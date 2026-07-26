@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Generated benchmark corpora (recreate with `pnpm generate`)
+/fixtures/*
+!/fixtures/.gitkeep
+
+# Large optional E2E clone
+/fixtures/e2e/nuxt-ui/
+
+# Ephemeral workspaces / probe output
+/work/
+
+# Local and CI report outputs (README markers hold published summaries)
+/results/*
+!/results/.gitkeep
+
+# VS Code test runner download cache
+.vscode-test/
+
+# Tooling / OS noise
+.bench-temp.json
+*.tgz
+*.log
+.DS_Store
+Thumbs.db
+dist/
+target/
+.env
+.env.*
+!.env.example
+
+# Editor / IDE
+.idea/
+*.swp
+*.swo

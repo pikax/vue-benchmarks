@@ -1,0 +1,12 @@
+{
+  "id": "expose",
+  "description": "defineExpose surface",
+  "props": [],
+  "exposed": [{ "name": "focus" }, { "name": "reset" }, { "name": "value" }],
+  "toolOverrides": {
+    "vize-declaration-meta": {
+      "skip": true,
+      "reason": "generateDeclaration does not emit defineExpose members"
+    }
+  }
+}

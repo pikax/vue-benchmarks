@@ -1,0 +1,53 @@
+name: Restore workspace
+description: >
+  Checkout is assumed already done. Restores pnpm/node_modules (cache),
+  installs if needed, and downloads prepared fixtures for this OS.
+
+inputs:
+  fixtures-artifact:
+    description: Artifact name containing the fixtures/ directory
+    required: true
+  node-modules-cache-key:
+    description: Cache key for node_modules (must match build job)
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - uses: pnpm/action-setup@v4
+      with:
+        version: 10
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version-file: .node-version
+        cache: pnpm
+
+    - name: Restore node_modules cache
+      id: nm-cache
+      uses: actions/cache@v4
+      with:
+        path: node_modules
+        key: ${{ inputs.node-modules-cache-key }}
+
+    # Always install: no-op/fast when node_modules is already complete from cache.
+    - name: Install dependencies
+      shell: bash
+      run: pnpm install --frozen-lockfile
+
+    - name: Download prepared fixtures
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ inputs.fixtures-artifact }}
+        path: fixtures
+
+    - name: Verify fixtures present
+      shell: bash
+      run: |
+        if [ ! -d fixtures ] || [ -z "$(ls -A fixtures 2>/dev/null)" ]; then
+          echo "Fixtures artifact empty or missing"
+          ls -la fixtures || true
+          exit 1
+        fi
+        echo "Fixtures ready:"
+        ls fixtures | head -20

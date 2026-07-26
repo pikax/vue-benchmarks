@@ -1,0 +1,11 @@
+{
+  "id": "basic-props",
+  "description": "Required typed props from defineProps generic",
+  "props": [
+    { "name": "title", "required": true, "typeIncludes": ["string"] },
+    { "name": "count", "required": true, "typeIncludes": ["number"] }
+  ],
+  "events": [],
+  "slots": [],
+  "absentProps": ["label", "extra"]
+}

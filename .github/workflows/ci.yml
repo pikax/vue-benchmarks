@@ -1,0 +1,23 @@
+# Deprecated stub kept so old links to `.github/workflows/ci.yml` do not 404.
+# Active workflows:
+#   - pr.yml         — pull request smoke + confirm
+#   - benchmark.yml  — full cold / warm-os / warm + README update
+#   - e2e-vscode.yml — optional VS Code E2E
+
+name: CI (deprecated stub)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  info:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Point to real workflows
+        run: |
+          echo "Use workflow 'PR' for pull requests."
+          echo "Use workflow 'Benchmark' for full benches and README updates."
+          echo "See .github/workflows/pr.yml and .github/workflows/benchmark.yml"

@@ -1,0 +1,5 @@
+{
+  "id": "v-if-narrow-ok",
+  "description": "v-if should narrow ref union in template (clean)",
+  "expectErrors": false
+}

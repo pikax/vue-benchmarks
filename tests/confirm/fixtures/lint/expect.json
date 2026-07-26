@@ -1,0 +1,83 @@
+{
+  "description": "Per-tool lint expectations. Rule sets differ — we never require identical codes across tools.",
+  "clean": {
+    "files": ["clean/CleanCard.vue", "clean/CleanButton.vue"],
+    "tools": {
+      "eslint-plugin-vue": { "maxIssues": 0 },
+      "vize-lint": { "maxIssues": 0 }
+    }
+  },
+  "dirty": [
+    {
+      "id": "v-html",
+      "file": "dirty/VHtml.vue",
+      "tools": {
+        "eslint-plugin-vue": {
+          "minIssues": 1,
+          "mustIncludeRules": ["vue/no-v-html"]
+        },
+        "vize-lint": {
+          "minIssues": 1,
+          "mustMatch": ["no-v-html", "v-html"]
+        }
+      }
+    },
+    {
+      "id": "v-for-no-key",
+      "file": "dirty/VForNoKey.vue",
+      "tools": {
+        "eslint-plugin-vue": {
+          "minIssues": 1,
+          "mustIncludeRules": ["vue/require-v-for-key"]
+        },
+        "vize-lint": {
+          "minIssues": 1,
+          "mustMatch": ["v-for", "key"]
+        }
+      }
+    },
+    {
+      "id": "dupe-else-if",
+      "file": "dirty/DupeElseIf.vue",
+      "tools": {
+        "eslint-plugin-vue": {
+          "minIssues": 1,
+          "mustIncludeRules": ["vue/no-dupe-v-else-if"]
+        },
+        "vize-lint": {
+          "minIssues": 1,
+          "mustMatch": ["else-if", "duplicate", "dupe"]
+        }
+      }
+    },
+    {
+      "id": "textarea-mustache",
+      "file": "dirty/TextareaMustache.vue",
+      "tools": {
+        "eslint-plugin-vue": {
+          "minIssues": 1,
+          "mustIncludeRules": ["vue/no-textarea-mustache"]
+        },
+        "vize-lint": {
+          "minIssues": 1,
+          "mustMatch": ["textarea", "mustache", "v-model"]
+        }
+      }
+    },
+    {
+      "id": "img-no-alt",
+      "file": "dirty/ImgNoAlt.vue",
+      "tools": {
+        "eslint-plugin-vue": {
+          "optional": true,
+          "minIssues": 0,
+          "note": "core eslint-plugin-vue has no img-alt rule without a11y plugin"
+        },
+        "vize-lint": {
+          "minIssues": 1,
+          "mustMatch": ["alt", "img"]
+        }
+      }
+    }
+  ]
+}

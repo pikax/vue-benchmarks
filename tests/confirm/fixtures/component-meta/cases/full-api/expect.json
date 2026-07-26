@@ -1,0 +1,24 @@
+{
+  "id": "full-api",
+  "description": "Props + defaults + emits + slots + expose together",
+  "props": [
+    { "name": "modelValue", "required": true, "typeIncludes": ["string"] },
+    {
+      "name": "size",
+      "required": false,
+      "typeIncludes": ["sm", "md", "lg", "string"],
+      "hasDefault": true
+    }
+  ],
+  "events": [
+    { "name": "update:modelValue", "typeIncludes": ["string"] },
+    { "name": "submit", "typeIncludes": ["value", "size", "string"] }
+  ],
+  "slots": [{ "name": "default", "typeIncludes": ["size"] }, { "name": "actions" }],
+  "exposed": [{ "name": "focus" }],
+  "toolOverrides": {
+    "vize-declaration-meta": {
+      "ignoreSections": ["exposed"]
+    }
+  }
+}

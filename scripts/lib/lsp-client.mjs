@@ -1,0 +1,261 @@
+/**
+ * Minimal JSON-RPC 2.0 LSP client over stdio.
+ * Stdio LSP client harness.
+ */
+
+import { spawn } from "node:child_process";
+import { EventEmitter } from "node:events";
+
+export class LspClient extends EventEmitter {
+  #proc;
+  #buffer = Buffer.alloc(0);
+  #nextId = 1;
+  #pending = new Map();
+  #name;
+  #configuration;
+  positionEncoding = "utf-16";
+
+  constructor(name, command, args = [], options = {}) {
+    super();
+    this.#name = name;
+    this.#configuration = options.configuration ?? {};
+    this.#proc = spawn(command, args, {
+      stdio: ["pipe", "pipe", options.inheritStderr ? "inherit" : "pipe"],
+      env: { ...process.env, ...(options.env ?? {}) },
+      cwd: options.cwd,
+      shell: options.shell ?? false,
+    });
+
+    this.#proc.stdout.on("data", (chunk) => this.#onData(chunk));
+    this.#proc.on("error", (err) => this.emit("error", err));
+    this.#proc.on("exit", (code, signal) => this.emit("exit", { code, signal }));
+
+    if (this.#proc.stderr && !options.inheritStderr) {
+      this.#proc.stderr.on("data", (chunk) => {
+        if (process.env.LSP_BENCH_DEBUG) {
+          process.stderr.write(`[${this.#name}:stderr] ${chunk}`);
+        }
+      });
+    }
+  }
+
+  get name() {
+    return this.#name;
+  }
+
+  #onData(chunk) {
+    this.#buffer = Buffer.concat([this.#buffer, chunk]);
+    while (true) {
+      const headerEnd = this.#buffer.indexOf("\r\n\r\n");
+      if (headerEnd === -1) return;
+      const header = this.#buffer.subarray(0, headerEnd).toString("utf8");
+      const match = header.match(/Content-Length:\s*(\d+)/i);
+      if (!match) {
+        this.#buffer = this.#buffer.subarray(headerEnd + 4);
+        continue;
+      }
+      const length = Number.parseInt(match[1], 10);
+      const bodyStart = headerEnd + 4;
+      if (this.#buffer.length < bodyStart + length) return;
+      const body = this.#buffer.subarray(bodyStart, bodyStart + length).toString("utf8");
+      this.#buffer = this.#buffer.subarray(bodyStart + length);
+      let msg;
+      try {
+        msg = JSON.parse(body);
+      } catch {
+        continue;
+      }
+      this.#dispatch(msg);
+    }
+  }
+
+  #dispatch(msg) {
+    if (msg.id != null && (msg.result !== undefined || msg.error !== undefined)) {
+      const pending = this.#pending.get(msg.id);
+      if (pending) {
+        this.#pending.delete(msg.id);
+        if (msg.error) pending.reject(new Error(JSON.stringify(msg.error)));
+        else pending.resolve(msg.result);
+      }
+      return;
+    }
+    if (msg.method) {
+      this.emit("notification", msg.method, msg.params);
+      this.emit(`notify:${msg.method}`, msg.params);
+      // Respond to server → client requests
+      if (msg.id != null) {
+        const result = this.#handleServerRequest(msg.method, msg.params);
+        this.#write({ jsonrpc: "2.0", id: msg.id, result });
+      }
+    }
+  }
+
+  #handleServerRequest(method, params) {
+    if (method === "workspace/configuration") {
+      const items = params?.items ?? [];
+      return items.map((item) => {
+        const section = item.section ?? "";
+        if (section in this.#configuration) return this.#configuration[section];
+        // Nested path support: "typescript.tsdk" style not used; whole section maps.
+        if (section === "typescript" && this.#configuration.typescript) {
+          return this.#configuration.typescript;
+        }
+        if (section === "vue" && this.#configuration.vue) {
+          return this.#configuration.vue;
+        }
+        if (section === "volar" && this.#configuration.volar) {
+          return this.#configuration.volar;
+        }
+        return {};
+      });
+    }
+    if (method === "workspace/workspaceFolders") {
+      return this.#configuration.workspaceFolders ?? null;
+    }
+    if (method === "client/registerCapability" || method === "client/unregisterCapability") {
+      return null;
+    }
+    if (method === "window/workDoneProgress/create") {
+      return null;
+    }
+    if (method === "window/showMessageRequest") {
+      return null;
+    }
+    // Default empty success
+    return null;
+  }
+
+  #write(msg) {
+    const json = JSON.stringify(msg);
+    const payload = `Content-Length: ${Buffer.byteLength(json, "utf8")}\r\n\r\n${json}`;
+    this.#proc.stdin.write(payload);
+  }
+
+  sendNotification(method, params) {
+    this.#write({ jsonrpc: "2.0", method, params });
+  }
+
+  sendRequest(method, params, timeoutMs = 30_000) {
+    const id = this.#nextId++;
+    return new Promise((resolve, reject) => {
+      const timer = setTimeout(() => {
+        this.#pending.delete(id);
+        reject(new Error(`${this.#name}: ${method} timed out after ${timeoutMs}ms`));
+      }, timeoutMs);
+      this.#pending.set(id, {
+        resolve: (v) => {
+          clearTimeout(timer);
+          resolve(v);
+        },
+        reject: (e) => {
+          clearTimeout(timer);
+          reject(e);
+        },
+      });
+      this.#write({ jsonrpc: "2.0", id, method, params });
+    });
+  }
+
+  /**
+   * Wait for a notification method (or any of methods[]).
+   */
+  waitForNotification(methods, timeoutMs = 60_000) {
+    const set = new Set(Array.isArray(methods) ? methods : [methods]);
+    return new Promise((resolve, reject) => {
+      const timer = setTimeout(() => {
+        this.off("notification", onNotify);
+        reject(
+          new Error(`${this.#name}: timeout waiting for ${[...set].join("|")} (${timeoutMs}ms)`),
+        );
+      }, timeoutMs);
+      const onNotify = (method, params) => {
+        if (set.has(method)) {
+          clearTimeout(timer);
+          this.off("notification", onNotify);
+          resolve({ method, params });
+        }
+      };
+      this.on("notification", onNotify);
+    });
+  }
+
+  async initialize(rootUri, { initializationOptions, timeoutMs = 30_000 } = {}) {
+    const result = await this.sendRequest(
+      "initialize",
+      {
+        processId: process.pid,
+        rootUri,
+        rootPath: null,
+        capabilities: {
+          workspace: {
+            configuration: true,
+            workspaceFolders: true,
+          },
+          textDocument: {
+            synchronization: { dynamicRegistration: false, didSave: true },
+            hover: { contentFormat: ["markdown", "plaintext"] },
+            completion: {
+              completionItem: { snippetSupport: true },
+            },
+            definition: { linkSupport: true },
+            publishDiagnostics: { relatedInformation: true },
+          },
+          general: {
+            positionEncodings: ["utf-16"],
+          },
+        },
+        initializationOptions: initializationOptions ?? {},
+        workspaceFolders: [{ uri: rootUri, name: "bench" }],
+      },
+      timeoutMs,
+    );
+
+    const encodings = result?.capabilities?.positionEncoding;
+    if (typeof encodings === "string") this.positionEncoding = encodings;
+    else if (result?.capabilities?.general?.positionEncodings?.[0]) {
+      this.positionEncoding = result.capabilities.general.positionEncodings[0];
+    }
+
+    this.sendNotification("initialized", {});
+    return result;
+  }
+
+  async shutdown() {
+    try {
+      await this.sendRequest("shutdown", null, 5_000);
+      this.sendNotification("exit");
+    } catch {
+      // ignore
+    }
+    await this.kill();
+  }
+
+  kill() {
+    return new Promise((resolve) => {
+      if (!this.#proc || this.#proc.killed) {
+        resolve();
+        return;
+      }
+      this.#proc.once("exit", () => resolve());
+      this.#proc.kill();
+      setTimeout(() => {
+        try {
+          this.#proc.kill("SIGKILL");
+        } catch {
+          // ignore
+        }
+        resolve();
+      }, 2000).unref?.();
+    });
+  }
+}
+
+export function pathToFileUri(absPath) {
+  let p = absPath.replace(/\\/g, "/");
+  if (!p.startsWith("/")) p = `/${p}`;
+  // Windows drive letter
+  if (/^\/[A-Za-z]:/.test(p)) {
+    return `file://${p}`;
+  }
+  return `file://${p}`;
+}

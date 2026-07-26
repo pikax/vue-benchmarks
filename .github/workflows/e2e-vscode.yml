@@ -1,0 +1,107 @@
+name: E2E VS Code
+
+# Heavy: downloads VS Code + optional Nuxt UI clone. Not on every PR.
+on:
+  workflow_dispatch:
+    inputs:
+      with_nuxt_ui:
+        description: "Clone and benchmark pinned Nuxt UI"
+        type: boolean
+        default: false
+      nuxt_ui_ref:
+        description: "Nuxt UI git ref"
+        required: false
+        default: "v3.1.3"
+      vize_extension:
+        description: "Vize marketplace id"
+        required: false
+        default: "ubugeeei.vize"
+      verter_extension:
+        description: "Verter marketplace id"
+        required: false
+        default: "verter.verter-vscode"
+  schedule:
+    # Weekly Sunday
+    - cron: "0 8 * * 0"
+
+permissions:
+  contents: read
+
+jobs:
+  e2e:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 90
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        # Pulls typescript@5.9 (vue-tsc) + typescript-go / typescript@7.0.2 (verter-tsc tsgo)
+        # for any non-E2E jobs that share the lockfile; E2E itself uses marketplace extensions.
+
+      # Linux CI needs xvfb for VS Code
+      - name: Install xvfb (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y xvfb
+
+      - name: Pre-install marketplace extensions
+        env:
+          VIZE_EXTENSION_ID: ${{ github.event.inputs.vize_extension || 'ubugeeei.vize' }}
+          VERTER_EXTENSION_ID: ${{ github.event.inputs.verter_extension || 'verter.verter-vscode' }}
+        run: |
+          node scripts/e2e-vscode/install-extensions.mjs \
+            --ids "Vue.volar,${VIZE_EXTENSION_ID},${VERTER_EXTENSION_ID}"
+
+      - name: Setup E2E workspaces
+        run: |
+          if [ "${{ github.event.inputs.with_nuxt_ui || 'false' }}" = "true" ] || [ "${{ github.event_name }}" = "schedule" ]; then
+            node scripts/e2e-vscode/setup-workspaces.mjs --with-nuxt-ui --nuxt-ui-ref "${{ github.event.inputs.nuxt_ui_ref || 'v3.1.3' }}"
+          else
+            node scripts/e2e-vscode/setup-workspaces.mjs
+          fi
+
+      - name: Run VS Code E2E (Volar + Vize + Verter)
+        env:
+          VIZE_EXTENSION_ID: ${{ github.event.inputs.vize_extension || 'ubugeeei.vize' }}
+          VERTER_EXTENSION_ID: ${{ github.event.inputs.verter_extension || 'verter.verter-vscode' }}
+        run: |
+          WS="regular,monorepo"
+          if [ -f fixtures/e2e/nuxt-ui/e2e-probe.json ]; then
+            WS="regular,monorepo,nuxt-ui"
+          fi
+          if [ "${{ runner.os }}" = "Linux" ]; then
+            xvfb-run -a node scripts/e2e-vscode/run.mjs \
+              --workspaces "$WS" \
+              --vize-extension "$VIZE_EXTENSION_ID" \
+              --verter-extension "$VERTER_EXTENSION_ID"
+          else
+            node scripts/e2e-vscode/run.mjs \
+              --workspaces "$WS" \
+              --vize-extension "$VIZE_EXTENSION_ID" \
+              --verter-extension "$VERTER_EXTENSION_ID"
+          fi
+
+      - name: Upload E2E results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-vscode-${{ matrix.os }}
+          path: results/e2e-vscode/**
+          if-no-files-found: warn

@@ -1,0 +1,10 @@
+{
+  "id": "runtime-props",
+  "description": "Runtime defineProps / defineEmits (non-TS)",
+  "props": [
+    { "name": "label", "required": true, "typeIncludes": ["string", "String"] },
+    { "name": "count", "typeIncludes": ["number", "Number"], "hasDefault": true },
+    { "name": "enabled", "typeIncludes": ["boolean", "Boolean"] }
+  ],
+  "events": [{ "name": "submit" }, { "name": "cancel" }]
+}

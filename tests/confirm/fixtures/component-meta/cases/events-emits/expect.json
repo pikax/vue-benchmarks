@@ -1,0 +1,10 @@
+{
+  "id": "events-emits",
+  "description": "Typed defineEmits including update: and empty payload",
+  "props": [{ "name": "id", "typeIncludes": ["number"] }],
+  "events": [
+    { "name": "change", "typeIncludes": ["number"] },
+    { "name": "update:modelValue", "typeIncludes": ["string"] },
+    { "name": "close" }
+  ]
+}

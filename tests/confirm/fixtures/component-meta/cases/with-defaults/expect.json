@@ -1,0 +1,19 @@
+{
+  "id": "with-defaults",
+  "description": "Optional props + withDefaults",
+  "props": [
+    { "name": "label", "required": true, "typeIncludes": ["string"] },
+    {
+      "name": "count",
+      "required": false,
+      "typeIncludes": ["number"],
+      "hasDefault": true
+    },
+    {
+      "name": "disabled",
+      "required": false,
+      "typeIncludes": ["boolean"],
+      "hasDefault": true
+    }
+  ]
+}

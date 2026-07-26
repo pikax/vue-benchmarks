@@ -1,0 +1,10 @@
+{
+  "id": "slots",
+  "description": "Named + scoped slots from defineSlots",
+  "props": [{ "name": "heading", "typeIncludes": ["string"] }],
+  "slots": [
+    { "name": "default", "typeIncludes": ["open", "boolean"] },
+    { "name": "icon" },
+    { "name": "footer", "typeIncludes": ["id", "number"] }
+  ]
+}

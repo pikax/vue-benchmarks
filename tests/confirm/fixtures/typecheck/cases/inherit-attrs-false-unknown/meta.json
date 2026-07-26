@@ -1,0 +1,8 @@
+{
+  "id": "inherit-attrs-false-unknown",
+  "description": "inheritAttrs:false still rejects unknown attrs at the call site under strictTemplates",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS2353", "data-x", "does not exist", "dataX"],
+  "requires": ["strict-component-attrs"]
+}

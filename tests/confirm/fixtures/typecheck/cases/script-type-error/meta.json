@@ -1,0 +1,7 @@
+{
+  "id": "script-type-error",
+  "description": "Planted TS error in <script setup>",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS2322", "string", "number"]
+}

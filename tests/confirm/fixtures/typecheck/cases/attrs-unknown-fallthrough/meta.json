@@ -1,0 +1,8 @@
+{
+  "id": "attrs-unknown-fallthrough",
+  "description": "Non-declared attribute (id) on component errors under strictTemplates regardless of inheritAttrs",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS2353", "id", "does not exist"],
+  "requires": ["strict-component-attrs"]
+}

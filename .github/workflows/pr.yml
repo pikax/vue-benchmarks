@@ -1,0 +1,113 @@
+name: PR
+
+# Pull requests: correctness + smoke only. No full multi-pass benchmarks,
+# no README rewrite (full benches run on main via benchmark.yml).
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Shared cache key for node_modules populated by the build job
+  NM_CACHE_PREFIX: nm-v1
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Build / prepare once per OS: install native tool binaries + small fixtures
+  # ---------------------------------------------------------------------------
+  build:
+    name: Build (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+
+      - name: Install dependencies (pulls native binaries)
+        run: pnpm install --frozen-lockfile
+
+      - name: Cache node_modules for sibling jobs
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ env.NM_CACHE_PREFIX }}-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', '.node-version') }}
+
+      - name: Generate smoke fixtures
+        run: node scripts/generate.mjs --counts 20
+
+      - name: Upload fixtures artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fixtures-pr-${{ matrix.os }}
+          path: fixtures
+          retention-days: 3
+          if-no-files-found: error
+
+  # ---------------------------------------------------------------------------
+  # Smoke: confirmation suite + tiny throughput pass (not for ranking)
+  # ---------------------------------------------------------------------------
+  smoke:
+    name: Smoke (${{ matrix.os }})
+    needs: build
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/restore-workspace
+        with:
+          fixtures-artifact: fixtures-pr-${{ matrix.os }}
+          node-modules-cache-key: ${{ env.NM_CACHE_PREFIX }}-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', '.node-version') }}
+
+      - name: Confirmation suite (correctness)
+        run: pnpm confirm
+
+      - name: Throughput smoke (1 run, no warmups, not ranking)
+        env:
+          RUNNER_OS: ${{ runner.os }}
+        run: |
+          node scripts/bench.mjs \
+            --fixture fixtures/20 \
+            --runs 1 \
+            --warmups 0 \
+            --surfaces compile,jsx-compile,lint,typecheck,format,component-meta,lsp \
+            --check-file-limit 20 \
+            --meta-file-limit 20 \
+            --json "results/smoke-${{ runner.os }}.json" \
+            --out "results/smoke-${{ runner.os }}.md"
+
+      - name: Upload smoke results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-${{ matrix.os }}
+          path: results/**
+          if-no-files-found: warn
+          retention-days: 7

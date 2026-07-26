@@ -1,0 +1,7 @@
+{
+  "id": "template-undefined",
+  "description": "Planted unknown identifier in <template>",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["missingName", "TS2339", "TS2304", "does not exist", "Cannot find name"]
+}

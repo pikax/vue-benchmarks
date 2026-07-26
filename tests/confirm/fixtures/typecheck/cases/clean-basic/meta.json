@@ -1,0 +1,5 @@
+{
+  "id": "clean-basic",
+  "description": "Valid script + template; no intentional errors",
+  "expectErrors": false
+}

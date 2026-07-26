@@ -1,0 +1,7 @@
+{
+  "id": "event-emit-payload",
+  "description": "Listener receives wrong payload type for typed emit",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS2345", "TS2322", "number", "string"]
+}

@@ -1,0 +1,7 @@
+{
+  "id": "v-if-event-closure",
+  "description": "Script handler uses nullable ref without guard (event may run later)",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS18047", "possibly", "null"]
+}

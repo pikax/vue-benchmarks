@@ -1,0 +1,5 @@
+{
+  "id": "attrs-class-style-ok",
+  "description": "class/style on component are AllowedComponentProps (clean under strictTemplates)",
+  "expectErrors": false
+}

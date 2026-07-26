@@ -1,0 +1,10 @@
+* text=auto eol=lf
+*.{cmd,bat,ps1} text eol=crlf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.node binary
+*.wasm binary
