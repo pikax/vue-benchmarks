@@ -16,6 +16,7 @@ import { createRequire } from "node:module";
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { resolveTnbVueTsc } from "./tnb.mjs";
 
 const require = createRequire(import.meta.url);
 const defaultRoot = join(dirname(fileURLToPath(import.meta.url)), "../..");
@@ -141,10 +142,25 @@ export function resolveToolEngine(id, rootDir = defaultRoot) {
 
   if (id === "vue-tsc") {
     const v = readVersion("typescript");
-    // vue-tsc drives the TypeScript compiler API, which only the JS package
-    // provides — the tsgo npm package is a native-binary wrapper, not a
-    // drop-in API, so vue-tsc cannot simply be pointed at it.
+    // The stock install: vue-tsc drives the TypeScript compiler API, and the
+    // tsgo npm package is a native-binary wrapper rather than a drop-in for
+    // that API, so this row runs the JavaScript checker. It is kept because it
+    // is what people actually run today — see `vue-tsc-tnb` for the same
+    // vue-tsc on the native engine.
     return { engine: "tsc-js", version: v, label: `TypeScript ${v ?? "?"} (JS)` };
+  }
+
+  if (id === "vue-tsc-tnb") {
+    // typescript-native-bridge IS a drop-in for the classic API, backed by tsgo
+    // in-process. Same vue-tsc, same Vue layer, native engine — so this row
+    // ranks alongside vize check / verter-tsc / golar instead of in the
+    // JS-engine table.
+    const t = resolveTnbVueTsc(rootDir);
+    return {
+      engine: "tsgo",
+      version: t.tsgoVersion,
+      label: `tsgo ${t.tsgoVersion ?? "?"} via TNB ${t.tnbVersion ?? "?"}`,
+    };
   }
 
   if (id === "vize-check") {

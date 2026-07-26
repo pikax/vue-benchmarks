@@ -1,0 +1,11 @@
+{
+  "name": "bench-env-tnb",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Isolated install of vue-tsc backed by typescript-native-bridge (tsgo engine). Deliberately NOT a root override — see README.md in this directory.",
+  "dependencies": {
+    "typescript": "npm:typescript-native-bridge@6.0.3-bridge.6.tsgo.7.0.2",
+    "vue": "3.5.40",
+    "vue-tsc": "3.3.8"
+  }
+}

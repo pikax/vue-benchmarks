@@ -66,6 +66,29 @@ defineEmits<{ select: [id: string] }>()
 </script>
 `;
 
+/**
+ * Position of `benchMarker` inside the `{{ }}` interpolation — a TEMPLATE
+ * position, not a script one.
+ *
+ * This is the discriminating probe for "does the server typecheck templates".
+ * In `<script setup>` the symbol is `Ref<string>`; inside a template Vue
+ * auto-unwraps refs, so the correct answer is `string`. A server that returns
+ * `Ref<...>` here is leaking the script type; one that returns no type at all
+ * is not resolving template types in the first place. Either way it is not
+ * doing the Vue-specific work a Vue language server exists to do — which is
+ * exactly the work the hover latency would otherwise be credited for.
+ */
+function findTemplateProbePosition(source, symbol) {
+  const lines = source.split(/\r?\n/);
+  const re = new RegExp(`\\{\\{\\s*${symbol}\\b`);
+  for (let i = 0; i < lines.length; i++) {
+    if (!re.test(lines[i])) continue;
+    const idx = lines[i].indexOf(symbol, lines[i].indexOf("{{"));
+    if (idx !== -1) return { line: i, character: idx };
+  }
+  throw new Error(`Could not locate {{ ${symbol} }} interpolation in LSP target`);
+}
+
 function findSymbolPosition(source, symbol) {
   const lines = source.split(/\r?\n/);
   for (let i = 0; i < lines.length; i++) {
@@ -160,6 +183,32 @@ declare module '*.vue' {
     )}\n`,
   );
 
+  // Vize's tsgo/Corsa IDE backend is OFF by default, and without it the server
+  // answers hovers from its own semantic analysis instead of a type checker.
+  // Benchmarking the default would measure a subset of the product the VS Code
+  // extension ships, so every switch is turned on here and the row reports at
+  // runtime whether the backend actually came up.
+  writeFileSync(
+    join(dir, "vize.config.json"),
+    `${JSON.stringify(
+      {
+        languageServer: {
+          enabled: true,
+          // `corsa` is the current name; `tsgo` is its deprecated alias.
+          corsa: true,
+          tsgo: true,
+          typecheck: true,
+          editor: true,
+          hover: true,
+          lint: true,
+        },
+        typeChecker: { enabled: true, strict: true, checkTemplateBindings: true },
+      },
+      null,
+      2,
+    )}\n`,
+  );
+
   // Point node_modules at repo root so Volar/TS resolve `vue` without a second install.
   const nm = join(dir, "node_modules");
   const rootNm = join(rootDir, "node_modules");
@@ -175,6 +224,7 @@ declare module '*.vue' {
   }
 
   const probe = findSymbolPosition(TARGET_SOURCE, "benchMarker");
+  const templateProbe = findTemplateProbePosition(TARGET_SOURCE, "benchMarker");
   writeFileSync(
     join(dir, "lsp-probe.json"),
     `${JSON.stringify(
@@ -182,8 +232,11 @@ declare module '*.vue' {
         file: "LspTarget.vue",
         symbol: "benchMarker",
         position: probe,
+        templatePosition: templateProbe,
         encoding: "utf-16",
-        note: "0-based line/character for textDocument/hover on const benchMarker",
+        note: "0-based line/character for textDocument/hover on const benchMarker (script) and {{ benchMarker }} (template)",
+        templateNote:
+          "Refs auto-unwrap in templates: the correct type here is `string`, not `Ref<string>`",
       },
       null,
       2,
@@ -195,6 +248,7 @@ declare module '*.vue' {
     file: join(dir, "LspTarget.vue"),
     fileRel: "LspTarget.vue",
     probe,
+    templateProbe,
     source: TARGET_SOURCE,
   };
 }

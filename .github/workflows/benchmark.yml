@@ -12,14 +12,19 @@ name: Benchmark
 # it — so a three-OS matrix bought nothing but three times the runner cost and
 # three more sources of variance. One OS, one runner class, one set of numbers.
 #
-# Jobs:
-#   bench  — EVERY timing surface in ONE job (~8-9 min). All numbers in a report
-#            come off the same VM, so no result is ever merged across runners.
-#            Runner-to-runner variance is easily larger than the differences
-#            being measured, and sharding by surface would have reintroduced
-#            exactly that discrepancy.
-#   memory — resource probe. Separate ON PURPOSE: sampling RSS/CPU alongside
-#            timing runs would perturb the timings it sits next to.
+# Two job groups, matching how the harness itself is split: SPEED and MEMORY
+# are always separate runs, never the same one.
+#
+#   bench  — SPEED. Every timing surface in ONE job (~8-9 min). All numbers in a
+#            report come off the same VM, so no result is ever merged across
+#            runners. Runner-to-runner variance is easily larger than the
+#            differences being measured, and sharding by surface would have
+#            reintroduced exactly that discrepancy. Nothing here samples memory.
+#
+#   memory — MEMORY. Every surface again, including the language servers, with
+#            resource sampling turned up (nothing is timed, so sampling cost is
+#            free) and exact OS high-water marks folded in. Kept apart because a
+#            sampler running beside a timer measures its own overhead.
 #
 # There is no cold job. Every measured run is preceded by a discarded warmup
 # pass, because an unwarmed first run costs a JS compiler ~3.2x its steady
@@ -191,10 +196,10 @@ jobs:
           retention-days: 30
 
   # ---------------------------------------------------------------------------
-  # MEMORY / CPU resource probe — Linux only, isolated from timing jobs
+  # MEMORY — all surfaces incl. LSP. Isolated from the speed job on purpose.
   # ---------------------------------------------------------------------------
   memory:
-    name: Memory (Linux)
+    name: Memory (Linux, all surfaces)
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 60
@@ -209,7 +214,7 @@ jobs:
           fixtures-artifact: fixtures-bench-linux
           node-modules-cache-key: ${{ env.NM_CACHE_PREFIX }}-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', '.node-version') }}-${{ github.sha }}
 
-      - name: Resource probe (RSS + alloc + CPU)
+      - name: Resource probe (RSS + alloc + CPU, all surfaces)
         env:
           RUNNER_OS: ${{ runner.os }}
         run: |

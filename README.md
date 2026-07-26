@@ -98,26 +98,34 @@ CI also runs a non-ranking compile pass on `fixtures/{N}-repeated` so content-ha
 
 ### Typecheckers
 
-| Tool    | Package                | Command / API                                 | TypeScript engine |
-| ------- | ---------------------- | --------------------------------------------- | ----------------- |
-| Vue TSC | `vue-tsc`              | `vue-tsc --noEmit -p tsconfig.json`           | **TypeScript 5.9 (JS)** |
-| Golar   | `golar` + `@golar/vue` | `golar typecheck` (+ default mode separately) | typescript-go (native) |
-| Vize    | `vize`                 | `vize check . --tsconfig …`                   | tsgo **nightly** (`@typescript/native-preview` 7.0.0-dev) |
-| Verter  | `verter-tsc`           | `verter-tsc --noEmit -p tsconfig.json`        | tsgo **stable** 7.0.2 |
+| Tool             | Package                     | Command / API                                 | TypeScript engine |
+| ---------------- | --------------------------- | --------------------------------------------- | ----------------- |
+| Vue TSC          | `vue-tsc`                   | `vue-tsc --noEmit -p tsconfig.json`           | **TypeScript 5.9 (JS)** |
+| Vue TSC (TNB)    | `typescript-native-bridge`  | same command, `envs/tnb` install              | tsgo **stable** 7.0.2 (in-process NAPI/FFI) |
+| Golar            | `golar` + `@golar/vue`      | `golar typecheck` (+ default mode separately) | typescript-go (native) |
+| Vize             | `vize`                      | `vize check . --tsconfig …`                   | tsgo **nightly** (`@typescript/native-preview` 7.0.0-dev) |
+| Verter           | `verter-tsc`                | `verter-tsc --noEmit -p tsconfig.json`        | tsgo **stable** 7.0.2 |
 
-#### Engines are ranked separately — and this is the biggest single caveat
+#### Engines are ranked separately — and this used to be the biggest single caveat
 
-Three of these four run the **native Go TypeScript engine**; `vue-tsc` runs the **JavaScript** one. Ranking them in one table mostly measures TypeScript's own Go rewrite, not the Vue layer under test. So engine is part of the comparison class and each gets its own table.
+Most of these run the **native Go TypeScript engine**; stock `vue-tsc` runs the **JavaScript** one. Ranking them in one table mostly measures TypeScript's own Go rewrite, not the Vue layer under test. So engine is part of the comparison class and each gets its own table.
 
-What that changes, measured on `fixtures/20`:
+**`vue-tsc (TNB / tsgo)` is what makes the incumbent comparable at all.** It is the *same* `vue-tsc`, the same `@vue/language-core`, the same template checking — with `typescript` aliased to [typescript-native-bridge](https://github.com/johnsoncodehk/typescript-native-bridge), whose checker is tsgo in-process. One variable changes, so the pair isolates the engine from the Vue layer, and the native row can finally be ranked against Vize/Verter/golar directly.
+
+Illustrative decomposition (local, `fixtures/50`, win32, 3 runs — published numbers come from Linux CI):
 
 | Comparison | Gap | What it actually measures |
 | --- | --- | --- |
-| verter-tsc vs golar (**same engine, both validated**) | **~5%** | The real Vue-layer difference |
-| tsgo class vs `vue-tsc` (JS) | ~2.4× | TypeScript's Go rewrite — inherited free by every tool that adopts it |
-| Vize (unranked) vs vue-tsc | ~10× | All of the above **plus** work Vize does not do |
+| `vue-tsc` (JS) vs `vue-tsc` (TNB) — **same tool, engine swapped** | **~1.9×** | TypeScript's Go rewrite, isolated. Nothing to do with Vue tooling. |
+| `vue-tsc` (TNB) vs `verter-tsc` (**same engine, both validated**) | **~2%** | The real Vue-layer difference — they are effectively equal |
+| `vue-tsc` (TNB) vs golar (**same engine, both validated**) | ~1.24× | golar's genuine Vue-layer lead |
+| Vize (unranked) vs `vue-tsc` (JS) | ~10× | All of the above **plus** work Vize does not do |
 
-A single "Nx faster" number spanning engines multiplies all three together and attributes the product to Vue tooling. It shouldn't.
+The headline: once the engine is held constant, `vue-tsc` is within a couple of percent of `verter-tsc`. Almost the entire "native Vue typechecker is ~2× faster" story is TypeScript's Go rewrite — which the incumbent inherits for free by swapping one package. A single "Nx faster" number spanning engines multiplies these factors together and attributes the product to Vue tooling. It shouldn't.
+
+Stock JS-engine `vue-tsc` is **kept** as a row, because it is what ships today.
+
+TNB lives in [`envs/tnb`](envs/tnb/README.md) as a standalone project, never a root `typescript` override — an override would swap the engine under component-meta, lint and LSP at the same time. It must also print its activation banner on the work-gate run, or the row is unranked: a silent fallback to the JS checker would leave the row labelled native while running JS.
 
 Note also that Vize ships a tsgo **nightly** while `verter-tsc` requires stable and explicitly rejects nightlies. Same class, different rigour — every row prints its exact engine build.
 
@@ -191,6 +199,23 @@ Harness shape: init → didOpen → hover cold/warm (same workspace, file, and p
 
 **Retry budget is identical for every server** (6 attempts × 20 s, same backoff). It used to be 6 attempts for Volar and 2 for everyone else — and because the backoff sleeps sit *inside* the timed `didOpen→hover` window, that handed Volar up to ~3 s of billable sleep the other servers could not incur, while hiding slow project spin-up. A server that needs the retries now pays for them.
 
+#### Hover content is gated in two places — and the template one is the Vue-specific one
+
+Latency is only comparable if every server answered the same question correctly, so hover **content** is validated at two positions in the same file. Both must pass to be ranked:
+
+| Position | Correct answer | What it proves |
+| --- | --- | --- |
+| `const benchMarker` in `<script setup>` | some form of `Ref<string>` | the server returns real TypeScript types |
+| `{{ benchMarker }}` in the **template** | `string` | the server actually models the template |
+
+The template probe is the discriminating one. Vue **auto-unwraps refs in templates**, so the same symbol is `Ref<string>` in script and `string` three lines up in the interpolation. A server can satisfy the script probe by proxying to a TypeScript server — that is not the job a *Vue* language server exists to do — but only a server that models the template gets the unwrapped type right.
+
+Measured, same workspace and position: two servers return the unwrapped `string`. One returns `benchMarker: Ref<string>` — the script type — accompanied by prose stating refs are "auto-unwrapped in template", describing the unwrapping it did not perform. It is by far the fastest, which is exactly why the gate exists. It is **measured and shown in brackets, but not ranked**.
+
+`Ref<...>` is rejected rather than accepted here, and the match is against the annotation (`benchMarker: string`) rather than a loose `string`, so that prose mentioning the word cannot pass. The probe runs **outside every timed window**, so it gates ranking without changing what the latency column measures.
+
+Regression fixtures for all three real payloads live in [`tests/harness/lsp-hover-gate.test.mjs`](tests/harness/lsp-hover-gate.test.mjs) — the first version of this gate wrongly failed a *correct* server whose doc comment ran into its type signature (`let benchMarker: stringStable hover target…`), which has no word boundary after `string`.
+
 **Not measured:** VS Code extension host UI cost — only the stdio language-server protocol.
 
 **Volar hybrid note:** Vue language-tools v3 no longer embeds tsserver. The client must bridge `tsserver/request` → TypeScript LS (`typescript.tsserverRequest`) → `tsserver/response` ([upgrade guide](https://github.com/vuejs/language-tools/discussions/5456)). This harness uses `typescript-language-server` + `@vue/typescript-plugin`. Incomplete hybrid wiring → status `error`.
@@ -223,11 +248,16 @@ CI: use workflow_dispatch / optional job — cloning Nuxt UI + downloading VS Co
 
 [typescript-native-bridge](https://github.com/johnsoncodehk/typescript-native-bridge) (by Volar's creator) is a drop-in **`typescript` package** backed by tsgo — **not a Vue LSP**.
 
-| Role                               | Status                                    |
-| ---------------------------------- | ----------------------------------------- |
-| LSP table row                      | No — not a language server                |
-| `vue-tsc` / Volar-tsdk engine swap | Possible as a separate labeled experiment |
-| Compared as Vue LSP                | No — different product surface            |
+| Role                               | Status                                                              |
+| ---------------------------------- | ------------------------------------------------------------------- |
+| LSP table row                      | No — not a language server                                          |
+| `vue-tsc` engine swap              | **Shipped** — `vue-tsc (TNB / tsgo)` in the typecheck table          |
+| Compared as Vue LSP                | No — different product surface                                      |
+| component-meta / lint engine swap  | Not yet — same technique would apply, see below                      |
+
+Install: `pnpm install --dir envs/tnb --ignore-workspace`. Absent, the row is skipped with a note and nothing else changes. See [`envs/tnb/README.md`](envs/tnb/README.md) for why it is isolated rather than a root override, and [Engines are ranked separately](#engines-are-ranked-separately--and-this-used-to-be-the-biggest-single-caveat) for what it revealed.
+
+`vue-component-meta` and type-aware ESLint also run the JS engine today and could get the same treatment, which would remove the last engine asymmetries in the report. Not done yet — each needs its own isolated env and its own work gate.
 
 ### Confirmation suite (correctness — not performance)
 

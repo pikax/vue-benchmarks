@@ -35,6 +35,15 @@ runs:
       shell: bash
       run: pnpm install --frozen-lockfile
 
+    # Isolated vue-tsc-on-tsgo env. Deliberately a separate project, never a root
+    # `typescript` override — an override would swap the engine under
+    # component-meta, lint and LSP too. Not covered by the node_modules cache
+    # (which caches the root only), so install it explicitly. Failure here must
+    # not fail the run: the harness skips the row with a note if it is absent.
+    - name: Install typescript-native-bridge env (envs/tnb)
+      shell: bash
+      run: pnpm install --dir envs/tnb --ignore-workspace --frozen-lockfile || echo "envs/tnb install failed — vue-tsc (TNB) row will be skipped"
+
     - name: Download prepared fixtures
       uses: actions/download-artifact@v4
       with:

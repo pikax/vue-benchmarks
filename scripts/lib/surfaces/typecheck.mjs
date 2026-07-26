@@ -19,6 +19,7 @@ import {
   typecheckGateDetail,
 } from "../work-gate.mjs";
 import { resolveToolEngine, resolveTsgoBin, withTsgoEnv } from "../tsgo.mjs";
+import { resolveTnbVueTsc, tnbActive } from "../tnb.mjs";
 
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../../..");
 
@@ -86,6 +87,7 @@ export async function runTypecheckSurface(fixtureDir, options) {
   const vize = tryResolveBin("vize");
   const verterTsc = tryResolveBin("verter-tsc");
   const golar = tryResolveBin("golar");
+  const tnb = resolveTnbVueTsc(rootDir);
 
   const variants = [];
 
@@ -119,6 +121,44 @@ export async function runTypecheckSurface(fixtureDir, options) {
       artifactPolarity: "informational",
       package: "vue-tsc",
       notes: "Binary not found",
+      skip: true,
+    });
+  }
+
+  // Same vue-tsc, same Vue layer, native engine. This is the row that makes the
+  // incumbent comparable to vize/verter/golar at all: without it, vue-tsc sits
+  // alone in the JS-engine table and any "N times faster" claim against it is
+  // really a claim about TypeScript's Go rewrite. Kept ALONGSIDE stock vue-tsc,
+  // never instead of it — the JS engine is what ships today.
+  if (tnb.entry) {
+    variants.push({
+      id: "vue-tsc-tnb",
+      label: "vue-tsc (TNB / tsgo)",
+      artifactLabel: "Diagnostics",
+      artifactPolarity: "informational",
+      package: "typescript-native-bridge",
+      notes: `vue-tsc ${tnb.vueTscVersion ?? "?"} with typescript aliased to typescript-native-bridge ${tnb.tnbVersion ?? "?"} (TS API ${tnb.tsApiVersion ?? "?"} on tsgo ${tnb.tsgoVersion ?? "?"}, in-process NAPI/FFI)`,
+      measure: () => {
+        const { ms, stdout, stderr } = runCommand(
+          process.execPath,
+          [tnb.entry, "--noEmit", "-p", "tsconfig.json"],
+          {
+            cwd: checkDir,
+            allowNonZeroExit: true,
+            env: baseEnv,
+          },
+        );
+        return { ms, artifact: countDiagnostics(stdout, stderr) };
+      },
+    });
+  } else {
+    variants.push({
+      id: "vue-tsc-tnb",
+      label: "vue-tsc (TNB / tsgo)",
+      artifactLabel: "Diagnostics",
+      artifactPolarity: "informational",
+      package: "typescript-native-bridge",
+      notes: `Skipped: ${tnb.notes}`,
       skip: true,
     });
   }
@@ -253,6 +293,7 @@ export async function runTypecheckSurface(fixtureDir, options) {
     [
       `files=${files.length}`,
       `vue-tsc=${vueTsc ?? "missing"}`,
+      `vue-tsc-tnb=${tnb.entry ?? "missing"} (${tnb.notes})`,
       `golar=${golar ?? "missing"}`,
       `vize=${vize ?? "missing"}`,
       `verter-tsc=${verterTsc ?? "missing"}`,
@@ -274,6 +315,10 @@ export async function runTypecheckSurface(fixtureDir, options) {
   // tools whose primary flag form is flaky on some platforms.
   const gateSpecs = {
     "vue-tsc": vueTsc && { bin: vueTsc, args: ["--noEmit", "-p", "tsconfig.json"] },
+    "vue-tsc-tnb": tnb.entry && {
+      bin: process.execPath,
+      args: [tnb.entry, "--noEmit", "-p", "tsconfig.json"],
+    },
     "golar-typecheck": golar && { bin: golar, args: ["typecheck"] },
     "golar-default": golar && { bin: golar, args: [] },
     "vize-check": vize && {
@@ -297,6 +342,30 @@ export async function runTypecheckSurface(fixtureDir, options) {
       const spec = gateSpecs[v.id];
       if (!spec) return true;
       const opts = { shell: isWinShell(spec.bin), env: baseEnv };
+
+      // TNB has to prove it is really the native bridge. If it ever fell back to
+      // the JavaScript checker the row would keep its "tsgo" engine label while
+      // running JS — a mislabel that would corrupt the exact comparison this row
+      // exists to enable. Probed on the 1-file script plant, so it costs
+      // ~nothing, and its absence unranks the row.
+      if (v.id === "vue-tsc-tnb") {
+        const probe = runCommand(spec.bin, spec.args, {
+          cwd: plant.scriptDir,
+          allowNonZeroExit: true,
+          env: { ...baseEnv, NODE_PATH: plant.nodePath },
+        });
+        if (!tnbActive(`${probe.stdout || ""}${probe.stderr || ""}`)) {
+          v.gateMissed = "TNB activation banner (bridge did not load — engine label would be wrong)";
+          gateReport[v.id] = {
+            script: false,
+            templateProp: false,
+            templateEvent: false,
+            corpus: false,
+            tnb: false,
+          };
+          return false;
+        }
+      }
 
       let detail = typecheckGateDetail(spec.bin, spec.args, plant, opts);
       let args = spec.args;
@@ -359,6 +428,8 @@ export async function runTypecheckSurface(fixtureDir, options) {
       "Work gate has three parts, all required to be ranked: (1) a script-only planted error, (2) a template-only planted error with strictTemplates — proving the tool actually typechecks templates and does not just run tsc over extracted script blocks, and (3) the same planted bug re-detected in the FULL timed corpus under the timed tsconfig, proving the tool does not degrade at scale.",
       "Per-tool gate results are shown in Notes as script/template/corpus ✓✗.",
       "verter-tsc requires stable tsgo (typescript@7.0.x / typescript-go); set via VERTER_TSGO_BIN.",
+      "Two engines are measured and ranked separately: the JavaScript TypeScript compiler and native tsgo. `vue-tsc` and `vue-tsc (TNB / tsgo)` are the SAME vue-tsc and the same Vue layer differing only in engine, so the pair isolates how much of any speed gap is TypeScript's Go rewrite rather than the Vue tooling on top of it.",
+      "The TNB row lives in envs/tnb as a standalone install, never a root `typescript` override, so the engine swap cannot leak into component-meta, lint or LSP surfaces; it must also print its activation banner or it is unranked.",
       "Diagnostic equivalence is NOT asserted — this is a throughput benchmark, not a correctness suite.",
       "golar default mode includes linting; golar typecheck is pure typecheck.",
       "Allow non-zero exit codes: generated fixtures may surface tool-specific diagnostics.",

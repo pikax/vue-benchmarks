@@ -193,6 +193,44 @@ const handlers = {
     }
   },
 
+  /**
+   * Language-server footprint. Runs the SAME session the timed LSP surface
+   * runs, but with sampling enabled and nothing being timed — memory is always
+   * measured in its own pass, never beside speed.
+   */
+  async "lsp-session"(payload) {
+    const { runLspSession, resolveVolarServer, resolveVizeLsp, resolveVerterLsp, resolveTsdk } =
+      await import("./lib/surfaces/lsp.mjs");
+    const { ensureLspWorkspace } = await import("./lib/lsp-workspace.mjs");
+
+    const resolve = { volar: resolveVolarServer, vize: resolveVizeLsp, verter: resolveVerterLsp };
+    const server = resolve[payload.server]?.();
+    if (!server) throw new Error(`${payload.server} language server not available`);
+
+    const ws = ensureLspWorkspace({ bulkFiles: payload.bulkFiles ?? 20 });
+    const tsdk = resolveTsdk();
+
+    const out = await runLspSession({
+      name: payload.server,
+      command: server.command,
+      args: payload.server === "verter" ? [...(server.args ?? []), ws.dir] : server.args,
+      shell: server.shell,
+      rootDir: ws.dir,
+      filePath: ws.file,
+      source: ws.source,
+      probe: ws.probe,
+      initializationOptions: payload.server === "volar" ? { typescript: { tsdk } } : {},
+      readyNotifications: payload.server === "verter" ? ["$/verter/ready"] : [],
+      volarHybrid: payload.server === "volar",
+      tsdkPath: tsdk,
+      // Poll hard: nothing here is timed, so sampling cost is free.
+      sampleResources: true,
+      resourcePollMs: Number(process.env.MEM_LSP_POLL_MS ?? 10),
+    });
+    // Surfaced through the task result for the report.
+    return { lspResource: out.resource, hoverValid: out.hoverValid };
+  },
+
   async "vue-component-meta"(payload) {
     const { createChecker } = require(require.resolve("vue-component-meta", { paths: [rootDir] }));
     const checker = createChecker(payload.tsconfig, { forceUseTs: true });
@@ -262,7 +300,7 @@ while (-not $p.HasExited) {
     if ($p.WorkingSet64 -gt 0) { [void]$ws.Add([Int64]$p.WorkingSet64) }
     if ($p.PrivateMemorySize64 -gt 0) { [void]$priv.Add([Int64]$p.PrivateMemorySize64) }
   } catch {}
-  Start-Sleep -Milliseconds 5
+  Start-Sleep -Milliseconds 1
 }
 if ($timedOut) {
   try { $p.WaitForExit(5000) } catch {}
@@ -276,6 +314,8 @@ try {
   if ($p.WorkingSet64 -gt 0) { [void]$ws.Add([Int64]$p.WorkingSet64) }
   if ($p.PrivateMemorySize64 -gt 0) { [void]$priv.Add([Int64]$p.PrivateMemorySize64) }
 } catch {}
+# Kernel high-water mark: exact peak regardless of what polling missed.
+try { if ($p.PeakWorkingSet64 -gt 0) { [void]$ws.Add([Int64]$p.PeakWorkingSet64) } } catch {}
 if ($ws.Count -eq 0) {
   Write-Output 'EMPTY'
   exit 0
@@ -435,7 +475,7 @@ async function runCli(cli) {
         if (Number.isFinite(cpu) && cpu > peakCpuMs) peakCpuMs = cpu;
       }
     };
-    const iv = setInterval(sample, 5);
+    const iv = setInterval(sample, 1);
     if (typeof iv.unref === "function") iv.unref();
     sample();
 

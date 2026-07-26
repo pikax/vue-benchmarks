@@ -428,5 +428,22 @@ export function buildMemoryTasks(fixtureDir, options = {}) {
     },
   });
 
+  // Language servers.
+  //
+  // Every surface follows the same split: bench.mjs measures speed, this file
+  // measures memory, and neither samples the other. The LSP surface previously
+  // had no memory coverage at all, so the one tool class that stays resident in
+  // an editor was the one whose footprint went unmeasured.
+  for (const server of ["volar", "vize", "verter"]) {
+    tasks.push({
+      id: `mem-lsp-${server}`,
+      label: `LSP ${server} (server process)`,
+      package: server,
+      surface: "lsp",
+      kind: "inproc",
+      inproc: { handler: "lsp-session", payload: { server } },
+    });
+  }
+
   return tasks.filter((t) => t.id);
 }

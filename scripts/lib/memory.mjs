@@ -157,6 +157,103 @@ export function linuxCpuMs(pid) {
   }
 }
 
+/**
+ * EXACT peak RSS of this process, from the OS high-water mark.
+ *
+ * Polling can only ever approximate a peak — a spike between two samples is
+ * invisible no matter how fast the interval. The kernel already tracks the
+ * true high-water mark, so we read it instead of guessing. maxRSS is reported
+ * in kilobytes on every platform Node supports.
+ */
+export function selfPeakRssBytes() {
+  try {
+    const kb = process.resourceUsage()?.maxRSS;
+    return Number.isFinite(kb) && kb > 0 ? kb * 1024 : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * EXACT peak RSS of another process, where the platform exposes it.
+ *
+ * win32: PeakWorkingSet64. linux: VmHWM. darwin has no per-pid peak that is
+ * readable from outside the process, so it returns null and the caller keeps
+ * its sampled maximum — flagged as sampled rather than silently mixed in.
+ */
+export function pidPeakRssBytes(pid) {
+  if (!pid || pid <= 0) return null;
+  try {
+    if (process.platform === "linux") {
+      const status = readFileSync(`/proc/${pid}/status`, "utf8");
+      const m = status.match(/^VmHWM:\s+(\d+)\s+kB/m);
+      return m ? Number(m[1]) * 1024 : null;
+    }
+    if (process.platform === "darwin") return null;
+    const r = spawnSync(
+      "powershell.exe",
+      [
+        "-NoProfile",
+        "-NonInteractive",
+        "-Command",
+        `(Get-Process -Id ${pid} -ErrorAction SilentlyContinue).PeakWorkingSet64`,
+      ],
+      { encoding: "utf8", windowsHide: true },
+    );
+    if (r.status !== 0) return null;
+    const n = Number(String(r.stdout).trim());
+    return Number.isFinite(n) && n > 0 ? n : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Cumulative CPU time (ms) consumed by a child process, cross-platform.
+ *
+ * Unlike the in-process delta path, this reads the OS counter for the whole
+ * lifetime of a spawned process. A language server lives for hundreds of ms
+ * to seconds, so the value sits far above the scheduler-tick floor that makes
+ * short in-process windows unmeasurable — no CPU_FLOOR_MS gate needed here.
+ *
+ * Read it just BEFORE the process exits; the counter is gone afterwards.
+ */
+export function pidCpuMs(pid) {
+  if (!pid || pid <= 0) return null;
+  try {
+    if (process.platform === "linux") {
+      const v = linuxCpuMs(pid);
+      return Number.isFinite(v) ? v : null;
+    }
+    if (process.platform === "darwin") {
+      // ps cputime is [[dd-]hh:]mm:ss(.ss)
+      const r = spawnSync("ps", ["-o", "cputime=", "-p", String(pid)], { encoding: "utf8" });
+      if (r.status !== 0) return null;
+      const t = String(r.stdout).trim();
+      if (!t) return null;
+      const parts = t.split(/[-:]/).map(Number);
+      if (parts.some((n) => !Number.isFinite(n))) return null;
+      const secs = parts.reduce((acc, n) => acc * 60 + n, 0);
+      return Number((secs * 1000).toFixed(2));
+    }
+    const r = spawnSync(
+      "powershell.exe",
+      [
+        "-NoProfile",
+        "-NonInteractive",
+        "-Command",
+        `(Get-Process -Id ${pid} -ErrorAction SilentlyContinue).TotalProcessorTime.TotalMilliseconds`,
+      ],
+      { encoding: "utf8", windowsHide: true },
+    );
+    if (r.status !== 0) return null;
+    const n = Number(String(r.stdout).trim());
+    return Number.isFinite(n) ? Number(n.toFixed(2)) : null;
+  } catch {
+    return null;
+  }
+}
+
 export function summarizeByteSeries(samplesBytes, baselineBytes = 0) {
   const valid = samplesBytes.filter((x) => Number.isFinite(x) && x >= 0);
   if (valid.length === 0) {
@@ -204,7 +301,10 @@ export function summarizeSamples(samplesBytes, baselineBytes) {
  * Poll RSS + heap while `fn` runs; also measure CPU via process.cpuUsage.
  */
 export async function sampleWhile(fn, opts = {}) {
-  const pollMs = opts.pollMs ?? 20;
+  // This path measures memory, never speed, so sampling cost is not a
+  // trade-off worth making — poll hard. The exact peak below does not depend
+  // on this interval; it only sharpens the min/avg curve.
+  const pollMs = opts.pollMs ?? Number(process.env.MEM_POLL_MS ?? 2);
   forceGc();
   const baselineSnap = selfSnapshot();
   const cpu0 = process.cpuUsage();
@@ -233,6 +333,10 @@ export async function sampleWhile(fn, opts = {}) {
     if (snap.rss > 0) rssSamples.push(snap.rss);
     if (snap.heapUsed > 0) heapSamples.push(snap.heapUsed);
     if (snap.mallocedMemory >= 0) mallocSamples.push(snap.mallocedMemory);
+    // Fold in the kernel's true high-water mark so the reported peak cannot
+    // be lower than what actually happened, whatever the poll interval missed.
+    const exactPeak = selfPeakRssBytes();
+    if (Number.isFinite(exactPeak) && exactPeak > 0) rssSamples.push(exactPeak);
   }
 
   const cpu1 = process.cpuUsage(cpu0);

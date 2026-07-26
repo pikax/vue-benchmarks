@@ -6,6 +6,9 @@
 import { spawn } from "node:child_process";
 import { EventEmitter } from "node:events";
 
+/** Cap on retained stderr per server — enough for a startup failure trace. */
+const STDERR_TAIL_BYTES = 16_384;
+
 export class LspClient extends EventEmitter {
   #proc;
   #buffer = Buffer.alloc(0);
@@ -26,12 +29,29 @@ export class LspClient extends EventEmitter {
       shell: options.shell ?? false,
     });
 
+    /** PID of the language server, for resource sampling. */
+    this.pid = this.#proc.pid;
+
     this.#proc.stdout.on("data", (chunk) => this.#onData(chunk));
     this.#proc.on("error", (err) => this.emit("error", err));
     this.#proc.on("exit", (code, signal) => this.emit("exit", { code, signal }));
 
+    /**
+     * Bounded tail of the server's stderr.
+     *
+     * Kept because a server can come up, answer every request, and still be
+     * running a degraded backend — Vize logs `corsa bridge spawn failed` to
+     * stderr and then silently answers hovers from its own semantic analysis
+     * instead of tsgo. That distinction does not appear anywhere in the LSP
+     * traffic, so without stderr the row would report a fast, healthy-looking
+     * result with no indication that its type backend never started.
+     */
+    this.stderrTail = "";
+
     if (this.#proc.stderr && !options.inheritStderr) {
       this.#proc.stderr.on("data", (chunk) => {
+        const s = chunk.toString();
+        this.stderrTail = (this.stderrTail + s).slice(-STDERR_TAIL_BYTES);
         if (process.env.LSP_BENCH_DEBUG) {
           process.stderr.write(`[${this.#name}:stderr] ${chunk}`);
         }
@@ -93,21 +113,7 @@ export class LspClient extends EventEmitter {
   #handleServerRequest(method, params) {
     if (method === "workspace/configuration") {
       const items = params?.items ?? [];
-      return items.map((item) => {
-        const section = item.section ?? "";
-        if (section in this.#configuration) return this.#configuration[section];
-        // Nested path support: "typescript.tsdk" style not used; whole section maps.
-        if (section === "typescript" && this.#configuration.typescript) {
-          return this.#configuration.typescript;
-        }
-        if (section === "vue" && this.#configuration.vue) {
-          return this.#configuration.vue;
-        }
-        if (section === "volar" && this.#configuration.volar) {
-          return this.#configuration.volar;
-        }
-        return {};
-      });
+      return items.map((item) => this.#lookupConfiguration(item.section ?? ""));
     }
     if (method === "workspace/workspaceFolders") {
       return this.#configuration.workspaceFolders ?? null;
@@ -123,6 +129,27 @@ export class LspClient extends EventEmitter {
     }
     // Default empty success
     return null;
+  }
+
+  /**
+   * Resolve a dotted configuration section ("vue.hover.rich", "css.customData")
+   * against the configured settings.
+   *
+   * Unknown sections return `null`, which the LSP spec defines as "the client
+   * has no value for this". Returning `{}` instead is actively harmful: servers
+   * read a section expecting an array or a scalar and get an object, e.g.
+   * Volar asks for `css.customData` and its CSS service does `for (… of value)`
+   * — `{}` is not iterable and the feature throws, while `null` falls through
+   * to the server's own default.
+   */
+  #lookupConfiguration(section) {
+    if (!section) return this.#configuration;
+    let value = this.#configuration;
+    for (const key of section.split(".")) {
+      if (value == null || typeof value !== "object" || !(key in value)) return null;
+      value = value[key];
+    }
+    return value ?? null;
   }
 
   #write(msg) {
