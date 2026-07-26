@@ -7,16 +7,18 @@ import {
   totalBytes,
 } from "../fixtures.mjs";
 import {
-  measureVariantsAlternating,
+  measureVariants,
   resolveBin,
   runCommand,
 } from "../timing.mjs";
 import {
   applyWorkGate,
+  corpusGateFor,
+  prepareCorpusPlant,
   prepareTypecheckPlant,
-  typecheckGateFor,
+  typecheckGateDetail,
 } from "../work-gate.mjs";
-import { resolveTsgoBin, withTsgoEnv } from "../tsgo.mjs";
+import { resolveToolEngine, resolveTsgoBin, withTsgoEnv } from "../tsgo.mjs";
 
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../../..");
 
@@ -30,6 +32,22 @@ function tryResolveBin(name) {
 
 function isWinShell(bin) {
   return process.platform === "win32" && bin.endsWith(".cmd");
+}
+
+/**
+ * Count diagnostics a checker emitted on the timed corpus.
+ *
+ * The artifact census for this surface. The corpus is clean, so a healthy
+ * checker reports few or none — the value of the number is that it exposes a
+ * tool emitting a suspicious volume of noise (verter-tsc leaks diagnostics
+ * about its own virtual code on generic components) or a tool that has
+ * silently stopped analysing. Counted as `file(line,col): severity` hits,
+ * which every checker here emits.
+ */
+function countDiagnostics(stdout = "", stderr = "") {
+  const text = `${stdout}\n${stderr}`;
+  const matches = text.match(/^.*\(\d+,\d+\):\s*(error|warning)/gim);
+  return matches ? matches.length : 0;
 }
 
 /**
@@ -75,10 +93,12 @@ export async function runTypecheckSurface(fixtureDir, options) {
     variants.push({
       id: "vue-tsc",
       label: "vue-tsc",
+      artifactLabel: "Diagnostics",
+      artifactPolarity: "informational",
       package: "vue-tsc",
       notes: "Official Vue Language Tools CLI: vue-tsc --noEmit -p tsconfig.json",
       measure: () => {
-        const { ms } = runCommand(
+        const { ms, stdout, stderr } = runCommand(
           vueTsc,
           ["--noEmit", "-p", "tsconfig.json"],
           {
@@ -88,13 +108,15 @@ export async function runTypecheckSurface(fixtureDir, options) {
             shell: process.platform === "win32" && vueTsc.endsWith(".cmd"),
           },
         );
-        return ms;
+        return { ms, artifact: countDiagnostics(stdout, stderr) };
       },
     });
   } else {
     variants.push({
       id: "vue-tsc",
       label: "vue-tsc",
+      artifactLabel: "Diagnostics",
+      artifactPolarity: "informational",
       package: "vue-tsc",
       notes: "Binary not found",
       skip: true,
@@ -105,37 +127,43 @@ export async function runTypecheckSurface(fixtureDir, options) {
     variants.push({
       id: "golar-typecheck",
       label: "Golar typecheck",
+      artifactLabel: "Diagnostics",
+      artifactPolarity: "informational",
       package: "golar",
       notes: "golar typecheck (typescript-go + @golar/vue plugin)",
       measure: () => {
-        const { ms } = runCommand(golar, ["typecheck"], {
+        const { ms, stdout, stderr } = runCommand(golar, ["typecheck"], {
           cwd: checkDir,
           allowNonZeroExit: true,
           env: baseEnv,
           shell: process.platform === "win32" && golar.endsWith(".cmd"),
         });
-        return ms;
+        return { ms, artifact: countDiagnostics(stdout, stderr) };
       },
     });
     variants.push({
       id: "golar-default",
       label: "Golar default (lint+typecheck)",
+      artifactLabel: "Diagnostics",
+      artifactPolarity: "informational",
       package: "golar",
       notes: "golar default mode runs lint then typecheck — not a pure typecheck",
       measure: () => {
-        const { ms } = runCommand(golar, [], {
+        const { ms, stdout, stderr } = runCommand(golar, [], {
           cwd: checkDir,
           allowNonZeroExit: true,
           env: baseEnv,
           shell: process.platform === "win32" && golar.endsWith(".cmd"),
         });
-        return ms;
+        return { ms, artifact: countDiagnostics(stdout, stderr) };
       },
     });
   } else {
     variants.push({
       id: "golar-typecheck",
       label: "Golar typecheck",
+      artifactLabel: "Diagnostics",
+      artifactPolarity: "informational",
       package: "golar",
       notes: "Binary not found",
       skip: true,
@@ -146,10 +174,12 @@ export async function runTypecheckSurface(fixtureDir, options) {
     variants.push({
       id: "vize-check",
       label: "Vize check",
+      artifactLabel: "Diagnostics",
+      artifactPolarity: "informational",
       package: "vize",
       notes: "vize check . --tsconfig tsconfig.json (native + Corsa when available)",
       measure: () => {
-        const { ms } = runCommand(
+        const { ms, stdout, stderr } = runCommand(
           vize,
           ["check", ".", "--tsconfig", "tsconfig.json"],
           {
@@ -159,13 +189,15 @@ export async function runTypecheckSurface(fixtureDir, options) {
             shell: process.platform === "win32" && vize.endsWith(".cmd"),
           },
         );
-        return ms;
+        return { ms, artifact: countDiagnostics(stdout, stderr) };
       },
     });
   } else {
     variants.push({
       id: "vize-check",
       label: "Vize check",
+      artifactLabel: "Diagnostics",
+      artifactPolarity: "informational",
       package: "vize",
       notes: "Binary not found",
       skip: true,
@@ -176,10 +208,12 @@ export async function runTypecheckSurface(fixtureDir, options) {
     variants.push({
       id: "verter-tsc",
       label: "verter-tsc",
+      artifactLabel: "Diagnostics",
+      artifactPolarity: "informational",
       package: "verter-tsc",
       notes: `verter-tsc --noEmit -p tsconfig.json · tsgo ${tsgo.version ?? "?"} (${tsgo.source})`,
       measure: () => {
-        const { ms } = runCommand(
+        const { ms, stdout, stderr } = runCommand(
           verterTsc,
           ["--noEmit", "-p", "tsconfig.json"],
           {
@@ -189,13 +223,15 @@ export async function runTypecheckSurface(fixtureDir, options) {
             shell: process.platform === "win32" && verterTsc.endsWith(".cmd"),
           },
         );
-        return ms;
+        return { ms, artifact: countDiagnostics(stdout, stderr) };
       },
     });
   } else if (verterTsc && !tsgo.bin) {
     variants.push({
       id: "verter-tsc",
       label: "verter-tsc",
+      artifactLabel: "Diagnostics",
+      artifactPolarity: "informational",
       package: "verter-tsc",
       notes: `Skipped: ${tsgo.notes}. Install typescript-go (typescript@7.0.2) or set VERTER_TSGO_BIN.`,
       skip: true,
@@ -204,6 +240,8 @@ export async function runTypecheckSurface(fixtureDir, options) {
     variants.push({
       id: "verter-tsc",
       label: "verter-tsc",
+      artifactLabel: "Diagnostics",
+      artifactPolarity: "informational",
       package: "verter-tsc",
       notes: "Binary not found",
       skip: true,
@@ -223,59 +261,85 @@ export async function runTypecheckSurface(fixtureDir, options) {
     ].join("\n"),
   );
 
-  // Work gate: tools that do not report a planted type error are unranked.
+  // Stamp the underlying TypeScript engine onto every row. Engines are ranked
+  // separately — see classKey() — because a JS-engine checker and a native
+  // tsgo checker are not measuring the same thing.
+  for (const v of variants) {
+    const e = resolveToolEngine(v.id, rootDir);
+    v.engine = e.engine;
+    v.notes = `${v.notes || ""} | engine: ${e.label}`.trim();
+  }
+
+  // How to invoke each tool for gating. `alt` is a fallback invocation for
+  // tools whose primary flag form is flaky on some platforms.
+  const gateSpecs = {
+    "vue-tsc": vueTsc && { bin: vueTsc, args: ["--noEmit", "-p", "tsconfig.json"] },
+    "golar-typecheck": golar && { bin: golar, args: ["typecheck"] },
+    "golar-default": golar && { bin: golar, args: [] },
+    "vize-check": vize && {
+      // Plain `check .` first — Vize discovers via tsconfig include and
+      // `--tsconfig` can race Corsa IO on Windows plant dirs.
+      bin: vize,
+      args: ["check", "."],
+      alt: ["check", ".", "--tsconfig", "tsconfig.json"],
+    },
+    "verter-tsc": verterTsc && { bin: verterTsc, args: ["--noEmit", "-p", "tsconfig.json"] },
+  };
+
+  // Work gate, two stages. A tool is ranked only if it reports:
+  //   1. a script-level AND a template-level planted error (1-file projects), and
+  //   2. a planted error in the full timed corpus under the timed tsconfig.
   const plant = prepareTypecheckPlant(workRoot);
+  const corpusPlant = prepareCorpusPlant(checkDir);
+  const gateReport = {};
   try {
     applyWorkGate(variants, (v) => {
-      if (v.id === "vue-tsc" && vueTsc) {
-        return typecheckGateFor(
-          vueTsc,
-          ["--noEmit", "-p", "tsconfig.json"],
-          plant,
-          { shell: isWinShell(vueTsc), env: baseEnv },
-        );
+      const spec = gateSpecs[v.id];
+      if (!spec) return true;
+      const opts = { shell: isWinShell(spec.bin), env: baseEnv };
+
+      let detail = typecheckGateDetail(spec.bin, spec.args, plant, opts);
+      let args = spec.args;
+      if (!detail.ok && spec.alt) {
+        const altDetail = typecheckGateDetail(spec.bin, spec.alt, plant, opts);
+        if (altDetail.ok) {
+          detail = altDetail;
+          args = spec.alt;
+        }
       }
-      if (v.id === "golar-typecheck" && golar) {
-        return typecheckGateFor(golar, ["typecheck"], plant, {
-          shell: isWinShell(golar),
-          env: baseEnv,
-        });
-      }
-      if (v.id === "golar-default" && golar) {
-        return typecheckGateFor(golar, [], plant, {
-          shell: isWinShell(golar),
-          env: baseEnv,
-        });
-      }
-      if (v.id === "vize-check" && vize) {
-        return (
-          typecheckGateFor(vize, ["check", "."], plant, {
-            shell: isWinShell(vize),
-            env: baseEnv,
-          }) ||
-          typecheckGateFor(
-            vize,
-            ["check", ".", "--tsconfig", "tsconfig.json"],
-            plant,
-            { shell: isWinShell(vize), env: baseEnv },
-          )
-        );
-      }
-      if (v.id === "verter-tsc" && verterTsc) {
-        return typecheckGateFor(
-          verterTsc,
-          ["--noEmit", "-p", "tsconfig.json"],
-          plant,
-          { shell: isWinShell(verterTsc), env: baseEnv },
-        );
-      }
-      return true;
+
+      const corpus = detail.ok
+        ? corpusGateFor(spec.bin, args, corpusPlant, {
+            shell: isWinShell(spec.bin),
+            env: { ...baseEnv, NODE_PATH: nodePath },
+          })
+        : false;
+
+      gateReport[v.id] = { ...detail, corpus };
+      if (!detail.script) v.gateMissed = "script-level plant";
+      else if (!detail.templateProp && !detail.templateEvent)
+        v.gateMissed = "both template plants (does not typecheck templates)";
+      else if (!detail.templateProp)
+        v.gateMissed = "template prop-type plant (:disabled string→boolean)";
+      else if (!detail.templateEvent)
+        v.gateMissed = "template event-handler plant (@click number→function)";
+      else if (!corpus) v.gateMissed = "planted bug in full corpus";
+      return detail.ok && corpus;
     });
   } finally {
     plant.cleanup();
+    corpusPlant.cleanup();
   }
 
-  const results = await measureVariantsAlternating(variants, {
+  for (const v of variants) {
+    const g = gateReport[v.id];
+    if (!g) continue;
+    v.notes =
+      `${v.notes || ""} | gate: script=${g.script ? "✓" : "✗"} tmpl-prop=${g.templateProp ? "✓" : "✗"} tmpl-event=${g.templateEvent ? "✓" : "✗"} corpus=${g.corpus ? "✓" : "✗"}`.trim();
+    if (v.gateMissed) v.notes += ` (missed ${v.gateMissed})`;
+  }
+
+  const results = await measureVariants(variants, {
     runs: options.runs,
     warmups: options.warmups,
     fileCount: files.length,
@@ -289,10 +353,11 @@ export async function runTypecheckSurface(fixtureDir, options) {
     methodology: [
       "Same on-disk fixture directory and tsconfig for every tool.",
       "Default check file limit is smaller than compile corpus (typecheck cost scales steeply).",
-      "Each measurement is a full CLI process invocation (tool-cache cold per process start).",
+      "Each measurement is a full CLI process invocation — every tool here is a CLI, so process startup is paid by all of them equally.",
       "Warm runs still benefit from OS page cache of source files and node_modules.",
-      "Measured runs alternate tool order each iteration.",
-      "Planted-bug work gate: each tool must report a deliberate type error or is unranked.",
+      "Tool order is rotated on every warmup and measured run; ranking metric is the median of warmed runs.",
+      "Work gate has three parts, all required to be ranked: (1) a script-only planted error, (2) a template-only planted error with strictTemplates — proving the tool actually typechecks templates and does not just run tsc over extracted script blocks, and (3) the same planted bug re-detected in the FULL timed corpus under the timed tsconfig, proving the tool does not degrade at scale.",
+      "Per-tool gate results are shown in Notes as script/template/corpus ✓✗.",
       "verter-tsc requires stable tsgo (typescript@7.0.x / typescript-go); set via VERTER_TSGO_BIN.",
       "Diagnostic equivalence is NOT asserted — this is a throughput benchmark, not a correctness suite.",
       "golar default mode includes linting; golar typecheck is pure typecheck.",

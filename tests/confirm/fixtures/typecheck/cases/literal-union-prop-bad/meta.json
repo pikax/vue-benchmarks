@@ -1,0 +1,7 @@
+{
+  "id": "literal-union-prop-bad",
+  "description": "Static attribute value outside the declared string-literal union must error",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS2322", "TS2769", "danger", "not assignable", "primary"]
+}

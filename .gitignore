@@ -11,6 +11,9 @@ node_modules/
 
 # Ephemeral workspaces / probe output
 /work/
+# bench.mjs falls back to work-<pid>-<timestamp> when Windows file locks stop it
+# wiping /work/ — those fallback dirs are ephemeral too and must not be tracked.
+/work-*/
 
 # Local and CI report outputs (README markers hold published summaries)
 /results/*

@@ -8,6 +8,22 @@ import { readFileSync } from "node:fs";
 import v8 from "node:v8";
 import os from "node:os";
 
+/**
+ * Shortest window over which this platform's CPU accounting is trustworthy.
+ *
+ * Derived from the OS scheduler tick that drives per-process CPU counters:
+ *   win32  ~15.6ms tick  -> 50ms  (3+ ticks)
+ *   darwin ~10ms   tick  -> 30ms
+ *   linux  1-4ms   tick  -> 20ms
+ *
+ * Conservative on purpose: a missing number is recoverable, a fabricated one
+ * is not. Override with MEM_CPU_FLOOR_MS when calibrating a specific machine.
+ */
+export const CPU_FLOOR_MS = Number(
+  process.env.MEM_CPU_FLOOR_MS ??
+    (process.platform === "win32" ? 50 : process.platform === "darwin" ? 30 : 20),
+);
+
 /** Snapshot of the current Node process. */
 export function selfSnapshot() {
   const mu = process.memoryUsage();
@@ -224,9 +240,30 @@ export async function sampleWhile(fn, opts = {}) {
   const wallMs = wallNs / 1e6;
   const cpuUserMs = usToMs(cpu1.user);
   const cpuSystemMs = usToMs(cpu1.system);
-  const cpuTotalMs = Number((cpuUserMs + cpuSystemMs).toFixed(2));
-  // % of one core during wall time
-  const cpuPercent = wallMs > 0 ? Number(((cpuTotalMs / wallMs) * 100).toFixed(1)) : Number.NaN;
+  const rawCpuTotalMs = Number((cpuUserMs + cpuSystemMs).toFixed(2));
+
+  // Only report CPU when the window is long enough to mean anything.
+  //
+  // process.cpuUsage() is backed by per-process accounting that the OS updates
+  // on scheduler ticks, so a short window quantises badly. Measured here with a
+  // busy-spin loop (true answer: 100% of one core):
+  //
+  //     1ms window -> 0.00ms / 0%      15ms -> 16ms / 107%
+  //     2ms window -> 15.00ms / 773%   50ms -> 47ms / 94%
+  //     5ms window -> 0.00ms / 0%     200ms -> 203ms / 102%
+  //
+  // Wrong in BOTH directions below the tick: a real 27-40ms/iter native batch
+  // compile was published as "CPU=0ms (0%)", which reads as free.
+  //
+  // Below the floor we report null, which renders as n/a. An honest gap beats
+  // a confident zero.
+  const reliable = wallMs >= CPU_FLOOR_MS;
+  const cpuTotalMs = reliable ? rawCpuTotalMs : null;
+  const cpuPercent =
+    reliable && wallMs > 0 ? Number(((rawCpuTotalMs / wallMs) * 100).toFixed(1)) : null;
+  const cpuNote = reliable
+    ? null
+    : `window ${wallMs.toFixed(1)}ms < ${CPU_FLOOR_MS}ms ${process.platform} CPU-accounting floor — not measurable`;
 
   const rss = summarizeByteSeries(rssSamples, baselineSnap.rss);
   const heap = summarizeByteSeries(heapSamples, baselineSnap.heapUsed);
@@ -260,8 +297,13 @@ export async function sampleWhile(fn, opts = {}) {
     cpu: {
       userMs: cpuUserMs,
       systemMs: cpuSystemMs,
+      // null when the window was too short for this platform to account for
+      // CPU meaningfully — see CPU_FLOOR_MS. Renders as n/a, never as 0.
       totalMs: cpuTotalMs,
       percent: cpuPercent,
+      reliable,
+      note: cpuNote,
+      floorMs: CPU_FLOOR_MS,
       wallMs: Number(wallMs.toFixed(2)),
       cores: os.cpus().length,
     },

@@ -1,0 +1,5 @@
+{
+  "id": "slot-scope-ok",
+  "description": "Scoped slot payload destructured and used at its declared type (clean)",
+  "expectErrors": false
+}

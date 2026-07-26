@@ -3,7 +3,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { readFileSync, writeFileSync } from "node:fs";
 import { collectVueFiles, prepareTypecheckDir, totalBytes } from "../fixtures.mjs";
-import { measureVariantsAlternating, timedSync } from "../timing.mjs";
+import { measureVariants, timedSync } from "../timing.mjs";
 
 const require = createRequire(import.meta.url);
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../../..");
@@ -177,7 +177,7 @@ export async function runComponentMetaSurface(fixtureDir, options) {
     };
   }
 
-  const results = await measureVariantsAlternating(variants, {
+  const results = await measureVariants(variants, {
     runs: options.runs,
     warmups: options.warmups,
     fileCount: files.length,

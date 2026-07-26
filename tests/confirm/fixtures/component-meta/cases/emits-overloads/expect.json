@@ -1,0 +1,9 @@
+{
+  "id": "emits-overloads",
+  "description": "Call-signature defineEmits with an overloaded event name",
+  "props": [],
+  "events": [
+    { "name": "save", "typeIncludes": ["number"] },
+    { "name": "cancel" }
+  ]
+}

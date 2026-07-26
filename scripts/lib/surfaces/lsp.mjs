@@ -30,12 +30,66 @@ import { existsSync, readFileSync } from "node:fs";
 import { LspClient, pathToFileUri } from "../lsp-client.mjs";
 import { ensureLspWorkspace } from "../lsp-workspace.mjs";
 import { attachVolarHybridBridge } from "../tsserver-bridge.mjs";
-import { measureVariantsAlternating, resolveBin, median } from "../timing.mjs";
+import { measureVariants, resolveBin, median } from "../timing.mjs";
 import { withTsgoEnv } from "../tsgo.mjs";
 
 const require = createRequire(import.meta.url);
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../../..");
 const WARM_HOVER_N = 5;
+/** Same hover retry budget for every server — see the note at the retry loop. */
+const HOVER_ATTEMPTS = 6;
+// 60s per attempt. Volar in hybrid mode has to spin up tsserver through the
+// bridge and load the project before it can answer the first hover, and 20s
+// was not enough on a cold CI box — it timed out 6/6 and dropped out of the
+// table entirely, which reads as "no result" rather than "slow". Generous and
+// identical for every server is the honest setting: whoever needs the time
+// pays for it in the measurement.
+const HOVER_ATTEMPT_TIMEOUT_MS = 60_000;
+
+/**
+ * The probe hovers `const benchMarker = ref('lsp-probe-token')` in a .vue file.
+ * A server doing real work answers with the TypeScript type — some form of
+ * `Ref<string>`. A server that pattern-matches can return a confident-looking
+ * payload very fast and be wrong: one returns a 270-byte answer that calls a
+ * function a `const`, resolves typed cross-module imports to
+ * `MaybeRef<unknown>`, and answers for symbols that do not exist.
+ *
+ * Hover LATENCY without hover CORRECTNESS is not a comparable measurement, so
+ * the content is validated and a server that cannot produce a real type is
+ * measured but unranked.
+ */
+const HOVER_EXPECT_SYMBOL = "benchMarker";
+const HOVER_EXPECT_TYPE = /\bRef\s*<|\bstring\b/;
+
+/** Flatten the several shapes LSP allows for Hover.contents into plain text. */
+function hoverText(result) {
+  const c = result?.contents;
+  if (c == null) return "";
+  const one = (x) =>
+    typeof x === "string" ? x : typeof x?.value === "string" ? x.value : "";
+  return (Array.isArray(c) ? c.map(one).join("\n") : one(c)).trim();
+}
+
+/**
+ * Does this hover actually carry TypeScript type information for the probe?
+ * Requires the symbol name AND something type-shaped — a payload that merely
+ * echoes the identifier is not a typecheck result.
+ */
+function classifyHover(text) {
+  const bytes = Buffer.byteLength(text, "utf8");
+  if (!text) return { ok: false, bytes, reason: "empty hover payload" };
+  const hasSymbol = text.includes(HOVER_EXPECT_SYMBOL);
+  const hasType = HOVER_EXPECT_TYPE.test(text);
+  if (!hasSymbol) return { ok: false, bytes, reason: `hover does not mention ${HOVER_EXPECT_SYMBOL}` };
+  if (!hasType) {
+    return {
+      ok: false,
+      bytes,
+      reason: `hover names ${HOVER_EXPECT_SYMBOL} but carries no TypeScript type (expected Ref<string>)`,
+    };
+  }
+  return { ok: true, bytes, reason: "" };
+}
 
 function tryResolveBin(name) {
   try {
@@ -217,12 +271,19 @@ async function runLspSession({
     await new Promise((r) => setTimeout(r, 50));
     let hoverOk = false;
     let lastErr = null;
-    // Bounded retries: Volar hybrid can need a moment after tsserver bridge ACK.
-    const attempts = volarHybrid ? 6 : 2;
-    const perAttemptMs = volarHybrid ? 20_000 : 12_000;
+    // Retry budget is IDENTICAL for every server, and deliberately so.
+    //
+    // It used to be 6 attempts for Volar and 2 for everyone else. Because the
+    // backoff sleeps below sit inside the timed open→hover region — the primary
+    // ranked metric — that handed Volar up to ~3s of billable sleep that the
+    // other servers could not incur, while also masking slow project spin-up.
+    // Same budget for all: whoever needs the retries pays for them.
+    const attempts = HOVER_ATTEMPTS;
+    const perAttemptMs = HOVER_ATTEMPT_TIMEOUT_MS;
+    let firstHover = null;
     for (let attempt = 0; attempt < attempts && !hoverOk; attempt++) {
       try {
-        await client.sendRequest(
+        firstHover = await client.sendRequest(
           "textDocument/hover",
           { textDocument: { uri: fileUri }, position },
           perAttemptMs,
@@ -239,6 +300,11 @@ async function runLspSession({
       );
     }
     const didOpenToHoverMs = performance.now() - tOpen0;
+
+    // Validate the CONTENT, not just that a response arrived. Answering fast
+    // with the wrong type is not the same job as answering with the right one.
+    const hoverPayload = hoverText(firstHover);
+    const hoverCheck = classifyHover(hoverPayload);
 
     // hover cold (already open)
     const tCold0 = performance.now();
@@ -303,6 +369,11 @@ async function runLspSession({
       definitionMs,
       // Primary ranking metric for alternating harness: didOpen→hover (most user-visible cold path)
       ms: didOpenToHoverMs,
+      // Artifact for this surface: bytes of hover content actually returned.
+      artifact: hoverCheck.bytes,
+      hoverValid: hoverCheck.ok,
+      hoverReason: hoverCheck.reason,
+      hoverSample: hoverPayload.slice(0, 200),
       meta: {
         initializeMs,
         workspaceReadyMs,
@@ -311,6 +382,10 @@ async function runLspSession({
         hoverWarmMedianMs,
         completionMs,
         definitionMs,
+        artifact: hoverCheck.bytes,
+        hoverValid: hoverCheck.ok,
+        hoverReason: hoverCheck.reason,
+        hoverSample: hoverPayload.slice(0, 200),
       },
     };
   } finally {
@@ -334,6 +409,7 @@ export async function runLspSurface(_fixtureDir, options) {
       label: "Volar (@vue/language-server)",
       package: "@vue/language-server",
       threading: "lsp",
+      artifactLabel: "Hover bytes",
       notes:
         "Official Vue language server v3 hybrid mode. Harness attaches typescript-language-server + @vue/typescript-plugin via tsserver/request↔response (VS Code/Neovim contract). If hybrid wiring fails, row is error — not ranked as slow. Primary metric: didOpen→hover.",
       measure: async () =>
@@ -372,6 +448,7 @@ export async function runLspSurface(_fixtureDir, options) {
       label: "Vize LSP (vize lsp)",
       package: "vize",
       threading: "lsp",
+      artifactLabel: "Hover bytes",
       notes:
         "vize lsp --stdio. Same workspace/file/position as Volar. Ready signal: none standardized → workspaceReady = n/a.",
       measure: async () =>
@@ -406,6 +483,7 @@ export async function runLspSurface(_fixtureDir, options) {
       label: `Verter LSP${verter.labelExtra ? ` (${verter.labelExtra})` : ""}`,
       package: "verter-lsp",
       threading: "lsp",
+      artifactLabel: "Hover bytes",
       notes:
         "verter-lsp stdio. Set VERTER_LSP_BIN if not auto-discovered. Waits for $/verter/ready when emitted; otherwise workspaceReady n/a.",
       measure: async () =>
@@ -441,7 +519,7 @@ export async function runLspSurface(_fixtureDir, options) {
     if (v.label.startsWith("Vory")) v.label = v.label.replace("Vory", "Vize");
   }
 
-  const results = await measureVariantsAlternating(variants, {
+  const results = await measureVariants(variants, {
     runs: options.runs,
     warmups: options.warmups,
     fileCount: 1, // primary metric is latency not files/s; keep 1 for table
@@ -464,6 +542,19 @@ export async function runLspSurface(_fixtureDir, options) {
       r.notes = `${r.notes} | ${r.phaseBreakdown}`;
       // Surface primary metric clearly
       r.primaryMetric = "didOpen→hover (ms)";
+
+      // Hover CONTENT gate. A server that answers quickly with no usable type
+      // is not doing the job the latency is being credited for, so it is
+      // demoted to unranked — measured, shown in brackets, with the reason.
+      const invalid = r.metaSamples.filter((m) => m.hoverValid === false);
+      if (invalid.length) {
+        const why = invalid[invalid.length - 1];
+        r.status = "unranked";
+        r.throughput = "n/a";
+        r.notes = `${r.notes} | ⚠ FAILED VALIDATION — ${why.hoverReason}. Sample: ${JSON.stringify((why.hoverSample || "").slice(0, 120))}`;
+      } else {
+        r.notes = `${r.notes} | hover verified: returns a TypeScript type for \`${HOVER_EXPECT_SYMBOL}\``;
+      }
     }
   }
 
@@ -481,14 +572,16 @@ export async function runLspSurface(_fixtureDir, options) {
     methodology: [
       "Apples-to-apples: identical workspace, LspTarget.vue, UTF-16 hover position on `const benchMarker`.",
       "Each measured run starts a fresh language-server process (tool process cold).",
-      "Primary ranking column uses didOpen→hover latency (cold semantic path after open).",
+      "Primary ranking column uses didOpen→hover latency (first semantic response after open), taken as the median over warmed runs — each run still starts a fresh server process, so per-process project load is measured every time.",
+      `Hover retry budget is identical for every server (${HOVER_ATTEMPTS} attempts, ${HOVER_ATTEMPT_TIMEOUT_MS / 1000}s each, same backoff). Retry sleeps fall inside the timed open→hover window, so an asymmetric budget would silently subsidise whichever server got the larger one.`,
+      "A fixed 50ms yield after didOpen is inside the timed window for every server alike — it is an additive constant, so it compresses ratios slightly but cannot reorder them.",
       "Phase breakdown in Notes: initialize, ready (n/a if no server signal), open→hover, hover cold, hover warm median(5), completion, definition.",
       "workspaceReady is ONLY timed when the server documents a ready notification (e.g. $/verter/ready). Missing signal = n/a, not 0.",
       "Completion/definition are best-effort extras; null/n/a does not mean the tool is slower — capability may differ.",
       "typescript-native-bridge (TNB) is a drop-in typescript package for CLI/tsserver — NOT a Vue LSP. It is out of this table; optional future experiment: Volar with TNB as workspace tsdk (same Volar binary, different TS engine).",
       "Verter binary is optional (VERTER_LSP_BIN). Skipped when missing.",
       "VS Code extension host overhead is NOT measured — only the language server stdio protocol.",
-      "Measured runs alternate server order each iteration.",
+      "Server order is rotated on every warmup and measured run; no server is pinned to first position.",
     ],
     variants: results,
   };

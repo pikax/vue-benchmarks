@@ -1,0 +1,5 @@
+{
+  "id": "v-for-ok",
+  "description": "v-for item/index types and a nested v-for used correctly (clean)",
+  "expectErrors": false
+}

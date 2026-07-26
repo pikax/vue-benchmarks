@@ -3,8 +3,11 @@
  * Vue toolchain benchmark runner.
  *
  * Surfaces: compile | jsx-compile | typecheck | format | lint | component-meta | lsp
- * Always reports cold + warm when runs > 1.
- * Measured runs alternate tool order each iteration.
+ *
+ * Ranking metric is the median of the measured runs. There is no cold metric:
+ * an unwarmed first run costs a JS compiler ~3.2x its steady state and a native
+ * compiler nothing, so `--warmups 0` is clamped to 1.
+ * Tool order is rotated on every warmup and measured run.
  */
 
 import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
@@ -12,6 +15,7 @@ import os from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { collectVueFiles } from "./lib/fixtures.mjs";
+import { effectiveWarmups } from "./lib/timing.mjs";
 import { collectVersions } from "./lib/versions.mjs";
 import { buildMethodologyNotes, renderFullMarkdown } from "./lib/report.mjs";
 import { runCompileSurface } from "./lib/surfaces/compile.mjs";
@@ -36,6 +40,11 @@ function parseArgs(argv) {
     lintFileLimit: Infinity,
     compileTargets: "vdom,vapor",
     compileEnvs: "production,development",
+    // OFF only by default: `sourceMap: true` is honoured by @vue/compiler-sfc
+    // but silently ignored by the native SFC entry points, so an `on` cell
+    // charges Vue for map generation and the natives for nothing. Opt in with
+    // --compile-sourcemaps on when investigating that specifically.
+    compileSourceMaps: "off",
     json: "",
     out: "",
     work: "work",
@@ -74,6 +83,9 @@ function parseArgs(argv) {
       case "--compile-envs":
         args.compileEnvs = next();
         break;
+      case "--compile-sourcemaps":
+        args.compileSourceMaps = next();
+        break;
       case "--json":
         args.json = next();
         break;
@@ -111,16 +123,24 @@ Options:
   --fixture PATH           Fixture directory (default: fixtures/200 UNIQUE)
   --surfaces LIST          compile,jsx-compile,typecheck,format,lint,component-meta,lsp
   --runs N                 Measured runs (default: 5)
-  --warmups N              Warmup runs (default: 1)
+  --warmups N              Discarded warmup runs (default: 1, minimum: 1)
   --file-limit N           Max files for compile/format/lint/jsx-compile
   --check-file-limit N     Max SFCs for typecheck (default: 200)
   --meta-file-limit N      Max SFCs for component-meta (default: 100)
   --lint-file-limit N      Max SFCs for lint (default: all)
   --compile-targets LIST   vdom,vapor (SFC compile only)
   --compile-envs LIST      production,development (SFC compile only)
+  --compile-sourcemaps L   off (default) or on. Only @vue/compiler-sfc emits a
+                           map from the benchmarked entry point, so "on" does
+                           NOT equalise work — it is opt-in, not published.
   --json FILE              Write JSON
   --out FILE               Write markdown
   --work DIR               Work directory
+
+Ranking:
+  Median of measured runs, each preceded by >= 1 discarded warmup pass.
+  There is no cold metric: an unwarmed first run measures JIT warmup for JS
+  tools and nothing for native tools. --warmups 0 is clamped to 1.
 
 Corpus notes:
   fixtures/N              UNIQUE SFC contents (primary rankings)
@@ -168,9 +188,16 @@ Corpus notes:
   mkdirSync(workRoot, { recursive: true });
 
   const fileCount = files.length || 0;
+  // Warmup is mandatory. An unwarmed first run costs a JS compiler ~3.2x its
+  // steady state and a native compiler nothing, so a zero-warmup pass ranks
+  // V8 warmup rather than the tools.
+  const warmups = effectiveWarmups(args.warmups);
+  if (warmups !== args.warmups) {
+    console.warn(`warn: --warmups ${args.warmups} raised to ${warmups} (warmup is mandatory)`);
+  }
   const options = {
     runs: args.runs,
-    warmups: args.warmups,
+    warmups,
     fileLimit: Number.isFinite(args.fileLimit) ? args.fileLimit : fileCount || Infinity,
     checkFileLimit: Number.isFinite(args.checkFileLimit)
       ? Math.min(args.checkFileLimit, fileCount || args.checkFileLimit)
@@ -179,6 +206,7 @@ Corpus notes:
     lintFileLimit: Number.isFinite(args.lintFileLimit) ? args.lintFileLimit : fileCount || Infinity,
     compileTargets: args.compileTargets,
     compileEnvs: args.compileEnvs,
+    compileSourceMaps: args.compileSourceMaps,
     workRoot,
   };
 
@@ -239,6 +267,7 @@ Corpus notes:
       lintFileLimit: options.lintFileLimit,
       compileTargets: options.compileTargets,
       compileEnvs: options.compileEnvs,
+      compileSourceMaps: options.compileSourceMaps,
       surfaces: surfaceIds,
     },
     runner: {

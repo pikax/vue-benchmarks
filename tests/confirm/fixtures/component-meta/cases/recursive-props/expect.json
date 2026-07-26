@@ -1,0 +1,9 @@
+{
+  "id": "recursive-props",
+  "description": "Self-referential prop type must be enumerated without expanding forever",
+  "props": [
+    { "name": "root", "required": true, "typeIncludes": ["treenode", "label", "children"] },
+    { "name": "depth", "required": false, "typeIncludes": ["number"] }
+  ],
+  "slots": [{ "name": "node", "typeIncludes": ["node", "depth"] }]
+}

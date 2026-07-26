@@ -1,0 +1,12 @@
+{
+  "id": "union-intersection-props",
+  "description": "Union / intersection / tuple prop types, and optional-with vs optional-without default",
+  "props": [
+    { "name": "size", "required": true, "typeIncludes": ["sm", "md", "lg", "size"] },
+    { "name": "value", "required": true, "typeIncludes": ["string", "number", "null"] },
+    { "name": "config", "required": true, "typeIncludes": ["note", "id", "base", "extra"] },
+    { "name": "tuple", "required": true, "typeIncludes": ["number", "string"] },
+    { "name": "optionalWithDefault", "required": false, "hasDefault": true },
+    { "name": "optionalNoDefault", "required": false }
+  ]
+}

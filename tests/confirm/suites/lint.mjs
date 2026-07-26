@@ -80,9 +80,53 @@ function matchesNeedles(text, needles) {
   return needles.some((n) => lower.includes(String(n).toLowerCase()));
 }
 
+/**
+ * Verter's native lint() returns diagnostic objects carrying rule codes, so it
+ * can be judged per plant like the other linters instead of on a single
+ * aggregate count.
+ */
+function createVerterLinter() {
+  let verter;
+  try {
+    verter = require(require.resolve("@verter/native", { paths: [rootDir] }));
+  } catch (error) {
+    return { skip: error instanceof Error ? error.message : String(error) };
+  }
+  if (typeof verter.VerterHost !== "function") {
+    return { skip: "VerterHost missing" };
+  }
+  const host = new verter.VerterHost({ devMode: false });
+  if (typeof host.lint !== "function") {
+    return { skip: "VerterHost.lint not available" };
+  }
+  return {
+    lint(relativeFile) {
+      const path = join(fixtureRoot, relativeFile).replace(/\\/g, "/");
+      const source = readFileSync(join(fixtureRoot, relativeFile), "utf8");
+      if (typeof host.upsert === "function") {
+        host.upsert({ inputId: path, canonicalId: path, source, fileKind: "vue" });
+      }
+      const out = host.lint(path);
+      const list = Array.isArray(out) ? out : (out?.diagnostics ?? []);
+      return list.map((d) => ({
+        rule: d.code ?? d.rule ?? "",
+        message: String(d.message ?? ""),
+      }));
+    },
+    dispose() {
+      try {
+        host.close?.();
+      } catch {
+        /* ignore */
+      }
+    },
+  };
+}
+
 export async function runLintSuite() {
   const suite = createSuite("lint");
   const expect = loadExpect();
+  const verterLinter = createVerterLinter();
 
   // --- clean corpus ---
   const cleanFiles = expect.clean.files;
@@ -199,52 +243,49 @@ export async function runLintSuite() {
         }
       }
     }
-  }
 
-  // Verter native lint — optional structured confirmation when API returns diagnostics
-  try {
-    const verter = require(require.resolve("@verter/native", { paths: [rootDir] }));
-    if (typeof verter.VerterHost !== "function") {
-      suite.skip("dirty-all", "verter-lint", "VerterHost missing");
-    } else {
-      const host = new verter.VerterHost({ devMode: false });
-      if (typeof host.lint !== "function") {
-        suite.skip("dirty-all", "verter-lint", "VerterHost.lint not available");
+    // verter (native lint API, rule codes)
+    const vtSpec = plant.tools["verter-lint"];
+    if (vtSpec) {
+      if (verterLinter.skip) {
+        suite.skip(plant.id, "verter-lint", verterLinter.skip);
       } else {
-        const dirtyFiles = expect.dirty.map((p) => p.file);
-        let total = 0;
-        for (const f of dirtyFiles) {
-          const path = join(fixtureRoot, f).replace(/\\/g, "/");
-          const source = readFileSync(join(fixtureRoot, f), "utf8");
-          if (typeof host.upsert === "function") {
-            host.upsert({
-              inputId: path,
-              canonicalId: path,
-              source,
-              fileKind: "vue",
-            });
+        try {
+          const diagnostics = verterLinter.lint(plant.file);
+          const rules = diagnostics.map((d) => d.rule).filter(Boolean);
+          const min = vtSpec.minIssues ?? 1;
+          const missing = (vtSpec.mustIncludeRules || []).filter((rule) => !rules.includes(rule));
+          if (diagnostics.length < min) {
+            suite.fail(
+              plant.id,
+              "verter-lint",
+              `expected ≥${min} diagnostics, got ${diagnostics.length}`,
+            );
+          } else if (missing.length) {
+            suite.fail(
+              plant.id,
+              "verter-lint",
+              `missing rules ${missing.join(", ")}; got ${rules.join(", ") || "none"}`,
+            );
+          } else {
+            suite.pass(
+              plant.id,
+              "verter-lint",
+              `issues=${diagnostics.length} rules=${rules.join(",")}`,
+            );
           }
-          const out = host.lint(path);
-          const n = Array.isArray(out)
-            ? out.length
-            : (out?.diagnostics?.length ?? out?.length ?? 0);
-          total += Number(n) || 0;
-        }
-        // If API returns nothing we skip rather than invent pass
-        if (total === 0) {
-          suite.skip(
-            "dirty-all",
+        } catch (error) {
+          suite.fail(
+            plant.id,
             "verter-lint",
-            "lint() returned 0 diagnostics on planted files (API shape or rule set unknown)",
+            error instanceof Error ? error.message : String(error),
           );
-        } else {
-          suite.pass("dirty-all", "verter-lint", `diagnostics=${total}`);
         }
       }
     }
-  } catch (error) {
-    suite.skip("dirty-all", "verter-lint", error instanceof Error ? error.message : String(error));
   }
+
+  verterLinter.dispose?.();
 
   return suite.results;
 }

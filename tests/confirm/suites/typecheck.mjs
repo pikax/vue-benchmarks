@@ -98,6 +98,28 @@ const TOOL_CAPABILITIES = {
   "verter-tsc": ["*"],
 };
 
+/**
+ * Virtual-code identifier prefixes. Every Vue typechecker rewrites SFCs into
+ * generated TS before handing them to the checker.
+ *
+ * On a *clean* fixture any diagnostic is already wrong; one that also names the
+ * tool's own generated code is diagnosing its own codegen rather than the
+ * author's source, which is worth calling out by name. Dirty fixtures are
+ * deliberately not checked: naming a virtual symbol inside an otherwise correct
+ * diagnostic (e.g. Volar's `'__VLS_ctx.user' is possibly 'null'`) is a message
+ * wart, not a failure to do the work.
+ */
+const VIRTUAL_CODE_MARKERS = ["__VLS_", "___VERTER___", "__vize_", "__golar_"];
+
+/** @returns {string[]} diagnostic lines that leak a virtual-code identifier */
+function findVirtualCodeLeaks(combined) {
+  if (!combined) return [];
+  return combined
+    .split(/\r?\n/)
+    .filter((line) => /error\s+TS\d+/i.test(line))
+    .filter((line) => VIRTUAL_CODE_MARKERS.some((marker) => line.includes(marker)));
+}
+
 function toolSupports(toolId, requires) {
   if (!requires?.length) return true;
   const caps = TOOL_CAPABILITIES[toolId] || [];
@@ -207,6 +229,22 @@ export async function runTypecheckSuite() {
         continue;
       }
 
+      // On a clean fixture, a diagnostic naming the tool's own virtual code is
+      // reporting a defect in its codegen, not in the source. Name it rather
+      // than letting it read as a generic "expected clean, got N".
+      if (!meta.expectErrors) {
+        const leaks = findVirtualCodeLeaks(result.combined);
+        if (leaks.length) {
+          suite.fail(
+            meta.id,
+            tool.id,
+            `clean fixture: diagnostic describes the tool's own generated code — ${leaks[0].trim().slice(0, 200)}`,
+            { snippet: leaks.join("\n").slice(0, 800) },
+          );
+          continue;
+        }
+      }
+
       const score = scoreDiagnostics({
         combined: result.combined,
         status: result.status,
@@ -214,6 +252,7 @@ export async function runTypecheckSuite() {
         minErrors: meta.minErrors ?? 1,
         maxErrors: meta.maxErrors,
         mustMatch: meta.mustMatch,
+        mustNotMatch: meta.mustNotMatch,
       });
 
       if (score.ok) {

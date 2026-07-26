@@ -4,37 +4,48 @@ import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
 import { readFileSync, existsSync } from "node:fs";
 import { collectVueFiles, readSources, totalBytes } from "../fixtures.mjs";
-import { measureVariantsAlternating, timedSync } from "../timing.mjs";
+import { measureVariants, timedSync } from "../timing.mjs";
 
 const require = createRequire(import.meta.url);
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../../..");
 
 /**
  * Compile matrix dimensions (orthogonal, reported separately):
- *   target:  "vdom" | "vapor"
- *   env:     "production" | "development"
+ *   target:     "vdom" | "vapor"
+ *   env:        "production" | "development"
+ *   sourceMap:  false | true
  *
- * Same in-memory SFC corpus for every cell. Vapor is a different
- * codegen path — not mixed into VDOM rows. Prod/dev toggles match each
- * tool's real flags (isProd / isProduction / sourceMap / HMR).
+ * Same in-memory SFC corpus for every cell.
+ *
+ * `sourceMap` is deliberately its OWN dimension rather than something folded
+ * into env. Folding it in made "production" mean *more* work for Vue
+ * (hoistStatic + cacheHandlers, maps still on) and *less* work for the native
+ * tools (maps off) inside the same ranked table. Now every compiler in a cell
+ * is asked for the same source-map behaviour, and both settings are reported.
+ *
+ * Caveat kept visible in the notes: Vize's `compileSfc` exposes no
+ * `isProduction` flag, so its production and development rows do identical
+ * work. That is a tool limitation, not a harness one — it is stated rather
+ * than papered over with a substitute knob.
  */
 
 /**
  * Official @vue/compiler-sfc: parse + script + template.
  * Returns a rough work score so empty/no-op compiles fail the measure.
  */
-function vueCompileSfc(compiler, source, filename, { vapor, isProd }) {
-  const { descriptor } = compiler.parse(source, { filename });
+function vueCompileSfc(compiler, source, filename, { vapor, isProd, sourceMap }) {
+  const { descriptor } = compiler.parse(source, { filename, sourceMap });
   let bindings = {};
   let work = 1; // parse
   const scriptOpts = {
     id: filename,
     inlineTemplate: false,
     isProd,
+    sourceMap,
   };
   if (vapor) {
     scriptOpts.vapor = true;
-    scriptOpts.templateOptions = { vapor: true, isProd };
+    scriptOpts.templateOptions = { vapor: true, isProd, compilerOptions: { sourceMap } };
   }
   if (descriptor.scriptSetup || descriptor.script) {
     const scriptResult = compiler.compileScript(descriptor, scriptOpts);
@@ -53,6 +64,8 @@ function vueCompileSfc(compiler, source, filename, { vapor, isProd }) {
         hoistStatic: isProd,
         cacheHandlers: isProd,
         prefixIdentifiers: true,
+        // compileTemplate has no top-level sourceMap; it lives in codegen opts.
+        sourceMap,
       },
     };
     if (vapor) {
@@ -72,20 +85,21 @@ function loadOptional(name) {
   }
 }
 
-function cellId(target, env) {
-  return `${target}-${env === "production" ? "prod" : "dev"}`;
+function cellId(target, env, sourceMap) {
+  return `${target}-${env === "production" ? "prod" : "dev"}-sm${sourceMap ? "on" : "off"}`;
 }
 
-function cellLabel(target, env) {
-  return `${target.toUpperCase()} · ${env}`;
+function cellLabel(target, env, sourceMap) {
+  return `${target.toUpperCase()} · ${env} · sourcemap ${sourceMap ? "on" : "off"}`;
 }
 
 /**
- * Build variants for one matrix cell (target × env).
+ * Build variants for one matrix cell (target × env × sourceMap).
  */
 function buildCellVariants({
   target,
   env,
+  sourceMap,
   sources,
   compiler35,
   compiler36,
@@ -96,7 +110,14 @@ function buildCellVariants({
   const vapor = target === "vapor";
   const isProd = env === "production";
   const variants = [];
-  const cell = cellId(target, env);
+  const cell = cellId(target, env, sourceMap);
+  // Only @vue/compiler-sfc actually emits a map from the entry point we
+  // benchmark, so say so on the rows that do not — otherwise an `sm on` cell
+  // silently reads as "same request, so same work".
+  const smNote = `sourceMap=${sourceMap}`;
+  const smIgnored = sourceMap
+    ? " ⚠ sourceMap requested but this entry point emits no map — it does NOT pay map-generation cost here, unlike @vue/compiler-sfc."
+    : "";
 
   // --- Vue official 3.5 (VDOM only; Vapor not supported) ---
   // Note: worker_threads fan-out removed — pathologically slow for this corpus
@@ -108,22 +129,26 @@ function buildCellVariants({
       package: "@vue/compiler-sfc",
       target,
       env,
+      sourceMap,
       threading: "1t",
-      notes: `Official 3.5 VDOM, isProd=${isProd}, single-threaded`,
+      invocation: "in-process",
+      notes: `Official 3.5 VDOM, isProd=${isProd}, ${smNote}, single-threaded`,
+      artifactLabel: "Code bytes",
       measure: async () => {
+        let work = 0;
         const { ms } = timedSync(() => {
-          let work = 0;
           for (const f of sources) {
             work += vueCompileSfc(compiler35, f.source, f.filename, {
               vapor: false,
               isProd,
+              sourceMap,
             });
           }
           if (work < sources.length) {
             throw new Error("vue 3.5 compile produced insufficient work units");
           }
         });
-        return ms;
+        return { ms, artifact: work };
       },
     });
   } else {
@@ -148,24 +173,28 @@ function buildCellVariants({
       package: "@vue/compiler-sfc-36",
       target,
       env,
+      sourceMap,
       threading: "1t",
+      invocation: "in-process",
       notes: vapor
-        ? `Official 3.6 Vapor (compileScript vapor + compileTemplate vapor=true), isProd=${isProd}`
-        : `Official 3.6 VDOM, isProd=${isProd}`,
+        ? `Official 3.6 Vapor (compileScript vapor + compileTemplate vapor=true), isProd=${isProd}, ${smNote}`
+        : `Official 3.6 VDOM, isProd=${isProd}, ${smNote}`,
+      artifactLabel: "Code bytes",
       measure: async () => {
+        let work = 0;
         const { ms } = timedSync(() => {
-          let work = 0;
           for (const f of sources) {
             work += vueCompileSfc(compiler36, f.source, f.filename, {
               vapor,
               isProd,
+              sourceMap,
             });
           }
           if (work < sources.length) {
             throw new Error("vue 3.6 compile produced insufficient work units");
           }
         });
-        return ms;
+        return { ms, artifact: work };
       },
     });
   } else {
@@ -182,11 +211,12 @@ function buildCellVariants({
 
   // --- Vize ---
   if (!vizeNative.error) {
-    // Vize has no separate isProduction on compileSfc; map env:
-    // production → sourceMap off; development → sourceMap on (dev tooling cost).
+    // sourceMap comes from the matrix dimension, identically to every other
+    // compiler in this cell. Vize exposes no isProduction on compileSfc, so its
+    // production and development rows do identical work — stated, not hidden.
     const vizeOpts = {
       vapor,
-      sourceMap: !isProd,
+      sourceMap,
       isTs: true,
     };
     variants.push({
@@ -195,11 +225,14 @@ function buildCellVariants({
       package: "@vizejs/native",
       target,
       env,
+      sourceMap,
       threading: "1t",
-      notes: `compileSfc vapor=${vapor}, sourceMap=${!isProd} (Vize has no isProduction flag on compileSfc; sourceMap is the documented dev/prod toggle). Content-hash caches reward duplicate bodies — use unique fixtures for ranking.`,
+      invocation: "in-process",
+      notes: `compileSfc vapor=${vapor}, ${smNote}.${smIgnored} ⚠ Vize has no isProduction flag on compileSfc — this row does identical work in the production and development cells. Content-hash caches reward duplicate bodies — use unique fixtures for ranking.`,
+      artifactLabel: "Code bytes",
       measure: async () => {
+        let codeBytes = 0;
         const { ms } = timedSync(() => {
-          let codeBytes = 0;
           for (const f of sources) {
             const result = vizeNative.compileSfc(f.source, {
               filename: f.filename,
@@ -214,7 +247,7 @@ function buildCellVariants({
             throw new Error("vize compile returned empty code for corpus");
           }
         });
-        return ms;
+        return { ms, artifact: codeBytes };
       },
     });
 
@@ -225,29 +258,38 @@ function buildCellVariants({
         package: "@vizejs/native",
         target,
         env,
+        sourceMap,
         threading: "batch",
-        notes: `compileSfcBatchWithResults vapor=${vapor}, multi-thread Rayon batch. Content-hash caches can skip work on repeated bodies — unique corpus required for ranking.`,
+        invocation: "in-process",
+        notes: `compileSfcBatchWithResults vapor=${vapor}, ${smNote}.${smIgnored} multi-thread Rayon batch. ⚠ No isProduction flag — identical work in production and development cells. Content-hash caches can skip work on repeated bodies — unique corpus required for ranking.`,
+        artifactLabel: "Code bytes",
         measure: async () => {
+          let codeBytes = 0;
           const { ms } = timedSync(() => {
             const result = vizeNative.compileSfcBatchWithResults(
               sources.map((f) => ({ path: f.filename, source: f.source })),
-              { vapor, isTs: true },
+              { vapor, isTs: true, sourceMap },
             );
             if (result.failedCount) {
               throw new Error(`vize batch failed: ${result.failedCount} files`);
             }
+            // Assert unconditionally: a batch API that returns nothing must not
+            // be ranked as infinitely fast.
             const rows = result.results ?? result.items ?? [];
-            if (Array.isArray(rows) && rows.length) {
-              const codeBytes = rows.reduce(
-                (n, r) => n + (r?.code?.length ?? r?.result?.code?.length ?? 0),
-                0,
+            if (!Array.isArray(rows) || rows.length !== sources.length) {
+              throw new Error(
+                `vize batch returned ${Array.isArray(rows) ? rows.length : "no"} rows for ${sources.length} inputs`,
               );
-              if (codeBytes < sources.length) {
-                throw new Error("vize batch returned empty code for corpus");
-              }
+            }
+            codeBytes = rows.reduce(
+              (n, r) => n + (r?.code?.length ?? r?.result?.code?.length ?? 0),
+              0,
+            );
+            if (codeBytes < sources.length) {
+              throw new Error("vize batch returned empty code for corpus");
             }
           });
-          return ms;
+          return { ms, artifact: codeBytes };
         },
       });
     }
@@ -272,7 +314,7 @@ function buildCellVariants({
       ssr: false,
       forceJs: true,
       forceVapor: vapor,
-      sourceMap: !isProd,
+      sourceMap,
       hmrStrategy: isProd ? "none" : "vite",
       runtimeModuleName: "vue",
     };
@@ -289,8 +331,11 @@ function buildCellVariants({
       package: "@verter/native",
       target,
       env,
+      sourceMap,
       threading: "batch",
-      notes: `runtime-render forceVapor=${vapor}, isProduction=${isProd}, sourceMap=${!isProd}, hmr=${renderProfile.hmrStrategy}, mode=stateless, multi-thread host pool`,
+      invocation: "in-process",
+      artifactLabel: "Code bytes",
+      notes: `runtime-render forceVapor=${vapor}, isProduction=${isProd}, ${smNote}${smIgnored}, hmr=${renderProfile.hmrStrategy}, mode=stateless, multi-thread host pool`,
       measure: async () => {
         const host = new VerterHost({ devMode: !isProd });
         return timedSync(() => {
@@ -310,6 +355,7 @@ function buildCellVariants({
           }
           const cacheHits = results.filter((r) => r.cacheHit).length;
           return {
+            artifact: codeBytes,
             cacheHits,
             actualModes: [...new Set(results.map((r) => r.actualMode))],
           };
@@ -323,8 +369,14 @@ function buildCellVariants({
       package: "@verter/native",
       target,
       env,
-      threading: "batch",
-      notes: `runtime-render forceVapor=${vapor}, isProduction=${isProd}, mode=session — cacheHits reported in results (warm may hit cache)`,
+      sourceMap,
+      // Ranked apart from the cache-free batch rows: this host persists across
+      // warmups and runs, so by the first measured run it is already warm. That
+      // is a legitimate thing to measure, but not against uncached tools.
+      threading: "batch-cached",
+      invocation: "in-process",
+      artifactLabel: "Code bytes",
+      notes: `runtime-render forceVapor=${vapor}, isProduction=${isProd}, ${smNote}${smIgnored}, mode=session — persistent host, cacheHits reported (ranked separately from cache-free batch rows)`,
       measure: async () => {
         const key = `session-${cell}`;
         if (!hosts[key]) {
@@ -347,6 +399,7 @@ function buildCellVariants({
           }
           const cacheHits = results.filter((r) => r.cacheHit).length;
           return {
+          artifact: codeBytes,
             cacheHits,
             actualModes: [...new Set(results.map((r) => r.actualMode))],
           };
@@ -424,14 +477,10 @@ export async function runCompileSurface(fixtureDir, options) {
   const verterNative = loadOptional("@verter/native");
   const hosts = {};
 
-  const matrix = [
-    { target: "vdom", env: "production" },
-    { target: "vdom", env: "development" },
-    { target: "vapor", env: "production" },
-    { target: "vapor", env: "development" },
-  ];
-
-  // Allow filtering: --compile-targets vdom,vapor  --compile-envs production,development
+  // Allow filtering:
+  //   --compile-targets vdom,vapor
+  //   --compile-envs production,development
+  //   --compile-sourcemaps off,on
   const wantTargets = new Set(
     (options.compileTargets ?? "vdom,vapor")
       .split(",")
@@ -444,16 +493,45 @@ export async function runCompileSurface(fixtureDir, options) {
       .map((s) => s.trim())
       .filter(Boolean),
   );
+  // Default is OFF only.
+  //
+  // `sourceMap: true` is accepted by every compiler here but honoured by one.
+  // @vue/compiler-sfc emits a real map (~553B for one SFC). Vize's
+  // SfcCompileResultNapi has no map field and its output is byte-identical
+  // with the flag on and off; Verter's runtime-render compileMany result has
+  // no sourceMap field either. (Both DO support maps elsewhere — Vize on its
+  // JSX API, Verter on processStyle and the tsc/declaration path — just not
+  // on the entry points this surface benchmarks.)
+  //
+  // So an `sm on` cell does not equalise work: it charges Vue for map
+  // generation and the natives for nothing. It stays available behind
+  // `--compile-sourcemaps on` for investigation, clearly annotated, but is
+  // not part of the default published matrix.
+  const wantSourceMaps = (options.compileSourceMaps ?? "off")
+    .split(",")
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean)
+    .map((s) => s === "on" || s === "true");
+
+  const matrix = [];
+  for (const target of ["vdom", "vapor"]) {
+    for (const env of ["production", "development"]) {
+      for (const sourceMap of [...new Set(wantSourceMaps)]) {
+        matrix.push({ target, env, sourceMap });
+      }
+    }
+  }
 
   const groups = [];
   const allVariants = [];
 
-  for (const { target, env } of matrix) {
+  for (const { target, env, sourceMap } of matrix) {
     if (!wantTargets.has(target) || !wantEnvs.has(env)) continue;
 
     const cellVariants = buildCellVariants({
       target,
       env,
+      sourceMap,
       sources,
       compiler35,
       compiler36,
@@ -461,17 +539,18 @@ export async function runCompileSurface(fixtureDir, options) {
       verterNative,
       hosts,
     });
-    const measured = await measureVariantsAlternating(cellVariants, {
+    const measured = await measureVariants(cellVariants, {
       runs: options.runs,
       warmups: options.warmups,
       fileCount,
     });
     allVariants.push(...measured);
     groups.push({
-      id: cellId(target, env),
-      label: cellLabel(target, env),
+      id: cellId(target, env, sourceMap),
+      label: cellLabel(target, env, sourceMap),
       target,
       env,
+      sourceMap,
       variants: measured,
     });
   }
@@ -489,17 +568,19 @@ export async function runCompileSurface(fixtureDir, options) {
       fixtureDir,
     },
     methodology: [
-      "Matrix: target ∈ {vdom, vapor} × env ∈ {production, development}. Cells are independent — do not cross-compare VDOM vs Vapor or prod vs dev as the same job.",
+      "Matrix: target ∈ {vdom, vapor} × env ∈ {production, development} × sourceMap ∈ {off, on}. Cells are independent — do not cross-compare cells.",
       `Corpus mode=${corpusMode}: ${uniqueness.uniqueBodies}/${uniqueness.files} unique content SHAs. Vize content-hash caches treat identical bodies as free — primary rankings must use unique fixtures (fixtures/N), not fixtures/N-repeated.`,
       "Same in-memory Vue SFC corpus for every variant (compiler flags differ; sources do not).",
       "Work measured: parse SFC + compile script (if any) + compile template (if any).",
       "VDOM = classic Virtual DOM render functions. Vapor = direct DOM codegen (Vue 3.6+ / native tool vapor flags).",
-      "Production vs development uses each tool's real knobs: Vue isProd; Verter isProduction + sourceMap + hmrStrategy; Vize sourceMap (no isProduction on compileSfc — documented).",
+      "Source map is an INDEPENDENT dimension, requested identically from every compiler in a cell (Vue: parse+compileScript+codegen sourceMap; Vize: compileSfc sourceMap; Verter: compileProfile sourceMap). It is not folded into the prod/dev flag for some tools and not others.",
+      "Production vs development uses each tool's real semantic knobs only: Vue isProd (hoistStatic + cacheHandlers); Verter isProduction + hmrStrategy.",
+      "⚠ Vize exposes no isProduction on compileSfc, so its production and development rows perform identical work. Stated rather than substituted with a different knob.",
       "Vue 3.5 has no Vapor path → skipped for vapor cells (not run as VDOM).",
-      "1T vs batch/max are ranked in separate tables (not mixed).",
-      "Measured runs alternate variant order each iteration (order bias reduction).",
-      "Verter session/stateless rows may include cacheHitsMedian when the host reports cacheHit.",
-      "Cold = first measured run after warmups; warm = median of remaining measured runs.",
+      "Comparison classes (1T / batch / batch-cached) are ranked in separate tables (not mixed).",
+      "Verter session mode keeps a persistent host across warmups and runs, so it is ranked as `batch-cached`, apart from cache-free batch rows.",
+      "Tool order is rotated on every warmup and measured run; no tool is pinned to first position.",
+      "Ranking metric is the median of measured runs, all taken after >= 1 discarded warmup. No cold column.",
     ],
     groups,
     variants: allVariants,

@@ -39,7 +39,7 @@ Do **not** commit:
 | `scripts/lib/surfaces/`           | Per-surface measurements (includes `jsx-compile` for [vue-jsx-vapor](https://github.com/vuejs/vue-jsx-vapor)) |
 | `tests/confirm/`                  | Correctness plants (tracked in git)                                                                           |
 | `.github/workflows/pr.yml`        | PR smoke                                                                                                      |
-| `.github/workflows/benchmark.yml` | Full cold / warm-os / warm + Linux memory probe → README.md + MEMORY.md                                       |
+| `.github/workflows/benchmark.yml` | Compile (sharded by target) + bench + Linux memory probe → README.md + MEMORY.md                                       |
 
 ## Adding a tool
 

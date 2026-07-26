@@ -2,7 +2,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { writeFileSync } from "node:fs";
 import { collectVueFiles, prepareFormatCopy, totalBytes } from "../fixtures.mjs";
-import { measureVariantsAlternating, resolveBin, runCommand } from "../timing.mjs";
+import { measureVariants, resolveBin, runCommand } from "../timing.mjs";
 
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../../..");
 
@@ -46,12 +46,17 @@ export async function runFormatSurface(fixtureDir, options) {
       id: "prettier",
       label: "Prettier",
       package: "prettier",
-      notes: "prettier --write **/*.vue (fresh copy each run)",
+      threading: "1t",
+      invocation: "cli",
+      notes: "prettier --write *.vue (fresh copy each run)",
       measure: () => {
         const cwd = nextCopy("prettier");
         const { ms } = runCommand(prettier, ["--write", "*.vue", "--log-level", "error"], {
           cwd,
-          allowNonZeroExit: false,
+          // Consistent with the other formatters: a non-zero exit from a
+          // style diagnostic must not fail one tool while the others are
+          // allowed to exit non-zero freely.
+          allowNonZeroExit: true,
           shell: process.platform === "win32" && prettier.endsWith(".cmd"),
         });
         return ms;
@@ -72,6 +77,8 @@ export async function runFormatSurface(fixtureDir, options) {
       id: "oxfmt",
       label: "Oxfmt",
       package: "oxfmt",
+      threading: "1t",
+      invocation: "cli",
       notes: "oxfmt --write (Vue-capable Oxc formatter; fresh copy each run)",
       measure: () => {
         const cwd = nextCopy("oxfmt");
@@ -99,6 +106,8 @@ export async function runFormatSurface(fixtureDir, options) {
       id: "vize-fmt",
       label: "Vize fmt",
       package: "vize",
+      threading: "1t",
+      invocation: "cli",
       notes: "vize fmt --write (fresh copy each run)",
       measure: () => {
         const cwd = nextCopy("vize-fmt");
@@ -120,7 +129,7 @@ export async function runFormatSurface(fixtureDir, options) {
     });
   }
 
-  const results = await measureVariantsAlternating(variants, {
+  const results = await measureVariants(variants, {
     runs: options.runs,
     warmups: options.warmups,
     fileCount: files.length,
@@ -133,10 +142,11 @@ export async function runFormatSurface(fixtureDir, options) {
     bytes,
     methodology: [
       "Each invocation receives a fresh copy of the same Vue SFC corpus (formatters rewrite files).",
-      "Output style is NOT normalized across tools — this measures format throughput, not style identity.",
+      ".prettierrc.json is copied into every work copy so Prettier's config actually resolves (config left in the fixture root is not on the work dir's lookup path).",
+      "All three formatters are CLI invocations and share the same non-zero-exit policy — no tool is failed for a diagnostic another tool is forgiven for.",
+      "Output style is NOT normalized across tools — this measures format throughput, not style identity. Spot-checked: on a messy SFC, oxfmt and Prettier produce byte-identical output and Vize reformats template + script + style, so no tool is winning by no-op.",
       "Prettier, Oxfmt, and Vize all claim Vue SFC support; rule/option parity is not guaranteed.",
-      "Measured runs alternate tool order each iteration.",
-      "Cold = first measured run; warm = later runs (OS page cache + process start costs still apply per CLI).",
+      "Tool order is rotated on every warmup and measured run; ranking metric is the median of warmed runs.",
     ],
     variants: results,
   };

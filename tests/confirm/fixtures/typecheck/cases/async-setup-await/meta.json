@@ -1,0 +1,6 @@
+{
+  "id": "async-setup-await",
+  "description": "Top-level await in <script setup> must typecheck cleanly (async setup wrapper)",
+  "expectErrors": false,
+  "mustNotMatch": ["TS1308"]
+}

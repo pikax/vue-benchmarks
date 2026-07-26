@@ -119,3 +119,60 @@ export function tsgoEnv(rootDir = defaultRoot) {
 export function withTsgoEnv(env = {}, rootDir = defaultRoot) {
   return { ...env, ...tsgoEnv(rootDir) };
 }
+
+/**
+ * Which TypeScript engine does each checker actually run on?
+ *
+ * This is a first-class fairness axis, not a footnote. The typecheck surface
+ * spans three engines: vue-tsc on the JavaScript TypeScript compiler, and the
+ * others on native tsgo builds (one stable, one nightly). Ranking a JS engine
+ * against a native one measures TypeScript's own rewrite, not the Vue layer
+ * sitting on top of it — so engines are ranked in separate tables and the
+ * engine is printed on every row.
+ */
+export function resolveToolEngine(id, rootDir = defaultRoot) {
+  const readVersion = (spec) => {
+    try {
+      return require(require.resolve(`${spec}/package.json`, { paths: [rootDir] })).version;
+    } catch {
+      return null;
+    }
+  };
+
+  if (id === "vue-tsc") {
+    const v = readVersion("typescript");
+    // vue-tsc drives the TypeScript compiler API, which only the JS package
+    // provides — the tsgo npm package is a native-binary wrapper, not a
+    // drop-in API, so vue-tsc cannot simply be pointed at it.
+    return { engine: "tsc-js", version: v, label: `TypeScript ${v ?? "?"} (JS)` };
+  }
+
+  if (id === "vize-check") {
+    // Vize bundles its own tsgo; read the exact build from its shim.
+    const shim = join(rootDir, "node_modules", "vize", "node_modules", ".bin", "tsgo");
+    if (existsSync(shim)) {
+      const m = readFileSync(shim, "utf8").match(/@typescript\+native-preview@([\d.a-zA-Z-]+)/);
+      const version = m?.[1] ?? null;
+      const nightly = Boolean(version && /dev|preview/.test(version));
+      return {
+        engine: "tsgo",
+        version,
+        nightly,
+        label: `tsgo ${version ?? "?"}${nightly ? " (nightly)" : ""}`,
+      };
+    }
+    return { engine: "tsgo", version: null, label: "tsgo (bundled)" };
+  }
+
+  if (id === "verter-tsc") {
+    const t = resolveTsgoBin(rootDir);
+    return { engine: "tsgo", version: t.version, label: `tsgo ${t.version ?? "?"} (${t.source})` };
+  }
+
+  if (id.startsWith("golar")) {
+    const v = readVersion("typescript-go") ?? readVersion("@typescript/native-preview");
+    return { engine: "tsgo", version: v, label: `typescript-go ${v ?? "?"}` };
+  }
+
+  return { engine: "unknown", version: null, label: "unknown engine" };
+}

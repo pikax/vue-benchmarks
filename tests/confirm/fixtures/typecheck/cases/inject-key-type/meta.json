@@ -1,0 +1,7 @@
+{
+  "id": "inject-key-type",
+  "description": "inject(InjectionKey) without a default is possibly undefined",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS18048", "TS2532", "possibly", "undefined"]
+}

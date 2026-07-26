@@ -11,6 +11,7 @@ import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
+  CPU_FLOOR_MS,
   forceGc,
   linuxCpuMs,
   pidTreeRssBytes,
@@ -217,6 +218,8 @@ function escapePsSingle(s) {
  * (Node→PowerShell roundtrips are too slow for short-lived CLIs).
  */
 function runCliWindows(cli) {
+  // Hard ceiling so a wedged tool fails its row instead of hanging the suite.
+  const timeoutMs = Number(cli.timeoutMs ?? process.env.MEM_CLI_TIMEOUT_MS ?? 180_000);
   const argList = (cli.args || []).map((a) => `'${escapePsSingle(a)}'`).join(", ");
   const envLines = Object.entries(cli.env || {})
     .map(([k, v]) => `$psi.Environment['${escapePsSingle(k)}'] = '${escapePsSingle(v)}'`)
@@ -235,15 +238,36 @@ $psi.CreateNoWindow = $true
 ${envLines}
 $sw = [System.Diagnostics.Stopwatch]::StartNew()
 $p = [System.Diagnostics.Process]::Start($psi)
+# Drain stdout/stderr asynchronously, BEFORE polling.
+#
+# Both streams are redirected above. If nobody reads them, the child blocks on
+# write as soon as it fills the ~4KB pipe buffer, so it never exits, so
+# HasExited never becomes true and the poll loop below spins forever. That is
+# exactly what happened: the probe hung indefinitely on the first CLI tool
+# (vue-tsc) because it out-writes the buffer. ReadToEndAsync keeps the pipes
+# drained while we sample memory.
+$outTask = $p.StandardOutput.ReadToEndAsync()
+$errTask = $p.StandardError.ReadToEndAsync()
 $ws = New-Object System.Collections.Generic.List[Int64]
 $priv = New-Object System.Collections.Generic.List[Int64]
+$timedOut = $false
 while (-not $p.HasExited) {
+  if ($sw.Elapsed.TotalMilliseconds -gt ${timeoutMs}) {
+    $timedOut = $true
+    try { $p.Kill() } catch {}
+    break
+  }
   try {
     $p.Refresh()
     if ($p.WorkingSet64 -gt 0) { [void]$ws.Add([Int64]$p.WorkingSet64) }
     if ($p.PrivateMemorySize64 -gt 0) { [void]$priv.Add([Int64]$p.PrivateMemorySize64) }
   } catch {}
   Start-Sleep -Milliseconds 5
+}
+if ($timedOut) {
+  try { $p.WaitForExit(5000) } catch {}
+  Write-Output 'TIMEOUT'
+  exit 0
 }
 $p.WaitForExit()
 $sw.Stop()
@@ -279,6 +303,8 @@ Write-Output ("{0} {1} {2} {3} {4} {5} {6} {7} {8} {9}" -f $wsMin, $wsMax, $wsAv
     encoding: "utf8",
     windowsHide: true,
     maxBuffer: 8 * 1024 * 1024,
+    // Backstop: even if the PowerShell-side guard fails, never hang the suite.
+    timeout: timeoutMs + 30_000,
   });
   try {
     // best-effort cleanup
@@ -290,6 +316,15 @@ Write-Output ("{0} {1} {2} {3} {4} {5} {6} {7} {8} {9}" -f $wsMin, $wsMax, $wsAv
     .split(/\r?\n/)
     .filter(Boolean)
     .pop();
+  if (line === "TIMEOUT" || r.error?.code === "ETIMEDOUT") {
+    return {
+      ...summarizeSamples([], 0),
+      status: "error",
+      error: `tool exceeded ${timeoutMs}ms and was killed — row failed rather than hanging the suite`,
+      isolation: "cli-child-rss",
+      baselineRssMb: 0,
+    };
+  }
   if (!line || line === "EMPTY") {
     return {
       ...summarizeSamples([], 0),
@@ -336,16 +371,27 @@ Write-Output ("{0} {1} {2} {3} {4} {5} {6} {7} {8} {9}" -f $wsMin, $wsMax, $wsAv
       mallocDeltaMaxMb: Number.NaN,
       note: "CLI private bytes (PrivateMemorySize64), not V8 heap",
     },
-    cpu: {
-      userMs: Number.isFinite(userMs) ? userMs : Number.NaN,
-      systemMs:
-        Number.isFinite(cpuTotal) && Number.isFinite(userMs)
-          ? Number((cpuTotal - userMs).toFixed(2))
-          : Number.NaN,
-      totalMs: cpuTotal,
-      percent: cpuPercent,
-      wallMs: Number.isFinite(wallMs) ? wallMs : Number.NaN,
-    },
+    cpu: (() => {
+      // Same accounting floor as the in-process path: TotalProcessorTime is
+      // driven by the same scheduler tick, so a short-lived CLI quantises
+      // exactly as badly. Report n/a rather than a confident 0.
+      const ok = Number.isFinite(wallMs) && wallMs >= CPU_FLOOR_MS;
+      return {
+        userMs: Number.isFinite(userMs) ? userMs : Number.NaN,
+        systemMs:
+          Number.isFinite(cpuTotal) && Number.isFinite(userMs)
+            ? Number((cpuTotal - userMs).toFixed(2))
+            : Number.NaN,
+        totalMs: ok ? cpuTotal : null,
+        percent: ok ? cpuPercent : null,
+        reliable: ok,
+        note: ok
+          ? null
+          : `window ${Number.isFinite(wallMs) ? wallMs.toFixed(1) : "?"}ms < ${CPU_FLOOR_MS}ms ${process.platform} CPU-accounting floor — not measurable`,
+        floorMs: CPU_FLOOR_MS,
+        wallMs: Number.isFinite(wallMs) ? wallMs : Number.NaN,
+      };
+    })(),
     isolation: "cli-child-rss",
     note: "RSS=WorkingSet; alloc≈PrivateMemorySize64; CPU=TotalProcessorTime (tool process only)",
   };
@@ -362,6 +408,9 @@ async function runCli(cli) {
 
   forceGc();
 
+  const timeoutMs = Number(cli.timeoutMs ?? process.env.MEM_CLI_TIMEOUT_MS ?? 180_000);
+  let timedOut = false;
+
   await new Promise((resolve, reject) => {
     const child = spawn(cli.bin, cli.args, {
       cwd: cli.cwd,
@@ -370,6 +419,13 @@ async function runCli(cli) {
       stdio: ["ignore", "pipe", "pipe"],
       windowsHide: true,
     });
+
+    // Drain both pipes. Same deadlock the Windows path hit: stdout/stderr are
+    // piped, so once the child writes past the OS pipe buffer it blocks on
+    // write and never exits, and 'close' never fires. We do not need the
+    // output here — resume() discards it while keeping the pipe empty.
+    child.stdout?.resume();
+    child.stderr?.resume();
 
     const sample = () => {
       const rss = pidTreeRssBytes(child.pid);
@@ -383,16 +439,39 @@ async function runCli(cli) {
     if (typeof iv.unref === "function") iv.unref();
     sample();
 
+    // Hard ceiling so a wedged tool fails its row instead of the suite.
+    const killer = setTimeout(() => {
+      timedOut = true;
+      try {
+        child.kill("SIGKILL");
+      } catch {
+        /* already gone */
+      }
+    }, timeoutMs);
+    if (typeof killer.unref === "function") killer.unref();
+
     child.on("error", (err) => {
       clearInterval(iv);
+      clearTimeout(killer);
       reject(err);
     });
     child.on("close", () => {
       sample();
       clearInterval(iv);
+      clearTimeout(killer);
       resolve();
     });
   });
+
+  if (timedOut) {
+    return {
+      ...summarizeSamples([], 0),
+      status: "error",
+      error: `tool exceeded ${timeoutMs}ms and was killed — row failed rather than hanging the suite`,
+      isolation: "cli-child-rss",
+      baselineRssMb: 0,
+    };
+  }
 
   const wallMs = Number(process.hrtime.bigint() - wall0) / 1e6;
 

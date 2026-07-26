@@ -2,16 +2,28 @@ name: Benchmark
 
 # Full multi-pass benchmarks (main / schedule / manual).
 # Pattern mirrors rolldown/benchmarks:
-#   - measure on a matrix of OS runners
+#   - measure on Linux only (see below)
 #   - on main, merge artifacts into README and auto-commit [skip ci]
 #
-# Cold and warm are SEPARATE jobs (fresh runners). Setup (install + fixtures)
-# is done once in `build` and reused via node_modules cache + fixtures artifact.
+# Setup (install + fixtures) is done once in `build` and reused via
+# node_modules cache + fixtures artifact.
 #
-# Pass definitions (see README):
-#   cold       — single measured pass, no warmups (first tool process touch)
-#   warm-os    — 1 discarded OS warmer pass, then measured runs with warmups=0
-#   warm       — standard process warmups + multiple measured runs
+# LINUX ONLY. Cross-OS rows were never comparable — the report already forbids
+# it — so a three-OS matrix bought nothing but three times the runner cost and
+# three more sources of variance. One OS, one runner class, one set of numbers.
+#
+# Jobs:
+#   bench  — EVERY timing surface in ONE job (~8-9 min). All numbers in a report
+#            come off the same VM, so no result is ever merged across runners.
+#            Runner-to-runner variance is easily larger than the differences
+#            being measured, and sharding by surface would have reintroduced
+#            exactly that discrepancy.
+#   memory — resource probe. Separate ON PURPOSE: sampling RSS/CPU alongside
+#            timing runs would perturb the timings it sits next to.
+#
+# There is no cold job. Every measured run is preceded by a discarded warmup
+# pass, because an unwarmed first run costs a JS compiler ~3.2x its steady
+# state and a native compiler nothing — ranking on it measures V8 warmup.
 
 on:
   workflow_dispatch:
@@ -20,18 +32,14 @@ on:
         description: "Primary UNIQUE fixture SFC count"
         required: false
         default: "200"
-      warm_runs:
-        description: "Measured runs for warm pass"
+      bench_runs:
+        description: "Measured runs per tool"
         required: false
         default: "5"
-      warm_warmups:
-        description: "Process warmups for warm pass"
+      bench_warmups:
+        description: "Discarded warmup runs per tool (minimum 1)"
         required: false
         default: "1"
-      warm_os_runs:
-        description: "Measured runs for warm-OS pass (after 1 discard)"
-        required: false
-        default: "3"
   push:
     branches: [main]
     paths-ignore:
@@ -51,21 +59,16 @@ concurrency:
 env:
   NM_CACHE_PREFIX: nm-v1
   FIXTURE_COUNT: ${{ github.event.inputs.fixture_count || '200' }}
-  WARM_RUNS: ${{ github.event.inputs.warm_runs || '5' }}
-  WARM_WARMS: ${{ github.event.inputs.warm_warmups || '1' }}
-  WARM_OS_RUNS: ${{ github.event.inputs.warm_os_runs || '3' }}
+  BENCH_RUNS: ${{ github.event.inputs.bench_runs || '5' }}
+  BENCH_WARMUPS: ${{ github.event.inputs.bench_warmups || '1' }}
 
 jobs:
   # ---------------------------------------------------------------------------
   # Build once per OS: native binaries + unique/vapor/repeated fixtures
   # ---------------------------------------------------------------------------
   build:
-    name: Build (${{ matrix.os }})
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
+    name: Build (Linux)
+    runs-on: ubuntu-latest
     defaults:
       run:
         shell: bash
@@ -84,7 +87,7 @@ jobs:
       - name: Install dependencies (pulls native binaries)
         run: pnpm install --frozen-lockfile
 
-      - name: Cache node_modules for cold/warm jobs
+      - name: Cache node_modules for bench jobs
         uses: actions/cache@v4
         with:
           path: node_modules
@@ -100,72 +103,34 @@ jobs:
       - name: Upload fixtures artifact
         uses: actions/upload-artifact@v4
         with:
-          name: fixtures-bench-${{ matrix.os }}
+          name: fixtures-bench-linux
           path: fixtures
           retention-days: 7
           if-no-files-found: error
 
   # ---------------------------------------------------------------------------
-  # COLD — singular measured pass, no process warmups
-  # (Best-effort first touch after fresh download; we do not drop_caches on GHA)
+  # BENCH — EVERY surface, one job per OS. All numbers in a report come off the
+  # same VM.
+  #
+  # Splitting by surface would have been faster (LSP is ~376s and dominates),
+  # but it puts each surface on a different runner, and GitHub runners vary
+  # enough that two reports merged from two VMs are not one measurement. Keeping
+  # everything on one box removes that discrepancy entirely and means a
+  # comparison class can never accidentally span machines as surfaces evolve.
+  # ~8-9 min per OS is a fine price for a main-push / weekly benchmark.
+  #
+  # Surface ORDER matters: lsp runs last. It is the longest and its hover
+  # retries heat the box, so running it first would leave every later surface
+  # measuring a warmer, more throttled machine.
+  #
+  # Every measured run is preceded by a discarded warmup pass (enforced by the
+  # harness); there is no separate cold job because an unwarmed run measures
+  # JIT warmup for JS tools and nothing for native tools.
   # ---------------------------------------------------------------------------
-  cold:
-    name: Cold (${{ matrix.os }})
+  bench:
+    name: Bench (Linux)
     needs: build
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
-    timeout-minutes: 90
-    defaults:
-      run:
-        shell: bash
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: ./.github/actions/restore-workspace
-        with:
-          fixtures-artifact: fixtures-bench-${{ matrix.os }}
-          node-modules-cache-key: ${{ env.NM_CACHE_PREFIX }}-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', '.node-version') }}-${{ github.sha }}
-
-      - name: Cold pass (runs=1, warmups=0)
-        env:
-          RUNNER_OS: ${{ runner.os }}
-          BENCH_PHASE: cold
-        run: |
-          COUNT="${{ env.FIXTURE_COUNT }}"
-          CHECK_LIMIT=$(( COUNT < 200 ? COUNT : 200 ))
-          node scripts/bench.mjs \
-            --fixture "fixtures/${COUNT}" \
-            --surfaces compile,jsx-compile,typecheck,format,lint,component-meta,lsp \
-            --runs 1 \
-            --warmups 0 \
-            --check-file-limit "$CHECK_LIMIT" \
-            --meta-file-limit 100 \
-            --json "results/bench-${{ runner.os }}-${COUNT}-cold.json" \
-            --out "results/bench-${{ runner.os }}-${COUNT}-cold.md"
-
-      - name: Upload cold results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: results-cold-${{ matrix.os }}
-          path: results/**
-          if-no-files-found: warn
-          retention-days: 30
-
-  # ---------------------------------------------------------------------------
-  # WARM-OS — 1 discarded pass to page fixtures into OS cache, then measure
-  # ---------------------------------------------------------------------------
-  warm-os:
-    name: Warm-OS (${{ matrix.os }})
-    needs: build
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     timeout-minutes: 120
     defaults:
       run:
@@ -175,93 +140,30 @@ jobs:
 
       - uses: ./.github/actions/restore-workspace
         with:
-          fixtures-artifact: fixtures-bench-${{ matrix.os }}
+          fixtures-artifact: fixtures-bench-linux
           node-modules-cache-key: ${{ env.NM_CACHE_PREFIX }}-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', '.node-version') }}-${{ github.sha }}
 
-      - name: OS warmer (discarded singular pass)
+      - name: Measured pass (warmups + measured runs)
         env:
           RUNNER_OS: ${{ runner.os }}
+          BENCH_PHASE: bench
         run: |
           COUNT="${{ env.FIXTURE_COUNT }}"
+          RUNS="${{ env.BENCH_RUNS }}"
+          WARMS="${{ env.BENCH_WARMUPS }}"
           CHECK_LIMIT=$(( COUNT < 200 ? COUNT : 200 ))
           node scripts/bench.mjs \
             --fixture "fixtures/${COUNT}" \
             --surfaces compile,jsx-compile,typecheck,format,lint,component-meta,lsp \
-            --runs 1 \
-            --warmups 0 \
-            --check-file-limit "$CHECK_LIMIT" \
-            --meta-file-limit 100 \
-            --json "results/_os-warmer-${{ runner.os }}.json" \
-            --out "results/_os-warmer-${{ runner.os }}.md" || true
-
-      - name: Warm-OS measured pass (warmups=0, after OS warmer)
-        env:
-          RUNNER_OS: ${{ runner.os }}
-          BENCH_PHASE: warm-os
-        run: |
-          COUNT="${{ env.FIXTURE_COUNT }}"
-          RUNS="${{ env.WARM_OS_RUNS }}"
-          CHECK_LIMIT=$(( COUNT < 200 ? COUNT : 200 ))
-          node scripts/bench.mjs \
-            --fixture "fixtures/${COUNT}" \
-            --surfaces compile,jsx-compile,typecheck,format,lint,component-meta,lsp \
-            --runs "$RUNS" \
-            --warmups 0 \
-            --check-file-limit "$CHECK_LIMIT" \
-            --meta-file-limit 100 \
-            --json "results/bench-${{ runner.os }}-${COUNT}-warm-os.json" \
-            --out "results/bench-${{ runner.os }}-${COUNT}-warm-os.md"
-
-      - name: Upload warm-OS results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: results-warm-os-${{ matrix.os }}
-          path: results/**
-          if-no-files-found: warn
-          retention-days: 30
-
-  # ---------------------------------------------------------------------------
-  # WARM — process warmups + multiple measured runs (steady-state-ish)
-  # ---------------------------------------------------------------------------
-  warm:
-    name: Warm (${{ matrix.os }})
-    needs: build
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
-    timeout-minutes: 120
-    defaults:
-      run:
-        shell: bash
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: ./.github/actions/restore-workspace
-        with:
-          fixtures-artifact: fixtures-bench-${{ matrix.os }}
-          node-modules-cache-key: ${{ env.NM_CACHE_PREFIX }}-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', '.node-version') }}-${{ github.sha }}
-
-      - name: Warm pass (process warmups + measured runs)
-        env:
-          RUNNER_OS: ${{ runner.os }}
-          BENCH_PHASE: warm
-        run: |
-          COUNT="${{ env.FIXTURE_COUNT }}"
-          RUNS="${{ env.WARM_RUNS }}"
-          WARMS="${{ env.WARM_WARMS }}"
-          CHECK_LIMIT=$(( COUNT < 200 ? COUNT : 200 ))
-          node scripts/bench.mjs \
-            --fixture "fixtures/${COUNT}" \
-            --surfaces compile,jsx-compile,typecheck,format,lint,component-meta,lsp \
+            --compile-targets vdom,vapor \
+            --compile-envs production,development \
+            --compile-sourcemaps off \
             --runs "$RUNS" \
             --warmups "$WARMS" \
             --check-file-limit "$CHECK_LIMIT" \
             --meta-file-limit 100 \
-            --json "results/bench-${{ runner.os }}-${COUNT}-warm.json" \
-            --out "results/bench-${{ runner.os }}-${COUNT}-warm.md"
+            --json "results/bench-${{ runner.os }}-${COUNT}-bench.json" \
+            --out "results/bench-${{ runner.os }}-${COUNT}-bench.md"
 
       - name: Compile cache-demo on REPEATED corpus (not for ranking)
         env:
@@ -273,16 +175,17 @@ jobs:
             --surfaces compile \
             --compile-targets vdom \
             --compile-envs production \
+            --compile-sourcemaps off \
             --runs 2 \
-            --warmups 0 \
             --json "results/bench-${{ runner.os }}-${COUNT}-repeated-cache-demo.json" \
             --out "results/bench-${{ runner.os }}-${COUNT}-repeated-cache-demo.md" || true
 
-      - name: Upload warm results
+      - name: Upload bench results
+        id: upload-bench
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: results-warm-${{ matrix.os }}
+          name: results-bench-linux
           path: results/**
           if-no-files-found: warn
           retention-days: 30
@@ -303,7 +206,7 @@ jobs:
 
       - uses: ./.github/actions/restore-workspace
         with:
-          fixtures-artifact: fixtures-bench-ubuntu-latest
+          fixtures-artifact: fixtures-bench-linux
           node-modules-cache-key: ${{ env.NM_CACHE_PREFIX }}-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', '.node-version') }}-${{ github.sha }}
 
       - name: Resource probe (RSS + alloc + CPU)
@@ -341,14 +244,14 @@ jobs:
   # ---------------------------------------------------------------------------
   update-readme:
     name: Update README + MEMORY.md
-    needs: [cold, warm-os, warm, memory]
+    needs: [bench, memory]
     runs-on: ubuntu-latest
     # Match rolldown: commit docs only on main (push / schedule / dispatch)
     if: >-
       always() &&
       github.ref == 'refs/heads/main' &&
       (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') &&
-      (needs.cold.result == 'success' || needs.warm.result == 'success' || needs.warm-os.result == 'success' || needs.memory.result == 'success')
+      (needs.bench.result == 'success' || needs.memory.result == 'success')
     permissions:
       contents: write
 

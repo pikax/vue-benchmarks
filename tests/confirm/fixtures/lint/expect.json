@@ -1,7 +1,7 @@
 {
   "description": "Per-tool lint expectations. Rule sets differ — we never require identical codes across tools.",
   "clean": {
-    "files": ["clean/CleanCard.vue", "clean/CleanButton.vue"],
+    "files": ["clean/CleanCard.vue", "clean/CleanButton.vue", "clean/CleanAdvanced.vue"],
     "tools": {
       "eslint-plugin-vue": { "maxIssues": 0 },
       "vize-lint": { "maxIssues": 0 }
@@ -19,6 +19,10 @@
         "vize-lint": {
           "minIssues": 1,
           "mustMatch": ["no-v-html", "v-html"]
+        },
+        "verter-lint": {
+          "minIssues": 1,
+          "mustIncludeRules": ["no-v-html"]
         }
       }
     },
@@ -33,6 +37,10 @@
         "vize-lint": {
           "minIssues": 1,
           "mustMatch": ["v-for", "key"]
+        },
+        "verter-lint": {
+          "minIssues": 1,
+          "mustIncludeRules": ["require-v-for-key"]
         }
       }
     },
@@ -47,6 +55,10 @@
         "vize-lint": {
           "minIssues": 1,
           "mustMatch": ["else-if", "duplicate", "dupe"]
+        },
+        "verter-lint": {
+          "minIssues": 1,
+          "mustIncludeRules": ["no-dupe-v-else-if"]
         }
       }
     },
@@ -61,6 +73,10 @@
         "vize-lint": {
           "minIssues": 1,
           "mustMatch": ["textarea", "mustache", "v-model"]
+        },
+        "verter-lint": {
+          "minIssues": 1,
+          "mustIncludeRules": ["no-textarea-mustache"]
         }
       }
     },
@@ -76,6 +92,129 @@
         "vize-lint": {
           "minIssues": 1,
           "mustMatch": ["alt", "img"]
+        },
+        "verter-lint": {
+          "minIssues": 1,
+          "mustIncludeRules": ["alt-text"]
+        }
+      }
+    },
+    {
+      "id": "v-if-with-v-for",
+      "file": "dirty/VIfWithVFor.vue",
+      "tools": {
+        "eslint-plugin-vue": {
+          "minIssues": 1,
+          "mustIncludeRules": ["vue/no-use-v-if-with-v-for"]
+        },
+        "vize-lint": {
+          "minIssues": 1,
+          "mustMatch": ["no-use-v-if-with-v-for"]
+        },
+        "verter-lint": {
+          "minIssues": 1,
+          "mustIncludeRules": ["no-use-v-if-with-v-for"]
+        }
+      }
+    },
+    {
+      "id": "duplicate-attributes",
+      "file": "dirty/DuplicateAttrs.vue",
+      "tools": {
+        "eslint-plugin-vue": {
+          "minIssues": 1,
+          "mustIncludeRules": ["vue/no-duplicate-attributes"]
+        },
+        "vize-lint": {
+          "minIssues": 1,
+          "mustMatch": ["no-duplicate-attributes", "duplicate attribute"]
+        },
+        "verter-lint": {
+          "minIssues": 1,
+          "mustIncludeRules": ["no-duplicate-attributes"]
+        }
+      }
+    },
+    {
+      "id": "require-component-is",
+      "file": "dirty/RequireComponentIs.vue",
+      "tools": {
+        "eslint-plugin-vue": {
+          "minIssues": 1,
+          "mustIncludeRules": ["vue/require-component-is"]
+        },
+        "vize-lint": {
+          "minIssues": 1,
+          "mustMatch": ["require-component-is"]
+        },
+        "verter-lint": {
+          "minIssues": 1,
+          "mustIncludeRules": ["require-component-is"]
+        }
+      }
+    },
+    {
+      "id": "mutating-props",
+      "file": "dirty/MutatingProps.vue",
+      "tools": {
+        "eslint-plugin-vue": {
+          "minIssues": 1,
+          "mustIncludeRules": ["vue/no-mutating-props"]
+        },
+        "vize-lint": {
+          "minIssues": 1,
+          "mustMatch": ["no-mutating-props", "mutat"]
+        },
+        "verter-lint": {
+          "minIssues": 1,
+          "mustIncludeRules": ["no-mutating-props"]
+        }
+      }
+    },
+    {
+      "id": "deprecated-slot-attr",
+      "file": "dirty/DeprecatedSlotAttr.vue",
+      "tools": {
+        "eslint-plugin-vue": {
+          "minIssues": 1,
+          "mustIncludeRules": ["vue/no-deprecated-slot-attribute"]
+        },
+        "vize-lint": {
+          "minIssues": 1,
+          "mustMatch": ["no-deprecated-slot-attribute", "slot attribute"]
+        },
+        "verter-lint": {
+          "minIssues": 1,
+          "mustIncludeRules": ["no-deprecated-slot-attribute"]
+        }
+      }
+    },
+    {
+      "id": "v-text-on-component",
+      "file": "dirty/VTextOnComponent.vue",
+      "tools": {
+        "eslint-plugin-vue": {
+          "minIssues": 1,
+          "mustIncludeRules": ["vue/no-v-text-v-html-on-component"]
+        },
+        "vize-lint": {
+          "minIssues": 1,
+          "mustMatch": ["no-v-text-v-html-on-component"]
+        },
+        "verter-lint": {
+          "minIssues": 1,
+          "mustIncludeRules": ["no-v-text-v-html-on-component"]
+        }
+      }
+    },
+    {
+      "id": "unused-components",
+      "note": "vize/verter intentionally omitted: neither reports an equivalent recommended-tier rule in its default preset",
+      "file": "dirty/UnusedComponents.vue",
+      "tools": {
+        "eslint-plugin-vue": {
+          "minIssues": 1,
+          "mustIncludeRules": ["vue/no-unused-components"]
         }
       }
     }

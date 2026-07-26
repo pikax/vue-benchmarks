@@ -1,0 +1,5 @@
+{
+  "id": "literal-union-prop-ok",
+  "description": "Static attribute value must narrow to a string literal type for a union prop (clean)",
+  "expectErrors": false
+}

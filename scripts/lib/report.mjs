@@ -4,11 +4,15 @@ function okVariants(variants) {
   return variants.filter((v) => v.status === "ok");
 }
 
-/** Primary ranking metric: cold first measured run. */
+/**
+ * Primary ranking metric: median of the measured runs (all warmed).
+ * There is deliberately no cold column — an unwarmed first run measures JIT
+ * warmup for JS tools and nothing for native tools, which is not comparable.
+ */
 function primaryMs(v) {
   if (v.status !== "ok") return Number.POSITIVE_INFINITY;
-  if (Number.isFinite(v.coldMs)) return v.coldMs;
-  return v.overallMedianMs;
+  if (Number.isFinite(v.medianMs)) return v.medianMs;
+  return Number.POSITIVE_INFINITY;
 }
 
 function fastestPrimary(variants) {
@@ -18,14 +22,14 @@ function fastestPrimary(variants) {
 }
 
 /**
- * "How many times slower than fastest (by cold)" — base is fastest cold.
+ * "How many times slower than fastest" — base is the fastest median in the class.
  * Faster tool → 1.00x; slower → >1.
  */
-function timesSlower(fastestCold, thisCold) {
-  if (!Number.isFinite(fastestCold) || !Number.isFinite(thisCold) || thisCold <= 0) {
+function timesSlower(fastest, current) {
+  if (!Number.isFinite(fastest) || !Number.isFinite(current) || current <= 0) {
     return "n/a";
   }
-  return `${(thisCold / fastestCold).toFixed(2)}x`;
+  return `${(current / fastest).toFixed(2)}x`;
 }
 
 function escapeCell(text) {
@@ -34,13 +38,65 @@ function escapeCell(text) {
     .replace(/\r?\n/g, " ");
 }
 
-function threadingKey(v) {
-  return v.threading || "default";
+const THREADING_LABEL = {
+  "1t": "Single-thread (1T)",
+  batch: "Batch / multi-thread pool",
+  "batch-cached": "Batch with persistent cache",
+  max: "Max threads",
+  workers: "Worker fan-out",
+  lsp: "LSP servers",
+  host: "Host API",
+};
+
+const INVOCATION_LABEL = {
+  cli: "CLI subprocess",
+  "in-process": "In-process API",
+};
+
+/**
+ * Comparison class. Tools are only ranked against tools in the same class.
+ *
+ * `invocation` matters as much as threading: an in-process API amortises
+ * process startup across iterations while a CLI pays it on every run
+ * (measured ~85ms for one native CLI), so the two are not comparable.
+ */
+function classKey(v) {
+  const threading = v.threading || "default";
+  let base = v.invocation ? `${v.invocation}|${threading}` : threading;
+  // Codegen target is part of the class too. jsx-compile carries vapor and
+  // VDOM rows in one flat surface (compile separates them into cells), and
+  // they share no runtime helpers — ranking them together compared three
+  // different jobs in a single table.
+  if (v.target) base += `|target:${v.target}`;
+  // Underlying engine is part of the class as well. The typecheck surface
+  // spans the JavaScript TypeScript compiler and native tsgo builds; ranking
+  // those together measures the TypeScript rewrite rather than the Vue layer
+  // under test, which is the comparison this surface claims to make.
+  if (v.engine) base += `|engine:${v.engine}`;
+  return base;
+}
+
+const ENGINE_LABEL = {
+  "tsc-js": "TypeScript (JS engine)",
+  tsgo: "tsgo (native engine)",
+};
+
+function classLabel(key) {
+  const parts = key.split("|");
+  const target = parts.find((p) => p.startsWith("target:"))?.slice("target:".length);
+  const engine = parts.find((p) => p.startsWith("engine:"))?.slice("engine:".length);
+  const rest = parts.filter((p) => !p.startsWith("target:") && !p.startsWith("engine:"));
+  const [a, b] = rest.length > 1 ? rest : [null, rest[0]];
+  const threading = THREADING_LABEL[b] ?? `Threading: ${b}`;
+  const invocation = a ? `${INVOCATION_LABEL[a] ?? a} · ` : "";
+  const targetLabel = target ? `${target.toUpperCase()} · ` : "";
+  const engineLabel = engine ? `${ENGINE_LABEL[engine] ?? engine} · ` : "";
+  return `${engineLabel}${targetLabel}${invocation}${threading} — ranked alone`;
 }
 
 /**
- * Render one ranking table for a homogeneous set of variants
- * (same threading class). Primary column = cold.
+ * Render one ranking table for a homogeneous set of variants.
+ * Primary column = median of measured runs (all warmed).
  */
 function renderVariantTable(variants, { title } = {}) {
   const lines = [];
@@ -48,25 +104,69 @@ function renderVariantTable(variants, { title } = {}) {
     lines.push(`##### ${title}`);
     lines.push("");
   }
+  const artifactLabel =
+    variants.find((v) => v.artifactLabel)?.artifactLabel ?? "Artifact";
   lines.push(
-    "| Tool | Status | **Cold (primary)** | Warm median | Overall median | vs fastest (cold) | Throughput | Notes |",
+    `| Tool | Status | **Median (primary)** | Min | Stddev | CV% | vs fastest | ${artifactLabel} | Throughput | Notes |`,
   );
-  lines.push("| --- | --- | ---: | ---: | ---: | ---: | ---: | --- |");
+  lines.push("| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |");
 
   const base = fastestPrimary(variants);
   const sorted = [...variants].sort((a, b) => primaryMs(a) - primaryMs(b));
 
+  // Reference artifact volume for this class: the largest any tool produced.
+  // A tool well below it was measured doing materially less work, so its
+  // speed is not comparable no matter how carefully it was timed.
+  const artifacts = okVariants(variants)
+    .map((v) => v.artifactMedian)
+    .filter((n) => Number.isFinite(n) && n > 0);
+  const peakArtifact = artifacts.length ? Math.max(...artifacts) : Number.NaN;
+
   for (const v of sorted) {
     if (v.status === "ok") {
       const cacheNote = Number.isFinite(v.cacheHitsMedian) ? ` cacheHits≈${v.cacheHitsMedian}` : "";
+      // Flag noisy series so a thermally-throttled or contended box is visible.
+      const cv = Number.isFinite(v.cvPct) ? `${v.cvPct.toFixed(1)}%${v.cvPct > 10 ? " ⚠" : ""}` : "n/a";
+      let artifact = "n/a";
+      let artifactWarn = "";
+      if (Number.isFinite(v.artifactMedian)) {
+        artifact = v.artifactMedian.toLocaleString();
+        // Only flag a low artifact where MORE genuinely means more work done
+        // (e.g. emitted code bytes). For an informational census such as
+        // diagnostics on a deliberately clean corpus, zero is the correct
+        // answer and a "produced less" warning would be actively misleading —
+        // it would scold the tools that are behaving and reward the one
+        // emitting noise about its own internals.
+        const moreIsWork = v.artifactPolarity !== "informational";
+        if (moreIsWork && Number.isFinite(peakArtifact) && peakArtifact > 0) {
+          const share = v.artifactMedian / peakArtifact;
+          if (share < 0.5) {
+            artifact += " ⚠";
+            artifactWarn = ` | ⚠ produced ${(share * 100).toFixed(0)}% of the largest artifact in this class — speed is not comparable`;
+          }
+        }
+      }
       lines.push(
-        `| ${v.label} | ok | **${formatMs(v.coldMs)}** | ${formatMs(v.warmMedianMs)} | ${formatMs(v.overallMedianMs)} | ${timesSlower(base, v.coldMs)} | ${v.throughput} | ${escapeCell((v.notes || "") + cacheNote)} |`,
+        `| ${v.label} | ok | **${formatMs(v.medianMs)}** | ${formatMs(v.minMs)} | ${formatMs(v.stddevMs)} | ${cv} | ${timesSlower(base, v.medianMs)} | ${artifact} | ${v.throughput} | ${escapeCell((v.notes || "") + cacheNote + artifactWarn)} |`,
+      );
+    } else if (v.status === "unranked") {
+      // Measured but failed validation: show the time in brackets so the
+      // speed/correctness trade is visible, and keep it out of every
+      // comparison column — it is not competing on equal terms.
+      const bracketed = Number.isFinite(v.medianMs) ? `(${formatMs(v.medianMs)})` : "n/a";
+      const artifact = Number.isFinite(v.artifactMedian)
+        ? `(${v.artifactMedian.toLocaleString()})`
+        : "n/a";
+      lines.push(
+        `| ${v.label} | ⚠ failed validation | ${bracketed} | ${Number.isFinite(v.minMs) ? `(${formatMs(v.minMs)})` : "n/a"} | n/a | n/a | not ranked | ${artifact} | n/a | ${escapeCell(v.notes)} |`,
       );
     } else if (v.status === "skipped") {
-      lines.push(`| ${v.label} | skipped | n/a | n/a | n/a | n/a | n/a | ${escapeCell(v.notes)} |`);
+      lines.push(
+        `| ${v.label} | skipped | n/a | n/a | n/a | n/a | n/a | n/a | n/a | ${escapeCell(v.notes)} |`,
+      );
     } else {
       lines.push(
-        `| ${v.label} | error | n/a | n/a | n/a | n/a | n/a | ${escapeCell(v.error || v.notes)} |`,
+        `| ${v.label} | error | n/a | n/a | n/a | n/a | n/a | n/a | n/a | ${escapeCell(v.error || v.notes)} |`,
       );
     }
   }
@@ -74,48 +174,33 @@ function renderVariantTable(variants, { title } = {}) {
 }
 
 /**
- * Split variants by threading class and render separate ranked tables.
+ * Split variants by comparison class (invocation × threading) and render
+ * separate ranked tables. Classes are never mixed in one ranking.
  */
 function renderByThreadingClass(variants) {
   const lines = [];
   const byClass = new Map();
   for (const v of variants) {
-    const k = threadingKey(v);
+    const k = classKey(v);
     if (!byClass.has(k)) byClass.set(k, []);
     byClass.get(k).push(v);
   }
 
   // Stable order of classes
   const order = ["1t", "batch", "max", "host", "lsp", "default", "n/a", "workers"];
-  const keys = [...byClass.keys()].sort((a, b) => {
-    const ia = order.indexOf(a);
-    const ib = order.indexOf(b);
-    if (ia === -1 && ib === -1) return a.localeCompare(b);
-    if (ia === -1) return 1;
-    if (ib === -1) return -1;
-    return ia - ib;
-  });
+  const rank = (k) => {
+    const t = k.includes("|") ? k.split("|")[1] : k;
+    const i = order.indexOf(t);
+    return i === -1 ? order.length : i;
+  };
+  const keys = [...byClass.keys()].sort((a, b) => rank(a) - rank(b) || a.localeCompare(b));
 
   const allSorted = [];
   for (const k of keys) {
     const group = byClass.get(k);
-    const label =
-      k === "1t"
-        ? "Single-thread (1T) — ranked alone"
-        : k === "batch"
-          ? "Batch / multi-thread pool — ranked alone"
-          : k === "max"
-            ? "Max threads — ranked alone"
-            : k === "workers"
-              ? "Worker fan-out — ranked alone"
-              : k === "lsp"
-                ? "LSP servers — ranked alone"
-                : k === "host"
-                  ? "Host API — ranked alone"
-                  : `Threading: ${k}`;
     // Only print class heading when multiple classes exist
     const { lines: tableLines, sorted } = renderVariantTable(group, {
-      title: keys.length > 1 ? label : undefined,
+      title: keys.length > 1 ? classLabel(k) : undefined,
     });
     lines.push(...tableLines);
     lines.push("");
@@ -129,7 +214,7 @@ function renderRawRuns(sorted) {
   lines.push("<details><summary>Raw runs</summary>");
   lines.push("");
   for (const v of sorted) {
-    if (v.status === "ok" && Array.isArray(v.runs)) {
+    if ((v.status === "ok" || v.status === "unranked") && Array.isArray(v.runs)) {
       lines.push(`- **${v.label}**: ${v.runs.map(formatMs).join(", ")}`);
     }
   }
@@ -147,20 +232,24 @@ export function renderSurfaceMarkdown(surface) {
   );
   lines.push("");
   lines.push(
-    "Primary ranking column is **cold** (first measured run). Warm median is secondary. Threading classes are ranked **separately**.",
+    "Primary ranking column is the **median of measured runs**, every one taken after at least one discarded warmup pass. There is no cold column: an unwarmed first run measures JIT warmup for JS tools and nothing for native tools. Comparison classes (invocation × threading) are ranked **separately**.",
   );
   lines.push("");
 
   // Compile matrix (and any future grouped surface)
   if (Array.isArray(surface.groups) && surface.groups.length > 0) {
-    lines.push("Compile results are **grouped by target × environment**, then by threading class.");
+    lines.push(
+      "Compile results are **grouped by target × environment × source map**, then by comparison class.",
+    );
     lines.push("");
 
     for (const group of surface.groups) {
       lines.push(`#### ${group.label}`);
       lines.push("");
       if (group.target || group.env) {
-        lines.push(`Target: \`${group.target ?? "?"}\` · Environment: \`${group.env ?? "?"}\``);
+        lines.push(
+          `Target: \`${group.target ?? "?"}\` · Environment: \`${group.env ?? "?"}\` · Source map: \`${group.sourceMap ? "on" : "off"}\``,
+        );
         lines.push("");
       }
       const { lines: tableLines, sorted } = renderByThreadingClass(group.variants);
@@ -192,7 +281,7 @@ export function renderSurfaceMarkdown(surface) {
   lines.push("Raw runs:");
   lines.push("");
   for (const v of sorted) {
-    if (v.status === "ok" && Array.isArray(v.runs)) {
+    if ((v.status === "ok" || v.status === "unranked") && Array.isArray(v.runs)) {
       lines.push(`- **${v.label}**: ${v.runs.map(formatMs).join(", ")}`);
     }
   }
@@ -243,17 +332,19 @@ export function renderFullMarkdown(data) {
 /** Factual run parameters and corpus rules (for reports). */
 export function buildMethodologyNotes() {
   return [
-    "Primary ranking metric is **cold** (first measured run after warmups).",
-    "Warm median is secondary; overall median includes cold + warm runs.",
-    "Threading classes (1t / batch / max / host / lsp) are ranked in **separate tables** — not mixed.",
+    "Primary ranking metric is the **median of measured runs**. Every measured run is preceded by at least one discarded warmup pass (enforced — `--warmups 0` is clamped to 1).",
+    "There is **no cold column**. An unwarmed first run costs a JS compiler ~3.2x its steady state and a native compiler nothing, so ranking on it measures V8 warmup rather than the tool.",
+    "Min / stddev / CV% are reported per row. CV% > 10 is flagged ⚠ — treat that row as noisy (thermal drift or a contended runner), not as a result.",
+    "Comparison classes (invocation × threading) are ranked in **separate tables** — an in-process API amortises process startup across runs, a CLI pays it every run.",
     "Surfaces are independent: compile ms is not comparable to jsx-compile/typecheck/lint/format ms.",
     "jsx-compile uses fixtures/jsx-N (.jsx); SFC compile uses fixtures/N (.vue).",
-    "Compile matrix cells (VDOM/Vapor × production/development) are independent.",
+    "Compile matrix cells (VDOM/Vapor × production/development × sourcemap on/off) are independent.",
+    "Source map is an explicit, independent dimension applied identically to every compiler — it is never folded into the production/development flag for some tools and not others.",
     "Primary compile corpus is unique file contents (fixtures/N).",
     "Content-hash caches skip work on duplicate bodies — unique fixtures required for ranking.",
-    "Measured runs alternate tool order each iteration.",
+    "Tool order is **rotated** on every warmup and measured run, so no tool is pinned to the expensive first slot.",
     "CI does not drop OS page cache; later tools in a job may share a warmer file cache.",
-    "Typecheck/lint tools that fail a planted-bug work gate are unranked (skipped).",
+    "Typecheck/lint tools that fail a planted-bug work gate are unranked (skipped). Typecheck gates require both a script-level and a template-level diagnostic, and are re-verified against the full timed corpus.",
     "Compile measures assert non-empty codegen where applicable.",
     "Vue official compiler is 1T only (worker_threads variants removed).",
     "LSP: Verter discovered via VERTER_LSP_BIN or sibling ../verter/target/{release,debug}/verter-lsp.",

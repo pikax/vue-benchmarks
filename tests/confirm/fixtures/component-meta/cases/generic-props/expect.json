@@ -1,0 +1,11 @@
+{
+  "id": "generic-props",
+  "description": "Props/emits of a generic <script setup> component must still be enumerated",
+  "props": [
+    { "name": "items", "required": true },
+    { "name": "selected", "required": false },
+    { "name": "keyOf", "required": true }
+  ],
+  "events": [{ "name": "pick" }],
+  "absentProps": ["T", "id"]
+}

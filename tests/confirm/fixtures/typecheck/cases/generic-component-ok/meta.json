@@ -1,0 +1,5 @@
+{
+  "id": "generic-component-ok",
+  "description": "generic=\"T extends { id: number }\" on <script setup>; parent passes a consistent T (clean)",
+  "expectErrors": false
+}

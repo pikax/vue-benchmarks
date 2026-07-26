@@ -1,0 +1,38 @@
+{
+  "$comment": [
+    "Known-failing correctness cases: real, reproduced bugs in the tool under test.",
+    "",
+    "They are listed here so `pnpm confirm` can stay a useful gate. A listed",
+    "failure does not fail the build; ANY unlisted failure does. Just as",
+    "importantly, a listed entry that starts PASSING also fails the build, so a",
+    "fixed tool cannot quietly leave a stale suppression behind.",
+    "",
+    "This is not a way to silence inconvenient results. Every entry names the",
+    "tool, the observed behaviour, and stays only until the upstream fix lands.",
+    "Delete the entry the moment the tool is fixed — the suite will tell you.",
+    "",
+    "Format: { \"suite/caseId/tool\": \"why it fails\" }"
+  ],
+
+  "compile/v-once/vize": "vize emits an unquoted object key in the v-once cache path (`data-testid: \"once\"`), producing JavaScript that does not parse. Siblings outside v-once quote correctly.",
+  "compile/custom-directive/vize": "vize omits the 512 /* NEED_PATCH */ flag for user directives, so the element never enters dynamicChildren and the directive's updated hook never fires. It does emit 512 for built-in v-show.",
+  "compile/dynamic-slot-name/vize": "vize emits `{ [_ctx.slotName]: ... }` instead of `[slotName.value]`, so a setup-binding slot name never resolves at runtime.",
+
+  "compile/v-once/verter": "verter ignores v-once entirely — no _cache / _setBlockTracking wrapper is emitted and the subtree re-renders.",
+  "compile/v-text-v-html/verter": "verter silently drops v-text and v-html: emits _createElementVNode(\"span\", _hoisted_1) with an empty props object, no textContent/innerHTML, and reports no error.",
+  "compile/custom-directive/verter": "verter compiles a <script setup> local directive to _resolveDirective(\"highlight\") instead of binding vHighlight, so it fails to resolve at runtime.",
+  "compile/css-v-bind/verter": "verter double-prefixes useCssVars keys (emits \"--a91785dd-x\" where runtime-dom then prepends another \"--\"), so <style> v-bind() never resolves.",
+  "compile/v-show/verter": "verter omits the 512 /* NEED_PATCH */ flag for v-show, so toggling the bound value never updates display.",
+
+  "lint/dupe-else-if/verter-lint": "rule registered in getLintRuleMetadata() as vue-essential but never fires.",
+  "lint/duplicate-attributes/verter-lint": "rule registered in getLintRuleMetadata() as vue-essential but never fires.",
+  "lint/mutating-props/verter-lint": "rule registered in getLintRuleMetadata() as vue-essential but never fires.",
+  "lint/mutating-props/vize-lint": "no-mutating-props never fires on `props.count += 1` under default, essential, opinionated or ecosystem presets.",
+  "lint/deprecated-slot-attr/vize-lint": "no-deprecated-slot-attribute never fires on Vue 2 `slot=\"header\"` under any preset.",
+
+  "typecheck/inherit-attrs-false-unknown/verter-tsc": "verter-tsc unconditionally exempts data-* and aria-* prefixed attributes from strictTemplates undeclared-prop checking (aria-zzz is silent, notdeclared errors), so the planted unknown attribute is missed. Unrelated to inheritAttrs.",
+  "typecheck/attrs-aria-data-unknown/verter-tsc": "Same root cause as above — this case isolates the data-*/aria-* prefix exemption directly.",
+  "typecheck/generic-component-ok/verter-tsc": "verter-tsc emits 3 spurious diagnostics about its own virtual code on a CLEAN generic <script setup> component: ___VERTER___Attrs requires 1 type argument, ___VERTER___attributes is not generic, Cannot find name 'items'.",
+
+  "component-meta/generic-props/vize-declaration-meta": "vize generateDeclaration emits unparseable TypeScript for generic components — `export type Props<T extends { id: number } = any> = <{ ... }>;` wraps the body in angle brackets (3 TS parse errors). Only generic components are affected."
+}

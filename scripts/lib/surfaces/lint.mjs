@@ -3,15 +3,8 @@ import { fileURLToPath } from "node:url";
 import { Worker } from "node:worker_threads";
 import os from "node:os";
 import { createRequire } from "node:module";
-import { existsSync } from "node:fs";
-import { collectVueFiles, totalBytes } from "../fixtures.mjs";
-import {
-  measureVariantsAlternating,
-  resolveBin,
-  runCommand,
-  timedAsync,
-  timedSync,
-} from "../timing.mjs";
+import { collectVueFiles, prepareLintDir, totalBytes } from "../fixtures.mjs";
+import { measureVariants, resolveBin, runCommand, timedAsync, timedSync } from "../timing.mjs";
 import {
   applyWorkGate,
   cliReportsPlantedIssue,
@@ -92,21 +85,15 @@ async function runEslintWorkers(cwd, files, eslintPath) {
 export async function runLintSurface(fixtureDir, options) {
   const files = collectVueFiles(fixtureDir, options.fileLimit);
   const bytes = totalBytes(fixtureDir, files);
-  const filePaths = files.map((f) => join(fixtureDir, f));
 
-  // Ensure eslint config exists (generator writes it; older fixtures may lack it)
-  if (!existsSync(join(fixtureDir, "eslint.config.mjs"))) {
-    const { writeFileSync } = await import("node:fs");
-    writeFileSync(
-      join(fixtureDir, "eslint.config.mjs"),
-      `import pluginVue from "eslint-plugin-vue";
-export default [
-  ...pluginVue.configs["flat/recommended"],
-  { files: ["**/*.vue"], rules: { "vue/multi-word-component-names": "off" } },
-];
-`,
-    );
-  }
+  // Lint against an isolated copy holding exactly the measured subset.
+  //
+  // Previously eslint received an explicit .vue list while `vize lint .` walked
+  // the whole fixture directory — so with --lint-file-limit set they silently
+  // linted different corpora. Copying the subset makes the file set identical
+  // no matter how each tool discovers its inputs.
+  const lintDir = prepareLintDir(fixtureDir, files, options.workRoot, `n${files.length}`);
+  const filePaths = files.map((f) => join(lintDir, f));
 
   const variants = [];
   let eslintPath = null;
@@ -115,6 +102,7 @@ export default [
   } catch {
     eslintPath = null;
   }
+  const eslintBin = tryResolveBin("eslint");
 
   if (eslintPath) {
     const { ESLint } = await import("eslint");
@@ -123,12 +111,13 @@ export default [
       label: "eslint-plugin-vue (1T)",
       package: "eslint-plugin-vue",
       threading: "1t",
+      invocation: "in-process",
       notes: "ESLint flat config + eslint-plugin-vue recommended, single-threaded lintFiles",
       measure: () =>
         timedAsync(async () => {
           const eslint = new ESLint({
-            overrideConfigFile: join(fixtureDir, "eslint.config.mjs"),
-            cwd: fixtureDir,
+            overrideConfigFile: join(lintDir, "eslint.config.mjs"),
+            cwd: lintDir,
           });
           await eslint.lintFiles(filePaths);
         }),
@@ -138,8 +127,9 @@ export default [
       label: `eslint-plugin-vue (${Math.min(cpuCount, files.length)} workers)`,
       package: "eslint-plugin-vue",
       threading: "workers",
+      invocation: "in-process",
       notes: "ESLint worker_threads fan-out (one ESLint instance per worker)",
-      measure: () => timedAsync(() => runEslintWorkers(fixtureDir, files, eslintPath)),
+      measure: () => timedAsync(() => runEslintWorkers(lintDir, files, eslintPath)),
     });
   } else {
     variants.push({
@@ -151,6 +141,28 @@ export default [
     });
   }
 
+  // ESLint also runs as a CLI so the CLI table has a non-native reference point.
+  // It is the only tool here with both a library and a binary entry point, so it
+  // is the bridge between the two comparison classes.
+  if (eslintBin) {
+    variants.push({
+      id: "eslint-plugin-vue-cli",
+      label: "eslint-plugin-vue (CLI)",
+      package: "eslint-plugin-vue",
+      threading: "1t",
+      invocation: "cli",
+      notes: "eslint CLI over the same corpus — pays Node startup + config load per run, like the native CLIs",
+      measure: () => {
+        const { ms } = runCommand(eslintBin, ["."], {
+          cwd: lintDir,
+          allowNonZeroExit: true,
+          shell: isWinShell(eslintBin),
+        });
+        return ms;
+      },
+    });
+  }
+
   const vize = tryResolveBin("vize");
   if (vize) {
     variants.push({
@@ -158,10 +170,11 @@ export default [
       label: "Vize lint (1T)",
       package: "vize",
       threading: "1t",
+      invocation: "cli",
       notes: "vize lint . with RAYON_NUM_THREADS=1",
       measure: () => {
         const { ms } = runCommand(vize, ["lint", ".", "--quiet"], {
-          cwd: fixtureDir,
+          cwd: lintDir,
           allowNonZeroExit: true,
           env: { RAYON_NUM_THREADS: "1" },
           shell: process.platform === "win32" && vize.endsWith(".cmd"),
@@ -174,10 +187,11 @@ export default [
       label: "Vize lint (max threads)",
       package: "vize",
       threading: "max",
+      invocation: "cli",
       notes: "vize lint . using default Rayon pool (all cores)",
       measure: () => {
         const { ms } = runCommand(vize, ["lint", ".", "--quiet"], {
-          cwd: fixtureDir,
+          cwd: lintDir,
           allowNonZeroExit: true,
           shell: process.platform === "win32" && vize.endsWith(".cmd"),
         });
@@ -205,14 +219,15 @@ export default [
   if (verterNative?.VerterHost) {
     const { VerterHost } = verterNative;
     const sources = files.map((f) => ({
-      path: join(fixtureDir, f).replace(/\\/g, "/"),
-      source: require("node:fs").readFileSync(join(fixtureDir, f), "utf8"),
+      path: join(lintDir, f).replace(/\\/g, "/"),
+      source: require("node:fs").readFileSync(join(lintDir, f), "utf8"),
     }));
     variants.push({
       id: "verter-lint-host",
       label: "Verter host lint",
       package: "@verter/native",
       threading: "host",
+      invocation: "in-process",
       notes: "VerterHost.upsert + lint(canonicalId) for each file (if API available)",
       measure: () =>
         timedSync(() => {
@@ -249,7 +264,11 @@ export default [
   try {
     const eslintOk = eslintPath ? await eslintReportsPlant(plant, eslintPath) : false;
     applyWorkGate(variants, (v) => {
-      if (v.id === "eslint-plugin-vue-1t" || v.id === "eslint-plugin-vue-workers") {
+      if (
+        v.id === "eslint-plugin-vue-1t" ||
+        v.id === "eslint-plugin-vue-workers" ||
+        v.id === "eslint-plugin-vue-cli"
+      ) {
         return eslintOk;
       }
       if (v.id === "vize-lint-1t" || v.id === "vize-lint-max") {
@@ -291,7 +310,7 @@ export default [
     plant.cleanup();
   }
 
-  const results = await measureVariantsAlternating(variants, {
+  const results = await measureVariants(variants, {
     runs: options.runs,
     warmups: options.warmups,
     fileCount: files.length,
@@ -308,13 +327,15 @@ export default [
     files: files.length,
     bytes,
     methodology: [
-      "Same on-disk Vue SFC corpus for every tool.",
+      "Every tool lints an identical isolated copy of the corpus (work/lint/…), so tools that take an explicit file list and tools that walk a directory see exactly the same files.",
+      "In-process and CLI tools are ranked in SEPARATE tables. A CLI pays process startup on every run (~85ms measured for a native CLI); an in-process API pays it once. eslint runs in BOTH classes so the two tables have a shared reference point.",
+      "No single invocation mode covers every tool — vize lint is CLI-only, VerterHost.lint is in-process-only — so the split is the only way to compare like with like.",
       "eslint-plugin-vue uses flat recommended config generated with fixtures.",
       "Vize lint 1T vs max threads reported separately — compare within class.",
       "Planted-bug work gate: each tool must report vue/no-v-html (or equivalent) or is unranked.",
       "Allow non-zero exit (style diagnostics do not abort timing).",
       "Rule sets are NOT identical across tools — throughput only, not diagnostic equivalence.",
-      "Measured runs alternate variant order each iteration to reduce order bias.",
+      "Tool order is rotated on every warmup and measured run; ranking metric is the median of warmed runs.",
     ],
     variants: results,
   };

@@ -1,0 +1,7 @@
+{
+  "id": "template-ref-type",
+  "description": "useTemplateRef element type must be enforced on member access",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS2339", "notAMethod", "does not exist", "HTMLInputElement"]
+}

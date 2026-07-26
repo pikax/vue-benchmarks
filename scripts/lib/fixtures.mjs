@@ -65,8 +65,19 @@ export function writeTsconfig(dir, { include = ["**/*.vue", "**/*.ts"], extendsP
       esModuleInterop: true,
       resolveJsonModule: true,
       lib: ["ESNext", "DOM"],
-      types: ["node"],
+      // MUST stay empty: `@types/node` is not a dependency of this repo, and
+      // `types: ["node"]` made every typechecker fail at program construction
+      // with TS2688 instead of checking the corpus — vue-tsc reported that one
+      // config error and nothing else, so its "typecheck" timing was really a
+      // fast config failure. The generated SFCs need no ambient node types.
+      types: [],
     },
+    // The work-gate plant projects set strictTemplates, so without it here the
+    // TIMED runs were checking materially less than the gate certified. Two
+    // checkers flip from "misses unknown props/events/components" to catching
+    // them once this is on, so its absence silently discounted their measured
+    // work relative to a checker that template-checks unconditionally.
+    vueCompilerOptions: { strictTemplates: true },
     include,
   };
   if (extendsPath) {
@@ -125,9 +136,58 @@ export function prepareTypecheckDir(inputDir, files, workRoot, label) {
   return out;
 }
 
+/**
+ * Isolated lint corpus holding exactly the measured subset.
+ *
+ * Tools discover inputs differently — eslint takes an explicit file list,
+ * `vize lint .` walks a directory. Handing both an identical directory keeps
+ * the compared file set the same regardless of discovery strategy.
+ */
+export function prepareLintDir(inputDir, files, workRoot, label) {
+  const out = join(workRoot, "lint", label);
+  copyFixtureSubset(inputDir, out, files, ["eslint.config.mjs"]);
+  if (!existsSync(join(out, "eslint.config.mjs"))) {
+    writeFileSync(
+      join(out, "eslint.config.mjs"),
+      `import pluginVue from "eslint-plugin-vue";
+import tsParser from "@typescript-eslint/parser";
+
+// parserOptions.parser is required for <script setup lang="ts"> — without it
+// ESLint fatally fails to parse and silently skips those files.
+export default [
+  ...pluginVue.configs["flat/recommended"],
+  {
+    files: ["**/*.vue"],
+    languageOptions: {
+      parserOptions: {
+        parser: tsParser,
+        ecmaVersion: "latest",
+        sourceType: "module",
+      },
+    },
+    rules: {
+      "vue/multi-word-component-names": "off",
+      "vue/require-default-prop": "off",
+      "vue/require-explicit-emits": "off",
+    },
+  },
+];
+`,
+    );
+  }
+  writeFileSync(
+    join(out, "package.json"),
+    `${JSON.stringify({ private: true, type: "module", name: `bench-lint-${label}` }, null, 2)}\n`,
+  );
+  return out;
+}
+
 export function prepareFormatCopy(inputDir, files, workRoot, label, invocation) {
   const out = join(workRoot, "format", `${label}-${String(invocation).padStart(4, "0")}`);
-  copyFixtureSubset(inputDir, out, files);
+  // .prettierrc.json must travel with the copy: Prettier resolves config by
+  // walking up from the file, and the work dir is not under the fixture dir,
+  // so a config left behind in the fixture root would never be applied.
+  copyFixtureSubset(inputDir, out, files, [".prettierrc.json"]);
   return out;
 }
 

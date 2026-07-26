@@ -1,0 +1,5 @@
+{
+  "id": "optional-chain-ok",
+  "description": "Optional chaining + nullish coalescing inside template expressions (clean)",
+  "expectErrors": false
+}

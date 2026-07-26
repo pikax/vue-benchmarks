@@ -1,0 +1,8 @@
+{
+  "id": "attrs-aria-data-unknown",
+  "description": "Undeclared aria-*/data-* attributes on a component are not exempt from strictTemplates (isolates the root cause of inherit-attrs-false-unknown: the exemption is prefix-based, not inheritAttrs-based)",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS2353", "TS2322", "aria-zzz", "data-x", "not assignable", "does not exist"],
+  "requires": ["strict-component-attrs"]
+}

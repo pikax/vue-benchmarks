@@ -357,7 +357,7 @@ only if machine load is acceptable; prefer sequential for cleaner numbers.
     results.push(row);
     if (row.status === "ok") {
       console.log(
-        `ok  RSS avg=${row.avgMb} MiB  alloc avg=${Number.isFinite(row.allocAvgMb) ? row.allocAvgMb : "n/a"} MiB  CPU=${Number.isFinite(row.cpuTotalMs) ? row.cpuTotalMs + "ms" : "n/a"} (${row.cpuPercent ?? "n/a"}%)`,
+        `ok  RSS avg=${row.avgMb} MiB  alloc avg=${Number.isFinite(row.allocAvgMb) ? row.allocAvgMb : "n/a"} MiB  CPU=${Number.isFinite(row.cpuTotalMs) ? row.cpuTotalMs + "ms" : "n/a"} (${Number.isFinite(row.cpuPercent) ? row.cpuPercent + "%" : "n/a"})`,
       );
     } else {
       console.log(row.status, row.error || row.skip || "");

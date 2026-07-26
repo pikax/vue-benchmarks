@@ -270,9 +270,10 @@ export function normalizeVerterMetaBuffer(buf) {
 
 /**
  * Extract `export type Name = { ... }` body with nested-brace awareness.
+ * Tolerates a generic parameter list on the alias (`export type Props<T> = {`).
  */
 function extractExportTypeBody(text, typeName) {
-  const re = new RegExp(`export\\s+type\\s+${typeName}\\s*=\\s*\\{`);
+  const re = new RegExp(`export\\s+type\\s+${typeName}\\s*(?:<[^=]*>)?\\s*=\\s*\\{`);
   const m = re.exec(text);
   if (!m) return null;
   let i = m.index + m[0].length;
@@ -284,6 +285,28 @@ function extractExportTypeBody(text, typeName) {
     else if (ch === "}") depth--;
   }
   return text.slice(start, i - 1);
+}
+
+/**
+ * A `.d.ts` emitter must emit parseable TypeScript. Returns the first few
+ * syntax errors, or [] when the source parses (or TypeScript is unavailable).
+ */
+export function findDeclarationSyntaxErrors(code) {
+  const ts = loadOptional("typescript");
+  if (ts.error) return [];
+  const sourceFile = ts.mod.createSourceFile(
+    "declaration.d.ts",
+    code,
+    ts.mod.ScriptTarget.ESNext,
+    true,
+    ts.mod.ScriptKind.TS,
+  );
+  const diagnostics = sourceFile.parseDiagnostics || [];
+  return diagnostics.slice(0, 3).map((d) => {
+    const message = ts.mod.flattenDiagnosticMessageText(d.messageText, " ");
+    const near = code.slice(Math.max(0, d.start - 40), d.start + 40).replace(/\s+/g, " ");
+    return `${message} (near "${near.trim()}")`;
+  });
 }
 
 /**
@@ -313,6 +336,18 @@ export function normalizeVizeDeclaration(code) {
   const emitsBody = extractExportTypeBody(text, "Emits");
   if (emitsBody) {
     for (const line of emitsBody.split(/\r?\n/)) {
+      // Call-signature form: `(event: "save", id: number): void;`
+      const call = line.match(
+        /^\s*\(\s*[A-Za-z_]\w*\s*:\s*(?:'([^']+)'|"([^"]+)")\s*(?:,\s*(.*?))?\)\s*:\s*(.+?)\s*;?\s*$/,
+      );
+      if (call) {
+        events.push({
+          name: call[1] || call[2],
+          type: (call[3] || "").trim(),
+        });
+        continue;
+      }
+      // Tuple/property form: `save: [id: number];`
       const m = line.match(/^\s*(?:'([^']+)'|"([^"]+)"|([A-Za-z_][\w:.-]*))\s*:\s*(.+?)\s*;?\s*$/);
       if (!m) continue;
       const name = m[1] || m[2] || m[3];
@@ -321,6 +356,13 @@ export function normalizeVizeDeclaration(code) {
         type: m[4].replace(/;?\s*$/, "").trim(),
       });
     }
+    // Overloaded event names collapse to one entry, widest payload wins
+    const merged = new Map();
+    for (const e of events.splice(0)) {
+      const prev = merged.get(e.name);
+      if (!prev || (e.type || "").length > (prev.type || "").length) merged.set(e.name, e);
+    }
+    events.push(...merged.values());
   }
 
   const slotsBody = extractExportTypeBody(text, "Slots");
@@ -443,7 +485,14 @@ export function getMetaTools({ workDir }) {
         const decl = vize.mod.generateDeclaration(source, {
           filename: "Component.vue",
         });
-        return normalizeVizeDeclaration(decl);
+        const text = typeof decl === "string" ? decl : (decl?.code ?? "");
+        const syntaxErrors = findDeclarationSyntaxErrors(text);
+        if (syntaxErrors.length) {
+          throw new Error(
+            `generateDeclaration emitted unparseable TypeScript: ${syntaxErrors.join("; ")}`,
+          );
+        }
+        return normalizeVizeDeclaration(text);
       },
       dispose() {},
     });

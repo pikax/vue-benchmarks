@@ -58,12 +58,56 @@ export async function timedAsync(fn) {
   return { ms, ...extra };
 }
 
+/** Minimum warmup passes. Cold (unwarmed) runs are never reported as a ranking metric. */
+export const MIN_WARMUPS = 1;
+
 /**
- * Measure a single variant: warmups then runs.
- * Returns cold / warm / median stats. measure() may return number or { ms, ...meta }.
+ * Every tool gets at least one discarded warmup pass before measurement.
+ *
+ * Rationale: a JS compiler pays a large one-off JIT cost on its first pass
+ * (measured ~3.2x its own steady state) while a native/NAPI tool pays none.
+ * Ranking on an unwarmed first run therefore measures V8 warmup, not the tool.
+ */
+export function effectiveWarmups(warmups) {
+  const n = Number.isFinite(warmups) ? warmups : MIN_WARMUPS;
+  return Math.max(MIN_WARMUPS, n);
+}
+
+/** Summary stats over measured runs. Primary metric is the median. */
+function summarize(all) {
+  const med = median(all);
+  const sd = stddev(all);
+  return {
+    runs: all,
+    medianMs: Number(med.toFixed(3)),
+    minMs: Number(Math.min(...all).toFixed(3)),
+    maxMs: Number(Math.max(...all).toFixed(3)),
+    meanMs: Number(mean(all).toFixed(3)),
+    stddevMs: Number(sd.toFixed(3)),
+    // Coefficient of variation — noise guard. High CV => thermal drift or a noisy box.
+    cvPct: med > 0 ? Number(((sd / med) * 100).toFixed(1)) : 0,
+  };
+}
+
+/**
+ * Rotate so each variant occupies a different position on each measured run.
+ * Deterministic (reproducible) and, over runs >= variants, position-balanced.
+ * Forward/reverse alternation only ever produces two orderings and leaves the
+ * first run in fixed declaration order.
+ */
+function rotate(list, by) {
+  if (list.length === 0) return list;
+  const k = ((by % list.length) + list.length) % list.length;
+  return [...list.slice(k), ...list.slice(0, k)];
+}
+
+/**
+ * Measure a single variant: warmups (>= 1, discarded) then runs.
+ * measure() may return number or { ms, ...meta }.
  */
 export async function measureSeries(measure, { runs = 3, warmups = 1 } = {}) {
-  for (let i = 0; i < warmups; i++) {
+  const w = effectiveWarmups(warmups);
+  for (let i = 0; i < w; i++) {
     await measure({ phase: "warmup", iteration: i });
   }
 
@@ -79,36 +123,27 @@ export async function measureSeries(measure, { runs = 3, warmups = 1 } = {}) {
     }
   }
 
-  const coldMs = all[0] ?? Number.NaN;
-  const warmRuns = all.length > 1 ? all.slice(1) : all;
-  const result = {
-    runs: all,
-    coldMs,
-    warmMedianMs: Number(median(warmRuns).toFixed(3)),
-    warmMeanMs: Number(mean(warmRuns).toFixed(3)),
-    warmStddevMs: Number(stddev(warmRuns).toFixed(3)),
-    overallMedianMs: Number(median(all).toFixed(3)),
-  };
+  const result = summarize(all);
   if (metas.length) result.metaSamples = metas;
   return result;
 }
 
 /**
- * Measure a list of variants with alternating order each measured iteration
- * (reduces systematic order bias — Vize-style).
+ * Measure a list of variants, rotating tool order on every measured run.
  *
- * Warmups: each variant once in forward order.
- * Measured: iteration i uses forward order when i even, reverse when i odd.
+ * Warmups (>= 1, always discarded) are rotated too, so no tool is pinned to
+ * first position — first position is the most expensive slot on a cold box.
+ * Ranking metric is the median of the measured runs; there is no cold column.
  */
-export async function measureVariantsAlternating(
+export async function measureVariants(
   variants,
   { runs = 3, warmups = 1, fileCount } = {},
 ) {
   const active = variants.filter((v) => !v.skip);
-  const skipped = variants.filter((v) => v.skip);
+  const warmupPasses = effectiveWarmups(warmups);
 
-  for (let w = 0; w < warmups; w++) {
-    for (const v of active) {
+  for (let w = 0; w < warmupPasses; w++) {
+    for (const v of rotate(active, w)) {
       try {
         await v.measure({ phase: "warmup", iteration: w });
       } catch (error) {
@@ -122,7 +157,8 @@ export async function measureVariantsAlternating(
   const metaById = new Map(active.map((v) => [v.id, []]));
 
   for (let i = 0; i < runs; i++) {
-    const ordered = i % 2 === 0 ? active : [...active].reverse();
+    // Rotate by run index: over runs >= variants every tool visits every slot.
+    const ordered = rotate(active, i);
     for (const v of ordered) {
       try {
         const out = await v.measure({ phase: "measure", iteration: i });
@@ -142,67 +178,53 @@ export async function measureVariantsAlternating(
     }
   }
 
+  const baseRow = (v) => ({
+    id: v.id,
+    label: v.label,
+    package: v.package,
+    target: v.target,
+    env: v.env,
+    sourceMap: v.sourceMap,
+    threading: v.threading,
+    invocation: v.invocation,
+    artifactPolarity: v.artifactPolarity,
+    // Underlying engine (e.g. tsc-js vs tsgo). Part of the comparison class.
+    engine: v.engine,
+    // What the surface counts as "work produced" (e.g. "code bytes",
+    // "diagnostics"). Rendered as a column so a fast row with a tiny artifact
+    // count is obvious.
+    artifactLabel: v.artifactLabel,
+    notes: v.notes,
+    files: fileCount,
+  });
+
   const results = [];
   for (const v of variants) {
     if (v.skip) {
-      results.push({
-        id: v.id,
-        label: v.label,
-        package: v.package,
-        target: v.target,
-        env: v.env,
-        threading: v.threading,
-        notes: v.notes,
-        status: "skipped",
-        files: fileCount,
-        throughput: "n/a",
-      });
+      results.push({ ...baseRow(v), status: "skipped", throughput: "n/a" });
       continue;
     }
     if (v._error) {
       results.push({
-        id: v.id,
-        label: v.label,
-        package: v.package,
-        target: v.target,
-        env: v.env,
-        threading: v.threading,
-        notes: v.notes,
+        ...baseRow(v),
         status: "error",
-        files: fileCount,
         error: v._error,
         throughput: "n/a",
       });
       continue;
     }
     const all = runsById.get(v.id) ?? [];
-    if (all.some((x) => !Number.isFinite(x))) {
+    if (all.length === 0 || all.some((x) => !Number.isFinite(x))) {
       results.push({
-        id: v.id,
-        label: v.label,
-        package: v.package,
-        target: v.target,
-        env: v.env,
-        threading: v.threading,
-        notes: v.notes,
+        ...baseRow(v),
         status: "error",
-        files: fileCount,
         error: v._error ?? "measurement failed",
         throughput: "n/a",
       });
       continue;
     }
-    const coldMs = all[0] ?? Number.NaN;
-    const warmRuns = all.length > 1 ? all.slice(1) : all;
     const metas = metaById.get(v.id) ?? [];
-    const series = {
-      runs: all,
-      coldMs,
-      warmMedianMs: Number(median(warmRuns).toFixed(3)),
-      warmMeanMs: Number(mean(warmRuns).toFixed(3)),
-      warmStddevMs: Number(stddev(warmRuns).toFixed(3)),
-      overallMedianMs: Number(median(all).toFixed(3)),
-    };
+    const series = summarize(all);
     if (metas.length) {
       series.metaSamples = metas;
       // Aggregate common cache stats if present
@@ -211,23 +233,34 @@ export async function measureVariantsAlternating(
         series.cacheHitsMedian = Number(median(hits).toFixed(0));
         series.cacheHitsLast = hits[hits.length - 1];
       }
+      // Artifact census: how much did this tool actually PRODUCE?
+      //
+      // Timing alone cannot tell "fast" from "did less". A tool that skips
+      // v-for codegen, drops v-text, fails to parse a third of the corpus, or
+      // emits no source map is quicker for reasons that have nothing to do
+      // with being a better implementation. Every surface reports a
+      // countable artifact so a suspiciously fast row is visible in the table
+      // instead of being taken at face value.
+      const artifacts = metas.map((m) => m.artifact).filter((x) => Number.isFinite(x));
+      if (artifacts.length) {
+        series.artifactMedian = Number(median(artifacts).toFixed(0));
+      }
     }
     results.push({
-      id: v.id,
-      label: v.label,
-      package: v.package,
-      target: v.target,
-      env: v.env,
-      threading: v.threading,
-      notes: v.notes,
-      status: "ok",
-      files: fileCount,
+      ...baseRow(v),
+      // "unranked" = measured, but failed a validation gate. Its timing is
+      // reported for context and excluded from every ranking comparison.
+      status: v.unranked ? "unranked" : "ok",
       ...series,
-      throughput: formatThroughput(fileCount, series.overallMedianMs),
+      warmupPasses,
+      throughput: v.unranked ? "n/a" : formatThroughput(fileCount, series.medianMs),
     });
   }
   return results;
 }
+
+/** @deprecated renamed — order is rotated, not merely alternated. */
+export const measureVariantsAlternating = measureVariants;
 
 export function pathWithNodeBins(cwd) {
   const dirs = [];

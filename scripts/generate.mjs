@@ -60,11 +60,24 @@ function writeSupportFiles(dir, { name, count, mode, uniqueContents }) {
   writeFileSync(
     join(dir, "eslint.config.mjs"),
     `import pluginVue from "eslint-plugin-vue";
+import tsParser from "@typescript-eslint/parser";
 
+// The corpus is <script setup lang="ts">. Without parserOptions.parser,
+// vue-eslint-parser cannot read TypeScript and ESLint emits a fatal parse
+// error per file — it was silently skipping ~30% of the corpus (6 of 20
+// files), which inflated its measured throughput against tools that parsed
+// everything. Wiring the TS parser makes the lint comparison honest.
 export default [
   ...pluginVue.configs["flat/recommended"],
   {
     files: ["**/*.vue"],
+    languageOptions: {
+      parserOptions: {
+        parser: tsParser,
+        ecmaVersion: "latest",
+        sourceType: "module",
+      },
+    },
     rules: {
       "vue/multi-word-component-names": "off",
       "vue/require-default-prop": "off",

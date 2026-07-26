@@ -16,7 +16,7 @@ import { fileURLToPath } from "node:url";
 import { existsSync } from "node:fs";
 import { basename } from "node:path";
 import { collectJsxFiles, readSources, totalBytes } from "../fixtures.mjs";
-import { measureVariantsAlternating, timedSync } from "../timing.mjs";
+import { measureVariants, timedSync } from "../timing.mjs";
 
 const require = createRequire(import.meta.url);
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../../..");
@@ -196,7 +196,7 @@ export async function runJsxCompileSurface(fixtureDir, options) {
     });
   }
 
-  const results = await measureVariantsAlternating(variants, {
+  const results = await measureVariants(variants, {
     runs: options.runs,
     warmups: options.warmups,
     fileCount: files.length,
