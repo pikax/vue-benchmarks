@@ -261,6 +261,20 @@ export async function attachVolarHybridBridge(volarClient, { workspaceDir, rootD
         textDocument: { uri, languageId, version, text },
       });
     },
+    /**
+     * Mirror an edit to the TypeScript server.
+     *
+     * Required for any measurement of the edit loop: Volar answers no
+     * TypeScript itself, so if only the Vue half sees a change, every
+     * subsequent type answer is computed from the stale buffer and the server
+     * looks both fast and correct while being neither.
+     */
+    changeDocument(uri, text, version) {
+      tsClient.sendNotification("textDocument/didChange", {
+        textDocument: { uri, version },
+        contentChanges: [{ text }],
+      });
+    },
     /** Ask the TypeScript half for a language feature. */
     request(method, params, timeoutMs) {
       return tsClient.sendRequest(method, params, timeoutMs);
