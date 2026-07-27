@@ -27,8 +27,8 @@ importers:
         specifier: 0.291.0
         version: 0.291.0
       '@vscode/test-electron':
-        specifier: 2.5.2
-        version: 2.5.2
+        specifier: 3.1.0
+        version: 3.1.0
       '@vue-jsx-vapor/compiler-rs':
         specifier: 3.2.19
         version: 3.2.19
@@ -1194,9 +1194,9 @@ packages:
   '@vscode/l10n@0.0.18':
     resolution: {integrity: sha512-KYSIHVmslkaCDyw013pphY+d7x1qV8IZupYfeIfzNA+nsaWHbn5uPuQRvdRFsa9zFzGeudPuoGoZ1Op4jrJXIQ==}
 
-  '@vscode/test-electron@2.5.2':
-    resolution: {integrity: sha512-8ukpxv4wYe0iWMRQU18jhzJOHkeGKbnw7xWRX3Zw1WJA4cEKbHcmmLPdPrPtL6rhDcrlCZN+xKRpv09n4gRHYg==}
-    engines: {node: '>=16'}
+  '@vscode/test-electron@3.1.0':
+    resolution: {integrity: sha512-CRqv5u+YYoseuNVJ6Tyo4k0sF0mx4qnKMihRB0PjsUF8Dc0WKtCXo6CNL6nWWm5esfFQsQA/pejMj4ZbpJVLTw==}
+    engines: {node: '>=22'}
 
   '@vue-jsx-vapor/compiler-rs-android-arm-eabi@3.2.19':
     resolution: {integrity: sha512-HefhdfW2cqQgmstyFySUtsf0ClWvfJacRto0nW0DzrNxojNmLlYKVoa4GnfcR5AitHlbPOnVorZT25rVCJ/MSA==}
@@ -3799,7 +3799,7 @@ snapshots:
 
   '@vscode/l10n@0.0.18': {}
 
-  '@vscode/test-electron@2.5.2':
+  '@vscode/test-electron@3.1.0':
     dependencies:
       http-proxy-agent: 7.0.2
       https-proxy-agent: 7.0.6
