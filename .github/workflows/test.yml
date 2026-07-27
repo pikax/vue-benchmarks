@@ -79,7 +79,7 @@ jobs:
       # regression. Never committed; results/ is gitignored.
       - name: Upload confirmation report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: confirm-report-linux
           path: |

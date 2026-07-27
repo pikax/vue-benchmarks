@@ -140,7 +140,7 @@ jobs:
           node scripts/generate.mjs --counts "50,${COUNT}"
 
       - name: Upload fixtures artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: fixtures-bench-linux
           path: fixtures
@@ -229,7 +229,7 @@ jobs:
       - name: Upload bench results
         id: upload-bench
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: results-bench-linux
           path: results/**
@@ -283,7 +283,7 @@ jobs:
 
       - name: Upload IDE results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: results-ide-linux
           path: results/ide-*
@@ -337,7 +337,7 @@ jobs:
 
       - name: Upload IDE scale results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: results-ide-scale-linux
           path: results/ide-scale-*
@@ -387,7 +387,7 @@ jobs:
 
       - name: Upload memory results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: results-memory-linux
           path: results/memory-*
