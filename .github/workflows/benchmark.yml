@@ -467,7 +467,7 @@ jobs:
       # The action no-ops when nothing changed, so an idempotent re-run does not
       # create an empty commit.
       - name: Commit results (single commit, skip ci)
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: |
             chore: publish benchmark results [skip ci]
