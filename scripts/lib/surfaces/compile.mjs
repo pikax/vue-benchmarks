@@ -10,6 +10,21 @@ const require = createRequire(import.meta.url);
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../../..");
 
 /**
+ * Verter host static-analysis level for the compile rows.
+ *
+ * `HostConfig.analysisLevel` defaults to "full", which drives the static
+ * analysis `upsert()` performs. The compile rows use the `runtime-render`
+ * lane, which emits bundler output and does not consume that analysis — and
+ * Verter's own apples-to-apples benchmark constructs its host with
+ * `analysisLevel: "none"` for exactly this reason.
+ *
+ * Overridable so the choice can be A/B'd against byte-identical output rather
+ * than asserted. Whatever it is set to is printed in the row notes: this
+ * changes how much work Verter does, so it must never be an invisible default.
+ */
+const VERTER_ANALYSIS_LEVEL = process.env.VERTER_ANALYSIS_LEVEL || "full";
+
+/**
  * Compile matrix dimensions (orthogonal, reported separately):
  *   target:     "vdom" | "vapor"
  *   env:        "production" | "development"
@@ -335,9 +350,9 @@ function buildCellVariants({
       threading: "batch",
       invocation: "in-process",
       artifactLabel: "Code bytes",
-      notes: `runtime-render forceVapor=${vapor}, isProduction=${isProd}, ${smNote}${smIgnored}, hmr=${renderProfile.hmrStrategy}, mode=stateless, multi-thread host pool`,
+      notes: `runtime-render forceVapor=${vapor}, isProduction=${isProd}, ${smNote}${smIgnored}, hmr=${renderProfile.hmrStrategy}, mode=stateless, analysis=${VERTER_ANALYSIS_LEVEL}, multi-thread host pool`,
       measure: async () => {
-        const host = new VerterHost({ devMode: !isProd });
+        const host = new VerterHost({ devMode: !isProd, analysisLevel: VERTER_ANALYSIS_LEVEL });
         return timedSync(() => {
           const results = host.compileMany(batchInputs, {
             target: "runtime-render",
@@ -376,7 +391,7 @@ function buildCellVariants({
       threading: "batch-cached",
       invocation: "in-process",
       artifactLabel: "Code bytes",
-      notes: `runtime-render forceVapor=${vapor}, isProduction=${isProd}, ${smNote}${smIgnored}, mode=session — persistent host, cacheHits reported (ranked separately from cache-free batch rows)`,
+      notes: `runtime-render forceVapor=${vapor}, isProduction=${isProd}, ${smNote}${smIgnored}, mode=session, analysis=${VERTER_ANALYSIS_LEVEL} — persistent host, cacheHits reported (ranked separately from cache-free batch rows)`,
       measure: async () => {
         const key = `session-${cell}`;
         if (!hosts[key]) {
