@@ -62,8 +62,34 @@ import { positionAfter, positionOf, scaffold } from "../workspace.mjs";
  * Whole budget for "initialize → first correct hover", i.e. project load. A
  * server that cannot get there inside it reports valid:false with the timeout
  * as evidence; the corpus is never shrunk to make a struggling server pass.
+ *
+ * 30s, measured — was 120s, which cost ~27 minutes of pure waiting per full run
+ * and bought nothing. Time-to-usable on this box:
+ *
+ *     server        @20      @100     @500     worst
+ *     Volar         1.46s    1.60s    2.11s    2.11s
+ *     Volar (TNB)   1.61s    1.83s    2.78s    2.78s
+ *     Verter        0.30s    0.33s    0.34s    0.34s
+ *     Vize          fail     fail     fail     never answers
+ *
+ * The slowest PASSING server uses 2.78s. At 4x for a slower CI runner that is
+ * ~11s, still comfortably inside 30s.
+ *
+ * The one server that exhausts the budget does not do so because it is slow: it
+ * never returns a correct answer at any budget, because it reports the type of
+ * this probe as `Ref<string>` when the fixture types it through a
+ * number-returning function. It therefore consumes 100% of whatever budget
+ * exists — 120s, 30s or 5s alike. A large identical budget is only fair if a
+ * server might actually use it; here it was just the price of a known failure,
+ * paid once per size per pass.
+ *
+ * Still IDENTICAL for every server, and still generous against measured need.
+ * Override with SCALE_PROJECT_LOAD_TIMEOUT_MS when investigating a server that
+ * genuinely needs longer — and if one ever does, raise it for everybody.
  */
-export const PROJECT_LOAD_TIMEOUT_MS = 120_000;
+export const PROJECT_LOAD_TIMEOUT_MS = Number(
+  process.env.SCALE_PROJECT_LOAD_TIMEOUT_MS ?? 30_000,
+);
 /** One hover attempt while polling for the first correct answer. */
 const HOVER_ATTEMPT_TIMEOUT_MS = 15_000;
 /** Gap between hover attempts, so polling does not flood a loading server. */
@@ -489,6 +515,36 @@ async function medianOp({ id, label, repeats, run }) {
  * it — that is the number that separates a server which is snappy at 20 files
  * from one that is unusable at 500.
  */
+/**
+ * Rows for a size that was not attempted because the server never became usable
+ * on a smaller corpus.
+ *
+ * Reported rather than omitted. A missing row reads as "not part of the suite";
+ * these say exactly why they are absent, and they are `valid:false` so nothing
+ * here can be mistaken for a measurement or enter a ranking.
+ */
+function skippedSizeOps(corpus, failedAtSize) {
+  const { size } = corpus;
+  const at = `@${size} files`;
+  const reason =
+    `not attempted: the server never became usable on the ${failedAtSize}-file corpus, ` +
+    `so it cannot become usable on ${size}. Re-proving that costs the full project-load ` +
+    `budget per size, per pass, and yields no new information.`;
+  return [
+    { id: `usable@${size}`, label: `Time-to-usable ${at}` },
+    { id: `completion@${size}`, label: `Completion ${at}` },
+    { id: `references@${size}`, label: `References ${at}` },
+    { id: `hover-warm@${size}`, label: `Hover warm ${at}` },
+  ].map(({ id, label }) => ({
+    id,
+    label,
+    ms: null,
+    valid: false,
+    reason,
+    sample: "",
+  }));
+}
+
 async function measureSize(ctx, corpus) {
   const { size } = corpus;
   const ids = {
@@ -739,8 +795,27 @@ export const SUITE = {
 
   async measure(ctx) {
     const ops = [];
+    // Sizes ascend, so the smallest corpus is the easiest case a server will
+    // face. If it cannot become usable THERE, it will not become usable on a
+    // corpus 25x larger — and re-proving that costs the full load budget at
+    // every remaining size, on every pass. It was the single largest block of
+    // dead time in this suite: 3 sizes x the budget, per pass, for a server
+    // that answers none of them.
+    //
+    // Applied to EVERY server by the same rule, not aimed at whichever one
+    // currently fails. The larger sizes are still reported — as unranked, with
+    // the reason naming the size that failed — so the row says "not measured
+    // because it never started", never a silently missing or a fabricated one.
+    let usableFailedAt = null;
     for (const corpus of ctx.ws.corpora) {
-      ops.push(...(await measureSize(ctx, corpus)));
+      if (usableFailedAt !== null) {
+        ops.push(...skippedSizeOps(corpus, usableFailedAt));
+        continue;
+      }
+      const sizeOps = await measureSize(ctx, corpus);
+      ops.push(...sizeOps);
+      const usable = sizeOps.find((o) => o.id === `usable@${corpus.size}`);
+      if (usable && usable.valid === false) usableFailedAt = corpus.size;
     }
     ops.push(...scalingOps(ops, ctx.ws.sizes));
     return ops;
