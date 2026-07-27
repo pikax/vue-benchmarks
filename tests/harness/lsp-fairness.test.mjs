@@ -490,6 +490,45 @@ describe("Verter language-server provenance", () => {
     );
   });
 
+  test("no local-build or working-copy path can be discovered", () => {
+    // Source tripwire. The behavioural assertion above only proves the npm
+    // package WINS while it happens to be installed; it cannot see a fallback
+    // ladder waiting behind it. That ladder is what made Verter the one row
+    // with no version — and it failed in the worst direction, by quietly
+    // succeeding. A `target/debug` candidate was accepted with the same label
+    // as release, publishing a Rust debug profile's timings as if they were a
+    // product measurement.
+    //
+    // Comments are stripped first, otherwise this matches the very sentences
+    // explaining why the paths must not come back.
+    //
+    // Scoped to resolveVerterLsp's body, NOT the whole file: the Vize resolver
+    // legitimately reads USERPROFILE/HOME to find VS Code's globalStorage,
+    // which is where the shipped extension puts its downloaded native server.
+    // A file-wide check flags that and would teach the next person to delete
+    // the tripwire rather than the defect.
+    const code = surfaceCode();
+    const start = code.indexOf("export function resolveVerterLsp");
+    assert.notEqual(start, -1, "resolveVerterLsp was renamed — update this guard");
+    const body = code.slice(start, code.indexOf("\nexport ", start + 1));
+
+    for (const [pattern, what] of [
+      [/target/, "a Rust target/ directory"],
+      [/\.\./, "a parent-directory traversal (sibling checkout)"],
+      [/USERPROFILE|HOME/, "a developer's home directory"],
+      [/VERTER_LSP_BIN|VERTER_LSP_ARGS|VERTER_LSP_LABEL/, "an env override pointing at a local binary"],
+      [/process\.cwd/, "a cwd-relative binary path"],
+      [/rootDir/, "a repo-relative bin/ path"],
+    ]) {
+      assert.doesNotMatch(
+        body,
+        pattern,
+        `resolveVerterLsp can again discover ${what} — a row sourced that way carries no version, ` +
+          `and a target/debug build would be published with the same label as release`,
+      );
+    }
+  });
+
   test("the resolved binary is the native executable, not the Node CLI shim", () => {
     // The package's own docs: bin/run.js exists for `npx` and for editors that
     // launch a bare `verter-lsp`; clients should spawn the native binary

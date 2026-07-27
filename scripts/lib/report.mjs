@@ -348,7 +348,7 @@ export function buildMethodologyNotes() {
     "Typecheck/lint tools that fail a planted-bug work gate are unranked (skipped). Typecheck gates require both a script-level and a template-level diagnostic, and are re-verified against the full timed corpus.",
     "Compile measures assert non-empty codegen where applicable.",
     "Vue official compiler is 1T only (worker_threads variants removed).",
-    "LSP: Verter discovered via VERTER_LSP_BIN or sibling ../verter/target/{release,debug}/verter-lsp.",
+    "LSP: every server resolves from its installed npm package and is skipped when absent — no local-build or working-copy discovery, so each row names a version.",
     "verter-tsc needs stable tsgo (typescript@7.0.x via typescript-go); harness sets VERTER_TSGO_BIN.",
     "Diagnostic/format identity across tools is not required for throughput rows.",
   ];

@@ -12,7 +12,8 @@
  *   - Vize:   vize lsp --stdio                (single process; the standalone
  *             native server the VS Code extension ships, or VIZE_LSP_BIN, or
  *             the npm package's Node entry as a fallback — the row says which)
- *   - Verter: verter-lsp / VERTER_LSP_BIN     (single process; optional)
+ *   - Verter: verter-lsp                      (single process; the native
+ *             server from the published npm package — skipped when absent)
  *
  * Phases (same request sequence for every server):
  *   1. initialize + initialized
@@ -463,29 +464,31 @@ export function resolveVizeLsp({
   };
 }
 
+/**
+ * The published `verter-lsp` server binary, or null.
+ *
+ * npm ONLY, deliberately. This used to fall back to a working copy — repo-local
+ * `bin/`, a sibling `../verter/target/{release,debug}/`, `$HOME/dev/personal/
+ * verter/…`, `cwd/target/release/` — and that made Verter the one row in the
+ * table with no version behind it: unreproducible from the lockfile, absent
+ * from versions.mjs, and silently accepting a `target/debug` build whose
+ * timings a Rust debug profile makes roughly an order of magnitude slower.
+ * Discovery like that fails in the worst direction, by succeeding quietly.
+ *
+ * `verter-lsp`, `verter-mcp` and `@verter/component-meta` are all published, so
+ * there is nothing left for a local path to rescue. Missing package now means
+ * `skipped`, which is what this repo already does for every other absent tool
+ * rather than substituting a different one.
+ *
+ * To measure an unreleased build, install it — `pnpm link` or a packed tarball
+ * — so the version it reports is the version that ran.
+ *
+ * The binary is spawned DIRECTLY. The package's own docs are explicit that
+ * `bin/run.js` is a Node shim for `npx` and for editors launching a bare
+ * `verter-lsp` command; going through it would add a Node startup no other
+ * native row pays.
+ */
 export function resolveVerterLsp() {
-  if (process.env.VERTER_LSP_BIN && existsSync(process.env.VERTER_LSP_BIN)) {
-    return {
-      command: process.env.VERTER_LSP_BIN,
-      args: process.env.VERTER_LSP_ARGS
-        ? process.env.VERTER_LSP_ARGS.split(/\s+/).filter(Boolean)
-        : [],
-      shell: false,
-      labelExtra: process.env.VERTER_LSP_LABEL ?? "custom binary",
-    };
-  }
-
-  // The published `verter-lsp` package, when installed. Preferred over any
-  // local build because it is the only candidate carrying a version: every
-  // other server in this table resolves to a pinned npm artifact, and a row
-  // sourced from an unversioned working copy cannot be reproduced from the
-  // lockfile or reported by versions.mjs. The local-build candidates below
-  // stay for development, and say "local build" on the row.
-  //
-  // The package's own docs are explicit that the native binary should be
-  // spawned DIRECTLY: bin/run.js is a Node shim for `npx` and for editors that
-  // launch a bare `verter-lsp` command. Going through it would add a Node
-  // startup that no other native row pays.
   try {
     const { resolveServerBinary } = require("verter-lsp");
     const resolved = resolveServerBinary?.();
@@ -499,35 +502,7 @@ export function resolveVerterLsp() {
       };
     }
   } catch {
-    // Not installed, or an unsupported host — fall through to local builds.
-  }
-
-  // Discovery: repo-local bin/, sibling checkout (dev/personal/verter), cwd target/
-  const home = process.env.USERPROFILE || process.env.HOME || "";
-  const candidates = [
-    join(rootDir, "bin", "verter-lsp.exe"),
-    join(rootDir, "bin", "verter-lsp"),
-    // Sibling monorepo: .../personal/vue-benchmarks + .../personal/verter
-    join(rootDir, "..", "verter", "target", "release", "verter-lsp.exe"),
-    join(rootDir, "..", "verter", "target", "release", "verter-lsp"),
-    join(rootDir, "..", "verter", "target", "debug", "verter-lsp.exe"),
-    join(rootDir, "..", "verter", "target", "debug", "verter-lsp"),
-    // Common absolute-ish local paths via USERPROFILE
-    home ? join(home, "dev", "personal", "verter", "target", "release", "verter-lsp.exe") : "",
-    home ? join(home, "dev", "personal", "verter", "target", "debug", "verter-lsp.exe") : "",
-    join(process.cwd(), "target", "release", "verter-lsp.exe"),
-    join(process.cwd(), "target", "release", "verter-lsp"),
-  ].filter(Boolean);
-
-  for (const c of candidates) {
-    if (existsSync(c)) {
-      return {
-        command: c,
-        args: [],
-        shell: false,
-        labelExtra: "local build",
-      };
-    }
+    // Not installed, or no platform package for this host.
   }
   return null;
 }
@@ -1129,7 +1104,7 @@ export async function runLspSurface(_fixtureDir, options) {
       threading: "lsp",
       artifactLabel: "Hover bytes",
       notes:
-        "verter-lsp stdio. Set VERTER_LSP_BIN if not auto-discovered. $/verter/ready is OBSERVED, never waited for — its workspace load is inside the timed open→hover window like every other server's.",
+        "verter-lsp stdio, the native server from the published npm package. $/verter/ready is OBSERVED, never waited for — its workspace load is inside the timed open→hover window like every other server's.",
       measure: async () =>
         runLspSession({
           name: "Verter",
@@ -1155,7 +1130,8 @@ export async function runLspSurface(_fixtureDir, options) {
       id: "verter-lsp",
       label: "Verter LSP",
       package: "verter-lsp",
-      notes: "Binary not found. Build verter-lsp or set VERTER_LSP_BIN=/path/to/verter-lsp.",
+      notes:
+        "Not installed. Add `verter-lsp` from npm — no local build is discovered, so every row names a published version.",
       skip: true,
     });
   }
@@ -1261,7 +1237,7 @@ export async function runLspSurface(_fixtureDir, options) {
       "Vize is launched from the standalone native server the VS Code extension downloads (version-matched, discovered under VS Code globalStorage, or pinned with VIZE_LSP_BIN) — that is the process the shipped product runs. Where no native server exists, e.g. CI, the npm package's Node entry is used and the row says so, because the Node bootstrap it adds (~35ms/spawn, inside initialize) is not part of the product.",
       "Completion/definition are best-effort extras; null/n/a does not mean the tool is slower — capability may differ.",
       "typescript-native-bridge (TNB) is a drop-in typescript package for CLI/tsserver — NOT a Vue LSP in its own right. It appears here only as Volar's TypeScript engine: the `Volar (TNB / tsgo tsdk)` row is the same Volar binary with TNB supplying the tsserver half, so the pair isolates the TS engine from the Vue layer.",
-      "Verter binary is optional (VERTER_LSP_BIN). Skipped when missing.",
+      "Verter resolves from the installed `verter-lsp` package only; skipped when it is absent.",
       "VS Code extension host overhead is NOT measured — only the language server stdio protocol.",
       "Server order is rotated on every warmup and measured run; no server is pinned to first position.",
     ],

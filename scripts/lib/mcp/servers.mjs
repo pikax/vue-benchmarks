@@ -33,110 +33,92 @@
  * debug binary") describe the intended contract, not code that exists today.
  * ───────────────────────────────────────────────────────────────────────────
  *
- * Resolution mirrors `resolveVerterLsp`, in this order:
- *   1. explicit env override
- *   2. repo-local bin/
- *   3. npm install (`verter-mcp` is being published, like `verter-lsp`)
- *   4. sibling source checkout, release BEFORE debug
+ * Resolution is the INSTALLED PACKAGE, and nothing else. Both servers resolve
+ * through their own published entry point and are skipped when absent.
  *
- * The build kind is part of the result and is NOT cosmetic. A Rust debug build
- * is routinely an order of magnitude slower than release, so timing one and
- * publishing the number would be worse than not measuring at all. Callers
- * refuse to rank a debug binary; correctness gates still run against it, since
- * behaviour does not change between profiles.
+ * There used to be a ladder — env override, repo-local `bin/`, npm, then a
+ * sibling source checkout with release ordered before debug — plus a
+ * `buildKind`/`rankable` guard so a debug binary could not be ranked. All of it
+ * existed because the packages were unpublished. They are published now, so the
+ * ladder is gone and the guard has nothing left to guard: an npm platform
+ * package is a release build. See `resolveVerterLsp` in
+ * `scripts/lib/surfaces/lsp.mjs`, which lost the same apparatus for the same
+ * reason and describes what silent local-path discovery cost.
  *
- * Only Verter ships an MCP server today — Vize has no `mcp` subcommand and the
- * Vue language tools have none. This returns a list rather than one server so
- * that stays true by inspection instead of by assumption.
+ * Vize ships its MCP server as its OWN npm package rather than a `vize`
+ * subcommand, which is why neither `vize --help` nor the CLI surface reveals
+ * it. The Vue language tools have none. This returns a list rather than one
+ * server so that stays true by inspection instead of by assumption.
  */
 
 import { createRequire } from "node:module";
-import { existsSync } from "node:fs";
-import { dirname, join, sep } from "node:path";
+import { existsSync, readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const require = createRequire(import.meta.url);
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../../..");
 
 /**
- * "release" | "debug" | "packaged".
- * `packaged` = came from an npm install, where the publisher controls the
- * profile and a release build is the reasonable assumption.
+ * Installed version of a package, or null — so a row names the artifact that
+ * produced it. Resolves by path rather than `require.resolve(<pkg>/package.json)`,
+ * which throws for any package whose `exports` omits "./package.json".
  */
-function buildKindOf(binPath) {
-  const p = binPath.split(sep).join("/");
-  if (/\/target\/release\//.test(p)) return "release";
-  if (/\/target\/debug\//.test(p)) return "debug";
-  return "packaged";
+function pkgVersion(name) {
+  const dir = join(rootDir, "node_modules", ...name.split("/"));
+  try {
+    return JSON.parse(readFileSync(join(dir, "package.json"), "utf8")).version ?? null;
+  } catch {
+    return null;
+  }
 }
 
+/**
+ * The published `verter-mcp` server binary, or an unavailable descriptor.
+ *
+ * npm ONLY, for the same reason as `resolveVerterLsp` in
+ * `scripts/lib/surfaces/lsp.mjs`. This used to search repo-local `bin/`, the
+ * `.bin` shims, and a sibling `../verter/target/{release,debug}` checkout,
+ * ordering release before debug precisely because picking up a debug build
+ * would publish a number roughly an order of magnitude too slow. That whole
+ * apparatus existed to work around the package not being published. It is
+ * published, so the apparatus is gone — and with it the `buildKind` /
+ * `rankable` debug guard, which had nothing left to guard against: an npm
+ * platform package is a release build.
+ *
+ * The `.bin` shim entries were also wrong in the way `verter-lsp` was: they
+ * point at `bin/run.js`, a Node launcher, so the row would have paid a Node
+ * startup the product does not. Resolved through the package's own
+ * `resolveServerBinary()` instead, which returns the native executable.
+ */
 function resolveVerterMcp() {
-  const candidates = [];
-
-  if (process.env.VERTER_MCP_BIN) candidates.push(process.env.VERTER_MCP_BIN);
-
-  candidates.push(join(rootDir, "bin", "verter-mcp.exe"), join(rootDir, "bin", "verter-mcp"));
-
-  // npm: the published package, resolved the same way any other bin is.
-  for (const name of ["verter-mcp.cmd", "verter-mcp"]) {
-    candidates.push(join(rootDir, "node_modules", ".bin", name));
-  }
   try {
-    const pkg = require.resolve("verter-mcp/package.json", { paths: [rootDir] });
-    const dir = dirname(pkg);
-    candidates.push(
-      join(dir, "bin", "verter-mcp.exe"),
-      join(dir, "bin", "verter-mcp"),
-      join(dir, "verter-mcp.exe"),
-    );
-  } catch {
-    // Not installed yet — expected until it is published.
-  }
-
-  // Sibling checkout. Release first, ALWAYS: picking up a debug binary because
-  // it happened to be built more recently would silently publish a number ~10x
-  // too slow.
-  const home = process.env.USERPROFILE || process.env.HOME || "";
-  for (const profile of ["release", "debug"]) {
-    candidates.push(
-      join(rootDir, "..", "verter", "target", profile, "verter-mcp.exe"),
-      join(rootDir, "..", "verter", "target", profile, "verter-mcp"),
-    );
-    if (home) {
-      candidates.push(
-        join(home, "dev", "personal", "verter", "target", profile, "verter-mcp.exe"),
-        join(home, "dev", "personal", "verter", "target", profile, "verter-mcp"),
-      );
+    const { resolveServerBinary } = require("verter-mcp");
+    const resolved = resolveServerBinary?.();
+    if (resolved?.path && existsSync(resolved.path)) {
+      return {
+        id: "verter-mcp",
+        label: "Verter MCP",
+        command: resolved.path,
+        // --project-root is filled in per run: the fixture differs by suite.
+        args: (projectRoot) => ["--project-root", projectRoot],
+        shell: false,
+        version: pkgVersion("verter-mcp"),
+        rankable: true,
+        notes: `npm ${pkgVersion("verter-mcp") ?? "package"}`,
+      };
     }
-  }
-
-  for (const c of candidates.filter(Boolean)) {
-    if (!existsSync(c)) continue;
-    const buildKind = buildKindOf(c);
-    return {
-      id: "verter-mcp",
-      label: "Verter MCP",
-      command: c,
-      // --project-root is filled in per run: the fixture differs by suite.
-      args: (projectRoot) => ["--project-root", projectRoot],
-      shell: c.endsWith(".cmd"),
-      buildKind,
-      rankable: buildKind !== "debug",
-      notes:
-        buildKind === "debug"
-          ? "DEBUG build — correctness is gated, timings are NOT ranked (a debug Rust build is routinely ~10x slower than release). Install the published `verter-mcp`, or set VERTER_MCP_BIN to a release binary."
-          : `${buildKind} build`,
-    };
+  } catch {
+    // Not installed, or no platform package for this host.
   }
 
   return {
     id: "verter-mcp",
     label: "Verter MCP",
     command: null,
-    buildKind: null,
+    version: null,
     rankable: false,
-    notes:
-      "Not found. Install `verter-mcp` from npm, set VERTER_MCP_BIN, or build it in a sibling verter checkout.",
+    notes: "Not found. Install `verter-mcp` from npm.",
   };
 }
 
@@ -152,34 +134,25 @@ function resolveVerterMcp() {
  * below and the suite's comparison classes.
  */
 function resolveMuseaMcp() {
-  const candidates = [];
-  if (process.env.MUSEA_MCP_BIN) candidates.push(process.env.MUSEA_MCP_BIN);
-  // Direct path first. The package's `exports` map exposes only ".", so
+  // Direct path: the package's `exports` map exposes only ".", so
   // `require.resolve("@vizejs/musea-mcp-server/package.json")` is blocked by
-  // exports encapsulation and throws even when the package is installed.
-  candidates.push(
-    join(rootDir, "node_modules", "@vizejs", "musea-mcp-server", "dist", "cli.mjs"),
-  );
-  try {
-    const pkg = require.resolve("@vizejs/musea-mcp-server/package.json", { paths: [rootDir] });
-    candidates.push(join(dirname(pkg), "dist", "cli.mjs"));
-  } catch {
-    // Blocked by exports, or not installed — the direct path above covers it.
-  }
+  // exports encapsulation and throws even when the package is installed. The
+  // same packaging detail once sent the Vize LSP resolver down a shell shim,
+  // which is why it is spelled out rather than worked around silently.
+  const cli = join(rootDir, "node_modules", "@vizejs", "musea-mcp-server", "dist", "cli.mjs");
 
-  for (const c of candidates.filter(Boolean)) {
-    if (!existsSync(c)) continue;
+  if (existsSync(cli)) {
     return {
       id: "musea-mcp",
       label: "Vize Musea MCP",
       // Spawned through node directly: the .bin shim is a .cmd on Windows and
       // would add a cmd.exe hop that the other server does not pay.
       command: process.execPath,
-      args: (projectRoot) => [c, "--project", projectRoot],
+      args: (projectRoot) => [cli, "--project", projectRoot],
       shell: false,
-      buildKind: "packaged",
+      version: pkgVersion("@vizejs/musea-mcp-server"),
       rankable: true,
-      notes: "published npm build",
+      notes: `npm ${pkgVersion("@vizejs/musea-mcp-server") ?? "package"}`,
     };
   }
 
@@ -187,9 +160,9 @@ function resolveMuseaMcp() {
     id: "musea-mcp",
     label: "Vize Musea MCP",
     command: null,
-    buildKind: null,
+    version: null,
     rankable: false,
-    notes: "Not found. Install `@vizejs/musea-mcp-server`, or set MUSEA_MCP_BIN.",
+    notes: "Not found. Install `@vizejs/musea-mcp-server`.",
   };
 }
 
@@ -214,5 +187,3 @@ export const CAPABILITY = {
 export function resolveMcpServers() {
   return [resolveVerterMcp(), resolveMuseaMcp()].filter(Boolean);
 }
-
-export { buildKindOf };
