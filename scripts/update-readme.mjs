@@ -66,6 +66,39 @@ function leafOf(path) {
   return base.split("/").pop() || base;
 }
 
+/**
+ * README states, twice, that published numbers are Linux only and that local
+ * runs on other platforms are for comparison on your own box — never against
+ * published figures. This is what enforces it.
+ *
+ * Without the check, `pnpm update-readme` on a developer machine spliced
+ * `#### Windows · bench` straight into that README. The tables were labelled,
+ * so it was not silent, but the document then contradicted its own stated
+ * policy — and the numbers most likely to be published by accident are exactly
+ * the ones taken on a machine nobody else can reproduce.
+ *
+ * Off by default, because the guard exists to stop an accident, not to stop
+ * someone who means it: PUBLISH_ANY_PLATFORM=1 allows the splice and says so.
+ */
+function publishablePlatforms(env = process.env) {
+  return env.PUBLISH_ANY_PLATFORM === "1" ? null : ["Ubuntu/Linux"];
+}
+
+/**
+ * @returns {{ publish: string[], rejected: Array<{file: string, platform: string}> }}
+ */
+export function filterPublishable(files, allowed = publishablePlatforms()) {
+  if (!allowed) return { publish: files, rejected: [] };
+  const publish = [];
+  const rejected = [];
+  for (const file of files) {
+    const platform = platformOf(file);
+    if (allowed.includes(platform)) publish.push(file);
+    else rejected.push({ file: leafOf(file), platform });
+  }
+  return { publish, rejected };
+}
+
 const today = () => new Date().toISOString().slice(0, 10);
 
 /**
@@ -178,8 +211,16 @@ function main() {
   const before = readme;
 
   for (const section of SECTIONS) {
-    const files = walk(dir, section.prefix);
+    const found = walk(dir, section.prefix);
+    const { publish: files, rejected } = filterPublishable(found);
     const hasMarkers = readme.includes(section.start) && readme.includes(section.end);
+
+    for (const { file, platform } of rejected) {
+      console.log(
+        `[${section.id}] SKIPPED ${file} — ${platform} artifact, and README publishes Linux only. ` +
+          `Set PUBLISH_ANY_PLATFORM=1 to override.`,
+      );
+    }
 
     if (files.length === 0) {
       // NEVER overwrite published results with a placeholder — see file header.
