@@ -44,12 +44,301 @@
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { existsSync } from "node:fs";
+import { performance } from "node:perf_hooks";
 import { LspClient, pathToFileUri } from "./lsp-client.mjs";
 
 const require = createRequire(import.meta.url);
 
-/** Cap on a single forwarded tsserver command. */
-const TS_REQUEST_TIMEOUT_MS = 15_000;
+/* -------------------------------------------------------------------------- */
+/* Budgets                                                                     */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Floor for a single forwarded tsserver command.
+ *
+ * The budget itself is NOT optional and removing it is not the fix. Volar's
+ * `sendTsServerRequest` is a bare `new Promise(resolve => …)` with no timeout
+ * and no reject path (see the file header), so a forwarded command that never
+ * comes back wedges the Vue half forever and takes the whole run with it. This
+ * budget is the only thing that guarantees Volar gets the one reply it waits
+ * for.
+ *
+ * What was wrong was the SIZE and the SILENCE:
+ *
+ *   - it was 15s, i.e. SHORTER than the budget the harness gives the outer
+ *     request the forwarded command belongs to (45s in the background suite,
+ *     60s in scale). An internal cap tighter than the external one makes the
+ *     internal cap the binding constraint, and no other server in this harness
+ *     has an internal cap at all — it was a penalty for being two processes.
+ *     `forwardedBudgetMs()` now raises this floor to whatever outer budget is
+ *     actually in flight, so the harness's own identical-for-everyone budget is
+ *     what decides.
+ *   - on expiry the bridge replied `null`, which on the wire is exactly what a
+ *     TypeScript server that genuinely has no answer sends. The Vue half then
+ *     answered the client with an empty result, the content gate failed it, and
+ *     the row was published `valid:false` — indistinguishable from the server
+ *     answering badly. Every expiry is now recorded in a failure log the suite
+ *     can read and attribute (`bridgeFailures()` / `takeBridgeFailures()`).
+ */
+export const DEFAULT_TS_REQUEST_TIMEOUT_MS = 30_000;
+
+/**
+ * Fallback for the TypeScript half's `initialize`.
+ *
+ * Only a floor — see `resolveTsInitTimeoutMs`. Hard-coding this was defect 2:
+ * the number was unreachable from `createSession`'s `initTimeoutMs` and from
+ * `SCALE_PROJECT_LOAD_TIMEOUT_MS`, so the documented way to give a slow-starting
+ * server more time reached the Vue half and never the TypeScript half — the half
+ * most likely to need it on a large project.
+ */
+export const DEFAULT_TS_INIT_TIMEOUT_MS = 30_000;
+
+/**
+ * Budget for a direct request on the TypeScript half when the caller names none.
+ * Mirrors `LspClient.sendRequest`'s own default so the two cannot drift.
+ */
+const DEFAULT_DIRECT_REQUEST_TIMEOUT_MS = 30_000;
+
+/**
+ * Grace added to the transport's timeout so THIS budget is the one that fires.
+ *
+ * Both timers would otherwise be armed for the same duration and which one won
+ * would be a coin flip — making "the bridge budget expired" and "the transport
+ * gave up" report as each other at random. The transport timer stays armed as
+ * the backstop that clears the pending-request entry.
+ */
+const BUDGET_GRACE_MS = 1_000;
+
+/** First positive, finite number among the candidates; else `fallback`. */
+function firstBudget(candidates, fallback) {
+  for (const candidate of candidates) {
+    if (candidate === undefined || candidate === null || candidate === "") continue;
+    const n = Number(candidate);
+    if (Number.isFinite(n) && n > 0) return n;
+  }
+  return fallback;
+}
+
+/**
+ * Budget for the TypeScript half's `initialize`, in precedence order.
+ *
+ *   1. `initTimeoutMs` passed by the caller — the correct channel.
+ *      `createSession()` already computes this (45s by default, and the scale
+ *      suite hands it `PROJECT_LOAD_TIMEOUT_MS`); it just does not forward it
+ *      yet. When it does, this is the branch that runs.
+ *   2. `VOLAR_TS_INIT_TIMEOUT_MS` — targets this half specifically.
+ *   3. `SCALE_PROJECT_LOAD_TIMEOUT_MS` — the escape hatch scale.mjs documents
+ *      for "a server that genuinely needs longer to load a project". Honouring
+ *      it here is the point: it is an ENV var, i.e. already process-global, and
+ *      the thing it names — project load — is exactly what this initialize does.
+ *      Reading it means the hatch works today without editing scale.mjs or
+ *      context.mjs. It can only ever RAISE a ceiling, so a run that did not need
+ *      it is unaffected.
+ */
+export function resolveTsInitTimeoutMs(explicit, env = process.env) {
+  return firstBudget(
+    [explicit, env.VOLAR_TS_INIT_TIMEOUT_MS, env.SCALE_PROJECT_LOAD_TIMEOUT_MS],
+    DEFAULT_TS_INIT_TIMEOUT_MS,
+  );
+}
+
+/** Floor for forwarded tsserver commands: caller, then env, then the default. */
+export function resolveTsRequestTimeoutMs(explicit, env = process.env) {
+  return firstBudget(
+    [explicit, env.VOLAR_TS_REQUEST_TIMEOUT_MS],
+    DEFAULT_TS_REQUEST_TIMEOUT_MS,
+  );
+}
+
+/**
+ * Budget for a forwarded command: the floor, raised to the largest outer budget
+ * still in flight.
+ *
+ * `ask()` fans a request out to both halves at the same instant with the same
+ * `timeoutMs`, so while the Vue half is working — and forwarding
+ * `tsserver/request` — there is a direct request on the TypeScript half carrying
+ * exactly the budget the harness intended for this question. Adopting it is what
+ * makes the two-process server answer to the same clock as the single-process
+ * ones instead of to a private, tighter one.
+ */
+export function forwardedBudgetMs(floorMs, inFlightDeadlines, now) {
+  let ms = floorMs;
+  for (const deadline of inFlightDeadlines) {
+    const remaining = deadline - now;
+    if (remaining > ms) ms = remaining;
+  }
+  return ms;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Failure log — what makes an expiry distinguishable from an empty answer      */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Bounded record of forwarded commands that produced no answer.
+ *
+ * Bounded because a wedged TypeScript server can generate these faster than
+ * anything drains them, and an unbounded array inside a benchmark is a memory
+ * leak that changes the thing being measured.
+ */
+export function createBridgeFailureLog(limit = 50) {
+  const entries = [];
+  return {
+    record(entry) {
+      entries.push(entry);
+      if (entries.length > limit) entries.splice(0, entries.length - limit);
+    },
+    get size() {
+      return entries.length;
+    },
+    /** Read without clearing. */
+    peek() {
+      return entries.slice();
+    },
+    /** Read AND clear, so a caller can attribute failures to one operation. */
+    take() {
+      return entries.splice(0, entries.length);
+    },
+  };
+}
+
+/**
+ * One line naming what the TypeScript half failed to do, for an Op's `reason`.
+ *
+ * Grouped by (kind, command) with a count: ten expiries of one command is one
+ * fact, and ten copies of it would push the actual gate reason out of the 240
+ * characters an Op reason is allowed.
+ */
+export function summarizeBridgeFailures(failures) {
+  if (!failures?.length) return "";
+  const groups = new Map();
+  for (const f of failures) {
+    const key = `${f.kind}:${f.command}`;
+    const existing = groups.get(key);
+    if (existing) existing.count++;
+    else groups.set(key, { ...f, count: 1 });
+  }
+  return [...groups.values()]
+    .map((f) =>
+      f.kind === "timeout"
+        ? `${f.count}x tsserver \`${f.command}\` exceeded the bridge budget of ${Math.round(f.budgetMs)}ms`
+        : `${f.count}x tsserver \`${f.command}\` failed (${f.message})`,
+    )
+    .join("; ");
+}
+
+/** Sentinel resolved by the bridge's own deadline, never by a server. */
+const BUDGET_EXPIRED = Symbol("volar-bridge-budget-expired");
+
+/**
+ * The `tsserver/request` handler, with its transport injected.
+ *
+ * Split out from `attachVolarHybridBridge` so the behaviour that matters — what
+ * happens when the TypeScript server does not answer — is testable without
+ * spawning two real language servers.
+ *
+ * @param {object} o
+ * @param {(command: string, args: unknown, timeoutMs: number) => Promise<any>} o.sendToTs
+ * @param {(requestId: unknown, body: unknown) => void} o.replyToVolar
+ * @param {number | (() => number)} o.budgetMs
+ * @param {{record: (entry: object) => void}} [o.failures]
+ * @param {boolean} [o.debug]
+ * @param {(msg: string) => void} [o.warn] where a budget expiry is announced
+ * @param {() => number} [o.now]
+ */
+export function createTsRequestForwarder({
+  sendToTs,
+  replyToVolar,
+  budgetMs,
+  failures,
+  debug = false,
+  warn = (msg) => console.error(msg),
+  now = () => performance.now(),
+}) {
+  return async function onTsserverRequest(params) {
+    const { requestId, command, args } = unwrapTuple(params);
+    // No id means no addressable reply. Nothing is waiting on it either, so
+    // there is nothing to wedge and nothing to record.
+    if (requestId == null) return;
+
+    // Volar's pending-request promise never rejects and never times out, so
+    // EVERY request must be answered exactly once — a null body is a valid
+    // answer, silence is not. That constraint is also precisely why the failure
+    // has to be recorded HERE: on the wire, "the budget expired" and "the
+    // TypeScript server has no answer" are the same reply, and only this side
+    // knows which one it just sent.
+    const reply = (body) => {
+      try {
+        replyToVolar(requestId, body ?? null);
+      } catch {
+        // Transport already gone; the run is ending either way.
+      }
+    };
+
+    if (!command) {
+      reply(null);
+      return;
+    }
+
+    if (debug) warn(`[hybrid] → ts_ls ${command}`);
+
+    const budget = typeof budgetMs === "function" ? budgetMs(command) : budgetMs;
+    const started = now();
+    let timer = null;
+    try {
+      const expiry = new Promise((resolve) => {
+        timer = setTimeout(() => resolve(BUDGET_EXPIRED), budget);
+      });
+      // The transport keeps its own, slightly later timer so its pending entry
+      // is always cleaned up; `expiry` is the one that decides the verdict.
+      const outcome = await Promise.race([
+        sendToTs(command, args, budget + BUDGET_GRACE_MS),
+        expiry,
+      ]);
+
+      if (outcome === BUDGET_EXPIRED) {
+        const ms = now() - started;
+        failures?.record({
+          kind: "timeout",
+          command,
+          requestId,
+          budgetMs: budget,
+          ms,
+          message: `no reply from the TypeScript server within ${Math.round(budget)}ms`,
+        });
+        // Always announced, not only under LSP_BENCH_DEBUG: this is the event
+        // that used to be published as a confident empty answer.
+        warn(
+          `[hybrid] BUDGET EXPIRED after ${Math.round(ms)}ms on tsserver \`${command}\` ` +
+            `— replying null so Volar cannot hang; the row this feeds is NOT a server answer`,
+        );
+        reply(null);
+        return;
+      }
+
+      // ts_ls returns the full tsserver envelope { type, command, success, body }.
+      // A body of null here is a GENUINE empty answer and is deliberately not
+      // recorded — that distinction is the whole point of this function.
+      const body = outcome?.body ?? outcome;
+      if (debug) warn(`[hybrid] ← id=${requestId} has=${body != null}`);
+      reply(body ?? null);
+    } catch (err) {
+      const message = String(err?.message ?? err).slice(0, 200);
+      failures?.record({
+        kind: "error",
+        command,
+        requestId,
+        budgetMs: budget,
+        ms: now() - started,
+        message,
+      });
+      if (debug) warn(`[hybrid] err ${message}`);
+      reply(null);
+    } finally {
+      if (timer) clearTimeout(timer);
+    }
+  };
+}
 
 /**
  * @param {string} fromDir resolution root for typescript / plugin / ts_ls
@@ -128,7 +417,10 @@ function unwrapTuple(params) {
  * and `openDocument` / `request` let the caller drive the TypeScript member the
  * way an editor does.
  */
-export async function attachVolarHybridBridge(volarClient, { workspaceDir, rootDir, tsdkDir }) {
+export async function attachVolarHybridBridge(
+  volarClient,
+  { workspaceDir, rootDir, tsdkDir, initTimeoutMs, requestTimeoutMs },
+) {
   const paths = resolveTsserverPaths(rootDir, tsdkDir);
   if (!paths.tsLsBin || !existsSync(paths.tsLsBin)) {
     throw new Error(
@@ -186,66 +478,85 @@ export async function attachVolarHybridBridge(volarClient, { workspaceDir, rootD
     preferences: {},
   };
 
-  await tsClient.initialize(rootUri, {
-    initializationOptions: initOptions,
-    timeoutMs: 30_000,
+  // Threaded, not hard-coded — see resolveTsInitTimeoutMs. This is the half most
+  // likely to need extra time on a large project, so it must be the half the
+  // documented escape hatch can actually reach.
+  //
+  // The failure path has to kill the process it started. `createSession()` binds
+  // its `ctx` only after this call returns, so a throw here leaves the caller
+  // with nothing to close: the ts_ls child keeps its stdio pipes open, the
+  // event loop never drains and the runner hangs forever instead of reporting
+  // "this server could not start". A hang is the one outcome worse than a
+  // failed row — it produces no measurement AND no finding.
+  const tsInitTimeoutMs = resolveTsInitTimeoutMs(initTimeoutMs);
+  try {
+    await tsClient.initialize(rootUri, {
+      initializationOptions: initOptions,
+      timeoutMs: tsInitTimeoutMs,
+    });
+  } catch (err) {
+    try {
+      await tsClient.kill();
+    } catch {
+      // Already gone.
+    }
+    throw new Error(
+      `Volar's TypeScript half did not initialize within ${tsInitTimeoutMs}ms: ${err?.message ?? err}`,
+    );
+  }
+
+  /** Forwarded commands that produced no answer, for the suite to attribute. */
+  const failures = createBridgeFailureLog();
+
+  /**
+   * Deadlines of direct requests currently in flight on this half.
+   *
+   * Read by `forwardedBudgetMs()` so a forwarded command inherits the outer
+   * budget the harness chose for the question being asked, instead of a private
+   * cap only this server has.
+   */
+  const inFlight = new Set();
+
+  const requestFloorMs = resolveTsRequestTimeoutMs(requestTimeoutMs);
+
+  const onTsserverRequest = createTsRequestForwarder({
+    sendToTs: (command, args, timeoutMs) =>
+      // Official bridge command: workspace/executeCommand typescript.tsserverRequest
+      tsClient.sendRequest(
+        "workspace/executeCommand",
+        { command: "typescript.tsserverRequest", arguments: [command, args] },
+        timeoutMs,
+      ),
+    replyToVolar: (requestId, body) => {
+      // Wrapped: vscode-jsonrpc spreads array params positionally and Volar's
+      // handler takes the tuple as its single argument. See the file header.
+      volarClient.sendNotification("tsserver/response", [[requestId, body]]);
+    },
+    budgetMs: () =>
+      forwardedBudgetMs(
+        requestFloorMs,
+        [...inFlight].map((e) => e.deadline),
+        performance.now(),
+      ),
+    failures,
+    debug: Boolean(process.env.LSP_BENCH_DEBUG),
   });
 
   volarClient.on("notification", (method, params) => {
     if (method !== "tsserver/request") return;
-    const { requestId, command, args } = unwrapTuple(params);
-    if (requestId == null) return;
-
-    // Volar's pending-request promise never rejects and never times out, so
-    // EVERY request must be answered exactly once — a null body is a valid
-    // answer, silence is not.
-    const reply = (body) => {
-      try {
-        // Wrapped: vscode-jsonrpc spreads array params positionally and Volar's
-        // handler takes the tuple as its single argument. See the file header.
-        volarClient.sendNotification("tsserver/response", [[requestId, body ?? null]]);
-      } catch {
-        // ignore
-      }
-    };
-
-    if (!command) {
-      reply(null);
-      return;
-    }
-
-    if (process.env.LSP_BENCH_DEBUG) {
-      console.error(`[hybrid] → ts_ls ${command}`);
-    }
-
-    // Official bridge command: workspace/executeCommand typescript.tsserverRequest
-    tsClient
-      .sendRequest(
-        "workspace/executeCommand",
-        {
-          command: "typescript.tsserverRequest",
-          arguments: [command, args],
-        },
-        TS_REQUEST_TIMEOUT_MS,
-      )
-      .then((result) => {
-        // ts_ls returns the full tsserver envelope { type, command, success, body }
-        const body = result?.body ?? result;
-        if (process.env.LSP_BENCH_DEBUG) {
-          console.error(`[hybrid] ← id=${requestId} has=${body != null}`);
-        }
-        reply(body ?? null);
-      })
-      .catch((err) => {
-        if (process.env.LSP_BENCH_DEBUG) {
-          console.error(`[hybrid] err`, err?.message);
-        }
-        reply(null);
-      });
+    onTsserverRequest(params);
   });
 
   return {
     tsClient,
+    /**
+     * Forwarded tsserver commands that produced no answer since the last drain.
+     *
+     * A suite reads this so a row that failed its content gate while a budget
+     * expired says WHICH it was. Without it the two are the same empty payload.
+     */
+    bridgeFailures: () => failures.peek(),
+    takeBridgeFailures: () => failures.take(),
     /** PID of the TypeScript half, for resource sampling of the whole pair. */
     get pid() {
       return tsClient.pid;
@@ -275,9 +586,33 @@ export async function attachVolarHybridBridge(volarClient, { workspaceDir, rootD
         contentChanges: [{ text }],
       });
     },
-    /** Ask the TypeScript half for a language feature. */
+    /**
+     * Ask the TypeScript half for a language feature.
+     *
+     * The deadline is registered while the request is open so that any
+     * `tsserver/request` Volar forwards during the SAME question inherits this
+     * budget rather than the bridge's floor — `ask()` starts both legs at the
+     * same instant with the same `timeoutMs`, so this is the budget the harness
+     * chose for this question, identically for every server.
+     */
     request(method, params, timeoutMs) {
-      return tsClient.sendRequest(method, params, timeoutMs);
+      const budget =
+        Number.isFinite(timeoutMs) && timeoutMs > 0
+          ? timeoutMs
+          : DEFAULT_DIRECT_REQUEST_TIMEOUT_MS;
+      const entry = { deadline: performance.now() + budget };
+      inFlight.add(entry);
+      const done = () => inFlight.delete(entry);
+      return tsClient.sendRequest(method, params, budget).then(
+        (v) => {
+          done();
+          return v;
+        },
+        (e) => {
+          done();
+          throw e;
+        },
+      );
     },
     async close() {
       await tsClient.shutdown();

@@ -77,6 +77,7 @@
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { timed } from "../context.mjs";
+import { summarizeBridgeFailures } from "../../tsserver-bridge.mjs";
 import { positionOf, scaffold } from "../workspace.mjs";
 
 /**
@@ -595,6 +596,187 @@ export function gateFoldingRanges(result, { template, script }) {
 }
 
 /* -------------------------------------------------------------------------- */
+/* Merges — how the two halves of a hybrid server are JOINED                   */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * WHY EVERY OPERATION HERE PASSES AN EXPLICIT MERGE.
+ *
+ * `ask()` fans a request out to both halves of a hybrid server. Given no merge
+ * function it falls back to picking a WINNER by `resultSize()` — array length,
+ * or `items.length`, or **1** for anything else. Two consequences, both of which
+ * silently threw away half of Volar's answer on all six operations here:
+ *
+ *   - For a non-array payload — `semanticTokens/full` answers `{data:[…]}` —
+ *     `resultSize()` returns 1 for BOTH halves, so the comparison
+ *     `size(b) > size(a)` is false and the first leg wins unconditionally. The
+ *     TypeScript half's tokens were discarded on every run, whatever they held,
+ *     including when the Vue half had nothing.
+ *   - For array payloads the bigger array wins and the smaller is dropped
+ *     ENTIRELY, so a symbol, highlight, hint or fold that only one half knew
+ *     about disappeared rather than being added.
+ *
+ * Every other suite in this harness already passes a merge (`mergeHover`,
+ * `mergeCompletions`, `mergeLocations`); these six were the exception. Note that
+ * merging is not a per-server branch and not a gate relaxation: the gates below
+ * are untouched, and for a single-process server `ask()` never calls a merge at
+ * all because there is only one leg.
+ */
+
+/** Dedupe key for a range, tolerating the shapes that omit parts of it. */
+function rangeKey(range) {
+  const s = range?.start;
+  const e = range?.end;
+  return `${s?.line ?? "?"}:${s?.character ?? "?"}-${e?.line ?? "?"}:${e?.character ?? "?"}`;
+}
+
+/**
+ * Concatenate the array payloads of every half, dropping exact duplicates.
+ *
+ * Returns `[]` (not null) when a half answered with an empty array, so the gate
+ * reports "empty array" rather than "returned null" — those are different
+ * findings and the row must not blur them. Returns null only when NO half
+ * produced an array at all.
+ */
+function unionBy(results, keyOf) {
+  const out = [];
+  const seen = new Set();
+  let sawArray = false;
+  for (const r of results) {
+    if (!Array.isArray(r)) continue;
+    sawArray = true;
+    for (const item of r) {
+      if (item == null) continue;
+      const key = keyOf(item);
+      if (key != null) {
+        if (seen.has(key)) continue;
+        seen.add(key);
+      }
+      out.push(item);
+    }
+  }
+  if (out.length) return out;
+  return sawArray ? [] : null;
+}
+
+/** Usable `data` array out of a `SemanticTokens` or a bare array, else null. */
+function tokenData(result) {
+  const data = Array.isArray(result) ? result : result?.data;
+  if (!Array.isArray(data) || data.length === 0 || data.length % 5 !== 0) return null;
+  return data;
+}
+
+/**
+ * Semantic tokens: PICK the FIRST half that answered — never splice, never rank.
+ *
+ * WHY NOT A UNION. LSP semantic tokens are (a) delta-encoded against the
+ * previous token, so concatenating two `data` arrays yields positions that
+ * decode to nonsense, and (b) indexed into the LEGEND THAT SERVER DECLARED in
+ * its `initialize` result. The two halves declare different legends, and
+ * `createSession()` does not surface `initialize` (see the file header), so
+ * there is no way to translate one half's type indices into the other's.
+ * Splicing would publish a stream no server produced, whose type ids mean two
+ * different things in the same array. Measured, both halves answer this fixture
+ * with 48 tokens each, so a union would have published 96 — a doubled, entirely
+ * fabricated census.
+ *
+ * WHY NOT "THE BIGGER STREAM WINS" EITHER. That was this function's first
+ * version and it is wrong for the same reason a union is: across two different
+ * legends, token COUNT is not a quality signal. Worse, it lets the bridge mask a
+ * degraded primary — a Vue half that emitted one token, or a corrupt stream,
+ * would be silently replaced by the TypeScript half's answer and the row would
+ * read as healthy. Observed directly while forcing bridge timeouts: the Vue half
+ * returned a stream containing a negative delta while the TypeScript half's was
+ * well-formed and the same length. Reporting the TypeScript half there would
+ * hide a real defect in the server under test, which is the exact failure mode
+ * this harness exists to catch.
+ *
+ * So: an editor treats semantic tokens as a SINGLE-provider feature and picks
+ * the provider whose selector matches the document — for a `.vue` file that is
+ * Volar's Vue half — falling through to the next provider only when the first
+ * declines. This does the same. The defect it fixes is precisely that the
+ * TypeScript leg used to be discarded EVEN WHEN the Vue leg had produced
+ * nothing at all; now it is the fallback it should always have been.
+ *
+ * A malformed-but-present payload is preferred over null so the gate can still
+ * name what was wrong with it rather than degrading to "returned null".
+ */
+export function mergeSemanticTokens(...results) {
+  for (const r of results) {
+    if (tokenData(r)) return r;
+  }
+  return results.find((r) => r != null) ?? null;
+}
+
+/**
+ * Semantic tokens delta: the same rule, over the same reasoning.
+ *
+ * A half "answered" if it produced either legal shape — a `SemanticTokensDelta`
+ * (`{edits}`, and an EMPTY edit list is a legitimate "nothing changed") or a
+ * whole `SemanticTokens` (`{data}`). The first half to produce either wins.
+ *
+ * Deliberately not ranked by informativeness: preferring the TypeScript half's
+ * real delta over the Vue half's `edits: []` would report the bridge's work as
+ * the server's, and `edits: []` is a correct answer this fixture can genuinely
+ * produce (the edit widens a string literal, which a legend that does not
+ * classify string literals reports as zero edits).
+ */
+export function mergeSemanticTokensDelta(...results) {
+  for (const r of results) {
+    if (Array.isArray(r?.edits) || tokenData(r)) return r;
+  }
+  return results.find((r) => r != null) ?? null;
+}
+
+/**
+ * Outline: union of both halves.
+ *
+ * Keyed on name + kind + start position, because the same binding legitimately
+ * appears in both halves and must be listed once, while two DIFFERENT symbols
+ * that share a name in different scopes must both survive — which is why the
+ * position is part of the key and not just the name.
+ *
+ * `DocumentSymbol` carries `range`; `SymbolInformation` hides it in
+ * `location.range`. Both shapes arrive here (see the file header), so the key
+ * reads whichever is present.
+ */
+export function mergeDocumentSymbols(...results) {
+  return unionBy(results, (s) => {
+    if (typeof s?.name !== "string") return null;
+    return `${s.name} ${s.kind ?? "?"} ${rangeKey(s.range ?? s.location?.range)}`;
+  });
+}
+
+/** Highlights: union, keyed on the range and kind — one span, listed once. */
+export function mergeDocumentHighlights(...results) {
+  return unionBy(results, (h) => `${rangeKey(h?.range)} ${h?.kind ?? "?"}`);
+}
+
+/**
+ * Inlay hints: union, keyed on position and rendered label text.
+ *
+ * The label is a string from one server and an `InlayHintLabelPart[]` from the
+ * other, so the key flattens it first — otherwise the same hint written the two
+ * legal ways would key differently and be listed twice.
+ */
+export function mergeInlayHints(...results) {
+  const flatten = (r) => (Array.isArray(r) ? r : Array.isArray(r?.items) ? r.items : r);
+  return unionBy(results.map(flatten), (h) => {
+    const pos = h?.position;
+    return `${pos?.line ?? "?"}:${pos?.character ?? "?"} ${inlayLabelText(h?.label).trim()}`;
+  });
+}
+
+/** Folding ranges: union, keyed on the whole span plus its kind. */
+export function mergeFoldingRanges(...results) {
+  return unionBy(
+    results,
+    (f) =>
+      `${f?.startLine ?? "?"}:${f?.startCharacter ?? "?"}-${f?.endLine ?? "?"}:${f?.endCharacter ?? "?"} ${f?.kind ?? "?"}`,
+  );
+}
+
+/* -------------------------------------------------------------------------- */
 /* Suite                                                                      */
 /* -------------------------------------------------------------------------- */
 
@@ -614,6 +796,35 @@ function configureEditor(ctx) {
     c.sendNotification("workspace/didChangeConfiguration", { settings: EDITOR_SETTINGS });
   }
   return clients.length;
+}
+
+/**
+ * Attribute a two-process bridge failure to the row it actually spoiled.
+ *
+ * A forwarded tsserver command that exceeds the bridge's budget is answered
+ * `null`, because Volar's pending-request promise never rejects and never times
+ * out — silence would wedge the Vue half forever. On the wire that reply is
+ * identical to "the TypeScript server has no answer", so the Vue half hands the
+ * client an empty result, the content gate fails it, and the row is published
+ * `valid:false` as though the SERVER answered badly. It did not: a budget the
+ * harness imposes on this server and on no other one expired.
+ *
+ * The bridge records those expiries; this drains them after each operation, so
+ * the note lands on the row whose request they belong to. Draining (rather than
+ * peeking) is what keeps operation 6 from inheriting operation 1's failures.
+ *
+ * It never changes `valid` — a row with no content is still a row with no
+ * content. It changes what the row SAYS about why.
+ */
+function attributeBridgeFailures(ctx, result) {
+  const failures = ctx.hybrid?.takeBridgeFailures?.() ?? [];
+  const note = summarizeBridgeFailures(failures);
+  if (!note) return result;
+  const prefix = result.reason ? `${result.reason} — ` : "";
+  return {
+    ...result,
+    reason: `${prefix}NOT A SERVER ANSWER: ${note}; the bridge replied null so Volar could not hang`,
+  };
 }
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -665,19 +876,20 @@ export const SUITE = {
           "textDocument/semanticTokens/full",
           { textDocument: { uri } },
           REQUEST_TIMEOUT_MS,
+          mergeSemanticTokens,
         );
         dump("semanticTokens/full", res);
         const gate = gateSemanticTokens(res);
         previousResultId = gate.resultId ?? null;
         const data = Array.isArray(res) ? res : res?.data;
-        return {
+        return attributeBridgeFailures(ctx, {
           valid: gate.ok,
           reason: gate.reason,
           sample: gate.ok
             ? `${gate.tokens} tokens, resultId=${JSON.stringify(gate.resultId)}, data[0..9]=${JSON.stringify((data ?? []).slice(0, 10))}`
             : JSON.stringify(res).slice(0, 200),
           artifact: gate.ok ? gate.tokens : undefined,
-        };
+        });
       }),
     );
 
@@ -699,29 +911,30 @@ export const SUITE = {
             "textDocument/semanticTokens/full/delta",
             { textDocument: { uri }, previousResultId: previous },
             REQUEST_TIMEOUT_MS,
+            mergeSemanticTokensDelta,
           );
         } catch (e) {
           const err = decodeRequestError(e.message);
           dump("semanticTokens/full/delta:error", err.raw);
-          return {
+          return attributeBridgeFailures(ctx, {
             valid: false,
             reason:
               err.code === -32601
                 ? `not implemented (JSON-RPC ${err.code}: ${err.text}); the full request ${previousResultId ? `DID return resultId ${JSON.stringify(previousResultId)}, which invites a delta` : "returned no resultId"}`
                 : `request failed: ${err.text}`,
             sample: err.raw,
-          };
+          });
         }
         dump("semanticTokens/full/delta", res);
         const gate = gateSemanticTokensDelta(res);
-        return {
+        return attributeBridgeFailures(ctx, {
           valid: gate.ok,
           reason: gate.reason,
           sample: gate.ok
             ? `${gate.kind}: ${gate.kind === "delta" ? `${gate.edits} edit(s)` : `${gate.tokens} tokens`}, previousResultId=${JSON.stringify(previous)}`
             : JSON.stringify(res).slice(0, 200),
           artifact: gate.ok ? (gate.kind === "delta" ? gate.edits : gate.tokens) : undefined,
-        };
+        });
       }),
     );
 
@@ -732,15 +945,16 @@ export const SUITE = {
           "textDocument/documentSymbol",
           { textDocument: { uri } },
           REQUEST_TIMEOUT_MS,
+          mergeDocumentSymbols,
         );
         dump("documentSymbol", res);
         const gate = gateDocumentSymbols(res, EXPECTED_SYMBOLS, expect.script);
-        return {
+        return attributeBridgeFailures(ctx, {
           valid: gate.ok,
           reason: gate.reason,
           sample: `${gate.count ?? 0} symbols: ${(gate.names ?? []).join(", ")}`,
           artifact: gate.count,
-        };
+        });
       }),
     );
 
@@ -751,15 +965,16 @@ export const SUITE = {
           "textDocument/documentHighlight",
           { textDocument: { uri }, position: expect.highlightProbe },
           REQUEST_TIMEOUT_MS,
+          mergeDocumentHighlights,
         );
         dump("documentHighlight", res);
         const gate = gateDocumentHighlights(res, expect.highlightOccurrences);
-        return {
+        return attributeBridgeFailures(ctx, {
           valid: gate.ok,
           reason: gate.reason,
           sample: `${gate.count ?? 0} range(s), ${gate.matched ?? 0}/${expect.highlightOccurrences.length} occurrences of \`${HIGHLIGHT_SYMBOL}\` covered`,
           artifact: gate.count,
-        };
+        });
       }),
     );
 
@@ -770,17 +985,18 @@ export const SUITE = {
           "textDocument/inlayHint",
           { textDocument: { uri }, range: expect.documentRange },
           REQUEST_TIMEOUT_MS,
+          mergeInlayHints,
         );
         dump("inlayHint", res);
         const gate = gateInlayHints(res, expect);
-        return {
+        return attributeBridgeFailures(ctx, {
           valid: gate.ok,
           reason: gate.reason,
           sample: gate.ok
             ? `${gate.count} hint(s); e.g. ${JSON.stringify(gate.best.text)} at ${gate.best.line}:${gate.best.character}`
             : JSON.stringify(res).slice(0, 200),
           artifact: gate.count,
-        };
+        });
       }),
     );
 
@@ -791,17 +1007,18 @@ export const SUITE = {
           "textDocument/foldingRange",
           { textDocument: { uri } },
           REQUEST_TIMEOUT_MS,
+          mergeFoldingRanges,
         );
         dump("foldingRange", res);
         const gate = gateFoldingRanges(res, expect);
-        return {
+        return attributeBridgeFailures(ctx, {
           valid: gate.ok,
           reason: gate.reason,
           sample: gate.ok
             ? `${gate.count} range(s), folds: ${gate.covers.join("+")}`
             : JSON.stringify(res).slice(0, 200),
           artifact: gate.count,
-        };
+        });
       }),
     );
 

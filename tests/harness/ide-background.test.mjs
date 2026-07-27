@@ -47,6 +47,12 @@ import {
   gateSemanticTokens,
   gateSemanticTokensDelta,
   inlayLabelText,
+  mergeDocumentHighlights,
+  mergeDocumentSymbols,
+  mergeFoldingRanges,
+  mergeInlayHints,
+  mergeSemanticTokens,
+  mergeSemanticTokensDelta,
   occurrencesOf,
 } from "../../scripts/lib/ide-ops/suites/background.mjs";
 
@@ -514,5 +520,327 @@ describe("gateFoldingRanges", () => {
   test("rejects null and an empty array", () => {
     assert.equal(gateFoldingRanges(null, EXPECT).ok, false);
     assert.equal(gateFoldingRanges([], EXPECT).ok, false);
+  });
+});
+
+/* ══════════════════════ Joining the two halves of a hybrid ═════════════════ */
+
+/**
+ * `ask()`'s DEFAULT merge, reproduced verbatim from context.mjs.
+ *
+ * Every test below also shows what this did with the same payload pair, because
+ * a regression test for a merge is only meaningful if it pins what the merge
+ * replaced. All six background operations used to fall through to this, and it
+ * is the reason half of Volar's answer never reached a gate.
+ */
+function resultSize(result) {
+  if (result == null) return 0;
+  if (Array.isArray(result)) return result.length;
+  if (Array.isArray(result?.items)) return result.items.length;
+  return 1;
+}
+function defaultMerge(a, b) {
+  return resultSize(b) > resultSize(a) ? b : resultSize(a) ? a : b;
+}
+
+const tokenCount = (r) => (Array.isArray(r) ? r : (r?.data ?? [])).length / 5;
+
+describe("mergeSemanticTokens — the TypeScript half's tokens must survive", () => {
+  test("a {data:[…]} payload from the TS half survives a Vue half that produced none", () => {
+    // The exact shape that broke: BOTH halves are non-array objects, so
+    // resultSize() answers 1 for each, `size(b) > size(a)` is false, and the
+    // first leg wins no matter what either of them contains.
+    const vueHalf = { resultId: "1785108447283", data: [] };
+    const tsHalf = { resultId: "ts-1", data: VOLAR_TOKENS.data };
+
+    assert.equal(defaultMerge(vueHalf, tsHalf), vueHalf, "old behaviour: first leg wins the tie");
+    assert.equal(
+      gateSemanticTokens(defaultMerge(vueHalf, tsHalf)).ok,
+      false,
+      "…so the row was published invalid while the other half held 48 tokens",
+    );
+
+    const merged = mergeSemanticTokens(vueHalf, tsHalf);
+    assert.equal(merged, tsHalf, "the half that actually produced tokens");
+    const gate = gateSemanticTokens(merged);
+    assert.equal(gate.ok, true, gate.reason);
+    assert.equal(gate.tokens, 48);
+  });
+
+  test("a legend-less object from the Vue half no longer beats real tokens", () => {
+    // `{}` and `{resultId}` both score 1 under resultSize().
+    for (const empty of [{}, { resultId: "x" }, { data: null }]) {
+      assert.equal(defaultMerge(empty, VOLAR_TOKENS), empty, "old behaviour");
+      assert.equal(mergeSemanticTokens(empty, VOLAR_TOKENS), VOLAR_TOKENS);
+    }
+  });
+
+  test("it PICKS a half and never splices two token streams together", () => {
+    // Splicing would be actively wrong, not merely untidy: `data` is delta
+    // encoded against the previous token AND indexed into the legend that
+    // server declared, and the two halves declare different legends. Measured,
+    // both halves answer the real fixture with 48 tokens each, so a union would
+    // publish 96 — a doubled, fabricated census.
+    const merged = mergeSemanticTokens(VIZE_TOKENS, VOLAR_TOKENS);
+    assert.ok(
+      merged === VIZE_TOKENS || merged === VOLAR_TOKENS,
+      "the result must be one half's own payload object",
+    );
+    assert.notEqual(
+      tokenCount(merged),
+      tokenCount(VIZE_TOKENS) + tokenCount(VOLAR_TOKENS),
+      "a spliced stream would decode to positions no server ever reported",
+    );
+  });
+
+  test("when BOTH halves answer, the server under test wins — never the bridge", () => {
+    // Not "the bigger stream": across two different legends a token count is
+    // not a quality signal, and preferring the larger one lets the bridge mask a
+    // degraded primary. Observed while forcing bridge timeouts: the Vue half
+    // returned a stream with a NEGATIVE delta while the TypeScript half's was
+    // well-formed and the same length. Reporting the TypeScript half there would
+    // hide a real defect in the server being measured.
+    assert.equal(mergeSemanticTokens(VIZE_TOKENS, VOLAR_TOKENS), VIZE_TOKENS);
+    const corrupt = { data: [0, 0, 5, 1, 0, 3, -38, 5, 1, 0] };
+    const healthy = { data: [0, 0, 5, 7, 0, 3, 2, 5, 7, 0] };
+    assert.equal(
+      mergeSemanticTokens(corrupt, healthy),
+      corrupt,
+      "a broken primary must still be reported as broken",
+    );
+    assert.match(gateSemanticTokens(mergeSemanticTokens(corrupt, healthy)).reason, /not a non-negative integer/);
+  });
+
+  test("ties keep the earlier leg — the server under test, not the bridge", () => {
+    const vueHalf = { data: [0, 0, 5, 1, 0] };
+    const tsHalf = { data: [0, 0, 5, 7, 0] };
+    assert.equal(mergeSemanticTokens(vueHalf, tsHalf), vueHalf);
+  });
+
+  test("a malformed payload is preferred over null so the gate can still name the fault", () => {
+    const malformed = { data: [1, 2, 3] };
+    const merged = mergeSemanticTokens(malformed, null);
+    assert.equal(merged, malformed);
+    assert.match(gateSemanticTokens(merged).reason, /not a multiple of 5/);
+  });
+
+  test("two null halves stay null — 'no tokens at all' is still the finding", () => {
+    assert.equal(mergeSemanticTokens(VERTER_TOKENS, null), null);
+    assert.equal(gateSemanticTokens(mergeSemanticTokens(null, null)).ok, false);
+  });
+});
+
+describe("mergeSemanticTokensDelta — the first half that answered, either shape", () => {
+  test("the TS half's delta survives when the Vue half produced no legal shape", () => {
+    const realDelta = {
+      resultId: "c",
+      edits: [{ start: 0, deleteCount: 5, data: [0, 0, 5, 1, 0] }],
+    };
+    for (const nothing of [{}, { resultId: "x" }, { edits: null }, { data: [] }]) {
+      // Old behaviour: resultSize() is 1 for both, so the first leg won.
+      assert.equal(defaultMerge(nothing, realDelta), nothing);
+      assert.equal(mergeSemanticTokensDelta(nothing, realDelta), realDelta);
+    }
+  });
+
+  test("an EMPTY edit list from the Vue half is a real answer and is not overridden", () => {
+    // `edits: []` is legal and correct here — the fixture's edit widens a string
+    // literal, which a legend that does not classify string literals reports as
+    // zero edits. Preferring the TS half's richer payload would publish the
+    // bridge's work as the server's.
+    const emptyDelta = { resultId: "a", edits: [] };
+    const fullSet = { resultId: "b", data: VOLAR_TOKENS.data };
+    const realDelta = { edits: [{ start: 0, deleteCount: 5 }] };
+    assert.equal(mergeSemanticTokensDelta(emptyDelta, fullSet), emptyDelta);
+    assert.equal(mergeSemanticTokensDelta(emptyDelta, realDelta), emptyDelta);
+    assert.equal(gateSemanticTokensDelta(emptyDelta).ok, true, "and it still passes the gate");
+  });
+
+  test("every ranked shape still passes the gate — this decides reporting, not validity", () => {
+    const fullSet = { resultId: "b", data: VOLAR_TOKENS.data };
+    const realDelta = { edits: [{ start: 0, deleteCount: 5, data: [0, 0, 5, 1, 0] }] };
+    for (const payload of [{ edits: [] }, fullSet, realDelta]) {
+      assert.equal(gateSemanticTokensDelta(payload).ok, true);
+    }
+  });
+
+  test("a half that answered nothing cannot displace one that answered", () => {
+    const realDelta = { edits: [{ start: 0, deleteCount: 5 }] };
+    assert.equal(mergeSemanticTokensDelta(null, realDelta), realDelta);
+    assert.equal(mergeSemanticTokensDelta(realDelta, null), realDelta);
+    assert.equal(mergeSemanticTokensDelta(null, null), null);
+  });
+});
+
+describe("mergeDocumentSymbols — union, not bigger-array-wins", () => {
+  test("symbols only one half knows about are ADDED rather than dropped", () => {
+    const vueHalf = VOLAR_SYMBOLS;
+    const tsHalf = TS_LS_SYMBOL_INFORMATION;
+
+    // Old behaviour: whichever root array was longer replaced the other whole.
+    const old = defaultMerge(vueHalf, tsHalf);
+    assert.ok(old === vueHalf || old === tsHalf, "one leg survived, the other vanished");
+
+    const merged = mergeDocumentSymbols(vueHalf, tsHalf);
+    assert.equal(merged.length, vueHalf.length + tsHalf.length);
+    const names = new Set(flattenSymbols(merged).map((s) => s.name));
+    for (const n of EXPECTED_SYMBOLS) assert.ok(names.has(n), `lost ${n}`);
+    // The SymbolInformation leg contributes through location.range.
+    assert.ok(names.has("threshold"));
+  });
+
+  test("the union still passes the gate the Vue half passed alone — no gate relaxation", () => {
+    const alone = gateDocumentSymbols(VOLAR_SYMBOLS, EXPECTED_SYMBOLS, EXPECT.script);
+    const merged = gateDocumentSymbols(
+      mergeDocumentSymbols(VOLAR_SYMBOLS, TS_LS_SYMBOL_INFORMATION),
+      EXPECTED_SYMBOLS,
+      EXPECT.script,
+    );
+    assert.equal(alone.ok, true, alone.reason);
+    assert.equal(merged.ok, true, merged.reason);
+  });
+
+  test("a union of two INCOMPLETE outlines still fails — the gate is untouched", () => {
+    // Vize's two-symbol outline plus the SymbolInformation leg names neither
+    // `heading` nor `entries`, and unioning must not manufacture a pass.
+    const r = gateDocumentSymbols(
+      mergeDocumentSymbols(VIZE_SYMBOLS, TS_LS_SYMBOL_INFORMATION),
+      EXPECTED_SYMBOLS,
+      EXPECT.script,
+    );
+    assert.equal(r.ok, false);
+    assert.match(r.reason, /missing/);
+  });
+
+  test("a symbol both halves report is listed once", () => {
+    const range = { start: { line: 37, character: 0 }, end: { line: 39, character: 1 } };
+    const one = [{ name: "addEntry", kind: 12, range }];
+    const same = [{ name: "addEntry", kind: 12, range: structuredClone(range) }];
+    assert.equal(mergeDocumentSymbols(one, same).length, 1);
+  });
+
+  test("two DIFFERENT symbols sharing a name in different scopes both survive", () => {
+    // Why the dedupe key carries the position and not only the name: `label` is
+    // genuinely a member of BOTH `Entry` and `addEntry` in this fixture.
+    const a = [
+      { name: "label", kind: 7, range: { start: { line: 21, character: 2 }, end: { line: 21, character: 15 } } },
+    ];
+    const b = [
+      { name: "label", kind: 7, range: { start: { line: 38, character: 53 }, end: { line: 38, character: 58 } } },
+    ];
+    assert.equal(mergeDocumentSymbols(a, b).length, 2);
+  });
+
+  test("an empty array stays an empty array; two nulls stay null", () => {
+    assert.deepEqual(mergeDocumentSymbols([], []), []);
+    assert.equal(mergeDocumentSymbols(null, null), null);
+    // "no symbols in the outline" and "returned null — no outline" are
+    // different findings and the merge must not turn one into the other.
+    assert.equal(
+      gateDocumentSymbols(mergeDocumentSymbols([], null), EXPECTED_SYMBOLS, EXPECT.script).reason,
+      "no symbols in the outline",
+    );
+  });
+});
+
+describe("mergeDocumentHighlights — a half's ranges must not be discarded", () => {
+  test("occurrences split across the halves are unioned, and the gate then sees them all", () => {
+    const vueHalf = VOLAR_HIGHLIGHTS.slice(0, 1);
+    const tsHalf = VOLAR_HIGHLIGHTS.slice(1);
+
+    const old = defaultMerge(vueHalf, tsHalf);
+    assert.equal(old.length, 3, "the longer leg won whole; the other leg's range was lost");
+    assert.equal(
+      gateDocumentHighlights(vueHalf, EXPECT.highlightOccurrences).ok,
+      false,
+      "one leg alone cannot satisfy a gate that needs two covered occurrences",
+    );
+
+    const merged = mergeDocumentHighlights(vueHalf, tsHalf);
+    assert.equal(merged.length, VOLAR_HIGHLIGHTS.length);
+    const gate = gateDocumentHighlights(merged, EXPECT.highlightOccurrences);
+    assert.equal(gate.ok, true, gate.reason);
+  });
+
+  test("identical ranges reported by both halves are counted once", () => {
+    // Same four spans, written with the object keys in a different order.
+    const merged = mergeDocumentHighlights(VOLAR_HIGHLIGHTS, VERTER_HIGHLIGHTS);
+    assert.equal(merged.length, VOLAR_HIGHLIGHTS.length);
+  });
+
+  test("a null half contributes nothing and destroys nothing", () => {
+    assert.equal(mergeDocumentHighlights(null, VOLAR_HIGHLIGHTS).length, 4);
+    assert.equal(mergeDocumentHighlights(VOLAR_HIGHLIGHTS, null).length, 4);
+    assert.equal(mergeDocumentHighlights(null, null), null);
+  });
+});
+
+describe("mergeInlayHints — both label shapes, one union", () => {
+  test("hints from both halves are combined instead of the shorter list vanishing", () => {
+    const merged = mergeInlayHints(VIZE_INLAY_HINTS, VOLAR_INLAY_HINTS);
+    assert.equal(merged.length, VIZE_INLAY_HINTS.length + VOLAR_INLAY_HINTS.length);
+    assert.equal(
+      defaultMerge(VIZE_INLAY_HINTS, VOLAR_INLAY_HINTS),
+      VOLAR_INLAY_HINTS,
+      "old behaviour kept only the longer array",
+    );
+    const gate = gateInlayHints(merged, EXPECT);
+    assert.equal(gate.ok, true, gate.reason);
+  });
+
+  test("the same hint written as a string and as label parts dedupes to one", () => {
+    const asString = [{ position: { line: 29, character: 13 }, label: ": Ref<Entry[]>" }];
+    const asParts = [
+      { position: { line: 29, character: 13 }, label: [{ value: ": " }, { value: "Ref<Entry[]>" }] },
+    ];
+    assert.equal(mergeInlayHints(asString, asParts).length, 1);
+  });
+
+  test("a {items:[…]} wrapper is unwrapped before the union", () => {
+    const merged = mergeInlayHints({ items: VIZE_INLAY_HINTS }, VOLAR_INLAY_HINTS);
+    assert.equal(merged.length, VIZE_INLAY_HINTS.length + VOLAR_INLAY_HINTS.length);
+  });
+
+  test("a null half (Verter's answer) leaves the other half intact", () => {
+    assert.equal(
+      mergeInlayHints(VERTER_INLAY_HINTS, VIZE_INLAY_HINTS).length,
+      VIZE_INLAY_HINTS.length,
+    );
+    assert.equal(mergeInlayHints(null, null), null);
+  });
+});
+
+describe("mergeFoldingRanges — union of both fold maps", () => {
+  test("a fold only one half computed is kept", () => {
+    // Split so the block-level folds live only in the second leg.
+    const vueHalf = VOLAR_FOLDING.slice(0, 6);
+    const tsHalf = VOLAR_FOLDING.slice(6);
+
+    assert.equal(
+      gateFoldingRanges(vueHalf, EXPECT).ok,
+      false,
+      "the inner-fold leg alone covers neither block",
+    );
+    const merged = mergeFoldingRanges(vueHalf, tsHalf);
+    assert.equal(merged.length, VOLAR_FOLDING.length);
+    const gate = gateFoldingRanges(merged, EXPECT);
+    assert.equal(gate.ok, true, gate.reason);
+    assert.deepEqual(gate.covers, ["template", "script"]);
+  });
+
+  test("both convention spellings of the same block survive as distinct ranges", () => {
+    // Volar ends a fold one line before the closing tag, Vize on it. Different
+    // ranges, both legal, so the union keeps both.
+    const merged = mergeFoldingRanges(VOLAR_FOLDING, VIZE_FOLDING);
+    assert.equal(merged.length, VOLAR_FOLDING.length + VIZE_FOLDING.length);
+  });
+
+  test("an identical range from both halves collapses to one", () => {
+    assert.equal(mergeFoldingRanges(VIZE_FOLDING, VIZE_FOLDING).length, VIZE_FOLDING.length);
+  });
+
+  test("null halves behave like the other operations", () => {
+    assert.equal(mergeFoldingRanges(null, VIZE_FOLDING).length, VIZE_FOLDING.length);
+    assert.equal(mergeFoldingRanges(null, null), null);
   });
 });

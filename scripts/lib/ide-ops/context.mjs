@@ -285,6 +285,25 @@ export async function createSession({ server, workspaceDir, initTimeoutMs = 45_0
     onDiagnostics(params);
   });
 
+  /**
+   * Nothing below can be allowed to throw while leaving `client` alive.
+   *
+   * `ctx` — the only handle carrying a `dispose()` — is bound after this
+   * function returns, so a throw in between orphans the server process: it sits
+   * holding its stdio pipes and its lock on the workspace, and the run reports
+   * `could not remove workspace … (still held)` for every size that follows.
+   * Reached by an `initialize` timeout, which is exactly the condition
+   * SCALE_PROJECT_LOAD_TIMEOUT_MS exists to provoke.
+   */
+  const killClientAndRethrow = (error) => {
+    try {
+      client.kill?.();
+    } catch {
+      // Already gone.
+    }
+    throw error;
+  };
+
   const initializeStart = performance.now();
   await client.initialize(rootUri, {
     initializationOptions: {
@@ -308,7 +327,7 @@ export async function createSession({ server, workspaceDir, initTimeoutMs = 45_0
       workspaceFolders: [{ uri: rootUri, name: "bench" }],
     },
     timeoutMs: initTimeoutMs,
-  });
+  }).catch(killClientAndRethrow);
   const initializeMs = performance.now() - initializeStart;
 
   let hybrid = null;
@@ -317,7 +336,16 @@ export async function createSession({ server, workspaceDir, initTimeoutMs = 45_0
       workspaceDir,
       rootDir,
       tsdkDir: server.tsdk,
-    });
+      // The same budget the Vue half got. Without this the TypeScript half kept
+      // a private, tighter one that SCALE_PROJECT_LOAD_TIMEOUT_MS could not
+      // raise — so the documented way to give a slow-starting server more time
+      // never reached the half most likely to need it on a large project.
+      // scale.mjs already passes that env var here as initTimeoutMs, so the
+      // budget now travels the same route for both halves.
+      initTimeoutMs,
+      // The bridge kills its own tsserver child on a failed init; the Vue half
+      // is ours to clean up.
+    }).catch(killClientAndRethrow);
   }
 
   /**
