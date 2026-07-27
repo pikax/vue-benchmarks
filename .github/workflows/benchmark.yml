@@ -101,13 +101,25 @@ jobs:
       - name: Install dependencies (pulls native binaries)
         run: pnpm install --frozen-lockfile
 
+      # Isolated vue-tsc-on-tsgo env, installed HERE so every consumer restores
+      # it instead of installing it again. Deliberately a separate project and
+      # never a root `typescript` override — an override would swap the engine
+      # under component-meta, lint and LSP too.
+      - name: Install typescript-native-bridge env (envs/tnb)
+        run: pnpm install --dir envs/tnb --ignore-workspace --frozen-lockfile || echo "envs/tnb install failed — vue-tsc (TNB) row will be skipped"
+
+      # ONE cache covering both installs. envs/tnb used to sit outside the cache,
+      # so each of bench/ide/memory re-installed it — the same setup paid three
+      # times. Its lockfile is part of the key so a change to either invalidates.
       - name: Cache node_modules for bench jobs
         uses: actions/cache@v4
         with:
-          path: node_modules
-          key: ${{ env.NM_CACHE_PREFIX }}-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', '.node-version') }}-${{ github.sha }}
+          path: |
+            node_modules
+            envs/tnb/node_modules
+          key: ${{ env.NM_CACHE_PREFIX }}-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', 'envs/tnb/pnpm-lock.yaml', '.node-version') }}-${{ github.sha }}
           restore-keys: |
-            ${{ env.NM_CACHE_PREFIX }}-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', '.node-version') }}-
+            ${{ env.NM_CACHE_PREFIX }}-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', 'envs/tnb/pnpm-lock.yaml', '.node-version') }}-
 
       - name: Generate fixtures (unique + vapor + repeated demo)
         run: |
@@ -155,7 +167,7 @@ jobs:
       - uses: ./.github/actions/restore-workspace
         with:
           fixtures-artifact: fixtures-bench-linux
-          node-modules-cache-key: ${{ env.NM_CACHE_PREFIX }}-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', '.node-version') }}-${{ github.sha }}
+          node-modules-cache-key: ${{ env.NM_CACHE_PREFIX }}-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', 'envs/tnb/pnpm-lock.yaml', '.node-version') }}-${{ github.sha }}
 
       - name: Measured pass (warmups + measured runs)
         env:
@@ -230,7 +242,7 @@ jobs:
       - uses: ./.github/actions/restore-workspace
         with:
           fixtures-artifact: fixtures-bench-linux
-          node-modules-cache-key: ${{ env.NM_CACHE_PREFIX }}-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', '.node-version') }}-${{ github.sha }}
+          node-modules-cache-key: ${{ env.NM_CACHE_PREFIX }}-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', 'envs/tnb/pnpm-lock.yaml', '.node-version') }}-${{ github.sha }}
 
       - name: IDE operation suites (all servers)
         env:
@@ -270,7 +282,7 @@ jobs:
       - uses: ./.github/actions/restore-workspace
         with:
           fixtures-artifact: fixtures-bench-linux
-          node-modules-cache-key: ${{ env.NM_CACHE_PREFIX }}-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', '.node-version') }}-${{ github.sha }}
+          node-modules-cache-key: ${{ env.NM_CACHE_PREFIX }}-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', 'envs/tnb/pnpm-lock.yaml', '.node-version') }}-${{ github.sha }}
 
       - name: Resource probe (RSS + alloc + CPU, all surfaces)
         env:

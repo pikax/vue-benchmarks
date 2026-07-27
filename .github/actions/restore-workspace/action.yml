@@ -23,26 +23,40 @@ runs:
         node-version-file: .node-version
         cache: pnpm
 
+    # Both installs come from the ONE cache the setup job wrote. envs/tnb used
+    # to be outside it and was re-installed by every consumer — the same setup
+    # cost paid once per job.
     - name: Restore node_modules cache
       id: nm-cache
       uses: actions/cache@v4
       with:
-        path: node_modules
+        path: |
+          node_modules
+          envs/tnb/node_modules
         key: ${{ inputs.node-modules-cache-key }}
 
-    # Always install: no-op/fast when node_modules is already complete from cache.
-    - name: Install dependencies
+    # Only on a cache miss. A hit makes these no-ops that still cost a pnpm
+    # start-up each, so skipping them is the point of the shared cache.
+    - name: Install dependencies (cache miss only)
+      if: steps.nm-cache.outputs.cache-hit != 'true'
       shell: bash
       run: pnpm install --frozen-lockfile
 
-    # Isolated vue-tsc-on-tsgo env. Deliberately a separate project, never a root
-    # `typescript` override — an override would swap the engine under
-    # component-meta, lint and LSP too. Not covered by the node_modules cache
-    # (which caches the root only), so install it explicitly. Failure here must
-    # not fail the run: the harness skips the row with a note if it is absent.
-    - name: Install typescript-native-bridge env (envs/tnb)
+    - name: Install typescript-native-bridge env (cache miss only)
+      if: steps.nm-cache.outputs.cache-hit != 'true'
       shell: bash
       run: pnpm install --dir envs/tnb --ignore-workspace --frozen-lockfile || echo "envs/tnb install failed — vue-tsc (TNB) row will be skipped"
+
+    # Guard: a partial cache (restore-key hit from an older lockfile) would leave
+    # a tree that imports but resolves the wrong versions, which is worse than a
+    # miss because nothing fails loudly.
+    - name: Verify workspace is complete
+      shell: bash
+      run: |
+        if [ ! -d node_modules/vue ] || [ ! -d node_modules/.bin ]; then
+          echo "node_modules incomplete after restore — installing"
+          pnpm install --frozen-lockfile
+        fi
 
     - name: Download prepared fixtures
       uses: actions/download-artifact@v4

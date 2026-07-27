@@ -273,17 +273,23 @@ function ensureSubjectExtension({ vscodeExecutablePath, extDir, extension }) {
 /**
  * Per-launch budget for one VS Code subject, in ms.
  *
- * Sized from what a launch has to do: Electron cold start, extension
- * activation, workspace open, language-server spawn and project load, then the
- * hover probe. Generous enough that a slow-but-working subject is measured
- * rather than cut off — a truncated slow result would be worse than useless —
- * and short enough that six of them fit comfortably inside a 30-minute job.
+ * MEASURED, not guessed. A full local run of 2 workspaces x 3 extensions took
+ * 33.1s end to end, with per-launch times of 9.0s / 2.8s / 6.8s / 4.0s and two
+ * more inside 8.9s — Electron cold start, extension activation, workspace open,
+ * language-server spawn and project load, and the probes, all included.
+ *
+ * 120s is ~13x the slowest launch observed. The headroom is for CI being
+ * slower than a warm local box (xvfb, cold page cache, shared runner) and for
+ * the opt-in Nuxt UI workspace, which loads a real project rather than a
+ * generated fixture. It is deliberately not tighter: cutting off a
+ * slow-but-working subject would publish a truncated number, which is worse
+ * than publishing none.
  *
  * IDENTICAL for every extension. An asymmetric budget silently subsidises
- * whichever subject got the larger one, which is the same mistake the LSP
- * surface's retry budget already had to have corrected.
+ * whichever subject got the larger one — the same mistake the LSP surface's
+ * retry budget already had to have corrected.
  */
-const LAUNCH_TIMEOUT_MS = Number(process.env.E2E_LAUNCH_TIMEOUT_MS ?? 240_000);
+const LAUNCH_TIMEOUT_MS = Number(process.env.E2E_LAUNCH_TIMEOUT_MS ?? 120_000);
 
 /**
  * Race a VS Code launch against the budget.
