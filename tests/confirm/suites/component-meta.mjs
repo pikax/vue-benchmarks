@@ -7,7 +7,7 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createSuite } from "../lib/harness.mjs";
 import { rootDir } from "../lib/run-cli.mjs";
-import { getMetaTools } from "../lib/component-meta-extract.mjs";
+import { getMetaTools, shutdownMetaRuntimes } from "../lib/component-meta-extract.mjs";
 import { scoreComponentMeta } from "../lib/component-meta-score.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -85,43 +85,52 @@ export async function runComponentMetaSuite() {
 
   // Prepare first case dir for tool init (vue checker needs a tsconfig path);
   // each case re-prepares tools against its own work dir.
-  for (const caseId of listCases()) {
-    const { dest, expect, absPath, source } = prepareCase(caseId);
-    const tools = getMetaTools({ workDir: dest });
+  //
+  // A tool's prepare/extract/dispose may be async (a published meta API is
+  // free to be), so every lifecycle call is awaited.
+  try {
+    for (const caseId of listCases()) {
+      const { dest, expect, absPath, source } = prepareCase(caseId);
+      const tools = await getMetaTools({ workDir: dest });
 
-    for (const tool of tools) {
-      if (tool.skip) {
-        suite.skip(expect.id, tool.id, tool.skip);
-        continue;
-      }
-
-      const { expect: caseExpect, skip } = applyOverrides(expect, tool.id);
-      if (skip) {
-        suite.skip(expect.id, tool.id, skip);
-        continue;
-      }
-
-      try {
-        tool.prepare?.();
-        const meta = tool.extract(absPath, source);
-        const score = scoreComponentMeta(meta, caseExpect, tool);
-        if (score.ok) {
-          suite.pass(expect.id, tool.id, score.message, score.metaSummary);
-        } else {
-          suite.fail(expect.id, tool.id, score.message, {
-            meta: score.metaSummary,
-          });
+      for (const tool of tools) {
+        if (tool.skip) {
+          suite.skip(expect.id, tool.id, tool.skip);
+          continue;
         }
-      } catch (error) {
-        suite.fail(expect.id, tool.id, error instanceof Error ? error.message : String(error));
-      } finally {
+
+        const { expect: caseExpect, skip } = applyOverrides(expect, tool.id);
+        if (skip) {
+          suite.skip(expect.id, tool.id, skip);
+          continue;
+        }
+
         try {
-          tool.dispose?.();
-        } catch {
-          /* ignore */
+          await tool.prepare?.();
+          const meta = await tool.extract(absPath, source);
+          const score = scoreComponentMeta(meta, caseExpect, tool);
+          if (score.ok) {
+            suite.pass(expect.id, tool.id, score.message, score.metaSummary);
+          } else {
+            suite.fail(expect.id, tool.id, score.message, {
+              meta: score.metaSummary,
+            });
+          }
+        } catch (error) {
+          suite.fail(expect.id, tool.id, error instanceof Error ? error.message : String(error));
+        } finally {
+          try {
+            await tool.dispose?.();
+          } catch {
+            /* ignore */
+          }
         }
       }
     }
+  } finally {
+    // Pooled native runtimes outlive individual sessions; release them so the
+    // suite does not hand a live engine to whatever runs next in this process.
+    await shutdownMetaRuntimes();
   }
 
   return suite.results;

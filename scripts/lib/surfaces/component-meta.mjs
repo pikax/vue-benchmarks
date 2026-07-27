@@ -3,7 +3,37 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { readFileSync, writeFileSync } from "node:fs";
 import { collectVueFiles, prepareTypecheckDir, totalBytes } from "../fixtures.mjs";
-import { measureVariants, timedSync } from "../timing.mjs";
+import { measureVariants, timedAsync, timedSync } from "../timing.mjs";
+
+/**
+ * Members actually materialised from one component's meta.
+ *
+ * Recorded so a row cannot be fast for the uninteresting reason that it
+ * returned nothing: before this, no variant on this surface declared an
+ * artifact at all, so a tool answering `{}` would have ranked fastest.
+ *
+ * Polarity is INFORMATIONAL — the count is published, never used to flag a
+ * row. Measured on `fixtures/50`: vue-component-meta reports 665 members,
+ * @verter/component-meta 40. That is not 16x less work. 45 of the 50 generated
+ * SFCs declare no macros at all — no defineProps/Emits/Slots/Expose — and for
+ * those, vue-component-meta still reports ~12 members each (implicit and
+ * inherited surface) while Verter reports the declared API only, i.e. none.
+ * On the 5 fixtures that do declare an API the counts are 20 vs 8.
+ *
+ * So the gap is mostly a difference in what each tool considers part of a
+ * component's public API, not in how much work it did. Scoring it as "did
+ * less" would brand one tool for a schema definition. Same reasoning as the
+ * diagnostics column on the typecheck surface, and the same polarity.
+ */
+function countMetaMembers(meta) {
+  if (!meta) return 0;
+  return (
+    (meta.props?.length ?? 0) +
+    (meta.events?.length ?? 0) +
+    (meta.slots?.length ?? 0) +
+    (meta.exposed?.length ?? 0)
+  );
+}
 
 const require = createRequire(import.meta.url);
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../../..");
@@ -42,7 +72,6 @@ export async function runComponentMetaSurface(fixtureDir, options) {
   process.env.NODE_PATH = nodePath;
 
   const vueMeta = loadOptional("vue-component-meta");
-  const verterNative = loadOptional("@verter/native");
   const verterMetaPkg = loadOptional("@verter/component-meta");
   const vizeNative = loadOptional("@vizejs/native");
 
@@ -60,16 +89,21 @@ export async function runComponentMetaSurface(fixtureDir, options) {
       label: "vue-component-meta",
       package: "vue-component-meta",
       notes: "createChecker(tsconfig) + getComponentMeta for each .vue file",
-      measure: () =>
-        timedSync(() => {
+      artifactLabel: "Meta members",
+      artifactPolarity: "informational",
+      measure: () => {
+        let work = 0;
+        const { ms } = timedSync(() => {
           const { createChecker } = vueMeta.mod;
           const checker = createChecker(join(metaDir, "tsconfig.json"), {
             forceUseTs: true,
           });
           for (const file of absFiles) {
-            checker.getComponentMeta(file);
+            work += countMetaMembers(checker.getComponentMeta(file));
           }
-        }),
+        });
+        return { ms, artifact: work };
+      },
     });
   } else {
     variants.push({
@@ -81,56 +115,68 @@ export async function runComponentMetaSurface(fixtureDir, options) {
     });
   }
 
-  // Prefer native ComponentMetaHost (ships with @verter/native).
-  // The separate @verter/component-meta npm package currently publishes without dist/.
-  if (!verterNative.error && typeof verterNative.mod.ComponentMetaHost === "function") {
-    const { ComponentMetaHost } = verterNative.mod;
-    variants.push({
-      id: "verter-component-meta-native",
-      label: "Verter ComponentMetaHost",
-      package: "@verter/native",
-      notes:
-        "ComponentMetaHost.upsertBase + session.getComponentMeta (protobuf payload). @verter/component-meta TS package is optional/higher-level.",
-      measure: () =>
-        timedSync(() => {
-          // Full cycle per iteration (matches vue-component-meta creating a new checker each run).
-          const project = new ComponentMetaHost({ devMode: false });
-          for (const f of sources) {
-            project.upsertBase(f.path, f.source);
-          }
-          const session = project.openSession();
-          for (const f of sources) {
-            session.getComponentMeta(f.path);
-          }
-          project.shutdown();
-        }),
-    });
-  } else if (!verterMetaPkg.error) {
+  // Drive Verter through its published `@verter/component-meta` session API,
+  // the same entry point the correctness suite scores.
+  //
+  // This row used to call `@verter/native`'s ComponentMetaHost directly and
+  // DISCARD the protobuf buffer it returns, while the vue-component-meta row
+  // above materialises full PropertyMeta objects. The two were then ranked
+  // against each other in one table: a decode-and-materialise pass timed
+  // against a pass that stops at the transport. The artifact column could not
+  // reveal it either, because no variant on this surface declared one — a row
+  // returning nothing at all would have ranked fastest.
+  //
+  // The workaround existed because the published package shipped an empty
+  // `dist/`. It ships properly as of 0.0.1-beta.3, so the workaround is gone.
+  if (!verterMetaPkg.error && typeof verterMetaPkg.mod.openComponentMetaSession === "function") {
+    const { openComponentMetaSession, evictComponentMetaSession } = verterMetaPkg.mod;
+    const sessionConfig = {
+      root: metaDir.replace(/\\/g, "/"),
+      tsconfig: join(metaDir, "tsconfig.json").replace(/\\/g, "/"),
+    };
     variants.push({
       id: "verter-component-meta",
       label: "@verter/component-meta",
       package: "@verter/component-meta",
-      notes: "Higher-level package loaded; attempting createChecker-style API",
-      measure: () =>
-        timedSync(() => {
-          const mod = verterMetaPkg.mod;
-          const create =
-            mod.createChecker ?? mod.createComponentMetaChecker ?? mod.createMetaChecker;
-          if (typeof create !== "function") {
-            throw new Error(
-              `No checker factory on @verter/component-meta. Exports: ${Object.keys(mod).slice(0, 20).join(", ")}`,
-            );
+      notes: "openComponentMetaSession(root, tsconfig) + getComponentMeta for each .vue file",
+      artifactLabel: "Meta members",
+      artifactPolarity: "informational",
+      measure: async () => {
+        let work = 0;
+        // Full cycle per iteration, matching vue-component-meta creating a new
+        // checker each run. Engines are pooled per root+tsconfig, so the evict
+        // is what actually ends the cycle — without it the second run would
+        // measure a warm engine against the other row's cold one.
+        const { ms } = await timedAsync(async () => {
+          const session = await openComponentMetaSession(sessionConfig);
+          try {
+            for (const f of sources) {
+              work += countMetaMembers(await session.getComponentMeta(f.path));
+            }
+          } finally {
+            try {
+              session.close();
+            } catch {
+              /* ignore */
+            }
+            try {
+              evictComponentMetaSession(sessionConfig);
+            } catch {
+              /* ignore */
+            }
           }
-          const checker = create(join(metaDir, "tsconfig.json"));
-          for (const file of absFiles) checker.getComponentMeta(file);
-        }),
+        });
+        return { ms, artifact: work };
+      },
     });
   } else {
     variants.push({
       id: "verter-component-meta",
-      label: "Verter component-meta",
-      package: "@verter/native / @verter/component-meta",
-      notes: `Unavailable: native=${verterNative.error ?? "no ComponentMetaHost"}; pkg=${verterMetaPkg.error ?? "n/a"}`,
+      label: "@verter/component-meta",
+      package: "@verter/component-meta",
+      // No substitute workload: a row measured through a different entry point
+      // than the one it claims is not this tool's number.
+      notes: `Unavailable: ${verterMetaPkg.error ?? "openComponentMetaSession missing"}`,
       skip: true,
     });
   }
@@ -162,7 +208,7 @@ export async function runComponentMetaSurface(fixtureDir, options) {
 
   writeFileSync(
     join(metaDir, "META_BENCH_NOTE.txt"),
-    `files=${files.length}\nvue-meta=${vueMeta.error ? "err" : "ok"}\nverter-native=${verterNative.error ? "err" : "ok"}\nverter-pkg=${verterMetaPkg.error ? "err" : "ok"}\n`,
+    `files=${files.length}\nvue-meta=${vueMeta.error ? "err" : "ok"}\nverter-pkg=${verterMetaPkg.error ? "err" : "ok"}\n`,
   );
 
   // Wrap measures that return timedSync result objects
@@ -192,6 +238,8 @@ export async function runComponentMetaSurface(fixtureDir, options) {
       "Extract component public API metadata (props/events/slots where supported).",
       "Same subset of .vue files for every available tool.",
       "Schema depth and TypeScript program options may differ by tool — timings are throughput, not equivalence.",
+      "Every tool is driven through its own published entry point. No payload is hand-decoded, and no row is measured through an API it does not ship.",
+      "Each row reports the meta members it materialised. The counts are NOT equivalent between tools and no threshold is applied to them: on this corpus most generated SFCs declare no macros, and the tools differ on whether a component with no declared API still has implicit members. Read the member counts alongside the times rather than treating the ratio as like-for-like.",
       "Tool order is ROTATED on every warmup and measured run (not merely alternated), so no tool keeps a fixed position in the sequence.",
       "Tools without a real component-meta API are reported as skipped (no substitute workload).",
     ],

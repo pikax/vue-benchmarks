@@ -8,19 +8,22 @@
  *     events:  [{ name, type? }],
  *     slots:   [{ name, type? }],
  *     exposed: [{ name, type? }],
- *     source:  'vue-component-meta' | 'verter-native' | 'vize-declaration',
+ *     source:  'vue-component-meta' | 'verter-component-meta' | 'vize-declaration',
  *   }
  *
  * Notes:
  * - vue-component-meta: first-class props/events/slots/exposed
- * - Verter ComponentMetaHost: protobuf payload — names/types recovered from
- *   embedded UTF-8 strings (public decode package ships empty dist/)
+ * - @verter/component-meta: first-class props/events/slots/exposed via the
+ *   package's own session API (openComponentMetaSession → getComponentMeta)
  * - Vize: no dedicated meta API; generateDeclaration() output is parsed and
  *   labeled as declaration-derived
+ *
+ * Every tool is driven through its own published entry point, on the same
+ * prepared work dir, with no hand-decoding of any tool's internal payload.
  */
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 const require = createRequire(import.meta.url);
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../../..");
@@ -30,6 +33,45 @@ function loadOptional(name) {
     return { mod: require(require.resolve(name, { paths: [rootDir] })) };
   } catch (error) {
     return { error: error instanceof Error ? error.message : String(error) };
+  }
+}
+
+/**
+ * ESM-only packages cannot be `require`d on every Node the suite runs on.
+ * Resolve with CJS semantics (honours `exports`), then import the resolved
+ * file, so availability detection and loading both stay accurate.
+ */
+async function loadOptionalEsm(name) {
+  try {
+    const entry = require.resolve(name, { paths: [rootDir] });
+    return { mod: await import(pathToFileURL(entry).href) };
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : String(error) };
+  }
+}
+
+/**
+ * `@verter/component-meta` pools its native runtime process-globally, so the
+ * module is loaded once and torn down once (see `shutdownMetaRuntimes`).
+ */
+let verterMetaModule = null;
+function loadVerterComponentMeta() {
+  if (!verterMetaModule) verterMetaModule = loadOptionalEsm("@verter/component-meta");
+  return verterMetaModule;
+}
+
+/**
+ * Stop every pooled Verter meta engine. Call once after a run: the runtime is
+ * process-global, and a leaked engine would keep native memory (and its
+ * sweep timer) alive past the suite that created it.
+ */
+export async function shutdownMetaRuntimes() {
+  if (!verterMetaModule) return;
+  const { mod } = await verterMetaModule;
+  try {
+    mod?.shutdownMetaRuntime?.();
+  } catch {
+    /* ignore */
   }
 }
 
@@ -43,7 +85,14 @@ function isGlobalPropName(name) {
   return false;
 }
 
-export function normalizeVueComponentMeta(raw) {
+/**
+ * Normalize the Volar `ComponentMeta` shape — `{ props, events, slots, exposed }`
+ * of `{ name, type, required, default, global }` — into the harness shape.
+ *
+ * Both `vue-component-meta` and `@verter/component-meta` publish this shape, so
+ * one normalizer serves both and neither gets tool-specific handling.
+ */
+export function normalizeVolarComponentMeta(raw, source) {
   const props = (raw.props || [])
     .filter((p) => !p.global && !isGlobalPropName(p.name))
     .map((p) => ({
@@ -69,201 +118,7 @@ export function normalizeVueComponentMeta(raw) {
       name: e.name,
       type: String(e.type ?? ""),
     })),
-    source: "vue-component-meta",
-  };
-}
-
-/**
- * Pull printable ASCII strings out of a protobuf-ish buffer.
- */
-export function extractBufferStrings(buf) {
-  const bytes = Buffer.isBuffer(buf) ? buf : Buffer.from(buf);
-  const out = [];
-  let cur = "";
-  for (let i = 0; i < bytes.length; i++) {
-    const b = bytes[i];
-    if (b >= 32 && b < 127) cur += String.fromCharCode(b);
-    else {
-      if (cur.length >= 1) out.push(cur);
-      cur = "";
-    }
-  }
-  if (cur.length >= 1) out.push(cur);
-  return out;
-}
-
-/**
- * Heuristic parse of Verter resolved meta strings.
- * Declared API names appear before HTML/ARIA fallthrough attrs in the payload.
- */
-export function normalizeVerterMetaBuffer(buf) {
-  const strings = extractBufferStrings(buf);
-  const cut = strings.findIndex(
-    (s) => s === "accesskey" || s.startsWith("aria-") || s === "autocapitalize" || s === "tabindex",
-  );
-  const region = cut > 0 ? strings.slice(0, cut) : strings.slice(0, 120);
-
-  // Known type tokens
-  const typeTokens = new Set([
-    "string",
-    "number",
-    "boolean",
-    "any",
-    "void",
-    "unknown",
-    "object",
-    "never",
-  ]);
-
-  const props = [];
-  const events = [];
-  const slots = [];
-  const exposed = [];
-
-  // Walk region looking for prop-like sequences: name, type, optional defaultValue
-  // Also capture event types like "[id: number]"
-  const skip = new Set([
-    "props",
-    "const",
-    "none",
-    "emit",
-    "about",
-    "button",
-    "defaultValue",
-    "type",
-    "ts",
-    "setup",
-    "expanded",
-    "defineEmits",
-    "defineSlots",
-    "$slots",
-  ]);
-
-  // Path-like first entry
-  let i = 0;
-  if (region[0] && (region[0].includes(".vue") || region[0].includes(":"))) i = 1;
-
-  const usedAsEvent = new Set();
-  const usedAsSlot = new Set();
-
-  // First pass: event type tuples and update: events
-  for (let j = 0; j < region.length; j++) {
-    const s = region[j];
-    if (/^\[.*\]$/.test(s) && j > 0) {
-      // previous tokens may be event name / arg name
-      const prev = region[j - 1];
-      const prev2 = region[j - 2];
-      // pattern: eventName, argName, [type]  OR eventName, [type]
-      if (prev2 && !typeTokens.has(prev2) && !skip.has(prev2) && !/^\[/.test(prev2)) {
-        if (prev2.includes(":") || /^[a-zA-Z_][\w:.-]*$/.test(prev2)) {
-          events.push({ name: prev2, type: s });
-          usedAsEvent.add(prev2);
-        }
-      }
-    }
-  }
-
-  // Props: look for name followed by a type token
-  for (let j = i; j < region.length - 1; j++) {
-    const name = region[j];
-    const next = region[j + 1];
-    if (!name || skip.has(name) || usedAsEvent.has(name)) continue;
-    if (name.includes("/") || name.includes("\\") || name.includes(".vue")) continue;
-    if (!/^[a-zA-Z_][\w-]*$/.test(name) && !name.includes(":")) continue;
-    if (name.includes(":")) continue; // events like update:label handled above
-
-    if (typeTokens.has(next) || /^(string|number|boolean|any)\b/.test(next)) {
-      let hasDefault = false;
-      // defaultValue marker after type, or literal default after type
-      if (region[j + 2] === "defaultValue") hasDefault = true;
-      if (
-        region[j + 2] &&
-        !typeTokens.has(region[j + 2]) &&
-        !skip.has(region[j + 2]) &&
-        region[j + 2] !== "defaultValue" &&
-        (region[j + 2] === "0" ||
-          region[j + 2] === "false" ||
-          region[j + 2] === "true" ||
-          region[j + 2] === "null" ||
-          region[j + 2] === "undefined" ||
-          /^['"`]/.test(region[j + 2]))
-      ) {
-        hasDefault = true;
-      }
-      // skip if this looks like slot prop field (open after default)
-      props.push({
-        name,
-        type: next,
-        required: undefined, // not reliably encoded in string dump
-        hasDefault: hasDefault || undefined,
-        global: false,
-      });
-    }
-  }
-
-  // Slots: "default", "icon" appear; slot props like "open" may sit between
-  // After events region, look for default/icon/focus
-  const slotNames = ["default", "icon", "header", "footer", "title", "prefix", "suffix"];
-  for (const sn of slotNames) {
-    if (region.includes(sn) && !props.some((p) => p.name === sn)) {
-      // "default" might also be a default value token — if we already saw defaultValue near a prop, still ok as slot name if defineSlots used
-      slots.push({ name: sn, type: "" });
-      usedAsSlot.add(sn);
-    }
-  }
-
-  // Exposed: focus etc. — names that appear and look like methods, not already props/events
-  // From dump: focus appears after icon
-  const propNames = new Set(props.map((p) => p.name));
-  for (const s of region) {
-    if (
-      s === "focus" ||
-      s === "blur" ||
-      s === "open" ||
-      s === "close" ||
-      s === "validate" ||
-      s === "reset"
-    ) {
-      // "open" is often a slot prop — only treat as exposed if not only a slot prop field
-      if (s === "open" && usedAsSlot.has("default")) continue;
-      if (!propNames.has(s) && !usedAsEvent.has(s)) {
-        if (!exposed.some((e) => e.name === s)) {
-          exposed.push({ name: s, type: "" });
-        }
-      }
-    }
-  }
-  // Explicit: if "focus" in region, add
-  if (region.includes("focus") && !exposed.some((e) => e.name === "focus")) {
-    exposed.push({ name: "focus", type: "" });
-  }
-
-  // Dedup props by name (keep first)
-  const seenP = new Set();
-  const dedupProps = [];
-  for (const p of props) {
-    if (seenP.has(p.name)) continue;
-    // filter false positives that are event arg names (id, value) when those aren't real props
-    seenP.add(p.name);
-    dedupProps.push(p);
-  }
-
-  // Dedup events
-  const seenE = new Set();
-  const dedupEvents = [];
-  for (const e of events) {
-    if (seenE.has(e.name)) continue;
-    seenE.add(e.name);
-    dedupEvents.push(e);
-  }
-
-  return {
-    props: dedupProps,
-    events: dedupEvents,
-    slots,
-    exposed,
-    source: "verter-native",
-    _strings: region,
+    source,
   };
 }
 
@@ -395,8 +250,10 @@ export function normalizeVizeDeclaration(code) {
 
 /**
  * List available meta tools with extract(path, source) → normalized meta.
+ *
+ * `prepare` / `extract` / `dispose` may be async; callers must await them.
  */
-export function getMetaTools({ workDir }) {
+export async function getMetaTools({ workDir }) {
   const tools = [];
 
   const vueMeta = loadOptional("vue-component-meta");
@@ -412,7 +269,7 @@ export function getMetaTools({ workDir }) {
       },
       extract(absPath) {
         const raw = checker.getComponentMeta(absPath);
-        return normalizeVueComponentMeta(raw);
+        return normalizeVolarComponentMeta(raw, "vue-component-meta");
       },
       dispose() {
         checker = null;
@@ -426,49 +283,57 @@ export function getMetaTools({ workDir }) {
     });
   }
 
-  const verter = loadOptional("@verter/native");
-  if (!verter.error && typeof verter.mod.ComponentMetaHost === "function") {
-    let host = null;
+  // Driven through the package's own documented entry point — the same
+  // `openComponentMetaSession(...)` → `getComponentMeta(file)` a consumer
+  // writes — so the row measures the shipped API, not a decoding of its
+  // internal transport.
+  const verterMeta = await loadVerterComponentMeta();
+  if (!verterMeta.error && typeof verterMeta.mod.openComponentMetaSession === "function") {
+    const { openComponentMetaSession, evictComponentMetaSession } = verterMeta.mod;
+    const sessionConfig = {
+      root: workDir.replace(/\\/g, "/"),
+      tsconfig: join(workDir, "tsconfig.json").replace(/\\/g, "/"),
+    };
     let session = null;
     tools.push({
       id: "verter-component-meta",
-      label: "Verter ComponentMetaHost",
-      capabilities: ["props", "events", "slots", "exposed", "types"],
-      prepare() {
-        host = new verter.mod.ComponentMetaHost({ devMode: false });
-        session = null;
+      label: "@verter/component-meta",
+      capabilities: ["props", "events", "slots", "exposed", "types", "required", "defaults"],
+      async prepare() {
+        session = await openComponentMetaSession(sessionConfig);
       },
-      extract(absPath, source) {
+      async extract(absPath, source) {
         const id = absPath.replace(/\\/g, "/");
-        host.upsertBase(id, source);
-        if (!session) session = host.openSession();
-        else if (typeof session.upsert === "function") session.upsert(id, source);
-        const buf =
-          typeof session.getResolvedComponentMeta === "function"
-            ? session.getResolvedComponentMeta(id)
-            : session.getComponentMeta(id);
-        return normalizeVerterMetaBuffer(buf);
+        // The file is on disk in the work dir and resolves without this, but
+        // the harness holds the exact bytes under test; the documented
+        // overlay API pins the session to them so the row can never be
+        // scored against a stale read.
+        session.updateFile(id, source);
+        const raw = await session.getComponentMeta(id);
+        return normalizeVolarComponentMeta(raw, "verter-component-meta");
       },
       dispose() {
         try {
-          session?.close?.();
+          session?.close();
         } catch {
           /* ignore */
         }
+        // Engines are pooled per root+tsconfig. Each case gets its own work
+        // dir, so without this every case would leave a live native engine
+        // behind for the rest of the run.
         try {
-          host?.shutdown?.();
+          evictComponentMetaSession(sessionConfig);
         } catch {
           /* ignore */
         }
-        host = null;
         session = null;
       },
     });
   } else {
     tools.push({
       id: "verter-component-meta",
-      label: "Verter ComponentMetaHost",
-      skip: verter.error || "ComponentMetaHost missing",
+      label: "@verter/component-meta",
+      skip: verterMeta.error || "openComponentMetaSession missing",
     });
   }
 

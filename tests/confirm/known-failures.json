@@ -35,35 +35,5 @@
   "typecheck/generic-component-ok/verter-tsc": "verter-tsc emits 3 spurious diagnostics about its own virtual code on a CLEAN generic <script setup> component: ___VERTER___Attrs requires 1 type argument, ___VERTER___attributes is not generic, Cannot find name 'items'.",
   "typecheck/literal-union-prop-bad/vize-check": "vize check reports 0 errors for a STATIC attribute outside its declared string-literal union (variant=\"danger\" against \"primary\" | \"secondary\"). vue-tsc, verter-tsc and golar all catch it. Reproduced deterministically. Same family as the work-gate template prop-type miss (:disabled string→boolean), so vize's strictTemplates prop-type checking on template attributes has real gaps — which is why the typecheck row is bracketed as failed validation rather than ranked.",
 
-  "component-meta/generic-props/vize-declaration-meta": "vize generateDeclaration emits unparseable TypeScript for generic components — `export type Props<T extends { id: number } = any> = <{ ... }>;` wraps the body in angle brackets (3 TS parse errors). Only generic components are affected.",
-
-  "$comment-verter-component-meta": [
-    "The nine entries below share ONE root cause and expire together.",
-    "",
-    "The published `@verter/component-meta` ships an empty `dist/` — a bad",
-    "deployment, fixed in the next release. With no decode package, the harness",
-    "falls back to the internal native host and recovers names by scraping",
-    "printable strings out of a protobuf buffer (normalizeVerterMetaBuffer),",
-    "which cannot reliably recover structured props/events/slots.",
-    "",
-    "These were previously INVISIBLE: component-meta-score.mjs carried a",
-    "`meta._strings` hatch that turned a missing structured entry into a PASS if",
-    "the name appeared anywhere in the raw payload. That scored props=0 as a",
-    "pass on generic-props while vize FAILED the same case. The hatch is gone;",
-    "these are what it was hiding. Listing them here keeps the ✗ visible in the",
-    "output instead of dressing it as a ✓, and the suite fails the moment they",
-    "start passing — so the real fix cannot leave a stale suppression behind.",
-    "",
-    "Delete this block when the package ships a working dist/."
-  ],
-
-  "component-meta/emits-overloads/verter-component-meta": "Empty published dist/ — see $comment-verter-component-meta. events.cancel not recoverable from the protobuf string scrape.",
-  "component-meta/events-emits/verter-component-meta": "Empty published dist/ — see $comment-verter-component-meta. events.update:modelValue and events.close missing.",
-  "component-meta/expose/verter-component-meta": "Empty published dist/ — see $comment-verter-component-meta. exposed.value missing.",
-  "component-meta/full-api/verter-component-meta": "Empty published dist/ — see $comment-verter-component-meta. props.size, events.submit, slots.default and slots.actions all missing; vue-component-meta resolves 2/2/2/2 on the same file.",
-  "component-meta/generic-props/verter-component-meta": "Empty published dist/ — see $comment-verter-component-meta. props.items, props.selected and props.keyOf missing — zero structured props recovered.",
-  "component-meta/recursive-props/verter-component-meta": "Empty published dist/ — see $comment-verter-component-meta. props.root and slots.node missing.",
-  "component-meta/runtime-props/verter-component-meta": "Empty published dist/ — see $comment-verter-component-meta. events.submit and events.cancel missing.",
-  "component-meta/slots/verter-component-meta": "Empty published dist/ — see $comment-verter-component-meta. slots.default and slots.footer carry no type at all; the scrape recovers the name but never the signature.",
-  "component-meta/union-intersection-props/verter-component-meta": "Empty published dist/ — see $comment-verter-component-meta. props.size, props.config and props.tuple missing."
+  "component-meta/generic-props/vize-declaration-meta": "vize generateDeclaration emits unparseable TypeScript for generic components — `export type Props<T extends { id: number } = any> = <{ ... }>;` wraps the body in angle brackets (3 TS parse errors). Only generic components are affected."
 }
