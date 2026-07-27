@@ -36,19 +36,72 @@ function isWinShell(bin) {
 }
 
 /**
+ * ANSI escape sequences (CSI colour/SGR, OSC hyperlinks, bare two-char escapes).
+ *
+ * Stripping is not optional. Measured on this repo: `vize check` colours every
+ * diagnostic line (`ESC[31merror:3:7 [TS2322] ...ESC[0m`) even with NO_COLOR=1 and
+ * FORCE_COLOR=0 set, which is exactly what runCommand sets. Any pattern that
+ * expects a diagnostic to START with a severity word therefore has to see
+ * through the colour codes first.
+ *
+ * OSC (`ESC ] ... BEL`) is matched before CSI because its payload may itself
+ * contain `[`.
+ */
+const ANSI_ESCAPE_RE =
+  // eslint-disable-next-line no-control-regex
+  /\u001B\][\s\S]*?(?:\u0007|\u001B\\)|\u001B\[[0-9;?]*[ -\/]*[@-~]|\u001B[@-Z\\-_]/g;
+
+/**
+ * The diagnostic-line shapes actually emitted by the checkers on this surface.
+ *
+ * Captured from real runs against a corpus with a known number of planted
+ * errors (see tests/harness/typecheck-artifact.test.mjs, which pins one real
+ * sample per tool):
+ *
+ *   vue-tsc / golar / verter-tsc   Comp.vue(83,7): error TS2322: Type 'string'...
+ *   golar (colour on)              Comp.vue:3:7 - error TS2322: Type 'string'...
+ *   vize check                     ESC[31merror:3:7 [TS2322] Type 'string'...ESC[0m
+ *
+ * `vize` is the reason this list exists: it never emits `(line,col):` at all, so
+ * the previous single `file(line,col): severity` pattern scored it 0 diagnostics
+ * on a corpus where it had just named 20/20 files and reported 40 real TS2322s.
+ * A zero there is indistinguishable from "this tool stopped analysing", which is
+ * the one thing the artifact column exists to reveal.
+ */
+const DIAGNOSTIC_LINE_PATTERNS = [
+  // tsc plain (`--pretty false`, the default when a TTY is absent).
+  /^\S[^\n]*\(\d+,\d+\):[ \t]*(?:error|warning)\b/i,
+  // tsc pretty (`file:line:col - error TSxxxx:`). Kept because tsc-family CLIs
+  // switch layout on colour, not on a flag we control.
+  /^\S[^\n]*:\d+:\d+[ \t]+-[ \t]+(?:error|warning)\b/i,
+  // vize: severity-first, indented under a filename heading line.
+  /^[ \t]*(?:error|warning):\d+:\d+/i,
+];
+
+/**
  * Count diagnostics a checker emitted on the timed corpus.
  *
- * The artifact census for this surface. The corpus is clean, so a healthy
- * checker reports few or none — the value of the number is that it exposes a
- * tool emitting a suspicious volume of noise (verter-tsc leaks diagnostics
- * about its own virtual code on generic components) or a tool that has
- * silently stopped analysing. Counted as `file(line,col): severity` hits,
- * which every checker here emits.
+ * The artifact census for this surface. Timing alone cannot tell "fast" from
+ * "did less", so the number is what exposes a tool emitting a suspicious volume
+ * of noise (verter-tsc reports the corpus plants twice — once against the .vue
+ * and again against its own generated `Comp_<hash>.vue.ts`) or a tool that has
+ * silently stopped analysing.
+ *
+ * Counted per LINE, and a line counts at most once no matter how many patterns
+ * it satisfies. That is what keeps a multi-line diagnostic worth exactly one:
+ * TypeScript indents the continuation lines of a nested-type mismatch
+ * ("  The types of 'a.b.c' are incompatible between these types.") and vize
+ * appends them unindented but without a `severity:line:col` prefix — in both
+ * shapes only the first line carries a position, so only the first line counts.
+ * The `^\S` anchor on the tsc patterns is the load-bearing half of that.
  */
-function countDiagnostics(stdout = "", stderr = "") {
-  const text = `${stdout}\n${stderr}`;
-  const matches = text.match(/^.*\(\d+,\d+\):\s*(error|warning)/gim);
-  return matches ? matches.length : 0;
+export function countDiagnostics(stdout = "", stderr = "") {
+  const text = `${stdout}\n${stderr}`.replace(ANSI_ESCAPE_RE, "");
+  let count = 0;
+  for (const line of text.split("\n")) {
+    if (DIAGNOSTIC_LINE_PATTERNS.some((re) => re.test(line))) count += 1;
+  }
+  return count;
 }
 
 /**

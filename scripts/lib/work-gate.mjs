@@ -2,8 +2,17 @@
  * Lightweight "does this tool actually report planted failures?" gates.
  * Tools that skip real work are demoted to unranked (skipped), not sorted as fast.
  */
-import { cpSync, mkdirSync, writeFileSync, readFileSync, rmSync, existsSync } from "node:fs";
-import { basename, dirname, join } from "node:path";
+import {
+  cpSync,
+  existsSync,
+  lstatSync,
+  mkdirSync,
+  readFileSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from "node:fs";
+import { basename, dirname, isAbsolute, join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { runCommand } from "./timing.mjs";
 
@@ -148,9 +157,86 @@ export function cliReportsPlantedIssue(opts) {
   }
 }
 
+/** The repo's own node_modules — the only dependency tree a plant may use. */
+const repoNodeModules = join(rootDir, "node_modules");
+
+/**
+ * Point a plant ROOT at the repo's dependency tree. Returns whether it worked.
+ *
+ * A plant under a `--work` root INSIDE the repo resolves `vue` by the ordinary
+ * walk-up to <repo>/node_modules. A plant under a `--work` root outside the repo
+ * has nothing to walk up to, and every dependency the plant needs disappears at
+ * once. Measured, with the plant one directory outside the repo:
+ *
+ *   vue-tsc      reported only `golar.config.ts(1,30): TS2307 Cannot find
+ *                module 'golar/unstable'` and NOTHING about the planted bug
+ *   verter-tsc   reported TS2307 'vue', TS2875 'vue/jsx-runtime' and TS7026
+ *                'no JSX.IntrinsicElements' against Bad.vue — a gate PASS
+ *                earned by noise rather than by finding the plant
+ *   golar        crashed outright (ERR_MODULE_NOT_FOUND: 'golar')
+ *   vize check   refused to run ("corsa not found — install
+ *                @typescript/native-preview")
+ *
+ * So the gate reported "does not typecheck templates" for five of six tools
+ * purely because of where --work pointed. A directory junction/symlink is used
+ * rather than a copy because it is O(1) and gives the plant byte-identical
+ * resolution to a project inside the repo — including package `exports` maps
+ * and pnpm's .pnpm store, which a tsconfig `paths` entry cannot reproduce.
+ *
+ * The link goes on the plant ROOT, never inside a plant project. Both Node and
+ * TypeScript walk UP for node_modules so the projects still find it, while
+ * directory-walking checkers (`vize check .`, `golar`) that enumerate inputs
+ * under the project dir never see it and cannot wander into the whole store.
+ *
+ * Verified that rmSync(recursive) unlinks the junction instead of deleting
+ * through it (same drive and across drives), so cleanup cannot reach the repo's
+ * node_modules. `tsconfigPathsForVue` below is the belt-and-braces fallback for
+ * hosts where the link cannot be created at all.
+ */
+function linkRepoNodeModules(dir) {
+  const link = join(dir, "node_modules");
+  if (!existsSync(repoNodeModules)) return false;
+  try {
+    if (lstatSync(link, { throwIfNoEntry: false })) return true;
+  } catch {
+    return false;
+  }
+  try {
+    symlinkSync(repoNodeModules, link, "junction");
+    return true;
+  } catch {
+    try {
+      symlinkSync(repoNodeModules, link, "dir");
+      return true;
+    } catch {
+      return false;
+    }
+  }
+}
+
+/**
+ * compilerOptions.paths that pin `vue` to the repo's copy.
+ *
+ * Independent of the junction on purpose: `vue` resolving is what makes
+ * strictTemplates check anything at all, and that is the one capability the two
+ * template plants exist to certify. If the link cannot be created this still
+ * keeps the plant honest for every TypeScript-based checker.
+ *
+ * Relative when possible (the same convention prepareTypecheckDir uses),
+ * absolute when the work root is on another volume and no relative path exists.
+ */
+function tsconfigPathsForVue(dir) {
+  const vueDir = join(repoNodeModules, "vue");
+  if (!existsSync(vueDir)) return undefined;
+  const rel = relative(dir, vueDir);
+  const target = (isAbsolute(rel) || rel === "" ? vueDir : rel).split(sep).join("/");
+  return { vue: [target], "vue/*": [`${target}/*`] };
+}
+
 /** Shared project scaffolding for a one-file typecheck plant. */
 function writePlantProject(dir, badFileSource, name) {
   mkdirSync(dir, { recursive: true });
+  const paths = tsconfigPathsForVue(dir);
   writeFileSync(
     join(dir, "tsconfig.json"),
     JSON.stringify(
@@ -167,6 +253,7 @@ function writePlantProject(dir, badFileSource, name) {
           esModuleInterop: true,
           lib: ["ESNext", "DOM"],
           types: [],
+          ...(paths ? { paths } : {}),
         },
         // Required for the template plant: without strictTemplates a native
         // element's prop types are not checked.
@@ -210,10 +297,17 @@ declare module "*.vue" {
  * A single script-level plant was not enough: a tool that extracts script
  * blocks and shells out to tsc passes it while doing none of the template
  * checking that dominates real vue-tsc cost.
+ *
+ * The plant is deliberately NOT assumed to sit inside the repo: `--work` can
+ * point anywhere, and the plant needs the repo's dependency tree to resolve
+ * `vue` at all — see linkRepoNodeModules for what silently breaks without it.
  */
 export function prepareTypecheckPlant(workRoot) {
   // Unique dir avoids Windows EPERM when a previous plant is still locked
   const root = join(workRoot, `work-gate-typecheck-${process.pid}-${Date.now().toString(36)}`);
+  mkdirSync(root, { recursive: true });
+  // One link on the root, shared by all four projects via the normal walk-up.
+  const linkedNodeModules = linkRepoNodeModules(root);
   const scriptDir = writePlantProject(join(root, "script"), BAD_SCRIPT_VUE, "work-gate-tc-script");
   const templateDir = writePlantProject(
     join(root, "template"),
@@ -238,12 +332,16 @@ export function prepareTypecheckPlant(workRoot) {
 
   return {
     dir: scriptDir, // back-compat for callers expecting a single dir
+    root,
     scriptDir,
     templateDir,
     templatePropDir,
     templateEventDir,
     nodePath,
-    cleanup: () => rmSync(root, { recursive: true, force: true }),
+    linkedNodeModules,
+    // maxRetries: the checkers hold handles on plant files briefly after exit on
+    // Windows, and a failed cleanup would leave the junction behind.
+    cleanup: () => rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 }),
   };
 }
 
