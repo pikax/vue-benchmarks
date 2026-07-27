@@ -278,18 +278,25 @@ function ensureSubjectExtension({ vscodeExecutablePath, extDir, extension }) {
  * more inside 8.9s — Electron cold start, extension activation, workspace open,
  * language-server spawn and project load, and the probes, all included.
  *
- * 120s is ~13x the slowest launch observed. The headroom is for CI being
- * slower than a warm local box (xvfb, cold page cache, shared runner) and for
- * the opt-in Nuxt UI workspace, which loads a real project rather than a
- * generated fixture. It is deliberately not tighter: cutting off a
- * slow-but-working subject would publish a truncated number, which is worse
- * than publishing none.
+ * 90s is ~10x the slowest launch observed, and roughly 2.5x what that launch
+ * should cost on a 2-core CI runner (assume 3-4x a warm local box for xvfb,
+ * cold page cache and shared hardware).
+ *
+ * It is sized TOGETHER WITH the job ceiling, not independently. Six launches
+ * at 90s is 9 minutes, which still fits a 10-minute job alongside setup; at the
+ * previous 120s the worst case was 12 minutes and the job could have died of
+ * budget exhaustion rather than of any real runaway — a confusing failure that
+ * looks like a hang but is arithmetic. Raise them together or not at all: the
+ * Nuxt UI path does exactly that via E2E_LAUNCH_TIMEOUT_MS.
+ *
+ * Deliberately not tighter: cutting off a slow-but-working subject publishes a
+ * truncated number, which is worse than publishing none.
  *
  * IDENTICAL for every extension. An asymmetric budget silently subsidises
  * whichever subject got the larger one — the same mistake the LSP surface's
  * retry budget already had to have corrected.
  */
-const LAUNCH_TIMEOUT_MS = Number(process.env.E2E_LAUNCH_TIMEOUT_MS ?? 120_000);
+const LAUNCH_TIMEOUT_MS = Number(process.env.E2E_LAUNCH_TIMEOUT_MS ?? 90_000);
 
 /**
  * Race a VS Code launch against the budget.

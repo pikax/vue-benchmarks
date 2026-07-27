@@ -27,26 +27,24 @@ permissions:
 jobs:
   e2e:
     runs-on: ubuntu-latest
-    # 20, down from 90, and now set from a MEASURED run rather than from fear.
-    #
-    # A full local pass (2 workspaces x 3 extensions = 6 sequential Electron
-    # launches) took 33.1s end to end: 1.6s of setup and per-launch times of
-    # 9.0s / 2.8s / 6.8s / 4.0s plus two inside 8.9s. The old 90-minute ceiling
-    # was roughly 160x the real cost.
+    # 10 by default, 20 when the Nuxt UI workspace is requested. Set from a
+    # MEASURED run rather than from fear: a full local pass (2 workspaces x 3
+    # extensions = 6 sequential Electron launches) took 33.1s end to end —
+    # 1.6s setup, then 9.0s / 2.8s / 6.8s / 4.0s and two more inside 8.9s. The
+    # old 90-minute ceiling was ~160x the real cost.
     #
     # It was high because `runTests()` had no timeout of its own, so one wedged
-    # launch blocked the serial loop until the job was killed — the ceiling was
+    # launch blocked the serial loop until the job was killed. The ceiling was
     # insurance against a hang, not an estimate. Each launch now has its own
-    # 120s budget (identical for every extension), so a hang costs one failed
-    # row instead of the whole job, which is what makes a tight ceiling safe
-    # rather than merely faster to fail.
+    # budget, so a hang costs ONE failed row instead of the whole job — which is
+    # what makes a tight ceiling safe rather than merely faster to fail.
     #
-    # 20 rather than 5: CI is slower than a warm local box (xvfb, cold page
-    # cache, shared runner), the first run downloads VS Code before the cache
-    # exists, and the opt-in Nuxt UI workspace adds 3 launches against a real
-    # cloned project. Worst case is 9 x 120s = 18 min of launches; in practice
-    # a warm run should finish in single-digit minutes.
-    timeout-minutes: 20
+    # Budgeted so the ceiling cannot be hit by arithmetic alone:
+    #   default   6 launches x 90s = 9 min   + ~1 min setup  <= 10
+    #   nuxt-ui   9 launches x 90s = 13.5 min + clone/install <= 20
+    # Allowing 4-5x the expected CI cost (assume a 2-core runner is 3-4x a warm
+    # local box, so the slowest launch ~36s against a 90s budget).
+    timeout-minutes: ${{ (github.event.inputs.with_nuxt_ui == 'true') && 20 || 10 }}
     defaults:
       run:
         shell: bash

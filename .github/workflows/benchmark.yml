@@ -373,11 +373,31 @@ jobs:
       # `[skip ci]` still earns its keep now that this workflow no longer runs
       # on push: the auto-commit lands on `main` and would otherwise trigger a
       # full `test.yml` run for a docs-only change.
-      - name: Commit docs (skip ci)
+      # EXACTLY ONE commit per publish run, and it is the only commit this repo
+      # ever makes automatically. Both updaters run first and this step commits
+      # their combined output, so a run publishes bench + ide + memory results
+      # as a single reviewable change rather than a trail of partial ones.
+      #
+      # Do not add a second commit step, and do not move this above either
+      # updater: splitting it would produce commits where README and MEMORY.md
+      # disagree about which run they came from.
+      #
+      # The action no-ops when nothing changed, so an idempotent re-run does not
+      # create an empty commit.
+      - name: Commit results (single commit, skip ci)
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: |
-            chore: update benchmark and memory results [skip ci]
+            chore: publish benchmark results [skip ci]
 
+            Single commit carrying every surface measured by this run:
+            throughput (compile, jsx-compile, typecheck, format, lint,
+            component-meta, lsp), per-operation IDE results, and the memory
+            probe. A section with no artifact keeps its previous published
+            content rather than being replaced by a placeholder, so a partial
+            run never erases results it did not measure.
+
+            fixtures: ${{ env.FIXTURE_COUNT }} SFCs · runs: ${{ env.BENCH_RUNS }} · warmups: ${{ env.BENCH_WARMUPS }}
+            bench: ${{ needs.bench.result }} · ide: ${{ needs.ide.result }} · memory: ${{ needs.memory.result }}
             Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           file_pattern: README.md MEMORY.md
