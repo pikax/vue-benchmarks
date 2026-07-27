@@ -19,6 +19,13 @@ updates:
           - "mocha"
           - "jsdom"
           - "@vue/test-utils"
+    ignore:
+      # Root `typescript` is the engine under the vue-tsc / Volar / lint /
+      # component-meta rows and must stay 5.x; TS 7 is already in the tree as
+      # `typescript-go` for the tsgo rows. A major bump here swaps the engine
+      # under the tools being measured.
+      - dependency-name: typescript
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: github-actions
     directory: /
