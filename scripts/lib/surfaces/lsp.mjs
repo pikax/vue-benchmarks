@@ -258,6 +258,17 @@ function resolvePackageDir(name) {
   return null;
 }
 
+/** Installed version of a package, or null. Used to label a row's provenance. */
+function pkgVersionOf(name) {
+  const dir = resolvePackageDir(name);
+  if (!dir) return null;
+  try {
+    return JSON.parse(readFileSync(join(dir, "package.json"), "utf8")).version ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export function resolveVolarServer() {
   const dir = resolvePackageDir("@vue/language-server");
   if (!dir) return null;
@@ -446,7 +457,34 @@ export function resolveVerterLsp() {
     };
   }
 
-  // Discovery: env, repo-local bin/, sibling checkout (dev/personal/verter), cwd target/
+  // The published `verter-lsp` package, when installed. Preferred over any
+  // local build because it is the only candidate carrying a version: every
+  // other server in this table resolves to a pinned npm artifact, and a row
+  // sourced from an unversioned working copy cannot be reproduced from the
+  // lockfile or reported by versions.mjs. The local-build candidates below
+  // stay for development, and say "local build" on the row.
+  //
+  // The package's own docs are explicit that the native binary should be
+  // spawned DIRECTLY: bin/run.js is a Node shim for `npx` and for editors that
+  // launch a bare `verter-lsp` command. Going through it would add a Node
+  // startup that no other native row pays.
+  try {
+    const { resolveServerBinary } = require("verter-lsp");
+    const resolved = resolveServerBinary?.();
+    if (resolved?.path && existsSync(resolved.path)) {
+      const version = pkgVersionOf("verter-lsp");
+      return {
+        command: resolved.path,
+        args: [],
+        shell: false,
+        labelExtra: version ? `npm ${version}` : "npm package",
+      };
+    }
+  } catch {
+    // Not installed, or an unsupported host — fall through to local builds.
+  }
+
+  // Discovery: repo-local bin/, sibling checkout (dev/personal/verter), cwd target/
   const home = process.env.USERPROFILE || process.env.HOME || "";
   const candidates = [
     join(rootDir, "bin", "verter-lsp.exe"),

@@ -15,11 +15,14 @@ importers:
         specifier: 0.1.10
         version: 0.1.10
       '@verter/component-meta':
-        specifier: 0.0.1-beta.2
-        version: 0.0.1-beta.2(zod@3.25.76)
+        specifier: 0.0.1-beta.3
+        version: 0.0.1-beta.3(zod@3.25.76)
       '@verter/native':
-        specifier: 0.0.1-beta.2
-        version: 0.0.1-beta.2
+        specifier: 0.0.1-beta.3
+        version: 0.0.1-beta.3
+      '@vizejs/musea-mcp-server':
+        specifier: 0.291.0
+        version: 0.291.0(zod@3.25.76)
       '@vizejs/native':
         specifier: 0.291.0
         version: 0.291.0
@@ -68,9 +71,15 @@ importers:
       typescript-language-server:
         specifier: 5.3.0
         version: 5.3.0
+      verter-lsp:
+        specifier: 0.0.1-beta.3
+        version: 0.0.1-beta.3
+      verter-mcp:
+        specifier: 0.0.1-beta.3
+        version: 0.0.1-beta.3
       verter-tsc:
-        specifier: 0.0.1-beta.2
-        version: 0.0.1-beta.2
+        specifier: 0.0.1-beta.3
+        version: 0.0.1-beta.3
       vize:
         specifier: 0.291.0
         version: 0.291.0(vue@3.5.40(typescript@5.9.3))
@@ -90,9 +99,6 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^8.65.0
         version: 8.65.0(eslint@9.39.2)(typescript@5.9.3)
-      '@vizejs/musea-mcp-server':
-        specifier: 0.291.0
-        version: 0.291.0(zod@3.25.76)
       '@vue/test-utils':
         specifier: 2.4.11
         version: 2.4.11(@vue/compiler-dom@3.6.0-rc.2)(@vue/server-renderer@3.5.40)(vue@3.5.40(typescript@5.9.3))
@@ -910,10 +916,14 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@verter/component-meta@0.0.1-beta.2':
-    resolution: {integrity: sha512-6fLkfwjR68wmv7w59zdtSiYvehIEqLpjk3DsZOmp6+Xsb/d+sOGGXbJtVdcRNXh90FbZBT8pzv43i0gc2wxusg==}
+  '@verter/binary-launcher@0.0.1-beta.3':
+    resolution: {integrity: sha512-Xzy4FFP6pyAv/DMPCPBzaw0s2g2aG7/7SHsxUKf0O8od2+M6mmZzjD3todgcBDsm1oXOJQJPm3PhtQbamuY00Q==}
+    engines: {node: '>=22'}
+
+  '@verter/component-meta@0.0.1-beta.3':
+    resolution: {integrity: sha512-I4kijhACMq/4RxuRl8SZsR5Iex0jj1mGuIIapBRNLxD9KwPnBshVqfupSMzQru0hvpx0nAbRNCzzV0DBOXgRLw==}
     peerDependencies:
-      '@verter/wasm': 0.0.1-beta.2
+      '@verter/wasm': 0.0.1-beta.3
       zod: ^3.0.0
     peerDependenciesMeta:
       '@verter/wasm':
@@ -921,106 +931,190 @@ packages:
       zod:
         optional: true
 
-  '@verter/language-shared@0.0.1-beta.2':
-    resolution: {integrity: sha512-5oddC7IMKUyaGiRsTxW0uOnnU5cDTVAaLUQ9OCq0HkXpxWycU9sdWDOdiJsP8FRfv4YPvtsZp09Uyb+NasCDrg==}
-    engines: {node: '>=18'}
+  '@verter/language-shared@0.0.1-beta.3':
+    resolution: {integrity: sha512-2NRBUOBiO1yFgmajXLxZENt+gEC/vi4RD+GreXJxF7XA6xjaPy11JeBmLqfZvWwraM+xBIrPooOpHW9mT7xDdw==}
+    engines: {node: '>=22'}
 
-  '@verter/native-darwin-arm64@0.0.1-beta.2':
-    resolution: {integrity: sha512-VKNiybSNAKBxuKSYWdc+Hr9sEJpjOa4C//ka+GwIlFtb5cuAAi2lpuYQndRXjbOaYDk8S/SNqd6Io7r3FFrB6g==}
-    engines: {node: '>=18'}
+  '@verter/lsp-darwin-arm64@0.0.1-beta.3':
+    resolution: {integrity: sha512-P5CTCdLc66yCrPUPkzNdX+eIlX5JDY270bwoNVyJkCNnmVXaa88G9w2MCjwb8kKFCX/MkCChOi0Js3vJC7ezDg==}
+    engines: {node: '>=22'}
     cpu: [arm64]
     os: [darwin]
 
-  '@verter/native-darwin-x64@0.0.1-beta.2':
-    resolution: {integrity: sha512-HAn0pIQP4H700Bd3kJINQ5M0j3j9bu9XkLEe0BdqPbvQLn8b+E2oAff0fGnS+MR2/g4+wAjpB5ML4UKsMYRhHA==}
-    engines: {node: '>=18'}
+  '@verter/lsp-darwin-x64@0.0.1-beta.3':
+    resolution: {integrity: sha512-3ORs+JW/4fuFyMb5jhGtcQbSlANmNDX/mSbrLgjSbJ4MAQ3NHLKbmD9AFdC34nMRf+bHfubf9K8JTHwyVHTQBw==}
+    engines: {node: '>=22'}
     cpu: [x64]
     os: [darwin]
 
-  '@verter/native-linux-arm64-gnu@0.0.1-beta.2':
-    resolution: {integrity: sha512-DZ06biU/cwKbAopxumqxXXcdJNroGys/Bqmr3hrw499JMSY2EthTZY5+cQItL44P53ujLJ/4/s/Vu5AUfYEHvA==}
-    engines: {node: '>=18'}
+  '@verter/lsp-linux-arm64-gnu@0.0.1-beta.3':
+    resolution: {integrity: sha512-DqRPT0RZol6gT5TW7X/Z9cDwOcMeftRVvYyKRobm594IqwLN3EfxTqJs7TphkRtpbqiv65C9sORHOkthB0lrYg==}
+    engines: {node: '>=22'}
     cpu: [arm64]
     os: [linux]
 
-  '@verter/native-linux-arm64-musl@0.0.1-beta.2':
-    resolution: {integrity: sha512-6kIfznOmTlzJresUUMPhUFbKDSBZxSiob8OsExHsArGxc0y9Ri9M1kZl5n0/1wPjuDvMzMz4krQFnAWCwCHSTQ==}
-    engines: {node: '>=18'}
+  '@verter/lsp-linux-arm64-musl@0.0.1-beta.3':
+    resolution: {integrity: sha512-G1EoTM3AXlmTP2/GIkZuK+SLa22uoJCOkC92Z0oLuP/vsWbv/5BMBLk4+VMfNXigjwE38gorfRPwWoBNkat+aQ==}
+    engines: {node: '>=22'}
     cpu: [arm64]
     os: [linux]
 
-  '@verter/native-linux-x64-gnu@0.0.1-beta.2':
-    resolution: {integrity: sha512-o8ZcvmUdDmb4kOacgD6gmiseF5ctYEs0XY+m6ZdbVeBYNEtsLd0FgafmiF9rdE/cvHQnbEa7LjDq86ehLfnhcw==}
-    engines: {node: '>=18'}
+  '@verter/lsp-linux-x64-gnu@0.0.1-beta.3':
+    resolution: {integrity: sha512-drKTBIamrB2llkmFkDCTghSuDrk8mUSZH6QImuTKqy5Fc3/vJ2qtw5T3ccIMkR7k8WIBdHjp+D+qWkuD+Xnz2w==}
+    engines: {node: '>=22'}
     cpu: [x64]
     os: [linux]
 
-  '@verter/native-linux-x64-musl@0.0.1-beta.2':
-    resolution: {integrity: sha512-sMBoa107JQ8KijHeiy89P4vzgsKmu3Vf7q4pgR3SfpNRv1/0sQt9MtEhiBSYqA/w2REI46QZve52isPKQ4NWdw==}
-    engines: {node: '>=18'}
+  '@verter/lsp-linux-x64-musl@0.0.1-beta.3':
+    resolution: {integrity: sha512-WLGq6I1hLu7wL6TZWviL+aOMF9qKFPltsqEmZHRqGv8wk5szAbjTCG5iIkXa7KdKwkKAHxzaQacrJuAWwsoVFQ==}
+    engines: {node: '>=22'}
     cpu: [x64]
     os: [linux]
 
-  '@verter/native-win32-x64-msvc@0.0.1-beta.2':
-    resolution: {integrity: sha512-QeDvOMNUv8yk9spPFo+H+gSvf2qZL8qwCoBe/NagC4PdtJkVP6ENSl9/2YnaB32nOAdhMOXuK7n+l3ULIKVz1w==}
-    engines: {node: '>=18'}
+  '@verter/lsp-win32-x64-msvc@0.0.1-beta.3':
+    resolution: {integrity: sha512-yXd4zrVqDFzojMHeuJ5+18BCbYnLTqpzviM44vhaq4Dsee0SKI/XDaglz4EBlNTc8YSmHzPCWkp+Co+hO/jThA==}
+    engines: {node: '>=22'}
     cpu: [x64]
     os: [win32]
 
-  '@verter/native@0.0.1-beta.2':
-    resolution: {integrity: sha512-CfmfHS8yjVY9rpWYD6zCjans6N2LaWeMxT93KO6taYAjCdiIvmrSvMVdIcnJbyZ4WN6IA+EWevs/XYLoY6lxbQ==}
-    engines: {node: '>=18'}
-
-  '@verter/proto@0.0.1-beta.2':
-    resolution: {integrity: sha512-MqcIdnJIDOZ/4O2ozAxOAv0Ch3kzCXDIK6p8+yHZaMJE85CLEknopBj64W2+OwFI8gEq4U3T1kSEmWWsLlou4A==}
-
-  '@verter/tsc-darwin-arm64@0.0.1-beta.2':
-    resolution: {integrity: sha512-9gwOzuhFLAkm5F4fgNcGaFA+8CPNJdzNXiCzDcFRehUKfWHR4ts0yVzi9WladbZDr1z61nWc6w8Gwc8Eb8a13w==}
-    engines: {node: '>=18'}
+  '@verter/mcp-darwin-arm64@0.0.1-beta.3':
+    resolution: {integrity: sha512-esxaDbLXLlIMXazH2X9CrUi+ArL+UFMKSQirTTREfkomkf8u3HU/0kh4DurfvaqsDs7kUcSUlzU7QrQEmeqy2w==}
+    engines: {node: '>=22'}
     cpu: [arm64]
     os: [darwin]
 
-  '@verter/tsc-darwin-x64@0.0.1-beta.2':
-    resolution: {integrity: sha512-N7G2PF6LOtHJ7hrwyfBKbe3c5svGiOAPIhdfb8yN6U0ARSUEJEJwrz7wve2WeslAiwNXFylCISXFqJl+v4cZjQ==}
-    engines: {node: '>=18'}
+  '@verter/mcp-darwin-x64@0.0.1-beta.3':
+    resolution: {integrity: sha512-QH5/ieYKmVP4LvjiSg7fLX/GBMqAMjv/w2e8hKsVtfQkWiNW8sSHierI1XyFXNE9pr7zzjEuEAnIiuPj535X2g==}
+    engines: {node: '>=22'}
     cpu: [x64]
     os: [darwin]
 
-  '@verter/tsc-linux-arm64-gnu@0.0.1-beta.2':
-    resolution: {integrity: sha512-GDVNr/DY62kgXD+wEkrWGF04/vh5/K/cTg4yACh8mF97bq9VunjG2ekTWs2WMBC6Ai5fDAbh5mrauH5ASTNvaw==}
-    engines: {node: '>=18'}
+  '@verter/mcp-linux-arm64-gnu@0.0.1-beta.3':
+    resolution: {integrity: sha512-DIHY4nvo5u1budImhVin4Pjy54oifj5X3K/bUqwWMVe5s4/NbW0AHOJLsuUwzuIJI+IAYO/JpfgoJEcFek3+pQ==}
+    engines: {node: '>=22'}
     cpu: [arm64]
     os: [linux]
 
-  '@verter/tsc-linux-arm64-musl@0.0.1-beta.2':
-    resolution: {integrity: sha512-0927SroNqhHIz9oX/cgQ/wdSeEYUQNDl8XuqueGqaGWKa+n4fEoAkSprw6xCLlG1g5IGslIFu9h7GlBpfWdNlg==}
-    engines: {node: '>=18'}
+  '@verter/mcp-linux-arm64-musl@0.0.1-beta.3':
+    resolution: {integrity: sha512-jL0dZOpOb2eTyokiGaVK7prDdWn9Rj+hszgBlFwH3JBsVX3wcR6EKtWm7IpuhbaOzfJnKZYZZoazGwowivoGhw==}
+    engines: {node: '>=22'}
     cpu: [arm64]
     os: [linux]
 
-  '@verter/tsc-linux-x64-gnu@0.0.1-beta.2':
-    resolution: {integrity: sha512-qc1RBgFJxzqgG14LQbCoZ4peyecGiXKvKuH8Y+4vxShN8ZN5GrpCrJHqt04AR18ktKF0ZEPSlSKJqHt6aN3Lwg==}
-    engines: {node: '>=18'}
+  '@verter/mcp-linux-x64-gnu@0.0.1-beta.3':
+    resolution: {integrity: sha512-zIwgF3h01RgEWbPQkVEuZIXPRY3AmleGo3kusQH78tz5nKO0TqyQMP5eoYojMzEDuvAM2mlVDflKYSE/QSr59g==}
+    engines: {node: '>=22'}
     cpu: [x64]
     os: [linux]
 
-  '@verter/tsc-linux-x64-musl@0.0.1-beta.2':
-    resolution: {integrity: sha512-NpPQ05bLXWThYuloBRvGMj2Md64rS9j5GYQqE15EHj+CuMFtEhCvU+g1t1P882oFBDcKY4srUSfT5C0PI8xxcg==}
-    engines: {node: '>=18'}
+  '@verter/mcp-linux-x64-musl@0.0.1-beta.3':
+    resolution: {integrity: sha512-gsoOG/SSAJMvZ3zmkQdtTfuepot+POyKXbt5AVACBklHrFg6m1BOoFaTOcIBj5f441c5moFROR1pyNaLsJ6+qA==}
+    engines: {node: '>=22'}
     cpu: [x64]
     os: [linux]
 
-  '@verter/tsc-win32-x64-msvc@0.0.1-beta.2':
-    resolution: {integrity: sha512-ByaxVdTbJGShbE2QP0QSs/+9Yj6O2dNvIQPEPeWDc++sEcH1olmOf5O8loxA9iclft7ht00mW28IUla/XlGUVw==}
-    engines: {node: '>=18'}
+  '@verter/mcp-win32-x64-msvc@0.0.1-beta.3':
+    resolution: {integrity: sha512-tvc2jptR9dKM4uhntz5blDJoUDQAKN4mW+JS6vC0DMeIE8MPUvgFWre4hnsmWh2B75dZcoO4OOCHVbacY7D9fQ==}
+    engines: {node: '>=22'}
     cpu: [x64]
     os: [win32]
 
-  '@verter/type-ir@0.0.1-beta.2':
-    resolution: {integrity: sha512-zy3eKVtD7Jk8yN6R9P7KEf/c8bUiTE9D8UoW5/GFlao7JobchDkZreL0nVdjiDA4mdQONmX/qsCqfZBdYRMsiA==}
+  '@verter/native-darwin-arm64@0.0.1-beta.3':
+    resolution: {integrity: sha512-qvePUwvU+4TK8JkjAxwcJOWO/80jMfIf2n53JvHWSTc9ZvSa9db18qJwlTw+8mswi4XiYWLcpkMasDTHj+INNw==}
+    engines: {node: '>=22'}
+    cpu: [arm64]
+    os: [darwin]
 
-  '@verter/types@0.0.1-beta.2':
-    resolution: {integrity: sha512-nVjPiAxFMk0yD+d+QowIf0eNrcmmXWe1pxO4wBdLVxaiFHEpWHeQ6kvGVdNu18NBqMRJVNcI145ijwhwyfspNg==}
+  '@verter/native-darwin-x64@0.0.1-beta.3':
+    resolution: {integrity: sha512-CJxQ8dRepAOTzkgyqc53rNu/b6FrLk7Tjp0ap2GZNuRTKmeSrHRlDDluhYjIGQEjFlGpg45qa84FonpvS1KNFw==}
+    engines: {node: '>=22'}
+    cpu: [x64]
+    os: [darwin]
+
+  '@verter/native-linux-arm64-gnu@0.0.1-beta.3':
+    resolution: {integrity: sha512-KxBY5OpFMUy9NOiEsC0RhJWCCifen2xLMc+vwgKpTT7p0xTCoQsC0lQ15gHDSH7i6Jy7P+hOquyqldlG1qadeg==}
+    engines: {node: '>=22'}
+    cpu: [arm64]
+    os: [linux]
+
+  '@verter/native-linux-arm64-musl@0.0.1-beta.3':
+    resolution: {integrity: sha512-CQLP01j4rNv2o2qhl7SRuoM+etYG+sPJGR+fq43XQe6A7a8ZmWgVn3tkn3BgXCPszcSB1Egkqs31Dy1IuC0sfw==}
+    engines: {node: '>=22'}
+    cpu: [arm64]
+    os: [linux]
+
+  '@verter/native-linux-x64-gnu@0.0.1-beta.3':
+    resolution: {integrity: sha512-LCE+yKQ2ZR0D6FIBjLrKQy8rrzAwfj1uoVW8uTQbv3ZE/6bfzwYSUCWv2mIO0h7mez3p3MsTM56UUJAjO56Euw==}
+    engines: {node: '>=22'}
+    cpu: [x64]
+    os: [linux]
+
+  '@verter/native-linux-x64-musl@0.0.1-beta.3':
+    resolution: {integrity: sha512-Eir0rvKHDR49hHtcKtjI/m9hn3lxJC/dq04/0em7/djtxGMHhuMpGSR5oi+OY91V91V0n+u79qK4ozO1q7BVDA==}
+    engines: {node: '>=22'}
+    cpu: [x64]
+    os: [linux]
+
+  '@verter/native-win32-x64-msvc@0.0.1-beta.3':
+    resolution: {integrity: sha512-ZlzGVtOkxGHbMLa0lUenu213QzvLOduJMo9wZIOWJe0uaxlPzHft1qxT2Z24G9rV2McDoM9USFfQ515DK0R2GQ==}
+    engines: {node: '>=22'}
+    cpu: [x64]
+    os: [win32]
+
+  '@verter/native@0.0.1-beta.3':
+    resolution: {integrity: sha512-wuLILg3fDCJbxQREfqtDFmANzSXQt3VtUsZ9BVWogyqzJQHXLGmE6kQ+tRLxCbjO2ZxjGU9ymjsti6cGyDs/0A==}
+    engines: {node: '>=22'}
+
+  '@verter/proto@0.0.1-beta.3':
+    resolution: {integrity: sha512-H1sQPdHXryOIY/poX/k5gw9MRrufRrN6o5bT2OY/dypB8Esf9w17fPknteiOzzxUCJ0Gl2MRVS3eUC2ziYAWRg==}
+
+  '@verter/tsc-darwin-arm64@0.0.1-beta.3':
+    resolution: {integrity: sha512-mrLNnK1OMmgQQQR9He00JdaBXLduZYHOCbi3a/bpIS1nd3NlaR6hQyPFMSJTp52tDAA3hUuBq+Ngvt+pS0oIWw==}
+    engines: {node: '>=22'}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@verter/tsc-darwin-x64@0.0.1-beta.3':
+    resolution: {integrity: sha512-s7hPsXVqQzK/Zje+j4xM+enalPdji9gH1HMIodCp1cMLLQCALyl+wfZv4hIfNczrwDzC/SprflT95UZwzO8+xw==}
+    engines: {node: '>=22'}
+    cpu: [x64]
+    os: [darwin]
+
+  '@verter/tsc-linux-arm64-gnu@0.0.1-beta.3':
+    resolution: {integrity: sha512-pw8EeX+g8A0ChAKjvmzvmYRRhu+/9VctFqr/CkapKDLQEw/jXBFOudiC0G5C1t8PLRhWfMBDz0at/zlEPG6CzQ==}
+    engines: {node: '>=22'}
+    cpu: [arm64]
+    os: [linux]
+
+  '@verter/tsc-linux-arm64-musl@0.0.1-beta.3':
+    resolution: {integrity: sha512-bQXOlckcNfB+WZGEbivBO9fJgnzg/VEBMoEX0EXZ++voRGHPtiw9lXcAHe8QaRNQ6pjrqe8ll4Qb56pZXVHNJg==}
+    engines: {node: '>=22'}
+    cpu: [arm64]
+    os: [linux]
+
+  '@verter/tsc-linux-x64-gnu@0.0.1-beta.3':
+    resolution: {integrity: sha512-l3ZRB5m98zId7Xnho5tawBjJhWbkzEsmI53lJVZ8jZUePpQ5JmWUkOdkAIF9jHx/Zh0Zm6YLb/PKtmfxL+dsUA==}
+    engines: {node: '>=22'}
+    cpu: [x64]
+    os: [linux]
+
+  '@verter/tsc-linux-x64-musl@0.0.1-beta.3':
+    resolution: {integrity: sha512-BEbdumNfkJT9OqE9x4Z9S3yQmowtdUnFtdOgxbdoUWIqI1INmyfrQsmhr4pEYeKa47WG7TKjnPrTMKEIplf28g==}
+    engines: {node: '>=22'}
+    cpu: [x64]
+    os: [linux]
+
+  '@verter/tsc-win32-x64-msvc@0.0.1-beta.3':
+    resolution: {integrity: sha512-Ho/jwuLFZ6MZjbx95mPto1OxXCiMcObgR9om37RTJ7kGgsy3sZjoxg3xLNj0GRe8ot4VT+utM9+gZzpGFP2GJg==}
+    engines: {node: '>=22'}
+    cpu: [x64]
+    os: [win32]
+
+  '@verter/type-ir@0.0.1-beta.3':
+    resolution: {integrity: sha512-3LIDs0lz2T8TJ/5XYzFPj6ii3Nhv983+3I7AJZqrYCe42BvzgcMrpuq5VbKGxyI7KkHJpVgWWih059nFTlPUqQ==}
+
+  '@verter/types@0.0.1-beta.3':
+    resolution: {integrity: sha512-tYy9xMcL8GNvLiMUBluMISLcZgzX8PzyIvHAWTeA21Yy0bhB1L1z0UFsUfpVT3+1aITqCccF4adFp2jsGR3hIA==}
 
   '@vizejs/musea-mcp-server@0.291.0':
     resolution: {integrity: sha512-AAVWvRY5Y4b/1jk0bmmMjBIyLQt7Xm3WPsZwQQeQnK8x5IxKvlPyCfkJwTdpFw2Z7fiPPOwHfiWhVd2PfUqkMQ==}
@@ -2578,9 +2672,19 @@ packages:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
     engines: {node: '>= 0.8'}
 
-  verter-tsc@0.0.1-beta.2:
-    resolution: {integrity: sha512-cBgmJJQuxg8jafQi+QtngYLKoKpoBp+EZE2FuFRI/7zVK9rn9z/ImjGnuLf2khmYaeB+aFC0sZ0WWin9ylAd5w==}
-    engines: {node: '>=18'}
+  verter-lsp@0.0.1-beta.3:
+    resolution: {integrity: sha512-Asuk5wQoG8SMJmWWTznvXTpVFx0vPn2mQG9LiLCfqNqIC9OILoaQ8GMboRZQcFE3VGlgJi5BBxI+0zWJm9yhnw==}
+    engines: {node: '>=22'}
+    hasBin: true
+
+  verter-mcp@0.0.1-beta.3:
+    resolution: {integrity: sha512-WIQ5oTOsEq7728sjyeggHXGckiO8CvCvM2VO6V/7lT/HQJNx6i9l5OI11agUZ0iI6Mnt62XZXs7NzQIuuDTcXA==}
+    engines: {node: '>=22'}
+    hasBin: true
+
+  verter-tsc@0.0.1-beta.3:
+    resolution: {integrity: sha512-J9mR9eDiyi3J0ansSIT2AtjKjx9beRj2mP3Yy6HJ9Q+aPHAsL8P67XbfY7ZFHW02/1mixinSI+qGoRJ7cR/M5w==}
+    engines: {node: '>=22'}
     hasBin: true
 
   vize@0.291.0:
@@ -3489,80 +3593,124 @@ snapshots:
   '@typescript/typescript-win32-x64@7.0.2':
     optional: true
 
-  '@verter/component-meta@0.0.1-beta.2(zod@3.25.76)':
+  '@verter/binary-launcher@0.0.1-beta.3': {}
+
+  '@verter/component-meta@0.0.1-beta.3(zod@3.25.76)':
     dependencies:
       '@bufbuild/protobuf': 2.12.0
-      '@verter/language-shared': 0.0.1-beta.2
-      '@verter/native': 0.0.1-beta.2
-      '@verter/proto': 0.0.1-beta.2
-      '@verter/type-ir': 0.0.1-beta.2
-      '@verter/types': 0.0.1-beta.2
+      '@verter/language-shared': 0.0.1-beta.3
+      '@verter/native': 0.0.1-beta.3
+      '@verter/proto': 0.0.1-beta.3
+      '@verter/type-ir': 0.0.1-beta.3
+      '@verter/types': 0.0.1-beta.3
     optionalDependencies:
       zod: 3.25.76
 
-  '@verter/language-shared@0.0.1-beta.2':
+  '@verter/language-shared@0.0.1-beta.3':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
 
-  '@verter/native-darwin-arm64@0.0.1-beta.2':
+  '@verter/lsp-darwin-arm64@0.0.1-beta.3':
     optional: true
 
-  '@verter/native-darwin-x64@0.0.1-beta.2':
+  '@verter/lsp-darwin-x64@0.0.1-beta.3':
     optional: true
 
-  '@verter/native-linux-arm64-gnu@0.0.1-beta.2':
+  '@verter/lsp-linux-arm64-gnu@0.0.1-beta.3':
     optional: true
 
-  '@verter/native-linux-arm64-musl@0.0.1-beta.2':
+  '@verter/lsp-linux-arm64-musl@0.0.1-beta.3':
     optional: true
 
-  '@verter/native-linux-x64-gnu@0.0.1-beta.2':
+  '@verter/lsp-linux-x64-gnu@0.0.1-beta.3':
     optional: true
 
-  '@verter/native-linux-x64-musl@0.0.1-beta.2':
+  '@verter/lsp-linux-x64-musl@0.0.1-beta.3':
     optional: true
 
-  '@verter/native-win32-x64-msvc@0.0.1-beta.2':
+  '@verter/lsp-win32-x64-msvc@0.0.1-beta.3':
     optional: true
 
-  '@verter/native@0.0.1-beta.2':
+  '@verter/mcp-darwin-arm64@0.0.1-beta.3':
+    optional: true
+
+  '@verter/mcp-darwin-x64@0.0.1-beta.3':
+    optional: true
+
+  '@verter/mcp-linux-arm64-gnu@0.0.1-beta.3':
+    optional: true
+
+  '@verter/mcp-linux-arm64-musl@0.0.1-beta.3':
+    optional: true
+
+  '@verter/mcp-linux-x64-gnu@0.0.1-beta.3':
+    optional: true
+
+  '@verter/mcp-linux-x64-musl@0.0.1-beta.3':
+    optional: true
+
+  '@verter/mcp-win32-x64-msvc@0.0.1-beta.3':
+    optional: true
+
+  '@verter/native-darwin-arm64@0.0.1-beta.3':
+    optional: true
+
+  '@verter/native-darwin-x64@0.0.1-beta.3':
+    optional: true
+
+  '@verter/native-linux-arm64-gnu@0.0.1-beta.3':
+    optional: true
+
+  '@verter/native-linux-arm64-musl@0.0.1-beta.3':
+    optional: true
+
+  '@verter/native-linux-x64-gnu@0.0.1-beta.3':
+    optional: true
+
+  '@verter/native-linux-x64-musl@0.0.1-beta.3':
+    optional: true
+
+  '@verter/native-win32-x64-msvc@0.0.1-beta.3':
+    optional: true
+
+  '@verter/native@0.0.1-beta.3':
     optionalDependencies:
-      '@verter/native-darwin-arm64': 0.0.1-beta.2
-      '@verter/native-darwin-x64': 0.0.1-beta.2
-      '@verter/native-linux-arm64-gnu': 0.0.1-beta.2
-      '@verter/native-linux-arm64-musl': 0.0.1-beta.2
-      '@verter/native-linux-x64-gnu': 0.0.1-beta.2
-      '@verter/native-linux-x64-musl': 0.0.1-beta.2
-      '@verter/native-win32-x64-msvc': 0.0.1-beta.2
+      '@verter/native-darwin-arm64': 0.0.1-beta.3
+      '@verter/native-darwin-x64': 0.0.1-beta.3
+      '@verter/native-linux-arm64-gnu': 0.0.1-beta.3
+      '@verter/native-linux-arm64-musl': 0.0.1-beta.3
+      '@verter/native-linux-x64-gnu': 0.0.1-beta.3
+      '@verter/native-linux-x64-musl': 0.0.1-beta.3
+      '@verter/native-win32-x64-msvc': 0.0.1-beta.3
 
-  '@verter/proto@0.0.1-beta.2':
+  '@verter/proto@0.0.1-beta.3':
     dependencies:
       '@bufbuild/protobuf': 2.12.0
 
-  '@verter/tsc-darwin-arm64@0.0.1-beta.2':
+  '@verter/tsc-darwin-arm64@0.0.1-beta.3':
     optional: true
 
-  '@verter/tsc-darwin-x64@0.0.1-beta.2':
+  '@verter/tsc-darwin-x64@0.0.1-beta.3':
     optional: true
 
-  '@verter/tsc-linux-arm64-gnu@0.0.1-beta.2':
+  '@verter/tsc-linux-arm64-gnu@0.0.1-beta.3':
     optional: true
 
-  '@verter/tsc-linux-arm64-musl@0.0.1-beta.2':
+  '@verter/tsc-linux-arm64-musl@0.0.1-beta.3':
     optional: true
 
-  '@verter/tsc-linux-x64-gnu@0.0.1-beta.2':
+  '@verter/tsc-linux-x64-gnu@0.0.1-beta.3':
     optional: true
 
-  '@verter/tsc-linux-x64-musl@0.0.1-beta.2':
+  '@verter/tsc-linux-x64-musl@0.0.1-beta.3':
     optional: true
 
-  '@verter/tsc-win32-x64-msvc@0.0.1-beta.2':
+  '@verter/tsc-win32-x64-msvc@0.0.1-beta.3':
     optional: true
 
-  '@verter/type-ir@0.0.1-beta.2': {}
+  '@verter/type-ir@0.0.1-beta.3': {}
 
-  '@verter/types@0.0.1-beta.2': {}
+  '@verter/types@0.0.1-beta.3': {}
 
   '@vizejs/musea-mcp-server@0.291.0(zod@3.25.76)':
     dependencies:
@@ -5250,15 +5398,39 @@ snapshots:
 
   vary@1.1.2: {}
 
-  verter-tsc@0.0.1-beta.2:
+  verter-lsp@0.0.1-beta.3:
+    dependencies:
+      '@verter/binary-launcher': 0.0.1-beta.3
     optionalDependencies:
-      '@verter/tsc-darwin-arm64': 0.0.1-beta.2
-      '@verter/tsc-darwin-x64': 0.0.1-beta.2
-      '@verter/tsc-linux-arm64-gnu': 0.0.1-beta.2
-      '@verter/tsc-linux-arm64-musl': 0.0.1-beta.2
-      '@verter/tsc-linux-x64-gnu': 0.0.1-beta.2
-      '@verter/tsc-linux-x64-musl': 0.0.1-beta.2
-      '@verter/tsc-win32-x64-msvc': 0.0.1-beta.2
+      '@verter/lsp-darwin-arm64': 0.0.1-beta.3
+      '@verter/lsp-darwin-x64': 0.0.1-beta.3
+      '@verter/lsp-linux-arm64-gnu': 0.0.1-beta.3
+      '@verter/lsp-linux-arm64-musl': 0.0.1-beta.3
+      '@verter/lsp-linux-x64-gnu': 0.0.1-beta.3
+      '@verter/lsp-linux-x64-musl': 0.0.1-beta.3
+      '@verter/lsp-win32-x64-msvc': 0.0.1-beta.3
+
+  verter-mcp@0.0.1-beta.3:
+    dependencies:
+      '@verter/binary-launcher': 0.0.1-beta.3
+    optionalDependencies:
+      '@verter/mcp-darwin-arm64': 0.0.1-beta.3
+      '@verter/mcp-darwin-x64': 0.0.1-beta.3
+      '@verter/mcp-linux-arm64-gnu': 0.0.1-beta.3
+      '@verter/mcp-linux-arm64-musl': 0.0.1-beta.3
+      '@verter/mcp-linux-x64-gnu': 0.0.1-beta.3
+      '@verter/mcp-linux-x64-musl': 0.0.1-beta.3
+      '@verter/mcp-win32-x64-msvc': 0.0.1-beta.3
+
+  verter-tsc@0.0.1-beta.3:
+    optionalDependencies:
+      '@verter/tsc-darwin-arm64': 0.0.1-beta.3
+      '@verter/tsc-darwin-x64': 0.0.1-beta.3
+      '@verter/tsc-linux-arm64-gnu': 0.0.1-beta.3
+      '@verter/tsc-linux-arm64-musl': 0.0.1-beta.3
+      '@verter/tsc-linux-x64-gnu': 0.0.1-beta.3
+      '@verter/tsc-linux-x64-musl': 0.0.1-beta.3
+      '@verter/tsc-win32-x64-msvc': 0.0.1-beta.3
 
   vize@0.291.0(vue@3.5.40(typescript@5.9.3)):
     dependencies:

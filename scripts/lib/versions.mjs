@@ -74,6 +74,16 @@ export function collectVersions() {
     "@verter/native": pkgVersion("@verter/native"),
     "verter-tsc": pkgVersion("verter-tsc"),
     "@verter/component-meta": pkgVersion("@verter/component-meta"),
+    // The LSP row used to resolve an unversioned local build, so it was the one
+    // server in the table with nothing to pin it to. Reported now that the
+    // package is published.
+    "verter-lsp": pkgVersion("verter-lsp"),
+    "verter-mcp": pkgVersion("verter-mcp"),
+    // Volar's two halves. Neither was reported either, so of the three servers
+    // in the LSP table only Vize could be traced to a version.
+    "@vue/language-server": pkgVersion("@vue/language-server"),
+    "@vue/typescript-plugin": pkgVersion("@vue/typescript-plugin"),
+    "typescript-language-server": pkgVersion("typescript-language-server"),
     "vue-tsc": pkgVersion("vue-tsc"),
     "vue-component-meta": pkgVersion("vue-component-meta"),
     golar: pkgVersion("golar"),

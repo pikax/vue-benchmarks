@@ -32,10 +32,12 @@ import {
   applyLspEngineAxis,
   findVizeNativeServer,
   lspVariantEngine,
+  resolveVerterLsp,
   resolveVizeLsp,
   runLspSession,
   vsCodeGlobalStorageRoots,
 } from "../../scripts/lib/surfaces/lsp.mjs";
+import { collectVersions } from "../../scripts/lib/versions.mjs";
 import { renderSurfaceMarkdown } from "../../scripts/lib/report.mjs";
 import { classTitles, collectMarkdownTables, makeTempDir, removeDir } from "./helpers.mjs";
 
@@ -456,5 +458,60 @@ describe("Vize language-server entry point", () => {
   test("an environment with no home directory yields no roots rather than bogus ones", () => {
     assert.deepEqual(vsCodeGlobalStorageRoots({}, "linux"), []);
     assert.deepEqual(vsCodeGlobalStorageRoots({}, "darwin"), []);
+  });
+});
+
+/**
+ * Verter's LSP row used to resolve `../verter/target/release/verter-lsp.exe` —
+ * an unversioned working copy on whoever ran the benchmark. Every other server
+ * in the table came from a pinned npm artifact, so Verter was the one row that
+ * could not be reproduced from the lockfile and the one row `versions.mjs`
+ * could not report. A `target/debug` build was also a discovery candidate and
+ * would have been accepted with the same label, publishing a Rust debug build's
+ * timings as if they were release.
+ *
+ * `verter-lsp` is published now, so the published binary is preferred and the
+ * row says which one it used. Local builds stay available for development and
+ * are labelled as such.
+ */
+describe("Verter language-server provenance", () => {
+  test("resolves the published npm binary rather than a local build", () => {
+    const spec = resolveVerterLsp();
+    assert.ok(spec, "verter-lsp did not resolve — is the package installed?");
+    assert.notEqual(
+      spec.labelExtra,
+      "local build",
+      "resolved an unversioned working copy while the published package is installed",
+    );
+    assert.match(
+      spec.labelExtra ?? "",
+      /^npm /,
+      `expected a version-carrying label, got ${JSON.stringify(spec.labelExtra)}`,
+    );
+  });
+
+  test("the resolved binary is the native executable, not the Node CLI shim", () => {
+    // The package's own docs: bin/run.js exists for `npx` and for editors that
+    // launch a bare `verter-lsp`; clients should spawn the native binary
+    // directly. Going through the shim would add a Node startup that no other
+    // native row pays — the same defect this file's Vize section documents.
+    const spec = resolveVerterLsp();
+    assert.ok(spec);
+    assert.notEqual(spec.command, process.execPath, "spawned through node");
+    assert.doesNotMatch(spec.command, /run\.js$/, "spawned through the CLI shim");
+    assert.notEqual(spec.shell, true);
+  });
+
+  test("every launched server is pinned to a reportable version", () => {
+    // The property that actually matters: a published row must be traceable to
+    // an artifact. Volar and Vize were already covered by versions.mjs; verter
+    // -lsp was the gap.
+    const versions = collectVersions();
+    for (const pkg of ["verter-lsp", "vize", "@vue/language-server"]) {
+      assert.ok(
+        versions[pkg] && versions[pkg] !== "unknown",
+        `${pkg} has no reported version, so its row cannot be reproduced`,
+      );
+    }
   });
 });
