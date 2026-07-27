@@ -313,7 +313,7 @@ describe("classifyScaleHover", () => {
     );
     const r = classifyScaleHover(HOVER.vizeOk);
     assert.equal(r.ok, false);
-    assert.match(r.reason, /guessed, not computed/);
+    assert.match(r.reason, /guessed type instead of the computed number/);
   });
 
   test("rejects an empty payload", () => {

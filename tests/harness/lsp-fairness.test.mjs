@@ -248,33 +248,28 @@ describe("LSP comparison classes (TypeScript engine axis)", () => {
       ]),
     });
 
+    // One table for the surface: engines are merged and the JS-engine row is
+    // TAGGED (JS) on the name instead of being split into its own table. The
+    // cross-engine caveat lives in the tag, the legend and the methodology.
     const tables = collectMarkdownTables(md);
-    assert.equal(tables.length, 2, "one table per engine, not one table for the surface");
+    assert.equal(tables.length, 1, "engines share one table, tagged on the name");
 
-    const titles = classTitles(md);
-    assert.ok(
-      titles.some((t) => t.startsWith("TypeScript")),
-      `expected a JS-engine class heading, got: ${titles.join(" | ")}`,
-    );
-    assert.ok(
-      titles.some((t) => t.startsWith("tsgo")),
-      `expected a native-engine class heading, got: ${titles.join(" | ")}`,
-    );
+    assert.deepEqual(classTitles(md), [], "no engine class headings when there is one class");
 
-    const labelsOf = (t) => t.body.map((cells) => cells[0]);
-    const jsTable = tables.find((t) => labelsOf(t).some((l) => l.startsWith("Volar (@vue")));
+    const labels = tables[0].body.map((cells) => cells[0]);
     assert.deepEqual(
-      labelsOf(jsTable),
-      ["Volar (@vue/language-server)"],
-      "the JavaScript-engine server must not share a table with the native-engine servers",
+      labels,
+      ["Vize", "Verter", "Volar (JS)", "Volar (N)"],
+      "sorted by median, slim names, JS engine tagged",
     );
 
-    // The concrete published bug: Volar was rated against Verter's baseline.
-    const VS_FASTEST = 6;
-    assert.equal(
-      jsTable.body[0][VS_FASTEST],
-      "1.00x",
-      "Volar's baseline must be its own engine class, not a tsgo server",
+    // The engine must still be visible on the row so nobody compares a JS
+    // server against a native one without noticing.
+    const VS_FASTEST = 5;
+    assert.equal(tables[0].body[0][VS_FASTEST], "1.00x", "fastest row is the shared baseline");
+    assert.ok(
+      labels.some((l) => l.endsWith("(JS)")),
+      "the JavaScript-engine row must carry the (JS) tag",
     );
   });
 

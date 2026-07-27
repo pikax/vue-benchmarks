@@ -81,7 +81,7 @@ export async function runFormatSurface(fixtureDir, options) {
       threading: "max",
       invocation: "cli",
       notes:
-        "oxfmt --write (Vue-capable Oxc formatter; fresh copy each run) · self-reports 32 threads on this box, so it is NOT ranked against single-threaded Prettier",
+        "oxfmt --write (Vue-capable Oxc formatter; fresh copy each run) · multi-threaded (self-reports its thread count) — a gap against single-threaded Prettier is partly thread count, not formatter speed",
       measure: () => {
         const cwd = nextCopy("oxfmt");
         // oxfmt accepts paths; try write mode flags used by oxfmt CLI
@@ -111,7 +111,7 @@ export async function runFormatSurface(fixtureDir, options) {
       threading: "unknown",
       invocation: "cli",
       notes:
-        "vize fmt --write (fresh copy each run) · does not report thread usage; ranked apart rather than assumed single-threaded",
+        "vize fmt --write (fresh copy each run) · does not report thread usage — not assumed single-threaded",
       measure: () => {
         const cwd = nextCopy("vize-fmt");
         const { ms } = runCommand(vize, ["fmt", "--write", "."], {

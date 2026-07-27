@@ -94,8 +94,16 @@ export const PROJECT_LOAD_TIMEOUT_MS = Number(
 const HOVER_ATTEMPT_TIMEOUT_MS = 15_000;
 /** Gap between hover attempts, so polling does not flood a loading server. */
 const POLL_MS = 150;
-/** Completion and references, once the project is loaded (or has given up). */
-const REQUEST_TIMEOUT_MS = 60_000;
+/**
+ * Completion and references, once the project is loaded (or has given up).
+ *
+ * 120s, not 60: Volar/TNB's references@500 MEASURED 51.13s on a 4-core CI
+ * runner — 85% of the old budget. A marginally slower runner would have
+ * flipped that row to a timeout, and a `usable` timeout suppresses every
+ * larger size, so one harness-side overrun erases 12 of a server's 16 rows
+ * looking exactly like a tool failure. 2.3x measured need, same for everyone.
+ */
+const REQUEST_TIMEOUT_MS = 120_000;
 /** Warm hover: enough repeats for a median, few enough to keep runtime sane. */
 const WARM_REPEATS = 5;
 
@@ -285,7 +293,11 @@ export function classifyScaleHover(text) {
     return {
       ok: false,
       bytes,
-      reason: `${PROBE_SYMBOL} is not a number — sharedCount() from ./shared did not resolve, so this type was guessed, not computed`,
+      // Name what was OBSERVED (a non-number type), not a cause the gate never
+      // tested: `any`/`string` could equally come from ./shared not resolving,
+      // the project not loading, or the server guessing from the ref() call
+      // shape without consulting its type backend at all.
+      reason: `${PROBE_SYMBOL} hover reports a guessed type instead of the computed number — sharedCount() returns number, so the type backend's answer never reached this hover`,
     };
   }
   return {
@@ -415,7 +427,7 @@ export function classifyScaleReferences(result, { probeUri }) {
       ...base,
       reason:
         result == null
-          ? "server answered textDocument/references with null — no reference provider replied"
+          ? "server answered textDocument/references with null — the provider declined this request (which is not proof the capability is absent)"
           : "references returned an empty list — the symbol is used in every generated component",
     };
   }
@@ -776,9 +788,17 @@ export const SUITE = {
     // would swallow all three corpora, so the idle root session would load 620
     // files and compete with the size it is supposed to be standing aside for.
     // Read back what scaffold() wrote so the shared config stays authoritative.
+    //
+    // node_modules must stay in the exclude list explicitly: scaffold() writes
+    // no `exclude`, so TypeScript's DEFAULT exclude (node_modules among it)
+    // applied — and setting our own list REPLACES the default. Without it the
+    // root session's `include: ["**/*.ts", …]` walks the node_modules symlink
+    // into the whole repository, and the "deliberately tiny" idle root session
+    // becomes the biggest project in the workspace, competing for CPU with the
+    // session actually being measured.
     const tsconfigPath = join(dir, "tsconfig.json");
     const tsconfig = JSON.parse(readFileSync(tsconfigPath, "utf8"));
-    tsconfig.exclude = SIZES.map(corpusDirName);
+    tsconfig.exclude = ["node_modules", ...SIZES.map(corpusDirName)];
     writeFileSync(tsconfigPath, `${JSON.stringify(tsconfig, null, 2)}\n`);
     writeFileSync(join(dir, "Root.vue"), ROOT_SOURCE);
 

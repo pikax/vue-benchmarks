@@ -228,12 +228,12 @@ describe("measureVariants — result row shape", () => {
 
     const cells = md
       .split("\n")
-      .find((l) => l.includes("| ok |"))
+      .find((l) => /^\| .*\| \*\*[\d.]+ (ms|s)\*\* \|/.test(l) || /^\|[^|]+\| \*\*[\d.]+ (ms|s)\*\*/.test(l))
       .split("|")
       .map((c) => c.trim());
-    // | Tool | Status | Median | Min | Stddev | CV% | ...
-    assert.equal(cells[5], "n/a", `stddev cell should be n/a, got ${cells[5]}`);
-    assert.equal(cells[6], "n/a", `CV% cell should be n/a, got ${cells[6]}`);
+    // | Tool | Median | Min | Stddev | CV% | ...
+    assert.equal(cells[4], "n/a", `stddev cell should be n/a, got ${cells[4]}`);
+    assert.equal(cells[5], "n/a", `CV% cell should be n/a, got ${cells[5]}`);
     assert.ok(!/0\.0 ms \| 0\.0%/.test(md), "must not print a fabricated 0.0 ms / 0.0% pair");
   });
 });

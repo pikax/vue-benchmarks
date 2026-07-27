@@ -123,7 +123,7 @@ function noteFor(op) {
     // The value is a factor; say so on the row, and show the pair it came from
     // (`sample` is `"12.3 ms → 48.5 ms"`) so nobody reads it as a duration.
     bits.push(
-      `scale factor ×${op.artifact}${op.sample ? ` (${op.sample})` : ""} — a ratio, not a duration, so the median column is n/a by design`,
+      `scale factor ×${op.artifact}${op.sample ? ` (${op.sample})` : ""} — a ratio, not a duration, so the median column is empty by design`,
     );
   } else if (isUnrankedByDesign(op)) {
     // The measurement is published in full — median, min and the noise guard —
@@ -292,21 +292,21 @@ export function buildIdeSurfaces(results) {
             (op) =>
               `\`${op.label}\` is MEASURED BUT NOT RANKED: ${
                 op.rankingNote ?? "this operation is not comparable across servers"
-              } Its median column reads n/a; the measured time is on the row and under Raw runs.`,
+              } Its median column is empty by design; the measured time is in the row's note and under Raw runs.`,
           ),
       ),
     ];
     const ratioNote = allOps.some(isRatioOp)
       ? [
-          "Rows whose value is a RATIO (`Scale × …`) have no median: the measurement is a factor, not a duration, and it is printed in the artifact column with the pair it came from. A ratio row is never given an invented time so that it can be ranked.",
+          "Rows whose value is a RATIO (`Scale × …`) have an empty median by design: the measurement is a factor, not a duration, and it is printed in the artifact column with the pair it came from. A ratio row is never given an invented time so that it can be ranked.",
         ]
       : [];
     const engineNote = [
-      `Rows are split by the TypeScript ENGINE behind the server and ranked only within one engine — ${[
+      `Rows share one table across TypeScript engines; rows tagged (JS) run the JavaScript compiler — ${[
         ...new Set(rows.map((r) => `${r.label ?? r.server} = ${engineForServer(r.server).label}`)),
       ].join(
         "; ",
-      )}. Volar on the stock JavaScript tsdk and Volar on the tsgo tsdk are the same Vue layer differing only in engine, so ranking them together would measure TypeScript's Go rewrite rather than the server. Same axis, same reason, same resolver as the typecheck surface.`,
+      )}. Volar on the stock JavaScript tsdk and Volar on the tsgo tsdk are the same Vue layer differing only in engine, so a cross-engine ratio measures TypeScript's Go rewrite as much as the server. Same axis, same resolver as the typecheck surface.`,
     ];
 
     surfaces.push({
@@ -442,7 +442,7 @@ export function buildTypingLoopSurface(results, { parts = LOOP_PARTS } = {}) {
       "Measured in separate sessions and added, NOT observed as one continuous cycle — it is an indicative cost of one edit-and-look cycle, not a single stopwatch reading.",
       "A server is ranked only if it passed the content gate on every component. Adding a fast hover to a diagnostics number the server never earned would flatter exactly the servers that do the least work.",
       "Servers that failed a component are shown in brackets with the failing part named.",
-      "Composites are split by TypeScript engine and ranked only within one, exactly as the per-operation tables are — the same Vue layer on a JS engine and on tsgo would otherwise be compared as if they were different servers.",
+      "Composites share one table across TypeScript engines with (JS)-tagged rows, exactly as the per-operation tables do — a JS-engine composite against a tsgo composite is an engine comparison, not a server comparison.",
     ],
   };
 }

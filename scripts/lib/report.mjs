@@ -32,66 +32,136 @@ function timesSlower(fastest, current) {
   return `${(current / fastest).toFixed(2)}x`;
 }
 
-function escapeCell(text) {
-  return String(text ?? "")
-    .replace(/\|/g, "\\|")
-    .replace(/\r?\n/g, " ");
-}
-
-const THREADING_LABEL = {
-  "1t": "Single-thread (1T)",
-  batch: "Batch / multi-thread pool",
-  "batch-cached": "Batch with persistent cache",
-  max: "Max threads",
-  workers: "Worker fan-out",
-  lsp: "LSP servers",
-  host: "Host API",
-};
-
-const INVOCATION_LABEL = {
-  cli: "CLI subprocess",
-  "in-process": "In-process API",
-};
 
 /**
- * Comparison class. Tools are only ranked against tools in the same class.
+ * Display names are SLIMMED at render time, not in the surface definitions,
+ * so previously-written result JSON re-renders with the same names as a fresh
+ * run. The stripped identity is restored in the per-surface "Tools" legend —
+ * the table trades detail for scanability, the legend holds the detail.
  *
- * `invocation` matters as much as threading: an in-process API amortises
- * process startup across iterations while a CLI pays it on every run
- * (measured ~85ms for one native CLI), so the two are not comparable.
+ * `desc` is what the tool actually runs — shown once per surface above the
+ * tables instead of being repeated in every row's Notes.
  */
-function classKey(v) {
-  const threading = v.threading || "default";
-  let base = v.invocation ? `${v.invocation}|${threading}` : threading;
-  // Codegen target is part of the class too. jsx-compile carries vapor and
-  // VDOM rows in one flat surface (compile separates them into cells), and
-  // they share no runtime helpers — ranking them together compared three
-  // different jobs in a single table.
-  if (v.target) base += `|target:${v.target}`;
-  // Underlying engine is part of the class as well. The typecheck surface
-  // spans the JavaScript TypeScript compiler and native tsgo builds; ranking
-  // those together measures the TypeScript rewrite rather than the Vue layer
-  // under test, which is the comparison this surface claims to make.
-  if (v.engine) base += `|engine:${v.engine}`;
-  return base;
+const SLIM_RULES = [
+  {
+    re: /^Volar \(@vue\/language-server\)$/,
+    slim: "Volar",
+    desc: "@vue/language-server v3 hybrid pair — the Vue server plus typescript-language-server with @vue/typescript-plugin; both processes are measured and the slower half is charged.",
+  },
+  {
+    re: /^Volar \(TNB.*\)$/,
+    slim: "Volar (N)",
+    desc: "the same Volar pair with its TypeScript half on typescript-native-bridge (tsgo) — same Vue layer, native engine.",
+  },
+  {
+    re: /^Vize LSP.*$/,
+    slim: "Vize",
+    desc: "vize lsp --stdio from the npm package (native standalone server when found, Node entry otherwise — the row's notes say which). Runs its own bundled tsgo (Corsa).",
+  },
+  {
+    re: /^Verter LSP.*$/,
+    slim: "Verter",
+    desc: "verter-lsp — the native server from the published npm package (version in the notes). Runs stable tsgo.",
+  },
+  {
+    re: /^vue-tsc \(TNB.*\)$/,
+    slim: "vue-tsc (N)",
+    desc: "the same vue-tsc with typescript aliased to typescript-native-bridge (tsgo) — same Vue layer, native engine.",
+  },
+  {
+    re: /^Vize check$/,
+    slim: "Vize",
+    desc: "vize check --tsconfig tsconfig.json (native, Corsa when available).",
+  },
+  {
+    re: /^Vize fmt$/,
+    slim: "Vize",
+    desc: "vize fmt --write.",
+  },
+  {
+    re: /^Golar default \(lint\+typecheck\)$/,
+    slim: "Golar (lint+check)",
+    desc: "golar default mode — lint then typecheck in one pass, not a pure typecheck.",
+  },
+  // desc-only entries (name unchanged) so a surface's legend covers every row,
+  // not just the renamed ones.
+  {
+    re: /^vue-tsc$/,
+    slim: "vue-tsc",
+    desc: "the official Vue Language Tools CLI — vue-tsc --noEmit -p tsconfig.json, stock JavaScript TypeScript engine.",
+  },
+  {
+    re: /^verter-tsc$/,
+    slim: "verter-tsc",
+    desc: "verter-tsc --noEmit -p tsconfig.json from the published npm package; runs stable tsgo.",
+  },
+  {
+    re: /^Golar typecheck$/,
+    slim: "Golar typecheck",
+    desc: "golar typecheck — typescript-go with the @golar/vue plugin, pure typecheck.",
+  },
+  {
+    re: /^Prettier$/,
+    slim: "Prettier",
+    desc: "prettier --write over a fresh corpus copy; built-in Vue SFC support, single-threaded by design.",
+  },
+  {
+    re: /^Oxfmt$/,
+    slim: "Oxfmt",
+    desc: "oxfmt --write — Oxc's Vue-capable formatter, multi-threaded.",
+  },
+];
+
+function slimRuleFor(rawLabel) {
+  return SLIM_RULES.find((r) => r.re.test(String(rawLabel ?? "")));
 }
 
-const ENGINE_LABEL = {
-  "tsc-js": "TypeScript (JS engine)",
-  tsgo: "tsgo (native engine)",
-};
+/**
+ * Engine tag on the NAME, not a table split. JS-engine rows are marked (JS);
+ * native (tsgo) rows are unmarked. The engines share one table — the tag plus
+ * the legend carry the caveat that a cross-engine ratio measures TypeScript's
+ * rewrite as much as the Vue layer.
+ */
+function engineTag(v) {
+  return v.engine === "tsc-js" ? " (JS)" : "";
+}
+
+/** Marker appended to the name instead of a Status column. */
+function statusMark(status) {
+  if (status === "unranked") return " ⚠";
+  if (status === "error") return " ❌";
+  if (status === "skipped") return " ⏭";
+  return "";
+}
+
+/** Table display name: slimmed label + engine tag + status marker. */
+function displayName(v) {
+  const rule = slimRuleFor(v.label);
+  return `${rule ? rule.slim : v.label}${engineTag(v)}${statusMark(v.status)}`;
+}
+
+/**
+ * Comparison class — reduced to the codegen target only; see classKey.
+ */
+function classKey(v) {
+  // ONE table per surface. Engine, invocation and threading are deliberately
+  // NOT table splits any more — JS-engine rows are tagged (JS) on the name,
+  // and the invocation/threading identity of a row lives in its label, the
+  // Tools legend and its notes entry. The caveats those splits used to carry
+  // (a CLI pays startup every run, a thread pool is not a single thread)
+  // moved to the methodology notes; the reader compares like with like by
+  // reading the row, not by which table it landed in.
+  //
+  // Codegen target is the one split that stays. jsx-compile carries vapor and
+  // VDOM rows in one flat surface (compile separates them into cells), and
+  // they share no runtime helpers — those are different jobs, not the same
+  // job invoked differently.
+  return v.target ? `target:${v.target}` : "all";
+}
 
 function classLabel(key) {
-  const parts = key.split("|");
-  const target = parts.find((p) => p.startsWith("target:"))?.slice("target:".length);
-  const engine = parts.find((p) => p.startsWith("engine:"))?.slice("engine:".length);
-  const rest = parts.filter((p) => !p.startsWith("target:") && !p.startsWith("engine:"));
-  const [a, b] = rest.length > 1 ? rest : [null, rest[0]];
-  const threading = THREADING_LABEL[b] ?? `Threading: ${b}`;
-  const invocation = a ? `${INVOCATION_LABEL[a] ?? a} · ` : "";
-  const targetLabel = target ? `${target.toUpperCase()} · ` : "";
-  const engineLabel = engine ? `${ENGINE_LABEL[engine] ?? engine} · ` : "";
-  return `${engineLabel}${targetLabel}${invocation}${threading} — ranked alone`;
+  const target = key.startsWith("target:") ? key.slice("target:".length) : null;
+  return target ? `${target.toUpperCase()} — ranked alone` : "";
 }
 
 /**
@@ -107,9 +177,9 @@ function renderVariantTable(variants, { title } = {}) {
   const artifactLabel =
     variants.find((v) => v.artifactLabel)?.artifactLabel ?? "Artifact";
   lines.push(
-    `| Tool | Status | **Median (primary)** | Min | Stddev | CV% | vs fastest | ${artifactLabel} | Throughput | Notes |`,
+    `| Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | ${artifactLabel} | Throughput |`,
   );
-  lines.push("| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |");
+  lines.push("| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |");
 
   const base = fastestPrimary(variants);
   const sorted = [...variants].sort((a, b) => primaryMs(a) - primaryMs(b));
@@ -122,7 +192,13 @@ function renderVariantTable(variants, { title } = {}) {
     .filter((n) => Number.isFinite(n) && n > 0);
   const peakArtifact = artifacts.length ? Math.max(...artifacts) : Number.NaN;
 
+  // Status lives on the name (⚠ unranked, ❌ error, ⏭ skipped) and per-row
+  // detail lives in the Notes collapsible below the table — cells that cannot
+  // apply to a row print "–" rather than a wall of n/a.
+  const noteRows = [];
   for (const v of sorted) {
+    const name = displayName(v);
+    let noteText = v.notes || "";
     if (v.status === "ok") {
       const cacheNote = Number.isFinite(v.cacheHitsMedian) ? ` cacheHits≈${v.cacheHitsMedian}` : "";
       // Flag noisy series so a thermally-throttled or contended box is visible.
@@ -146,29 +222,45 @@ function renderVariantTable(variants, { title } = {}) {
           }
         }
       }
-      lines.push(
-        `| ${v.label} | ok | **${formatMs(v.medianMs)}** | ${formatMs(v.minMs)} | ${formatMs(v.stddevMs)} | ${cv} | ${timesSlower(base, v.medianMs)} | ${artifact} | ${v.throughput} | ${escapeCell((v.notes || "") + cacheNote + artifactWarn)} |`,
-      );
+      if (Number.isFinite(v.medianMs)) {
+        lines.push(
+          `| ${name} | **${formatMs(v.medianMs)}** | ${formatMs(v.minMs)} | ${formatMs(v.stddevMs)} | ${cv} | ${timesSlower(base, v.medianMs)} | ${artifact} | ${v.throughput} |`,
+        );
+      } else {
+        // An ok row with no duration is a ratio or informational row — its
+        // value sits in the artifact column (or the notes), never in a
+        // fabricated time.
+        const throughput = v.throughput && v.throughput !== "n/a" ? v.throughput : "–";
+        lines.push(`| ${name} | – | – | – | – | – | ${artifact} | ${throughput} |`);
+      }
+      noteText = (v.notes || "") + cacheNote + artifactWarn;
     } else if (v.status === "unranked") {
       // Measured but failed validation: show the time in brackets so the
       // speed/correctness trade is visible, and keep it out of every
       // comparison column — it is not competing on equal terms.
-      const bracketed = Number.isFinite(v.medianMs) ? `(${formatMs(v.medianMs)})` : "n/a";
+      const bracketed = Number.isFinite(v.medianMs) ? `(${formatMs(v.medianMs)})` : "–";
       const artifact = Number.isFinite(v.artifactMedian)
         ? `(${v.artifactMedian.toLocaleString()})`
-        : "n/a";
+        : "–";
       lines.push(
-        `| ${v.label} | ⚠ failed validation | ${bracketed} | ${Number.isFinite(v.minMs) ? `(${formatMs(v.minMs)})` : "n/a"} | n/a | n/a | not ranked | ${artifact} | n/a | ${escapeCell(v.notes)} |`,
+        `| ${name} | ${bracketed} | ${Number.isFinite(v.minMs) ? `(${formatMs(v.minMs)})` : "–"} | – | – | not ranked | ${artifact} | – |`,
       );
     } else if (v.status === "skipped") {
-      lines.push(
-        `| ${v.label} | skipped | n/a | n/a | n/a | n/a | n/a | n/a | n/a | ${escapeCell(v.notes)} |`,
-      );
+      lines.push(`| ${name} | skipped | – | – | – | – | – | – |`);
     } else {
-      lines.push(
-        `| ${v.label} | error | n/a | n/a | n/a | n/a | n/a | n/a | n/a | ${escapeCell(v.error || v.notes)} |`,
-      );
+      lines.push(`| ${name} | error | – | – | – | – | – | – |`);
+      noteText = v.error || v.notes || "";
     }
+    if (noteText) noteRows.push(`- **${displayName(v)}**: ${noteText.replace(/\r?\n/g, " ")}`);
+  }
+
+  if (noteRows.length) {
+    lines.push("");
+    lines.push("<details><summary>Notes</summary>");
+    lines.push("");
+    lines.push(...noteRows);
+    lines.push("");
+    lines.push("</details>");
   }
   return { lines, sorted };
 }
@@ -186,14 +278,10 @@ function renderByThreadingClass(variants) {
     byClass.get(k).push(v);
   }
 
-  // Stable order of classes
-  const order = ["1t", "batch", "max", "host", "lsp", "default", "n/a", "workers"];
-  const rank = (k) => {
-    const t = k.includes("|") ? k.split("|")[1] : k;
-    const i = order.indexOf(t);
-    return i === -1 ? order.length : i;
-  };
-  const keys = [...byClass.keys()].sort((a, b) => rank(a) - rank(b) || a.localeCompare(b));
+  // Stable order: the untargeted class first, then targets alphabetically.
+  const keys = [...byClass.keys()].sort(
+    (a, b) => (a === "all" ? -1 : b === "all" ? 1 : a.localeCompare(b)),
+  );
 
   const allSorted = [];
   for (const k of keys) {
@@ -210,16 +298,39 @@ function renderByThreadingClass(variants) {
 }
 
 function renderRawRuns(sorted) {
-  const lines = [];
-  lines.push("<details><summary>Raw runs</summary>");
-  lines.push("");
+  const entries = [];
   for (const v of sorted) {
     if ((v.status === "ok" || v.status === "unranked") && Array.isArray(v.runs)) {
-      lines.push(`- **${v.label}**: ${v.runs.map(formatMs).join(", ")}`);
+      const rule = slimRuleFor(v.label);
+      entries.push(`- **${rule ? rule.slim : v.label}${engineTag(v)}**: ${v.runs.map(formatMs).join(", ")}`);
     }
   }
+  // A table of ratio rows has no runs — an empty collapsible says nothing.
+  if (entries.length === 0) return [];
+  return ["<details><summary>Raw runs</summary>", "", ...entries, "", "</details>"];
+}
+
+/**
+ * One legend entry per distinct tool on the surface: the slim display name
+ * mapped back to what actually ran. Emitted once, above the tables, instead of
+ * repeating the identity in every row.
+ */
+function renderToolLegend(surface) {
+  const variants = Array.isArray(surface.groups)
+    ? surface.groups.flatMap((g) => g.variants)
+    : (surface.variants ?? []);
+  const seen = new Map();
+  for (const v of variants) {
+    const rule = slimRuleFor(v.label);
+    const name = `${rule ? rule.slim : v.label}${engineTag(v)}`;
+    if (seen.has(name)) continue;
+    const desc = rule?.desc ?? (rule && rule.slim !== v.label ? v.label : null);
+    if (desc) seen.set(name, desc);
+  }
+  if (seen.size === 0) return [];
+  const lines = ["Tools:", ""];
+  for (const [name, desc] of seen) lines.push(`- **${name}** — ${desc}`);
   lines.push("");
-  lines.push("</details>");
   return lines;
 }
 
@@ -232,9 +343,10 @@ export function renderSurfaceMarkdown(surface) {
   );
   lines.push("");
   lines.push(
-    "Primary ranking column is the **median of measured runs**, every one taken after at least one discarded warmup pass. There is no cold column: an unwarmed first run measures JIT warmup for JS tools and nothing for native tools. Comparison classes (invocation × threading) are ranked **separately**.",
+    "Ranked on the **median of measured runs** (each after ≥1 discarded warmup; no cold column — it would measure JIT warmup). One table per surface: engine, invocation and threading are row properties, not table splits — rows tagged **(JS)** run the JavaScript TypeScript compiler (a cross-engine ratio measures TypeScript's rewrite as much as the tool), and a row's label/notes say whether it is a CLI (pays process startup every run), an in-process API, single-threaded or a thread pool. Name markers: ⚠ failed validation (time bracketed, unranked) · ❌ error · ⏭ skipped. Per-row detail is under **Notes** below each table.",
   );
   lines.push("");
+  lines.push(...renderToolLegend(surface));
 
   // Compile matrix (and any future grouped surface)
   if (Array.isArray(surface.groups) && surface.groups.length > 0) {
@@ -283,7 +395,8 @@ export function renderSurfaceMarkdown(surface) {
   lines.push("");
   for (const v of sorted) {
     if ((v.status === "ok" || v.status === "unranked") && Array.isArray(v.runs)) {
-      lines.push(`- **${v.label}**: ${v.runs.map(formatMs).join(", ")}`);
+      const rule = slimRuleFor(v.label);
+      lines.push(`- **${rule ? rule.slim : v.label}${engineTag(v)}**: ${v.runs.map(formatMs).join(", ")}`);
     }
   }
   lines.push("");
@@ -336,7 +449,8 @@ export function buildMethodologyNotes() {
     "Primary ranking metric is the **median of measured runs**. Every measured run is preceded by at least one discarded warmup pass (enforced — `--warmups 0` is clamped to 1).",
     "There is **no cold column**. An unwarmed first run costs a JS compiler ~3.2x its steady state and a native compiler nothing, so ranking on it measures V8 warmup rather than the tool.",
     "Min / stddev / CV% are reported per row. CV% > 10 is flagged ⚠ — treat that row as noisy (thermal drift or a contended runner), not as a result.",
-    "Comparison classes (invocation × threading) are ranked in **separate tables** — an in-process API amortises process startup across runs, a CLI pays it every run.",
+    "Each surface is ONE table. Engine, invocation and threading are row properties, not table splits: a CLI pays process startup on every run (~85ms measured for one native CLI) while an in-process API amortises it, and a thread pool is not a single thread — the row's label and notes say which mode it ran, so compare like with like.",
+    "Rows tagged **(JS)** run the JavaScript TypeScript compiler, untagged typecheck/LSP rows run native tsgo. A cross-engine ratio measures TypeScript's Go rewrite as much as the Vue layer on top of it.",
     "Surfaces are independent: compile ms is not comparable to jsx-compile/typecheck/lint/format ms.",
     "jsx-compile uses fixtures/jsx-N (.jsx); SFC compile uses fixtures/N (.vue).",
     "Compile matrix cells (VDOM/Vapor × production/development × sourcemap on/off) are independent.",

@@ -1161,7 +1161,7 @@ export async function runLspSurface(_fixtureDir, options) {
   }
 
   // Stamp the underlying TypeScript engine onto every row, skipped ones
-  // included. Engines are ranked in separate tables — see lspVariantEngine()
+  // included. Engines share one table, tagged (JS) — see lspVariantEngine()
   // and classKey() — because a JS-engine server and a native-tsgo server are
   // not measuring the same thing. Must happen before measureVariants(), which
   // is what copies the axis onto the result rows the report ranks.
@@ -1251,7 +1251,7 @@ export async function runLspSurface(_fixtureDir, options) {
       "Phase breakdown in Notes: initialize, ready (n/a if no server signal), open→hover, hover cold, hover warm median(5), completion, definition.",
       "workspaceReady is OBSERVED, never waited for. A vendor ready notification (e.g. $/verter/ready) is recorded from session start as a diagnostic and never enters a ranked column — the harness does not pause on it. It previously did, which moved one server's workspace load OUT of the ranked open→hover window while every other server's stayed inside it. Missing signal = n/a, not 0.",
       "Readiness is established identically for every server and INSIDE the ranked window, via the shared didOpen→hover retry loop — the same content-gated approach the ide-ops suites use. Whoever needs project-load time pays for it in the metric.",
-      "Comparison classes are split by TypeScript ENGINE, the same rule the typecheck surface applies and via the same resolver: Volar runs the JavaScript TypeScript compiler, while Volar/TNB, Vize and Verter all run native tsgo. Ranking those in one table measures TypeScript's Go rewrite rather than the Vue layer under test.",
+      "Rows share one table across TypeScript engines, tagged by the same resolver the typecheck surface uses: Volar (JS) runs the JavaScript TypeScript compiler, while Volar (N), Vize and Verter all run native tsgo. A cross-engine ratio measures TypeScript's Go rewrite as much as the Vue layer under test — the (JS) tag is there so you compare like with like.",
       "Process host (native executable vs Node) is NOT a comparison-class axis here — there is no native Volar and no Node-hosted Verter, so splitting on it would leave every table with one row. It is printed on the row instead.",
       "Vize is launched from the standalone native server the VS Code extension downloads (version-matched, discovered under VS Code globalStorage, or pinned with VIZE_LSP_BIN) — that is the process the shipped product runs. Where no native server exists, e.g. CI, the npm package's Node entry is used and the row says so, because the Node bootstrap it adds (~35ms/spawn, inside initialize) is not part of the product.",
       "Completion/definition are best-effort extras; null/n/a does not mean the tool is slower — capability may differ.",

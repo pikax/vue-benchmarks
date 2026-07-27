@@ -328,10 +328,10 @@ export async function runLintSurface(fixtureDir, options) {
     bytes,
     methodology: [
       "Every tool lints an identical isolated copy of the corpus (work/lint/…), so tools that take an explicit file list and tools that walk a directory see exactly the same files.",
-      "In-process and CLI tools are ranked in SEPARATE tables. A CLI pays process startup on every run (~85ms measured for a native CLI); an in-process API pays it once. eslint runs in BOTH classes so the two tables have a shared reference point.",
-      "No single invocation mode covers every tool — vize lint is CLI-only, VerterHost.lint is in-process-only — so the split is the only way to compare like with like.",
+      "In-process and CLI rows share the table; the row label says which mode ran. A CLI pays process startup on every run (~85ms measured for a native CLI); an in-process API pays it once — read same-mode rows against each other. eslint runs in BOTH modes and is the reference point between them.",
+      "No single invocation mode covers every tool — vize lint is CLI-only, VerterHost.lint is in-process-only — which is why the mode is on the row instead of one mode being dropped.",
       "eslint-plugin-vue uses flat recommended config generated with fixtures.",
-      "Vize lint 1T vs max threads reported separately — compare within class.",
+      "Vize lint 1T and max-threads are separate rows — a thread-count gap is not a linter gap.",
       "Planted-bug work gate: each tool must report vue/no-v-html (or equivalent) or is unranked.",
       "Allow non-zero exit (style diagnostics do not abort timing).",
       "Rule sets are NOT identical across tools — throughput only, not diagnostic equivalence.",

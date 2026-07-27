@@ -391,7 +391,7 @@ function buildCellVariants({
       threading: "batch-cached",
       invocation: "in-process",
       artifactLabel: "Code bytes",
-      notes: `runtime-render forceVapor=${vapor}, isProduction=${isProd}, ${smNote}${smIgnored}, mode=session, analysis=${VERTER_ANALYSIS_LEVEL} — persistent host, cacheHits reported (ranked separately from cache-free batch rows)`,
+      notes: `runtime-render forceVapor=${vapor}, isProduction=${isProd}, ${smNote}${smIgnored}, mode=session, analysis=${VERTER_ANALYSIS_LEVEL} — persistent host, cacheHits reported; not comparable to the cache-free batch rows`,
       measure: async () => {
         const key = `session-${cell}`;
         if (!hosts[key]) {
@@ -595,7 +595,7 @@ export async function runCompileSurface(fixtureDir, options) {
       "Production vs development uses each tool's real semantic knobs only: Vue isProd (hoistStatic + cacheHandlers); Verter isProduction + hmrStrategy.",
       "⚠ Vize exposes no isProduction on compileSfc, so its production and development rows perform identical work. Stated rather than substituted with a different knob.",
       "Vue 3.5 has no Vapor path → skipped for vapor cells (not run as VDOM).",
-      "Comparison classes (1T / batch / batch-cached) are ranked in separate tables (not mixed).",
+      "1T / batch / batch-cached rows share the table; the mode is in the row label. A batch pool amortises across a thread pool and a cached session reuses prior analysis, so read same-mode rows against each other.",
       "Verter session mode keeps a persistent host across warmups and runs, so it is ranked as `batch-cached`, apart from cache-free batch rows.",
       "Tool order is rotated on every warmup and measured run; no tool is pinned to first position.",
       "Ranking metric is the median of measured runs, all taken after >= 1 discarded warmup. No cold column.",

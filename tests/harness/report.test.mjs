@@ -58,24 +58,33 @@ function tableLabels(markdown, index = 0) {
 /**
  * Column layout of a rendered ranking table, by name, so an assertion says
  * which column it means instead of an index nobody can check.
+ *
+ * There is no Status column (status is a marker on the name: ⚠ unranked,
+ * ❌ error, ⏭ skipped) and no Notes column (notes live in a <details> block
+ * under the table).
  */
 const COL = {
   tool: 0,
-  status: 1,
-  primary: 2,
-  min: 3,
-  stddev: 4,
-  cv: 5,
-  vsFastest: 6,
-  artifact: 7,
-  throughput: 8,
-  notes: 9,
+  primary: 1,
+  min: 2,
+  stddev: 3,
+  cv: 4,
+  vsFastest: 5,
+  artifact: 6,
+  throughput: 7,
 };
 
-/** `{ [label]: cells }` for the first (or nth) rendered table. */
+/** `{ [label]: cells }` for the first (or nth) rendered table. Keys keep any name marker. */
 function rowsByLabel(markdown, index = 0) {
   return Object.fromEntries(
     collectMarkdownTables(markdown)[index].body.map((cells) => [cells[COL.tool], cells]),
+  );
+}
+
+/** The `- **name**: …` notes line for one row inside the Notes collapsible, or null. */
+function notesLineFor(markdown, name) {
+  return (
+    markdown.split("\n").find((l) => l.startsWith(`- **${name}**: `)) ?? null
   );
 }
 
@@ -131,15 +140,16 @@ describe("ranking order", () => {
 
     const labels = tableLabels(md);
     assert.deepEqual(labels.slice(0, 2), ["Fast", "Slow"], "ok rows rank first");
-    assert.deepEqual(labels.slice(2).sort(), ["Broken", "Missing"]);
+    // Status is a marker on the name, not a column.
+    assert.deepEqual(labels.slice(2).sort(), ["Broken ❌", "Missing ⏭"]);
 
     const [table] = collectMarkdownTables(md);
-    const vsFastest = Object.fromEntries(table.body.map((cells) => [cells[0], cells[6]]));
+    const vsFastest = Object.fromEntries(table.body.map((cells) => [cells[0], cells[COL.vsFastest]]));
     // Baseline is the fastest *ok* median (50), not the +Infinity of an error row.
     assert.equal(vsFastest.Fast, "1.00x");
     assert.equal(vsFastest.Slow, "2.00x");
-    assert.equal(vsFastest.Broken, "n/a");
-    assert.equal(vsFastest.Missing, "n/a");
+    assert.equal(vsFastest["Broken ❌"], "–");
+    assert.equal(vsFastest["Missing ⏭"], "–");
   });
 
   test("a class made only of error/skipped rows produces no bogus baseline", () => {
@@ -152,7 +162,7 @@ describe("ranking order", () => {
 
     const [table] = collectMarkdownTables(md);
     for (const cells of table.body) {
-      assert.equal(cells[6], "n/a");
+      assert.equal(cells[COL.vsFastest], "–");
     }
     assert.ok(!md.includes("NaN"), "no NaN leaked into the rendered table");
     assert.ok(!md.includes("Infinity"), "no Infinity leaked into the rendered table");
@@ -186,12 +196,12 @@ describe("unranked rows — ⚠ failed validation", () => {
     );
   }
 
-  test("its status cell reads ⚠ failed validation", () => {
-    assert.equal(rowsByLabel(rendered()).Cheat[COL.status], "⚠ failed validation");
+  test("its name carries the ⚠ marker instead of a status column", () => {
+    assert.ok(rowsByLabel(rendered())["Cheat ⚠"], "unranked row must be named with a trailing ⚠");
   });
 
   test("its time is rendered in brackets, never as a plain ranking number", () => {
-    const cells = rowsByLabel(rendered()).Cheat;
+    const cells = rowsByLabel(rendered())["Cheat ⚠"];
     assert.equal(cells[COL.primary], "(10.0 ms)", "median must be bracketed");
     assert.equal(cells[COL.min], "(9.0 ms)", "min must be bracketed too");
     // Bold is the ranked-row treatment; an unranked row must not wear it.
@@ -200,10 +210,10 @@ describe("unranked rows — ⚠ failed validation", () => {
 
   test("it is excluded from the vs-fastest comparison", () => {
     const rows = rowsByLabel(rendered());
-    assert.equal(rows.Cheat[COL.vsFastest], "not ranked");
-    assert.equal(rows.Cheat[COL.cv], "n/a", "no CV% for a row that is not competing");
-    assert.equal(rows.Cheat[COL.stddev], "n/a");
-    assert.equal(rows.Cheat[COL.throughput], "n/a", "throughput is a ranking number");
+    assert.equal(rows["Cheat ⚠"][COL.vsFastest], "not ranked");
+    assert.equal(rows["Cheat ⚠"][COL.cv], "–", "no CV% for a row that is not competing");
+    assert.equal(rows["Cheat ⚠"][COL.stddev], "–");
+    assert.equal(rows["Cheat ⚠"][COL.throughput], "–", "throughput is a ranking number");
   });
 
   test("it is never counted as the fastest, even when it is the fastest number in the table", () => {
@@ -215,14 +225,15 @@ describe("unranked rows — ⚠ failed validation", () => {
     assert.notEqual(rows.Slow[COL.vsFastest], "20.00x", "the unranked 10ms row became the baseline");
   });
 
-  test("it shows its reason and sorts below every ranked row", () => {
+  test("it shows its reason in the Notes collapsible and sorts below every ranked row", () => {
     const md = rendered();
-    assert.deepEqual(tableLabels(md), ["Fast", "Slow", "Cheat"]);
+    assert.deepEqual(tableLabels(md), ["Fast", "Slow", "Cheat ⚠"]);
     assert.match(
-      rowsByLabel(md).Cheat[COL.notes],
+      notesLineFor(md, "Cheat ⚠") ?? "",
       /failed planted-bug work gate \(no template diagnostic\)/,
-      "the reason a row is unranked must be on the row",
+      "the reason a row is unranked must be in its notes entry",
     );
+    assert.ok(md.includes("<details><summary>Notes</summary>"), "notes live in a collapsible");
   });
 
   test("its raw runs are still published — the timing is reported, only the ranking is withheld", () => {
@@ -267,14 +278,14 @@ describe("artifact ⚠ guard", () => {
 
     assert.equal(rows.Thin[COL.artifact], "200 ⚠", "25% of the peak must be flagged");
     assert.match(
-      rows.Thin[COL.notes],
+      notesLineFor(md, "Thin") ?? "",
       /produced 25% of the largest artifact in this class — speed is not comparable/,
     );
     // Exactly 50% is the documented boundary and is NOT flagged.
     assert.equal(rows.Half[COL.artifact], "400", "exactly half the peak is the boundary, not a warning");
-    assert.ok(!rows.Half[COL.notes].includes("produced"), rows.Half[COL.notes]);
+    assert.ok(!(notesLineFor(md, "Half") ?? "").includes("produced"), notesLineFor(md, "Half") ?? "");
     assert.equal(rows.Full[COL.artifact], "800", "the peak itself is never flagged");
-    assert.ok(!rows.Full[COL.notes].includes("produced"), rows.Full[COL.notes]);
+    assert.ok(!(notesLineFor(md, "Full") ?? "").includes("produced"), notesLineFor(md, "Full") ?? "");
   });
 
   test("artifactPolarity informational suppresses the warning", () => {
@@ -285,8 +296,9 @@ describe("artifact ⚠ guard", () => {
     const rows = rowsByLabel(md);
 
     assert.equal(rows.Thin[COL.artifact], "200", "an informational census must not be flagged");
-    assert.ok(!rows.Thin[COL.notes].includes("⚠"), rows.Thin[COL.notes]);
-    assert.ok(!rows.Thin[COL.notes].includes("produced"), rows.Thin[COL.notes]);
+    const thinNotes = notesLineFor(md, "Thin") ?? "";
+    assert.ok(!thinNotes.includes("⚠"), thinNotes);
+    assert.ok(!thinNotes.includes("produced"), thinNotes);
   });
 
   test("polarity is per-row: an informational row is spared while its neighbour is not", () => {
@@ -319,7 +331,7 @@ describe("artifact ⚠ guard", () => {
     // the unranked 100,000 counted, everything would be flagged.
     assert.equal(rows.Half[COL.artifact], "400");
     assert.equal(rows.Full[COL.artifact], "800");
-    assert.equal(rows.Cheat[COL.artifact], "(100,000)", "an unranked artifact is bracketed too");
+    assert.equal(rows["Cheat ⚠"][COL.artifact], "(100,000)", "an unranked artifact is bracketed too");
   });
 
   test("a row with no artifact census renders n/a and is not flagged", () => {
@@ -330,7 +342,7 @@ describe("artifact ⚠ guard", () => {
     const rows = rowsByLabel(md);
 
     assert.equal(rows.Unknown[COL.artifact], "n/a");
-    assert.ok(!rows.Unknown[COL.notes].includes("produced"), rows.Unknown[COL.notes]);
+    assert.ok(!(notesLineFor(md, "Unknown") ?? "").includes("produced"), notesLineFor(md, "Unknown") ?? "");
   });
 
   test("the artifact column is titled by artifactLabel, so the census names its unit", () => {
@@ -342,8 +354,11 @@ describe("artifact ⚠ guard", () => {
   });
 });
 
-describe("comparison classes (invocation x threading)", () => {
-  test("an in-process tool and a CLI tool are never ranked in the same table", () => {
+describe("comparison classes (one table per surface)", () => {
+  test("an in-process tool and a CLI tool share one table with one baseline", () => {
+    // Invocation is a row property, not a table split: the mode lives in the
+    // label/legend/notes, and the caveat (a CLI pays startup every run) lives
+    // in the methodology notes.
     const md = renderSurfaceMarkdown(
       surface([
         okRow({ label: "CliTool", invocation: "cli", threading: "1t", medianMs: 500 }),
@@ -352,30 +367,16 @@ describe("comparison classes (invocation x threading)", () => {
     );
 
     const tables = collectMarkdownTables(md);
-    assert.equal(tables.length, 2, "one table per comparison class");
+    assert.equal(tables.length, 1, "one table for the surface");
+    assert.deepEqual(classTitles(md), [], "no class headings");
+    assert.deepEqual(tableLabels(md), ["ApiTool", "CliTool"], "sorted by median");
 
-    const titles = classTitles(md);
-    assert.equal(titles.length, 2);
-    assert.ok(titles.some((t) => t.startsWith("CLI subprocess")), titles.join(" | "));
-    assert.ok(titles.some((t) => t.startsWith("In-process API")), titles.join(" | "));
-
-    const grouped = tables.map((t) => t.body.map((cells) => cells[0]));
-    assert.ok(
-      grouped.some((labels) => labels.length === 1 && labels[0] === "CliTool"),
-      "CliTool must be ranked alone",
-    );
-    assert.ok(
-      grouped.some((labels) => labels.length === 1 && labels[0] === "ApiTool"),
-      "ApiTool must be ranked alone",
-    );
-
-    // The 100x gap must not produce a cross-class "vs fastest" comparison.
-    for (const table of tables) {
-      assert.equal(table.body[0][6], "1.00x", "each class has its own baseline");
-    }
+    const rows = rowsByLabel(md);
+    assert.equal(rows.ApiTool[COL.vsFastest], "1.00x", "single shared baseline");
+    assert.equal(rows.CliTool[COL.vsFastest], "100.00x");
   });
 
-  test("different threading modes split even within one invocation kind", () => {
+  test("threading modes share the table too", () => {
     const md = renderSurfaceMarkdown(
       surface([
         okRow({ label: "Single", invocation: "cli", threading: "1t" }),
@@ -383,7 +384,26 @@ describe("comparison classes (invocation x threading)", () => {
       ]),
     );
 
-    assert.equal(collectMarkdownTables(md).length, 2);
+    assert.equal(collectMarkdownTables(md).length, 1);
+  });
+
+  test("codegen targets still split — vapor and VDOM are different jobs", () => {
+    const md = renderSurfaceMarkdown(
+      surface([
+        okRow({ label: "VaporTool", target: "vapor", medianMs: 10 }),
+        okRow({ label: "VdomTool", target: "vdom", medianMs: 20 }),
+      ]),
+    );
+
+    const tables = collectMarkdownTables(md);
+    assert.equal(tables.length, 2, "one table per codegen target");
+    const titles = classTitles(md);
+    assert.ok(titles.some((t) => t.startsWith("VAPOR")), titles.join(" | "));
+    assert.ok(titles.some((t) => t.startsWith("VDOM")), titles.join(" | "));
+    // Each target has its own baseline — the 2x gap never crosses tables.
+    for (const table of tables) {
+      assert.equal(table.body[0][COL.vsFastest], "1.00x");
+    }
   });
 
   test("a homogeneous surface renders a single untitled table", () => {
@@ -410,7 +430,7 @@ describe("noise flag", () => {
     );
 
     const [table] = collectMarkdownTables(md);
-    const cv = Object.fromEntries(table.body.map((cells) => [cells[0], cells[5]]));
+    const cv = Object.fromEntries(table.body.map((cells) => [cells[0], cells[COL.cv]]));
 
     assert.equal(cv.Noisy, "10.1% ⚠");
     assert.equal(cv.Steady, "10.0%");
@@ -421,7 +441,7 @@ describe("noise flag", () => {
     const md = renderSurfaceMarkdown(surface([okRow({ label: "NoCv", cvPct: undefined })]));
 
     const [table] = collectMarkdownTables(md);
-    assert.equal(table.body[0][5], "n/a");
+    assert.equal(table.body[0][COL.cv], "n/a");
   });
 });
 
@@ -453,7 +473,7 @@ describe("markdown table integrity", () => {
     assertTablesWellFormed(md, "flat surface");
   });
 
-  test("pipes in notes are escaped and do not shift columns", () => {
+  test("notes with pipes and newlines live outside the table and cannot shift columns", () => {
     const md = renderSurfaceMarkdown(
       surface([
         okRow({ label: "A", notes: "gate: script=✓ | template=✓ | corpus=✓" }),
@@ -473,8 +493,11 @@ describe("markdown table integrity", () => {
     );
 
     assertTablesWellFormed(md, "notes with pipes");
-    assert.ok(md.includes("\\|"), "a literal pipe in a note must be escaped");
-    assert.ok(!/\|[^\n]*\n[^|\n]/.test(md.split("| A |")[1] ?? ""), "newlines in cells must be flattened");
+    // Notes are a list inside the collapsible, not table cells, so pipes are
+    // harmless there — but each entry must be one line.
+    assert.match(notesLineFor(md, "A") ?? "", /gate: script=✓ \| template=✓ \| corpus=✓/);
+    assert.match(notesLineFor(md, "B ❌") ?? "", /cmd \| failed second line/, "newlines flattened to one line");
+    assert.match(notesLineFor(md, "C ⏭") ?? "", /failed planted-bug work gate/);
   });
 
   test("a grouped (compile-matrix) surface renders well-formed tables", () => {
@@ -563,7 +586,11 @@ describe("methodology notes", () => {
     assert.match(text, /no cold column/i, "removal of the cold metric must stay documented");
     assert.match(text, /warmups 0.*clamped to 1|clamped to 1/i, "warmup clamping must stay documented");
     assert.match(text, /rotated/i, "order rotation must stay documented");
-    assert.match(text, /separate tables|separately/i, "class separation must stay documented");
+    assert.match(
+      text,
+      /ONE table.*row propert|one table per surface/i,
+      "the one-table-per-surface rule and its row-property caveats must stay documented",
+    );
     assert.match(text, /CV% > 10/i, "the noise flag threshold must stay documented");
   });
 });
