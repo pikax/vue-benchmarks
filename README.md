@@ -50,7 +50,9 @@ Both natives *do* support source maps elsewhere — Vize on its JSX API, Verter 
 | Vize               | `@vizejs/native`        | yes  | yes (`vapor`)                      | ⚠ **none** — no `isProduction` on `compileSfc`    |
 | Verter             | `@verter/native`        | yes  | yes (`forceVapor`)                 | `isProduction` + `hmrStrategy`                    |
 
-⚠ Vize's production and development rows perform **identical work**, because `compileSfc` exposes no production flag. That is stated in the row notes rather than papered over by swapping in a different knob.
+⚠ in this table marks a matrix dimension the tool does not vary with: the rows are still produced, and they are identical. Where a tool has no code path for a dimension at all, the row is reported `skipped` instead and carries no ⚠.
+
+⚠ Vize's production and development rows therefore perform **identical work**, because `compileSfc` exposes no production flag. The row notes record this; no substitute flag is used in its place.
 
 **Comparison classes:** Vue official compiler is **1T only** (worker_threads variants removed). Vize/Verter batch pools are ranked separately, and Verter's `session` mode — which keeps a persistent host across warmups and runs — is ranked as `batch-cached`, apart from the cache-free batch rows.
 
@@ -59,7 +61,7 @@ Both natives *do* support source maps elsewhere — Vize on its JSX API, Verter 
 ```bash
 pnpm bench:compile:single
 # tiny → small → medium → large → xlarge; 20 warmup + 100 iters
-# Each iteration uses a **unique** SFC body (defeats Vize content-hash free-rides)
+# Each iteration uses a **unique** SFC body (a content-hash cache cannot serve a repeat)
 # options: --files tiny,medium --targets vdom --verter-session | --no-mutate
 ```
 
@@ -83,7 +85,7 @@ pnpm bench:jsx-compile
 pnpm confirm:jsx-compile
 ```
 
-### Fixtures (important for Vize content-hash caches)
+### Fixtures (and content-hash caches)
 
 | Path                    | Contents                                            | Use for ranking?               |
 | ----------------------- | --------------------------------------------------- | ------------------------------ |
@@ -110,7 +112,7 @@ CI also runs a non-ranking compile pass on `fixtures/{N}-repeated` so content-ha
 
 Most of these run the **native Go TypeScript engine**; stock `vue-tsc` runs the **JavaScript** one. Ranking them in one table mostly measures TypeScript's own Go rewrite, not the Vue layer under test. So engine is part of the comparison class and each gets its own table.
 
-**`vue-tsc (TNB / tsgo)` is what makes the incumbent comparable at all.** It is the *same* `vue-tsc`, the same `@vue/language-core`, the same template checking — with `typescript` aliased to [typescript-native-bridge](https://github.com/johnsoncodehk/typescript-native-bridge), whose checker is tsgo in-process. One variable changes, so the pair isolates the engine from the Vue layer, and the native row can finally be ranked against Vize/Verter/golar directly.
+**`vue-tsc (TNB / tsgo)` holds the Vue layer fixed and changes only the engine.** It is the *same* `vue-tsc`, the same `@vue/language-core`, the same template checking — with `typescript` aliased to [typescript-native-bridge](https://github.com/johnsoncodehk/typescript-native-bridge), whose checker is tsgo in-process. One variable changes, so the pair isolates the engine from the Vue layer, and the row falls in the same engine class as Vize/Verter/golar.
 
 Illustrative decomposition. **Local `fixtures/50` on win32, 50 files, 5 measured runs after a warmup; CV 1.5–3.1% on every ranked row.** Published numbers come from Linux CI — these are indicative of the *shape*, not a published ranking.
 
@@ -124,22 +126,22 @@ Measured medians:
 | `verter-tsc` | tsgo 7.0.2 | 760.5 ms | 2.0% | 105 ⚠ |
 | Vize check | tsgo nightly | *(132.8 ms)* | — | *(0)* — unranked, failed the template gate |
 
-| Comparison | Gap | What it actually measures |
+| Comparison | Gap | What differs between the two rows |
 | --- | --- | --- |
-| `vue-tsc` (JS) vs `vue-tsc` (TNB) — **same tool, engine swapped** | **1.94×** | TypeScript's Go rewrite, isolated. Nothing to do with Vue tooling. |
-| `vue-tsc` (TNB) vs `verter-tsc` (**same engine, both validated**) | **1.09× — `vue-tsc` ahead** | The real Vue-layer difference, and it does not favour the native tool |
-| `vue-tsc` (TNB) vs golar (**same engine, both validated**) | 1.23× | golar's genuine Vue-layer lead |
-| Vize (unranked) vs `vue-tsc` (JS) | 10.2× | All of the above **plus** work Vize does not do |
+| `vue-tsc` (JS) vs `vue-tsc` (TNB) — **same tool, engine swapped** | **1.94×** | The TypeScript engine only; the Vue layer is identical in both rows |
+| `vue-tsc` (TNB) vs `verter-tsc` (**same engine, both validated**) | **1.09×** (`vue-tsc` (TNB) median lower) | The Vue layer only; the engine is identical in both rows |
+| `vue-tsc` (TNB) vs golar (**same engine, both validated**) | 1.23× (golar median lower) | The Vue layer only; the engine is identical in both rows |
+| Vize (unranked) vs `vue-tsc` (JS) | 10.2× | Engine and Vue layer both differ, and the Vize row did not pass the template gate |
 
-The headline: once the engine is held constant, the incumbent is not behind at all — on this corpus `vue-tsc` on tsgo is 9% *faster* than `verter-tsc`. The entire "native Vue typechecker is ~2× faster" story is TypeScript's Go rewrite, which `vue-tsc` inherits for free by swapping one package. A single "Nx faster" number spanning engines multiplies these factors together and attributes the product to Vue tooling. It shouldn't.
+Read together: the 1.94× between the two `vue-tsc` rows is attributable to the engine swap alone, and between same-engine, both-validated rows the measured gaps on this corpus are 1.09× and 1.23×. A single cross-engine ratio multiplies the two factors together, which is why engine is part of the comparison class here.
 
-> ⚠ An earlier revision of this table claimed **~2%**, "effectively equal", from a **single** unreplicated run at a 20-file limit. That was wrong: the run it came from actually showed 1.20× the other way, and this replicated 5-run measurement at 50 files reverses the sign again. Treat single-run typecheck numbers as noise. Note also that `verter-tsc` is the only row emitting diagnostics on this corpus — 105 of them, about its own virtual code — so it is not doing identical work to the rows above it.
+> ⚠ An earlier revision of this table published **~2%** from a **single** unreplicated run at a 20-file limit. That figure was corrected: the run it was taken from showed 1.20×, in the opposite direction to the 1.09× that the replicated 5-run measurement at 50 files above gives. Single-run typecheck numbers on this corpus move by more than the gaps being reported, so they are not treated as results. Note also that `verter-tsc` is the only row emitting diagnostics on this corpus — 105 of them, referring to its own virtual code — so its output on this run was not the same as that of the rows above it.
 
 Stock JS-engine `vue-tsc` is **kept** as a row, because it is what ships today.
 
 TNB lives in [`envs/tnb`](envs/tnb/README.md) as a standalone project, never a root `typescript` override — an override would swap the engine under component-meta, lint and LSP at the same time. It must also print its activation banner on the work-gate run, or the row is unranked: a silent fallback to the JS checker would leave the row labelled native while running JS.
 
-Note also that Vize ships a tsgo **nightly** while `verter-tsc` requires stable and explicitly rejects nightlies. Same class, different rigour — every row prints its exact engine build.
+Note also that Vize ships a tsgo **nightly** while `verter-tsc` requires stable and rejects nightlies. Both are ranked in the same engine class, and every row prints its exact engine build.
 
 Default typecheck file limit is **200** (or smaller if the fixture is smaller) — typecheck cost scales steeply vs pure compile.
 
@@ -152,7 +154,7 @@ Default typecheck file limit is **200** (or smaller if the fixture is smaller) �
 | **tmpl-event**  | Clean script; `@click` number→function in template only      | It checks **event handler** types in templates                                |
 | **corpus**      | Same bug planted into the **full timed corpus**              | It still finds it at scale, under the tsconfig the timed runs use             |
 
-The two template capabilities are **separate single-error projects on purpose**. A combined plant carrying both errors let a checker pass on the strength of whichever half it supported — one native checker reports the `@click` mismatch, misses `:disabled` entirely, and was ranked ~10× faster than `vue-tsc` while doing strictly less checking.
+The two template capabilities are **separate single-error projects on purpose**. A combined plant carrying both errors let a checker pass on the strength of whichever half it supported: under the combined plant, one checker reported the `@click` mismatch, did not report `:disabled`, passed the gate, and was ranked at ~10× the speed of `vue-tsc`. Split into two projects, the same checker fails the `tmpl-prop` stage and its time is bracketed.
 
 The diagnostic must **name the planted file**. Without that, an unrelated project-level failure (a config import that will not resolve, say) reads as a pass and the gate silently stops gating.
 
@@ -164,19 +166,19 @@ Measured locally (win32, the same runs the tables above are produced from — `r
 
 | Corpus | `verter-tsc` diagnostics | Every other ranked checker | `verter-tsc` rank in its class |
 | --- | ---: | ---: | --- |
-| 200 files (`fixtures/200`) | **442** | 0 | 3rd (2.20× behind golar) |
+| 200 files (`fixtures/200`) | **442** | 0 | 3rd (2.20× golar's median) |
 | 20 files (`fixtures/50`, check limit 20) | **42** | 0 | **1st** |
 
-So on the smaller corpus the checker that **tops its comparison class is also the only one emitting noise**, at roughly two diagnostics per file, and the ranking does not dock it for that.
+On the smaller corpus, the row ranked 1st in its class is also the only one emitting diagnostics, at roughly two per file. Ranking is by median time and is not adjusted for diagnostic count.
 
-The cause is Verter's own virtual code leaking into user-visible output. The confirmation suite pins it independently in [`tests/confirm/known-failures.json`](tests/confirm/known-failures.json): on a **clean** generic `<script setup>` component `verter-tsc` emits three spurious diagnostics — `___VERTER___Attrs requires 1 type argument`, `___VERTER___attributes is not generic`, and `Cannot find name 'items'`. Those are not complaints about the code under test; they are the tool describing its own internals.
+The diagnostics refer to Verter's own virtual code rather than to the source under test. The confirmation suite records this independently in [`tests/confirm/known-failures.json`](tests/confirm/known-failures.json): on a **clean** generic `<script setup>` component `verter-tsc` emits three diagnostics — `___VERTER___Attrs requires 1 type argument`, `___VERTER___attributes is not generic`, and `Cannot find name 'items'` — against a fixture that contains no planted error.
 
-Two things follow, and neither is hidden:
+Two consequences for how the tables read:
 
-- **The work gate cannot catch this.** It asks "did you find the planted bug?", not "did you stay quiet about everything else". `verter-tsc` passes all four stages (`script`, `tmpl-prop`, `tmpl-event`, `corpus`) and is correctly ranked on that basis.
-- **The artifact column cannot catch it either.** Diagnostics are marked *informational* polarity precisely because on a clean corpus more is not better — so no ⚠ fires on the count. That is the right call for the tools answering 0, and it means the one tool answering 442 gets no automatic flag. Hence this note.
+- **The work gate does not test for this.** It asks whether the planted bug was found, not whether anything else was reported. `verter-tsc` passes all four stages (`script`, `tmpl-prop`, `tmpl-event`, `corpus`) and is ranked on that basis.
+- **The artifact column does not flag it either.** Diagnostics carry *informational* polarity, because on a clean corpus a higher count is not more work — so no ⚠ fires on the count, on any row. The count is recorded in this note instead of by an automatic flag.
 
-Emitting noise is not the same as failing to check, and this is **not** grounds to bracket the row. But a reader comparing `verter-tsc`'s time against a competitor's should know the two rows did not produce equivalent output, and that some of `verter-tsc`'s work went into diagnostics nobody asked for.
+Emitting diagnostics is not a gate failure, so the row is not bracketed. The condition on reading its time: the rows in this class did not produce equivalent output — one emitted 442 diagnostics on 200 files, the others emitted 0.
 
 **Verter + tsgo:** `verter-tsc` requires the TypeScript **7 native** engine (stable `>=7.0.2,<7.1.0`), not `typescript@5` and not nightly `@typescript/native-preview`. This repo pins:
 
@@ -216,7 +218,7 @@ Rule sets are **not** identical — throughput only.
 | Tool               | Package                              | Notes                                                                                                                                                     |
 | ------------------ | ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | vue-component-meta | `vue-component-meta`                 | Official `createChecker` + `getComponentMeta`                                                                                                             |
-| Verter             | `@verter/native` `ComponentMetaHost` | Native meta host/session API. The separate `@verter/component-meta` npm tarball currently ships without `dist/` (packaging gap); the native host is used. |
+| Verter             | `@verter/native` `ComponentMetaHost` | Native meta host/session API. The separate `@verter/component-meta` npm tarball currently ships without `dist/`; the native host is used instead. |
 | Vize               | —                                    | No dedicated public component-meta API on `vize` / `@vizejs/native`; row is `skipped` (declaration emit is a different job).                              |
 
 ### LSP (language servers)
@@ -233,7 +235,7 @@ Harness shape: init → didOpen → hover cold/warm (same workspace, file, and p
 
 **Retry budget is identical for every server** (6 attempts × 60 s, same backoff). It used to be 6 attempts for Volar and 2 for everyone else — and because the backoff sleeps sit *inside* the timed `didOpen→hover` window, that handed Volar up to ~3 s of billable sleep the other servers could not incur, while hiding slow project spin-up. A server that needs the retries now pays for them.
 
-#### Hover content is gated in two places — and the template one is the Vue-specific one
+#### Hover content is gated at two positions
 
 Latency is only comparable if every server answered the same question correctly, so hover **content** is validated at two positions in the same file. Both must pass to be ranked:
 
@@ -242,9 +244,9 @@ Latency is only comparable if every server answered the same question correctly,
 | `const benchMarker` in `<script setup>` | some form of `Ref<string>` | the server returns real TypeScript types |
 | `{{ benchMarker }}` in the **template** | `string` | the server actually models the template |
 
-The template probe is the discriminating one. Vue **auto-unwraps refs in templates**, so the same symbol is `Ref<string>` in script and `string` three lines up in the interpolation. A server can satisfy the script probe by proxying to a TypeScript server — that is not the job a *Vue* language server exists to do — but only a server that models the template gets the unwrapped type right.
+The template probe is the discriminating one. Vue **auto-unwraps refs in templates**, so the same symbol is `Ref<string>` in script and `string` three lines up in the interpolation. The script probe can be satisfied by proxying to a TypeScript server; the template probe cannot, so only a server that models the template returns the unwrapped type.
 
-Measured, same workspace and position: two servers return the unwrapped `string`. One returns `benchMarker: Ref<string>` — the script type — accompanied by prose stating refs are "auto-unwrapped in template", describing the unwrapping it did not perform. It is by far the fastest, which is exactly why the gate exists. It is **measured and shown in brackets, but not ranked**.
+Measured, same workspace and position: two servers return the unwrapped `string`. One returns `benchMarker: Ref<string>` — the script type — accompanied by prose stating that refs are "auto-unwrapped in template". Its measured latency is the lowest of the three; it is **measured and shown in brackets, but not ranked**.
 
 `Ref<...>` is rejected rather than accepted here, and the match is against the annotation (`benchMarker: string`) rather than a loose `string`, so that prose mentioning the word cannot pass. The probe runs **outside every timed window**, so it gates ranking without changing what the latency column measures.
 
@@ -252,13 +254,13 @@ Regression fixtures for all three real payloads live in [`tests/harness/lsp-hove
 
 #### Caveat: Vize's type-checking backend sometimes never starts, and the row still answers
 
-⚠ Vize drives tsgo out-of-process as "Corsa". When that session fails to spawn, it logs to stderr and **silently falls back to its own semantic analysis**. Nothing in the LSP traffic shows it: the server initializes, answers every request, and returns a very fast, apparently-healthy result — for work a type checker never did.
+⚠ Vize drives tsgo out-of-process as "Corsa". When that session fails to spawn, it logs to stderr and **falls back to its own semantic analysis**. The LSP traffic does not show it: the server initializes, answers every request, and returns a result with no protocol-level error, produced without the type-checking backend running.
 
-This is **not hypothetical**. It fired in a recorded run on this machine, with the reason `tsgo/Corsa backend did not start — server answered from its own semantic analysis (OpenProject request returned no error but project not present in snapshot)`. In that same run the Vize row was also bracketed for failing the template hover gate. A fast row and an absent type backend are not a coincidence, and the two facts belong next to each other.
+This was observed, not hypothesised. It fired in a recorded run on this machine, with the reason `tsgo/Corsa backend did not start — server answered from its own semantic analysis (OpenProject request returned no error but project not present in snapshot)`. In that same run the Vize row was also bracketed for failing the template hover gate.
 
-Both the LSP timing surface (`scripts/lib/surfaces/lsp.mjs`) and the IDE surface (`scripts/lib/ide-ops/context.mjs`) sniff for it and print `⚠ BACKEND FALLBACK` in the row's Notes. It is **reported, never used to fail a row on its own** — the hover and per-operation gates already judge the answers. It exists so the reason a row is fast is never invisible.
+Both the LSP timing surface (`scripts/lib/surfaces/lsp.mjs`) and the IDE surface (`scripts/lib/ide-ops/context.mjs`) sniff for it and print `⚠ BACKEND FALLBACK` in the row's Notes. It is **reported, never used to fail a row on its own** — the hover and per-operation gates decide ranking. It is recorded so the conditions a row was measured under stay visible.
 
-**If you see that warning on a row, its latency is not a measurement of type checking.** It is also non-deterministic: the same server can come up healthy on the next run, so a published table may carry the note on some runs and not others.
+**A row carrying that warning was measured with the type-checking backend absent, so its latency is not a measurement of type checking.** The condition is non-deterministic: the backend can start normally on the next run, so a published table may carry the note on some runs and not others.
 
 **Not measured:** VS Code extension host UI cost — only the stdio language-server protocol.
 
@@ -266,7 +268,7 @@ Both the LSP timing surface (`scripts/lib/surfaces/lsp.mjs`) and the IDE surface
 
 **Verter:** set `VERTER_LSP_BIN` to a built `verter-lsp` binary when not published on npm.
 
-**Vize:** `VIZE_LSP_BIN` (with `VIZE_LSP_ARGS` / `VIZE_LSP_LABEL`) overrides discovery. Left unset, the harness prefers the standalone native server the VS Code extension downloads, and only falls back to the npm package's Node entry when no version-matched binary is present — CI has no VS Code, so CI always measures the Node entry. That is a real ~33 ms of Node bootstrap, so **the row and the memory label always name the entry point**: a local run and a CI run of the same version are not comparable numbers, and nothing should let them look like they are.
+**Vize:** `VIZE_LSP_BIN` (with `VIZE_LSP_ARGS` / `VIZE_LSP_LABEL`) overrides discovery. Left unset, the harness prefers the standalone native server the VS Code extension downloads, and only falls back to the npm package's Node entry when no version-matched binary is present — CI has no VS Code, so CI always measures the Node entry. That entry carries ~33 ms of Node bootstrap, so **the row and the memory label always name the entry point**: a local run and a CI run of the same version measured different entry points and are not comparable numbers.
 
 ### VS Code E2E (headless extension host)
 
@@ -301,17 +303,17 @@ CI: use workflow_dispatch / optional job — cloning Nuxt UI + downloading VS Co
 | LSP / IDE row, as Volar's **tsdk** | **Shipped** — `Volar (TNB / tsgo tsdk)`: same Volar binary, same Vue half, TypeScript half on tsgo |
 | component-meta / lint engine swap  | Not yet — same technique would apply, see below                      |
 
-Install: `pnpm install --dir envs/tnb --ignore-workspace`. Absent, the row is skipped with a note and nothing else changes. See [`envs/tnb/README.md`](envs/tnb/README.md) for why it is isolated rather than a root override, and [Engines are ranked separately](#engines-are-ranked-separately--and-this-used-to-be-the-biggest-single-caveat) for what it revealed.
+Install: `pnpm install --dir envs/tnb --ignore-workspace`. Absent, the row is skipped with a note and nothing else changes. See [`envs/tnb/README.md`](envs/tnb/README.md) for why it is isolated rather than a root override, and [Engines are ranked separately](#engines-are-ranked-separately--and-this-used-to-be-the-biggest-single-caveat) for the comparison it enables.
 
-##### Caveat: TNB is not a consequence-free drop-in, it fails a real IDE operation
+##### Caveat: the TNB engine swap fails an IDE completion-resolve operation
 
-⚠ The typecheck story above is "one variable changes, and it is the engine". That is true of the typecheck surface, where TNB passes the full work gate. It is **not** true everywhere the swap is applied, and the report should not be read as if it were.
+⚠ On the typecheck surface the swap changes one variable, the engine, and TNB passes the full work gate there. On the IDE surface the same swap also changes an observed behaviour, recorded below.
 
-On the IDE surface, `Volar (TNB / tsgo tsdk)` **offers an auto-import completion item and then crashes resolving it**. The tsgo side throws `Debug Failure. False expression. at getCompletionEntryCodeActionsAndSourceDisplay` — recorded verbatim in [`scripts/lib/ide-ops/suites/completion.mjs`](scripts/lib/ide-ops/suites/completion.mjs). In an editor that is the moment you accept `computed` from the completion list and expect the `import` statement to be written for you; on TNB it errors instead.
+On the IDE surface, `Volar (TNB / tsgo tsdk)` **offers an auto-import completion item and then errors resolving it**. The tsgo side throws `Debug Failure. False expression. at getCompletionEntryCodeActionsAndSourceDisplay` — recorded verbatim in [`scripts/lib/ide-ops/suites/completion.mjs`](scripts/lib/ide-ops/suites/completion.mjs). The operation corresponds to accepting `computed` from the completion list and having the `import` statement written; on TNB it errors instead.
 
-Stock Volar on the JavaScript TypeScript engine resolves the same item correctly, so this is a genuine behavioural difference introduced by the engine swap, not a harness artifact. The suite fans a resolve out to both halves specifically so this crash is attributed to tsgo rather than collapsed into the Vue half's misleading "not my item" error.
+Stock Volar on the JavaScript TypeScript engine resolves the same item, so the difference tracks the engine swap rather than the harness. The suite fans a resolve out to both halves so the failure is attributed to the tsgo half rather than collapsed into the Vue half's "not my item" response.
 
-Read `vue-tsc (TNB / tsgo)` as: **the fastest checker of the two on the same Vue layer, on a backend that is not yet complete for editor work.** The typecheck comparison stands; "drop-in replacement" is doing more work than the evidence supports.
+Conditions for reading the `vue-tsc (TNB / tsgo)` row: it was measured on the typecheck surface, where it passes the work gate; the same engine fails the IDE completion-resolve operation above. The two surfaces were measured separately, and the typecheck result does not carry over to editor operations.
 
 `vue-component-meta` and type-aware ESLint also run the JS engine today and could get the same treatment, which would remove the last engine asymmetries in the report. Not done yet — each needs its own isolated env and its own work gate.
 
@@ -349,7 +351,7 @@ An unwarmed first run does not measure a compiler — it measures V8 warming up.
 | `@vue/compiler-sfc` (JS)    | **335 ms** | 139 ms | 105 ms | **3.2×**          |
 | `@vizejs/native` (Rust)     | 32 ms      | 34 ms  | 36 ms  | none              |
 
-Ranking on run 1 would report a ~10.5× gap where the steady-state gap is ~3.2× — inflating the native advantage roughly threefold. A JS tool cannot avoid that cost; a native tool structurally never pays it. So:
+Ranking on run 1 would report a ~10.5× gap where the steady-state gap is ~3.2×, roughly a threefold overstatement of the warmed measurement. A JS tool cannot avoid that first-run cost; a native tool does not pay it. So:
 
 - **Warmup is mandatory.** `--warmups 0` is clamped to 1 and a warning is printed.
 - **The ranking metric is the median of the measured runs**, all of them warmed.
@@ -377,13 +379,13 @@ Timing alone cannot tell a fast tool from one that skipped the work. Every table
 | **lint** | **none yet** | — |
 | **component-meta** | **none yet** | — |
 
-⚠ **Four surfaces currently have no artifact census at all.** Their rows are ranked on time with nothing attesting that the tools produced comparable output — which is exactly the failure mode this column exists to catch. `component-meta` is the sharpest case: it publishes a ~20× spread with neither a gate nor an artifact, while the confirmation suite shows the faster tool extracting fewer events and slots. Treat those four surfaces' rankings as provisional until a census lands.
+⚠ **Four surfaces currently have no artifact census at all.** Their rows are ranked on time with nothing attesting that the tools produced comparable output — the condition this column exists to detect. On `component-meta` the published spread is ~20× with neither a gate nor an artifact count, and the confirmation suite records the faster tool extracting fewer events and slots than the slower one. Those four surfaces' rankings are provisional until a census lands.
 
-Where **more genuinely means more work** (code bytes), a row below 50% of the largest artifact in its class is flagged ⚠ and its speed marked not comparable. Where the count is **informational** (diagnostics on a deliberately clean corpus, where zero is the correct answer) no such warning fires — otherwise the report would scold the well-behaved tools and reward one emitting noise about its own internals.
+Where **more output means more work** (code bytes), a row below 50% of the largest artifact in its class is flagged ⚠ and its speed marked not comparable. Where the count is **informational** (diagnostics on a deliberately clean corpus, where zero is the correct answer) no threshold applies in either direction: a low count is the expected result there, so a low-count flag would fire on every row that answered correctly.
 
-The tool being alluded to there is `verter-tsc`, and it is named rather than left as a hint: see [Read the Diagnostics column](#caveat-verter-tsc-is-the-only-checker-that-is-not-silent-on-a-clean-corpus). The consequence of that polarity choice is that the one row emitting hundreds of diagnostics on a clean corpus receives no automatic flag, so the disclosure has to be editorial.
+One consequence of that polarity choice: a row emitting hundreds of diagnostics on a clean corpus receives no automatic flag. `verter-tsc` is the row in question on this corpus — see [the diagnostics caveat](#caveat-verter-tsc-is-the-only-checker-that-is-not-silent-on-a-clean-corpus). The count is disclosed in that note rather than by the column.
 
-Honest limit: byte-count is blunt. It catches gross omissions, not semantic ones — a compiler that flattens a `v-for` instead of emitting loop codegen loses some bytes but not enough to trip the threshold.
+Limit of the method: byte-count is blunt. It catches gross omissions, not semantic ones — a compiler that flattens a `v-for` instead of emitting loop codegen loses some bytes but not enough to trip the threshold.
 
 ### Failed validation is shown, not hidden
 
@@ -393,11 +395,11 @@ A tool that fails a work gate is **still measured**, and its time is reported **
 | Vize check | ⚠ failed validation | (114.0 ms) | … | not ranked | … |
 ```
 
-It is excluded from the ranking sort, from the `vs fastest` baseline, and from the artifact-peak calculation, so it cannot distort the tools it lost to. Dropping the row entirely hid the interesting part — a tool is often fast *because* it failed validation, and a reader deserves to see both halves of that trade.
+It is excluded from the ranking sort, from the `vs fastest` baseline, and from the artifact-peak calculation, so a bracketed row cannot shift the rows it was measured alongside. Dropping the row entirely removed information: the time and the gate outcome are reported together so both are visible.
 
 ### Order rotation
 
-Tool order is **rotated by run index** on every warmup and measured run, so over `runs >= tools` every tool visits every position. Forward/reverse alternation was not enough: it produces only two orderings and leaves run 0 in fixed declaration order, which mattered when run 0 was the ranked metric and the incumbent was always declared first.
+Tool order is **rotated by run index** on every warmup and measured run, so over `runs >= tools` every tool visits every position. Forward/reverse alternation was not enough: it produces only two orderings and leaves run 0 in fixed declaration order, which mattered when run 0 was the ranked metric and the same tool always occupied the first position.
 
 ### Remaining limits
 
@@ -592,7 +594,7 @@ On `main`, Linux CI copies the latest report into **[MEMORY.md](./MEMORY.md)** (
 
 #### Caveat: Volar's LSP memory row is not the whole of Volar, but the LSP timing row is
 
-⚠ This is the sharpest known asymmetry in the report, and it runs in opposite directions on two different axes.
+⚠ This asymmetry runs in opposite directions on two different axes.
 
 Vue language-tools v3 is a **two-process** architecture: `@vue/language-server` plus a TypeScript server reached over the `tsserver/request`↔`tsserver/response` bridge. Both processes are real, and the TypeScript half is the larger of the two.
 
@@ -601,7 +603,7 @@ Vue language-tools v3 is a **two-process** architecture: `@vue/language-server` 
 | **LSP / IDE timing** | **Both processes.** Startup and project load of the pair are inside the timings, and each feature is asked of both halves in parallel with the **slower** one charged (`scripts/lib/surfaces/lsp.mjs`). |
 | **Memory probe** | **The Vue server only.** RSS and CPU are sampled from a single pid; the tsserver half is a separate, larger process and is **not** included (`scripts/memory-worker.mjs`). |
 
-So on the memory tables Volar looks **leaner than it is**, and on the latency tables it is charged work its single-process competitors never do. Neither number is wrong for what it measures, but they are not the same subject, and a reader comparing "Volar's memory" to "Vize's memory" is not comparing like with like. Vize and Verter run single-process, so their rows are whole.
+So the memory tables cover **one of Volar's two processes**, and the latency tables cover both. Neither number is wrong for what it measures, but they do not cover the same process set: "Volar's memory" and "Vize's memory" are not measurements of the same thing. Vize and Verter run single-process, so their rows cover the whole tool.
 
 Treat Volar's LSP memory figure as a **lower bound on the Vue half**, not as Volar's footprint. The `Notes` column on the affected rows carries the same warning; it is emitted by the probe rather than being editorial.
 
@@ -620,10 +622,10 @@ Treat Volar's LSP memory figure as a **lower bound on the Vue half**, not as Vol
 
 | Caveat | Effect on the tables |
 | --- | --- |
-| [`verter-tsc` is the only checker not silent on a clean corpus](#caveat-verter-tsc-is-the-only-checker-that-is-not-silent-on-a-clean-corpus) | It emits 442 diagnostics on 200 files (every other ranked checker: 0) and still tops its class on the smaller corpus. Passes the work gate; not bracketed. |
-| [Vize's tsgo/Corsa backend sometimes never starts](#caveat-vizes-type-checking-backend-sometimes-never-starts-and-the-row-still-answers) | Non-deterministic. When it fires, the row is fast because a type checker did not run. Look for `⚠ BACKEND FALLBACK` in Notes. |
-| [Volar's memory excludes its tsserver half; its timing includes it](#caveat-volars-lsp-memory-row-is-not-the-whole-of-volar-but-the-lsp-timing-row-is) | Volar reads leaner than it is on memory and slower than a single-process tool on latency. Its competitors are single-process, so their rows are whole. |
-| [TNB fails a real IDE operation](#caveat-tnb-is-not-a-consequence-free-drop-in-it-fails-a-real-ide-operation) | The engine swap is clean on typecheck, not on auto-import completion resolve, where tsgo crashes. |
+| [`verter-tsc` is the only checker not silent on a clean corpus](#caveat-verter-tsc-is-the-only-checker-that-is-not-silent-on-a-clean-corpus) | It emits 442 diagnostics on 200 files (every other ranked checker: 0) and ranks 1st in its class on the smaller corpus. Passes the work gate; not bracketed. |
+| [Vize's tsgo/Corsa backend sometimes never starts](#caveat-vizes-type-checking-backend-sometimes-never-starts-and-the-row-still-answers) | Non-deterministic. When it fires, the row was measured with the type-checking backend absent. Look for `⚠ BACKEND FALLBACK` in Notes. |
+| [Volar's memory excludes its tsserver half; its timing includes it](#caveat-volars-lsp-memory-row-is-not-the-whole-of-volar-but-the-lsp-timing-row-is) | Volar's memory row covers one of its two processes; its latency rows include both. Vize and Verter are single-process, so their rows cover the whole tool. |
+| [The TNB engine swap fails an IDE completion resolve](#caveat-the-tnb-engine-swap-fails-an-ide-completion-resolve-operation) | TNB passes the typecheck work gate. On the IDE surface, resolving an auto-import completion item errors in the tsgo half. |
 
 Four surfaces (`jsx-compile`, `format`, `lint`, `component-meta`) also have [no artifact census](#artifact-column--fast-vs-did-less) — their rankings are provisional.
 
@@ -639,8 +641,8 @@ Per-operation editor benchmarks from the `ide` job (`scripts/ide-bench.mjs`). Ra
 
 Servers here are Volar, **Volar on the TNB/tsgo tsdk**, Vize and Verter. Three caveats apply to these tables specifically:
 
-- **`Volar (TNB / tsgo tsdk)` crashes resolving an auto-import completion** — `Debug Failure. False expression. at getCompletionEntryCodeActionsAndSourceDisplay`. Stock Volar resolves the same item correctly. [Details](#caveat-tnb-is-not-a-consequence-free-drop-in-it-fails-a-real-ide-operation).
-- **Vize may answer with its tsgo backend absent**, silently. [Details](#caveat-vizes-type-checking-backend-sometimes-never-starts-and-the-row-still-answers).
+- **`Volar (TNB / tsgo tsdk)` errors resolving an auto-import completion** — `Debug Failure. False expression. at getCompletionEntryCodeActionsAndSourceDisplay`. Stock Volar resolves the same item. [Details](#caveat-the-tnb-engine-swap-fails-an-ide-completion-resolve-operation).
+- **Vize may answer with its tsgo backend absent**, with no error in the LSP traffic. [Details](#caveat-vizes-type-checking-backend-sometimes-never-starts-and-the-row-still-answers).
 - **Both Volar rows are two processes**, charged the slower half on every operation; Vize and Verter are one. [Details](#caveat-volars-lsp-memory-row-is-not-the-whole-of-volar-but-the-lsp-timing-row-is).
 
 <!-- IDE_RESULTS_START -->

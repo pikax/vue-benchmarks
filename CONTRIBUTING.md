@@ -71,7 +71,7 @@ pnpm confirm:typecheck
 ## Coding notes
 
 - ESM only (`"type": "module"`).
-- Keep report wording factual (no tool preference language).
+- Keep report and documentation wording factual: state what was measured, under what conditions, and what was observed. No tool preference language, no verdicts about which tool is better, and no telling the reader what a number means beyond the measurement. Caveats are worded as conditions on reading a number, not as warnings about a tool — and a factual caveat is reworded, never deleted.
 - Windows and Unix paths are both supported; prefer `node:path` and avoid shell-only pipelines in scripts used by CI.
 
 ## License

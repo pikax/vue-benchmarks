@@ -22,9 +22,13 @@ Ranking `vue-tsc` against the others measured **TypeScript's own Go rewrite**,
 not the Vue layer sitting on top of it — so the report puts the two engines in
 separate tables and refuses to compare across them.
 
-TNB closes that gap. With `vue-tsc (TNB)` in the table, every native-engine row
-runs the same TypeScript checker, and the remaining spread is the Vue layer —
-which is the thing this benchmark is actually about.
+TNB closes that gap on the typecheck surface. With `vue-tsc (TNB)` in the table,
+every native-engine row runs the same TypeScript checker, and the remaining
+spread between those rows is the Vue layer.
+
+The swap has an observed consequence on another surface: on the IDE surface the
+tsgo half errors resolving an auto-import completion item, recorded in
+[the root README][ide-caveat]. The two surfaces are measured separately.
 
 The stock JS-engine `vue-tsc` row is **kept**, because that is what people run
 today. Two rows, two engines, both labelled.
@@ -59,12 +63,13 @@ else in the benchmark is affected.
 ## Activation is asserted, not trusted
 
 TNB prints a `TNB ACTIVE` banner on startup. The harness requires it on every
-gate run: if the bridge ever silently fell back to the JavaScript checker, the
-row would still be *labelled* native while running JS — exactly the kind of
-quiet lie the work gate exists to catch. No banner, no ranking.
+gate run: if the bridge ever fell back to the JavaScript checker without
+signalling it, the row would still be *labelled* native while running JS —
+the kind of mislabelling the work gate exists to catch. No banner, no ranking.
 
 The row also clears the standard typecheck work gate unchanged: script-level
 plant, both template-level plants under `strictTemplates`, and the planted bug
 re-found in the full timed corpus.
 
 [tnb]: https://github.com/johnsoncodehk/typescript-native-bridge
+[ide-caveat]: ../../README.md#caveat-the-tnb-engine-swap-fails-an-ide-completion-resolve-operation
