@@ -112,16 +112,28 @@ Most of these run the **native Go TypeScript engine**; stock `vue-tsc` runs the 
 
 **`vue-tsc (TNB / tsgo)` is what makes the incumbent comparable at all.** It is the *same* `vue-tsc`, the same `@vue/language-core`, the same template checking — with `typescript` aliased to [typescript-native-bridge](https://github.com/johnsoncodehk/typescript-native-bridge), whose checker is tsgo in-process. One variable changes, so the pair isolates the engine from the Vue layer, and the native row can finally be ranked against Vize/Verter/golar directly.
 
-Illustrative decomposition (local, `fixtures/50`, win32, 3 runs — published numbers come from Linux CI):
+Illustrative decomposition. **Local `fixtures/50` on win32, 50 files, 5 measured runs after a warmup; CV 1.5–3.1% on every ranked row.** Published numbers come from Linux CI — these are indicative of the *shape*, not a published ranking.
+
+Measured medians:
+
+| Tool | Engine | Median | CV | Diagnostics |
+| --- | --- | ---: | ---: | ---: |
+| `vue-tsc` | TypeScript 5.9.3 (JS) | 1.35 s | 2.6% | 0 |
+| golar typecheck | tsgo 7.0.2 | 564.1 ms | 3.1% | 0 |
+| `vue-tsc` (TNB / tsgo) | tsgo 7.0.2 | 696.6 ms | 1.5% | 0 |
+| `verter-tsc` | tsgo 7.0.2 | 760.5 ms | 2.0% | 105 ⚠ |
+| Vize check | tsgo nightly | *(132.8 ms)* | — | *(0)* — unranked, failed the template gate |
 
 | Comparison | Gap | What it actually measures |
 | --- | --- | --- |
-| `vue-tsc` (JS) vs `vue-tsc` (TNB) — **same tool, engine swapped** | **~1.9×** | TypeScript's Go rewrite, isolated. Nothing to do with Vue tooling. |
-| `vue-tsc` (TNB) vs `verter-tsc` (**same engine, both validated**) | **~2%** | The real Vue-layer difference — they are effectively equal |
-| `vue-tsc` (TNB) vs golar (**same engine, both validated**) | ~1.24× | golar's genuine Vue-layer lead |
-| Vize (unranked) vs `vue-tsc` (JS) | ~10× | All of the above **plus** work Vize does not do |
+| `vue-tsc` (JS) vs `vue-tsc` (TNB) — **same tool, engine swapped** | **1.94×** | TypeScript's Go rewrite, isolated. Nothing to do with Vue tooling. |
+| `vue-tsc` (TNB) vs `verter-tsc` (**same engine, both validated**) | **1.09× — `vue-tsc` ahead** | The real Vue-layer difference, and it does not favour the native tool |
+| `vue-tsc` (TNB) vs golar (**same engine, both validated**) | 1.23× | golar's genuine Vue-layer lead |
+| Vize (unranked) vs `vue-tsc` (JS) | 10.2× | All of the above **plus** work Vize does not do |
 
-The headline: once the engine is held constant, `vue-tsc` is within a couple of percent of `verter-tsc`. Almost the entire "native Vue typechecker is ~2× faster" story is TypeScript's Go rewrite — which the incumbent inherits for free by swapping one package. A single "Nx faster" number spanning engines multiplies these factors together and attributes the product to Vue tooling. It shouldn't.
+The headline: once the engine is held constant, the incumbent is not behind at all — on this corpus `vue-tsc` on tsgo is 9% *faster* than `verter-tsc`. The entire "native Vue typechecker is ~2× faster" story is TypeScript's Go rewrite, which `vue-tsc` inherits for free by swapping one package. A single "Nx faster" number spanning engines multiplies these factors together and attributes the product to Vue tooling. It shouldn't.
+
+> ⚠ An earlier revision of this table claimed **~2%**, "effectively equal", from a **single** unreplicated run at a 20-file limit. That was wrong: the run it came from actually showed 1.20× the other way, and this replicated 5-run measurement at 50 files reverses the sign again. Treat single-run typecheck numbers as noise. Note also that `verter-tsc` is the only row emitting diagnostics on this corpus — 105 of them, about its own virtual code — so it is not doing identical work to the rows above it.
 
 Stock JS-engine `vue-tsc` is **kept** as a row, because it is what ships today.
 
