@@ -8,7 +8,36 @@ import {
   statSync,
   writeFileSync,
 } from "node:fs";
-import { join, relative, sep } from "node:path";
+import { dirname, join, relative, sep } from "node:path";
+import { fileURLToPath } from "node:url";
+
+/**
+ * Absolute path to the installed `vue` package.
+ *
+ * The corpus is copied into a work directory that may sit anywhere `--work`
+ * points, so every generated tsconfig needs to name `vue` from wherever it
+ * landed. The old code guessed with `join(inputDir, "..", "..", "node_modules",
+ * "vue")` — two levels up from the FIXTURE dir, which is only correct while
+ * fixtures live exactly at <root>/fixtures/<name>/ and the work dir is inside
+ * the repo. Point `--work` outside the repo and the mapping aimed at nothing:
+ * vue-tsc then reported 0 diagnostics on a corpus with 40 planted errors (a
+ * checker that resolves no types finds no faults) while verter-tsc reported
+ * ~2400. Both numbers are garbage, and neither run said anything was wrong.
+ *
+ * Walking up from this module instead is independent of both fixture layout
+ * and work-dir location. Callers must fail loudly if it is missing.
+ */
+function findVuePackage() {
+  let dir = dirname(fileURLToPath(import.meta.url));
+  for (let up = 0; up < 8; up++) {
+    const candidate = join(dir, "node_modules", "vue");
+    if (existsSync(candidate)) return candidate;
+    const parent = dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  return null;
+}
 
 export function collectVueFiles(dir, limit = Infinity) {
   if (!existsSync(dir)) return [];
@@ -123,11 +152,18 @@ export function prepareTypecheckDir(inputDir, files, workRoot, label) {
     `${JSON.stringify({ private: true, type: "module", name: `bench-${label}` }, null, 2)}\n`,
   );
 
-  // Relative path from work dir up to root node_modules/vue — tools usually walk up.
-  // Also write a small shim tsconfig paths entry when needed.
-  const rootVue = relative(out, join(inputDir, "..", "..", "node_modules", "vue"))
-    .split(sep)
-    .join("/");
+  // Point the corpus at the real `vue` from wherever --work put it. Fail loudly
+  // rather than emit a tsconfig aimed at nothing: a checker that cannot resolve
+  // vue reports zero errors on a corpus full of them, which reads as a clean,
+  // fast pass instead of a broken run.
+  const vuePkg = findVuePackage();
+  if (!vuePkg) {
+    throw new Error(
+      "cannot locate node_modules/vue — refusing to build a typecheck corpus " +
+        "whose tsconfig would resolve no types (every checker would report 0 diagnostics)",
+    );
+  }
+  const rootVue = relative(out, vuePkg).split(sep).join("/");
   const tsconfig = JSON.parse(readFileSync(join(out, "tsconfig.json"), "utf8"));
   tsconfig.compilerOptions.paths = {
     vue: [rootVue],

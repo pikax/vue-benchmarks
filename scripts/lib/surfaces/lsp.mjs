@@ -229,27 +229,46 @@ function tryResolveBin(name) {
   }
 }
 
-export function resolveVolarServer() {
-  try {
-    const pkg = require.resolve("@vue/language-server/package.json", {
-      paths: [rootDir],
-    });
-    const dir = dirname(pkg);
-    const bin = join(dir, "bin", "vue-language-server.js");
-    if (existsSync(bin)) return { command: process.execPath, args: [bin, "--stdio"] };
-  } catch {
-    // fall through
+/**
+ * Locate a package's install directory WITHOUT going through its `exports`.
+ *
+ * The obvious `require.resolve("<pkg>/package.json")` throws
+ * ERR_PACKAGE_PATH_NOT_EXPORTED for any package whose `exports` map omits
+ * "./package.json" — which vize's does and @vue/language-server's does not.
+ * Used directly, that turns a packaging detail into a benchmark result: the
+ * resolver silently fell through to the `.cmd` shim under `shell: true` for
+ * vize while every other server got spawned as `node <entry>` — about 15ms of
+ * cmd.exe on every single spawn, charged to one tool only.
+ *
+ * `require.resolve.paths()` returns the node_modules candidates and is not
+ * subject to `exports`, so every server resolves by the same rule.
+ *
+ * @param {string} name package name
+ * @returns {string | null} absolute package directory, or null
+ */
+function resolvePackageDir(name) {
+  for (const base of require.resolve.paths(name) ?? []) {
+    const dir = join(base, ...name.split("/"));
+    if (existsSync(join(dir, "package.json"))) return dir;
   }
   return null;
 }
 
+export function resolveVolarServer() {
+  const dir = resolvePackageDir("@vue/language-server");
+  if (!dir) return null;
+  const bin = join(dir, "bin", "vue-language-server.js");
+  if (existsSync(bin)) return { command: process.execPath, args: [bin, "--stdio"] };
+  return null;
+}
+
 export function resolveVizeLsp() {
-  const vize = tryResolveBin("vize");
-  if (!vize) return null;
-  // Prefer node entry if cmd wrapping is flaky
-  try {
-    const pkg = require.resolve("vize/package.json", { paths: [rootDir] });
-    const binJs = join(dirname(pkg), "bin", "vize");
+  // Spawn `node <entry>` like every other server. bin/vize is itself a two-line
+  // node shim, so this is the same process the .cmd wrapper would end up
+  // starting, minus a cmd.exe in front of it.
+  const dir = resolvePackageDir("vize");
+  if (dir) {
+    const binJs = join(dir, "bin", "vize");
     if (existsSync(binJs)) {
       return {
         command: process.execPath,
@@ -257,9 +276,9 @@ export function resolveVizeLsp() {
         shell: false,
       };
     }
-  } catch {
-    // use bin
   }
+  const vize = tryResolveBin("vize");
+  if (!vize) return null;
   return {
     command: vize,
     args: ["lsp", "--stdio"],

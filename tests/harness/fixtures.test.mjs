@@ -6,7 +6,8 @@
  */
 import { after, before, describe, test } from "node:test";
 import assert from "node:assert/strict";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
 import {
@@ -128,6 +129,32 @@ describe("prepareTypecheckDir", () => {
 
   test("contains exactly the measured corpus plus the project scaffolding", () => {
     assert.deepEqual(listDir(out), [...fixture.files, "env.d.ts", "golar.config.ts", "package.json", "tsconfig.json"].sort());
+  });
+
+  test("resolves vue even when --work points OUTSIDE the repo", () => {
+    // Every other test here builds under <repo>/work/, so the old mapping --
+    // two levels up from the FIXTURE dir -- happened to land on the right
+    // node_modules and nothing caught that it was a guess. `--work` is a
+    // documented flag on bench/bench-memory/ide-bench; aim it at a real temp
+    // dir and the mapping pointed at nothing. A checker that cannot resolve
+    // vue reports 0 diagnostics on a corpus with planted errors, which scores
+    // as a clean, fast pass rather than a broken run.
+    const external = mkdtempSync(join(tmpdir(), "vb-external-work-"));
+    try {
+      const dir = prepareTypecheckDir(fixture.dir, fixture.files, external, "external");
+      const mapped = JSON.parse(readFileSync(join(dir, "tsconfig.json"), "utf8"))
+        .compilerOptions?.paths?.vue?.[0];
+
+      assert.ok(mapped, "compilerOptions.paths.vue was not written");
+      const resolved = resolve(dir, mapped);
+      assert.ok(
+        existsSync(join(resolved, "package.json")),
+        `paths.vue does not point at a real vue package from an external work dir: ${resolved}`,
+      );
+      assert.equal(resolved, join(repoRoot, "node_modules", "vue"));
+    } finally {
+      removeDir(external);
+    }
   });
 
   test("the tsconfig lists every measured file explicitly", () => {
