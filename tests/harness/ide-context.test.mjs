@@ -219,3 +219,76 @@ describe("detectBackendFallback — a degraded backend must never be invisible",
     );
   });
 });
+
+/**
+ * Verter's degraded start, and the symmetry that makes it worth testing.
+ *
+ * Both of Verter's managed engines (tsgo and tsserver) are project-bound. With
+ * no tsconfig discoverable under the workspace root neither starts, and the
+ * server carries on in "verter-only mode": it initializes, answers requests,
+ * and publishes a fast number produced without a type checker. That is the
+ * same condition as Vize's Corsa fallback above, for a different tool.
+ *
+ * The harness detected Vize's and not Verter's, which meant the report
+ * disclosed the condition only for the vendor it happened to know about. A
+ * degraded backend has to be equally visible whoever it belongs to.
+ *
+ * The banner below is VERBATIM from verter-lsp 0.0.1-beta.3 started against a
+ * directory with no tsconfig.
+ */
+describe("detectBackendFallback — Verter's degraded start is detected too", () => {
+  const VERTER_NO_PROVIDER = [
+    "2026-07-27T14:52:26.8Z  INFO verter_lsp: verter-lsp v0.0.1-beta.3 (release)",
+    "2026-07-27T14:52:26.8Z  INFO verter_lsp: armed LSP process-tree containment client_pid=None",
+    '2026-07-27T14:52:26.8Z  INFO verter_lsp: create_type_provider: type_provider="auto", tsdk=None, workspace_root=Some("D:/repo")',
+    "2026-07-27T14:52:26.8Z  WARN verter_lsp: no TypeScript type provider — running in verter-only mode: no configured TypeScript project (tsconfig.json) found anywhere under d:/repo — the managed tsgo and tsserver engines are both project-bound and will not start a config-less inferred project",
+    "2026-07-27T14:52:26.8Z  INFO verter_lsp::sync_coordinator: sync_coordinator: spawned (debounce 300ms)",
+  ].join("\n");
+
+  /** Verbatim healthy start against the harness's own LSP workspace. */
+  const VERTER_HEALTHY = [
+    "2026-07-27T14:52:52.7Z  INFO verter_lsp: verter-lsp v0.0.1-beta.3 (release)",
+    '2026-07-27T14:52:52.7Z  INFO verter_lsp: create_type_provider: type_provider="auto", tsdk=None, workspace_root=Some("D:/repo/fixtures/lsp-workspace")',
+    "2026-07-27T14:52:52.7Z  INFO verter_lsp: managed fallback: managed TSGO resolved to d:/repo/node_modules/@typescript/typescript-win32-x64/lib/tsc.exe",
+    "2026-07-27T14:52:52.7Z  INFO verter_lsp::sync_coordinator: sync_coordinator: spawned (debounce 300ms)",
+  ].join("\n");
+
+  test("a server running with no TypeScript type provider is reported", () => {
+    const reason = detectBackendFallback(VERTER_NO_PROVIDER);
+    assert.equal(typeof reason, "string", "verter-only mode went undetected");
+    assert.match(reason, /type provider did not start/i);
+    assert.match(
+      reason,
+      /answered from its own analysis/,
+      "the reason must say what produced the answers, not only what failed",
+    );
+  });
+
+  test("a healthy start reports nothing — including the word 'fallback' in an INFO line", () => {
+    // "managed fallback: managed TSGO resolved to ..." is a HEALTHY line. A
+    // detector keying on "fallback" alone would flag every good run.
+    assert.equal(detectBackendFallback(VERTER_HEALTHY), null);
+  });
+
+  test("the reason quotes the cause, bounded", () => {
+    const reason = detectBackendFallback(VERTER_NO_PROVIDER);
+    assert.match(reason, /no configured TypeScript project/);
+    assert.ok(reason.length < 220, `reason is unbounded: ${reason.length} chars`);
+  });
+
+  test("both detectors agree — one condition cannot read as two findings", async () => {
+    // context.mjs and surfaces/lsp.mjs carry separate implementations. They are
+    // published in different tables, so a drift between them would report the
+    // same degraded backend more harshly on one surface than the other.
+    const { detectBackendFallback: fromSurface } = await import(
+      "../../scripts/lib/surfaces/lsp.mjs"
+    );
+    for (const sample of [VERTER_NO_PROVIDER, VERTER_HEALTHY]) {
+      assert.equal(
+        fromSurface(sample),
+        detectBackendFallback(sample),
+        "the two backend-fallback detectors disagree",
+      );
+    }
+  });
+});

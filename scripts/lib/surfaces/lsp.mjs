@@ -216,11 +216,29 @@ export function classifyTemplateHover(text) {
  * @param {string} stderr bounded stderr tail from the server process
  * @returns {string | null} human-readable reason, or null if nothing detected
  */
-function detectBackendFallback(stderr = "") {
+export function detectBackendFallback(stderr = "") {
   if (!stderr) return null;
   if (/corsa bridge (spawn failed|not available)/i.test(stderr)) {
     const panic = /panic:\s*([^\n]+)/i.exec(stderr);
     return `tsgo/Corsa backend did not start — server answered from its own semantic analysis${panic ? ` (${panic[1].trim().slice(0, 120)})` : ""}`;
+  }
+  // Verter's equivalent, and it must be detected for the same reason.
+  //
+  // Both managed engines (tsgo and tsserver) are project-bound: with no
+  // tsconfig discoverable under the workspace root, neither starts and the
+  // server continues in "verter-only mode" — initializing, answering, and
+  // publishing a fast number produced without a type checker. Verbatim:
+  //
+  //   WARN verter_lsp: no TypeScript type provider — running in verter-only
+  //   mode: no configured TypeScript project (tsconfig.json) found anywhere
+  //   under <path> — the managed tsgo and tsserver engines are both
+  //   project-bound and will not start a config-less inferred project
+  //
+  // Detecting one vendor's degraded backend and not another's would mean the
+  // report discloses the condition only for the tool it happens to know about.
+  if (/verter-only mode|no TypeScript type provider/i.test(stderr)) {
+    const why = /verter-only mode:\s*([^\n—]+)/i.exec(stderr);
+    return `TypeScript type provider did not start — server answered from its own analysis${why ? ` (${why[1].trim().slice(0, 120)})` : ""}`;
   }
   return null;
 }

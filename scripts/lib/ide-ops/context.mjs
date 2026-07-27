@@ -130,6 +130,14 @@ export function detectBackendFallback(stderr = "") {
     // one detector cannot read as a harsher finding than the other.
     return `tsgo/Corsa backend did not start — server answered from its own semantic analysis${panic ? ` (${panic[1].trim().slice(0, 120)})` : ""}`;
   }
+  // Verter's equivalent degraded start. Both managed engines are project-bound,
+  // so with no discoverable tsconfig neither starts and the server answers from
+  // its own analysis — the same condition as above, for a different tool.
+  // Wording kept parallel with surfaces/lsp.mjs for the same reason.
+  if (/verter-only mode|no TypeScript type provider/i.test(stderr)) {
+    const why = /verter-only mode:\s*([^\n—]+)/i.exec(stderr);
+    return `TypeScript type provider did not start — server answered from its own analysis${why ? ` (${why[1].trim().slice(0, 120)})` : ""}`;
+  }
   if (/typecheck-unavailable/i.test(stderr)) {
     return "server reports type checking unavailable in this workspace";
   }
