@@ -19,6 +19,7 @@ import {
   median,
   stddev,
 } from "../../scripts/lib/timing.mjs";
+import { renderSurfaceMarkdown } from "../../scripts/lib/report.mjs";
 
 /**
  * Variants whose measure() records the exact call order.
@@ -194,6 +195,46 @@ describe("measureVariants — result row shape", () => {
 
     assert.equal(row.stddevMs, 0);
     assert.equal(row.cvPct, 0);
+  });
+
+  /**
+   * A ONE-RUN artifact has no measured spread. Reporting 0 made every row print
+   * `0.0 ms / 0.0%`, and the published legend flags `CV > 10%` as noisy — so the
+   * least-evidenced row in the report rendered as the most reproducible one.
+   */
+  test("a single measured run reports null dispersion, never 0", async () => {
+    const { variants } = recordingVariants(["a"], { value: () => 12 });
+
+    const [row] = await measureVariants(variants, { runs: 1, warmups: 1 });
+
+    assert.equal(row.runs.length, 1);
+    assert.equal(row.medianMs, 12, "the median is still a real measurement");
+    assert.equal(row.stddevMs, null, "stddev of one sample must be null, not 0");
+    assert.equal(row.cvPct, null, "CV% of one sample must be null, not 0");
+  });
+
+  test("null dispersion renders as n/a, not as 0.0 ms / 0.0%", async () => {
+    const { variants } = recordingVariants(["a"], { value: () => 12 });
+    const [row] = await measureVariants(variants, { runs: 1, warmups: 1 });
+
+    const md = renderSurfaceMarkdown({
+      id: "one-run",
+      label: "One run",
+      files: 1,
+      bytes: 1,
+      variants: [row],
+      methodology: [],
+    });
+
+    const cells = md
+      .split("\n")
+      .find((l) => l.includes("| ok |"))
+      .split("|")
+      .map((c) => c.trim());
+    // | Tool | Status | Median | Min | Stddev | CV% | ...
+    assert.equal(cells[5], "n/a", `stddev cell should be n/a, got ${cells[5]}`);
+    assert.equal(cells[6], "n/a", `CV% cell should be n/a, got ${cells[6]}`);
+    assert.ok(!/0\.0 ms \| 0\.0%/.test(md), "must not print a fabricated 0.0 ms / 0.0% pair");
   });
 });
 
@@ -448,7 +489,8 @@ describe("statistics primitives", () => {
   test("mean and stddev match the textbook sample formulas", () => {
     assert.equal(mean([2, 4, 6]), 4);
     assert.equal(stddev([2, 4, 6]), 2);
-    assert.equal(stddev([5]), 0, "a single sample has no spread");
+    assert.equal(stddev([5]), null, "a single sample has no MEASURED spread — that is null, not 0");
+    assert.equal(stddev([]), null, "no samples, no spread");
   });
 
   test("formatMs and formatThroughput degrade to n/a rather than NaN text", () => {

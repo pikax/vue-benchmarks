@@ -15,8 +15,17 @@ export function mean(values) {
   return values.reduce((a, b) => a + b, 0) / values.length;
 }
 
+/**
+ * Sample standard deviation, or `null` when there is nothing to disperse.
+ *
+ * Fewer than two samples has NO measured spread — that is undefined, not zero.
+ * Returning 0 made every row of a 1-run artifact print `0.0 ms / 0.0%`, and the
+ * report legend flags `CV > 10%` as noisy, so an UNMEASURED series rendered as
+ * the most reproducible result in the table. `null` propagates through
+ * `summarize()` into `stddevMs`/`cvPct` and every renderer prints `n/a`.
+ */
 export function stddev(values) {
-  if (values.length < 2) return 0;
+  if (values.length < 2) return null;
   const m = mean(values);
   const variance = values.reduce((acc, v) => acc + (v - m) ** 2, 0) / (values.length - 1);
   return Math.sqrt(variance);
@@ -28,13 +37,6 @@ export function formatMs(ms) {
     return `${(ms / 1000).toFixed(2)} s`;
   }
   return `${ms.toFixed(1)} ms`;
-}
-
-export function formatSpeedup(baselineMs, candidateMs) {
-  if (!Number.isFinite(baselineMs) || !Number.isFinite(candidateMs) || candidateMs <= 0) {
-    return "n/a";
-  }
-  return `${(baselineMs / candidateMs).toFixed(2)}x`;
 }
 
 export function formatThroughput(files, ms) {
@@ -83,9 +85,13 @@ function summarize(all) {
     minMs: Number(Math.min(...all).toFixed(3)),
     maxMs: Number(Math.max(...all).toFixed(3)),
     meanMs: Number(mean(all).toFixed(3)),
-    stddevMs: Number(sd.toFixed(3)),
+    // `null`, never 0, for a single measured run — see stddev(). A number here
+    // is a claim about reproducibility, and with one sample there is none to
+    // make.
+    stddevMs: sd === null ? null : Number(sd.toFixed(3)),
     // Coefficient of variation — noise guard. High CV => thermal drift or a noisy box.
-    cvPct: med > 0 ? Number(((sd / med) * 100).toFixed(1)) : 0,
+    // Undefined without a spread to divide, for the same reason.
+    cvPct: sd === null ? null : med > 0 ? Number(((sd / med) * 100).toFixed(1)) : 0,
   };
 }
 

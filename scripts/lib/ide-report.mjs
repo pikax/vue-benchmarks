@@ -42,6 +42,64 @@ function isUnrankedByDesign(op) {
   return op.ranked === false;
 }
 
+/**
+ * Why is there no row for this operation, and what does that NOT mean?
+ *
+ * "operation not reported" answered neither question. A reader seeing it next
+ * to a competitor's timing cannot tell whether the server refuses the request
+ * or whether this harness never asked — and those are opposite conclusions
+ * about the tool.
+ *
+ * The load-bearing fact is that IN THIS HARNESS A SERVER THAT DOES NOT
+ * IMPLEMENT AN OPERATION STILL GETS A ROW. Every suite pushes its ops
+ * unconditionally; an unimplemented LSP method comes back as JSON-RPC -32601
+ * and is recorded as a row that FAILED ITS GATE naming that code (see
+ * `suites/background.mjs`), and `suites/scale.mjs` emits explicit placeholder
+ * rows for sizes it stops measuring rather than dropping them. So an ABSENT op
+ * is always a harness-side condition and never evidence about the tool, and
+ * the note has to say so rather than leave the reader to guess.
+ *
+ * Within "harness-side" the data supports four distinct causes, so each is
+ * named instead of being flattened into one string:
+ *
+ *   - the suite was not run for this server at all (no result row);
+ *   - the session for this suite failed outright (`row.error`), which is why
+ *     none of its operations exist;
+ *   - the session completed but the suite returned no operations at all;
+ *   - the suite returned other operations and simply never produced this id.
+ *
+ * The first two are self-explanatory; the last two are the ones a reader could
+ * misread as the server refusing the request, so those carry the disclaimer.
+ */
+const NOT_A_CAPABILITY_CLAIM =
+  "This is NOT a statement that the server lacks the capability: an unimplemented method is reported as a row that failed its gate (JSON-RPC -32601), never as an absent one.";
+
+/** The cause clause alone, shared by the per-operation tables and the composite. */
+function missingOpCause(row, opId) {
+  if (!row) return "that suite was not run for this server";
+  const suite = row.suite ?? "this";
+  if (row.error) {
+    return `the ${suite} session failed before any result was collected (${row.error})`;
+  }
+  const reported = row.ops?.length ?? 0;
+  if (reported === 0) {
+    return `the ${suite} session completed but returned no operations at all`;
+  }
+  return `the ${suite} suite reported ${reported} other operation${
+    reported === 1 ? "" : "s"
+  } for this server but never produced \`${opId}\``;
+}
+
+/** True when the absence could be misread as the server refusing the request. */
+function needsCapabilityDisclaimer(row) {
+  return Boolean(row) && !row.error;
+}
+
+function missingOpNote(row, opId) {
+  const disclaimer = needsCapabilityDisclaimer(row) ? ` ${NOT_A_CAPABILITY_CLAIM}` : "";
+  return `⚠ NOT MEASURED (harness) — ${missingOpCause(row, opId)}.${disclaimer}`;
+}
+
 /** An operation whose gate failed is measured but never ranked. */
 function statusOf(op) {
   if (op.valid === false) return "unranked";
@@ -168,7 +226,7 @@ export function buildIdeSurfaces(results) {
             threading: "lsp",
             invocation: "lsp",
             engine: engine.engine,
-            notes: row.error ? `session failed: ${row.error}` : "operation not reported",
+            notes: missingOpNote(row, id),
             error: row.error,
           };
         }
@@ -308,7 +366,7 @@ export function buildTypingLoopSurface(results, { parts = LOOP_PARTS } = {}) {
       // overwrote the id string with the looked-up object, so the
       // missing-component message printed `suite/undefined` — the one branch
       // where the id is the only information the reader has.
-      return { ...p, opId: p.op, op: (row?.ops ?? []).find((o) => o.id === p.op) };
+      return { ...p, opId: p.op, row, op: (row?.ops ?? []).find((o) => o.id === p.op) };
     });
 
     const missing = found.filter((f) => !f.op);
@@ -322,7 +380,14 @@ export function buildTypingLoopSurface(results, { parts = LOOP_PARTS } = {}) {
         threading: "lsp",
         invocation: "lsp",
         engine,
-        notes: `not measured: ${missing.map((m) => `${m.suite}/${m.opId}`).join(", ")} absent from this run`,
+        // Same rule as the per-operation tables: name WHY the component is
+        // absent, and say what its absence does not prove. A composite the
+        // reader cannot attribute reads as though the server failed at it.
+        notes: `⚠ NOT MEASURED (harness) — ${missing
+          .map((m) => `${m.suite}/${m.opId}: ${missingOpCause(m.row, m.opId)}`)
+          .join("; ")}.${
+          missing.some((m) => needsCapabilityDisclaimer(m.row)) ? ` ${NOT_A_CAPABILITY_CLAIM}` : ""
+        }`,
       });
       continue;
     }
@@ -353,7 +418,10 @@ export function buildTypingLoopSurface(results, { parts = LOOP_PARTS } = {}) {
       status: "ok",
       medianMs: total,
       minMs: total,
-      stddevMs: 0,
+      // The composite is a SUM OF THREE MEDIANS, not a series — it has no
+      // samples of its own, so it has no dispersion. `0` would have read as a
+      // perfectly reproducible measurement; both cells print n/a.
+      stddevMs: null,
       cvPct: null,
       threading: "lsp",
       invocation: "lsp",

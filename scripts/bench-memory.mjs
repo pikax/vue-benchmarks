@@ -195,6 +195,28 @@ function fmt(n, digits = 2) {
   return Number.isFinite(n) ? n.toFixed(digits) : "n/a";
 }
 
+/**
+ * One markdown table cell of free text.
+ *
+ * The `Notes` column exists because the worker's per-row `note` had nowhere to
+ * go. It was collected (`memory-worker.mjs`), carried through the aggregate
+ * (`note: ok[0].note` above) and written to the JSON — then dropped on the
+ * floor at render, because the markdown table had no column for it. That is how
+ * the LSP rows came to publish Volar's memory with no hint that the figure
+ * covers the Vue server ONLY and excludes its larger tsserver half: the
+ * disclaimer existed, in a field nothing rendered.
+ *
+ * Pipes and newlines are escaped rather than stripped — an unescaped `|` in a
+ * note silently splits the row into extra cells, and `update-memory-readme.mjs`
+ * appends its `Samples` column by string-appending to each row, so a malformed
+ * row would stay malformed all the way into MEMORY.md.
+ */
+function mdCell(text) {
+  const s = String(text ?? "").trim();
+  if (!s) return "";
+  return s.replace(/\|/g, "\\|").replace(/\r?\n/g, " ");
+}
+
 function renderMarkdown(data) {
   const lines = [];
   lines.push("# Resource probe results (memory + allocations + CPU)");
@@ -235,9 +257,9 @@ function renderMarkdown(data) {
     lines.push(`### ${surface}`);
     lines.push("");
     lines.push(
-      "| Tool | Status | RSS min | RSS max | RSS avg | Alloc min | Alloc max | Alloc avg | CPU ms | CPU % | Wall ms |",
+      "| Tool | Status | RSS min | RSS max | RSS avg | Alloc min | Alloc max | Alloc avg | CPU ms | CPU % | Wall ms | Notes |",
     );
-    lines.push("| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |");
+    lines.push("| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |");
     const sorted = [...rows].sort((a, b) => {
       if (a.status !== "ok") return 1;
       if (b.status !== "ok") return -1;
@@ -246,15 +268,15 @@ function renderMarkdown(data) {
     for (const r of sorted) {
       if (r.status === "ok") {
         lines.push(
-          `| ${r.label} | ok | ${fmt(r.minMb)} | ${fmt(r.maxMb)} | ${fmt(r.avgMb)} | ${fmt(r.allocMinMb)} | ${fmt(r.allocMaxMb)} | ${fmt(r.allocAvgMb)} | ${fmt(r.cpuTotalMs)} | ${fmt(r.cpuPercent, 1)} | ${fmt(r.wallMs)} |`,
+          `| ${r.label} | ok | ${fmt(r.minMb)} | ${fmt(r.maxMb)} | ${fmt(r.avgMb)} | ${fmt(r.allocMinMb)} | ${fmt(r.allocMaxMb)} | ${fmt(r.allocAvgMb)} | ${fmt(r.cpuTotalMs)} | ${fmt(r.cpuPercent, 1)} | ${fmt(r.wallMs)} | ${mdCell(r.note)} |`,
         );
       } else if (r.status === "skipped") {
         lines.push(
-          `| ${r.label} | skipped | n/a | n/a | n/a | n/a | n/a | n/a | n/a | n/a | n/a |`,
+          `| ${r.label} | skipped | n/a | n/a | n/a | n/a | n/a | n/a | n/a | n/a | n/a | ${mdCell(r.skip)} |`,
         );
       } else {
         lines.push(
-          `| ${r.label || r.id} | error | n/a | n/a | n/a | n/a | n/a | n/a | n/a | n/a | n/a |`,
+          `| ${r.label || r.id} | error | n/a | n/a | n/a | n/a | n/a | n/a | n/a | n/a | n/a | ${mdCell(r.error)} |`,
         );
       }
     }

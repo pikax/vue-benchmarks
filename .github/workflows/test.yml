@@ -17,8 +17,11 @@ name: Test
 # Neither suite reads the generated corpora, so there is no `scripts/generate.mjs`
 # step and no fixtures artifact: `pnpm install --frozen-lockfile` is the whole
 # setup. Publishing benchmarks is `benchmark.yml`, which is manual-dispatch only
-# because the `ide` job alone can run for 90 minutes — far too heavy to hang off
-# a pull request.
+# so that every published number is traceable to a deliberate run — not because
+# it is slow. Measured job times are ~4.2min (bench), ~4.8min (memory), ~3.8min
+# (ide) and ~3.5min (ide-scale), each bounded at 10. An earlier note here
+# claimed "the `ide` job alone can run for 90 minutes"; that predated the
+# timeout work and was wrong by more than an order of magnitude.
 #
 # LINUX ONLY, like every other workflow here. Platform-specific breakage
 # (Windows file locks, .cmd shims, path handling) is not covered by CI.

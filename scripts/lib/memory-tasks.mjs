@@ -16,6 +16,7 @@ import {
 } from "./fixtures.mjs";
 import { resolveBin } from "./timing.mjs";
 import { resolveJsxFixtureDir } from "./surfaces/jsx-compile.mjs";
+import { resolveVizeLsp, resolveVerterLsp } from "./surfaces/lsp.mjs";
 import { resolveTsgoBin, withTsgoEnv } from "./tsgo.mjs";
 
 const require = createRequire(import.meta.url);
@@ -434,10 +435,18 @@ export function buildMemoryTasks(fixtureDir, options = {}) {
   // measures memory, and neither samples the other. The LSP surface previously
   // had no memory coverage at all, so the one tool class that stays resident in
   // an editor was the one whose footprint went unmeasured.
+  // The label must name the ENTRY POINT, not just the tool. Vize resolves to
+  // either the standalone native server its extension ships or the npm
+  // package's Node entry, and the two have very different footprints — the Node
+  // path carries a 34MB NAPI addon inside a V8 heap. A row labelled only
+  // "LSP vize" would silently mean different things on a machine with VS Code
+  // installed and on CI, and two such rows are not comparable.
+  const lspEntryLabel = { volar: null, vize: resolveVizeLsp, verter: resolveVerterLsp };
   for (const server of ["volar", "vize", "verter"]) {
+    const extra = lspEntryLabel[server]?.()?.labelExtra ?? null;
     tasks.push({
       id: `mem-lsp-${server}`,
-      label: `LSP ${server} (server process)`,
+      label: `LSP ${server} (server process${extra ? `, ${extra}` : ""})`,
       package: server,
       surface: "lsp",
       kind: "inproc",

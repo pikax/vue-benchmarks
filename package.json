@@ -20,7 +20,6 @@
   "scripts": {
     "generate": "node scripts/generate.mjs",
     "generate:small": "node scripts/generate.mjs --counts 50,200",
-    "generate:ci": "node scripts/generate.mjs --counts 200,1000",
     "bench": "node scripts/bench.mjs",
     "bench:small": "node scripts/bench.mjs --fixture fixtures/50 --runs 2 --warmups 1",
     "bench:quick": "node scripts/bench.mjs --runs 3 --warmups 1",
@@ -51,7 +50,6 @@
     "confirm:typecheck": "node tests/confirm/run.mjs --surfaces typecheck",
     "confirm:component-meta": "node tests/confirm/run.mjs --surfaces component-meta",
     "smoke": "node scripts/generate.mjs --counts 20 && node scripts/bench.mjs --fixture fixtures/20 --runs 2 --warmups 1 --surfaces compile,jsx-compile,lint,typecheck,format,component-meta,lsp --check-file-limit 20 --meta-file-limit 20",
-    "check": "node tests/confirm/run.mjs",
     "prepublishOnly": "node -e \"console.error('This package is private and not published to npm.'); process.exit(1)\"",
     "bench:ide": "node scripts/ide-bench.mjs",
     "bench:ide:list": "node scripts/ide-bench.mjs --list",

@@ -47,10 +47,6 @@ export function selfSnapshot() {
   };
 }
 
-export function selfRssBytes() {
-  return process.memoryUsage().rss;
-}
-
 export function bytesToMb(n) {
   if (!Number.isFinite(n)) return Number.NaN;
   return Number((n / (1024 * 1024)).toFixed(2));

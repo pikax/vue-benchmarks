@@ -21,7 +21,6 @@
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { mkdirSync, writeFileSync, rmSync, existsSync } from "node:fs";
 
 const require = createRequire(import.meta.url);
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../../..");
@@ -505,23 +504,6 @@ export function getMetaTools({ workDir }) {
   }
 
   return tools;
-}
-
-/**
- * Prepare a temp work dir with tsconfig + the single component for vue-component-meta.
- */
-export function prepareMetaCaseDir(caseDir, files, sharedTsconfig) {
-  const dest = join(rootDir, "work", "confirm-component-meta", caseDir);
-  rmSync(dest, { recursive: true, force: true });
-  mkdirSync(dest, { recursive: true });
-  writeFileSync(join(dest, "tsconfig.json"), JSON.stringify(sharedTsconfig, null, 2));
-  writeFileSync(join(dest, "env.d.ts"), `/// <reference types="vue/macros-global" />\n`);
-  for (const [name, content] of Object.entries(files)) {
-    const target = join(dest, name);
-    mkdirSync(dirname(target), { recursive: true });
-    writeFileSync(target, content);
-  }
-  return dest;
 }
 
 export { rootDir, isGlobalPropName };

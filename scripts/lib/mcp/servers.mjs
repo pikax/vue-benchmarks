@@ -1,6 +1,20 @@
 /**
  * Discover MCP servers to benchmark.
  *
+ * ── STATUS: foundation only, no suite yet ──────────────────────────────────
+ * Nothing imports this module or its sibling `client.mjs`. The MCP benchmark
+ * is deliberately unfinished: `verter-mcp` is not published yet, and a
+ * benchmark with one participant cannot rank anything, so the suite that would
+ * consume this is waiting on a second implementation to compare against.
+ *
+ * Kept rather than deleted because publication is imminent. When it lands, the
+ * suite ranks ONLY the single shared capability (see `CAPABILITY` below) and
+ * treats everything else as unranked-but-validated, the same rule every other
+ * surface here follows. Sentences below written in the present tense
+ * ("callers refuse to rank a debug binary") describe that intended contract,
+ * not code that exists today.
+ * ───────────────────────────────────────────────────────────────────────────
+ *
  * Resolution mirrors `resolveVerterLsp`, in this order:
  *   1. explicit env override
  *   2. repo-local bin/

@@ -1,6 +1,9 @@
 /**
  * Minimal MCP (Model Context Protocol) client over stdio.
  *
+ * STATUS: foundation only — nothing imports this yet. See the status note in
+ * `servers.mjs` for why the suite is not written and what it will do.
+ *
  * Deliberately NOT built on LspClient. Both are JSON-RPC 2.0, but the framing
  * differs: LSP uses `Content-Length` headers, MCP stdio uses newline-delimited
  * JSON. Sharing a transport would mean a mode flag threaded through every read,

@@ -160,9 +160,10 @@ jobs:
   # comparison class can never accidentally span machines as surfaces evolve.
   # 4.2 min measured is a fine price for a benchmark somebody asked for.
   #
-  # Surface ORDER matters: lsp runs last. It is the longest and its hover
-  # retries heat the box, so running it first would leave every later surface
-  # measuring a warmer, more throttled machine.
+  # Surface ORDER matters: lsp runs last. Not because it is the longest — it is
+  # ~25s against lint's ~100s — but because it spawns and tears down language
+  # servers repeatedly, and its hover retries heat the box. Running it first
+  # would leave every later surface measuring a warmer, more throttled machine.
   #
   # Every measured run is preceded by a discarded warmup pass (enforced by the
   # harness); there is no separate cold job because an unwarmed run measures

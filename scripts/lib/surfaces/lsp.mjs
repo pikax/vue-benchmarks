@@ -9,7 +9,9 @@
  *             server over `tsserver/request`↔`tsserver/response`. Both processes
  *             are started, synced and timed here, because both are what a user
  *             running the Vue (Official) extension actually waits for.
- *   - Vize:   vize lsp --stdio                (single process)
+ *   - Vize:   vize lsp --stdio                (single process; the standalone
+ *             native server the VS Code extension ships, or VIZE_LSP_BIN, or
+ *             the npm package's Node entry as a fallback — the row says which)
  *   - Verter: verter-lsp / VERTER_LSP_BIN     (single process; optional)
  *
  * Phases (same request sequence for every server):
@@ -23,8 +25,10 @@
  * Notes:
  *   - Same workspace, same file, same UTF-16 positions.
  *   - Fresh process per measured run (tool process cache cold).
- *   - workspaceScan is only timed when the server emits a documented ready signal;
- *     otherwise reported as n/a (not zero-filled).
+ *   - Servers are ranked within a TypeScript-engine class, never across one.
+ *   - A vendor ready notification is observed for the phase breakdown and never
+ *     waited for: every server's project load sits inside the ranked
+ *     didOpen→hover window. Reported as n/a when no signal arrives.
  *   - typescript-native-bridge is NOT an LSP — see methodology; optional
  *     "Volar + workspace TS override" would be a separate experiment, not mixed in.
  */
@@ -32,13 +36,13 @@
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { LspClient, pathToFileUri } from "../lsp-client.mjs";
 import { ensureLspWorkspace } from "../lsp-workspace.mjs";
 import { attachVolarHybridBridge } from "../tsserver-bridge.mjs";
 import { measureVariants, resolveBin, median } from "../timing.mjs";
 import { pidCpuMs, pidPeakRssBytes, pidTreeRssBytes } from "../memory.mjs";
-import { withTsgoEnv } from "../tsgo.mjs";
+import { resolveToolEngine, withTsgoEnv } from "../tsgo.mjs";
 import { resolveTnbTsdk } from "../tnb.mjs";
 
 const require = createRequire(import.meta.url);
@@ -262,11 +266,151 @@ export function resolveVolarServer() {
   return null;
 }
 
-export function resolveVizeLsp() {
-  // Spawn `node <entry>` like every other server. bin/vize is itself a two-line
-  // node shim, so this is the same process the .cmd wrapper would end up
-  // starting, minus a cmd.exe in front of it.
+/** Publisher.extension id of the Vue/Vize VS Code extension. */
+const VIZE_EXTENSION_ID = "ubugeeei.vize";
+
+/**
+ * Where VS Code keeps per-extension downloads on this platform.
+ *
+ * Pure over `env` and `platform` so the discovery rule can be tested on a
+ * machine that has no VS Code — which is every CI runner this repo uses.
+ * Stable and Insiders share the layout and differ only in the product folder,
+ * so both are searched; that is two `join()` calls, not a VS Code integration.
+ *
+ * @returns {string[]} candidate globalStorage directories, most likely first
+ */
+export function vsCodeGlobalStorageRoots(env = process.env, platform = process.platform) {
+  const home = env.USERPROFILE || env.HOME || "";
+  const bases = [];
+  if (platform === "win32") {
+    const appData = env.APPDATA || (home ? join(home, "AppData", "Roaming") : "");
+    if (appData) bases.push(appData);
+  } else if (platform === "darwin") {
+    if (home) bases.push(join(home, "Library", "Application Support"));
+  } else {
+    const xdg = env.XDG_CONFIG_HOME || (home ? join(home, ".config") : "");
+    if (xdg) bases.push(xdg);
+  }
+  const roots = [];
+  for (const base of bases) {
+    for (const product of ["Code", "Code - Insiders"]) {
+      roots.push(join(base, product, "User", "globalStorage"));
+    }
+  }
+  return roots;
+}
+
+/**
+ * Locate the standalone native language server the Vize VS Code extension
+ * downloads, i.e. the process a user of the shipped product actually runs.
+ *
+ * Layout, read out of the extension bundle rather than guessed:
+ *   <globalStorage>/ubugeeei.vize/servers/<version>/<target-triple>/vize[.exe]
+ * and the extension launches it as `<bin> lsp` over stdio.
+ *
+ * The version is matched EXACTLY against the installed npm package. A
+ * benchmark that silently compared the extension's 0.290 against the repo's
+ * 0.291 would be reporting a version delta as a product delta, and the whole
+ * point of this resolver is to remove an accidental difference, not add one.
+ * The triple directory is discovered by listing rather than by reconstructing
+ * the Rust target triple, which is cheaper and cannot drift.
+ *
+ * @returns {{bin:string, version:string, triple:string} | null}
+ */
+export function findVizeNativeServer({
+  version,
+  roots = vsCodeGlobalStorageRoots(),
+  platform = process.platform,
+} = {}) {
+  if (!version) return null;
+  const exe = platform === "win32" ? "vize.exe" : "vize";
+  for (const root of roots) {
+    const versionDir = join(root, VIZE_EXTENSION_ID, "servers", version);
+    let entries;
+    try {
+      entries = readdirSync(versionDir, { withFileTypes: true });
+    } catch {
+      continue; // no such install — the normal case on CI
+    }
+    for (const entry of entries) {
+      if (!entry.isDirectory()) continue;
+      const bin = join(versionDir, entry.name, exe);
+      if (existsSync(bin)) return { bin, version, triple: entry.name };
+    }
+  }
+  return null;
+}
+
+function readPackageVersion(dir) {
+  try {
+    return JSON.parse(readFileSync(join(dir, "package.json"), "utf8")).version ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * How to launch Vize's language server.
+ *
+ * The npm `vize` package's `bin/vize` is a two-line Node shim that loads a
+ * ~34MB NAPI addon under Node. That is NOT what the shipped product runs: the
+ * VS Code extension downloads a standalone native `vize` executable and starts
+ * `<bin> lsp --stdio` directly. Measured here at the same version (0.291.0),
+ * `--version` costs 11/11/11/14/16 ms native against 52/45/50/55/58 ms through
+ * the Node shim — roughly 35ms of Node bootstrap charged to Vize on every
+ * spawn, and this surface spawns a fresh server for every measured run.
+ *
+ * That bootstrap lands in `initializeMs` rather than in the primary ranked
+ * `didOpenToHoverMs` (the process is spawned before the timed open→hover
+ * region), so this is not a silent thumb on the ranking column — but
+ * `initializeMs` is published, and the ide-ops `Time-to-usable` metric DOES
+ * include session start. Either way the honest thing to benchmark is the
+ * artifact users run.
+ *
+ * Resolution order, mirroring `resolveVerterLsp`:
+ *   1. VIZE_LSP_BIN (+ VIZE_LSP_ARGS / VIZE_LSP_LABEL) — explicit override
+ *   2. version-matched native server downloaded by the VS Code extension
+ *   3. the npm package's Node entry — the CI path, since no runner has VS Code
+ *
+ * Every branch reports `entry` and `labelExtra`, and the surface puts them in
+ * the row label and notes. Without that, a local run and a CI run would publish
+ * different measurements under the same row name.
+ */
+export function resolveVizeLsp({
+  env = process.env,
+  roots = vsCodeGlobalStorageRoots(env),
+  platform = process.platform,
+} = {}) {
+  if (env.VIZE_LSP_BIN && existsSync(env.VIZE_LSP_BIN)) {
+    return {
+      command: env.VIZE_LSP_BIN,
+      args: env.VIZE_LSP_ARGS
+        ? env.VIZE_LSP_ARGS.split(/\s+/).filter(Boolean)
+        : ["lsp", "--stdio"],
+      shell: false,
+      entry: "native",
+      labelExtra: env.VIZE_LSP_LABEL ?? "custom binary",
+    };
+  }
+
   const dir = resolvePackageDir("vize");
+  const version = dir ? readPackageVersion(dir) : null;
+
+  const native = findVizeNativeServer({ version, roots, platform });
+  if (native) {
+    return {
+      command: native.bin,
+      args: ["lsp", "--stdio"],
+      shell: false,
+      entry: "native",
+      labelExtra: `native server ${native.version}`,
+    };
+  }
+
+  // Fallback: `node <entry>` like every other Node-hosted server. bin/vize is
+  // itself a two-line node shim, so this is the same process the .cmd wrapper
+  // would end up starting, minus a cmd.exe in front of it. CI has no VS Code
+  // install, so this branch is the one CI takes and must keep working.
   if (dir) {
     const binJs = join(dir, "bin", "vize");
     if (existsSync(binJs)) {
@@ -274,6 +418,8 @@ export function resolveVizeLsp() {
         command: process.execPath,
         args: [binJs, "lsp", "--stdio"],
         shell: false,
+        entry: "node",
+        labelExtra: "Node shim",
       };
     }
   }
@@ -282,7 +428,9 @@ export function resolveVizeLsp() {
   return {
     command: vize,
     args: ["lsp", "--stdio"],
-    shell: process.platform === "win32" && vize.endsWith(".cmd"),
+    shell: platform === "win32" && vize.endsWith(".cmd"),
+    entry: "node",
+    labelExtra: "Node shim (.bin)",
   };
 }
 
@@ -352,8 +500,12 @@ export async function runLspSession({
   /** Template-position probe for the Vue-specific half of the hover gate. */
   templateProbe,
   initializationOptions,
+  /**
+   * Vendor ready notifications to OBSERVE — never to wait for. See the note at
+   * the listener below; this is a diagnostic, not a gate, and passing a value
+   * here cannot move work out of any timed window.
+   */
   readyNotifications = [],
-  readyTimeoutMs = 15_000,
   /** When true, attach tsserver hybrid bridge (required for modern Volar). */
   volarHybrid = false,
   tsdkPath,
@@ -364,6 +516,9 @@ export async function runLspSession({
 }) {
   const rootUri = pathToFileUri(workspaceDir);
   const fileUri = pathToFileUri(filePath);
+  // Session clock. The child process is spawned by the LspClient constructor
+  // below, so this is the earliest honest "session started" mark.
+  const tSession0 = performance.now();
   const client = new LspClient(name, command, args, {
     shell,
     cwd: workspaceDir,
@@ -379,6 +534,45 @@ export async function runLspSession({
   });
 
   let hybrid = null;
+
+  /**
+   * Workspace-ready signal: OBSERVED, never awaited.
+   *
+   * This used to be `await client.waitForNotification(readyNotifications,
+   * readyTimeoutMs)` sitting after `initialize` and before `tOpen0` — that is,
+   * OUTSIDE the primary ranked metric, which is `didOpenToHoverMs`. Exactly one
+   * server documents such a notification ($/verter/ready), so exactly one
+   * server had its workspace-load work moved out of the number it is ranked on,
+   * while every other server's equivalent work stayed inside it. On the small
+   * published fixture that was ~3ms, but the budget was 30s and the excluded
+   * work scales with project size — the ranking was structurally, not slightly,
+   * unfair.
+   *
+   * Waiting for it for EVERYONE is not the alternative: a server that never
+   * emits the notification would simply burn the whole budget. So readiness is
+   * now established the way the ide-ops suites already establish it — on
+   * CONTENT, through one code path every server takes, inside the measured
+   * window (see `scripts/lib/ide-ops/suites/completion.mjs` and `scale.mjs`).
+   * Here that path is the shared didOpen→hover retry loop below, whose budget
+   * is already identical for every server; whoever needs project-load time now
+   * pays for it in the metric, like everyone else.
+   *
+   * The signal is still useful diagnostically, so it is recorded passively. The
+   * listener is attached before `initialize` because the notification can
+   * arrive during it, and `workspaceReadyMs` is therefore measured from session
+   * start. It is reported in the phase breakdown only and never enters a ranked
+   * column.
+   */
+  let workspaceReadyMs = null;
+  const readySet = new Set(readyNotifications);
+  const onReadyNotification = readySet.size
+    ? (method) => {
+        if (workspaceReadyMs == null && readySet.has(method)) {
+          workspaceReadyMs = performance.now() - tSession0;
+        }
+      }
+    : null;
+  if (onReadyNotification) client.on("notification", onReadyNotification);
 
   // Resource sampling for the SERVER process — OFF during timed runs.
   //
@@ -417,17 +611,8 @@ export async function runLspSession({
     });
     const initializeMs = performance.now() - tInit0;
 
-    // Optional ready signal (Verter emits $/verter/ready; others may not)
-    let workspaceReadyMs = null;
-    if (readyNotifications.length) {
-      const tR0 = performance.now();
-      try {
-        await client.waitForNotification(readyNotifications, readyTimeoutMs);
-        workspaceReadyMs = performance.now() - tR0;
-      } catch {
-        workspaceReadyMs = null; // n/a when no ready signal
-      }
-    }
+    // NOTE: no ready-wait here. Project load is inside the timed open→hover
+    // window for every server alike — see the `workspaceReadyMs` note above.
 
     const position = { line: probe.line, character: probe.character };
 
@@ -647,6 +832,7 @@ export async function runLspSession({
       resource,
     };
   } finally {
+    if (onReadyNotification) client.off("notification", onReadyNotification);
     // Read CPU BEFORE shutdown — the counter disappears with the process.
     if (rssTimer) clearInterval(rssTimer);
     if (sampleResources) {
@@ -671,6 +857,86 @@ export async function runLspSession({
     await client.shutdown();
     if (hybrid) await hybrid.close();
   }
+}
+
+/**
+ * Which TypeScript engine answers each LSP variant's semantic questions?
+ *
+ * This is the same fairness axis `typecheck.mjs` and `ide-report.mjs` already
+ * apply, for the same written-down reason: ranking a JavaScript-TypeScript
+ * checker against a native tsgo one "measures the TypeScript rewrite rather
+ * than the Vue layer under test". Every LSP variant used to set only
+ * `threading: "lsp"`, so `classKey()` put one JS-engine row and three tsgo rows
+ * in a single table sharing one `vs fastest` baseline — Verter 1.00x, Volar
+ * 2.20x, Volar/TNB 2.27x, a ranking across engines.
+ *
+ * The mapping goes through `resolveToolEngine()` — the function that classifies
+ * the very same tools on the typecheck surface — via each server's typecheck
+ * peer, so the surfaces cannot drift apart and the engine STRINGS are identical
+ * to the ones typecheck publishes:
+ *
+ *   volar     → vue-tsc       → the repo's typescript/lib      → tsc-js
+ *   volar-tnb → vue-tsc-tnb   → typescript-native-bridge       → tsgo
+ *   vize      → vize-check    → its own bundled tsgo (Corsa)   → tsgo
+ *   verter    → verter-tsc    → tsgo via VERTER_TSGO_BIN       → tsgo
+ *
+ * A server whose type backend failed to start still carries its declared
+ * engine; that condition is reported loudly and separately on the row
+ * (`⚠ BACKEND FALLBACK`), which is where a reader has to see it.
+ *
+ * NOTE ON `invocation`: deliberately left unset, so a native-process server and
+ * a Node-process server stay in the SAME table. `invocation` exists to separate
+ * an in-process API (which amortises startup across iterations) from a CLI
+ * (which pays it every run); both of those are true of every row here. Process
+ * host is not an accidental difference for these products — there is no native
+ * Volar and no Node-hosted Verter, so splitting on it would put every row in a
+ * table of one and delete the comparison this surface exists to make. Worse, it
+ * would make the grouping itself depend on whether the machine has a VS Code
+ * install (see `resolveVizeLsp`), so local and CI reports would not have the
+ * same shape. The process host is instead printed on the row.
+ */
+const ENGINE_PEER = {
+  "volar-language-server": "vue-tsc",
+  "volar-language-server-tnb": "vue-tsc-tnb",
+  "vize-lsp": "vize-check",
+  "verter-lsp": "verter-tsc",
+};
+
+const lspEngineCache = new Map();
+
+export function lspVariantEngine(id) {
+  if (!lspEngineCache.has(id)) {
+    const peer = ENGINE_PEER[id];
+    let resolved = { engine: "unknown", label: "unknown engine" };
+    if (peer) {
+      try {
+        resolved = resolveToolEngine(peer, rootDir);
+      } catch {
+        // Engine detection must never break a report. An unknown engine is its
+        // own comparison class, which errs towards not comparing.
+      }
+    }
+    lspEngineCache.set(id, resolved);
+  }
+  return lspEngineCache.get(id);
+}
+
+/**
+ * Stamp the engine axis onto every row, skipped rows included.
+ *
+ * Separated from `runLspSurface` so the rule can be tested without spawning
+ * four language servers — the surface's own test would otherwise have to run
+ * the benchmark to find out whether the ranking is cross-engine.
+ *
+ * @param {Array<{id:string, engine?:string, notes?:string}>} variants mutated in place
+ */
+export function applyLspEngineAxis(variants) {
+  for (const v of variants) {
+    const e = lspVariantEngine(v.id);
+    v.engine = e.engine;
+    v.notes = `${v.notes || ""} | engine: ${e.label}`.trim();
+  }
+  return variants;
 }
 
 export async function runLspSurface(_fixtureDir, options) {
@@ -759,12 +1025,19 @@ export async function runLspSurface(_fixtureDir, options) {
   if (vize) {
     variants.push({
       id: "vize-lsp",
-      label: "Vize LSP (vize lsp)",
+      // The entry point is part of the row's identity, not a footnote: a native
+      // server row and a Node-shim row are different measurements and would
+      // otherwise be published under the same name (locally vs on CI).
+      label: `Vize LSP${vize.labelExtra ? ` (${vize.labelExtra})` : ""}`,
       package: "vize",
       threading: "lsp",
       artifactLabel: "Hover bytes",
       notes:
-        "vize lsp --stdio. Same workspace/file/position as Volar. Ready signal: none standardized → workspaceReady = n/a.",
+        `vize lsp --stdio, launched from the ${
+          vize.entry === "native"
+            ? "standalone NATIVE server — the executable the VS Code extension downloads and runs"
+            : "npm package's NODE entry (bin/vize → NAPI addon under Node) because no version-matched native server was found; this costs ~35ms of Node bootstrap per spawn, inside initialize"
+        } (${vize.command}). Set VIZE_LSP_BIN to pin a specific binary. Same workspace/file/position as Volar. Ready signal: none standardized → workspaceReady = n/a.`,
       measure: async () =>
         runLspSession({
           name: "Vize",
@@ -800,7 +1073,7 @@ export async function runLspSurface(_fixtureDir, options) {
       threading: "lsp",
       artifactLabel: "Hover bytes",
       notes:
-        "verter-lsp stdio. Set VERTER_LSP_BIN if not auto-discovered. Waits for $/verter/ready when emitted; otherwise workspaceReady n/a.",
+        "verter-lsp stdio. Set VERTER_LSP_BIN if not auto-discovered. $/verter/ready is OBSERVED, never waited for — its workspace load is inside the timed open→hover window like every other server's.",
       measure: async () =>
         runLspSession({
           name: "Verter",
@@ -814,8 +1087,9 @@ export async function runLspSurface(_fixtureDir, options) {
           probe: workspace.probe,
           templateProbe: workspace.templateProbe,
           initializationOptions: {},
+          // Observed for the phase breakdown only — this no longer moves any
+          // work out of the ranked window. See runLspSession's ready note.
           readyNotifications: ["$/verter/ready"],
-          readyTimeoutMs: 30_000,
           // Stable tsgo (typescript@7.0.x) for Verter type provider
           env: withTsgoEnv({}, rootDir),
         }),
@@ -834,6 +1108,13 @@ export async function runLspSurface(_fixtureDir, options) {
   for (const v of variants) {
     if (v.label.startsWith("Vory")) v.label = v.label.replace("Vory", "Vize");
   }
+
+  // Stamp the underlying TypeScript engine onto every row, skipped ones
+  // included. Engines are ranked in separate tables — see lspVariantEngine()
+  // and classKey() — because a JS-engine server and a native-tsgo server are
+  // not measuring the same thing. Must happen before measureVariants(), which
+  // is what copies the axis onto the result rows the report ranks.
+  applyLspEngineAxis(variants);
 
   const results = await measureVariants(variants, {
     runs: options.runs,
@@ -917,9 +1198,13 @@ export async function runLspSurface(_fixtureDir, options) {
       `Hover retry budget is identical for every server (${HOVER_ATTEMPTS} attempts, ${HOVER_ATTEMPT_TIMEOUT_MS / 1000}s each, same backoff). Retry sleeps fall inside the timed open→hover window, so an asymmetric budget would silently subsidise whichever server got the larger one.`,
       "A fixed 50ms yield after didOpen is inside the timed window for every server alike — it is an additive constant, so it compresses ratios slightly but cannot reorder them.",
       "Phase breakdown in Notes: initialize, ready (n/a if no server signal), open→hover, hover cold, hover warm median(5), completion, definition.",
-      "workspaceReady is ONLY timed when the server documents a ready notification (e.g. $/verter/ready). Missing signal = n/a, not 0.",
+      "workspaceReady is OBSERVED, never waited for. A vendor ready notification (e.g. $/verter/ready) is recorded from session start as a diagnostic and never enters a ranked column — the harness does not pause on it. It previously did, which moved one server's workspace load OUT of the ranked open→hover window while every other server's stayed inside it. Missing signal = n/a, not 0.",
+      "Readiness is established identically for every server and INSIDE the ranked window, via the shared didOpen→hover retry loop — the same content-gated approach the ide-ops suites use. Whoever needs project-load time pays for it in the metric.",
+      "Comparison classes are split by TypeScript ENGINE, the same rule the typecheck surface applies and via the same resolver: Volar runs the JavaScript TypeScript compiler, while Volar/TNB, Vize and Verter all run native tsgo. Ranking those in one table measures TypeScript's Go rewrite rather than the Vue layer under test.",
+      "Process host (native executable vs Node) is NOT a comparison-class axis here — there is no native Volar and no Node-hosted Verter, so splitting on it would leave every table with one row. It is printed on the row instead.",
+      "Vize is launched from the standalone native server the VS Code extension downloads (version-matched, discovered under VS Code globalStorage, or pinned with VIZE_LSP_BIN) — that is the process the shipped product runs. Where no native server exists, e.g. CI, the npm package's Node entry is used and the row says so, because the Node bootstrap it adds (~35ms/spawn, inside initialize) is not part of the product.",
       "Completion/definition are best-effort extras; null/n/a does not mean the tool is slower — capability may differ.",
-      "typescript-native-bridge (TNB) is a drop-in typescript package for CLI/tsserver — NOT a Vue LSP. It is out of this table; optional future experiment: Volar with TNB as workspace tsdk (same Volar binary, different TS engine).",
+      "typescript-native-bridge (TNB) is a drop-in typescript package for CLI/tsserver — NOT a Vue LSP in its own right. It appears here only as Volar's TypeScript engine: the `Volar (TNB / tsgo tsdk)` row is the same Volar binary with TNB supplying the tsserver half, so the pair isolates the TS engine from the Vue layer.",
       "Verter binary is optional (VERTER_LSP_BIN). Skipped when missing.",
       "VS Code extension host overhead is NOT measured — only the language server stdio protocol.",
       "Server order is rotated on every warmup and measured run; no server is pinned to first position.",

@@ -68,11 +68,16 @@ function leafOf(path) {
 
 const today = () => new Date().toISOString().slice(0, 10);
 
-/** Stable order: cold -> warm-os -> warm -> other -> cache demos last. */
+/**
+ * Stable order: ranking tables first, cache demos last.
+ *
+ * There is no cold/warm ordering any more. The cold/warm-os/warm phase model
+ * was abolished — every measured run is warmed and ranked on the median — and
+ * no producer has emitted a `-cold` / `-warm-os` / `-warm` artifact since.
+ * `benchmark.yml` writes exactly two shapes: `bench-<os>-<n>-bench.md` and
+ * `bench-<os>-<n>-repeated-cache-demo.md`.
+ */
 function phaseRank(p) {
-  if (p.includes("-cold")) return 0;
-  if (p.includes("-warm-os")) return 1;
-  if (p.includes("-warm") && !p.includes("warm-os")) return 2;
   if (p.includes("repeated") || p.includes("cache-demo")) return 9;
   return 5;
 }
@@ -83,7 +88,7 @@ function renderBench(files, { start, end }) {
     "",
     `> Auto-updated ${today()} from the **Benchmark** workflow (rolldown-style: measure on CI → commit README on \`main\` with \`[skip ci]\`).`,
     `> Numbers are reference-only; re-run on your hardware for local relevance.`,
-    `> Pass labels: **cold** (single first touch) · **warm-os** (after discarded OS warmer) · **warm** (process warmups + multi-run).`,
+    `> Every measured run is warmed (>= 1 discarded pass); the ranking metric is the median. There is no cold column.`,
     "",
   ];
 
@@ -98,11 +103,9 @@ function renderBench(files, { start, end }) {
     const content = readFileSync(file, "utf8").trim();
     const leaf = leafOf(file);
     let phase = "bench";
-    if (leaf.includes("-cold")) phase = "cold";
-    else if (leaf.includes("-warm-os")) phase = "warm-os";
-    else if (leaf.includes("repeated") || leaf.includes("cache-demo")) {
+    if (leaf.includes("repeated") || leaf.includes("cache-demo")) {
       phase = "cache-demo (not ranking)";
-    } else if (leaf.includes("-warm")) phase = "warm";
+    }
 
     chunks.push(`#### ${platformOf(file)} · ${phase}`);
     chunks.push("");

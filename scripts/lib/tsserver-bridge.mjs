@@ -284,11 +284,3 @@ export async function attachVolarHybridBridge(volarClient, { workspaceDir, rootD
     },
   };
 }
-
-// Keep old names as thin wrappers so call sites can migrate cleanly
-export function startTsserver() {
-  throw new Error("Use attachVolarHybridBridge instead of startTsserver");
-}
-export function attachVolarTsserverBridge() {
-  throw new Error("Use attachVolarHybridBridge instead of attachVolarTsserverBridge");
-}

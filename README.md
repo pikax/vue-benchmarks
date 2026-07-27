@@ -144,6 +144,28 @@ The two template capabilities are **separate single-error projects on purpose**.
 
 The diagnostic must **name the planted file**. Without that, an unrelated project-level failure (a config import that will not resolve, say) reads as a pass and the gate silently stops gating.
 
+#### Caveat: `verter-tsc` is the only checker that is not silent on a clean corpus
+
+⚠ The benchmark corpus is generated and clean, so **0 diagnostics is the correct answer**, and it is the answer `vue-tsc`, `vue-tsc (TNB / tsgo)`, `golar typecheck` and `golar default` all give. `verter-tsc` does not.
+
+Measured locally (win32, the same runs the tables above are produced from — `results/` is gitignored, so these are not yet the published CI figures):
+
+| Corpus | `verter-tsc` diagnostics | Every other ranked checker | `verter-tsc` rank in its class |
+| --- | ---: | ---: | --- |
+| 200 files (`fixtures/200`) | **442** | 0 | 3rd (2.20× behind golar) |
+| 20 files (`fixtures/50`, check limit 20) | **42** | 0 | **1st** |
+
+So on the smaller corpus the checker that **tops its comparison class is also the only one emitting noise**, at roughly two diagnostics per file, and the ranking does not dock it for that.
+
+The cause is Verter's own virtual code leaking into user-visible output. The confirmation suite pins it independently in [`tests/confirm/known-failures.json`](tests/confirm/known-failures.json): on a **clean** generic `<script setup>` component `verter-tsc` emits three spurious diagnostics — `___VERTER___Attrs requires 1 type argument`, `___VERTER___attributes is not generic`, and `Cannot find name 'items'`. Those are not complaints about the code under test; they are the tool describing its own internals.
+
+Two things follow, and neither is hidden:
+
+- **The work gate cannot catch this.** It asks "did you find the planted bug?", not "did you stay quiet about everything else". `verter-tsc` passes all four stages (`script`, `tmpl-prop`, `tmpl-event`, `corpus`) and is correctly ranked on that basis.
+- **The artifact column cannot catch it either.** Diagnostics are marked *informational* polarity precisely because on a clean corpus more is not better — so no ⚠ fires on the count. That is the right call for the tools answering 0, and it means the one tool answering 442 gets no automatic flag. Hence this note.
+
+Emitting noise is not the same as failing to check, and this is **not** grounds to bracket the row. But a reader comparing `verter-tsc`'s time against a competitor's should know the two rows did not produce equivalent output, and that some of `verter-tsc`'s work went into diagnostics nobody asked for.
+
 **Verter + tsgo:** `verter-tsc` requires the TypeScript **7 native** engine (stable `>=7.0.2,<7.1.0`), not `typescript@5` and not nightly `@typescript/native-preview`. This repo pins:
 
 | Package | Role |
@@ -192,7 +214,7 @@ Harness shape: init → didOpen → hover cold/warm (same workspace, file, and p
 | Tool       | How we start it                | Notes                                                           |
 | ---------- | ------------------------------ | --------------------------------------------------------------- |
 | **Volar**  | `@vue/language-server --stdio` | Official Vue LS; `typescript.tsdk` = workspace `typescript/lib` |
-| **Vize**   | `vize lsp --stdio`             | From npm `vize` package                                         |
+| **Vize**   | `vize lsp --stdio`             | Prefers the standalone native server its VS Code extension ships (auto-discovered from VS Code globalStorage, version-matched); falls back to the npm package's Node entry. Override with `VIZE_LSP_BIN`. The row says which was used. |
 | **Verter** | `verter-lsp` binary            | Optional: set `VERTER_LSP_BIN` if not auto-discovered           |
 
 **Phases (in notes):** initialize · workspace ready (`n/a` if no signal) · **didOpen→hover** (primary ranking) · hover cold · hover warm median(5) · completion · definition.
@@ -216,11 +238,23 @@ Measured, same workspace and position: two servers return the unwrapped `string`
 
 Regression fixtures for all three real payloads live in [`tests/harness/lsp-hover-gate.test.mjs`](tests/harness/lsp-hover-gate.test.mjs) — the first version of this gate wrongly failed a *correct* server whose doc comment ran into its type signature (`let benchMarker: stringStable hover target…`), which has no word boundary after `string`.
 
+#### Caveat: Vize's type-checking backend sometimes never starts, and the row still answers
+
+⚠ Vize drives tsgo out-of-process as "Corsa". When that session fails to spawn, it logs to stderr and **silently falls back to its own semantic analysis**. Nothing in the LSP traffic shows it: the server initializes, answers every request, and returns a very fast, apparently-healthy result — for work a type checker never did.
+
+This is **not hypothetical**. It fired in a recorded run on this machine, with the reason `tsgo/Corsa backend did not start — server answered from its own semantic analysis (OpenProject request returned no error but project not present in snapshot)`. In that same run the Vize row was also bracketed for failing the template hover gate. A fast row and an absent type backend are not a coincidence, and the two facts belong next to each other.
+
+Both the LSP timing surface (`scripts/lib/surfaces/lsp.mjs`) and the IDE surface (`scripts/lib/ide-ops/context.mjs`) sniff for it and print `⚠ BACKEND FALLBACK` in the row's Notes. It is **reported, never used to fail a row on its own** — the hover and per-operation gates already judge the answers. It exists so the reason a row is fast is never invisible.
+
+**If you see that warning on a row, its latency is not a measurement of type checking.** It is also non-deterministic: the same server can come up healthy on the next run, so a published table may carry the note on some runs and not others.
+
 **Not measured:** VS Code extension host UI cost — only the stdio language-server protocol.
 
 **Volar hybrid note:** Vue language-tools v3 no longer embeds tsserver. The client must bridge `tsserver/request` → TypeScript LS (`typescript.tsserverRequest`) → `tsserver/response` ([upgrade guide](https://github.com/vuejs/language-tools/discussions/5456)). This harness uses `typescript-language-server` + `@vue/typescript-plugin`. Incomplete hybrid wiring → status `error`.
 
 **Verter:** set `VERTER_LSP_BIN` to a built `verter-lsp` binary when not published on npm.
+
+**Vize:** `VIZE_LSP_BIN` (with `VIZE_LSP_ARGS` / `VIZE_LSP_LABEL`) overrides discovery. Left unset, the harness prefers the standalone native server the VS Code extension downloads, and only falls back to the npm package's Node entry when no version-matched binary is present — CI has no VS Code, so CI always measures the Node entry. That is a real ~33 ms of Node bootstrap, so **the row and the memory label always name the entry point**: a local run and a CI run of the same version are not comparable numbers, and nothing should let them look like they are.
 
 ### VS Code E2E (headless extension host)
 
@@ -250,12 +284,22 @@ CI: use workflow_dispatch / optional job — cloning Nuxt UI + downloading VS Co
 
 | Role                               | Status                                                              |
 | ---------------------------------- | ------------------------------------------------------------------- |
-| LSP table row                      | No — not a language server                                          |
+| Ranked as a Vue LSP in its own right | No — it is not a language server, and not a different product to compare |
 | `vue-tsc` engine swap              | **Shipped** — `vue-tsc (TNB / tsgo)` in the typecheck table          |
-| Compared as Vue LSP                | No — different product surface                                      |
+| LSP / IDE row, as Volar's **tsdk** | **Shipped** — `Volar (TNB / tsgo tsdk)`: same Volar binary, same Vue half, TypeScript half on tsgo |
 | component-meta / lint engine swap  | Not yet — same technique would apply, see below                      |
 
 Install: `pnpm install --dir envs/tnb --ignore-workspace`. Absent, the row is skipped with a note and nothing else changes. See [`envs/tnb/README.md`](envs/tnb/README.md) for why it is isolated rather than a root override, and [Engines are ranked separately](#engines-are-ranked-separately--and-this-used-to-be-the-biggest-single-caveat) for what it revealed.
+
+##### Caveat: TNB is not a consequence-free drop-in, it fails a real IDE operation
+
+⚠ The typecheck story above is "one variable changes, and it is the engine". That is true of the typecheck surface, where TNB passes the full work gate. It is **not** true everywhere the swap is applied, and the report should not be read as if it were.
+
+On the IDE surface, `Volar (TNB / tsgo tsdk)` **offers an auto-import completion item and then crashes resolving it**. The tsgo side throws `Debug Failure. False expression. at getCompletionEntryCodeActionsAndSourceDisplay` — recorded verbatim in [`scripts/lib/ide-ops/suites/completion.mjs`](scripts/lib/ide-ops/suites/completion.mjs). In an editor that is the moment you accept `computed` from the completion list and expect the `import` statement to be written for you; on TNB it errors instead.
+
+Stock Volar on the JavaScript TypeScript engine resolves the same item correctly, so this is a genuine behavioural difference introduced by the engine swap, not a harness artifact. The suite fans a resolve out to both halves specifically so this crash is attributed to tsgo rather than collapsed into the Vue half's misleading "not my item" error.
+
+Read `vue-tsc (TNB / tsgo)` as: **the fastest checker of the two on the same Vue layer, on a backend that is not yet complete for editor work.** The typecheck comparison stands; "drop-in replacement" is doing more work than the evidence supports.
 
 `vue-component-meta` and type-aware ESLint also run the JS engine today and could get the same treatment, which would remove the last engine asymmetries in the report. Not done yet — each needs its own isolated env and its own work gate.
 
@@ -325,6 +369,8 @@ Timing alone cannot tell a fast tool from one that skipped the work. Every table
 
 Where **more genuinely means more work** (code bytes), a row below 50% of the largest artifact in its class is flagged ⚠ and its speed marked not comparable. Where the count is **informational** (diagnostics on a deliberately clean corpus, where zero is the correct answer) no such warning fires — otherwise the report would scold the well-behaved tools and reward one emitting noise about its own internals.
 
+The tool being alluded to there is `verter-tsc`, and it is named rather than left as a hint: see [Read the Diagnostics column](#caveat-verter-tsc-is-the-only-checker-that-is-not-silent-on-a-clean-corpus). The consequence of that polarity choice is that the one row emitting hundreds of diagnostics on a clean corpus receives no automatic flag, so the disclosure has to be editorial.
+
 Honest limit: byte-count is blunt. It catches gross omissions, not semantic ones — a compiler that flattens a `v-for` instead of emitting loop codegen loses some bytes but not enough to trip the threshold.
 
 ### Failed validation is shown, not hidden
@@ -353,23 +399,27 @@ Tool order is **rotated by run index** on every warmup and measured run, so over
 
 Cross-OS rows were never comparable — this report already forbids it — so a three-OS matrix bought nothing but 3x the runner cost and three more sources of variance. One OS, one runner class, one set of numbers.
 
-The tempting optimisation is to shard by surface — LSP alone is ~376 s and dominates, so splitting it out would cut wall time by a third. We don't, because it puts each surface on a different runner, and GitHub runners vary enough that a report stitched together from several VMs is not one measurement. Keeping everything on one box removes that discrepancy outright, and guarantees a comparison class can never accidentally span machines as surfaces are added or regrouped.
+The tempting optimisation is to shard by surface — `lint` and `typecheck` are the two biggest and together are ~70% of the job. We don't, because it puts each surface on a different runner, and GitHub runners vary enough that a report stitched together from several VMs is not one measurement. Keeping everything on one box removes that discrepancy outright, and guarantees a comparison class can never accidentally span machines as surfaces are added or regrouped.
 
-Measured cost per surface (n=200, runs=5) — all of it sequential on the same box:
+Measured cost per surface (n=200, runs=5, 32-core box) — all of it sequential in the one `bench` job. These are the figures recorded in [`.github/workflows/benchmark.yml`](.github/workflows/benchmark.yml) (the `bench` job header and its `timeout-minutes` rationale), not estimates:
 
 | Surface | Cost |
 | --- | ---: |
-| lsp | ~376 s |
-| lint | ~42 s |
-| format | ~32 s |
-| typecheck | ~28 s |
-| compile (whole matrix) | ~10 s |
-| component-meta | ~7 s |
-| jsx-compile | ~1 s |
+| lint | ~100 s |
+| typecheck | ~76 s |
+| format | ~33 s |
+| lsp | ~25 s |
+| component-meta | ~9 s |
+| compile (whole matrix) | ~8 s |
+| jsx-compile | ~2 s |
 
-~8–9 minutes total, which is a fine price for a main-push / weekly benchmark.
+~4.2 minutes total. Benchmarks are `workflow_dispatch` only — there is no push trigger and no schedule — so this is a cost paid when somebody asks for a number, not on every review round.
 
-**Surface order matters.** `lsp` runs **last**: it is by far the longest and its hover retries heat the machine, so running it earlier would leave every subsequent surface measuring a warmer, more throttled box.
+⚠ An earlier revision of this table published `lsp ~376 s`, drawn from a period when Volar exhausted a 6 × 60 s retry budget on every run. That is fixed and LSP is now the fourth-cheapest surface. If you have seen the old figure quoted, it is wrong.
+
+The other three jobs run separately and are not in that total, also measured: `memory` ~4.8 min at `--samples 3`, `ide` ~3.2 min at the `--runs 3` CI uses, `ide-scale` ~3.6 min at the 1 run + 1 warmup CI uses. Every job is capped at `timeout-minutes: 10`.
+
+**Surface order matters.** `lsp` runs **last**: its hover retries and language-server churn heat the machine, so running it earlier would leave every subsequent surface measuring a warmer, more throttled box. (It ran last originally because it was also the longest surface; that is no longer true, but the thermal reason stands on its own.)
 
 The **memory** probe stays a separate job on purpose — sampling RSS and CPU alongside timing runs would perturb the very timings it sits next to. That is isolation for a different reason than machine variance.
 
@@ -378,13 +428,13 @@ The **memory** probe stays a separate job on purpose — sampling RSS and CPU al
 | Workflow                                          | When                                | What                                                                                                                                    |
 | ------------------------------------------------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | **Test** (`.github/workflows/test.yml`)           | pull_request, `main` push           | `tests/harness/run.mjs` + `tests/confirm/run.mjs`. Install only, no fixtures. **Publishes nothing.**                                    |
-| **PR** (`.github/workflows/pr.yml`)               | pull_request                        | **Smoke only**: build → `pnpm confirm` + tiny `fixtures/20` throughput pass. **No** full bench, **no** README rewrite.                  |
-| **Benchmark** (`.github/workflows/benchmark.yml`) | `workflow_dispatch` **only**        | build → **bench** + **ide** + **memory** → update `README.md` + [`MEMORY.md`](./MEMORY.md). The only workflow that commits.             |
-| **E2E VS Code**                                   | manual / weekly                     | Heavy extension-host path (optional)                                                                                                    |
+| **PR** (`.github/workflows/pr.yml`)               | pull_request                        | **Smoke only**: build (install + `fixtures/20`) → one throughput pass over every surface at `--runs 1 --warmups 0`. **No** `pnpm confirm` (that runs in `test.yml` on the same event — see [`pr.yml`](.github/workflows/pr.yml) L92), **no** full bench, **no** README rewrite. |
+| **Benchmark** (`.github/workflows/benchmark.yml`) | `workflow_dispatch` **only**        | build → **bench** + **ide** + **ide-scale** + **memory** → update `README.md` + [`MEMORY.md`](./MEMORY.md). The only workflow that commits. |
+| **E2E VS Code** (`.github/workflows/e2e-vscode.yml`) | `workflow_dispatch` **only**     | Heavy extension-host path (optional). No schedule.                                                                                      |
 
 **All workflows run on `ubuntu-latest`.** One runner class for everything — measurement, correctness and E2E. Platform-specific breakage (Windows file locks, `.cmd` shims, path handling) is consequently **not covered by CI**; run `pnpm confirm` and `pnpm test:harness` locally on macOS/Windows if you need that signal.
 
-**Benchmarks do not run on push or pull request, and there is no schedule.** `ide` alone can take 90 minutes, so measuring on every review round would cost hours of runner time for numbers nobody reads — and a weekly cron that silently rewrites the README is a published number nobody asked for. Validation on PR/push is `test.yml`; measurement is a deliberate manual dispatch.
+**Benchmarks do not run on push or pull request, and there is no schedule.** The reason is not cost — the whole measurement is ~16 minutes of runner time across four jobs (`bench` 4.2 min, `memory` 4.8 min, `ide` 3.2 min, `ide-scale` 3.6 min, each capped at 10). It is that a published number should be traceable to a person who asked for it, and a cron that silently rewrites the README on a runner nobody was watching is the opposite of that. Validation on PR/push is `test.yml`; measurement is a deliberate manual dispatch.
 
 Doc updates follow the [rolldown/benchmarks](https://github.com/rolldown/benchmarks) pattern:
 
@@ -476,20 +526,35 @@ node scripts/bench.mjs \
 ```
 scripts/
   generate.mjs              # fixture generator
-  bench.mjs                 # throughput orchestrator
-  update-readme.mjs         # CI README merge
+  bench.mjs                 # throughput orchestrator (compile … lsp)
+  ide-bench.mjs             # per-operation IDE orchestrator (its own surface)
+  bench-memory.mjs          # resource probe orchestrator
+  memory-worker.mjs         # one isolated child per tool, for the probe
+  bench-compile-single.mjs  # tinybench size-ladder microbench
+  update-readme.mjs         # CI merge into BENCHMARK_RESULTS / IDE_RESULTS
+  update-memory-readme.mjs  # CI merge into MEMORY.md MEMORY_RESULTS
   e2e-vscode/               # headless extension-host runner
   lib/
-    surfaces/               # compile, typecheck, format, lint, meta, lsp
-tests/confirm/              # correctness plants (tracked)
+    surfaces/               # compile, jsx-compile, typecheck, format, lint, meta, lsp
+    ide-ops/                # IDE surface: server registry, workspace, and
+      suites/               #   background, completion, edit-loop, navigation, scale, smoke
+    report.mjs              # timing report rendering
+    ide-report.mjs          # IDE report rendering (ranked per operation)
+    tnb.mjs                 # typescript-native-bridge discovery + activation gate
+    work-gate.mjs           # planted-bug gates that decide ranked vs bracketed
+envs/tnb/                   # isolated vue-tsc-on-tsgo install (never a root override)
+tests/harness/              # self-tests of the benchmark machinery (tracked)
+tests/confirm/              # correctness plants + known-failures.json (tracked)
 fixtures/                   # generated corpora (gitignored)
 work/                       # ephemeral copies (gitignored)
-results/                    # local reports (gitignored)
+results/                    # local + CI reports (gitignored; published copies live
+                            #   in the README / MEMORY.md marker sections)
 .github/workflows/
   test.yml                  # harness + confirm on PR / main push (publishes nothing)
-  pr.yml                    # PR smoke (pnpm confirm + tiny throughput pass)
-  benchmark.yml             # manual dispatch: bench + ide + memory → README / MEMORY.md
-  e2e-vscode.yml            # optional VS Code E2E
+  pr.yml                    # PR smoke: tiny throughput pass only (no confirm)
+  benchmark.yml             # manual dispatch: bench + ide + ide-scale + memory
+                            #   → README / MEMORY.md
+  e2e-vscode.yml            # optional VS Code E2E (manual dispatch)
 ```
 
 ## Resource probe (memory + allocations + CPU)
@@ -513,6 +578,21 @@ Output: `results/memory-<platform>-<limit>.{json,md}`.
 
 On `main`, Linux CI copies the latest report into **[MEMORY.md](./MEMORY.md)** (committed).
 
+#### Caveat: Volar's LSP memory row is not the whole of Volar, but the LSP timing row is
+
+⚠ This is the sharpest known asymmetry in the report, and it runs in opposite directions on two different axes.
+
+Vue language-tools v3 is a **two-process** architecture: `@vue/language-server` plus a TypeScript server reached over the `tsserver/request`↔`tsserver/response` bridge. Both processes are real, and the TypeScript half is the larger of the two.
+
+| Surface | What Volar is charged for |
+| --- | --- |
+| **LSP / IDE timing** | **Both processes.** Startup and project load of the pair are inside the timings, and each feature is asked of both halves in parallel with the **slower** one charged (`scripts/lib/surfaces/lsp.mjs`). |
+| **Memory probe** | **The Vue server only.** RSS and CPU are sampled from a single pid; the tsserver half is a separate, larger process and is **not** included (`scripts/memory-worker.mjs`). |
+
+So on the memory tables Volar looks **leaner than it is**, and on the latency tables it is charged work its single-process competitors never do. Neither number is wrong for what it measures, but they are not the same subject, and a reader comparing "Volar's memory" to "Vize's memory" is not comparing like with like. Vize and Verter run single-process, so their rows are whole.
+
+Treat Volar's LSP memory figure as a **lower bound on the Vue half**, not as Volar's footprint. The `Notes` column on the affected rows carries the same warning; it is emitted by the probe rather than being editorial.
+
 ## Interpreting results
 
 - Published numbers are **Linux only**. Local runs on macOS/Windows are for relative comparison on your own box, not against published figures.
@@ -524,6 +604,17 @@ On `main`, Linux CI copies the latest report into **[MEMORY.md](./MEMORY.md)** (
 
 ## Reference results
 
+**Before reading the tables — four known caveats that the numbers alone will not tell you:**
+
+| Caveat | Effect on the tables |
+| --- | --- |
+| [`verter-tsc` is the only checker not silent on a clean corpus](#caveat-verter-tsc-is-the-only-checker-that-is-not-silent-on-a-clean-corpus) | It emits 442 diagnostics on 200 files (every other ranked checker: 0) and still tops its class on the smaller corpus. Passes the work gate; not bracketed. |
+| [Vize's tsgo/Corsa backend sometimes never starts](#caveat-vizes-type-checking-backend-sometimes-never-starts-and-the-row-still-answers) | Non-deterministic. When it fires, the row is fast because a type checker did not run. Look for `⚠ BACKEND FALLBACK` in Notes. |
+| [Volar's memory excludes its tsserver half; its timing includes it](#caveat-volars-lsp-memory-row-is-not-the-whole-of-volar-but-the-lsp-timing-row-is) | Volar reads leaner than it is on memory and slower than a single-process tool on latency. Its competitors are single-process, so their rows are whole. |
+| [TNB fails a real IDE operation](#caveat-tnb-is-not-a-consequence-free-drop-in-it-fails-a-real-ide-operation) | The engine swap is clean on typecheck, not on auto-import completion resolve, where tsgo crashes. |
+
+Four surfaces (`jsx-compile`, `format`, `lint`, `component-meta`) also have [no artifact census](#artifact-column--fast-vs-did-less) — their rankings are provisional.
+
 <!-- BENCHMARK_RESULTS_START -->
 
 _No benchmark artifacts found yet. Run CI or `pnpm bench` locally._
@@ -533,6 +624,12 @@ _No benchmark artifacts found yet. Run CI or `pnpm bench` locally._
 ## IDE operation results
 
 Per-operation editor benchmarks from the `ide` job (`scripts/ide-bench.mjs`). Ranked **per operation**, never pooled — `didOpen→diagnostics` and `foldingRange` differ by orders of magnitude and answer unrelated questions. Not comparable to the timing tables above: different job, different load profile.
+
+Servers here are Volar, **Volar on the TNB/tsgo tsdk**, Vize and Verter. Three caveats apply to these tables specifically:
+
+- **`Volar (TNB / tsgo tsdk)` crashes resolving an auto-import completion** — `Debug Failure. False expression. at getCompletionEntryCodeActionsAndSourceDisplay`. Stock Volar resolves the same item correctly. [Details](#caveat-tnb-is-not-a-consequence-free-drop-in-it-fails-a-real-ide-operation).
+- **Vize may answer with its tsgo backend absent**, silently. [Details](#caveat-vizes-type-checking-backend-sometimes-never-starts-and-the-row-still-answers).
+- **Both Volar rows are two processes**, charged the slower half on every operation; Vize and Verter are one. [Details](#caveat-volars-lsp-memory-row-is-not-the-whole-of-volar-but-the-lsp-timing-row-is).
 
 <!-- IDE_RESULTS_START -->
 

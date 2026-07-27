@@ -71,6 +71,21 @@ jobs:
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y xvfb
 
+      # Cache key suffix, rotated monthly.
+      #
+      # `actions/cache` only WRITES an entry when the primary key missed, so a
+      # constant key freezes the cache at whatever VS Code build happened to be
+      # stable the first time it was saved: every later run then re-downloads
+      # the newer stable and throws it away at the end of the job. Rotating the
+      # key means one run a month misses, warm-starts from `restore-keys`, and
+      # saves a refreshed entry. Computed here rather than inline because
+      # `github.run_month` (used previously) is not a real context property —
+      # it evaluated to empty, fell through to the `v1` literal, and never
+      # rotated at all.
+      - name: Compute cache period
+        id: cache-period
+        run: echo "month=$(date -u +%Y-%m)" >> "$GITHUB_OUTPUT"
+
       # The VS Code download is ~100-200MB and was re-fetched on every run, for
       # a build that only changes when stable ships. Cached separately from
       # node_modules because it is invalidated by a different thing entirely.
@@ -78,7 +93,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .vscode-test
-          key: vscode-test-${{ runner.os }}-stable-${{ github.run_month || 'v1' }}
+          key: vscode-test-${{ runner.os }}-stable-${{ steps.cache-period.outputs.month }}
           restore-keys: |
             vscode-test-${{ runner.os }}-stable-
 
@@ -102,7 +117,7 @@ jobs:
 
       - name: Setup E2E workspaces
         run: |
-          if [ "${{ github.event.inputs.with_nuxt_ui || 'false' }}" = "true" ] || [ "${{ github.event_name }}" = "schedule" ]; then
+          if [ "${{ github.event.inputs.with_nuxt_ui || 'false' }}" = "true" ]; then
             node scripts/e2e-vscode/setup-workspaces.mjs --with-nuxt-ui --nuxt-ui-ref "${{ github.event.inputs.nuxt_ui_ref || 'v3.1.3' }}"
           else
             node scripts/e2e-vscode/setup-workspaces.mjs
@@ -117,17 +132,11 @@ jobs:
           if [ -f fixtures/e2e/nuxt-ui/e2e-probe.json ]; then
             WS="regular,monorepo,nuxt-ui"
           fi
-          if [ "${{ runner.os }}" = "Linux" ]; then
-            xvfb-run -a node scripts/e2e-vscode/run.mjs \
-              --workspaces "$WS" \
-              --vize-extension "$VIZE_EXTENSION_ID" \
-              --verter-extension "$VERTER_EXTENSION_ID"
-          else
-            node scripts/e2e-vscode/run.mjs \
-              --workspaces "$WS" \
-              --vize-extension "$VIZE_EXTENSION_ID" \
-              --verter-extension "$VERTER_EXTENSION_ID"
-          fi
+          # `runs-on: ubuntu-latest` is hardcoded, so VS Code always needs xvfb.
+          xvfb-run -a node scripts/e2e-vscode/run.mjs \
+            --workspaces "$WS" \
+            --vize-extension "$VIZE_EXTENSION_ID" \
+            --verter-extension "$VERTER_EXTENSION_ID"
 
       - name: Upload E2E results
         if: always()

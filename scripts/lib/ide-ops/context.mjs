@@ -158,9 +158,29 @@ export function resolveServers() {
     }
   }
   const vize = resolveVizeLsp();
-  if (vize) out.push({ id: "vize", label: "Vize LSP", ...vize, hybrid: false });
+  // Which entry point is in the label on purpose. Vize resolves to the
+  // standalone native server the VS Code extension ships when one is present
+  // and to the npm package's Node entry otherwise (CI has no VS Code), and the
+  // two differ by ~35ms of Node bootstrap per spawn — which `Time-to-usable`
+  // measures. Unlabelled, a local run and a CI run publish different
+  // measurements under the same row name.
+  if (vize) {
+    out.push({
+      id: "vize",
+      label: `Vize LSP${vize.labelExtra ? ` (${vize.labelExtra})` : ""}`,
+      ...vize,
+      hybrid: false,
+    });
+  }
   const verter = resolveVerterLsp();
-  if (verter) out.push({ id: "verter", label: "Verter LSP", ...verter, hybrid: false });
+  if (verter) {
+    out.push({
+      id: "verter",
+      label: `Verter LSP${verter.labelExtra ? ` (${verter.labelExtra})` : ""}`,
+      ...verter,
+      hybrid: false,
+    });
+  }
   return out;
 }
 
