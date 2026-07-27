@@ -11,6 +11,7 @@ const STDERR_TAIL_BYTES = 16_384;
 
 export class LspClient extends EventEmitter {
   #proc;
+  #procError = null;
   #buffer = Buffer.alloc(0);
   #nextId = 1;
   #pending = new Map();
@@ -33,7 +34,19 @@ export class LspClient extends EventEmitter {
     this.pid = this.#proc.pid;
 
     this.#proc.stdout.on("data", (chunk) => this.#onData(chunk));
-    this.#proc.on("error", (err) => this.emit("error", err));
+    // A spawn failure (EACCES, ENOENT) must cost ONE failed row, not the whole
+    // benchmark process: `emit("error")` with no listener throws, and nothing
+    // here listens. Reject every in-flight request instead — the callers
+    // already treat a rejected request as that server's failure — and only
+    // re-emit for callers that opted in.
+    this.#proc.on("error", (err) => {
+      this.#procError = err;
+      for (const [id, pending] of this.#pending) {
+        this.#pending.delete(id);
+        pending.reject(new Error(`${this.#name}: server process failed: ${err.message}`));
+      }
+      if (this.listenerCount("error") > 0) this.emit("error", err);
+    });
     this.#proc.on("exit", (code, signal) => this.emit("exit", { code, signal }));
 
     /**
@@ -153,6 +166,9 @@ export class LspClient extends EventEmitter {
   }
 
   #write(msg) {
+    // A failed spawn leaves stdin destroyed; writing would throw a second,
+    // unrelated error on top of the one already reported via #procError.
+    if (this.#procError || !this.#proc.stdin?.writable) return;
     const json = JSON.stringify(msg);
     const payload = `Content-Length: ${Buffer.byteLength(json, "utf8")}\r\n\r\n${json}`;
     this.#proc.stdin.write(payload);
@@ -163,6 +179,11 @@ export class LspClient extends EventEmitter {
   }
 
   sendRequest(method, params, timeoutMs = 30_000) {
+    if (this.#procError) {
+      return Promise.reject(
+        new Error(`${this.#name}: server process failed: ${this.#procError.message}`),
+      );
+    }
     const id = this.#nextId++;
     return new Promise((resolve, reject) => {
       const timer = setTimeout(() => {
@@ -259,7 +280,9 @@ export class LspClient extends EventEmitter {
 
   kill() {
     return new Promise((resolve) => {
-      if (!this.#proc || this.#proc.killed) {
+      // A spawn-failed process never emits 'exit', so waiting for it here
+      // would ride the 2s fallback timer for a process that does not exist.
+      if (!this.#proc || this.#proc.killed || this.#procError) {
         resolve();
         return;
       }

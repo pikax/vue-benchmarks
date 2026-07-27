@@ -37,7 +37,14 @@
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { existsSync, readFileSync, readdirSync } from "node:fs";
+import {
+  accessSync,
+  chmodSync,
+  constants as fsConstants,
+  existsSync,
+  readFileSync,
+  readdirSync,
+} from "node:fs";
 import { LspClient, pathToFileUri } from "../lsp-client.mjs";
 import { ensureLspWorkspace } from "../lsp-workspace.mjs";
 import { attachVolarHybridBridge } from "../tsserver-bridge.mjs";
@@ -493,6 +500,18 @@ export function resolveVerterLsp() {
     const { resolveServerBinary } = require("verter-lsp");
     const resolved = resolveServerBinary?.();
     if (resolved?.path && existsSync(resolved.path)) {
+      // The published @verter/lsp-linux-x64-gnu binary arrives without its
+      // executable bit (npm tarballs carry file modes, and the platform
+      // package is packed on a host that has none), so a fresh install
+      // EACCESes on spawn. Every consumer resolves through here, so restore
+      // the bit at the resolution point instead of in each CI workflow.
+      if (process.platform !== "win32") {
+        try {
+          accessSync(resolved.path, fsConstants.X_OK);
+        } catch {
+          chmodSync(resolved.path, 0o755);
+        }
+      }
       const version = pkgVersionOf("verter-lsp");
       return {
         command: resolved.path,
