@@ -270,6 +270,54 @@ function ensureSubjectExtension({ vscodeExecutablePath, extDir, extension }) {
   return { extension, developmentPath };
 }
 
+/**
+ * Per-launch budget for one VS Code subject, in ms.
+ *
+ * Sized from what a launch has to do: Electron cold start, extension
+ * activation, workspace open, language-server spawn and project load, then the
+ * hover probe. Generous enough that a slow-but-working subject is measured
+ * rather than cut off — a truncated slow result would be worse than useless —
+ * and short enough that six of them fit comfortably inside a 30-minute job.
+ *
+ * IDENTICAL for every extension. An asymmetric budget silently subsidises
+ * whichever subject got the larger one, which is the same mistake the LSP
+ * surface's retry budget already had to have corrected.
+ */
+const LAUNCH_TIMEOUT_MS = Number(process.env.E2E_LAUNCH_TIMEOUT_MS ?? 240_000);
+
+/**
+ * Race a VS Code launch against the budget.
+ *
+ * On timeout the Electron process is killed rather than merely abandoned:
+ * `runTests()` gives us no handle on the child, so an orphan would keep holding
+ * the display and could make every LATER subject fail too — turning one bad
+ * result into a bad run.
+ */
+async function withLaunchTimeout(promise, label, vscodeExecutablePath) {
+  let timer;
+  const budget = new Promise((_resolve, reject) => {
+    timer = setTimeout(() => {
+      const seconds = Math.round(LAUNCH_TIMEOUT_MS / 1000);
+      try {
+        const exe = vscodeExecutablePath.split(/[/\\]/).pop();
+        if (process.platform === "win32") {
+          spawnSync("taskkill", ["/IM", exe, "/F", "/T"], { stdio: "ignore" });
+        } else {
+          spawnSync("pkill", ["-f", vscodeExecutablePath], { stdio: "ignore" });
+        }
+      } catch {
+        // Best effort — the rejection below is what matters.
+      }
+      reject(new Error(`launch exceeded ${seconds}s budget (killed): ${label}`));
+    }, LAUNCH_TIMEOUT_MS);
+  });
+  try {
+    return await Promise.race([promise, budget]);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 async function runOne({ workspaceName, extension, resultsDir }) {
   const workspacePath = join(e2eRoot, workspaceName);
   if (!existsSync(workspacePath)) {
@@ -345,18 +393,31 @@ async function runOne({ workspaceName, extension, resultsDir }) {
   console.log(`  results:   ${resultFile}`);
 
   try {
-    await runTests({
+    // BOUNDED. `runTests()` has no timeout of its own, so a launch that wedges
+    // — an extension that never activates, a language server that never answers
+    // — blocks this loop forever and the only thing that ends it is the CI job
+    // ceiling. That is the entire reason the job was allowed 90 minutes.
+    //
+    // A per-launch budget turns a hang into ONE failed row (recorded below with
+    // its reason) instead of a dead job, which is what makes a tight job ceiling
+    // safe. Identical for every subject: whichever extension needs the time pays
+    // for it, and none gets a larger allowance than the others.
+    await withLaunchTimeout(
+      runTests({
+        vscodeExecutablePath,
+        extensionDevelopmentPath: developmentPath,
+        extensionTestsPath: join(__dirname, "suite", "index.cjs"),
+        launchArgs,
+        extensionTestsEnv: {
+          E2E_WORKSPACE: workspacePath,
+          E2E_EXTENSION: subject.id.endsWith(".local-vsix") ? "" : subject.id,
+          E2E_LABEL: subject.label,
+          E2E_RESULTS: resultFile,
+        },
+      }),
+      `${workspaceName} · ${subject.label}`,
       vscodeExecutablePath,
-      extensionDevelopmentPath: developmentPath,
-      extensionTestsPath: join(__dirname, "suite", "index.cjs"),
-      launchArgs,
-      extensionTestsEnv: {
-        E2E_WORKSPACE: workspacePath,
-        E2E_EXTENSION: subject.id.endsWith(".local-vsix") ? "" : subject.id,
-        E2E_LABEL: subject.label,
-        E2E_RESULTS: resultFile,
-      },
-    });
+    );
   } catch (e) {
     console.error(`  FAILED: ${e.message}`);
     writeFileSync(

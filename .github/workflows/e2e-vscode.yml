@@ -27,7 +27,17 @@ permissions:
 jobs:
   e2e:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    # 30, not 90. The old ceiling was insurance against an unbounded hang:
+    # `runTests()` had no timeout, so one wedged VS Code launch blocked the
+    # serial loop until the job was killed. Each launch now has its own budget
+    # (E2E_LAUNCH_TIMEOUT_MS, 4 min, identical for every extension), so a hang
+    # costs one failed row instead of the whole job — which is what makes a
+    # tight ceiling safe rather than merely faster to fail.
+    #
+    # Work is 2 workspaces x 3 extensions = 6 sequential Electron launches
+    # (9 with Nuxt UI, which stays opt-in). Worst case 6 x 4 min = 24 min of
+    # launches, plus setup — hence 30.
+    timeout-minutes: 30
     defaults:
       run:
         shell: bash
@@ -53,6 +63,27 @@ jobs:
       - name: Install xvfb (Linux)
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y xvfb
+
+      # The VS Code download is ~100-200MB and was re-fetched on every run, for
+      # a build that only changes when stable ships. Cached separately from
+      # node_modules because it is invalidated by a different thing entirely.
+      - name: Cache VS Code download
+        uses: actions/cache@v4
+        with:
+          path: .vscode-test
+          key: vscode-test-${{ runner.os }}-stable-${{ github.run_month || 'v1' }}
+          restore-keys: |
+            vscode-test-${{ runner.os }}-stable-
+
+      # Marketplace extension installs are three network round-trips that do not
+      # change between runs unless the pinned ids change.
+      - name: Cache marketplace extensions
+        uses: actions/cache@v4
+        with:
+          path: ~/.vscode/extensions
+          key: vscode-exts-${{ runner.os }}-${{ github.event.inputs.vize_extension || 'ubugeeei.vize' }}-${{ github.event.inputs.verter_extension || 'verter.verter-vscode' }}
+          restore-keys: |
+            vscode-exts-${{ runner.os }}-
 
       - name: Pre-install marketplace extensions
         env:
