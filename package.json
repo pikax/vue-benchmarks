@@ -87,6 +87,7 @@
   },
   "devDependencies": {
     "@typescript-eslint/parser": "^8.65.0",
+    "@vizejs/musea-mcp-server": "0.291.0",
     "@vue/test-utils": "2.4.11",
     "jsdom": "29.1.1",
     "tinybench": "6.1.2",
