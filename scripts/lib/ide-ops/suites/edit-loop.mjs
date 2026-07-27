@@ -52,6 +52,20 @@
  * there. That is why the gate on operation 1 is only "a report arrived and it
  * does not claim this valid file is broken", and why operations 2/3 — which
  * demand specific CONTENT — are the ones to read.
+ *
+ * Because no content gate can tell an analysed empty report from a reflex empty
+ * one — for a valid file both are `[]` — operation 1 is published with
+ * `ranked: false`. It is still measured and its number still printed; it is
+ * simply never given a `vs fastest` figure, because "1.00x" against a server
+ * that really analysed the file would be a ranking of who answers soonest with
+ * nothing. Measured, unranked and explained beats ranked and wrong.
+ *
+ * That this caveat was written here and nowhere else is the whole problem it
+ * fixes: the report published the ranking anyway. Measured on this fixture,
+ * `Verter 21.6 ms → 1.00x` against `Volar 877.2 ms → 40.69x`, both rows marked
+ * "content verified" and both carrying ZERO diagnostics — a like-for-like
+ * ranking of two numbers that are not like for like. A caveat that lives only
+ * in a source header is not a caveat, it is a comment.
  */
 
 import { writeFileSync } from "node:fs";
@@ -594,6 +608,13 @@ export const SUITE = {
     // nothing arrives do we ask for a pull report — same request, same timeout,
     // for every server. Which model answered is recorded in `sample`, because
     // "this server has no diagnostics at all" is a finding, not an error.
+    //
+    // MEASURED BUT NOT RANKED — see the file header. The fixture is a VALID
+    // file, so the correct first payload is `[]`, and no content gate can
+    // separate "analysed, nothing wrong" from "published empty on open and
+    // analysed afterwards". Ranking it rewards the latter.
+    const OPEN_DIAGNOSTICS_RANKING_NOTE =
+      "the fixture is a valid file, so the correct payload is empty and no gate can tell an analysed empty report from a server that publishes `[]` on open and analyses afterwards — the fastest number here can be the least work done. Read `Edit plants type error -> reported` and `Edit fixes it -> diagnostic clears`, which demand specific content, as the comparable diagnostics figures.";
     let diagnosticsModel = "none";
     let modelEvidence = "";
 
@@ -645,7 +666,15 @@ export const SUITE = {
           sample: modelEvidence,
           artifact: report.length,
         };
-      }),
+      }).then((op) =>
+        // `timed()` shapes the Op; whether the Op may be RANKED is the suite's
+        // call, and this one may not be. The note travels with the record so
+        // the report can publish the reason next to the number.
+        Object.assign(op, {
+          ranked: false,
+          rankingNote: OPEN_DIAGNOSTICS_RANKING_NOTE,
+        }),
+      ),
     );
 
     // -- 2. edit introduces a type error -----------------------------------

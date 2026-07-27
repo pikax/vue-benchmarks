@@ -11,12 +11,46 @@
  *
  * On top of that sits ONE composite, the typing loop, because a developer does
  * not experience these operations separately.
+ *
+ * TWO KINDS OF ROW DO NOT CARRY A RANKED DURATION, and both are rendered with
+ * an empty Median column on purpose rather than being dropped or invented:
+ *
+ *   - a RATIO row (scale's `Scale × … 20→500`), whose measurement is a factor
+ *     and not a duration; it lands in the artifact column;
+ *   - an op the suite declares `ranked: false`, because the operation cannot be
+ *     compared like for like however carefully it is timed. The measurement is
+ *     still published — in the row note and in the raw-runs list — it simply
+ *     never enters the `vs fastest` column.
  */
+
+import { resolveToolEngine } from "./tsgo.mjs";
+
+/**
+ * A ratio-style operation reports a FACTOR, not a duration.
+ *
+ * `scalingOps()` sets `ms: null` deliberately and puts the 20→500 factor in
+ * `artifact`. Mapping "no median" to `error` printed those four headline rows
+ * as `| Vize LSP | error | n/a | … |` and blanked the artifact column, which is
+ * the only cell they fill — the suite's whole conclusion rendered as a failure.
+ */
+function isRatioOp(op) {
+  return !Number.isFinite(op.medianMs) && op.valid === true && Number.isFinite(op.artifact);
+}
+
+/** An operation the suite itself declares uncomparable (see `rankingNote`). */
+function isUnrankedByDesign(op) {
+  return op.ranked === false;
+}
 
 /** An operation whose gate failed is measured but never ranked. */
 function statusOf(op) {
   if (op.valid === false) return "unranked";
-  return Number.isFinite(op.medianMs) ? "ok" : "error";
+  // `ok` here means "this row is reported normally", not "this row has a time":
+  // a ratio row has no time by design and the renderer prints n/a for it, which
+  // is the honest cell. Fabricating a duration to fill it is the one thing this
+  // must never do.
+  if (Number.isFinite(op.medianMs) || isRatioOp(op)) return "ok";
+  return "error";
 }
 
 function noteFor(op) {
@@ -27,7 +61,76 @@ function noteFor(op) {
   } else if (op.valid === true) {
     bits.push("content verified");
   }
+  if (isRatioOp(op)) {
+    // The value is a factor; say so on the row, and show the pair it came from
+    // (`sample` is `"12.3 ms → 48.5 ms"`) so nobody reads it as a duration.
+    bits.push(
+      `scale factor ×${op.artifact}${op.sample ? ` (${op.sample})` : ""} — a ratio, not a duration, so the median column is n/a by design`,
+    );
+  } else if (isUnrankedByDesign(op)) {
+    // The measurement is published in full — median, min and the noise guard —
+    // just never in a column that ranks it. Withholding the number would be a
+    // different dishonesty from ranking it.
+    bits.push(
+      `NOT RANKED (informational) — measured ${fmtMs(op.medianMs)}${
+        Number.isFinite(op.minMs) && op.minMs !== op.medianMs ? `, min ${fmtMs(op.minMs)}` : ""
+      }${Number.isFinite(op.cvPct) ? `, CV ${op.cvPct.toFixed(1)}%` : ""}: ${
+        op.rankingNote ?? "this operation is not comparable across servers"
+      }`,
+    );
+  }
   return bits.join(" | ");
+}
+
+function fmtMs(ms) {
+  if (!Number.isFinite(ms)) return "n/a";
+  return ms >= 1000 ? `${(ms / 1000).toFixed(2)} s` : `${ms.toFixed(1)} ms`;
+}
+
+/**
+ * Which TypeScript engine answers this server's semantic questions?
+ *
+ * Same fairness axis the typecheck surface applies, for the same reason: Volar
+ * on the stock JavaScript tsdk and Volar on the tsgo (TNB) tsdk are the SAME
+ * Vue layer differing only in engine, so ranking them against each other
+ * measures TypeScript's Go rewrite rather than anything about the server. The
+ * engine is resolved by `resolveToolEngine()` — the function that classifies
+ * the very same tools on the typecheck surface — so the two surfaces cannot
+ * drift apart:
+ *
+ *   volar     → the tsdk is the repo's `typescript/lib`  → JS engine
+ *   volar-tnb → the tsdk is envs/tnb typescript-native-bridge → tsgo
+ *   vize      → drives its own bundled tsgo (Corsa)      → tsgo
+ *   verter    → driven through VERTER_TSGO_BIN           → tsgo
+ *
+ * A server whose type backend did not actually start still carries its declared
+ * engine here; that condition is reported separately and loudly on every one of
+ * its rows (`⚠ BACKEND FALLBACK`), which is where a reader must see it.
+ */
+const ENGINE_PEER = {
+  volar: "vue-tsc",
+  "volar-tnb": "vue-tsc-tnb",
+  vize: "vize-check",
+  verter: "verter-tsc",
+};
+
+const engineCache = new Map();
+
+export function engineForServer(serverId) {
+  if (!engineCache.has(serverId)) {
+    const peer = ENGINE_PEER[serverId];
+    let resolved = { engine: "unknown", label: "unknown engine" };
+    if (peer) {
+      try {
+        resolved = resolveToolEngine(peer);
+      } catch {
+        // Never let engine detection break a report; an unknown engine is its
+        // own comparison class, which errs towards not comparing.
+      }
+    }
+    engineCache.set(serverId, resolved);
+  }
+  return engineCache.get(serverId);
 }
 
 /**
@@ -55,6 +158,7 @@ export function buildIdeSurfaces(results) {
     const groups = opOrder.map(({ id, label }) => ({
       label,
       variants: rows.map((row) => {
+        const engine = engineForServer(row.server);
         const op = (row.ops ?? []).find((o) => o.id === id);
         if (!op) {
           return {
@@ -63,21 +167,37 @@ export function buildIdeSurfaces(results) {
             status: row.error ? "error" : "skipped",
             threading: "lsp",
             invocation: "lsp",
+            engine: engine.engine,
             notes: row.error ? `session failed: ${row.error}` : "operation not reported",
             error: row.error,
           };
         }
+        // A row that carries no ranked duration — a ratio, or an operation the
+        // suite declared uncomparable — keeps its timing OUT of the ranked
+        // columns. The number is not hidden: it is stated in the note and, for
+        // a real measurement, still listed under Raw runs.
+        const ranked = !isRatioOp(op) && !isUnrankedByDesign(op);
+        const timing = ranked
+          ? {
+              medianMs: op.medianMs,
+              minMs: op.minMs,
+              stddevMs: op.stddevMs,
+              cvPct: op.cvPct,
+            }
+          : {};
         return {
           id: `${row.server}-${id}`,
           label: row.label ?? row.server,
           status: statusOf(op),
-          medianMs: op.medianMs,
-          minMs: op.minMs,
-          stddevMs: op.stddevMs,
-          cvPct: op.cvPct,
-          runs: op.runs,
+          ...timing,
+          runs: op.runs?.length ? op.runs : undefined,
           artifactMedian: Number.isFinite(op.artifact) ? op.artifact : undefined,
-          artifactLabel: "Artifact",
+          // The suite names its own artifact when it is not a plain census —
+          // the scale rows put a 20→500 factor there, and a column headed
+          // "Artifact" invites reading it as a payload size.
+          artifactLabel: op.artifactLabel ?? "Artifact",
+          // Engines are ranked in separate tables — see engineForServer().
+          engine: engine.engine,
           // Informational on purpose. Across these operations the artifact is
           // sometimes a payload size, sometimes an item count, sometimes a
           // ratio — "produced less than the biggest" is only a work signal for
@@ -91,12 +211,45 @@ export function buildIdeSurfaces(results) {
           // just the ones that failed. A server whose type backend never
           // started is fast on the operations it still answers, and those are
           // exactly the rows where the reader needs to know why.
-          notes: [noteFor(op), row.backendFallback && `⚠ BACKEND FALLBACK — ${row.backendFallback}`]
+          notes: [
+            noteFor(op),
+            row.backendFallback && `⚠ BACKEND FALLBACK — ${row.backendFallback}`,
+            `engine: ${engine.label}`,
+          ]
             .filter(Boolean)
             .join(" | "),
         };
       }),
     }));
+
+    // Caveats the SUITES declared, carried into the published methodology. The
+    // hazard on `didOpen → first diagnostics` was documented in the suite's own
+    // header for months and never reached a reader of the report.
+    const allOps = rows.flatMap((r) => r.ops ?? []);
+    const rankingNotes = [
+      ...new Set(
+        allOps
+          .filter(isUnrankedByDesign)
+          .map(
+            (op) =>
+              `\`${op.label}\` is MEASURED BUT NOT RANKED: ${
+                op.rankingNote ?? "this operation is not comparable across servers"
+              } Its median column reads n/a; the measured time is on the row and under Raw runs.`,
+          ),
+      ),
+    ];
+    const ratioNote = allOps.some(isRatioOp)
+      ? [
+          "Rows whose value is a RATIO (`Scale × …`) have no median: the measurement is a factor, not a duration, and it is printed in the artifact column with the pair it came from. A ratio row is never given an invented time so that it can be ranked.",
+        ]
+      : [];
+    const engineNote = [
+      `Rows are split by the TypeScript ENGINE behind the server and ranked only within one engine — ${[
+        ...new Set(rows.map((r) => `${r.label ?? r.server} = ${engineForServer(r.server).label}`)),
+      ].join(
+        "; ",
+      )}. Volar on the stock JavaScript tsdk and Volar on the tsgo tsdk are the same Vue layer differing only in engine, so ranking them together would measure TypeScript's Go rewrite rather than the server. Same axis, same reason, same resolver as the typecheck surface.`,
+    ];
 
     surfaces.push({
       id: `ide-${suiteId}`,
@@ -108,6 +261,9 @@ export function buildIdeSurfaces(results) {
         "Ranked **per operation**, never pooled. These operations differ by orders of magnitude and answer unrelated questions, so one table each. A row that failed its content gate is shown in brackets and excluded from ranking — latency without a correct answer is not a comparable measurement.",
       methodology: [
         "Every operation carries a content gate; the timing is only ranked when the answer was verified correct.",
+        ...rankingNotes,
+        ...ratioNote,
+        ...engineNote,
         "Volar is measured as the two-process product it is: both halves are asked in parallel and the pair is charged the slower leg.",
         "A rejected leg counts as `no answer from this provider`, not as a failure of the pair — Volar's Vue half legitimately rejects methods it does not implement, and an editor routes those to the TypeScript half.",
         "Document URIs are compared normalised, never by string equality: the same file arrives percent-encoded and with a different drive-letter case from different servers.",
@@ -143,6 +299,9 @@ export function buildTypingLoopSurface(results, { parts = LOOP_PARTS } = {}) {
 
   for (const server of servers) {
     const label = results.find((r) => r.server === server)?.label ?? server;
+    // Same engine axis as the per-operation tables: a composite built from
+    // JS-engine components is not comparable to one built from tsgo components.
+    const engine = engineForServer(server).engine;
     const found = parts.map((p) => {
       const row = results.find((r) => r.server === server && r.suite === p.suite);
       // `opId` deliberately, not `op`: spreading `p` and then assigning `op`
@@ -162,6 +321,7 @@ export function buildTypingLoopSurface(results, { parts = LOOP_PARTS } = {}) {
         status: "skipped",
         threading: "lsp",
         invocation: "lsp",
+        engine,
         notes: `not measured: ${missing.map((m) => `${m.suite}/${m.opId}`).join(", ")} absent from this run`,
       });
       continue;
@@ -181,6 +341,7 @@ export function buildTypingLoopSurface(results, { parts = LOOP_PARTS } = {}) {
         minMs: total,
         threading: "lsp",
         invocation: "lsp",
+        engine,
         notes: `⚠ FAILED VALIDATION — ${failed.length} of ${parts.length} components failed their gate (${failed.map((f) => f.label).join(", ")}); the sum is shown for reference only. ${breakdown}`,
       });
       continue;
@@ -196,6 +357,7 @@ export function buildTypingLoopSurface(results, { parts = LOOP_PARTS } = {}) {
       cvPct: null,
       threading: "lsp",
       invocation: "lsp",
+      engine,
       throughput: "n/a",
       notes: `all components verified · ${breakdown}`,
     });
@@ -212,6 +374,7 @@ export function buildTypingLoopSurface(results, { parts = LOOP_PARTS } = {}) {
       "Measured in separate sessions and added, NOT observed as one continuous cycle — it is an indicative cost of one edit-and-look cycle, not a single stopwatch reading.",
       "A server is ranked only if it passed the content gate on every component. Adding a fast hover to a diagnostics number the server never earned would flatter exactly the servers that do the least work.",
       "Servers that failed a component are shown in brackets with the failing part named.",
+      "Composites are split by TypeScript engine and ranked only within one, exactly as the per-operation tables are — the same Vue layer on a JS engine and on tsgo would otherwise be compared as if they were different servers.",
     ],
   };
 }

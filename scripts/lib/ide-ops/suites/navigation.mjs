@@ -641,7 +641,33 @@ export function gateRename(edit, { templatePath, declPath, newName }) {
   };
 }
 
-/** codeAction: CodeAction[] and Command[] are both legal; both need a title. */
+/**
+ * codeAction: CodeAction[] and Command[] are both legal; both need a title.
+ *
+ * The operation is "offer a quick fix for THIS diagnostic" — the diagnostic is
+ * handed to every server as request input (see QUICK_FIX_DIAGNOSTIC). So a
+ * title alone is not the gate. Two ways a response can look like an answer and
+ * not be one, both of which the gate used to pass:
+ *
+ *   - an entry with a title and neither `edit` nor `command`: nothing an editor
+ *     could apply. The `actionable` count was already computed and printed in
+ *     the sample — `0/1 actionable` was reported next to `valid: true`, the
+ *     gate contradicting its own evidence.
+ *   - refactors only. `refactor.*` and `source.*` are, by the LSP kinds spec,
+ *     things you can always offer anywhere ("Move to a new file", "Organize
+ *     imports"); they are not a fix for the error at the cursor. A server that
+ *     offers only those has not answered this request. Volar's real response
+ *     carries `Change spelling to 'fixtureLabel'` (quickfix, with an edit) AND
+ *     `Move to a new file` (refactor) — the first is the answer, and it still
+ *     passes.
+ *
+ * An entry with NO `kind` counts as a candidate fix: `kind` is optional in the
+ * spec and a bare `Command[]` has nowhere to put one, so requiring it would
+ * fail a server for terseness rather than for behaviour. Only an explicitly
+ * declared refactor/source action is excluded — the server said what it was.
+ */
+const NON_FIX_KIND = /^(refactor|source)\b/;
+
 export function gateCodeActions(result) {
   const items = Array.isArray(result) ? result : result ? [result] : [];
   const titled = items.filter(
@@ -650,16 +676,26 @@ export function gateCodeActions(result) {
   // A CodeAction carries `edit` and/or a Command object; a bare Command carries
   // `command` as a string. Either one is actionable.
   const actionable = titled.filter((a) => a.edit != null || a.command != null);
+  const fixes = actionable.filter((a) => !NON_FIX_KIND.test(String(a.kind ?? "")));
+
+  const kinds = titled.map((a) => a.kind ?? "(no kind)");
+  let reason = "";
+  if (items.length === 0) reason = "codeAction returned nothing at the diagnostic";
+  else if (titled.length === 0) reason = "codeAction returned entries without a title";
+  else if (actionable.length === 0)
+    reason = `codeAction returned ${titled.length} titled entr${
+      titled.length === 1 ? "y" : "ies"
+    } with no \`edit\` and no \`command\` — nothing an editor could apply`;
+  else if (fixes.length === 0)
+    reason = `codeAction offered only refactor/source actions (${[...new Set(kinds)].join(
+      ", ",
+    )}) — no quick fix for the diagnostic it was handed`;
+
   return {
-    valid: titled.length > 0,
-    reason:
-      titled.length > 0
-        ? ""
-        : items.length === 0
-          ? "codeAction returned nothing at the diagnostic"
-          : "codeAction returned entries without a title",
+    valid: fixes.length > 0,
+    reason,
     sample: titled.length
-      ? `${actionable.length}/${titled.length} actionable :: ${titled
+      ? `${actionable.length}/${titled.length} actionable, ${fixes.length} quick fix :: ${titled
           .slice(0, 3)
           .map((a) => a.title)
           .join(" | ")}`

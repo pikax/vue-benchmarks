@@ -197,6 +197,106 @@ describe("measureVariants — result row shape", () => {
   });
 });
 
+/**
+ * `medianMs` is the number the whole report is sorted on and the number every
+ * published claim is made from. The series here is deliberately outlier-skewed
+ * so that median, mean, min, max and midrange are all DIFFERENT — a symmetric
+ * series like [10,20,30] cannot tell them apart, so swapping the ranking
+ * statistic would go unnoticed.
+ *
+ *   [10, 11, 12, 13, 154]  →  median 12 · mean 40 · min 10 · max 154 · mid 82
+ */
+describe("measureVariants — the ranking metric is the median of measured runs", () => {
+  const SKEWED = [10, 11, 12, 13, 154];
+
+  function skewedVariant(ids = ["a"], { warmupMs = 1000 } = {}) {
+    return recordingVariants(ids, {
+      value: (_id, phase, i) => (phase === "warmup" ? warmupMs : SKEWED[i]),
+    });
+  }
+
+  test("medianMs is the median — not the mean, min, max or midrange", async () => {
+    const { variants } = skewedVariant();
+
+    const [row] = await measureVariants(variants, { runs: SKEWED.length, warmups: 1 });
+
+    assert.deepEqual(row.runs, SKEWED);
+    assert.equal(row.medianMs, 12, "ranking metric must be the median");
+    // Every other candidate statistic over this series, spelled out so that
+    // swapping the metric for any of them fails here rather than silently
+    // re-ordering every table in the report.
+    assert.equal(row.meanMs, 40);
+    assert.equal(row.minMs, 10);
+    assert.equal(row.maxMs, 154);
+    for (const [what, value] of Object.entries({
+      mean: row.meanMs,
+      min: row.minMs,
+      max: row.maxMs,
+      midrange: (row.minMs + row.maxMs) / 2,
+    })) {
+      assert.notEqual(row.medianMs, value, `medianMs must not equal the ${what} for this series`);
+    }
+  });
+
+  test("an outlier moves the mean past a rival but must not move the ranking", async () => {
+    // Ranked on the median, `spiky` is the faster tool (10 vs 20). Ranked on
+    // the mean, `steady` wins (20 vs 30) — one slow run would have flipped the
+    // published ordering of two tools.
+    const variants = [
+      { id: "spiky", label: "Spiky", measure: ({ phase, iteration }) => (phase === "warmup" ? 1000 : [10, 10, 10, 10, 110][iteration]) },
+      { id: "steady", label: "Steady", measure: () => 20 },
+    ];
+
+    const rows = await measureVariants(variants, { runs: 5, warmups: 1 });
+    const byId = Object.fromEntries(rows.map((r) => [r.id, r]));
+
+    assert.equal(byId.spiky.medianMs, 10);
+    assert.equal(byId.steady.medianMs, 20);
+    assert.ok(byId.spiky.medianMs < byId.steady.medianMs, "median ranks spiky first");
+    // The same two rows ranked on the mean give the opposite answer.
+    assert.equal(byId.spiky.meanMs, 30);
+    assert.equal(byId.steady.meanMs, 20);
+    assert.ok(byId.steady.meanMs < byId.spiky.meanMs, "mean would rank steady first");
+  });
+
+  test("the ranking metric is taken over MEASURED runs only — warmups cannot move it", async () => {
+    // Four 1000ms warmups against five measured runs. Folded in, they would be
+    // the majority of the series and drag the median from 12 to 154.
+    const { variants, calls } = skewedVariant(["a"], { warmupMs: 1000 });
+
+    const [row] = await measureVariants(variants, { runs: SKEWED.length, warmups: 4 });
+
+    assert.equal(calls.filter((c) => c.phase === "warmup").length, 4);
+    assert.equal(row.warmupPasses, 4);
+    assert.deepEqual(row.runs, SKEWED, "warmup timings must never enter the series");
+    assert.equal(row.runs.length, SKEWED.length, "the series is exactly the measured runs");
+    assert.equal(row.medianMs, 12, "median of the measured runs");
+    assert.notEqual(row.medianMs, 154, "median of warmups+runs — warmups were folded in");
+    assert.equal(row.meanMs, 40, "mean of the measured runs");
+    assert.equal(row.maxMs, 154, "a 1000ms warmup is not the max");
+  });
+
+  test("CV% is stddev over the MEDIAN, not over the mean", async () => {
+    const { variants } = skewedVariant();
+
+    const [row] = await measureVariants(variants, { runs: SKEWED.length, warmups: 1 });
+
+    assert.equal(row.stddevMs, 63.738);
+    assert.equal(row.cvPct, 531.1, "63.738 / 12 * 100");
+    assert.notEqual(row.cvPct, 159.3, "63.738 / 40 * 100 — CV% was taken over the mean");
+  });
+
+  test("throughput is derived from the median, not from any other statistic", async () => {
+    const { variants } = skewedVariant();
+
+    const [row] = await measureVariants(variants, { runs: SKEWED.length, warmups: 1, fileCount: 120 });
+
+    assert.equal(row.throughput, formatThroughput(120, 12));
+    assert.equal(row.throughput, "10.0k files/s");
+    assert.notEqual(row.throughput, formatThroughput(120, row.meanMs));
+  });
+});
+
 describe("measureVariants — failure handling", () => {
   test("a variant whose measure() throws becomes an error row, not a fast row", async () => {
     const variants = [

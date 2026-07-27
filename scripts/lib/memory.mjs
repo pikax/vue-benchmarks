@@ -282,7 +282,14 @@ export function summarizeByteSeries(samplesBytes, baselineBytes = 0) {
   };
 }
 
-/** @deprecated alias */
+/**
+ * RSS summary in the flat `*RssMb` shape the worker protocol uses.
+ *
+ * Not an alias and not deprecated, despite how it was previously tagged: it
+ * reshapes `summarizeByteSeries`'s nested result into the flat keys
+ * `memory-worker.mjs` sends over the wire, and four call sites depend on that
+ * exact shape. Renaming or removing it changes the worker protocol.
+ */
 export function summarizeSamples(samplesBytes, baselineBytes) {
   const s = summarizeByteSeries(samplesBytes, baselineBytes);
   return {

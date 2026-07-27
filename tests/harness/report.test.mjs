@@ -10,7 +10,6 @@ import { describe, test } from "node:test";
 import assert from "node:assert/strict";
 
 import {
-  buildFairnessNotes,
   buildMethodologyNotes,
   renderFullMarkdown,
   renderSurfaceMarkdown,
@@ -56,6 +55,30 @@ function tableLabels(markdown, index = 0) {
   return collectMarkdownTables(markdown)[index].body.map((cells) => cells[0]);
 }
 
+/**
+ * Column layout of a rendered ranking table, by name, so an assertion says
+ * which column it means instead of an index nobody can check.
+ */
+const COL = {
+  tool: 0,
+  status: 1,
+  primary: 2,
+  min: 3,
+  stddev: 4,
+  cv: 5,
+  vsFastest: 6,
+  artifact: 7,
+  throughput: 8,
+  notes: 9,
+};
+
+/** `{ [label]: cells }` for the first (or nth) rendered table. */
+function rowsByLabel(markdown, index = 0) {
+  return Object.fromEntries(
+    collectMarkdownTables(markdown)[index].body.map((cells) => [cells[COL.tool], cells]),
+  );
+}
+
 describe("ranking order", () => {
   test("rows are sorted by median ascending regardless of declaration order", () => {
     const md = renderSurfaceMarkdown(
@@ -67,6 +90,33 @@ describe("ranking order", () => {
     );
 
     assert.deepEqual(tableLabels(md), ["Fast", "Middle", "Slow"]);
+  });
+
+  test("the ranking statistic is the median — mean, min and max each give a different answer", () => {
+    // Every row here is deliberately skewed so that no two candidate statistics
+    // agree. Ranked on the median the order is Spiky, Steady; ranked on the
+    // mean, the min or the max it is Steady, Spiky — and the "vs fastest"
+    // multiplier differs in all four. Rows whose median happens to equal their
+    // mean (the common test-fixture shape) cannot tell any of this apart.
+    const md = renderSurfaceMarkdown(
+      surface([
+        okRow({ label: "Spiky", medianMs: 100, meanMs: 500, minMs: 90, maxMs: 1900, stddevMs: 700 }),
+        okRow({ label: "Steady", medianMs: 200, meanMs: 150, minMs: 20, maxMs: 210, stddevMs: 5 }),
+      ]),
+    );
+
+    assert.deepEqual(tableLabels(md), ["Spiky", "Steady"], "sorted on the median");
+
+    const rows = rowsByLabel(md);
+    // The primary column prints the median itself, not a neighbouring statistic.
+    assert.equal(rows.Spiky[COL.primary], "**100.0 ms**");
+    assert.equal(rows.Steady[COL.primary], "**200.0 ms**");
+    // 200/100. Mean would be 500/150 = 3.33x, min 90/20 = 4.50x, max 1900/210 = 9.05x.
+    assert.equal(rows.Spiky[COL.vsFastest], "1.00x");
+    assert.equal(rows.Steady[COL.vsFastest], "2.00x");
+    for (const wrong of ["3.33x", "4.50x", "9.05x", "0.30x", "0.22x", "0.11x"]) {
+      assert.notEqual(rows.Steady[COL.vsFastest], wrong, `ranking baseline is not the ${wrong} statistic`);
+    }
   });
 
   test("error and skipped rows sort last and never become the fastest baseline", () => {
@@ -106,6 +156,189 @@ describe("ranking order", () => {
     }
     assert.ok(!md.includes("NaN"), "no NaN leaked into the rendered table");
     assert.ok(!md.includes("Infinity"), "no Infinity leaked into the rendered table");
+  });
+});
+
+/**
+ * `status: "unranked"` is the row for a tool that WAS measured but failed a
+ * validation gate (the planted-bug work gate, an empty-codegen check). Its
+ * timing is published for context and must be excluded from every comparison.
+ * Getting this wrong publishes the fastest number in the table as the winner
+ * while the row that produced it never did the work.
+ */
+describe("unranked rows — ⚠ failed validation", () => {
+  const unrankedRow = (overrides = {}) => ({
+    ...okRow({ label: "Cheat", medianMs: 10, ...overrides }),
+    status: "unranked",
+    throughput: "n/a",
+    notes: "unranked: failed planted-bug work gate (no template diagnostic)",
+    ...overrides,
+  });
+
+  function rendered(extra = []) {
+    return renderSurfaceMarkdown(
+      surface([
+        okRow({ label: "Fast", medianMs: 100 }),
+        okRow({ label: "Slow", medianMs: 200 }),
+        unrankedRow(),
+        ...extra,
+      ]),
+    );
+  }
+
+  test("its status cell reads ⚠ failed validation", () => {
+    assert.equal(rowsByLabel(rendered()).Cheat[COL.status], "⚠ failed validation");
+  });
+
+  test("its time is rendered in brackets, never as a plain ranking number", () => {
+    const cells = rowsByLabel(rendered()).Cheat;
+    assert.equal(cells[COL.primary], "(10.0 ms)", "median must be bracketed");
+    assert.equal(cells[COL.min], "(9.0 ms)", "min must be bracketed too");
+    // Bold is the ranked-row treatment; an unranked row must not wear it.
+    assert.ok(!cells[COL.primary].includes("**"), "an unranked time must not be bolded like a ranking");
+  });
+
+  test("it is excluded from the vs-fastest comparison", () => {
+    const rows = rowsByLabel(rendered());
+    assert.equal(rows.Cheat[COL.vsFastest], "not ranked");
+    assert.equal(rows.Cheat[COL.cv], "n/a", "no CV% for a row that is not competing");
+    assert.equal(rows.Cheat[COL.stddev], "n/a");
+    assert.equal(rows.Cheat[COL.throughput], "n/a", "throughput is a ranking number");
+  });
+
+  test("it is never counted as the fastest, even when it is the fastest number in the table", () => {
+    // Cheat's 10ms is the smallest median present. The baseline must still be
+    // Fast's 100ms, so Slow stays at 2.00x rather than 20.00x.
+    const rows = rowsByLabel(rendered());
+    assert.equal(rows.Fast[COL.vsFastest], "1.00x", "the fastest OK row is the baseline");
+    assert.equal(rows.Slow[COL.vsFastest], "2.00x");
+    assert.notEqual(rows.Slow[COL.vsFastest], "20.00x", "the unranked 10ms row became the baseline");
+  });
+
+  test("it shows its reason and sorts below every ranked row", () => {
+    const md = rendered();
+    assert.deepEqual(tableLabels(md), ["Fast", "Slow", "Cheat"]);
+    assert.match(
+      rowsByLabel(md).Cheat[COL.notes],
+      /failed planted-bug work gate \(no template diagnostic\)/,
+      "the reason a row is unranked must be on the row",
+    );
+  });
+
+  test("its raw runs are still published — the timing is reported, only the ranking is withheld", () => {
+    const md = rendered();
+    assert.ok(md.includes("- **Cheat**:"), "an unranked row's measured runs must still be visible");
+  });
+
+  test("an unranked row does not become the baseline for a class of its own either", () => {
+    // Sole survivor: with no OK row at all there is no baseline to invent.
+    const md = renderSurfaceMarkdown(surface([unrankedRow()]));
+    const [table] = collectMarkdownTables(md);
+    assert.equal(table.body[0][COL.vsFastest], "not ranked");
+    assert.ok(!md.includes("NaN"), "no NaN leaked into the rendered table");
+    assert.ok(!md.includes("Infinity"), "no Infinity leaked into the rendered table");
+  });
+});
+
+/**
+ * The artifact ⚠ guard. Timing alone cannot tell "fast" from "did less": a tool
+ * that emits a third of the code, or parses a third of the corpus, is quicker
+ * for reasons that have nothing to do with being better. A row materially below
+ * the largest artifact in its class is flagged so the number is not read at face
+ * value — except where MORE does not mean more work (a diagnostics census on a
+ * clean corpus), where the flag would scold the tools that are behaving.
+ */
+describe("artifact ⚠ guard", () => {
+  function artifactSurface(rows) {
+    return renderSurfaceMarkdown(
+      surface(rows.map(([label, medianMs, artifactMedian, extra = {}]) =>
+        okRow({ label, medianMs, artifactMedian, artifactLabel: "Code bytes", ...extra }),
+      )),
+    );
+  }
+
+  test("a row below half the class peak is flagged and told what share it produced", () => {
+    const md = artifactSurface([
+      ["Full", 300, 800],
+      ["Half", 200, 400],
+      ["Thin", 100, 200],
+    ]);
+    const rows = rowsByLabel(md);
+
+    assert.equal(rows.Thin[COL.artifact], "200 ⚠", "25% of the peak must be flagged");
+    assert.match(
+      rows.Thin[COL.notes],
+      /produced 25% of the largest artifact in this class — speed is not comparable/,
+    );
+    // Exactly 50% is the documented boundary and is NOT flagged.
+    assert.equal(rows.Half[COL.artifact], "400", "exactly half the peak is the boundary, not a warning");
+    assert.ok(!rows.Half[COL.notes].includes("produced"), rows.Half[COL.notes]);
+    assert.equal(rows.Full[COL.artifact], "800", "the peak itself is never flagged");
+    assert.ok(!rows.Full[COL.notes].includes("produced"), rows.Full[COL.notes]);
+  });
+
+  test("artifactPolarity informational suppresses the warning", () => {
+    const md = artifactSurface([
+      ["Full", 300, 800, { artifactPolarity: "informational" }],
+      ["Thin", 100, 200, { artifactPolarity: "informational" }],
+    ]);
+    const rows = rowsByLabel(md);
+
+    assert.equal(rows.Thin[COL.artifact], "200", "an informational census must not be flagged");
+    assert.ok(!rows.Thin[COL.notes].includes("⚠"), rows.Thin[COL.notes]);
+    assert.ok(!rows.Thin[COL.notes].includes("produced"), rows.Thin[COL.notes]);
+  });
+
+  test("polarity is per-row: an informational row is spared while its neighbour is not", () => {
+    const md = artifactSurface([
+      ["Full", 300, 800],
+      ["ThinWork", 100, 100],
+      ["ThinInfo", 50, 100, { artifactPolarity: "informational" }],
+    ]);
+    const rows = rowsByLabel(md);
+
+    assert.equal(rows.ThinWork[COL.artifact], "100 ⚠");
+    assert.equal(rows.ThinInfo[COL.artifact], "100");
+  });
+
+  test("the peak comes from ranked rows only — an unranked row cannot raise the bar", () => {
+    const md = renderSurfaceMarkdown(
+      surface([
+        okRow({ label: "Full", medianMs: 300, artifactMedian: 800 }),
+        okRow({ label: "Half", medianMs: 200, artifactMedian: 400 }),
+        {
+          ...okRow({ label: "Cheat", medianMs: 10, artifactMedian: 100_000 }),
+          status: "unranked",
+          notes: "failed validation",
+        },
+      ]),
+    );
+    const rows = rowsByLabel(md);
+
+    // Peak is Full's 800, so Half is exactly at the boundary and unflagged. If
+    // the unranked 100,000 counted, everything would be flagged.
+    assert.equal(rows.Half[COL.artifact], "400");
+    assert.equal(rows.Full[COL.artifact], "800");
+    assert.equal(rows.Cheat[COL.artifact], "(100,000)", "an unranked artifact is bracketed too");
+  });
+
+  test("a row with no artifact census renders n/a and is not flagged", () => {
+    const md = artifactSurface([
+      ["Full", 300, 800],
+      ["Unknown", 100, undefined],
+    ]);
+    const rows = rowsByLabel(md);
+
+    assert.equal(rows.Unknown[COL.artifact], "n/a");
+    assert.ok(!rows.Unknown[COL.notes].includes("produced"), rows.Unknown[COL.notes]);
+  });
+
+  test("the artifact column is titled by artifactLabel, so the census names its unit", () => {
+    const [table] = collectMarkdownTables(artifactSurface([["Full", 300, 800]]));
+    assert.equal(table.header[COL.artifact], "Code bytes");
+
+    const [plain] = collectMarkdownTables(renderSurfaceMarkdown(surface([okRow({ label: "A" })])));
+    assert.equal(plain.header[COL.artifact], "Artifact", "a surface with no label still names the column");
   });
 });
 
@@ -332,9 +565,5 @@ describe("methodology notes", () => {
     assert.match(text, /rotated/i, "order rotation must stay documented");
     assert.match(text, /separate tables|separately/i, "class separation must stay documented");
     assert.match(text, /CV% > 10/i, "the noise flag threshold must stay documented");
-  });
-
-  test("buildFairnessNotes is a pure alias of buildMethodologyNotes", () => {
-    assert.deepEqual(buildFairnessNotes(), buildMethodologyNotes());
   });
 });

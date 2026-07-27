@@ -11,9 +11,13 @@
  *
  * Ranking lives in the report layer, not here — this prints raw per-op results
  * so a suite author can see exactly what their gates returned.
+ *
+ * Each measured run gets a fresh workspace under `--work` (default `work-ide/`)
+ * and that workspace is REMOVED when the run ends. Pass `--keep-work` to keep
+ * them for debugging a suite by hand.
  */
 
-import { mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, rmdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { pathToFileUri } from "./lib/lsp-client.mjs";
@@ -40,11 +44,17 @@ function parseArgs(argv) {
     out: null,
     list: false,
     verbose: false,
+    // Generated workspaces are removed after each run. `--keep-work` is for
+    // debugging a suite by hand; it is never the default, because the default
+    // left one directory per suite × server × run behind (144 after a full CI
+    // pass), each holding a junction into the repo's node_modules.
+    keepWork: false,
   };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === "--list") args.list = true;
     else if (a === "--verbose") args.verbose = true;
+    else if (a === "--keep-work") args.keepWork = true;
     else if (a === "--suite") args.suite = argv[++i];
     else if (a === "--server") args.server = argv[++i];
     else if (a === "--runs") args.runs = Number(argv[++i]);
@@ -70,7 +80,34 @@ function fmt(ms) {
 
 let wsSeq = 0;
 
-async function runSuiteOnServer({ suite, server, workRoot, verbose }) {
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+/**
+ * Drop a finished workspace, retrying while the server lets go of it.
+ *
+ * `removeWorkspace()` (context.mjs) is the ONLY correct way to do this: every
+ * workspace contains a `node_modules` JUNCTION to the repo root, `rmSync`
+ * recursive fails EPERM on the link rather than following it, and following it
+ * would delete the repo's real node_modules. So the link is unlinked first and
+ * the rest removed after.
+ *
+ * The retry exists because `close()` returns as soon as the LSP shutdown
+ * handshake completes, and on Windows the process can still hold a handle into
+ * the directory for a few milliseconds after that. Bounded and best-effort: a
+ * workspace that survives all attempts is inert (every dir is unique), so this
+ * never fails a run — it just stops the runner leaving 144 of them behind after
+ * a full CI pass.
+ */
+async function cleanupWorkspace(wsDir) {
+  for (let attempt = 0; attempt < 4; attempt++) {
+    removeWorkspace(wsDir);
+    if (!existsSync(wsDir)) return true;
+    await sleep(100 * (attempt + 1));
+  }
+  return !existsSync(wsDir);
+}
+
+async function runSuiteOnServer({ suite, server, workRoot, verbose, keepWork }) {
   // Unique per run: a fresh server process per run is the point, and a previous
   // run's server may still hold handles into its workspace.
   const wsDir = join(workRoot, `${suite.id}-${server.id}-${++wsSeq}`);
@@ -86,7 +123,13 @@ async function runSuiteOnServer({ suite, server, workRoot, verbose }) {
   } catch (e) {
     return { ok: false, error: e.message, ops: [], stderr: ctx?.stderrTail?.() ?? "" };
   } finally {
+    // Close FIRST, then remove: the workspace is the server's project root.
     await ctx?.close?.();
+    if (keepWork) {
+      if (verbose) console.log(`    kept workspace ${wsDir}`);
+    } else if (!(await cleanupWorkspace(wsDir))) {
+      console.warn(`    ⚠ could not remove workspace ${wsDir} (still held); left in place`);
+    }
   }
 }
 
@@ -128,11 +171,25 @@ async function main() {
       // Warmups are discarded, as everywhere else in this repo: an unwarmed
       // first run measures JIT warmup for JS servers and nothing for native.
       for (let w = 0; w < Math.max(1, args.warmups); w++) {
-        await runSuiteOnServer({ suite, server, workRoot, verbose: false });
+        await runSuiteOnServer({
+          suite,
+          server,
+          workRoot,
+          verbose: false,
+          keepWork: args.keepWork,
+        });
       }
       const runs = [];
       for (let r = 0; r < Math.max(1, args.runs); r++) {
-        runs.push(await runSuiteOnServer({ suite, server, workRoot, verbose: args.verbose }));
+        runs.push(
+          await runSuiteOnServer({
+            suite,
+            server,
+            workRoot,
+            verbose: args.verbose,
+            keepWork: args.keepWork,
+          }),
+        );
       }
 
       const failed = runs.find((r) => !r.ok);
@@ -172,6 +229,13 @@ async function main() {
           reason: anyInvalid?.reason ?? "",
           sample: anyInvalid?.sample ?? o.samples[0]?.sample ?? "",
           artifact: o.samples[0]?.artifact,
+          // Carried, not re-derived. A suite may declare that its operation
+          // must not be RANKED (`ranked: false` + why), or name what its
+          // artifact number means; both are properties of the operation, and
+          // dropping them here is how a suite's own caveat stops reaching the
+          // report that publishes its numbers.
+          ...(o.ranked === false ? { ranked: false, rankingNote: o.rankingNote } : {}),
+          ...(o.artifactLabel ? { artifactLabel: o.artifactLabel } : {}),
         };
       });
 
@@ -179,7 +243,10 @@ async function main() {
       for (const op of ops) {
         const mark = op.valid === false ? "✗" : op.valid === true ? "✓" : "·";
         const art = op.artifact == null ? "" : `  [${op.artifact}]`;
-        console.log(`    ${mark} ${op.label.padEnd(34)} ${fmt(op.medianMs).padStart(10)}${art}`);
+        // Same marker the report uses, so a suite author sees at the console
+        // which of their operations will not carry a ranking.
+        const rank = op.ranked === false ? "  (not ranked)" : "";
+        console.log(`    ${mark} ${op.label.padEnd(34)} ${fmt(op.medianMs).padStart(10)}${art}${rank}`);
         if (op.valid === false) {
           console.log(`        reason: ${op.reason}`);
           if (op.sample) console.log(`        sample: ${JSON.stringify(op.sample.slice(0, 120))}`);
@@ -225,6 +292,18 @@ async function main() {
     mkdirSync(dirname(out), { recursive: true });
     writeFileSync(out, `${md}\n`);
     console.log(`Wrote ${out}`);
+  }
+
+  // The work root itself, only when this run emptied it. `rmdir` without
+  // `recursive` on purpose: it refuses on a non-empty directory, so a workspace
+  // this run could not remove — or anything a concurrent run is still using —
+  // is never taken with it.
+  if (!args.keepWork) {
+    try {
+      if (readdirSync(workRoot).length === 0) rmdirSync(workRoot);
+    } catch {
+      // Missing, non-empty or in use: leaving it is correct.
+    }
   }
 }
 

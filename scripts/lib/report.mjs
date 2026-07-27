@@ -354,7 +354,3 @@ export function buildMethodologyNotes() {
   ];
 }
 
-/** @deprecated use buildMethodologyNotes */
-export function buildFairnessNotes() {
-  return buildMethodologyNotes();
-}

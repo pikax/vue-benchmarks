@@ -259,9 +259,6 @@ export async function measureVariants(
   return results;
 }
 
-/** @deprecated renamed — order is rotated, not merely alternated. */
-export const measureVariantsAlternating = measureVariants;
-
 export function pathWithNodeBins(cwd) {
   const dirs = [];
   let current = cwd;

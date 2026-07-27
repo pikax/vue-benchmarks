@@ -38,6 +38,7 @@ import assert from "node:assert/strict";
 
 import {
   LIST_CONTEXTS,
+  SUITE,
   describeItem,
   findAllExpected,
   findExpected,
@@ -819,25 +820,158 @@ describe("resolve payloads", () => {
     assert.equal(importEdits(VIZE.resolvedAutoImport, "computed").length, 0);
   });
 
-  test("the Vue half rejects an item produced by the TypeScript half", () => {
-    // This is why the suite fans resolve out tolerantly instead of using
-    // `ask`, which awaits Promise.all and would fail 100% of Volar resolves.
-    assert.match(VOLAR.resolveVueHalfError, /Cannot read properties of undefined/);
-  });
-
-  test("the tsgo tsdk crashes computing the auto-import code action", () => {
-    // Volar/TNB returns the `computed` item and then cannot resolve it: a real
-    // defect, reported as valid:false with this text as the reason.
-    assert.match(VOLAR_TNB.resolveTsHalfError, /Debug Failure/);
-    assert.match(VOLAR_TNB.resolveTsHalfError, /getCompletionEntryCodeActionsAndSourceDisplay/);
-  });
-
   test("resolvedText tolerates every documentation shape LSP allows", () => {
     assert.equal(resolvedText({ documentation: "plain" }), "plain");
     assert.equal(resolvedText({ documentation: { kind: "markdown", value: "md" } }), "md");
     assert.equal(resolvedText({ detail: "d", documentation: { value: "m" } }), "d\nm");
     assert.equal(resolvedText({}), "");
     assert.equal(resolvedText(null), "");
+  });
+});
+
+/* ═══════════════════ the resolve gate, through the suite ══════════════════ */
+
+/**
+ * The resolve gate is not one of the helpers above. It lives inside
+ * SUITE.measure(), where it reads what the fan-out got back from each half —
+ * an item, an error, or both — and decides `valid`, `reason` and `sample`. So
+ * the two resolve captures are fed to it the only way that exercises it: by
+ * running the suite's own measure() over a context whose halves return them.
+ *
+ * Nothing below re-implements a gate. The inputs are the captured lists and
+ * each half's resolve behaviour; the fan-out, the richest-answer pick, the
+ * import-edit test and every verdict in the result are production code.
+ */
+
+/** Every probe measure() asks for, as the identity token the fake `ask` keys on. */
+const PROBE_IDS = [
+  "member",
+  "tag",
+  "prop",
+  "event",
+  "directive",
+  "slot",
+  "autoImport",
+  "warmScript",
+  "warmTemplate",
+  "warmAttribute",
+  "warmComponentAttribute",
+];
+
+/**
+ * Lists that satisfy measure()'s untimed readiness poll — `visible.value` from
+ * the script pipeline, SiblingCard's `ballast` from the component one. Neither
+ * is a measured context and neither computes an answer a gate below asks for;
+ * without them every case spends the poll's whole ~2.2s budget first.
+ */
+const READY_LISTS = {
+  warmScript: [{ label: "value", kind: 5 }],
+  warmComponentAttribute: [{ label: ":ballast", kind: 5 }],
+};
+
+/**
+ * Run the suite over captured payloads; returns its ops keyed by id.
+ *
+ * `client` is the Vue half and `hybrid` the TypeScript half, as createSession()
+ * assembles them. A half fails by throwing an Error whose message is the
+ * captured JSON verbatim: LspClient rejects with
+ * `new Error(JSON.stringify(msg.error))`, so that string is exactly what the
+ * suite reads off the wire.
+ */
+async function runMeasure({ lists, vueHalf, tsHalf }) {
+  const all = { ...READY_LISTS, ...lists };
+  const half = (fn) => async (_method, item) => fn(item);
+  const ops = await SUITE.measure({
+    server: { id: "capture" },
+    verbose: false,
+    ws: {
+      file: "/bench/Host.vue",
+      source: "",
+      probes: Object.fromEntries(PROBE_IDS.map((id) => [id, { probe: id }])),
+    },
+    pathToFileUri: (file) => `file://${file}`,
+    openDoc() {},
+    ask: async (_method, params) => ({
+      items: all[params.position.probe] ?? [],
+      isIncomplete: false,
+    }),
+    client: { sendRequest: half(vueHalf) },
+    hybrid: { request: half(tsHalf) },
+  });
+  return Object.fromEntries(ops.map((op) => [op.id, op]));
+}
+
+/** A half that rejects, the way LspClient surfaces a server error. */
+const rejectsWith = (message) => () => {
+  throw new Error(message);
+};
+
+describe("resolve gate — the captured payloads, through measure()", () => {
+  test("one half rejecting does not fail a resolve the other half answered", async () => {
+    // Volar's Vue half throws on an item the TypeScript half produced. This is
+    // why the suite fans resolve out tolerantly instead of using `ask`, which
+    // awaits Promise.all and would have failed 100% of Volar's resolves.
+    const ops = await runMeasure({
+      lists: { autoImport: VOLAR.autoImportSlice, member: VOLAR.member },
+      vueHalf: rejectsWith(VOLAR.resolveVueHalfError),
+      tsHalf: (item) =>
+        itemNames(item).has("computed") ? VOLAR.resolvedAutoImport : VOLAR.resolvedMember,
+    });
+    const resolve = ops["resolve-auto-import"];
+    assert.equal(resolve.valid, true, `should pass but failed: ${resolve.reason}`);
+    assert.equal(resolve.reason, "");
+    assert.match(resolve.sample, /edit "computed, "/);
+    // The list gate this resolve completes is not downgraded either.
+    assert.equal(ops["completion-auto-import"].valid, true);
+
+    // CONTROL — the pass above is earned by the import edit, not by the gate
+    // ignoring a half that failed. Same rejection from the Vue half, and the
+    // TypeScript half's own answer with its additionalTextEdits removed: the
+    // verdict flips, and the surviving error is quoted on the row.
+    const control = await runMeasure({
+      lists: { autoImport: VOLAR.autoImportSlice, member: VOLAR.member },
+      vueHalf: rejectsWith(VOLAR.resolveVueHalfError),
+      tsHalf: () => ({ ...VOLAR.resolvedAutoImport, additionalTextEdits: [] }),
+    });
+    assert.equal(control["resolve-auto-import"].valid, false);
+    assert.match(control["resolve-auto-import"].reason, /no import edit for `computed`/);
+    assert.match(control["resolve-auto-import"].reason, /Cannot read properties of undefined/);
+    assert.equal(control["completion-auto-import"].valid, false);
+  });
+
+  test("the tsgo tsdk crash fails the resolve and is named in the reason", async () => {
+    // Volar/TNB offers the `computed` item and then cannot resolve it. Its Vue
+    // half is the same @vue/language-server as the row above — only the tsdk
+    // differs — so it rejects the item it did not produce with the same error,
+    // and BOTH halves fail. Collapsed to a single value, the row would have
+    // carried the Vue half's misleading "not my item" error and discarded the
+    // actual defect; the gate must keep the crash.
+    const ops = await runMeasure({
+      lists: { autoImport: VOLAR_TNB.autoImportMatches, member: VOLAR.member },
+      vueHalf: rejectsWith(VOLAR.resolveVueHalfError),
+      tsHalf: rejectsWith(VOLAR_TNB.resolveTsHalfError),
+    });
+    const resolve = ops["resolve-auto-import"];
+    assert.equal(resolve.valid, false);
+    assert.match(resolve.reason, /Debug Failure/);
+    assert.match(resolve.reason, /getCompletionEntryCodeActionsAndSourceDisplay/);
+    assert.match(resolve.reason, /Cannot read properties of undefined/);
+    // The auto-import list gate is completed from this resolve, so it is
+    // downgraded too rather than reporting an import the editor never gets.
+    assert.equal(ops["completion-auto-import"].valid, false);
+    assert.match(ops["completion-auto-import"].reason, /no import edit on any entry/);
+
+    // CONTROL — the failure belongs to the payload, not to this harness. The
+    // same two-item list, with the TypeScript half answering as it does on the
+    // stock tsdk, turns both ops green.
+    const control = await runMeasure({
+      lists: { autoImport: VOLAR_TNB.autoImportMatches, member: VOLAR.member },
+      vueHalf: rejectsWith(VOLAR.resolveVueHalfError),
+      tsHalf: () => VOLAR.resolvedAutoImport,
+    });
+    assert.equal(control["resolve-auto-import"].valid, true);
+    assert.equal(control["resolve-auto-import"].reason, "");
+    assert.equal(control["completion-auto-import"].valid, true);
   });
 });
 

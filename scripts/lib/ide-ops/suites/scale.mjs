@@ -422,7 +422,7 @@ function median(nums) {
 }
 
 /** Build an Op record with the same field discipline `timed()` applies. */
-function op({ id, label, ms, valid, reason = "", sample = "", artifact }) {
+function op({ id, label, ms, valid, reason = "", sample = "", artifact, artifactLabel }) {
   return {
     id,
     label,
@@ -431,6 +431,10 @@ function op({ id, label, ms, valid, reason = "", sample = "", artifact }) {
     reason: String(reason).slice(0, 240),
     sample: String(sample ?? "").slice(0, 200),
     artifact,
+    // Optional: what the artifact number MEANS, when it is not a census. The
+    // ratio rows below put a scale factor there and a column headed "Artifact"
+    // invites reading it as a payload size.
+    ...(artifactLabel ? { artifactLabel } : {}),
   };
 }
 
@@ -660,6 +664,11 @@ async function measureSize(ctx, corpus) {
  * the time and the ratio lands in the artifact column. The row is invalid when
  * there is no gate-passing pair to divide, which is the honest reading: you
  * cannot quote a scale factor for a server that stopped answering correctly.
+ *
+ * `artifactLabel` is set so the report can head that column with what the
+ * number is. Nothing here may ever put a DURATION in `ms` to make these rows
+ * look like the other rows: the four headline rows of this suite carry a
+ * factor, and a report that cannot render a factor must be fixed in the report.
  */
 export function scalingOps(ops, sizes = SIZES) {
   const lo = sizes[0];
@@ -692,6 +701,7 @@ export function scalingOps(ops, sizes = SIZES) {
           : `no scale factor: missing timing for ${family}`,
       sample: usable ? `${a.ms.toFixed(1)} ms → ${b.ms.toFixed(1)} ms` : "",
       artifact: usable ? Number((b.ms / a.ms).toFixed(2)) : undefined,
+      artifactLabel: `Scale factor ${lo}→${hi} (×, lower is better)`,
     });
   });
 }
