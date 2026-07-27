@@ -215,7 +215,7 @@ export async function runJsxCompileSurface(fixtureDir, options) {
       "compiler-rs vapor vs interop:true (VDOM) are different codegen targets.",
       "@vue/babel-plugin-jsx is the classic Babel VDOM JSX path (comparison baseline).",
       "Do not compare JSX ms to SFC compile ms; different language and pipeline.",
-      "Measured runs alternate tool order each iteration.",
+      "Tool order is ROTATED on every warmup and measured run (not merely alternated), so no tool keeps a fixed position in the sequence.",
     ],
     variants: results,
   };

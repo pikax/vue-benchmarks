@@ -48,7 +48,8 @@ export async function runFormatSurface(fixtureDir, options) {
       package: "prettier",
       threading: "1t",
       invocation: "cli",
-      notes: "prettier --write *.vue (fresh copy each run)",
+      notes:
+        "prettier --write *.vue (fresh copy each run) · single-threaded by design",
       measure: () => {
         const cwd = nextCopy("prettier");
         const { ms } = runCommand(prettier, ["--write", "*.vue", "--log-level", "error"], {
@@ -77,9 +78,10 @@ export async function runFormatSurface(fixtureDir, options) {
       id: "oxfmt",
       label: "Oxfmt",
       package: "oxfmt",
-      threading: "1t",
+      threading: "max",
       invocation: "cli",
-      notes: "oxfmt --write (Vue-capable Oxc formatter; fresh copy each run)",
+      notes:
+        "oxfmt --write (Vue-capable Oxc formatter; fresh copy each run) · self-reports 32 threads on this box, so it is NOT ranked against single-threaded Prettier",
       measure: () => {
         const cwd = nextCopy("oxfmt");
         // oxfmt accepts paths; try write mode flags used by oxfmt CLI
@@ -106,9 +108,10 @@ export async function runFormatSurface(fixtureDir, options) {
       id: "vize-fmt",
       label: "Vize fmt",
       package: "vize",
-      threading: "1t",
+      threading: "unknown",
       invocation: "cli",
-      notes: "vize fmt --write (fresh copy each run)",
+      notes:
+        "vize fmt --write (fresh copy each run) · does not report thread usage; ranked apart rather than assumed single-threaded",
       measure: () => {
         const cwd = nextCopy("vize-fmt");
         const { ms } = runCommand(vize, ["fmt", "--write", "."], {

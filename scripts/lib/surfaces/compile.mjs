@@ -395,7 +395,10 @@ function buildCellVariants({
       measure: async () => {
         const key = `session-${cell}`;
         if (!hosts[key]) {
-          hosts[key] = new VerterHost({ devMode: !isProd });
+          // Must match the stateless row's host config. Omitting
+          // analysisLevel here made the session row run "full" while its own
+          // note printed whatever VERTER_ANALYSIS_LEVEL claimed.
+          hosts[key] = new VerterHost({ devMode: !isProd, analysisLevel: VERTER_ANALYSIS_LEVEL });
         }
         return timedSync(() => {
           const results = hosts[key].compileMany(batchInputs, {

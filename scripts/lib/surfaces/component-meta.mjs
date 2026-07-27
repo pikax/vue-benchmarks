@@ -192,7 +192,7 @@ export async function runComponentMetaSurface(fixtureDir, options) {
       "Extract component public API metadata (props/events/slots where supported).",
       "Same subset of .vue files for every available tool.",
       "Schema depth and TypeScript program options may differ by tool — timings are throughput, not equivalence.",
-      "Measured runs alternate tool order each iteration.",
+      "Tool order is ROTATED on every warmup and measured run (not merely alternated), so no tool keeps a fixed position in the sequence.",
       "Tools without a real component-meta API are reported as skipped (no substitute workload).",
     ],
     variants: results,

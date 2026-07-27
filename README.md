@@ -197,7 +197,7 @@ Harness shape: init → didOpen → hover cold/warm (same workspace, file, and p
 
 **Phases (in notes):** initialize · workspace ready (`n/a` if no signal) · **didOpen→hover** (primary ranking) · hover cold · hover warm median(5) · completion · definition.
 
-**Retry budget is identical for every server** (6 attempts × 20 s, same backoff). It used to be 6 attempts for Volar and 2 for everyone else — and because the backoff sleeps sit *inside* the timed `didOpen→hover` window, that handed Volar up to ~3 s of billable sleep the other servers could not incur, while hiding slow project spin-up. A server that needs the retries now pays for them.
+**Retry budget is identical for every server** (6 attempts × 60 s, same backoff). It used to be 6 attempts for Volar and 2 for everyone else — and because the backoff sleeps sit *inside* the timed `didOpen→hover` window, that handed Volar up to ~3 s of billable sleep the other servers could not incur, while hiding slow project spin-up. A server that needs the retries now pays for them.
 
 #### Hover content is gated in two places — and the template one is the Vue-specific one
 
@@ -311,11 +311,17 @@ pnpm bench:deep     # 9 runs, 2 warmups — use when CV% is high
 
 Timing alone cannot tell a fast tool from one that skipped the work. Every table carries an **artifact** count next to the timing — what the tool actually produced:
 
-| Surface | Artifact |
-| --- | --- |
-| compile / jsx-compile | emitted code bytes |
-| typecheck | diagnostics emitted |
-| lint | diagnostics emitted |
+| Surface | Artifact | Polarity |
+| --- | --- | --- |
+| compile | emitted code bytes | more = more work (⚠ below 50% of class peak) |
+| typecheck | diagnostics emitted | informational |
+| lsp / ide | hover bytes, item counts | informational |
+| **jsx-compile** | **none yet** | — |
+| **format** | **none yet** | — |
+| **lint** | **none yet** | — |
+| **component-meta** | **none yet** | — |
+
+⚠ **Four surfaces currently have no artifact census at all.** Their rows are ranked on time with nothing attesting that the tools produced comparable output — which is exactly the failure mode this column exists to catch. `component-meta` is the sharpest case: it publishes a ~20× spread with neither a gate nor an artifact, while the confirmation suite shows the faster tool extracting fewer events and slots. Treat those four surfaces' rankings as provisional until a census lands.
 
 Where **more genuinely means more work** (code bytes), a row below 50% of the largest artifact in its class is flagged ⚠ and its speed marked not comparable. Where the count is **informational** (diagnostics on a deliberately clean corpus, where zero is the correct answer) no such warning fires — otherwise the report would scold the well-behaved tools and reward one emitting noise about its own internals.
 

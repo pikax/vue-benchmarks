@@ -98,6 +98,24 @@ export const SUITE = {
       }),
     );
 
+    // JOIN the two probes, as the LSP surface does.
+    //
+    // Ranked independently, a server that leaks the <script setup> type into
+    // template context still takes #1 on the script probe — and the script
+    // probe is satisfiable by a pattern-matcher, which is the entire reason the
+    // template probe exists. Failing either means the hover answers are not
+    // trustworthy, so neither row is ranked.
+    const failed = ops.filter((o) => o.valid === false);
+    if (failed.length && failed.length < ops.length) {
+      for (const op of ops) {
+        if (op.valid === false) continue;
+        op.valid = false;
+        op.reason = `unranked because the paired probe failed (${failed
+          .map((f) => f.id)
+          .join(", ")}) — a hover that is right in one context and wrong in the other is not a comparable measurement`;
+      }
+    }
+
     return ops;
   },
 };
