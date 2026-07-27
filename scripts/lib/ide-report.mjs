@@ -87,7 +87,13 @@ export function buildIdeSurfaces(results) {
           threading: "lsp",
           invocation: "lsp",
           throughput: "n/a",
-          notes: noteFor(op),
+          // The backend-fallback warning goes on EVERY row for that server, not
+          // just the ones that failed. A server whose type backend never
+          // started is fast on the operations it still answers, and those are
+          // exactly the rows where the reader needs to know why.
+          notes: [noteFor(op), row.backendFallback && `⚠ BACKEND FALLBACK — ${row.backendFallback}`]
+            .filter(Boolean)
+            .join(" | "),
         };
       }),
     }));

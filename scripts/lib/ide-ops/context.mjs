@@ -106,6 +106,34 @@ export function normalizeUri(uri) {
   return u.replace(/^file:\/\/\/([A-Za-z]):/, (_m, d) => `file:///${d.toLowerCase()}:`);
 }
 
+/**
+ * Did the server come up on a DEGRADED backend?
+ *
+ * A server can initialize, answer every request and look healthy while its
+ * type-checking backend never started. Vize drives tsgo out-of-process as
+ * "Corsa"; when that session fails to spawn it logs to stderr and silently
+ * falls back to its own semantic analysis. Nothing in the LSP traffic shows it.
+ *
+ * This is REPORTED, never used to fail a row on its own — the per-operation
+ * gates already judge the answers. It exists so the reason a row is fast is
+ * never invisible. Omitting it is how a server ends up ranked first on
+ * questions its type backend cannot answer.
+ *
+ * @param {string} stderr bounded stderr tail from the server process
+ * @returns {string | null} human-readable reason, or null if nothing detected
+ */
+export function detectBackendFallback(stderr = "") {
+  if (!stderr) return null;
+  if (/corsa bridge (spawn failed|not available)/i.test(stderr)) {
+    const panic = /panic:\s*([^\n]+)/i.exec(stderr);
+    return `tsgo/Corsa backend did not start — answers come from the server's own semantic analysis, not a type checker${panic ? ` (${panic[1].trim().slice(0, 120)})` : ""}`;
+  }
+  if (/typecheck-unavailable/i.test(stderr)) {
+    return "server reports type checking unavailable in this workspace";
+  }
+  return null;
+}
+
 /** Servers this harness knows how to start. */
 export function resolveServers() {
   const out = [];

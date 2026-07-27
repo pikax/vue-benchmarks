@@ -17,7 +17,12 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { pathToFileUri } from "./lib/lsp-client.mjs";
-import { createSession, removeWorkspace, resolveServers } from "./lib/ide-ops/context.mjs";
+import {
+  createSession,
+  detectBackendFallback,
+  removeWorkspace,
+  resolveServers,
+} from "./lib/ide-ops/context.mjs";
 import { SUITES } from "./lib/ide-ops/registry.mjs";
 import { buildIdeSurfaces, buildTypingLoopSurface } from "./lib/ide-report.mjs";
 import { renderSurfaceMarkdown } from "./lib/report.mjs";
@@ -158,10 +163,10 @@ async function main() {
           label: o.label,
           medianMs: median(runs),
           minMs: runs.length ? Math.min(...runs) : null,
-          stddevMs: stddev,
+          stddevMs: runs.length > 1 ? stddev : null,
           // Noise guard, same as every other surface: a contended or throttled
           // box shows up here rather than silently widening every comparison.
-          cvPct: mean ? (stddev / mean) * 100 : null,
+          cvPct: runs.length > 1 && mean ? (stddev / mean) * 100 : null,
           runs,
           valid: anyInvalid ? false : o.samples.some((s) => s.valid === true) ? true : null,
           reason: anyInvalid?.reason ?? "",
@@ -180,7 +185,21 @@ async function main() {
           if (op.sample) console.log(`        sample: ${JSON.stringify(op.sample.slice(0, 120))}`);
         }
       }
-      results.push({ suite: suite.id, server: server.id, label: server.label, ops });
+      // Carry the backend-fallback signal through to the report. It was
+      // collected here and then dropped, which let a server whose type backend
+      // never started be ranked first on questions that backend answers.
+      const fallback = runs
+        .map((r) => detectBackendFallback(r.stderr))
+        .filter(Boolean)
+        .pop();
+      if (fallback) console.log(`      ⚠ BACKEND FALLBACK — ${fallback}`);
+      results.push({
+        suite: suite.id,
+        server: server.id,
+        label: server.label,
+        ops,
+        backendFallback: fallback ?? null,
+      });
     }
   }
 
