@@ -84,6 +84,28 @@ export function removeWorkspace(dir) {
   }
 }
 
+/**
+ * Canonical form of a document URI, for comparing URIs that name the same file.
+ *
+ * The same file genuinely arrives spelled three ways in one session:
+ * `file:///D:/…` from this client, `file:///d%3A/…` from Volar's tsserver half,
+ * and `file:///d:/…` from others. Keying diagnostics on the raw string silently
+ * dropped every diagnostic published by one half of Volar, which reads exactly
+ * like "this server publishes nothing" — a published lie rather than a missing
+ * feature. Never compare document URIs by string equality.
+ */
+export function normalizeUri(uri) {
+  if (typeof uri !== "string") return uri;
+  let u = uri;
+  try {
+    u = decodeURIComponent(u);
+  } catch {
+    // Malformed escapes: fall through with the raw string.
+  }
+  // Windows drive letters are case-insensitive; nothing else in a URI is.
+  return u.replace(/^file:\/\/\/([A-Za-z]):/, (_m, d) => `file:///${d.toLowerCase()}:`);
+}
+
 /** Servers this harness knows how to start. */
 export function resolveServers() {
   const out = [];
@@ -186,15 +208,23 @@ export async function createSession({ server, workspaceDir, initTimeoutMs = 45_0
   /** Resolvers waiting on a diagnostics predicate. */
   const diagWaiters = new Set();
 
-  client.on("notification", (method, params) => {
-    if (method !== "textDocument/publishDiagnostics") return;
-    diagnostics.set(params.uri, params.diagnostics ?? []);
+  // Diagnostics are keyed by NORMALIZED uri — see normalizeUri(). Volar's two
+  // halves publish the same file under different spellings.
+  const onDiagnostics = (params) => {
+    const key = normalizeUri(params.uri);
+    const list = params.diagnostics ?? [];
+    diagnostics.set(key, list);
     for (const w of [...diagWaiters]) {
-      if (w.test(params.uri, params.diagnostics ?? [])) {
+      if (w.test(key, list)) {
         diagWaiters.delete(w);
-        w.resolve(params.diagnostics ?? []);
+        w.resolve(list);
       }
     }
+  };
+
+  client.on("notification", (method, params) => {
+    if (method !== "textDocument/publishDiagnostics") return;
+    onDiagnostics(params);
   });
 
   const initializeStart = performance.now();
@@ -222,16 +252,30 @@ export async function createSession({ server, workspaceDir, initTimeoutMs = 45_0
     });
   }
 
-  /** Request, fanned out to every half, charged the slower. */
+  /**
+   * Request, fanned out to every half, charged the slower.
+   *
+   * `allSettled`, deliberately NOT `all`. Volar v3's Vue half rejects
+   * `-32601 Unhandled method` for everything it does not implement — verified
+   * for `typeDefinition` and `signatureHelp`, where the TypeScript half answers
+   * correctly and a real editor simply routes to it. Under `Promise.all` one
+   * half saying "not my job" became a failure of the pair, and a CORRECT server
+   * was reported as unable to perform the operation. That is the worst failure
+   * mode this harness has, so a rejected leg is treated as "no answer from this
+   * provider", exactly as an editor treats it.
+   *
+   * Both legs are still awaited, so the pair is still charged the slower one,
+   * and if EVERY leg rejects the error is preserved and rethrown — a genuine
+   * failure must still fail.
+   */
   const ask = async (method, params, timeoutMs = 30_000, merge) => {
     if (!hybrid) return client.sendRequest(method, params, timeoutMs);
-    const own = client.sendRequest(method, params, timeoutMs);
-    const ts = hybrid.request(method, params, timeoutMs);
-    // Promise.all settles on first rejection; without these the other leg can
-    // reject later unheard and take the process down.
-    own.catch(() => {});
-    ts.catch(() => {});
-    const [a, b] = await Promise.all([own, ts]);
+    const settled = await Promise.allSettled([
+      client.sendRequest(method, params, timeoutMs),
+      hybrid.request(method, params, timeoutMs),
+    ]);
+    if (settled.every((s) => s.status === "rejected")) throw settled[0].reason;
+    const [a, b] = settled.map((s) => (s.status === "fulfilled" ? s.value : null));
     if (merge) return merge(a, b);
     return resultSize(b) > resultSize(a) ? b : resultSize(a) ? a : b;
   };
@@ -267,8 +311,8 @@ export async function createSession({ server, workspaceDir, initTimeoutMs = 45_0
     if (hybrid) hybrid.changeDocument?.(uri, text, version);
   };
 
-  /** Latest push diagnostics seen for a uri. */
-  const diagnosticsFor = (uri) => diagnostics.get(uri) ?? [];
+  /** Latest push diagnostics seen for a uri (uri spelling-insensitive). */
+  const diagnosticsFor = (uri) => diagnostics.get(normalizeUri(uri)) ?? [];
 
   /**
    * Wait until a uri's diagnostics satisfy `test`, or time out.
@@ -277,10 +321,12 @@ export async function createSession({ server, workspaceDir, initTimeoutMs = 45_0
    */
   const waitForDiagnostics = (uri, test, timeoutMs = 15_000) =>
     new Promise((resolve) => {
-      const existing = diagnostics.get(uri);
-      if (existing && test(uri, existing)) return resolve(existing);
+      const key = normalizeUri(uri);
+      const existing = diagnostics.get(key);
+      if (existing && test(key, existing)) return resolve(existing);
       const waiter = {
-        test: (u, d) => u === uri && test(u, d),
+        // Compare normalized, never raw — see normalizeUri().
+        test: (u, d) => u === key && test(u, d),
         resolve,
       };
       diagWaiters.add(waiter);
