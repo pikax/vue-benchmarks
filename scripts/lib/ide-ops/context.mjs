@@ -126,7 +126,9 @@ export function detectBackendFallback(stderr = "") {
   if (!stderr) return null;
   if (/corsa bridge (spawn failed|not available)/i.test(stderr)) {
     const panic = /panic:\s*([^\n]+)/i.exec(stderr);
-    return `tsgo/Corsa backend did not start — answers come from the server's own semantic analysis, not a type checker${panic ? ` (${panic[1].trim().slice(0, 120)})` : ""}`;
+    // Same condition as surfaces/lsp.mjs reports; keep the wording identical so
+    // one detector cannot read as a harsher finding than the other.
+    return `tsgo/Corsa backend did not start — server answered from its own semantic analysis${panic ? ` (${panic[1].trim().slice(0, 120)})` : ""}`;
   }
   if (/typecheck-unavailable/i.test(stderr)) {
     return "server reports type checking unavailable in this workspace";

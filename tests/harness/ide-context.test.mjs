@@ -145,7 +145,15 @@ describe("detectBackendFallback — a degraded backend must never be invisible",
     const reason = detectBackendFallback(VIZE_SPAWN_FAILED);
     assert.equal(typeof reason, "string");
     assert.match(reason, /tsgo\/Corsa backend did not start/);
-    assert.match(reason, /not a type checker/, "the reason must say what the answers are NOT");
+    // The reason must name what DID answer, not only what failed to start —
+    // otherwise a reader cannot tell why the row is fast. Asserted on the
+    // substance rather than a particular adjective: this string is published
+    // in result tables, so it states the condition and draws no conclusion.
+    assert.match(
+      reason,
+      /answered from its own semantic analysis/,
+      "the reason must say what produced the answers instead",
+    );
   });
 
   test("`corsa bridge not available` is the same fallback", () => {
