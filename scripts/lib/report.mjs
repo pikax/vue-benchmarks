@@ -239,7 +239,8 @@ export function renderSurfaceMarkdown(surface) {
   // Compile matrix (and any future grouped surface)
   if (Array.isArray(surface.groups) && surface.groups.length > 0) {
     lines.push(
-      "Compile results are **grouped by target × environment × source map**, then by comparison class.",
+      surface.groupingNote ??
+        "Compile results are **grouped by target × environment × source map**, then by comparison class.",
     );
     lines.push("");
 

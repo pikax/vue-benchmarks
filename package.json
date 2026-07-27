@@ -52,7 +52,10 @@
     "confirm:component-meta": "node tests/confirm/run.mjs --surfaces component-meta",
     "smoke": "node scripts/generate.mjs --counts 20 && node scripts/bench.mjs --fixture fixtures/20 --runs 2 --warmups 1 --surfaces compile,jsx-compile,lint,typecheck,format,component-meta,lsp --check-file-limit 20 --meta-file-limit 20",
     "check": "node tests/confirm/run.mjs",
-    "prepublishOnly": "node -e \"console.error('This package is private and not published to npm.'); process.exit(1)\""
+    "prepublishOnly": "node -e \"console.error('This package is private and not published to npm.'); process.exit(1)\"",
+    "bench:ide": "node scripts/ide-bench.mjs",
+    "bench:ide:list": "node scripts/ide-bench.mjs --list",
+    "bench:ide:quick": "node scripts/ide-bench.mjs --suite smoke,completion --server all --runs 1"
   },
   "dependencies": {
     "@babel/core": "7.28.5",

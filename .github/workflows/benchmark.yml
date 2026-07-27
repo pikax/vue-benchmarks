@@ -21,6 +21,13 @@ name: Benchmark
 #            differences being measured, and sharding by surface would have
 #            reintroduced exactly that discrepancy. Nothing here samples memory.
 #
+#   ide    — SPEED, per-operation editor benchmarks. Its own job only because it
+#            churns dozens of language-server processes and repeatedly loads a
+#            500-file project; folding that into `bench` would put the load
+#            beside every compile and format measurement. Everything WITHIN the
+#            job is still one runner, so its operations stay comparable to each
+#            other — the same-VM rule is intact.
+#
 #   memory — MEMORY. Every surface again, including the language servers, with
 #            resource sampling turned up (nothing is timed, so sampling cost is
 #            free) and exact OS high-water marks folded in. Kept apart because a
@@ -196,6 +203,55 @@ jobs:
           retention-days: 30
 
   # ---------------------------------------------------------------------------
+  # IDE — per-operation editor benchmarks. SPEED group, but its own job.
+  #
+  # Separate from `bench` for one reason: it starts and stops dozens of language
+  # server processes and the scale suite loads a 500-file project several times
+  # over, so folding it into `bench` would put that load beside every compile
+  # and format measurement on the same box. Everything WITHIN this job stays on
+  # one runner, so operations remain comparable to each other — the rule is
+  # unchanged, it is the surrounding noise that is being kept out.
+  #
+  # Nothing here samples memory; that is the `memory` job's business.
+  # ---------------------------------------------------------------------------
+  ide:
+    name: IDE ops (Linux)
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/restore-workspace
+        with:
+          fixtures-artifact: fixtures-bench-linux
+          node-modules-cache-key: ${{ env.NM_CACHE_PREFIX }}-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', '.node-version') }}-${{ github.sha }}
+
+      - name: IDE operation suites (all servers)
+        env:
+          RUNNER_OS: ${{ runner.os }}
+        run: |
+          node scripts/ide-bench.mjs \
+            --suite all \
+            --server all \
+            --runs "${{ env.BENCH_RUNS }}" \
+            --warmups "${{ env.BENCH_WARMUPS }}" \
+            --json "results/ide-${{ runner.os }}.json" \
+            --out "results/ide-${{ runner.os }}.md"
+
+      - name: Upload IDE results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results-ide-linux
+          path: results/ide-*
+          if-no-files-found: warn
+          retention-days: 30
+
+  # ---------------------------------------------------------------------------
   # MEMORY — all surfaces incl. LSP. Isolated from the speed job on purpose.
   # ---------------------------------------------------------------------------
   memory:
@@ -249,14 +305,14 @@ jobs:
   # ---------------------------------------------------------------------------
   update-readme:
     name: Update README + MEMORY.md
-    needs: [bench, memory]
+    needs: [bench, ide, memory]
     runs-on: ubuntu-latest
     # Match rolldown: commit docs only on main (push / schedule / dispatch)
     if: >-
       always() &&
       github.ref == 'refs/heads/main' &&
       (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') &&
-      (needs.bench.result == 'success' || needs.memory.result == 'success')
+      (needs.bench.result == 'success' || needs.ide.result == 'success' || needs.memory.result == 'success')
     permissions:
       contents: write
 

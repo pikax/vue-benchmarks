@@ -19,6 +19,8 @@ import { fileURLToPath } from "node:url";
 import { pathToFileUri } from "./lib/lsp-client.mjs";
 import { createSession, removeWorkspace, resolveServers } from "./lib/ide-ops/context.mjs";
 import { SUITES } from "./lib/ide-ops/registry.mjs";
+import { buildIdeSurfaces, buildTypingLoopSurface } from "./lib/ide-report.mjs";
+import { renderSurfaceMarkdown } from "./lib/report.mjs";
 
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -30,6 +32,7 @@ function parseArgs(argv) {
     warmups: 1,
     work: "work-ide",
     json: null,
+    out: null,
     list: false,
     verbose: false,
   };
@@ -43,6 +46,7 @@ function parseArgs(argv) {
     else if (a === "--warmups") args.warmups = Number(argv[++i]);
     else if (a === "--work") args.work = argv[++i];
     else if (a === "--json") args.json = argv[++i];
+    else if (a === "--out") args.out = argv[++i];
   }
   return args;
 }
@@ -143,10 +147,22 @@ async function main() {
       }
       const ops = [...byOp.values()].map((o) => {
         const anyInvalid = o.samples.find((s) => s.valid === false);
+        const runs = o.samples.map((s) => s.ms).filter(Number.isFinite);
+        const mean = runs.length ? runs.reduce((a, b) => a + b, 0) / runs.length : null;
+        const stddev =
+          runs.length > 1
+            ? Math.sqrt(runs.reduce((a, b) => a + (b - mean) ** 2, 0) / (runs.length - 1))
+            : 0;
         return {
           id: o.id,
           label: o.label,
-          medianMs: median(o.samples.map((s) => s.ms)),
+          medianMs: median(runs),
+          minMs: runs.length ? Math.min(...runs) : null,
+          stddevMs: stddev,
+          // Noise guard, same as every other surface: a contended or throttled
+          // box shows up here rather than silently widening every comparison.
+          cvPct: mean ? (stddev / mean) * 100 : null,
+          runs,
           valid: anyInvalid ? false : o.samples.some((s) => s.valid === true) ? true : null,
           reason: anyInvalid?.reason ?? "",
           sample: anyInvalid?.sample ?? o.samples[0]?.sample ?? "",
@@ -173,6 +189,23 @@ async function main() {
     mkdirSync(dirname(out), { recursive: true });
     writeFileSync(out, `${JSON.stringify({ results }, null, 2)}\n`);
     console.log(`\nWrote ${out}`);
+  }
+
+  if (args.out) {
+    const md = [
+      "## IDE operation results",
+      "",
+      `- **Generated:** ${new Date().toISOString()}`,
+      `- **Runner:** ${process.platform}/${process.arch} · Node ${process.version}`,
+      `- **Runs / warmups:** ${args.runs} / ${Math.max(1, args.warmups)}`,
+      "",
+      ...buildIdeSurfaces(results).map((s) => renderSurfaceMarkdown(s)),
+      renderSurfaceMarkdown(buildTypingLoopSurface(results)),
+    ].join("\n");
+    const out = resolve(rootDir, args.out);
+    mkdirSync(dirname(out), { recursive: true });
+    writeFileSync(out, `${md}\n`);
+    console.log(`Wrote ${out}`);
   }
 }
 
