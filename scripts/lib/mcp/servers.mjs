@@ -2,17 +2,35 @@
  * Discover MCP servers to benchmark.
  *
  * ── STATUS: foundation only, no suite yet ──────────────────────────────────
- * Nothing imports this module or its sibling `client.mjs`. The MCP benchmark
- * is deliberately unfinished: `verter-mcp` is not published yet, and a
- * benchmark with one participant cannot rank anything, so the suite that would
- * consume this is waiting on a second implementation to compare against.
+ * Nothing imports this module or its sibling `client.mjs`. A benchmark with
+ * one working participant cannot rank anything, and as of 2026-07-27 that is
+ * still the position — though for a different reason than when this was
+ * written.
  *
- * Kept rather than deleted because publication is imminent. When it lands, the
- * suite ranks ONLY the single shared capability (see `CAPABILITY` below) and
- * treats everything else as unranked-but-validated, the same rule every other
- * surface here follows. Sentences below written in the present tense
- * ("callers refuse to rank a debug binary") describe that intended contract,
- * not code that exists today.
+ * Measured, both servers installed (verter-mcp 0.0.1-beta.3,
+ * @vizejs/musea-mcp-server 0.291.0). Both start and answer `tools/list`:
+ * verter-mcp exposes 49 tools, musea-mcp 13, with no exact-name overlap, so
+ * the hand-authored CAPABILITY map below is the only way to pair them. The
+ * pairing itself holds up — the two descriptions ask the same question:
+ *
+ *   verter-mcp get_component_api : "Get the public API surface of a Vue
+ *                                   component: props, emits, slots, models,
+ *                                   expose."
+ *   musea-mcp  analyze_component : "Statically analyze a Vue SFC to extract
+ *                                   its props and emits."
+ *
+ * Called on the same SFC, `get_component_api` returns a full answer (props,
+ * emits and slots all present). `analyze_component` fails:
+ *
+ *   MCP error -32603: analyzeSfc not available in native binding
+ *
+ * So the one shared capability is currently unrunnable on the musea side, and
+ * a ranked table would be a table of one. Kept because the blocker is an
+ * upstream defect rather than a design problem: re-run the check when musea
+ * ships a working binding.
+ *
+ * Sentences below written in the present tense ("callers refuse to rank a
+ * debug binary") describe the intended contract, not code that exists today.
  * ───────────────────────────────────────────────────────────────────────────
  *
  * Resolution mirrors `resolveVerterLsp`, in this order:
