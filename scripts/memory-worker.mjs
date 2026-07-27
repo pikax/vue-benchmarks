@@ -557,12 +557,52 @@ async function runInproc(task) {
   const handler = handlers[task.inproc.handler];
   if (!handler) throw new Error(`Unknown handler ${task.inproc.handler}`);
 
+  // Capture the handler's return. It used to be discarded by a void arrow,
+  // which is how the LSP rows came to publish THIS WORKER's RSS as if it were
+  // the language server's — understating the server by ~50x (1.45 MB published
+  // against 73 MB actually measured). `lspResource` existed and was collected;
+  // nothing ever read it.
+  let handlerResult = null;
   const result = await sampleWhile(
     async () => {
-      await handler(task.inproc.payload);
+      handlerResult = await handler(task.inproc.payload);
     },
     { pollMs: 15 },
   );
+
+  const lspResource = handlerResult?.lspResource ?? null;
+  if (lspResource) {
+    return {
+      ...result,
+      // The measured subject is the SERVER process, not this worker. Report the
+      // server's numbers, and keep the worker's under explicit `worker*` keys
+      // so the harness overhead stays inspectable rather than being mistaken
+      // for the result.
+      maxRssMb: lspResource.serverRssMaxMb ?? null,
+      avgRssMb: lspResource.serverRssAvgMb ?? null,
+      minRssMb: lspResource.serverRssAvgMb ?? null,
+      // The aggregator prefers delta* over *RssMb for in-process tasks, and for
+      // an LSP session the tool-attributed RSS IS the server's resident set —
+      // not a delta against this worker's baseline. Setting them consistently
+      // is what actually moves the published number; overriding only the
+      // *RssMb keys left `deltaAvgMb` winning the pick order.
+      deltaMaxMb: lspResource.serverRssMaxMb ?? null,
+      deltaAvgMb: lspResource.serverRssAvgMb ?? null,
+      deltaMinMb: lspResource.serverRssAvgMb ?? null,
+      workerMaxRssMb: result.maxRssMb ?? null,
+      workerAvgRssMb: result.avgRssMb ?? null,
+      workerDeltaMaxMb: result.deltaMaxMb ?? null,
+      cpu: {
+        ...(result.cpu ?? {}),
+        totalMs: lspResource.serverCpuMs ?? null,
+        workerTotalMs: result.cpu?.totalMs ?? null,
+      },
+      lspResource,
+      hoverValid: handlerResult?.hoverValid ?? null,
+      isolation: "lsp-session-server-process",
+      note: "RSS/CPU are the LANGUAGE SERVER process, sampled by the session. Worker-process figures are reported separately as worker*. NOTE: for Volar this covers the Vue server only — its tsserver half is a separate, larger process and is NOT included.",
+    };
+  }
 
   return {
     ...result,
