@@ -83,8 +83,8 @@ jobs:
           fixtures-artifact: fixtures-pr-linux
           node-modules-cache-key: ${{ env.NM_CACHE_PREFIX }}-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', '.node-version') }}
 
-      - name: Confirmation suite (correctness)
-        run: pnpm confirm
+      # Confirmation suite runs in test.yml on every pull_request; running it
+      # here too doubled ~60s of PR time for an identical result.
 
       - name: Throughput smoke (1 run, no warmups, not ranking)
         env:

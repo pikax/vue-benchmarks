@@ -9,7 +9,9 @@ Isolated from timing benchmarks: each tool runs in its **own process** so RSS, a
 | **CPU total / %**     | Process CPU when available                                    | `process.cpuUsage()`              |
 | **Wall**              | Elapsed while the tool ran                                    | Same                              |
 
-**CI:** Linux (`ubuntu-latest`) only, via the **Benchmark** workflow (`memory` job). Results below are auto-committed on `main` with `[skip ci]`.
+**CI:** Linux (`ubuntu-latest`) only, via the **Benchmark** workflow (`memory` job, manual dispatch). Results below are auto-committed on a `main` dispatch with `[skip ci]`.
+
+Each block below states the platform it came from and carries a per-row **Samples** column. `⚠` on a sample count means that row recorded **fewer** samples than were requested — its numbers rest on less evidence than its neighbours.
 
 Local:
 

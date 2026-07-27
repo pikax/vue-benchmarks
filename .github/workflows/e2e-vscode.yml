@@ -20,9 +20,6 @@ on:
         description: "Verter marketplace id"
         required: false
         default: "verter.verter-vscode"
-  schedule:
-    # Weekly Sunday
-    - cron: "0 8 * * 0"
 
 permissions:
   contents: read

@@ -1,0 +1,84 @@
+name: Test
+
+# VALIDATION ONLY. This workflow never publishes and never commits.
+#
+# It is the gate that runs on every pull request and every push to `main`:
+#
+#   tests/harness/run.mjs   — self-tests of the benchmark machinery itself
+#                             (measurement protocol, ranking/report rendering,
+#                             the planted-bug work gate, corpus preparation,
+#                             module wiring). Spawns no compiler, runs no
+#                             benchmark, finishes in seconds.
+#   tests/confirm/run.mjs   — correctness confirmation suite. Real tools, real
+#                             assertions; known upstream bugs are allowlisted in
+#                             tests/confirm/known-failures.json, an UNLISTED
+#                             failure fails the build.
+#
+# Neither suite reads the generated corpora, so there is no `scripts/generate.mjs`
+# step and no fixtures artifact: `pnpm install --frozen-lockfile` is the whole
+# setup. Publishing benchmarks is `benchmark.yml`, which is manual-dispatch only
+# because the `ide` job alone can run for 90 minutes — far too heavy to hang off
+# a pull request.
+#
+# LINUX ONLY, like every other workflow here. Platform-specific breakage
+# (Windows file locks, .cmd shims, path handling) is not covered by CI.
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: test-${{ github.event.pull_request.number || github.ref }}
+  # Superseded PR pushes are pointless; main pushes each get their own run.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  test:
+    name: Tests (Linux)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Both suites exit non-zero on failure and no step is `continue-on-error`,
+      # so either one failing fails the job and therefore the build.
+      - name: Harness self-tests
+        run: node tests/harness/run.mjs
+
+      - name: Confirmation suite (correctness)
+        run: node tests/confirm/run.mjs
+
+      # run.mjs writes results/confirm.{md,json} by default. Keep them on a
+      # failing run — that report is how you tell a new tool bug from a
+      # regression. Never committed; results/ is gitignored.
+      - name: Upload confirmation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: confirm-report-linux
+          path: |
+            results/confirm.md
+            results/confirm.json
+          if-no-files-found: ignore
+          retention-days: 7

@@ -1,9 +1,19 @@
 name: Benchmark
 
-# Full multi-pass benchmarks (main / schedule / manual).
-# Pattern mirrors rolldown/benchmarks:
-#   - measure on Linux only (see below)
-#   - on main, merge artifacts into README and auto-commit [skip ci]
+# Full multi-pass benchmarks. MANUAL DISPATCH ONLY — this is the only workflow
+# that ever writes README.md / MEMORY.md.
+#
+# Pattern mirrors rolldown/benchmarks (measure on CI, merge artifacts into the
+# README, auto-commit with [skip ci]) with one deliberate divergence: rolldown
+# runs its benchmark job on every push and pull request, we do not. The `ide`
+# job alone can take 90 minutes and `bench` another 8-9, so hanging this off a
+# pull request would burn hours of runner time per review round for numbers
+# nobody reads. Validation on PR / push lives in `test.yml` (harness + confirm,
+# a couple of minutes) and publishes nothing.
+#
+# There is no schedule. A published number should be traceable to a person who
+# asked for it, and a weekly cron that silently rewrites the README on a runner
+# nobody was watching is the opposite of that.
 #
 # Setup (install + fixtures) is done once in `build` and reused via
 # node_modules cache + fixtures artifact.
@@ -52,14 +62,6 @@ on:
         description: "Discarded warmup runs per tool (minimum 1)"
         required: false
         default: "1"
-  push:
-    branches: [main]
-    paths-ignore:
-      # Avoid loop when README-only auto-commits land ([skip ci] is belt+suspenders)
-      - "README.md"
-  schedule:
-    # Weekly Monday 06:00 UTC
-    - cron: "0 6 * * 1"
 
 permissions:
   contents: read
@@ -129,7 +131,7 @@ jobs:
   # enough that two reports merged from two VMs are not one measurement. Keeping
   # everything on one box removes that discrepancy entirely and means a
   # comparison class can never accidentally span machines as surfaces evolve.
-  # ~8-9 min per OS is a fine price for a main-push / weekly benchmark.
+  # ~8-9 min is a fine price for a benchmark somebody deliberately asked for.
   #
   # Surface ORDER matters: lsp runs last. It is the longest and its hover
   # retries heat the box, so running it first would leave every later surface
@@ -301,17 +303,31 @@ jobs:
           retention-days: 30
 
   # ---------------------------------------------------------------------------
-  # README + MEMORY.md update (rolldown-style): only on main
+  # README + MEMORY.md update (rolldown-style). The ONLY publishing job in the
+  # repository.
+  #
+  # Gate, explicitly and not by accident:
+  #   - workflow_dispatch only. A fork PR could not obtain `contents: write`
+  #     anyway, but "the token would have failed" is not a permission model —
+  #     the event is named here so the job cannot start from any other trigger.
+  #   - main only.
+  #   - at least one measurement job succeeded.
+  #
+  # `always()` plus an OR over the three results means a partial run still
+  # publishes what it has. That is safe now and was not before: both updaters
+  # LEAVE A SECTION UNTOUCHED when its artifacts are absent instead of
+  # substituting a "no artifacts found" placeholder, so a failed `bench` beside
+  # a passing `memory` can no longer erase the published bench tables and
+  # auto-commit the erasure.
   # ---------------------------------------------------------------------------
   update-readme:
     name: Update README + MEMORY.md
     needs: [bench, ide, memory]
     runs-on: ubuntu-latest
-    # Match rolldown: commit docs only on main (push / schedule / dispatch)
     if: >-
       always() &&
+      github.event_name == 'workflow_dispatch' &&
       github.ref == 'refs/heads/main' &&
-      (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') &&
       (needs.bench.result == 'success' || needs.ide.result == 'success' || needs.memory.result == 'success')
     permissions:
       contents: write
@@ -342,6 +358,9 @@ jobs:
       - name: Update MEMORY.md resource probe section
         run: node scripts/update-memory-readme.mjs --dir ./results
 
+      # `[skip ci]` still earns its keep now that this workflow no longer runs
+      # on push: the auto-commit lands on `main` and would otherwise trigger a
+      # full `test.yml` run for a docs-only change.
       - name: Commit docs (skip ci)
         uses: stefanzweifel/git-auto-commit-action@v5
         with:

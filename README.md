@@ -375,20 +375,23 @@ The **memory** probe stays a separate job on purpose — sampling RSS and CPU al
 
 ## CI layout
 
-| Workflow                                          | When                                              | What                                                                                                                              |
-| ------------------------------------------------- | ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| **PR** (`.github/workflows/pr.yml`)               | pull_request                                      | **Smoke only**: build → `pnpm confirm` + tiny `fixtures/20` throughput pass. **No** full bench, **no** README rewrite.            |
-| **Benchmark** (`.github/workflows/benchmark.yml`) | `main` push, weekly schedule, `workflow_dispatch` | build → **bench** (all timing surfaces, one Linux job) + **memory** → update `README.md` + [`MEMORY.md`](./MEMORY.md) |
-| **E2E VS Code**                                   | manual / weekly                                   | Heavy extension-host path (optional)                                                                                              |
+| Workflow                                          | When                                | What                                                                                                                                    |
+| ------------------------------------------------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| **Test** (`.github/workflows/test.yml`)           | pull_request, `main` push           | `tests/harness/run.mjs` + `tests/confirm/run.mjs`. Install only, no fixtures. **Publishes nothing.**                                    |
+| **PR** (`.github/workflows/pr.yml`)               | pull_request                        | **Smoke only**: build → `pnpm confirm` + tiny `fixtures/20` throughput pass. **No** full bench, **no** README rewrite.                  |
+| **Benchmark** (`.github/workflows/benchmark.yml`) | `workflow_dispatch` **only**        | build → **bench** + **ide** + **memory** → update `README.md` + [`MEMORY.md`](./MEMORY.md). The only workflow that commits.             |
+| **E2E VS Code**                                   | manual / weekly                     | Heavy extension-host path (optional)                                                                                                    |
 
 **All workflows run on `ubuntu-latest`.** One runner class for everything — measurement, correctness and E2E. Platform-specific breakage (Windows file locks, `.cmd` shims, path handling) is consequently **not covered by CI**; run `pnpm confirm` and `pnpm test:harness` locally on macOS/Windows if you need that signal.
+
+**Benchmarks do not run on push or pull request, and there is no schedule.** `ide` alone can take 90 minutes, so measuring on every review round would cost hours of runner time for numbers nobody reads — and a weekly cron that silently rewrites the README is a published number nobody asked for. Validation on PR/push is `test.yml`; measurement is a deliberate manual dispatch.
 
 Doc updates follow the [rolldown/benchmarks](https://github.com/rolldown/benchmarks) pattern:
 
 1. Measure on a single Linux runner; upload `results/*` artifacts.
-2. On `main` only, a final job downloads artifacts, runs `scripts/update-readme.mjs` and `scripts/update-memory-readme.mjs`, and **auto-commits** `README.md` + `MEMORY.md` with `[skip ci]`.
+2. On a `main` dispatch, a final job downloads artifacts, runs `scripts/update-readme.mjs` and `scripts/update-memory-readme.mjs`, and **auto-commits** `README.md` + `MEMORY.md` with `[skip ci]`.
 
-PRs never rewrite docs from partial smoke data.
+A section whose artifacts are missing — because its job failed, or was not part of the run — is **left exactly as published**. It is never replaced with a "no artifacts" placeholder, so a partial run can never erase good results and commit the erasure.
 
 Published resource numbers: **[MEMORY.md](./MEMORY.md)**.
 
@@ -483,8 +486,9 @@ fixtures/                   # generated corpora (gitignored)
 work/                       # ephemeral copies (gitignored)
 results/                    # local reports (gitignored)
 .github/workflows/
+  test.yml                  # harness + confirm on PR / main push (publishes nothing)
   pr.yml                    # PR smoke (pnpm confirm + tiny throughput pass)
-  benchmark.yml             # bench (all surfaces, one Linux VM) + memory → README
+  benchmark.yml             # manual dispatch: bench + ide + memory → README / MEMORY.md
   e2e-vscode.yml            # optional VS Code E2E
 ```
 
@@ -525,6 +529,16 @@ On `main`, Linux CI copies the latest report into **[MEMORY.md](./MEMORY.md)** (
 _No benchmark artifacts found yet. Run CI or `pnpm bench` locally._
 
 <!-- BENCHMARK_RESULTS_END -->
+
+## IDE operation results
+
+Per-operation editor benchmarks from the `ide` job (`scripts/ide-bench.mjs`). Ranked **per operation**, never pooled — `didOpen→diagnostics` and `foldingRange` differ by orders of magnitude and answer unrelated questions. Not comparable to the timing tables above: different job, different load profile.
+
+<!-- IDE_RESULTS_START -->
+
+_No IDE artifacts found yet. Run the Benchmark workflow or `pnpm bench:ide` locally._
+
+<!-- IDE_RESULTS_END -->
 
 ## Contributing
 
