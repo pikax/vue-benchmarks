@@ -7,6 +7,14 @@
  *   E2E_EXTENSION   marketplace id (Vue.volar | ubugeeei.vize | verter.verter-vscode)
  *   E2E_LABEL       display label
  *   E2E_RESULTS     path to write JSON results
+ *
+ * This file does the measuring and the gating and writes the raw result. It
+ * does NOT decide what ranks — scripts/e2e-vscode/report.mjs does, from the
+ * JSON, so those rules are testable without Electron.
+ *
+ * Everything with a decision in it lives in a sibling module for the same
+ * reason: suite/measure.cjs (activation, diagnostics), suite/probe-positions.cjs
+ * (where to hover), suite/hover-gate.cjs (whether the answer was right).
  */
 
 const assert = require("assert");
@@ -14,25 +22,17 @@ const fs = require("fs");
 const path = require("path");
 const vscode = require("vscode");
 
-function findSymbolPosition(source, symbol) {
-  if (!symbol) {
-    // Mid-file word token
-    const lines = source.split(/\r?\n/);
-    for (let i = Math.floor(lines.length * 0.3); i < lines.length; i++) {
-      const m = lines[i].match(/\b([A-Za-z_][A-Za-z0-9_]{3,})\b/);
-      if (m) return new vscode.Position(i, m.index);
-    }
-    return new vscode.Position(0, 0);
-  }
-  const lines = source.split(/\r?\n/);
-  for (let i = 0; i < lines.length; i++) {
-    const idx = lines[i].indexOf(`const ${symbol}`);
-    if (idx !== -1) return new vscode.Position(i, idx + "const ".length);
-    const idx2 = lines[i].indexOf(symbol);
-    if (idx2 !== -1) return new vscode.Position(i, idx2);
-  }
-  return new vscode.Position(0, 0);
-}
+const { activateSubject, waitForFirstDiagnostics } = require("./measure.cjs");
+const {
+  findScriptPosition,
+  findTemplatePosition,
+  findFallbackPosition,
+} = require("./probe-positions.cjs");
+const { classifyHover, classifyTemplateHover, hoverText } = require("./hover-gate.cjs");
+
+const DIAGNOSTICS_TIMEOUT_MS = 45_000;
+/** Bound the payload kept in the result file — it is there to audit the gate. */
+const PAYLOAD_KEEP_BYTES = 2000;
 
 function median(values) {
   const s = [...values].sort((a, b) => a - b);
@@ -40,53 +40,22 @@ function median(values) {
   return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
 }
 
-async function waitForExtension(id, timeoutMs = 60_000) {
-  if (!id) return null;
-  const ext = vscode.extensions.getExtension(id);
-  if (!ext) {
-    // list for debug
-    const vueish = vscode.extensions.all
-      .filter((e) => /vue|volar|vize|verter/i.test(e.id))
-      .map((e) => e.id);
-    throw new Error(
-      `Extension not found: ${id}. Vue-related loaded: ${vueish.join(", ") || "(none)"}`,
-    );
-  }
-  if (!ext.isActive) {
-    const t0 = performance.now();
-    await Promise.race([
-      ext.activate(),
-      new Promise((_, rej) =>
-        setTimeout(() => rej(new Error(`activate timeout ${id}`)), timeoutMs),
-      ),
-    ]);
-    return { ext, activateMs: performance.now() - t0 };
-  }
-  return { ext, activateMs: 0 };
+function toPosition(p) {
+  return new vscode.Position(p.line, p.character);
 }
 
-async function waitForDiagnostics(uri, timeoutMs = 30_000) {
+async function hoverAt(uri, position) {
   const t0 = performance.now();
-  // First check existing
-  let diags = vscode.languages.getDiagnostics(uri);
-  if (diags.length > 0) {
-    return { waitMs: performance.now() - t0, count: diags.length };
-  }
-  return await new Promise((resolve) => {
-    const timer = setTimeout(() => {
-      sub.dispose();
-      const d = vscode.languages.getDiagnostics(uri);
-      resolve({ waitMs: performance.now() - t0, count: d.length, timedOut: true });
-    }, timeoutMs);
-    const sub = vscode.languages.onDidChangeDiagnostics((e) => {
-      if (e.uris.some((u) => u.toString() === uri.toString())) {
-        clearTimeout(timer);
-        sub.dispose();
-        const d = vscode.languages.getDiagnostics(uri);
-        resolve({ waitMs: performance.now() - t0, count: d.length });
-      }
-    });
-  });
+  const hovers = await vscode.commands.executeCommand(
+    "vscode.executeHoverProvider",
+    uri,
+    position,
+  );
+  return {
+    ms: performance.now() - t0,
+    count: Array.isArray(hovers) ? hovers.length : 0,
+    text: hoverText(hovers),
+  };
 }
 
 suite("VS Code E2E Vue language extension", function () {
@@ -109,7 +78,18 @@ suite("VS Code E2E Vue language extension", function () {
     const fileAbs = path.join(workspacePath, fileRel);
     assert.ok(fs.existsSync(fileAbs), `probe file missing: ${fileAbs}`);
     const source = fs.readFileSync(fileAbs, "utf8");
-    const position = findSymbolPosition(source, probe.symbol);
+
+    // Where to hover, and whether the answer can be checked at all.
+    //
+    // `probe.symbol` is the planted marker. When it is present the probe has a
+    // known-correct answer at two positions and the row can be gated; when it
+    // is absent (a real cloned project) it cannot, and the row is measured but
+    // never ranked — see classifyRow in ../report.mjs.
+    const symbol = probe.symbol || null;
+    const templatePos = symbol ? findTemplatePosition(source, symbol) : null;
+    const scriptPos = symbol ? findScriptPosition(source, symbol) : null;
+    const gateable = Boolean(symbol && templatePos && scriptPos);
+    const position = toPosition(templatePos ?? findFallbackPosition(source));
 
     const result = {
       label,
@@ -117,42 +97,92 @@ suite("VS Code E2E Vue language extension", function () {
       workspace: workspacePath,
       kind: probe.kind,
       file: fileRel,
+      symbol,
       position: { line: position.line, character: position.character },
+      scriptPosition: scriptPos,
+      templatePosition: templatePos,
       platform: process.platform,
       vscodeVersion: vscode.version,
       phases: {},
       timestamp: new Date().toISOString(),
     };
 
-    // Activate target extension
+    // Activate target extension. Reported only when this run performed it.
     if (extensionId) {
-      const act = await waitForExtension(extensionId);
-      result.phases.activateMs = act.activateMs;
+      const ext = vscode.extensions.getExtension(extensionId);
+      if (!ext) {
+        const vueish = vscode.extensions.all
+          .filter((e) => /vue|volar|vize|verter/i.test(e.id))
+          .map((e) => e.id);
+        throw new Error(
+          `Extension not found: ${extensionId}. Vue-related loaded: ${vueish.join(", ") || "(none)"}`,
+        );
+      }
+      const activation = await activateSubject({ extension: ext, label: extensionId });
+      result.phases.activateMs = activation.activateMs;
+      result.phases.activateOutcome = activation.activateOutcome;
     } else {
       result.phases.activateMs = null;
+      result.phases.activateOutcome = "no-extension";
       result.notes = "No extension id — baseline vscode only";
     }
 
-    // Open document
+    // Open + diagnostics share ONE timeline with a common origin: the
+    // subscription is registered and the clock started before the open, so a
+    // server that publishes during the open is timed instead of scoring zero.
     const uri = vscode.Uri.file(fileAbs);
-    const tOpen0 = performance.now();
-    const doc = await vscode.workspace.openTextDocument(uri);
-    await vscode.window.showTextDocument(doc, { preview: false });
-    result.phases.openDocumentMs = performance.now() - tOpen0;
-
-    // Diagnostics settle (language service warm path)
-    const diag = await waitForDiagnostics(uri, 45_000);
+    const diag = await waitForFirstDiagnostics({
+      languages: vscode.languages,
+      uri,
+      timeoutMs: DIAGNOSTICS_TIMEOUT_MS,
+      openDocument: async () => {
+        const doc = await vscode.workspace.openTextDocument(uri);
+        await vscode.window.showTextDocument(doc, { preview: false });
+        return doc;
+      },
+    });
+    result.phases.openDocumentMs = diag.openMs;
     result.phases.diagnosticsWaitMs = diag.waitMs;
     result.phases.diagnosticsCount = diag.count;
-    result.phases.diagnosticsTimedOut = !!diag.timedOut;
+    result.phases.diagnosticsOutcome = diag.outcome;
+    result.phases.diagnosticsTimeoutMs = diag.timeoutMs;
+    result.phases.diagnosticsTimedOut = diag.outcome === "timeout";
 
-    // First hover (cold after open)
-    const tHover0 = performance.now();
-    let hovers = await vscode.commands.executeCommand("vscode.executeHoverProvider", uri, position);
-    result.phases.hoverColdMs = performance.now() - tHover0;
-    result.phases.hoverColdCount = Array.isArray(hovers) ? hovers.length : 0;
+    // First hover after open — the ranked measurement, taken at the template
+    // position because that is the Vue-specific one.
+    const cold = await hoverAt(uri, position);
+    result.phases.hoverColdMs = cold.ms;
+    result.phases.hoverColdCount = cold.count;
 
-    // Warm hover median
+    // Content gate. Both halves required, mirroring the LSP surface.
+    if (gateable) {
+      const scriptHover = await hoverAt(uri, toPosition(scriptPos));
+      // Recorded but never published as a latency: it is taken after the cold
+      // hover has already warmed the server, so it is not a cold number and
+      // must not be read as one. It exists to be classified.
+      result.phases.gateScriptHoverWarmMs = scriptHover.ms;
+      result.gate = {
+        applicable: true,
+        symbol,
+        template: classifyTemplateHover(cold.text),
+        script: classifyHover(scriptHover.text),
+        payloads: {
+          template: cold.text.slice(0, PAYLOAD_KEEP_BYTES),
+          script: scriptHover.text.slice(0, PAYLOAD_KEEP_BYTES),
+        },
+      };
+    } else {
+      result.gate = {
+        applicable: false,
+        symbol,
+        reason: symbol
+          ? `probe symbol \`${symbol}\` has no ${templatePos ? "script" : "template"} position in ${fileRel} — nothing to validate the hover answer against`
+          : "no planted marker in this workspace — the hover position has no known-correct answer, so latency here cannot be validated or compared",
+        payloads: { template: cold.text.slice(0, PAYLOAD_KEEP_BYTES) },
+      };
+    }
+
+    // Warm hover median at the same position as the cold one.
     const warm = [];
     for (let i = 0; i < 5; i++) {
       const t0 = performance.now();
@@ -192,14 +222,18 @@ suite("VS Code E2E Vue language extension", function () {
       result.phases.definitionError = String(e.message || e);
     }
 
-    // Primary metric for ranking tables
+    // Primary metric for ranking tables. Whether it is ALLOWED to rank is
+    // decided in ../report.mjs from the gate above — writing a number here is
+    // not the same as claiming it is comparable.
     result.primaryMs = result.phases.hoverColdMs;
     result.primaryMetric = "hoverColdMs";
 
     fs.mkdirSync(path.dirname(resultsPath), { recursive: true });
     fs.writeFileSync(resultsPath, JSON.stringify(result, null, 2) + "\n");
 
-    // Soft asserts — we still write results on partial failure
+    // Soft asserts — we still write results on partial failure. A failed gate
+    // is NOT a failed test: it is an unranked row, which is the report's job.
+    const doc = await vscode.workspace.openTextDocument(uri);
     assert.ok(doc.lineCount > 0, "document empty");
   });
 });

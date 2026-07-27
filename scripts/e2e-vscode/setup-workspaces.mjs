@@ -23,13 +23,76 @@ import {
   readFileSync,
 } from "node:fs";
 import { join, dirname, relative } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { spawnSync } from "node:child_process";
 
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../..");
 const e2eRoot = join(rootDir, "fixtures", "e2e");
 const DEFAULT_NUXT_UI_REF = process.env.NUXT_UI_REF || "v3.1.3";
 const NUXT_UI_REPO = "https://github.com/nuxt/ui.git";
+
+/**
+ * The planted hover marker. Deliberately the SAME identifier the LSP surface
+ * plants (`benchMarker`, see scripts/lib/lsp-workspace.mjs), declared the same
+ * way — `const benchMarker = ref('…')` in `<script setup>`, interpolated once
+ * as `{{ benchMarker }}` in the template.
+ *
+ * That shape is what makes the hover answer checkable: Vue auto-unwraps refs
+ * inside `{{ }}`, so the correct answer is `Ref<string>` at the declaration and
+ * `string` in the interpolation, and the E2E surface can reuse the LSP
+ * surface's classifiers verbatim rather than inventing a second notion of a
+ * correct hover. Rename it here and the gate stops recognising it — which is
+ * why every workspace refers to this constant instead of spelling it out.
+ *
+ * Workspaces that CANNOT carry a planted marker (the real Nuxt UI clone) leave
+ * `symbol` null. Those rows are measured and never ranked, because there is no
+ * known-correct answer at an arbitrary identifier in someone else's source.
+ */
+export const PROBE_SYMBOL = "benchMarker";
+
+/**
+ * The two gateable probe components, hoisted out of their setup functions and
+ * exported so tests/harness/e2e-vscode-probe.test.mjs can assert that both
+ * probe positions actually resolve in them. A workspace whose template stops
+ * interpolating the marker silently loses its gate; the test is what stops that
+ * being discovered in a published table.
+ */
+export const REGULAR_APP_SOURCE = `<template>
+  <main class="app">
+    <h1>{{ title }}</h1>
+    <p>{{ ${PROBE_SYMBOL} }}</p>
+    <Hello :name="title" @greet="onGreet" />
+  </main>
+</template>
+
+<script setup lang="ts">
+import { computed, ref } from 'vue'
+import Hello from './components/Hello.vue'
+
+/** Stable hover target for benchmarks — do not rename. */
+const ${PROBE_SYMBOL} = ref('regular-repo-probe')
+
+const title = computed(() => 'Regular ' + ${PROBE_SYMBOL}.value)
+
+function onGreet(msg: string): void {
+  ${PROBE_SYMBOL}.value = msg
+}
+</script>
+`;
+
+export const MONOREPO_BUTTON_SOURCE = `<template>
+  <button type="button" class="ui-btn" @click="$emit('click')">
+    <slot />{{ ${PROBE_SYMBOL} }}
+  </button>
+</template>
+<script setup lang="ts">
+import { ref } from 'vue'
+/** Stable monorepo hover target in shared package — do not rename. */
+const ${PROBE_SYMBOL} = ref('monorepo-ui-probe')
+defineEmits<{ click: [] }>()
+defineExpose({ ${PROBE_SYMBOL} })
+</script>
+`;
 
 function parseArgs(argv) {
   const args = {
@@ -123,28 +186,7 @@ function setupRegular() {
   writeVuePackage(dir, {
     name: "e2e-regular",
     files: {
-      "src/App.vue": `<template>
-  <main class="app">
-    <h1>{{ title }}</h1>
-    <p>{{ e2eMarker }}</p>
-    <Hello :name="title" @greet="onGreet" />
-  </main>
-</template>
-
-<script setup lang="ts">
-import { computed, ref } from 'vue'
-import Hello from './components/Hello.vue'
-
-/** Stable E2E hover target — do not rename. */
-const e2eMarker = ref('regular-repo-probe')
-
-const title = computed(() => 'Regular ' + e2eMarker.value)
-
-function onGreet(msg: string): void {
-  e2eMarker.value = msg
-}
-</script>
-`,
+      "src/App.vue": REGULAR_APP_SOURCE,
       "src/components/Hello.vue": `<template>
   <button type="button" @click="$emit('greet', name)">Hello {{ name }}</button>
 </template>
@@ -158,7 +200,7 @@ import App from './App.vue'
 createApp(App).mount('#app')
 `,
       "e2e-probe.json": `${JSON.stringify(
-        { kind: "regular", file: "src/App.vue", symbol: "e2eMarker" },
+        { kind: "regular", file: "src/App.vue", symbol: PROBE_SYMBOL },
         null,
         2,
       )}\n`,
@@ -182,19 +224,7 @@ function setupMonorepo() {
   writeVuePackage(join(dir, "packages", "ui"), {
     name: "@e2e/ui",
     files: {
-      "src/Button.vue": `<template>
-  <button type="button" class="ui-btn" @click="$emit('click')">
-    <slot />{{ monoMarker }}
-  </button>
-</template>
-<script setup lang="ts">
-import { ref } from 'vue'
-/** Stable monorepo hover target in shared package. */
-const monoMarker = ref('monorepo-ui-probe')
-defineEmits<{ click: [] }>()
-defineExpose({ monoMarker })
-</script>
-`,
+      "src/Button.vue": MONOREPO_BUTTON_SOURCE,
       "src/index.ts": `export { default as UiButton } from './Button.vue'\n`,
     },
   });
@@ -229,7 +259,7 @@ createApp(App).mount('#app')
       {
         kind: "monorepo",
         file: "packages/ui/src/Button.vue",
-        symbol: "monoMarker",
+        symbol: PROBE_SYMBOL,
       },
       null,
       2,
@@ -377,4 +407,9 @@ function main() {
   }
 }
 
-main();
+// Only run when executed directly. Importing this module — which the harness
+// tests do, to assert the probe components still carry a resolvable marker —
+// must not wipe and rewrite the fixture workspaces as a side effect.
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main();
+}

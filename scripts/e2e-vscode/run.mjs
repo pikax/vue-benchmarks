@@ -12,7 +12,8 @@
  *   - Same VS Code version for every cell
  *   - --disable-extensions then enable only the subject under test
  *   - Same workspaces (regular / monorepo / optional nuxt-ui)
- *   - Tables sort by measured primary metric
+ *   - Tables sort by measured primary metric, and ONLY rows that pass the
+ *     hover content gate are ranked (see ./report.mjs)
  *
  * Extensions (defaults — all on Marketplace):
  *   Vue.volar              Official Volar
@@ -43,6 +44,8 @@ import { join, dirname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { createRequire } from "node:module";
 import os from "node:os";
+
+import { renderMarkdown } from "./report.mjs";
 
 const require = createRequire(import.meta.url);
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -299,6 +302,46 @@ function ensureSubjectExtension({ vscodeExecutablePath, extDir, extension }) {
 const LAUNCH_TIMEOUT_MS = Number(process.env.E2E_LAUNCH_TIMEOUT_MS ?? 90_000);
 
 /**
+ * How to kill a wedged launch — scoped to the DOWNLOADED TEST BUILD only.
+ *
+ * The Windows branch used to be `taskkill /IM Code.exe /F /T`, which matches by
+ * image name and therefore kills every VS Code process on the machine: the
+ * developer's own editor, with whatever was unsaved in it, on any run where a
+ * launch happened to exceed the budget. On a benchmark box that is an
+ * annoyance; on a developer's box it is data loss, triggered by a timeout in an
+ * unrelated background task.
+ *
+ * The POSIX branch never had this problem — `pkill -f <path>` already matched
+ * the full executable path. This brings Windows to the same rule: match on
+ * ExecutablePath, so only the build under `.vscode-test/` is killed. Electron's
+ * renderer and extension-host children share that path, so they still go too.
+ *
+ * Exported for tests/harness/e2e-vscode-kill-scope.test.mjs.
+ *
+ * @param {string} vscodeExecutablePath absolute path to the test build
+ * @param {string} platform process.platform
+ */
+export function killLaunchCommand(vscodeExecutablePath, platform = process.platform) {
+  if (platform !== "win32") {
+    return { command: "pkill", args: ["-f", vscodeExecutablePath] };
+  }
+  const image = vscodeExecutablePath.split(/[/\\]/).pop();
+  // Single quotes are the escape character for themselves in PowerShell.
+  const quoted = vscodeExecutablePath.replace(/'/g, "''");
+  return {
+    command: "powershell",
+    args: [
+      "-NoProfile",
+      "-NonInteractive",
+      "-Command",
+      `Get-CimInstance Win32_Process -Filter "Name='${image}'" | ` +
+        `Where-Object { $_.ExecutablePath -eq '${quoted}' } | ` +
+        `ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }`,
+    ],
+  };
+}
+
+/**
  * Race a VS Code launch against the budget.
  *
  * On timeout the Electron process is killed rather than merely abandoned:
@@ -312,12 +355,8 @@ async function withLaunchTimeout(promise, label, vscodeExecutablePath) {
     timer = setTimeout(() => {
       const seconds = Math.round(LAUNCH_TIMEOUT_MS / 1000);
       try {
-        const exe = vscodeExecutablePath.split(/[/\\]/).pop();
-        if (process.platform === "win32") {
-          spawnSync("taskkill", ["/IM", exe, "/F", "/T"], { stdio: "ignore" });
-        } else {
-          spawnSync("pkill", ["-f", vscodeExecutablePath], { stdio: "ignore" });
-        }
+        const { command, args } = killLaunchCommand(vscodeExecutablePath);
+        spawnSync(command, args, { stdio: "ignore" });
       } catch {
         // Best effort — the rejection below is what matters.
       }
@@ -455,86 +494,18 @@ async function runOne({ workspaceName, extension, resultsDir }) {
   return resultFile;
 }
 
-function renderMarkdown(resultFiles) {
+/** Parse the result files this run wrote, skipping anything unreadable. */
+function readRows(resultFiles) {
   const rows = [];
   for (const f of resultFiles) {
     if (!f || !existsSync(f)) continue;
     try {
-      const j = JSON.parse(readFileSync(f, "utf8"));
-      rows.push(j);
+      rows.push(JSON.parse(readFileSync(f, "utf8")));
     } catch {
       // ignore
     }
   }
-
-  const lines = [];
-  lines.push("## VS Code E2E results");
-  lines.push("");
-  lines.push(
-    "Headless `@vscode/test-electron` runs. Primary metric: **hover cold** after open. Sorted within each workspace.",
-  );
-  lines.push("");
-  lines.push(
-    "Setup: same VS Code stable build; isolated `--extensions-dir` per subject; only that Vue extension installed.",
-  );
-  lines.push("");
-
-  const byWs = new Map();
-  for (const r of rows) {
-    const k = r.kind || r.workspace || "?";
-    if (!byWs.has(k)) byWs.set(k, []);
-    byWs.get(k).push(r);
-  }
-
-  for (const [ws, list] of byWs) {
-    lines.push(`### Workspace: ${ws}`);
-    lines.push("");
-    lines.push(
-      "| Extension | Status | Activate | Open | Diag wait | Hover cold | Hover warm | Completion | Definition |",
-    );
-    lines.push("| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |");
-    const ok = list
-      .filter((r) => r.status !== "error" && r.phases)
-      .sort((a, b) => (a.primaryMs ?? 1e12) - (b.primaryMs ?? 1e12));
-    const bad = list.filter((r) => r.status === "error" || !r.phases);
-    const fmt = (ms) =>
-      ms == null || !Number.isFinite(ms)
-        ? "n/a"
-        : ms >= 1000
-          ? `${(ms / 1000).toFixed(2)} s`
-          : `${ms.toFixed(0)} ms`;
-    for (const r of [...ok, ...bad]) {
-      if (r.status === "error") {
-        lines.push(`| ${r.label} | error | n/a | n/a | n/a | n/a | n/a | n/a | n/a |`);
-        continue;
-      }
-      const p = r.phases || {};
-      lines.push(
-        `| ${r.label} | ok | ${fmt(p.activateMs)} | ${fmt(p.openDocumentMs)} | ${fmt(p.diagnosticsWaitMs)} | ${fmt(p.hoverColdMs)} | ${fmt(p.hoverWarmMedianMs)} | ${fmt(p.completionMs)} | ${fmt(p.definitionMs)} |`,
-      );
-    }
-    lines.push("");
-  }
-
-  lines.push("<details><summary>Methodology</summary>");
-  lines.push("");
-  lines.push("- VS Code launched headless via `@vscode/test-electron` (stable channel).");
-  lines.push("- One subject extension per run in an isolated extensions directory.");
-  lines.push(
-    "- Workspaces: regular (single app), monorepo (shared package + app), optional real Nuxt UI clone.",
-  );
-  lines.push(
-    "- Primary ranking metric: first `vscode.executeHoverProvider` after open (hover cold).",
-  );
-  lines.push(
-    "- Diagnostics wait is time-to-first-publish or timeout — not identity of diagnostics.",
-  );
-  lines.push("- Marketplace defaults: Vue.volar, ubugeeei.vize, verter.verter-vscode.");
-  lines.push("- typescript-native-bridge is not an extension under test here.");
-  lines.push("");
-  lines.push("</details>");
-  lines.push("");
-  return lines.join("\n");
+  return rows;
 }
 
 async function main() {
@@ -580,14 +551,19 @@ Options:
     }
   }
 
-  const md = renderMarkdown(resultFiles);
+  const md = renderMarkdown(readRows(resultFiles));
   const mdPath = join(resultsRoot, "summary.md");
   writeFileSync(mdPath, md);
   console.log("\n" + md);
   console.log(`Wrote ${mdPath}`);
 }
 
-main().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+// Only run when executed directly. Importing this module — which the harness
+// tests do, to assert the timeout kill is scoped to the test build — must not
+// launch VS Code as a side effect.
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main().catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });
+}
