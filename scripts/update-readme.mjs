@@ -77,11 +77,16 @@ function main() {
       const content = readFileSync(file, "utf8").trim();
       const base = file.replace(/\\/g, "/");
       const leaf = base.split("/").pop() || base;
-      const platformGuess = base.includes("win32")
+      // Case-insensitive: local runs name files from `process.platform`
+      // ("linux"), CI names them from `runner.os` ("Linux"). Matching only the
+      // lowercase spelling made every CI artifact fall through to the fallback,
+      // which published the raw file path as the platform heading.
+      const baseLower = base.toLowerCase();
+      const platformGuess = baseLower.includes("win32")
         ? "Windows"
-        : base.includes("darwin")
+        : baseLower.includes("darwin") || baseLower.includes("macos")
           ? "macOS"
-          : base.includes("linux")
+          : baseLower.includes("linux") || baseLower.includes("ubuntu")
             ? "Ubuntu/Linux"
             : osTitle(base);
       let phase = "bench";
@@ -105,7 +110,11 @@ function main() {
   const readme = readFileSync(readmePath, "utf8");
   let next;
   if (readme.includes(START) && readme.includes(END)) {
-    next = readme.replace(new RegExp(`${START}[\\s\\S]*?${END}`), section);
+    // Replacer FUNCTION, not a string. A replacement string interprets `$&`,
+    // `` $` ``, `$'` and `$1`, so a results table containing any of them would
+    // splice the matched text (the whole old section) into the README. A
+    // function's return value is inserted literally.
+    next = readme.replace(new RegExp(`${START}[\\s\\S]*?${END}`), () => section);
   } else {
     next = `${readme.trimEnd()}\n\n## Reference results\n\n${section}\n`;
   }

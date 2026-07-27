@@ -139,8 +139,11 @@ export function buildTypingLoopSurface(results, { parts = LOOP_PARTS } = {}) {
     const label = results.find((r) => r.server === server)?.label ?? server;
     const found = parts.map((p) => {
       const row = results.find((r) => r.server === server && r.suite === p.suite);
-      const op = (row?.ops ?? []).find((o) => o.id === p.op);
-      return { ...p, op };
+      // `opId` deliberately, not `op`: spreading `p` and then assigning `op`
+      // overwrote the id string with the looked-up object, so the
+      // missing-component message printed `suite/undefined` — the one branch
+      // where the id is the only information the reader has.
+      return { ...p, opId: p.op, op: (row?.ops ?? []).find((o) => o.id === p.op) };
     });
 
     const missing = found.filter((f) => !f.op);
@@ -153,7 +156,7 @@ export function buildTypingLoopSurface(results, { parts = LOOP_PARTS } = {}) {
         status: "skipped",
         threading: "lsp",
         invocation: "lsp",
-        notes: `not measured: ${missing.map((m) => `${m.suite}/${m.op}`).join(", ")} absent from this run`,
+        notes: `not measured: ${missing.map((m) => `${m.suite}/${m.opId}`).join(", ")} absent from this run`,
       });
       continue;
     }

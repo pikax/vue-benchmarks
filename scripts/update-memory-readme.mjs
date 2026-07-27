@@ -70,7 +70,10 @@ function main() {
   const doc = readFileSync(memoryPath, "utf8");
   let next;
   if (doc.includes(START) && doc.includes(END)) {
-    next = doc.replace(new RegExp(`${START}[\\s\\S]*?${END}`), section);
+    // Replacer FUNCTION — see update-readme.mjs. A replacement string would
+    // interpret `$&` / `` $` `` / `$'` in any table cell and splice the matched
+    // text into the document.
+    next = doc.replace(new RegExp(`${START}[\\s\\S]*?${END}`), () => section);
   } else {
     next = `${doc.trimEnd()}\n\n${section}\n`;
   }
