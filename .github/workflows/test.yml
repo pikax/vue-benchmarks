@@ -42,7 +42,9 @@ jobs:
   test:
     name: Tests (Linux)
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # harness suite ~3s + confirm suite ~60s locally. 10 is generous even on a
+    # slow runner, and this gates every PR so it must fail fast rather than sit.
+    timeout-minutes: 10
     defaults:
       run:
         shell: bash

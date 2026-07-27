@@ -78,6 +78,12 @@ env:
   FIXTURE_COUNT: ${{ github.event.inputs.fixture_count || '200' }}
   BENCH_RUNS: ${{ github.event.inputs.bench_runs || '5' }}
   BENCH_WARMUPS: ${{ github.event.inputs.bench_warmups || '1' }}
+  # The IDE suites start a FRESH language server per pass, and the scale suite
+  # additionally loads a 500-file project per size per pass, so they do not get
+  # the same run count as the in-process throughput surfaces. Measured, not
+  # assumed: at --runs 5 the scale suite alone was ~10.8 min.
+  IDE_RUNS: "3"
+  IDE_SCALE_RUNS: "1"
 
 jobs:
   # ---------------------------------------------------------------------------
@@ -86,6 +92,10 @@ jobs:
   build:
     name: Build (Linux)
     runs-on: ubuntu-latest
+    # Install + fixture generation. Bounded like everything else: an unbounded
+    # job inherits GitHub's 6-hour default, so a hung install burns an
+    # afternoon instead of failing a check.
+    timeout-minutes: 10
     defaults:
       run:
         shell: bash
@@ -241,7 +251,12 @@ jobs:
     name: IDE ops (Linux)
     needs: build
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    # MEASURED at --runs 5: background 36s, completion 48s, edit-loop 208s,
+    # navigation 28s — ~5.4 min, and ~3.2 min at the --runs 3 used here. 10
+    # allows ~3x for a slower runner.
+    #
+    # The `scale` suite is NOT in this job; see `ide-scale`.
+    timeout-minutes: 10
     defaults:
       run:
         shell: bash
@@ -253,14 +268,14 @@ jobs:
           fixtures-artifact: fixtures-bench-linux
           node-modules-cache-key: ${{ env.NM_CACHE_PREFIX }}-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', 'envs/tnb/pnpm-lock.yaml', '.node-version') }}-${{ github.sha }}
 
-      - name: IDE operation suites (all servers)
+      - name: IDE latency suites (all servers)
         env:
           RUNNER_OS: ${{ runner.os }}
         run: |
           node scripts/ide-bench.mjs \
-            --suite all \
+            --suite background,completion,edit-loop,navigation,smoke \
             --server all \
-            --runs "${{ env.BENCH_RUNS }}" \
+            --runs "${{ env.IDE_RUNS }}" \
             --warmups "${{ env.BENCH_WARMUPS }}" \
             --json "results/ide-${{ runner.os }}.json" \
             --out "results/ide-${{ runner.os }}.md"
@@ -271,6 +286,60 @@ jobs:
         with:
           name: results-ide-linux
           path: results/ide-*
+          if-no-files-found: warn
+          retention-days: 30
+
+  # ---------------------------------------------------------------------------
+  # IDE-SCALE — the scale suite alone: 20 / 100 / 500 files x 4 servers.
+  #
+  # Split out because it is the single most expensive thing here — a full
+  # project load per size per server per pass — and at --runs 5 it was ~10.8 min
+  # on a 32-core box, more than the whole rest of the IDE work put together.
+  #
+  # Splitting it does NOT span a comparison. Every figure the scale suite
+  # publishes is a ratio WITHIN itself (the same server at 20 vs 500 files), so
+  # a separate runner changes the baseline for every one of its rows equally.
+  # That is the same test applied to e2e: sharding by workspace is fine, sharding
+  # by extension is not, because the latter would put two compared tools on
+  # different VMs.
+  # ---------------------------------------------------------------------------
+  ide-scale:
+    name: IDE scale (Linux)
+    needs: build
+    runs-on: ubuntu-latest
+    # MEASURED 3.6 min at 2 passes on a 32-core box, after the load budget went
+    # to 30s and larger sizes stopped being retried once a server fails
+    # time-to-usable. 10 allows ~2.7x for a slower runner.
+    timeout-minutes: 10
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/restore-workspace
+        with:
+          fixtures-artifact: fixtures-bench-linux
+          node-modules-cache-key: ${{ env.NM_CACHE_PREFIX }}-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', 'envs/tnb/pnpm-lock.yaml', '.node-version') }}-${{ github.sha }}
+
+      - name: IDE scale suite (all servers)
+        env:
+          RUNNER_OS: ${{ runner.os }}
+        run: |
+          node scripts/ide-bench.mjs \
+            --suite scale \
+            --server all \
+            --runs "${{ env.IDE_SCALE_RUNS }}" \
+            --warmups "${{ env.BENCH_WARMUPS }}" \
+            --json "results/ide-scale-${{ runner.os }}.json" \
+            --out "results/ide-scale-${{ runner.os }}.md"
+
+      - name: Upload IDE scale results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results-ide-scale-linux
+          path: results/ide-scale-*
           if-no-files-found: warn
           retention-days: 30
 
@@ -344,13 +413,15 @@ jobs:
   # ---------------------------------------------------------------------------
   update-readme:
     name: Update README + MEMORY.md
-    needs: [bench, ide, memory]
+    needs: [bench, ide, ide-scale, memory]
     runs-on: ubuntu-latest
+    # Download artifacts, run two updaters, one commit. Seconds of work.
+    timeout-minutes: 10
     if: >-
       always() &&
       github.event_name == 'workflow_dispatch' &&
       github.ref == 'refs/heads/main' &&
-      (needs.bench.result == 'success' || needs.ide.result == 'success' || needs.memory.result == 'success')
+      (needs.bench.result == 'success' || needs.ide.result == 'success' || needs['ide-scale'].result == 'success' || needs.memory.result == 'success')
     permissions:
       contents: write
 
@@ -408,6 +479,6 @@ jobs:
             run never erases results it did not measure.
 
             fixtures: ${{ env.FIXTURE_COUNT }} SFCs · runs: ${{ env.BENCH_RUNS }} · warmups: ${{ env.BENCH_WARMUPS }}
-            bench: ${{ needs.bench.result }} · ide: ${{ needs.ide.result }} · memory: ${{ needs.memory.result }}
+            bench: ${{ needs.bench.result }} · ide: ${{ needs.ide.result }} · ide-scale: ${{ needs['ide-scale'].result }} · memory: ${{ needs.memory.result }}
             Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           file_pattern: README.md MEMORY.md

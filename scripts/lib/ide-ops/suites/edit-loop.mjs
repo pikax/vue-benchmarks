@@ -149,10 +149,26 @@ const parentLabel = 'parent-text'
 // Timing budget — identical for every server, no exceptions.
 // ---------------------------------------------------------------------------
 
-const OPEN_DIAGNOSTICS_TIMEOUT_MS = 20_000;
-const EDIT_DIAGNOSTICS_TIMEOUT_MS = 12_000;
-const PULL_DIAGNOSTICS_TIMEOUT_MS = 10_000;
-const HOVER_TIMEOUT_MS = 20_000;
+// Sized from MEASURED need, not from caution. On this corpus the servers that
+// answer do so in:
+//
+//     didOpen -> first diagnostics     389 ms - 944 ms
+//     edit -> diagnostic reported      385 ms / 433 ms / 558 ms
+//     cross-file hover converge        447 ms
+//
+// The previous budgets were 20-50x that, and the cost was not hypothetical: a
+// server that never publishes burns the WHOLE budget on every failing op, on
+// every pass. Two such ops at 12s was ~36s of dead time per pass, i.e. ~3.6 of
+// the 5.8 minutes this suite took at --runs 5.
+//
+// These are still 7-9x the slowest observed success, and remain IDENTICAL for
+// every server — the point is to stop paying 20x for a known non-answer, not to
+// make anything harder to pass. A server that legitimately needs longer should
+// have these raised for everybody, with the measurement that justifies it.
+const OPEN_DIAGNOSTICS_TIMEOUT_MS = 8_000;
+const EDIT_DIAGNOSTICS_TIMEOUT_MS = 4_000;
+const PULL_DIAGNOSTICS_TIMEOUT_MS = 4_000;
+const HOVER_TIMEOUT_MS = 8_000;
 /**
  * A diagnostics state must survive this long to count.
  *
@@ -179,7 +195,9 @@ const STEADY_EDITS = 10;
  * "wrong for 450ms" and "wrong forever" become the same row. Re-asking turns
  * the difference into a number.
  */
-const HOVER_CONVERGE_TIMEOUT_MS = 6_000;
+// 3s: the one server that converges does so in 447ms. The one that never
+// reports the type burned the full 6s on every pass.
+const HOVER_CONVERGE_TIMEOUT_MS = 3_000;
 const HOVER_POLL_MS = 200;
 
 // ---------------------------------------------------------------------------
