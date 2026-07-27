@@ -5,10 +5,10 @@ name: Benchmark
 #
 # Pattern mirrors rolldown/benchmarks (measure on CI, merge artifacts into the
 # README, auto-commit with [skip ci]) with one deliberate divergence: rolldown
-# runs its benchmark job on every push and pull request, we do not. The `ide`
-# job alone can take 90 minutes and `bench` another 8-9, so hanging this off a
-# pull request would burn hours of runner time per review round for numbers
-# nobody reads. Validation on PR / push lives in `test.yml` (harness + confirm,
+# runs its benchmark job on every push and pull request, we do not. Measured on
+# a 32-core box: bench 4.2 min, memory 4.8 min, and ide dominated by repeated
+# 500-file project loads — hanging that off a pull request would burn runner
+# time per review round for numbers nobody reads. Validation on PR / push lives in `test.yml` (harness + confirm,
 # a couple of minutes) and publishes nothing.
 #
 # There is no schedule. A published number should be traceable to a person who
@@ -25,7 +25,10 @@ name: Benchmark
 # Two job groups, matching how the harness itself is split: SPEED and MEMORY
 # are always separate runs, never the same one.
 #
-#   bench  — SPEED. Every timing surface in ONE job (~8-9 min). All numbers in a
+#   bench  — SPEED. Every timing surface in ONE job. MEASURED at 4.2 min on a
+#            32-core box with --runs 5: lint 100s, typecheck 76s, format 33s,
+#            lsp 25s, component-meta 9s, compile 8s, jsx-compile 2s.
+#            All numbers in a
 #            report come off the same VM, so no result is ever merged across
 #            runners. Runner-to-runner variance is easily larger than the
 #            differences being measured, and sharding by surface would have
@@ -138,12 +141,14 @@ jobs:
   # BENCH — EVERY surface, one job per OS. All numbers in a report come off the
   # same VM.
   #
-  # Splitting by surface would have been faster (LSP is ~376s and dominates),
+  # Splitting by surface would shave some wall time (lint 100s and typecheck 76s
+  # are the two biggest; LSP is only 25s now that Volar no longer times out
+  # 6 x 60s per run — the old "~376s and dominates" note predated that fix),
   # but it puts each surface on a different runner, and GitHub runners vary
   # enough that two reports merged from two VMs are not one measurement. Keeping
   # everything on one box removes that discrepancy entirely and means a
   # comparison class can never accidentally span machines as surfaces evolve.
-  # ~8-9 min is a fine price for a benchmark somebody deliberately asked for.
+  # 4.2 min measured is a fine price for a benchmark somebody asked for.
   #
   # Surface ORDER matters: lsp runs last. It is the longest and its hover
   # retries heat the box, so running it first would leave every later surface
@@ -157,7 +162,11 @@ jobs:
     name: Bench (Linux)
     needs: build
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    # MEASURED 4.2 min on a 32-core box at --runs 5. 10 allows ~2.4x for a
+    # slower 2-core CI runner. If a run ever approaches this, cut --runs
+    # before raising the ceiling: a ceiling that merely accommodates the
+    # runtime tells you nothing.
+    timeout-minutes: 10
     defaults:
       run:
         shell: bash
@@ -272,7 +281,8 @@ jobs:
     name: Memory (Linux, all surfaces)
     needs: build
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    # MEASURED 4.8 min on a 32-core box at --samples 3. 10 allows ~2x for CI.
+    timeout-minutes: 10
     defaults:
       run:
         shell: bash

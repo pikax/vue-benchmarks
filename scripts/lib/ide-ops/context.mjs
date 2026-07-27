@@ -261,10 +261,20 @@ export async function createSession({ server, workspaceDir, initTimeoutMs = 45_0
       typescript: { tsdk: server.tsdk },
       vue: {},
       volar: {},
-      // Vize's tsgo/Corsa IDE backend is opt-in; without it the server answers
-      // from its own semantic analysis. Enabled here so every suite measures
-      // the product the extension ships, not a default-off subset.
-      languageServer: { corsa: true, tsgo: true, typecheck: true, editor: true },
+      // FLAT, not nested. Vize reads these as top-level keys; a
+      // `languageServer: {...}` wrapper is silently ignored, so every flag the
+      // harness thought it was setting was a no-op. Falsified directly: sending
+      // `{languageServer:{typecheck:false}}` still parsed `typecheck: true`,
+      // while `{typecheck:false}` parsed false and skipped the Corsa attempt.
+      //
+      // These are the keys Vize's own VS Code extension sends. Note it does NOT
+      // send `corsa` — Corsa is driven by `typecheck`, so requesting it
+      // explicitly would be asking for something the shipped product never asks
+      // for.
+      lint: true,
+      typecheck: true,
+      editor: true,
+      ecosystem: true,
       workspaceFolders: [{ uri: rootUri, name: "bench" }],
     },
     timeoutMs: initTimeoutMs,
