@@ -56,7 +56,7 @@
     "bench:ide:quick": "node scripts/ide-bench.mjs --suite smoke,completion --server all --runs 1"
   },
   "dependencies": {
-    "@babel/core": "7.29.7",
+    "@babel/core": "8.0.1",
     "@golar/vue": "0.1.10",
     "@verter/component-meta": "0.0.1-beta.3",
     "@verter/native": "0.0.1-beta.3",
