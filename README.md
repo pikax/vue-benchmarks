@@ -9,8 +9,8 @@ Throughput benchmarks for the Vue toolchain, measured on one Linux CI runner per
 | **SFC compile** (vdom/vapor × prod/dev) | `@vue/compiler-sfc` 3.5 & 3.6 · Vize (`@vizejs/native`) · Verter (`@verter/native`) · [fervid](https://github.com/phoenix-ru/fervid) (`@fervid/napi`, vdom only — currently unranked, see below) |
 | **JSX compile** | vue-jsx-vapor (Rust + API) · `@vue/babel-plugin-jsx` |
 | **Typecheck** | `vue-tsc` (JS engine and TNB/tsgo) · golar · Vize · `verter-tsc` |
-| **Format** | Prettier · Oxfmt · Vize |
-| **Lint** | eslint-plugin-vue · Vize · Verter |
+| **Format** | Prettier · Oxfmt · Vize · [Biome](https://biomejs.dev) (`@biomejs/biome`, `<script>` block only — unranked, see below) |
+| **Lint** | eslint-plugin-vue · Vize · Verter · Biome (`<script>` block only — unranked, see below) |
 | **Component-meta** | vue-component-meta · Verter · (Vize: skipped, no public API) |
 | **LSP + IDE operations** | Volar (JS engine and TNB/tsgo tsdk) · Vize · Verter |
 | **Memory / CPU** | all of the above, sampled separately — published in [MEMORY.md](./MEMORY.md) |
@@ -21,7 +21,7 @@ Throughput benchmarks for the Vue toolchain, measured on one Linux CI runner per
 - **One table per surface** (only vapor/vdom codegen targets stay separate — different jobs). Engine, invocation and threading are row properties: **(JS)** marks the JavaScript TypeScript compiler (a cross-engine ratio measures TypeScript's Go rewrite as much as the tool), and the row's label/notes say CLI vs in-process and the thread mode — compare like with like.
 - Name markers: **⚠** failed a validation gate (time in brackets, unranked) · **❌** error · **⏭** skipped/not installed.
 - Per-row detail lives in the collapsible **Notes** under each table; each surface has a **Tools** legend saying what actually ran.
-- A tool that misses a planted bug is **measured but unranked** — speed without the work is not a result.
+- A tool that misses a planted bug, or that does materially less work than the tools beside it, is **measured but unranked** — speed without the work is not a result. Biome is the clearest case: it treats `.vue` as a host for an embedded `<script>` and has no template support, so on **format** it returns the template and style blocks byte-identical, and on **lint** it never examines `<template>` (missing the planted `vue/no-v-html`, and reporting template-only variable uses as unused). Its times are shown in brackets and excluded from ranking; on 50 SFCs it formatted in 226 ms against Vize's 231 ms, so unranking it changes who tops the table.
 
 Everything else — corpus design, work gates, comparison classes, caveats, CI layout, local runs — is in **[docs/methodology.md](docs/methodology.md)**.
 

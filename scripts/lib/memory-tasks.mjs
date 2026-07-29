@@ -340,6 +340,9 @@ export function buildMemoryTasks(fixtureDir, options = {}) {
     ["mem-prettier", "Prettier", "prettier", ["--write", "**/*.vue"]],
     ["mem-oxfmt", "Oxfmt", "oxfmt", ["--write", "."]],
     ["mem-vize-fmt", "Vize fmt", "vize", ["fmt", "--write"]],
+    // Script block only — its footprint is not comparable to a whole-SFC
+    // formatter's, for the same reason the format surface leaves it unranked.
+    ["mem-biome-fmt", "Biome format", "biome", ["format", "--write", "."]],
   ]) {
     const cli = tryCli(binName);
     const fmtDir = join(workRoot, "fmt-src", id);
@@ -394,6 +397,24 @@ export function buildMemoryTasks(fixtureDir, options = {}) {
           args: [...vizeCli.argsPrefix, "lint", ".", "--quiet"],
           cwd: fixtureDir,
           shell: vizeCli.shell,
+        }
+      : undefined,
+  });
+
+  const biomeCli = tryCli("biome");
+  tasks.push({
+    id: "mem-biome-lint",
+    label: "Biome lint",
+    package: "@biomejs/biome",
+    surface: "lint",
+    kind: "cli",
+    skip: biomeCli ? undefined : "biome not found",
+    cli: biomeCli
+      ? {
+          bin: biomeCli.bin,
+          args: [...biomeCli.argsPrefix, "lint", "."],
+          cwd: fixtureDir,
+          shell: biomeCli.shell,
         }
       : undefined,
   });

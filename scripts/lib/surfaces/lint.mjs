@@ -208,6 +208,54 @@ export async function runLintSurface(fixtureDir, options) {
     });
   }
 
+  // Biome. Split 1T/max exactly like Vize: Biome parallelises with Rayon and
+  // honours RAYON_NUM_THREADS (measured ~4.3x spread over 1000 SFCs), so a
+  // single row would fold thread count into the linter comparison.
+  const biome = tryResolveBin("biome");
+  if (biome) {
+    variants.push({
+      id: "biome-lint-1t",
+      label: "Biome lint (1T)",
+      package: "@biomejs/biome",
+      threading: "1t",
+      invocation: "cli",
+      notes: "biome lint . with RAYON_NUM_THREADS=1 · script block only, no template rules",
+      measure: () => {
+        const { ms } = runCommand(biome, ["lint", "."], {
+          cwd: lintDir,
+          allowNonZeroExit: true,
+          env: { RAYON_NUM_THREADS: "1" },
+          shell: isWinShell(biome),
+        });
+        return ms;
+      },
+    });
+    variants.push({
+      id: "biome-lint-max",
+      label: "Biome lint (max threads)",
+      package: "@biomejs/biome",
+      threading: "max",
+      invocation: "cli",
+      notes: "biome lint . using the default Rayon pool (all cores) · script block only",
+      measure: () => {
+        const { ms } = runCommand(biome, ["lint", "."], {
+          cwd: lintDir,
+          allowNonZeroExit: true,
+          shell: isWinShell(biome),
+        });
+        return ms;
+      },
+    });
+  } else {
+    variants.push({
+      id: "biome-lint",
+      label: "Biome lint",
+      package: "@biomejs/biome",
+      notes: "biome binary not found",
+      skip: true,
+    });
+  }
+
   // Verter: try native host lint if available
   let verterNative = null;
   try {
@@ -281,6 +329,16 @@ export async function runLintSurface(fixtureDir, options) {
           expectErrors: true,
         });
       }
+      if (v.id === "biome-lint-1t" || v.id === "biome-lint-max") {
+        if (!biome) return false;
+        return cliReportsPlantedIssue({
+          bin: biome,
+          args: ["lint", "Dirty.vue"],
+          cwd: plant.dir,
+          shell: isWinShell(biome),
+          expectErrors: true,
+        });
+      }
       if (v.id === "verter-lint-host" && verterNative?.VerterHost) {
         try {
           const host = new verterNative.VerterHost({ devMode: false });
@@ -331,8 +389,9 @@ export async function runLintSurface(fixtureDir, options) {
       "In-process and CLI rows share the table; the row label says which mode ran. A CLI pays process startup on every run (~85ms measured for a native CLI); an in-process API pays it once — read same-mode rows against each other. eslint runs in BOTH modes and is the reference point between them.",
       "No single invocation mode covers every tool — vize lint is CLI-only, VerterHost.lint is in-process-only — which is why the mode is on the row instead of one mode being dropped.",
       "eslint-plugin-vue uses flat recommended config generated with fixtures.",
-      "Vize lint 1T and max-threads are separate rows — a thread-count gap is not a linter gap.",
-      "Planted-bug work gate: each tool must report vue/no-v-html (or equivalent) or is unranked.",
+      "Vize and Biome each get separate 1T and max-threads rows — a thread-count gap is not a linter gap.",
+      "Planted-bug work gate: each tool must report vue/no-v-html (or equivalent) or is unranked. Biome fails it — it lints the <script> block only and has no template rules, so nothing in <template> is examined.",
+      "Biome's script-only view also produces false positives on this corpus: variables declared in <script setup> and used only in <template> are reported as unused. Its diagnostics are not comparable to the Vue-aware linters', in either direction.",
       "Allow non-zero exit (style diagnostics do not abort timing).",
       "Rule sets are NOT identical across tools — throughput only, not diagnostic equivalence.",
       "Tool order is rotated on every warmup and measured run; ranking metric is the median of warmed runs.",

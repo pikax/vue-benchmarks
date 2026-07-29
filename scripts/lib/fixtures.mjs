@@ -211,6 +211,23 @@ export default [
 `,
     );
   }
+  // Biome resolves biome.json by walking up from the file, so like the eslint
+  // config it has to exist inside the lint corpus itself. Formatter disabled:
+  // this surface measures linting, and `biome lint` must not be credited or
+  // charged for format work the other linters here do not do.
+  if (!existsSync(join(out, "biome.json"))) {
+    writeFileSync(
+      join(out, "biome.json"),
+      `${JSON.stringify(
+        {
+          formatter: { enabled: false },
+          linter: { enabled: true, rules: { recommended: true } },
+        },
+        null,
+        2,
+      )}\n`,
+    );
+  }
   writeFileSync(
     join(out, "package.json"),
     `${JSON.stringify({ private: true, type: "module", name: `bench-lint-${label}` }, null, 2)}\n`,
@@ -220,9 +237,10 @@ export default [
 
 export function prepareFormatCopy(inputDir, files, workRoot, label, invocation) {
   const out = join(workRoot, "format", `${label}-${String(invocation).padStart(4, "0")}`);
-  // .prettierrc.json must travel with the copy: Prettier resolves config by
-  // walking up from the file, and the work dir is not under the fixture dir,
-  // so a config left behind in the fixture root would never be applied.
-  copyFixtureSubset(inputDir, out, files, [".prettierrc.json"]);
+  // .prettierrc.json and biome.json must travel with the copy: both tools
+  // resolve config by walking up from the file, and the work dir is not under
+  // the fixture dir, so a config left behind in the fixture root would never be
+  // applied — each tool would silently fall back to its own defaults.
+  copyFixtureSubset(inputDir, out, files, [".prettierrc.json", "biome.json"]);
   return out;
 }

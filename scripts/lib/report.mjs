@@ -110,6 +110,24 @@ const SLIM_RULES = [
     slim: "Oxfmt",
     desc: "oxfmt --write — Oxc's Vue-capable formatter, multi-threaded.",
   },
+  {
+    re: /^Biome format$/,
+    slim: "Biome format",
+    desc: "biome format --write — multi-threaded, but formats the <script> block only; template and style come back byte-identical, so it is unranked on the format surface.",
+  },
+  // Two rules, not one `/^Biome lint/`: `slim` REPLACES the label everywhere it
+  // is rendered, so a shared rule collapsed the 1T and max-threads rows into two
+  // identically-named lines in the table, notes and raw runs.
+  {
+    re: /^Biome lint \(1T\)$/,
+    slim: "Biome lint (1T)",
+    desc: "biome lint with RAYON_NUM_THREADS=1 — script block only. No template rules, so it misses the planted vue/no-v-html and reports template-only variable uses as unused; unranked.",
+  },
+  {
+    re: /^Biome lint \(max threads\)$/,
+    slim: "Biome lint (max threads)",
+    desc: "biome lint on all cores — script block only. No template rules, so it misses the planted vue/no-v-html and reports template-only variable uses as unused; unranked.",
+  },
 ];
 
 function slimRuleFor(rawLabel) {
@@ -459,7 +477,7 @@ export function buildMethodologyNotes() {
     "Content-hash caches skip work on duplicate bodies — unique fixtures required for ranking.",
     "Tool order is **rotated** on every warmup and measured run, so no tool is pinned to the expensive first slot.",
     "CI does not drop OS page cache; later tools in a job may share a warmer file cache.",
-    "Typecheck/lint tools that fail a planted-bug work gate are unranked (skipped). Typecheck gates require both a script-level and a template-level diagnostic, and are re-verified against the full timed corpus.",
+    "Typecheck/lint/format tools that fail a work gate are unranked (skipped). Typecheck gates require both a script-level and a template-level diagnostic, and are re-verified against the full timed corpus. Lint gates require the planted vue/no-v-html. The format gate requires the tool to actually rewrite the <template> block, so a script-only formatter is not ranked against whole-SFC formatters.",
     "Compile measures assert non-empty codegen where applicable.",
     "Vue official compiler is 1T only (worker_threads variants removed).",
     "LSP: every server resolves from its installed npm package and is skipped when absent — no local-build or working-copy discovery, so each row names a version.",

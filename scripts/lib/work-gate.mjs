@@ -98,6 +98,82 @@ const html = "<b>x</b>"
 `;
 
 /**
+ * Format plant: every block is badly formatted — template attributes and
+ * interpolation, script statements, style declarations.
+ *
+ * The format surface had no gate, and it is the surface where a partial tool
+ * looks best. A formatter that only rewrites `<script>` leaves the template
+ * byte-identical while the formatters sharing its table rewrite template +
+ * script + style, so ranking them together on wall clock credits it for work
+ * it never did. Measured on this exact file: Prettier, Oxfmt and Vize all
+ * normalise the template; Biome returns it unchanged (Biome treats .vue as an
+ * embedded-script host and has no template formatter).
+ */
+const MESSY_FORMAT_VUE = `<template>
+  <div    class="a"   :title="t"  >{{   msg }}</div>
+      <span>{{t}}</span>
+</template>
+<script setup>
+const    msg  =    'hello'
+const t=1
+</script>
+<style>
+.a{color:red}
+</style>
+`;
+
+function templateBlockOf(source) {
+  const m = source.match(/<template[^>]*>([\s\S]*?)<\/template>/i);
+  return m ? m[1] : null;
+}
+
+/** Root for per-tool format-gate runs; each tool gets a fresh copy of the plant. */
+export function prepareFormatPlant(workRoot) {
+  const dir = join(workRoot, `work-gate-format-${process.pid}-${Date.now().toString(36)}`);
+  mkdirSync(dir, { recursive: true });
+  return {
+    dir,
+    file: "Messy.vue",
+    cleanup: () => rmSync(dir, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 }),
+  };
+}
+
+/**
+ * True if the formatter rewrites the TEMPLATE block, not merely the script.
+ *
+ * Compares the template block before and after the write. Fails closed: a
+ * formatter that crashes, refuses the file, or no-ops leaves the block
+ * untouched and is treated the same as one that cannot format templates —
+ * in every one of those cases the measured time is not comparable.
+ *
+ * `configFiles` carries whatever config the tool needs for its timed run
+ * (.prettierrc.json, biome.json) so the gate exercises the same settings.
+ */
+export function formatterRewritesTemplate(
+  plant,
+  { bin, args, label, shell = false, env = {}, configFiles = {} },
+) {
+  if (!bin || !plant?.dir) return false;
+  const dir = join(plant.dir, label);
+  try {
+    rmSync(dir, { recursive: true, force: true });
+    mkdirSync(dir, { recursive: true });
+    const target = join(dir, plant.file);
+    writeFileSync(target, MESSY_FORMAT_VUE);
+    for (const [name, content] of Object.entries(configFiles)) {
+      writeFileSync(join(dir, name), content);
+    }
+    const before = templateBlockOf(MESSY_FORMAT_VUE);
+    runCommand(bin, args, { cwd: dir, shell, env, allowNonZeroExit: true });
+    const after = templateBlockOf(readFileSync(target, "utf8"));
+    if (before == null || after == null) return false;
+    return after !== before;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Returns true if the CLI appears to perform real diagnostics on a planted bug.
  * @param {{ bin: string, args: string[], cwd: string, shell?: boolean, env?: object, expectErrors?: boolean }} opts
  */

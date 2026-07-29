@@ -8,14 +8,16 @@
  */
 import { after, before, describe, test } from "node:test";
 import assert from "node:assert/strict";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, dirname, join, resolve } from "node:path";
 
 import {
   applyWorkGate,
   cliReportsPlantedIssue,
   corpusGateFor,
+  formatterRewritesTemplate,
   prepareCorpusPlant,
+  prepareFormatPlant,
   prepareLintPlant,
   prepareTypecheckPlant,
   typecheckGateDetail,
@@ -442,6 +444,122 @@ describe("prepareLintPlant", () => {
 
     const config = readFileSync(join(plant.dir, "eslint.config.mjs"), "utf8");
     assert.match(config, /"vue\/no-v-html": "error"/);
+  });
+});
+
+describe("prepareFormatPlant + formatterRewritesTemplate", () => {
+  let workRoot;
+  let plant;
+
+  /**
+   * A fake formatter that rewrites the plant file in cwd according to `mode`.
+   * The real distinction the gate exists to draw — whole-SFC vs script-only —
+   * is reproduced here without depending on any installed formatter.
+   */
+  function fakeFormatter(mode) {
+    const script = join(workRoot, `fake-fmt-${mode}.cjs`);
+    writeFileSync(
+      script,
+      `const { readFileSync, writeFileSync } = require("node:fs");
+const { join } = require("node:path");
+const target = join(process.cwd(), "Messy.vue");
+const src = readFileSync(target, "utf8");
+const mode = ${JSON.stringify(mode)};
+if (mode === "crash") process.exit(3);
+if (mode === "noop") process.exit(0);
+// Script-only: collapse runs of spaces INSIDE <script> and nowhere else.
+let out = src.replace(/<script([^>]*)>([\\s\\S]*?)<\\/script>/i, (m, attrs, body) =>
+  "<script" + attrs + ">" + body.replace(/[ \\t]{2,}/g, " ") + "</script>");
+if (mode === "whole") {
+  // Whole-SFC: also normalise the template block.
+  out = out.replace(/<template([^>]*)>([\\s\\S]*?)<\\/template>/i, (m, attrs, body) =>
+    "<template" + attrs + ">" + body.replace(/[ \\t]{2,}/g, " ") + "</template>");
+}
+writeFileSync(target, out);
+`,
+    );
+    return { bin: process.execPath, args: [script] };
+  }
+
+  before(() => {
+    workRoot = makeTempDir("format-plant-");
+    plant = prepareFormatPlant(workRoot);
+  });
+
+  after(() => {
+    plant?.cleanup();
+    removeDir(workRoot);
+  });
+
+  test("the plant dir is created and carries a plant filename", () => {
+    assert.ok(existsSync(plant.dir));
+    assert.equal(plant.file, "Messy.vue");
+  });
+
+  test("a whole-SFC formatter passes the gate", () => {
+    const tool = fakeFormatter("whole");
+    assert.equal(
+      formatterRewritesTemplate(plant, { bin: tool.bin, args: tool.args, label: "whole" }),
+      true,
+    );
+  });
+
+  test("a script-only formatter FAILS the gate even though it did rewrite the file", () => {
+    const tool = fakeFormatter("script");
+    // The script block really is reformatted — this is exactly the tool shape
+    // (Biome) that would otherwise rank fastest for doing less work.
+    const dir = join(plant.dir, "script");
+    assert.equal(
+      formatterRewritesTemplate(plant, { bin: tool.bin, args: tool.args, label: "script" }),
+      false,
+    );
+    const after = readFileSync(join(dir, plant.file), "utf8");
+    assert.match(after, /const msg = 'hello'/, "the script block was rewritten");
+    assert.match(after, /<div {4}class="a"/, "the template block was left untouched");
+  });
+
+  test("a no-op tool fails closed", () => {
+    const tool = fakeFormatter("noop");
+    assert.equal(
+      formatterRewritesTemplate(plant, { bin: tool.bin, args: tool.args, label: "noop" }),
+      false,
+    );
+  });
+
+  test("a crashing tool fails closed rather than throwing", () => {
+    const tool = fakeFormatter("crash");
+    assert.equal(
+      formatterRewritesTemplate(plant, { bin: tool.bin, args: tool.args, label: "crash" }),
+      false,
+    );
+  });
+
+  test("a missing bin fails closed", () => {
+    assert.equal(formatterRewritesTemplate(plant, { bin: null, args: [], label: "none" }), false);
+  });
+
+  test("configFiles are written next to the plant so the gate uses the timed config", () => {
+    const tool = fakeFormatter("whole");
+    formatterRewritesTemplate(plant, {
+      bin: tool.bin,
+      args: tool.args,
+      label: "cfg",
+      configFiles: { "biome.json": '{"formatter":{"enabled":true}}\n' },
+    });
+    assert.ok(existsSync(join(plant.dir, "cfg", "biome.json")));
+  });
+
+  test("each label gets an isolated run dir, so one tool cannot see another's output", () => {
+    const whole = fakeFormatter("whole");
+    formatterRewritesTemplate(plant, { bin: whole.bin, args: whole.args, label: "iso-a" });
+    // A second tool must still meet a pristine messy plant, not the formatted
+    // leftovers of the first — otherwise gate order would decide the verdict.
+    const noop = fakeFormatter("noop");
+    assert.equal(
+      formatterRewritesTemplate(plant, { bin: noop.bin, args: noop.args, label: "iso-b" }),
+      false,
+    );
+    assert.match(readFileSync(join(plant.dir, "iso-b", plant.file), "utf8"), /<div {4}class="a"/);
   });
 });
 

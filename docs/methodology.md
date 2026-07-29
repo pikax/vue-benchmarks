@@ -238,13 +238,32 @@ The harness sets `VERTER_TSGO_BIN` to the platform native binary (`tsc.exe` / `t
 
 ### Formatters
 
-| Tool     | Package    | Notes                          |
-| -------- | ---------- | ------------------------------ |
-| Prettier | `prettier` | Built-in Vue SFC support       |
-| Oxfmt    | `oxfmt`    | Oxc formatter with Vue support |
-| Vize     | `vize`     | `vize fmt --write`             |
+| Tool     | Package           | Notes                                                    |
+| -------- | ----------------- | -------------------------------------------------------- |
+| Prettier | `prettier`        | Built-in Vue SFC support                                  |
+| Oxfmt    | `oxfmt`           | Oxc formatter with Vue support                            |
+| Vize     | `vize`            | `vize fmt --write`                                        |
+| Biome    | `@biomejs/biome`  | `biome format --write` — **`<script>` block only**; unranked |
 
 Each format run uses a **fresh copy** of the corpus (write is destructive).
+
+`.prettierrc.json` and `biome.json` travel with every copy — both tools resolve
+config by walking up from the file, and the work dir is not under the fixture
+dir. The two configs set the same indent, line width, quote style, semicolon
+and trailing-comma choices, so neither is doing more rewriting than the other
+because of style settings alone.
+
+**Template-rewrite work gate.** Each formatter is run against a messy SFC whose
+template, script and style are all badly formatted, and must actually change the
+`<template>` block or it is measured but **unranked**. Prettier, Oxfmt and Vize
+pass. **Biome fails**: it treats `.vue` as a host for an embedded script and has
+no template formatter, so the template and style blocks come back byte-identical
+while the script block is reformatted.
+
+This gate is why Biome is bracketed rather than ranked. It is not a small
+difference in the ranking — on 50 SFCs Biome finished in **226 ms** against
+Vize's 231 ms, so without the gate the fastest row in the table would have
+belonged to the one tool doing a fraction of the work.
 
 ### Linters
 
@@ -253,12 +272,22 @@ Each format run uses a **fresh copy** of the corpus (write is destructive).
 | eslint-plugin-vue | `eslint` + `eslint-plugin-vue` | in-process **and** CLI | 1T + worker fan-out, plus a CLI row    |
 | Vize              | `vize lint`                    | CLI only             | 1T (`RAYON_NUM_THREADS=1`) + max threads |
 | Verter            | `@verter/native`               | in-process only      | `VerterHost.lint` when available         |
+| Biome             | `@biomejs/biome`               | CLI only             | 1T + max threads; **`<script>` only**, unranked |
 
 **In-process and CLI rows share the table, with the mode in the row label.** A CLI pays process startup on every run — measured at **~85 ms** for a native CLI on an empty directory — while an in-process API pays it once, so read same-mode rows against each other. No single invocation mode covers every tool here (`vize lint` is CLI-only, `VerterHost.lint` is in-process-only), which is why the mode is stated on the row instead of one mode being dropped. ESLint is the one tool with both entry points, so it runs in **both** modes and acts as the reference point between them.
 
 All tools lint an identical isolated copy of the corpus under `work/lint/`, so a tool that takes an explicit file list and a tool that walks a directory see exactly the same files.
 
 Rule sets are **not** identical — throughput only.
+
+**Biome is unranked on this surface too.** It lints the `<script>` block and has
+no template rules, so it never examines `<template>` and misses the planted
+`vue/no-v-html`. The same blind spot produces false positives on this corpus in
+the other direction: a variable declared in `<script setup>` and used only in
+the template is reported as `noUnusedVariables`. Its diagnostics are therefore
+not comparable to the Vue-aware linters' in either direction, which is what the
+gate records. Biome does honour `RAYON_NUM_THREADS`, so it gets the same 1T /
+max-threads split as Vize (measured ~4.3× spread over 1000 SFCs).
 
 ### Component-meta
 
