@@ -273,6 +273,7 @@ belonged to the one tool doing a fraction of the work.
 | Vize              | `vize lint`                    | CLI only             | 1T (`RAYON_NUM_THREADS=1`) + max threads |
 | Verter            | `@verter/native`               | in-process only      | `VerterHost.lint` when available         |
 | Biome             | `@biomejs/biome`               | CLI only             | 1T + max threads; **`<script>` only**, unranked |
+| Oxlint            | `oxlint`                       | CLI only             | 1T (`--threads=1`) + max threads; **`<script>` only**, unranked |
 
 **In-process and CLI rows share the table, with the mode in the row label.** A CLI pays process startup on every run — measured at **~85 ms** for a native CLI on an empty directory — while an in-process API pays it once, so read same-mode rows against each other. No single invocation mode covers every tool here (`vize lint` is CLI-only, `VerterHost.lint` is in-process-only), which is why the mode is stated on the row instead of one mode being dropped. ESLint is the one tool with both entry points, so it runs in **both** modes and acts as the reference point between them.
 
@@ -288,6 +289,43 @@ the template is reported as `noUnusedVariables`. Its diagnostics are therefore
 not comparable to the Vue-aware linters' in either direction, which is what the
 gate records. Biome does honour `RAYON_NUM_THREADS`, so it gets the same 1T /
 max-threads split as Vize (measured ~4.3× spread over 1000 SFCs).
+
+**Oxlint is unranked for the same reason**, and it is the case worth being
+careful about, because oxlint ships a `vue` plugin and the obvious objection to
+its verdict is that the plugin was never switched on. It is switched on. An
+`.oxlintrc.json` travels with the lint corpus **and with the gate plant**, so
+the gate certifies exactly the configuration that is timed:
+
+```json
+{ "plugins": ["unicorn", "typescript", "oxc", "vue"] }
+```
+
+All four are listed because `plugins` **replaces** oxlint's default list rather
+than extending it — `["vue"]` alone measured 88 active rules against a stock
+run's 111. As written it is 142: the stock 111 plus 31 vue rules.
+
+Those 31 rules read `<script>`. They cover SFC option and macro shape — prop
+name casing, `defineEmits` declaration style, lifecycle calls after `await` —
+and not one of them parses template syntax. With all 142 active, `oxlint` on
+the planted `Dirty.vue` prints nothing and exits 0.
+
+Where oxlint differs from Biome is in how it handles the blind spot. Biome
+reports template-only variable uses as unused; oxlint disables `no-unused-vars`
+for `.vue` outright, so it reports neither the false positive **nor** a variable
+that is genuinely unused in both blocks (verified: `-D no-unused-vars` on an SFC
+with a dead `const` is silent). That is the better failure mode, but it is still
+a rule the other linters run and oxlint does not. It exposes `--threads`, so it
+gets the same 1T / max-threads split as Vize and Biome (measured ~1.8× spread
+over 1000 SFCs — a narrower spread than Biome's, still wide enough that one row
+would hide it).
+
+One thing to keep in mind when reading oxlint's bracketed time against Vize's
+and Biome's: **oxlint ships no standalone executable.** It is a NAPI addon
+(`@oxlint/binding-<platform>`) loaded into a Node process, so its per-run
+startup is Node's, while `vize` and `biome` launch a native binary. The
+methodology's "a CLI pays process startup on every run" applies to all three,
+but it is not the same constant for all three. The memory row is labelled
+accordingly.
 
 ### Component-meta
 

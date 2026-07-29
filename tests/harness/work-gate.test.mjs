@@ -23,7 +23,7 @@ import {
   typecheckGateDetail,
   typecheckGateFor,
 } from "../../scripts/lib/work-gate.mjs";
-import { prepareTypecheckDir } from "../../scripts/lib/fixtures.mjs";
+import { OXLINT_CONFIG, prepareTypecheckDir } from "../../scripts/lib/fixtures.mjs";
 import {
   depthOf,
   makeFakeTool,
@@ -444,6 +444,15 @@ describe("prepareLintPlant", () => {
 
     const config = readFileSync(join(plant.dir, "eslint.config.mjs"), "utf8");
     assert.match(config, /"vue\/no-v-html": "error"/);
+  });
+
+  test("carries the same oxlint config the timed corpus uses", () => {
+    // The gate must judge the configuration that is measured. Run the plant on
+    // oxlint's stock defaults and "misses the plant" becomes a statement about
+    // the gate (vue plugin off) rather than about the tool.
+    const gate = readFileSync(join(plant.dir, ".oxlintrc.json"), "utf8");
+    assert.equal(gate, OXLINT_CONFIG);
+    assert.ok(JSON.parse(gate).plugins.includes("vue"));
   });
 });
 

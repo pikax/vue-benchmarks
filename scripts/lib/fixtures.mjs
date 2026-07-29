@@ -173,6 +173,27 @@ export function prepareTypecheckDir(inputDir, files, workRoot, label) {
 }
 
 /**
+ * oxlint config shared by the timed lint corpus and the lint work-gate plant.
+ *
+ * The vue plugin is enabled deliberately. It is oxlint's *maximum* Vue
+ * awareness — 31 extra rules — so the gate verdict cannot be waved away with
+ * "you never turned the plugin on". Every one of those 31 rules reads
+ * `<script>` (SFC option/macro shape: prop casing, `defineEmits` style,
+ * lifecycle-after-await); none of them examine `<template>`.
+ *
+ * `plugins` REPLACES oxlint's default list rather than extending it, so the
+ * three defaults are repeated here. Listing only `["vue"]` measured 88 active
+ * rules against a stock run's 111 — Vue support bought by silently dropping a
+ * fifth of the rule set. As written it is 142: the stock 111 plus the 31 vue
+ * rules.
+ */
+export const OXLINT_CONFIG = `${JSON.stringify(
+  { plugins: ["unicorn", "typescript", "oxc", "vue"] },
+  null,
+  2,
+)}\n`;
+
+/**
  * Isolated lint corpus holding exactly the measured subset.
  *
  * Tools discover inputs differently — eslint takes an explicit file list,
@@ -227,6 +248,13 @@ export default [
         2,
       )}\n`,
     );
+  }
+  // Same walk-up story as biome.json: oxlint resolves .oxlintrc.json from the
+  // linted file upwards, and the corpus is not under the fixture dir, so the
+  // config has to be written into the corpus itself. Without it oxlint would
+  // run with the vue plugin OFF and be measured doing even less than it can.
+  if (!existsSync(join(out, ".oxlintrc.json"))) {
+    writeFileSync(join(out, ".oxlintrc.json"), OXLINT_CONFIG);
   }
   writeFileSync(
     join(out, "package.json"),

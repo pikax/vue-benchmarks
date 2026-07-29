@@ -128,6 +128,18 @@ const SLIM_RULES = [
     slim: "Biome lint (max threads)",
     desc: "biome lint on all cores — script block only. No template rules, so it misses the planted vue/no-v-html and reports template-only variable uses as unused; unranked.",
   },
+  // Same two-rule split as Biome above — one shared /^Oxlint/ rule would rename
+  // both rows to the same string in the table, notes and raw runs.
+  {
+    re: /^Oxlint \(1T\)$/,
+    slim: "Oxlint (1T)",
+    desc: "oxlint --threads=1 with its vue plugin enabled — script block only. The plugin's 31 Vue rules all read <script>; <template> is never parsed, so the planted vue/no-v-html is missed; unranked.",
+  },
+  {
+    re: /^Oxlint \(max threads\)$/,
+    slim: "Oxlint (max threads)",
+    desc: "oxlint on all cores with its vue plugin enabled — script block only, misses the planted vue/no-v-html; unranked.",
+  },
 ];
 
 function slimRuleFor(rawLabel) {

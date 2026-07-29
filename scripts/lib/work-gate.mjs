@@ -15,6 +15,7 @@ import {
 import { basename, dirname, isAbsolute, join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { runCommand } from "./timing.mjs";
+import { OXLINT_CONFIG } from "./fixtures.mjs";
 
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../..");
 
@@ -468,11 +469,18 @@ export function prepareCorpusPlant(checkDir) {
 
 /**
  * Prepare a tiny lint plant (v-html dirty).
+ *
+ * Each config-driven linter gets the SAME config here that its timed run uses.
+ * A gate run on a tool's stock defaults certifies a rule set nobody measured,
+ * and for oxlint specifically the difference is the whole question: with the
+ * vue plugin off, "misses the plant" would be an artefact of the gate rather
+ * than a fact about the tool.
  */
 export function prepareLintPlant(workRoot) {
   const dir = join(workRoot, `work-gate-lint-${process.pid}-${Date.now().toString(36)}`);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, "Dirty.vue"), DIRTY_VUE);
+  writeFileSync(join(dir, ".oxlintrc.json"), OXLINT_CONFIG);
   writeFileSync(
     join(dir, "eslint.config.mjs"),
     `import pluginVue from "eslint-plugin-vue";

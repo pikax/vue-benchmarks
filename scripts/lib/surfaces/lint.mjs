@@ -256,6 +256,55 @@ export async function runLintSurface(fixtureDir, options) {
     });
   }
 
+  // Oxlint. Split 1T/max like Vize and Biome — it exposes an explicit
+  // `--threads` flag (measured ~1.8x spread over 1000 SFCs), so thread count is
+  // a row property here rather than something folded into the linter gap.
+  const oxlint = tryResolveBin("oxlint");
+  if (oxlint) {
+    variants.push({
+      id: "oxlint-1t",
+      label: "Oxlint (1T)",
+      package: "oxlint",
+      threading: "1t",
+      invocation: "cli",
+      notes:
+        "oxlint . --threads=1, vue plugin enabled via .oxlintrc.json · script block only, no template rules",
+      measure: () => {
+        const { ms } = runCommand(oxlint, [".", "--threads=1"], {
+          cwd: lintDir,
+          allowNonZeroExit: true,
+          shell: isWinShell(oxlint),
+        });
+        return ms;
+      },
+    });
+    variants.push({
+      id: "oxlint-max",
+      label: "Oxlint (max threads)",
+      package: "oxlint",
+      threading: "max",
+      invocation: "cli",
+      notes:
+        "oxlint . on the default thread pool (all cores), vue plugin enabled · script block only",
+      measure: () => {
+        const { ms } = runCommand(oxlint, ["."], {
+          cwd: lintDir,
+          allowNonZeroExit: true,
+          shell: isWinShell(oxlint),
+        });
+        return ms;
+      },
+    });
+  } else {
+    variants.push({
+      id: "oxlint",
+      label: "Oxlint",
+      package: "oxlint",
+      notes: "oxlint binary not found",
+      skip: true,
+    });
+  }
+
   // Verter: try native host lint if available
   let verterNative = null;
   try {
@@ -339,6 +388,16 @@ export async function runLintSurface(fixtureDir, options) {
           expectErrors: true,
         });
       }
+      if (v.id === "oxlint-1t" || v.id === "oxlint-max") {
+        if (!oxlint) return false;
+        return cliReportsPlantedIssue({
+          bin: oxlint,
+          args: ["Dirty.vue"],
+          cwd: plant.dir,
+          shell: isWinShell(oxlint),
+          expectErrors: true,
+        });
+      }
       if (v.id === "verter-lint-host" && verterNative?.VerterHost) {
         try {
           const host = new verterNative.VerterHost({ devMode: false });
@@ -389,9 +448,11 @@ export async function runLintSurface(fixtureDir, options) {
       "In-process and CLI rows share the table; the row label says which mode ran. A CLI pays process startup on every run (~85ms measured for a native CLI); an in-process API pays it once — read same-mode rows against each other. eslint runs in BOTH modes and is the reference point between them.",
       "No single invocation mode covers every tool — vize lint is CLI-only, VerterHost.lint is in-process-only — which is why the mode is on the row instead of one mode being dropped.",
       "eslint-plugin-vue uses flat recommended config generated with fixtures.",
-      "Vize and Biome each get separate 1T and max-threads rows — a thread-count gap is not a linter gap.",
-      "Planted-bug work gate: each tool must report vue/no-v-html (or equivalent) or is unranked. Biome fails it — it lints the <script> block only and has no template rules, so nothing in <template> is examined.",
-      "Biome's script-only view also produces false positives on this corpus: variables declared in <script setup> and used only in <template> are reported as unused. Its diagnostics are not comparable to the Vue-aware linters', in either direction.",
+      "Vize, Biome and Oxlint each get separate 1T and max-threads rows — a thread-count gap is not a linter gap.",
+      "Planted-bug work gate: each tool must report vue/no-v-html (or equivalent) or is unranked. Biome and Oxlint both fail it — each lints the <script> block only and has no template rules, so nothing in <template> is examined.",
+      "Oxlint runs with its vue plugin ON (.oxlintrc.json travels with the corpus and with the gate plant): 31 extra rules over its stock 111, all of them <script> rules for SFC option/macro shape. Template syntax is still never parsed, which is why the plant is missed with the plugin's full rule set active.",
+      "Oxlint ships no standalone executable — it is a NAPI addon loaded into a Node process — so its per-run startup is Node's, while vize and biome launch a native binary. All three pay startup every run; it is not the same constant.",
+      "Biome's script-only view also produces false positives on this corpus: variables declared in <script setup> and used only in <template> are reported as unused. Oxlint avoids that by disabling no-unused-vars for .vue entirely — it reports neither the false positive nor a genuinely unused declaration. Neither tool's diagnostics are comparable to the Vue-aware linters'.",
       "Allow non-zero exit (style diagnostics do not abort timing).",
       "Rule sets are NOT identical across tools — throughput only, not diagnostic equivalence.",
       "Tool order is rotated on every warmup and measured run; ranking metric is the median of warmed runs.",

@@ -6,13 +6,14 @@
 import { createRequire } from "node:module";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import {
   collectJsxFiles,
   collectVueFiles,
   prepareTypecheckDir,
   readSources,
   copyFixtureSubset,
+  OXLINT_CONFIG,
 } from "./fixtures.mjs";
 import { resolveBin } from "./timing.mjs";
 import { resolveJsxFixtureDir } from "./surfaces/jsx-compile.mjs";
@@ -415,6 +416,40 @@ export function buildMemoryTasks(fixtureDir, options = {}) {
           args: [...biomeCli.argsPrefix, "lint", "."],
           cwd: fixtureDir,
           shell: biomeCli.shell,
+        }
+      : undefined,
+  });
+
+  // Oxlint gets its own prepared dir rather than sharing `fixtureDir` with the
+  // linters above: it resolves .oxlintrc.json by walking up from the file, and
+  // without that config the vue plugin is off. Sampling the footprint of a
+  // 111-rule run while the timed surface measures a 142-rule one would put two
+  // different configurations under the same tool name.
+  const oxlintCli = tryCli("oxlint");
+  const oxlintDir = join(workRoot, "lint-src", "mem-oxlint");
+  if (oxlintCli && vueFiles.length) {
+    copyFixtureSubset(fixtureDir, oxlintDir, vueFiles, []);
+    writeFileSync(join(oxlintDir, ".oxlintrc.json"), OXLINT_CONFIG);
+  }
+  tasks.push({
+    id: "mem-oxlint",
+    // The entry point is in the label for the same reason the LSP rows carry
+    // theirs. oxlint ships no standalone binary — it is a NAPI addon inside a
+    // Node process (`@oxlint/binding-*`), so this row includes a V8 heap that
+    // the Biome row above, a native executable, does not. Measured on 20 SFCs:
+    // 73 MiB against Biome's 8 MiB. That IS what running `oxlint` costs, but a
+    // row labelled plain "Oxlint" would read as a linter being 9x heavier.
+    label: "Oxlint (Node host + NAPI addon)",
+    package: "oxlint",
+    surface: "lint",
+    kind: "cli",
+    skip: oxlintCli ? undefined : "oxlint not found",
+    cli: oxlintCli
+      ? {
+          bin: oxlintCli.bin,
+          args: [...oxlintCli.argsPrefix, "."],
+          cwd: oxlintDir,
+          shell: oxlintCli.shell,
         }
       : undefined,
   });

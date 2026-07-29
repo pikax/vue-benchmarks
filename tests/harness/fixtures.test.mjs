@@ -220,6 +220,30 @@ describe("prepareLintDir", () => {
       removeDir(marked.dir);
     }
   });
+
+  test("leaves an .oxlintrc.json next to the corpus, with the vue plugin on", () => {
+    // oxlint walks UP from each file for its config and the corpus is not under
+    // the fixture dir, so a config left anywhere else is never applied. Without
+    // it oxlint runs with the vue plugin off — measured doing less than it can,
+    // and unranked on a weaker rule set than the one the gate certified.
+    const out = prepareLintDir(fixture.dir, fixture.files.slice(0, 1), work, "oxlint-config");
+
+    assert.ok(existsSync(join(out, ".oxlintrc.json")));
+    const config = JSON.parse(readFileSync(join(out, ".oxlintrc.json"), "utf8"));
+    assert.ok(config.plugins.includes("vue"), "the vue plugin must be enabled");
+  });
+
+  test("the oxlint config keeps the default plugins alongside vue", () => {
+    // `plugins` REPLACES oxlint's default list rather than extending it, so
+    // dropping the three defaults would trade 111 stock rules for 88 while
+    // reading like a pure addition.
+    const out = prepareLintDir(fixture.dir, fixture.files.slice(0, 1), work, "oxlint-defaults");
+    const { plugins } = JSON.parse(readFileSync(join(out, ".oxlintrc.json"), "utf8"));
+
+    for (const stock of ["unicorn", "typescript", "oxc"]) {
+      assert.ok(plugins.includes(stock), `oxlint default plugin ${stock} must survive`);
+    }
+  });
 });
 
 describe("prepareFormatCopy", () => {
