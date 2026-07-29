@@ -315,8 +315,9 @@ export function buildIdeSurfaces(results) {
       files: 1,
       bytes: 0,
       groups,
-      groupingNote:
-        "Ranked **per operation**, never pooled. These operations differ by orders of magnitude and answer unrelated questions, so one table each. A row that failed its content gate is shown in brackets and excluded from ranking — latency without a correct answer is not a comparable measurement.",
+      // No groupingNote: "ranked per operation, never pooled" describes every
+      // suite in the report identically, so it is stated once per document
+      // (report.mjs: IDE_RANKING_RULES) rather than above all eight of them.
       methodology: [
         "Every operation carries a content gate; the timing is only ranked when the answer was verified correct.",
         ...rankingNotes,

@@ -11,6 +11,7 @@ import assert from "node:assert/strict";
 
 import {
   buildMethodologyNotes,
+  RANKING_RULES,
   renderFullMarkdown,
   renderSurfaceMarkdown,
 } from "../../scripts/lib/report.mjs";
@@ -351,6 +352,46 @@ describe("artifact ⚠ guard", () => {
 
     const [plain] = collectMarkdownTables(renderSurfaceMarkdown(surface([okRow({ label: "A" })])));
     assert.equal(plain.header[COL.artifact], "Artifact", "a surface with no label still names the column");
+  });
+});
+
+describe("rules stated once per document, not once per table", () => {
+  test("a surface does not restate the ranking rules", () => {
+    // They used to head every surface: 16 verbatim copies in README.md. They
+    // are a property of the report, so the document states them.
+    const md = renderSurfaceMarkdown(surface([okRow({ label: "A" })]));
+    assert.ok(!md.includes(RANKING_RULES), "the ranking rules belong to the document");
+  });
+
+  test("a full report carries them in its methodology notes", () => {
+    const md = renderFullMarkdown({
+      generatedAt: "now",
+      fixture: "fixtures/10",
+      fileCount: 10,
+      settings: { runs: 5, warmups: 1 },
+      runner: { label: "R", platform: "linux", arch: "x64", cpuCount: 4, cpuModel: "cpu" },
+      versions: { node: "v22" },
+      methodology: buildMethodologyNotes(),
+      surfaces: [surface([okRow({ label: "A" })])],
+    });
+
+    assert.match(md, /median of measured runs/, "the primary metric must be stated somewhere");
+    assert.match(md, /Status is a marker on the tool NAME/, "the name markers must be documented");
+  });
+
+  test("a grouped surface prints a grouping note only when it has one", () => {
+    const grouped = (extra) =>
+      renderSurfaceMarkdown(
+        surface([], {
+          groups: [{ label: "Cell", target: "vdom", env: "production", variants: [okRow()] }],
+          ...extra,
+        }),
+      );
+
+    // The IDE suites are grouped too, and the compile matrix's explanation is
+    // not theirs — a renderer default put it above all eight of them.
+    assert.ok(!grouped({}).includes("grouped by"), "no default grouping prose");
+    assert.ok(grouped({ groupingNote: "Grouped by cell." }).includes("Grouped by cell."));
   });
 });
 

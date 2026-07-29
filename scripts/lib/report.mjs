@@ -364,6 +364,30 @@ function renderToolLegend(surface) {
   return lines;
 }
 
+/**
+ * How to read the tables — a property of the REPORT, stated once per document.
+ *
+ * This paragraph used to be emitted by `renderSurfaceMarkdown`, which put a
+ * verbatim copy above every table on every surface: 21 identical copies in
+ * README.md, one every few screens, saying the same thing each time. Nothing
+ * about it varies per surface.
+ *
+ * A full timing report states these rules in its **Methodology notes** section
+ * and does not need this line at all; documents with no methodology section
+ * (`ide-bench.mjs`) push it once, near the top.
+ */
+/**
+ * The IDE report's half of the same contract, stated once per document.
+ *
+ * It was a per-surface `groupingNote` on all eight IDE suites, so the identical
+ * paragraph landed above every suite in the same document.
+ */
+export const IDE_RANKING_RULES =
+  "Ranked **per operation**, never pooled. These operations differ by orders of magnitude and answer unrelated questions, so one table each. A row that failed its content gate is shown in brackets and excluded from ranking — latency without a correct answer is not a comparable measurement.";
+
+export const RANKING_RULES =
+  "Ranked on the **median of measured runs** (each after ≥1 discarded warmup; no cold column — it would measure JIT warmup). One table per surface: engine, invocation and threading are row properties, not table splits — rows tagged **(JS)** run the JavaScript TypeScript compiler (a cross-engine ratio measures TypeScript's rewrite as much as the tool), and a row's label/notes say whether it is a CLI (pays process startup every run), an in-process API, single-threaded or a thread pool. Name markers: ⚠ failed validation (time bracketed, unranked) · ❌ error · ⏭ skipped. Per-row detail is under **Notes** below each table.";
+
 export function renderSurfaceMarkdown(surface) {
   const lines = [];
   lines.push(`### ${surface.label}`);
@@ -372,19 +396,17 @@ export function renderSurfaceMarkdown(surface) {
     `Files: **${surface.files.toLocaleString()}** · Bytes: **${surface.bytes.toLocaleString()}**`,
   );
   lines.push("");
-  lines.push(
-    "Ranked on the **median of measured runs** (each after ≥1 discarded warmup; no cold column — it would measure JIT warmup). One table per surface: engine, invocation and threading are row properties, not table splits — rows tagged **(JS)** run the JavaScript TypeScript compiler (a cross-engine ratio measures TypeScript's rewrite as much as the tool), and a row's label/notes say whether it is a CLI (pays process startup every run), an in-process API, single-threaded or a thread pool. Name markers: ⚠ failed validation (time bracketed, unranked) · ❌ error · ⏭ skipped. Per-row detail is under **Notes** below each table.",
-  );
-  lines.push("");
   lines.push(...renderToolLegend(surface));
 
   // Compile matrix (and any future grouped surface)
   if (Array.isArray(surface.groups) && surface.groups.length > 0) {
-    lines.push(
-      surface.groupingNote ??
-        "Compile results are **grouped by target × environment × source map**, then by comparison class.",
-    );
-    lines.push("");
+    // Only when the surface has something to say. A default here printed the
+    // compile matrix's explanation above every grouped surface, including the
+    // eight IDE suites it does not describe.
+    if (surface.groupingNote) {
+      lines.push(surface.groupingNote);
+      lines.push("");
+    }
 
     for (const group of surface.groups) {
       lines.push(`#### ${group.label}`);
@@ -479,6 +501,7 @@ export function buildMethodologyNotes() {
     "Primary ranking metric is the **median of measured runs**. Every measured run is preceded by at least one discarded warmup pass (enforced — `--warmups 0` is clamped to 1).",
     "There is **no cold column**. An unwarmed first run costs a JS compiler ~3.2x its steady state and a native compiler nothing, so ranking on it measures V8 warmup rather than the tool.",
     "Min / stddev / CV% are reported per row. CV% > 10 is flagged ⚠ — treat that row as noisy (thermal drift or a contended runner), not as a result.",
+    "Status is a marker on the tool NAME, not a column: ⚠ failed a validation gate (time in brackets, unranked) · ❌ error · ⏭ skipped. Per-row detail is in the collapsible **Notes** under each table, and each surface carries a **Tools** legend naming what actually ran.",
     "Each surface is ONE table. Engine, invocation and threading are row properties, not table splits: a CLI pays process startup on every run (~85ms measured for one native CLI) while an in-process API amortises it, and a thread pool is not a single thread — the row's label and notes say which mode it ran, so compare like with like.",
     "Rows tagged **(JS)** run the JavaScript TypeScript compiler, untagged typecheck/LSP rows run native tsgo. A cross-engine ratio measures TypeScript's Go rewrite as much as the Vue layer on top of it.",
     "Surfaces are independent: compile ms is not comparable to jsx-compile/typecheck/lint/format ms.",

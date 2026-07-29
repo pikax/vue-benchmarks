@@ -16,13 +16,12 @@
  *    published under a Linux-only banner. The banner now names the platforms
  *    actually spliced, and each block is labelled with its own source platform.
  *
- * 3. SAMPLE COUNTS ARE PER ROW. `bench-memory.mjs` prints the REQUESTED sample
- *    count in the report header (`- **Samples per tool:** 3`,
- *    bench-memory.mjs:208) but stores the count that actually produced data per
- *    row (`samples: ok.length`, bench-memory.mjs:179). A flaky LSP probe that
- *    lost two of three samples was therefore published looking identical to a
- *    three-sample row. The sibling `*.json` is read and each row gets its real
- *    count in a **Samples** column, with ⚠ when it is short of the request.
+ * 3. SAMPLE COUNTS ARE PER ROW — and they are no longer this script's job.
+ *    This file used to re-parse the artifact markdown, match each row by its
+ *    `Tool` cell against the sibling `*.json`, and string-append a **Samples**
+ *    column onto the end of every line. That coupling broke the moment a column
+ *    moved. The count is now rendered by `lib/memory-report.mjs`, which owns the
+ *    table and already holds `samples` per row; this script only splices.
  */
 import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -66,129 +65,13 @@ function leafOf(path) {
   return base.split("/").pop() || base;
 }
 
-/** `| a | b |` -> ["a", "b"]; tolerates padded cells and CRLF. */
-function cells(line) {
-  const t = line.trim();
-  if (!t.startsWith("|")) return null;
-  return t
-    .slice(1, t.endsWith("|") ? -1 : undefined)
-    .split("|")
-    .map((c) => c.trim());
-}
-
-function isResultsHeader(row) {
-  return Array.isArray(row) && row[0] === "Tool" && row[1] === "Status";
-}
-
 /**
- * Add a per-row **Samples** column to every results table and correct the
- * report header line so a short row can never read as a full one.
- *
- * @returns {{ md: string, summary: string }}
+ * The renderer's own sample-count line, echoed to the job log so a run where
+ * rows came up short is visible without opening the diff.
  */
-function annotateSamples(md, jsonPath) {
-  if (!existsSync(jsonPath)) {
-    return {
-      md: md.replace(
-        /^(- \*\*Samples per tool:\*\* .*)$/m,
-        "$1 (requested; per-row counts unavailable — sibling JSON missing)",
-      ),
-      summary: `${leafOf(jsonPath)} missing — per-row sample counts not verified`,
-    };
-  }
-
-  let data;
-  try {
-    data = JSON.parse(readFileSync(jsonPath, "utf8"));
-  } catch (err) {
-    return {
-      md,
-      summary: `${leafOf(jsonPath)} unreadable (${err.message}) — samples not verified`,
-    };
-  }
-
-  const declared = Number(data?.settings?.samples);
-  // surface -> label -> recorded sample count (null when the row produced none)
-  const bySurface = new Map();
-  for (const r of data.results || []) {
-    const surface = String(r.surface ?? "");
-    if (!bySurface.has(surface)) bySurface.set(surface, new Map());
-    // `bench-memory.mjs` renders `r.label || r.id` in the Tool cell.
-    const cell = String(r.label || r.id);
-    bySurface.get(surface).set(cell, Number.isFinite(r.samples) ? r.samples : null);
-  }
-
-  const observed = [];
-  let short = 0;
-  let surface = "";
-  let inTable = false;
-  const out = [];
-
-  for (const raw of md.split(/\r?\n/)) {
-    const heading = /^###\s+(.+?)\s*$/.exec(raw);
-    if (heading) {
-      surface = heading[1];
-      inTable = false;
-      out.push(raw);
-      continue;
-    }
-
-    const row = cells(raw);
-    if (!row) {
-      inTable = false;
-      out.push(raw);
-      continue;
-    }
-
-    if (isResultsHeader(row)) {
-      inTable = true;
-      out.push(`${raw.trimEnd()} Samples |`);
-      continue;
-    }
-    if (!inTable) {
-      out.push(raw);
-      continue;
-    }
-    if (row.every((c) => /^:?-{2,}:?$/.test(c))) {
-      out.push(`${raw.trimEnd()} ---: |`);
-      continue;
-    }
-
-    const n = bySurface.get(surface)?.get(row[0]);
-    let cell;
-    if (n === undefined || n === null) {
-      cell = "n/a";
-    } else {
-      observed.push(n);
-      const isShort = Number.isFinite(declared) && n < declared;
-      if (isShort) short++;
-      cell = isShort ? `${n} ⚠` : String(n);
-    }
-    out.push(`${raw.trimEnd()} ${cell} |`);
-  }
-
-  let annotated = out.join("\n");
-  const min = observed.length ? Math.min(...observed) : null;
-  const max = observed.length ? Math.max(...observed) : null;
-
-  let headerLine;
-  let summary;
-  if (!Number.isFinite(declared)) {
-    headerLine = `- **Samples per tool:** see the **Samples** column (recorded per row)`;
-    summary = "no declared sample count; per-row counts published";
-  } else if (min === null) {
-    headerLine = `- **Samples per tool:** ${declared} requested · no row recorded any sample`;
-    summary = `${declared} requested; no row recorded a sample`;
-  } else if (min === max && min === declared) {
-    headerLine = `- **Samples per tool:** ${declared} requested · ${declared} recorded for every row (see the **Samples** column)`;
-    summary = `${declared} requested, ${declared} recorded on all ${observed.length} row(s)`;
-  } else {
-    headerLine = `- **Samples per tool:** ${declared} requested · **${min}–${max} actually recorded** — per-row counts in the **Samples** column (⚠ = fewer than requested)`;
-    summary = `${declared} requested, ${min}–${max} recorded; ${short} row(s) short of the request`;
-  }
-  annotated = annotated.replace(/^- \*\*Samples per tool:\*\* .*$/m, () => headerLine);
-
-  return { md: annotated, summary };
+function samplesLine(md) {
+  const m = /^- \*\*Samples per tool:\*\* (.*)$/m.exec(md);
+  return m ? m[1].replace(/\*\*/g, "") : "not stated by the artifact";
 }
 
 function bannerPlatforms(files) {
@@ -246,9 +129,8 @@ function main() {
   const chunks = [START, "", banner, ""];
   for (const file of files) {
     const leaf = leafOf(file);
-    const jsonPath = file.replace(/\.md$/, ".json");
-    const { md, summary } = annotateSamples(readFileSync(file, "utf8").trim(), jsonPath);
-    console.log(`[memory] ${leaf} · ${platformOf(file)} · samples: ${summary}`);
+    const md = readFileSync(file, "utf8").trim();
+    console.log(`[memory] ${leaf} · ${platformOf(file)} · samples: ${samplesLine(md)}`);
     chunks.push(`#### ${platformOf(file)} · source: \`${leaf}\``);
     chunks.push("");
     chunks.push(md.trim());

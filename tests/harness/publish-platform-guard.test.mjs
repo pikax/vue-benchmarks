@@ -19,7 +19,8 @@
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
 
-import { filterPublishable } from "../../scripts/update-readme.mjs";
+import { filterPublishable, stripParagraphs } from "../../scripts/update-readme.mjs";
+import { IDE_RANKING_RULES, RANKING_RULES } from "../../scripts/lib/report.mjs";
 
 const LINUX_CI = "results/bench-Linux-200-bench.md";
 const LINUX_LOCAL = "results/bench-linux-50-bench.md";
@@ -70,5 +71,50 @@ describe("publish platform guard", () => {
     const { publish, rejected } = filterPublishable([]);
     assert.deepEqual(publish, []);
     assert.deepEqual(rejected, []);
+  });
+});
+
+/**
+ * Each artifact states the ranking rules so it reads standalone, but a README
+ * section splices several artifacts together. Stated once per document becomes
+ * stated four times per README unless the splice drops the copies.
+ */
+describe("a rule spliced into one section is stated once", () => {
+  const doc = [
+    "## IDE operation results",
+    "",
+    "- **Runs / warmups:** 3 / 1",
+    "",
+    RANKING_RULES,
+    "",
+    IDE_RANKING_RULES,
+    "",
+    "### IDE · hover",
+    "",
+    "| Tool | Median |",
+  ].join("\n");
+
+  test("a document's own copies are dropped, with the blank line each left", () => {
+    const stripped = stripParagraphs(doc, [RANKING_RULES, IDE_RANKING_RULES]);
+
+    assert.ok(!stripped.includes(RANKING_RULES));
+    assert.ok(!stripped.includes(IDE_RANKING_RULES));
+    assert.equal(
+      stripped,
+      ["## IDE operation results", "", "- **Runs / warmups:** 3 / 1", "", "### IDE · hover", "", "| Tool | Median |"].join(
+        "\n",
+      ),
+    );
+  });
+
+  test("everything else survives verbatim", () => {
+    const stripped = stripParagraphs(doc, [RANKING_RULES, IDE_RANKING_RULES]);
+    assert.ok(stripped.includes("- **Runs / warmups:** 3 / 1"));
+    assert.ok(stripped.includes("| Tool | Median |"));
+  });
+
+  test("a document that never stated them is unchanged", () => {
+    const plain = "## IDE operation results\n\n| Tool | Median |";
+    assert.equal(stripParagraphs(plain, [RANKING_RULES, IDE_RANKING_RULES]), plain);
   });
 });

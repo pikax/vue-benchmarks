@@ -890,6 +890,11 @@ export async function runCompileSurface(fixtureDir, options) {
       ...uniqueness,
       fixtureDir,
     },
+    // Why this surface is split into sub-tables. Stated by the surface that
+    // does the splitting rather than defaulted in the renderer, so a grouped
+    // surface with a different reason (the IDE suites) is not given this one.
+    groupingNote:
+      "Compile results are **grouped by target × environment × source map**, then by comparison class.",
     methodology: [
       "Matrix: target ∈ {vdom, vapor} × env ∈ {production, development} × sourceMap ∈ {off, on}. Cells are independent — do not cross-compare cells.",
       `Corpus mode=${corpusMode}: ${uniqueness.uniqueBodies}/${uniqueness.files} unique content SHAs. Vize content-hash caches treat identical bodies as free — primary rankings must use unique fixtures (fixtures/N), not fixtures/N-repeated.`,

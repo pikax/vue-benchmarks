@@ -29,7 +29,7 @@ import {
 } from "./lib/ide-ops/context.mjs";
 import { SUITES } from "./lib/ide-ops/registry.mjs";
 import { buildIdeSurfaces, buildTypingLoopSurface } from "./lib/ide-report.mjs";
-import { renderSurfaceMarkdown } from "./lib/report.mjs";
+import { IDE_RANKING_RULES, RANKING_RULES, renderSurfaceMarkdown } from "./lib/report.mjs";
 
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -284,6 +284,12 @@ async function main() {
       `- **Generated:** ${new Date().toISOString()}`,
       `- **Runner:** ${process.platform}/${process.arch} · Node ${process.version}`,
       `- **Runs / warmups:** ${args.runs} / ${Math.max(1, args.warmups)}`,
+      "",
+      // Once per document. This report has no methodology section, so the
+      // ranking rules are stated here rather than above every table.
+      RANKING_RULES,
+      "",
+      IDE_RANKING_RULES,
       "",
       ...buildIdeSurfaces(results).map((s) => renderSurfaceMarkdown(s)),
       renderSurfaceMarkdown(buildTypingLoopSurface(results)),

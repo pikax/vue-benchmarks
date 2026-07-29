@@ -25,6 +25,7 @@
 import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { IDE_RANKING_RULES, RANKING_RULES } from "./lib/report.mjs";
 
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -115,6 +116,26 @@ function phaseRank(p) {
   return 5;
 }
 
+/**
+ * Drop a document's own copy of the given paragraphs, and the blank line each
+ * one left behind. The section states them once, above every document it
+ * splices — a rule that reads identically over four reports is a rule stated
+ * four times.
+ */
+export function stripParagraphs(markdown, paragraphs) {
+  const drop = new Set(paragraphs);
+  const kept = [];
+  const lines = markdown.split("\n");
+  for (let i = 0; i < lines.length; i++) {
+    if (drop.has(lines[i].trim())) {
+      if (lines[i + 1] === "") i++;
+      continue;
+    }
+    kept.push(lines[i]);
+  }
+  return kept.join("\n");
+}
+
 function renderBench(files, { start, end }) {
   const chunks = [
     start,
@@ -159,10 +180,20 @@ function renderIde(files, { start, end }) {
     `> Ranked **per operation**, never pooled: \`didOpen→diagnostics\` and \`foldingRange\` answer unrelated questions.`,
     `> Same-VM rule holds within the job; these numbers are not comparable to the timing tables above.`,
     "",
+    // Once for the whole section. Each IDE artifact states the ranking rules
+    // itself so it reads standalone, but several artifacts are spliced into one
+    // README section — the copies below are stripped, not repeated.
+    RANKING_RULES,
+    "",
+    IDE_RANKING_RULES,
+    "",
   ];
 
   for (const file of [...files].sort()) {
-    const content = readFileSync(file, "utf8").trim();
+    const content = stripParagraphs(readFileSync(file, "utf8").trim(), [
+      RANKING_RULES,
+      IDE_RANKING_RULES,
+    ]);
     const leaf = leafOf(file);
     chunks.push(`#### ${platformOf(file)} · ide ops`);
     chunks.push("");
