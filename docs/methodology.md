@@ -547,7 +547,21 @@ Measured cost per surface (n=200, runs=5, 32-core box) — all of it sequential 
 
 ⚠ An earlier revision of this table published `lsp ~376 s`, drawn from a period when Volar exhausted a 6 × 60 s retry budget on every run. That is fixed and LSP is now the fourth-cheapest surface. If you have seen the old figure quoted, it is wrong.
 
-The other three jobs run separately and are not in that total, also measured: `memory` ~4.8 min at `--samples 3`, `ide` ~3.2 min at the `--runs 3` CI uses, `ide-scale` ~3.6 min at the 1 run + 1 warmup CI uses. Jobs are capped at `timeout-minutes: 10` (`ide-scale` at 15, since its per-request budget went to 120 s after references@500 measured 51 s on a CI runner).
+The other three jobs run separately and are not in that total, also measured: `memory` ~4.8 min at `--samples 3`, `ide` ~3.2 min at the `--runs 3` CI uses, `ide-scale` ~3.6 min at the 1 run + 1 warmup CI uses. Jobs are capped at `timeout-minutes: 20`, with `ide` at 30.
+
+**Request budgets scale with the workspace.** Every budget in the IDE suites used to be a flat constant sized for the worst case anywhere in the harness — 30 s per request, 45–60 s for a warm-up, 120 s in the scale suite — which on a 3-file workspace is not a budget but the absence of one. [`scripts/lib/ide-ops/budget.mjs`](../scripts/lib/ide-ops/budget.mjs) derives them linearly from the file count the suite declares, from a small-project floor (≤ 20 files) to a large-project cap (≥ 1000):
+
+| Class | ≤ 20 | 100 | 200 | 500 | ≥ 1000 | What it covers |
+| --- | --- | --- | --- | --- | --- | --- |
+| `coldMs` | 60 s | 69.8 s | 82 s | 118.8 s | 180 s | Session start and project load |
+| `warmMs` | 5 s | 7 s | 9.6 s | 17.2 s | 30 s | A request answered from the loaded project |
+| `projectMs` | 60 s | 69.8 s | 82 s | 118.8 s | 180 s | A query that walks every file on every call |
+
+Identical for every server at a given size, as every budget here is — what varies is the corpus, not who is asking. The cap sits at 1000 rather than at 500, the largest corpus actually run: anchoring it on today's biggest size would put today's biggest run at the ceiling, and the next corpus to grow would get no more budget than the one before it.
+
+The three classes exist because "warm" is not one thing. `references` and `rename` do cold-sized work on every call, and Volar/TNB's references@500 measured **51.13 s** on a 4-core CI runner — a warm-sized budget (17.2 s at that size) would flip that row to a timeout, and a `usable` timeout suppresses every larger size, so one harness-side overrun erases 12 of a server's 16 scale rows looking exactly like a tool failure. The ramp gives it 118.8 s, within 1% of the 120 s flat budget it replaces; that agreement is not a coincidence, since the flat value was forced by the same measurement.
+
+The floor is set against measurement, not caution: the slowest passing ranked operation on any server outside the scale suite is 1.11 s (Volar hover, script setup, 2-core runner), so 5 s is ~4.5× measured need. What the old flat budgets actually bought was failure latency — a wedged `textDocument/completion` in vize 0.302 spent 9 minutes inside one suite (4 warm-ups × 60 s, then readiness polls at 60 s each) and took a 10-minute CI job down with it, publishing nothing and naming no server.
 
 **Surface order matters.** `lsp` runs **last**: its hover retries and language-server churn heat the machine, so running it earlier would leave every subsequent surface measuring a warmer, more throttled box. (It ran last originally because it was also the longest surface; that is no longer true, but the thermal reason stands on its own.)
 

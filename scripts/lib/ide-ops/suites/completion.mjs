@@ -88,18 +88,25 @@
 
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { budgetOf } from "../budget.mjs";
 import { mergeCompletions, timed } from "../context.mjs";
 import { positionAfter, scaffold } from "../workspace.mjs";
 
-/** Same budget for every server and every measured request. */
-const REQUEST_TIMEOUT_MS = 30_000;
 /**
- * Untimed warm-up gets longer: Volar's TypeScript half runs with
- * `useSyntaxServer: "never"`, so its first completion blocks on the full
- * project load. Charging that to whichever context happened to be first would
- * measure project loading, not completion.
+ * Request budgets come from `ctx.budget` (budget.mjs), scaled by workspace size.
+ * This suite writes 3 files, so it sits at the small-project floor.
+ *
+ * The warm-up used to get its OWN budget, at DOUBLE the measured one (60s
+ * against 30s), on the reasoning that Volar's TypeScript half runs with
+ * `useSyntaxServer: "never"` and so blocks its first completion on the full
+ * project load. That reasoning was right about the cause and wrong about the
+ * fix: project load is COLD work, and it is already covered by `budget.coldMs`
+ * before the first warm-up is sent. What the extra budget actually bought was
+ * 4 minutes of a wedged server — vize 0.302 stopped answering
+ * `textDocument/completion` entirely, and the four sequential warm-ups spent
+ * 60s each before the readiness loop had even started. Warm-ups now share the
+ * measured budget; nothing may wait longer than the thing it is warming up for.
  */
-const WARMUP_TIMEOUT_MS = 60_000;
 
 /** Labels printed as evidence on a failing row. */
 const SAMPLE_LABELS = 12;
@@ -439,6 +446,7 @@ export const SUITE = {
     writeFileSync(join(dir, "Host.vue"), HOST_SOURCE);
     return {
       dir,
+      fileCount: 3,
       file: join(dir, "Host.vue"),
       fileRel: "Host.vue",
       source: HOST_SOURCE,
@@ -482,6 +490,11 @@ export const SUITE = {
   async measure(ctx) {
     const { ask, openDoc, ws, pathToFileUri, client, hybrid, verbose } = ctx;
     const uri = pathToFileUri(ws.file);
+    // Completion and resolve are both warm, single-document requests. Warm-ups
+    // and readiness probes use the SAME budget — see the header.
+    const budget = budgetOf(ctx);
+    const REQUEST_TIMEOUT_MS = budget.warmMs;
+    const WARMUP_TIMEOUT_MS = budget.warmMs;
 
     // Only the file under edit is opened, as in an editor. Verified to make no
     // difference: opening ChildCard.vue as well produces byte-identical results
@@ -531,23 +544,44 @@ export const SUITE = {
       return { item: best, errors };
     };
 
+    /**
+     * One untimed probe, separating "answered, but not with what we wanted"
+     * from "did not answer at all".
+     *
+     * That distinction is the whole point. A server that answers something
+     * useless is worth asking again — it is loading, and the next attempt may
+     * catch it ready. A server that consumed its entire budget in silence is
+     * not: nothing about waiting another 150ms makes it more likely to reply,
+     * and every further attempt costs a full budget. Collapsing the two into
+     * `.catch(() => null)` is what let one wedged server (vize 0.302, which
+     * stopped answering `textDocument/completion` outright) spend 9 minutes
+     * here and take a 10-minute CI job down with it.
+     */
+    const probe = async (position) => {
+      try {
+        return { items: itemsOf(await complete(position, WARMUP_TIMEOUT_MS)), timedOut: false };
+      } catch (e) {
+        return { items: [], timedOut: /timed out after/.test(e?.message ?? "") };
+      }
+    };
+
     // Warm-ups, untimed and identical for every server, so that no measured
     // context pays for project load, first-template compile or one-time
     // attribute-machinery setup. See the `probes` comment for the measurements
     // that made each of these necessary.
+    //
+    // A server that cannot warm up will fail its gates below with a real
+    // reason; swallowing the error here keeps the failure attributed to the
+    // context that actually failed. But a warm-up that TIMED OUT ends the loop:
+    // the remaining three would each pay the same budget to learn the same
+    // thing, and the gates below will report it anyway.
     for (const position of [
       ws.probes.warmScript,
       ws.probes.warmTemplate,
       ws.probes.warmAttribute,
       ws.probes.warmComponentAttribute,
     ]) {
-      try {
-        await complete(position, WARMUP_TIMEOUT_MS);
-      } catch {
-        // A server that cannot warm up will fail its gates below with a real
-        // reason; swallowing here keeps the failure attributed to the context
-        // that actually failed.
-      }
+      if ((await probe(position)).timedOut) break;
     }
 
     // Readiness, on a budget identical for every server.
@@ -566,18 +600,23 @@ export const SUITE = {
     // answer, so this cannot flatter anyone — a server that never satisfies it
     // proceeds after the budget and reports its real result. It can only stop
     // a ready server from being measured before it is ready.
-    let readiness = { script: false, component: false, attempts: 0 };
+    let readiness = { script: false, component: false, attempts: 0, timedOut: false };
     for (let attempt = 1; attempt <= READY_ATTEMPTS; attempt++) {
       const [script, component] = await Promise.all([
-        complete(ws.probes.warmScript, WARMUP_TIMEOUT_MS).catch(() => null),
-        complete(ws.probes.warmComponentAttribute, WARMUP_TIMEOUT_MS).catch(() => null),
+        probe(ws.probes.warmScript),
+        probe(ws.probes.warmComponentAttribute),
       ]);
       readiness = {
-        script: Boolean(findExpected(itemsOf(script), ["value"])),
-        component: Boolean(findExpected(itemsOf(component), ["ballast"])),
+        script: Boolean(findExpected(script.items, ["value"])),
+        component: Boolean(findExpected(component.items, ["ballast"])),
         attempts: attempt,
+        timedOut: script.timedOut || component.timedOut,
       };
       if (readiness.script && readiness.component) break;
+      // Silence is not a slow answer — stop polling. See probe(). Recorded on
+      // `readiness` rather than swallowed, so `--verbose` shows the loop ended
+      // because the server stopped talking, not because it ran out of attempts.
+      if (readiness.timedOut) break;
       await new Promise((r) => setTimeout(r, READY_INTERVAL_MS));
     }
 

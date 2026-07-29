@@ -27,7 +27,7 @@ permissions:
 jobs:
   e2e:
     runs-on: ubuntu-latest
-    # 10 by default, 20 when the Nuxt UI workspace is requested. Set from a
+    # 20 for both paths — the default and the Nuxt UI workspace. Set from a
     # MEASURED run rather than from fear: a full local pass (2 workspaces x 3
     # extensions = 6 sequential Electron launches) took 33.1s end to end —
     # 1.6s setup, then 9.0s / 2.8s / 6.8s / 4.0s and two more inside 8.9s. The
@@ -40,11 +40,12 @@ jobs:
     # what makes a tight ceiling safe rather than merely faster to fail.
     #
     # Budgeted so the ceiling cannot be hit by arithmetic alone:
-    #   default   6 launches x 90s = 9 min   + ~1 min setup  <= 10
+    #   default   6 launches x 90s = 9 min   + ~1 min setup  <= 20
     #   nuxt-ui   9 launches x 90s = 13.5 min + clone/install <= 20
     # Allowing 4-5x the expected CI cost (assume a 2-core runner is 3-4x a warm
-    # local box, so the slowest launch ~36s against a 90s budget).
-    timeout-minutes: ${{ (github.event.inputs.with_nuxt_ui == 'true') && 20 || 10 }}
+    # local box, so the slowest launch ~36s against a 90s budget). The two paths
+    # used to differ (10 / 20); a flat 20 makes the conditional redundant.
+    timeout-minutes: 20
     defaults:
       run:
         shell: bash

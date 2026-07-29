@@ -71,6 +71,7 @@
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { performance } from "node:perf_hooks";
+import { budgetOf } from "../budget.mjs";
 import { contentText, mergeHover, timed } from "../context.mjs";
 import { positionOf, scaffold } from "../workspace.mjs";
 
@@ -165,10 +166,19 @@ const parentLabel = 'parent-text'
 // every server — the point is to stop paying 20x for a known non-answer, not to
 // make anything harder to pass. A server that legitimately needs longer should
 // have these raised for everybody, with the measurement that justifies it.
+//
+// These stay CONSTANT rather than riding the file-count ramp in budget.mjs, and
+// the distinction matters: they are convergence windows, not request budgets.
+// "How long may a server take to publish a diagnostic and still be counted as
+// having caught up with the edit" is a property of the editing loop being
+// modelled, sized against measured server behaviour (see DIAGNOSTICS_STABLE_MS
+// below). Scaling them by project size would quietly change what the gate
+// means — a 500-file project would be allowed a slower edit loop and score the
+// same. `HOVER_TIMEOUT_MS` is the exception: it is a plain request budget with
+// no gate semantics, so it comes from `ctx.budget.warmMs`.
 const OPEN_DIAGNOSTICS_TIMEOUT_MS = 8_000;
 const EDIT_DIAGNOSTICS_TIMEOUT_MS = 4_000;
 const PULL_DIAGNOSTICS_TIMEOUT_MS = 4_000;
-const HOVER_TIMEOUT_MS = 8_000;
 /**
  * A diagnostics state must survive this long to count.
  *
@@ -513,6 +523,7 @@ export const SUITE = {
     writeFileSync(join(dir, "Parent.vue"), PARENT_SOURCE);
     return {
       dir,
+      fileCount: 3,
       file: join(dir, "Edit.vue"),
       fileRel: "Edit.vue",
       source: EDIT_BASE,
@@ -529,6 +540,8 @@ export const SUITE = {
 
   async measure(ctx) {
     const { ask, openDoc, changeDoc, client, ws, pathToFileUri } = ctx;
+    // A plain request budget, unlike the convergence windows above.
+    const HOVER_TIMEOUT_MS = budgetOf(ctx).warmMs;
     const editUri = pathToFileUri(ws.file);
     const childUri = pathToFileUri(ws.childFile);
     const parentUri = pathToFileUri(ws.parentFile);

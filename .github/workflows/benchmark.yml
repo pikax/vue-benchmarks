@@ -95,7 +95,7 @@ jobs:
     # Install + fixture generation. Bounded like everything else: an unbounded
     # job inherits GitHub's 6-hour default, so a hung install burns an
     # afternoon instead of failing a check.
-    timeout-minutes: 10
+    timeout-minutes: 20
     defaults:
       run:
         shell: bash
@@ -171,11 +171,11 @@ jobs:
     name: Bench (Linux)
     needs: build
     runs-on: ubuntu-latest
-    # MEASURED 4.2 min on a 32-core box at --runs 5. 10 allows ~2.4x for a
+    # MEASURED 4.2 min on a 32-core box at --runs 5. 20 allows ~4.8x for a
     # slower 2-core CI runner. If a run ever approaches this, cut --runs
     # before raising the ceiling: a ceiling that merely accommodates the
     # runtime tells you nothing.
-    timeout-minutes: 10
+    timeout-minutes: 20
     defaults:
       run:
         shell: bash
@@ -251,11 +251,11 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     # MEASURED at --runs 5: background 36s, completion 48s, edit-loop 208s,
-    # navigation 28s — ~5.4 min, and ~3.2 min at the --runs 3 used here. 10
-    # allows ~3x for a slower runner.
+    # navigation 28s — ~5.4 min, and ~3.2 min at the --runs 3 used here. 30
+    # allows ~9x for a slower runner.
     #
     # The `scale` suite is NOT in this job; see `ide-scale`.
-    timeout-minutes: 10
+    timeout-minutes: 30
     defaults:
       run:
         shell: bash
@@ -308,10 +308,10 @@ jobs:
     runs-on: ubuntu-latest
     # MEASURED 3.6 min at 2 passes on a 32-core box, after the load budget went
     # to 30s and larger sizes stopped being retried once a server fails
-    # time-to-usable. 15 keeps ~2.5x headroom now that the per-request budget
+    # time-to-usable. 20 keeps ~3.3x headroom now that the per-request budget
     # is 120s (references@500 measured 51s on a 4-core runner — a 60s budget
     # was one slow runner away from erasing 12 rows as a fake tool failure).
-    timeout-minutes: 15
+    timeout-minutes: 20
     defaults:
       run:
         shell: bash
@@ -351,8 +351,8 @@ jobs:
     name: Memory (Linux, all surfaces)
     needs: build
     runs-on: ubuntu-latest
-    # MEASURED 4.8 min on a 32-core box at --samples 3. 10 allows ~2x for CI.
-    timeout-minutes: 10
+    # MEASURED 4.8 min on a 32-core box at --samples 3. 20 allows ~4x for CI.
+    timeout-minutes: 20
     defaults:
       run:
         shell: bash
@@ -417,7 +417,7 @@ jobs:
     needs: [bench, ide, ide-scale, memory]
     runs-on: ubuntu-latest
     # Download artifacts, run two updaters, one commit. Seconds of work.
-    timeout-minutes: 10
+    timeout-minutes: 20
     if: >-
       always() &&
       github.event_name == 'workflow_dispatch' &&

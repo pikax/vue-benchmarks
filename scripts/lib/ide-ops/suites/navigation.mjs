@@ -48,13 +48,23 @@
 
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { budgetOf } from "../budget.mjs";
 import { mergeHover, timed } from "../context.mjs";
 import { positionAfter, positionOf, scaffold } from "../workspace.mjs";
 
-/** Same budget for every server, every operation. */
-const OP_TIMEOUT_MS = 30_000;
-/** Untimed project warm-up: charged to nobody, so ops measure steady state. */
-const PRIME_TIMEOUT_MS = 45_000;
+/**
+ * Budgets come from `ctx.budget` (budget.mjs), scaled by workspace size, and
+ * are identical for every server as they always were. This suite writes 5
+ * files, so it sits at the small-project floor.
+ *
+ * Two classes are in play here. Most operations are positional — definition,
+ * type definition, prepareRename, signature help — and answer from state the
+ * server already holds: `budget.warmMs`. `references` and `rename` are not:
+ * both walk every file in the project on every call, and their cost tracks
+ * project size directly. They get `budget.projectMs`, the same ramp cold work
+ * rides. At 5 files the two are 5s and 60s; the distinction only bites in the
+ * scale suite, where references@500 MEASURED 51.13s.
+ */
 
 const PROP_NAME = "captionText";
 const NEW_NAME = "renamedCaption";
@@ -838,9 +848,14 @@ async function askAll(ctx, method, params, timeoutMs, merge) {
   return { value: merge(...values), errors };
 }
 
-/** askAll + gate, with the wire error kept as the sample when nothing replied. */
-async function probe(ctx, method, params, merge, gate) {
-  const { value, errors } = await askAll(ctx, method, params, OP_TIMEOUT_MS, merge);
+/**
+ * askAll + gate, with the wire error kept as the sample when nothing replied.
+ *
+ * `timeoutMs` defaults to the warm budget; the two project-wide operations
+ * (references, rename) pass `ctx.budget.projectMs` explicitly. See the header.
+ */
+async function probe(ctx, method, params, merge, gate, timeoutMs = budgetOf(ctx).warmMs) {
+  const { value, errors } = await askAll(ctx, method, params, timeoutMs, merge);
   if (value === undefined) {
     return {
       valid: false,
@@ -871,6 +886,7 @@ export const SUITE = {
 
     return {
       dir,
+      fileCount: 5,
       // Documented contract fields — the "current" document of this suite.
       file: join(dir, "Parent.vue"),
       fileRel: "Parent.vue",
@@ -938,7 +954,10 @@ export const SUITE = {
         ctx,
         "textDocument/hover",
         { textDocument: { uri: parentUri }, position: ws.importedSymbolProbe },
-        PRIME_TIMEOUT_MS,
+        // This warm-up exists to absorb the TypeScript project load, so it is
+        // cold work and gets the cold budget — not a private constant larger
+        // than either. Its cost appears in no measurement.
+        budgetOf(ctx).coldMs,
         mergeHover,
       );
     } catch {
@@ -1014,6 +1033,8 @@ export const SUITE = {
           },
           mergeLocations,
           (res) => gateReferences(res, { declPath: ws.childFile, usePath: ws.parentFile }),
+          // Project-wide: walks every file on every call. See the header.
+          budgetOf(ctx).projectMs,
         ),
       ),
     );
@@ -1049,6 +1070,9 @@ export const SUITE = {
               declPath: ws.childFile,
               newName: ws.newName,
             }),
+          // Project-wide: a cross-file rename edits every use site. Same class
+          // as references — see the header.
+          budgetOf(ctx).projectMs,
         ),
       ),
     );

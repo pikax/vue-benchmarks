@@ -52,6 +52,7 @@ import {
   mergeHover,
   timed,
 } from "../context.mjs";
+import { budgetFor } from "../budget.mjs";
 import { positionAfter, positionOf, scaffold } from "../workspace.mjs";
 
 /* -------------------------------------------------------------------------- */
@@ -83,27 +84,36 @@ import { positionAfter, positionOf, scaffold } from "../workspace.mjs";
  * server might actually use it; here it was just the price of a known failure,
  * paid once per size per pass.
  *
- * Still IDENTICAL for every server, and still generous against measured need.
+ * NOW PER-SIZE, from `budgetFor(corpus.vueFiles).coldMs` (budget.mjs):
+ * 60s @20, 69.8s @100, 118.8s @500. Read the paragraphs above as the argument
+ * against a flat 120s AT EVERY SIZE, which is what they were: a 20-file corpus
+ * was being given a 500-file project's patience, and the waiting it bought was
+ * spent entirely by a server that never answers at any budget. The ramp keeps
+ * the small end tight — @20 is 60s, half the flat value it used to get — and
+ * spends the headroom only where project size can actually justify it.
+ *
+ * It IS more generous than the flat 30s this replaced, and that costs
+ * something: the server that consumes 100% of any budget now consumes 60s
+ * rather than 30s per attempt. Bounded, and the arithmetic is worth stating —
+ * it fails at @20, which suppresses the larger sizes, so the whole regression
+ * is 2 sessions x 30s = ~1 extra minute per pass. Paid knowingly, because the
+ * alternative is sizing every server's load budget around one known failure.
+ *
+ * Still IDENTICAL for every server at a given size — the fairness rule is
+ * unchanged; what varies is the corpus, not who is asking.
+ *
  * Override with SCALE_PROJECT_LOAD_TIMEOUT_MS when investigating a server that
- * genuinely needs longer — and if one ever does, raise it for everybody.
+ * genuinely needs longer; the env var wins at EVERY size, as it did before, and
+ * `null` here means "no override, use the ramp". If a server ever genuinely
+ * needs more, raise the ramp for everybody rather than setting the env var in
+ * CI — a budget only one runner knows about is not a shared budget.
  */
-export const PROJECT_LOAD_TIMEOUT_MS = Number(
-  process.env.SCALE_PROJECT_LOAD_TIMEOUT_MS ?? 30_000,
-);
-/** One hover attempt while polling for the first correct answer. */
-const HOVER_ATTEMPT_TIMEOUT_MS = 15_000;
+export const PROJECT_LOAD_TIMEOUT_MS =
+  process.env.SCALE_PROJECT_LOAD_TIMEOUT_MS == null
+    ? null
+    : Number(process.env.SCALE_PROJECT_LOAD_TIMEOUT_MS);
 /** Gap between hover attempts, so polling does not flood a loading server. */
 const POLL_MS = 150;
-/**
- * Completion and references, once the project is loaded (or has given up).
- *
- * 120s, not 60: Volar/TNB's references@500 MEASURED 51.13s on a 4-core CI
- * runner — 85% of the old budget. A marginally slower runner would have
- * flipped that row to a timeout, and a `usable` timeout suppresses every
- * larger size, so one harness-side overrun erases 12 of a server's 16 rows
- * looking exactly like a tool failure. 2.3x measured need, same for everyone.
- */
-const REQUEST_TIMEOUT_MS = 120_000;
 /** Warm hover: enough repeats for a median, few enough to keep runtime sane. */
 const WARM_REPEATS = 5;
 
@@ -559,6 +569,11 @@ function skippedSizeOps(corpus, failedAtSize) {
 
 async function measureSize(ctx, corpus) {
   const { size } = corpus;
+  // The ONLY suite where the ramp actually varies: one budget set per corpus
+  // size, so 20 files are not given a 500-file project's patience. The env
+  // hatch still wins for the load budget — see PROJECT_LOAD_TIMEOUT_MS.
+  const budget = budgetFor(corpus.vueFiles);
+  const loadTimeoutMs = PROJECT_LOAD_TIMEOUT_MS ?? budget.coldMs;
   const ids = {
     usable: `usable@${size}`,
     completion: `completion@${size}`,
@@ -573,14 +588,15 @@ async function measureSize(ctx, corpus) {
     session = await createSession({
       server: ctx.server,
       workspaceDir: corpus.dir,
-      initTimeoutMs: PROJECT_LOAD_TIMEOUT_MS,
+      budget,
+      initTimeoutMs: loadTimeoutMs,
     });
   } catch (e) {
     // A server that cannot come up on this corpus inside the shared budget is a
     // RESULT, not a reason to shrink the corpus. Every row at this size is
     // invalid, and carries the failure as its evidence.
     const ms = performance.now() - t0;
-    const reason = `session did not start on ${corpus.vueFiles} .vue files within ${PROJECT_LOAD_TIMEOUT_MS} ms: ${e.message}`;
+    const reason = `session did not start on ${corpus.vueFiles} .vue files within ${loadTimeoutMs} ms: ${e.message}`;
     return [
       op({
         id: ids.usable,
@@ -603,7 +619,7 @@ async function measureSize(ctx, corpus) {
   try {
     /* 1. Time-to-usable: didOpen, then poll hover until it is CORRECT. */
     session.openDoc(uri, PROBE_SOURCE);
-    const deadline = t0 + PROJECT_LOAD_TIMEOUT_MS;
+    const deadline = t0 + loadTimeoutMs;
     let attempts = 0;
     let cls = null;
     let lastText = "";
@@ -617,7 +633,7 @@ async function measureSize(ctx, corpus) {
           await session.ask(
             "textDocument/hover",
             { textDocument: { uri }, position: PROBE_POSITIONS.hover },
-            Math.min(remaining, HOVER_ATTEMPT_TIMEOUT_MS),
+            Math.min(remaining, budget.warmMs),
             mergeHover,
           ),
         );
@@ -639,7 +655,7 @@ async function measureSize(ctx, corpus) {
         valid: !!cls?.ok,
         reason: cls?.ok
           ? ""
-          : `no correct hover within ${PROJECT_LOAD_TIMEOUT_MS} ms (${attempts} attempts): ${cls?.reason || lastError || "no answer at all"}`,
+          : `no correct hover within ${loadTimeoutMs} ms (${attempts} attempts): ${cls?.reason || lastError || "no answer at all"}`,
         sample: lastText || lastError,
         artifact: corpus.vueFiles,
       }),
@@ -656,7 +672,8 @@ async function measureSize(ctx, corpus) {
               position: PROBE_POSITIONS.completion,
               context: { triggerKind: 1 },
             },
-            REQUEST_TIMEOUT_MS,
+            // Warm: answered from the loaded project. MEASURED ~140ms @500.
+            budget.warmMs,
             mergeCompletions,
           ),
         );
@@ -685,7 +702,19 @@ async function measureSize(ctx, corpus) {
             position: PROBE_POSITIONS.references,
             context: { includeDeclaration: true },
           },
-          REQUEST_TIMEOUT_MS,
+          // Project-wide, and the one measurement here that genuinely tracks
+          // corpus size: Volar/TNB's references@500 MEASURED 51.13s on a 4-core
+          // CI runner. `projectMs` gives it 118.8s at that size and 60s at 20
+          // files, where the same call took under a second. Worth noting that
+          // the ramp lands within 1% of the 120s flat budget this replaced —
+          // that number was forced by the same measurement, so the two agree
+          // where it matters and differ at every smaller size.
+          //
+          // A warm-sized budget here (17.2s @500) would flip that row to a
+          // timeout, and a `usable` timeout suppresses every larger size — one
+          // harness-side overrun erasing 12 of a server's 16 rows, looking
+          // exactly like a tool failure. That has happened once already.
+          budget.projectMs,
           mergeLocations,
         );
         const r = classifyScaleReferences(result, { probeUri: uri });
@@ -709,7 +738,7 @@ async function measureSize(ctx, corpus) {
             await session.ask(
               "textDocument/hover",
               { textDocument: { uri }, position: PROBE_POSITIONS.hover },
-              HOVER_ATTEMPT_TIMEOUT_MS,
+              budget.warmMs,
               mergeHover,
             ),
           );

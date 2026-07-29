@@ -76,6 +76,7 @@
 
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { budgetOf } from "../budget.mjs";
 import { timed } from "../context.mjs";
 import { summarizeBridgeFailures } from "../../tsserver-bridge.mjs";
 import { positionOf, scaffold } from "../workspace.mjs";
@@ -211,8 +212,15 @@ export const EDITOR_SETTINGS = {
   },
 };
 
-/** One timeout, one settle, for every operation and every server. */
-const REQUEST_TIMEOUT_MS = 45_000;
+/**
+ * One settle, for every operation and every server.
+ *
+ * The request budget is no longer a constant here: it comes from
+ * `ctx.budget.warmMs` (budget.mjs), which scales with the workspace. This suite
+ * writes ONE file, so it sits at the small-project floor — every operation it
+ * measures answered in under 760ms on a 2-core CI runner, and a 45s flat
+ * ceiling meant a wedged server cost 60x what a working one did.
+ */
 const SETTLE_AFTER_OPEN_MS = 400;
 const SETTLE_AFTER_CONFIG_MS = 200;
 const SETTLE_AFTER_EDIT_MS = 200;
@@ -838,6 +846,7 @@ export const SUITE = {
     writeFileSync(join(dir, "Background.vue"), SOURCE);
     return {
       dir,
+      fileCount: 1,
       file: join(dir, "Background.vue"),
       fileRel: "Background.vue",
       source: SOURCE,
@@ -850,6 +859,9 @@ export const SUITE = {
     const { ask, openDoc, changeDoc, ws, pathToFileUri, verbose } = ctx;
     const uri = pathToFileUri(ws.file);
     const expect = ws.expect;
+    // Every operation below is a warm, single-document request. Identical for
+    // every server, as the whole suite is.
+    const REQUEST_TIMEOUT_MS = budgetOf(ctx).warmMs;
 
     const dump = (what, value) => {
       if (!verbose) return;

@@ -27,6 +27,7 @@ import {
   removeWorkspace,
   resolveServers,
 } from "./lib/ide-ops/context.mjs";
+import { budgetFor } from "./lib/ide-ops/budget.mjs";
 import { SUITES } from "./lib/ide-ops/registry.mjs";
 import { buildIdeSurfaces, buildTypingLoopSurface } from "./lib/ide-report.mjs";
 import { IDE_RANKING_RULES, RANKING_RULES, renderSurfaceMarkdown } from "./lib/report.mjs";
@@ -115,9 +116,15 @@ async function runSuiteOnServer({ suite, server, workRoot, verbose, keepWork }) 
   mkdirSync(wsDir, { recursive: true });
   const ws = suite.buildWorkspace(wsDir);
 
+  // Budgets scale with the workspace the suite just wrote. A suite that does
+  // not declare `fileCount` gets the small-project floor, which is correct for
+  // every suite here except `scale` — and `scale` builds one session per corpus
+  // size inside measure(), so it computes its own budgets there.
+  const budget = budgetFor(ws.fileCount);
+
   let ctx = null;
   try {
-    ctx = await createSession({ server, workspaceDir: wsDir });
+    ctx = await createSession({ server, workspaceDir: wsDir, budget });
     const ops = await suite.measure({ ...ctx, ws, pathToFileUri, verbose });
     return { ok: true, ops, initializeMs: ctx.initializeMs, stderr: ctx.stderrTail() };
   } catch (e) {

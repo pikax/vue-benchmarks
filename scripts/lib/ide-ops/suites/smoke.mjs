@@ -34,6 +34,7 @@ export const SUITE = {
     writeFileSync(join(dir, "Smoke.vue"), SOURCE);
     return {
       dir,
+      fileCount: 1,
       file: join(dir, "Smoke.vue"),
       fileRel: "Smoke.vue",
       source: SOURCE,

@@ -46,6 +46,7 @@ import {
 } from "../surfaces/lsp.mjs";
 import { resolveTnbTsdk } from "../tnb.mjs";
 import { withTsgoEnv } from "../tsgo.mjs";
+import { budgetFor } from "./budget.mjs";
 
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../../..");
 
@@ -242,12 +243,24 @@ function resultSize(result) {
 /**
  * Start one server against one workspace and return the operation context.
  *
+ * Budgets come from the workspace's file count (see budget.mjs) rather than
+ * from a flat constant, so a 3-file suite does not wait a 500-file project's
+ * worth of time to find out a server has wedged. `initTimeoutMs` still wins
+ * when passed explicitly — the scale suite threads
+ * SCALE_PROJECT_LOAD_TIMEOUT_MS through it, and that hatch has to keep working.
+ *
  * @param {object} opts
  * @param {object} opts.server         entry from resolveServers()
  * @param {string} opts.workspaceDir
- * @param {number} [opts.initTimeoutMs]
+ * @param {object} [opts.budget]       from budgetFor(fileCount)
+ * @param {number} [opts.initTimeoutMs] explicit override for the cold budget
  */
-export async function createSession({ server, workspaceDir, initTimeoutMs = 45_000 }) {
+export async function createSession({
+  server,
+  workspaceDir,
+  budget = budgetFor(0),
+  initTimeoutMs = budget.coldMs,
+}) {
   const rootUri = pathToFileUri(workspaceDir);
   const client = new LspClient(server.id, server.command, server.args, {
     cwd: workspaceDir,
@@ -364,7 +377,7 @@ export async function createSession({ server, workspaceDir, initTimeoutMs = 45_0
    * and if EVERY leg rejects the error is preserved and rethrown — a genuine
    * failure must still fail.
    */
-  const ask = async (method, params, timeoutMs = 30_000, merge) => {
+  const ask = async (method, params, timeoutMs = budget.warmMs, merge) => {
     if (!hybrid) return client.sendRequest(method, params, timeoutMs);
     const settled = await Promise.allSettled([
       client.sendRequest(method, params, timeoutMs),
@@ -448,6 +461,7 @@ export async function createSession({ server, workspaceDir, initTimeoutMs = 45_0
     rootUri,
     client,
     hybrid,
+    budget,
     initializeMs,
     ask,
     notify,
