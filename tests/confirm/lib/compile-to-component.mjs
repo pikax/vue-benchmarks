@@ -106,6 +106,47 @@ export function getCompilers() {
     });
   }
 
+  // fervid — https://github.com/phoenix-ru/fervid
+  //
+  // fervid reports a non-fatal `NonVoidHtmlElementStartTagWithTrailingSolidus`
+  // diagnostic for self-closing non-void tags (`<div />`, `<MyComp />`), which
+  // Vue's own SFC parser accepts, while still emitting complete codegen. The
+  // suite treats a non-empty `errors` array as a compile failure, so that one
+  // diagnostic kind is dropped WHEN CODE WAS PRODUCED — otherwise fervid would
+  // be failed here for output that mounts and behaves correctly.
+  //
+  // Deliberately narrow: any other diagnostic, and any diagnostic at all when
+  // no code came back, still fails the case. Runtime behaviour remains the real
+  // gate — this only stops a parser-strictness note from pre-empting it.
+  const FERVID_NONFATAL = /NonVoidHtmlElementStartTagWithTrailingSolidus/;
+  const fervid = loadOptional("@fervid/napi");
+  if (!fervid.error && typeof fervid.mod.Compiler === "function") {
+    const fervidCompiler = new fervid.mod.Compiler({ isProduction: true });
+    list.push({
+      id: "fervid",
+      label: "@fervid/napi",
+      compile(source, filename) {
+        let result;
+        try {
+          result = fervidCompiler.compileSync(source, { id: hashId(filename), filename });
+        } catch (error) {
+          return { code: null, errors: [error instanceof Error ? error.message : String(error)] };
+        }
+        const code = result?.code ?? null;
+        const errors = (result?.errors || [])
+          .map((e) => (typeof e === "string" ? e : e.message || String(e)))
+          .filter((message) => !(code && FERVID_NONFATAL.test(message)));
+        return { code, errors };
+      },
+    });
+  } else {
+    list.push({
+      id: "fervid",
+      label: "@fervid/napi",
+      skip: fervid.error || "Compiler missing",
+    });
+  }
+
   const verter = loadOptional("@verter/native");
   if (!verter.error && typeof verter.mod.VerterHost === "function") {
     list.push({

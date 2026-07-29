@@ -95,6 +95,18 @@ const handlers = {
     if (result.failedCount) throw new Error(`vize batch failed ${result.failedCount}`);
   },
 
+  async "fervid-compile-sfc"(payload) {
+    const { Compiler } = require(require.resolve("@fervid/napi", { paths: [rootDir] }));
+    const compiler = new Compiler({ isProduction: payload.isProd });
+    for (const f of payload.sources) {
+      const result = compiler.compileSync(f.source, { id: f.filename, filename: f.filename });
+      // Gated on codegen, not on diagnostic silence: fervid reports non-fatal
+      // HTML-strictness diagnostics on self-closing non-void tags while still
+      // emitting complete code. See scripts/lib/surfaces/compile.mjs.
+      if (!result?.code?.length) throw new Error(`fervid emitted no code for ${f.filename}`);
+    }
+  },
+
   async "verter-compile-many"(payload) {
     const { VerterHost } = require(require.resolve("@verter/native", { paths: [rootDir] }));
     const host = new VerterHost({ devMode: !payload.isProd });

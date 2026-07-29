@@ -11,6 +11,9 @@ importers:
       '@babel/core':
         specifier: 8.0.1
         version: 8.0.1
+      '@fervid/napi':
+        specifier: 0.4.1
+        version: 0.4.1
       '@golar/vue':
         specifier: 0.1.10
         version: 0.1.10
@@ -326,6 +329,34 @@ packages:
     peerDependenciesMeta:
       '@noble/hashes':
         optional: true
+
+  '@fervid/napi-darwin-arm64@0.4.1':
+    resolution: {integrity: sha512-HhP8z4RdvZWNrjPIqOWRpSqu3CTUPsah8svP4yS5NZ0oD3oN1ZUfU+kGt4RkE5e/BaAlQCPz/kW+UfNtcfHRxA==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@fervid/napi-linux-x64-gnu@0.4.1':
+    resolution: {integrity: sha512-SalLMsvQ9VFOaPf333uC3VwShFbdIW1dVoDYKCQPjoPu0w3wdv504ApBSsRQOjcPQ0FaIL9g9qHWLNEcpJZKvQ==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [linux]
+
+  '@fervid/napi-linux-x64-musl@0.4.1':
+    resolution: {integrity: sha512-evWRev0hUYoqCCfmzHWq5NpkAmjoB7ebtl5UWAzpVSEGu75t0wOqqTIxkaQNoiWoLUVFer2LuhVl+UhIBpqyxg==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [linux]
+
+  '@fervid/napi-win32-x64-msvc@0.4.1':
+    resolution: {integrity: sha512-b5qMUm5Ojz7T129jAvr+Rf7gpSotVULG7oDKtINnRTuOKNYncxpYX+ZnXHHpykrEPUx2iyo9ET+HVCjPHrIUTw==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [win32]
+
+  '@fervid/napi@0.4.1':
+    resolution: {integrity: sha512-otpFMUKRLKBjhc650uIZKWWMRixybr2nWTHQzPC0XOCqOwtGBaJ9o8rqY5eWwWvPXFbYBQL58yFTJQp8dl2cAQ==}
+    engines: {node: '>= 10'}
 
   '@golar/darwin-arm64@0.1.10':
     resolution: {integrity: sha512-r4Iz1g2izi4cEskMsgL71uVY70o9/iZCBeCzO1z01EH1Z8Bp/Bp0q2+Rbtk0Hq1Gy9cKX5GG22BphqdhK4ltWQ==}
@@ -3124,6 +3155,25 @@ snapshots:
       levn: 0.4.1
 
   '@exodus/bytes@1.15.1': {}
+
+  '@fervid/napi-darwin-arm64@0.4.1':
+    optional: true
+
+  '@fervid/napi-linux-x64-gnu@0.4.1':
+    optional: true
+
+  '@fervid/napi-linux-x64-musl@0.4.1':
+    optional: true
+
+  '@fervid/napi-win32-x64-msvc@0.4.1':
+    optional: true
+
+  '@fervid/napi@0.4.1':
+    optionalDependencies:
+      '@fervid/napi-darwin-arm64': 0.4.1
+      '@fervid/napi-linux-x64-gnu': 0.4.1
+      '@fervid/napi-linux-x64-musl': 0.4.1
+      '@fervid/napi-win32-x64-msvc': 0.4.1
 
   '@golar/darwin-arm64@0.1.10':
     optional: true

@@ -72,6 +72,7 @@ export function collectVersions() {
     vize: pkgVersion("vize"),
     "@vizejs/native": pkgVersion("@vizejs/native"),
     "@verter/native": pkgVersion("@verter/native"),
+    "@fervid/napi": pkgVersion("@fervid/napi"),
     "verter-tsc": pkgVersion("verter-tsc"),
     "@verter/component-meta": pkgVersion("@verter/component-meta"),
     // The LSP row used to resolve an unversioned local build, so it was the one

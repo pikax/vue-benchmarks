@@ -47,10 +47,59 @@ Both natives *do* support source maps elsewhere — Vize on its JSX API, Verter 
 | Vue Official 3.6.x | `@vue/compiler-sfc@3.6` | yes  | yes (`vapor: true` / vapor script) | `isProd`                                          |
 | Vize               | `@vizejs/native`        | yes  | yes (`vapor`)                      | ⚠ **none** — no `isProduction` on `compileSfc`    |
 | Verter             | `@verter/native`        | yes  | yes (`forceVapor`)                 | `isProduction` + `hmrStrategy`                    |
+| [fervid](https://github.com/phoenix-ru/fervid) | `@fervid/napi` | yes | **no** (skipped — no Vapor path)   | `isProduction`                                    |
 
 ⚠ in this table marks a matrix dimension the tool does not vary with: the rows are still produced, and they are identical. Where a tool has no code path for a dimension at all, the row is reported `skipped` instead and carries no ⚠.
 
 ⚠ Vize's production and development rows therefore perform **identical work**, because `compileSfc` exposes no production flag. The row notes record this; no substitute flag is used in its place.
+
+#### Caveat: fervid is measured but unranked — 11% of its output for this corpus is not valid JavaScript
+
+[fervid](https://github.com/phoenix-ru/fervid) (`@fervid/napi` 0.4.1) is an all-in-one Vue SFC compiler in Rust. It is wired into the SFC compile surface only — it has no JSX, typecheck, format, lint, component-meta or LSP surface, so it appears nowhere else — and VDOM only, so vapor cells report it `skipped` rather than substituting VDOM, exactly as Vue 3.5 is treated.
+
+Its rows are **measured, bracketed and excluded from ranking**, because it fails the [codegen validity gate](#codegen-validity-gate):
+
+> **22 of 200** timed fixtures compile to output that is not parseable JavaScript.
+
+The cause is multi-binding `v-for`. For `v-for="(label, i) in labels"` fervid emits doubly-parenthesised arrow parameters:
+
+```js
+_renderList(__props.items, ((item, index)) => /* … */)
+//                         ^^^^^^^^^^^^^^^  not valid JavaScript
+```
+
+Single-binding `v-for="item in items"` is unaffected. `@vue/compiler-sfc` 3.5/3.6, Vize and Verter each emit parseable output for **all 200** files, so the gate is not a fervid-specific rule — it is applied to every compiler in the table and only fervid fails it.
+
+The confirmation suite (`pnpm confirm:compile`, runtime behaviour under `@vue/test-utils`) shows the same picture from the correctness side — fervid passes 10 of 19 cases. All nine failures are recorded in `tests/confirm/known-failures.json` with root causes:
+
+| Case | Root cause |
+| --- | --- |
+| `v-for-list` | doubly-parenthesised arrow params — the gate failure above |
+| `slot-fallback` | fallback passed to `_renderSlot` as an array, not the thunk Vue calls |
+| `dynamic-component-is` | `<component :is>` compiled as a literal component named `component` instead of `_resolveDynamicComponent` |
+| `keep-alive` | same `<component :is>` cause, inside `<KeepAlive>` |
+| `custom-directive` | directive bound correctly, but the `512 /* NEED_PATCH */` flag is omitted so `updated` never fires |
+| `dynamic-slot-name` | plain computed slot key instead of `_createSlots` + `1024 /* DYNAMIC_SLOTS */` |
+| `event-modifiers` | `@keyup.enter` compiled with `_withModifiers` instead of `_withKeys`, so the key guard is a no-op |
+| `css-v-bind` | `__scopeId` set but no `useCssVars()` emitted, so `<style> v-bind()` never resolves |
+| `v-show` | `_vShow` bound but `512 /* NEED_PATCH */` omitted, so toggling never updates `display` |
+
+Two further properties of the fervid rows are stated on every row rather than folded into the number:
+
+- **It does more work than its neighbours.** `compileSync` also compiles `<style>` blocks (scoped styles come back `isCompiled: true` with the scope attribute applied). Every other row in the table measures parse + script + template and never touches styles. There is no option to disable it.
+- **It honours `sourceMap` for real** (~594 KB of map across this corpus), where Vize's and Verter's benchmarked entry points return none. In an `sm on` cell fervid pays map-generation cost alongside `@vue/compiler-sfc`, not alongside the natives.
+
+A third observation is *not* held against it: fervid reports non-fatal `NonVoidHtmlElementStartTagWithTrailingSolidus` diagnostics for self-closing non-void tags (`<div />`, `<MyComp />`) that Vue's SFC parser accepts — 44 on this corpus. Verified case by case: codegen is complete and correct for those files, so the count is recorded (in the row notes, and per-run in the JSON report's meta samples) and nothing more is made of it.
+
+**Every part of this is re-derived on each run.** The gate re-parses fervid's output each benchmark and the confirmation suite fails the build if a listed failure starts passing, so a later fervid release that fixes the `v-for` codegen clears the bracket and enters the ranking with no change to this repository.
+
+#### Codegen validity gate
+
+The compile surface ranks on bytes per millisecond, and nothing used to check that those bytes parsed. A compiler emitting syntactically broken output for part of the corpus is doing less work than one that is not, and would out-rank it on exactly that basis.
+
+So before any timing, each compiler's output for the whole corpus is parsed once. TypeScript syntax is permitted (the corpus is 110/200 `lang="ts"` and `compileScript` passes annotations through for a downstream transpiler); only genuine syntax errors count. A tool that fails is **measured but unranked**, with the failing count and first error in its row notes — the compile-surface analogue of the typecheck and lint work gates.
+
+Validity is a property of the compiler, not of a matrix cell, so it is evaluated once on vdom/production/sourcemap-off and carried onto that tool's rows in every cell.
 
 **Modes on the row:** Vue official compiler is **1T only** (worker_threads variants removed). Vize/Verter batch pools and Verter's `session` mode — a persistent host across warmups and runs — share the table with the mode in the row label; a pool row against a 1T row is a thread-count comparison, and a session row reuses prior analysis the cache-free rows repeat.
 

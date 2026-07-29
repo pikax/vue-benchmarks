@@ -209,6 +209,24 @@ export function buildMemoryTasks(fixtureDir, options = {}) {
         },
       });
 
+      // fervid is VDOM-only — no vapor task, matching the timing surface.
+      if (!vapor) {
+        tasks.push({
+          id: `mem-fervid-1t-${cell}`,
+          label: `fervid compileSync (1T) ${cell}`,
+          package: "@fervid/napi",
+          surface: "compile",
+          kind: "inproc",
+          inproc: {
+            handler: "fervid-compile-sfc",
+            payload: {
+              isProd,
+              sources: vueSources,
+            },
+          },
+        });
+      }
+
       tasks.push({
         id: `mem-verter-stateless-${cell}`,
         label: `Verter compileMany (stateless) ${cell}`,
