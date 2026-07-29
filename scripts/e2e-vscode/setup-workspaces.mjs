@@ -140,7 +140,7 @@ function writeVuePackage(dir, { name, files, extraDeps = {} }) {
         private: true,
         type: "module",
         dependencies: { vue: "3.5.40", ...extraDeps },
-        devDependencies: { typescript: "5.9.3" },
+        devDependencies: { typescript: "6.0.3" },
       },
       null,
       2,

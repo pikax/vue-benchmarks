@@ -6,7 +6,7 @@
  * VERTER_TSGO_DEV_ALLOW_NIGHTLY=1.
  *
  * This repo keeps:
- *   - typescript@5.9.x  → vue-tsc / vue-component-meta
+ *   - typescript@6.0.x  → vue-tsc / vue-component-meta (last JS-based line)
  *   - typescript-go (npm:typescript@7.0.2) → Verter tsgo engine
  *
  * Prefer VERTER_TSGO_BIN when set; otherwise resolve the platform native
