@@ -91,9 +91,14 @@ jobs:
         shell: bash
         run: |
           REQUESTED="${{ github.event.inputs.projects }}"
-          node -e '
+          # --input-type BEFORE -e: trailing args after the -e payload are the
+          # script's argv, not node flags — which left Node sniffing the module
+          # format, and top-level await (ESM) beside require() (CJS) is exactly
+          # the ambiguity it refuses (first live dispatch failed on this).
+          node --input-type=module -e '
+            const { appendFileSync } = await import("node:fs");
             const { REAL_WORLD_PROJECTS } = await import("./scripts/lib/real-world/projects.mjs");
-            const requested = process.env.REQUESTED.split(",").map((s) => s.trim()).filter(Boolean);
+            const requested = (process.env.REQUESTED ?? "").split(",").map((s) => s.trim()).filter(Boolean);
             const known = REAL_WORLD_PROJECTS.map((p) => p.id);
             const unknown = requested.filter((id) => !known.includes(id));
             if (unknown.length) {
@@ -112,8 +117,8 @@ jobs:
               return { project: id, timeoutMinutes: files > 1000 ? 120 : 90 };
             });
             console.log(`matrix: ${include.map((e) => `${e.project}(${e.timeoutMinutes}m)`).join(", ")}`);
-            require("node:fs").appendFileSync(process.env.GITHUB_OUTPUT, `include=${JSON.stringify(include)}\n`);
-          ' --input-type=module
+            appendFileSync(process.env.GITHUB_OUTPUT, `include=${JSON.stringify(include)}\n`);
+          '
         env:
           REQUESTED: ${{ github.event.inputs.projects }}
 
