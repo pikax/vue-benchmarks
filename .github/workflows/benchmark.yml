@@ -480,4 +480,6 @@ jobs:
             fixtures: ${{ env.FIXTURE_COUNT }} SFCs · runs: ${{ env.BENCH_RUNS }} · warmups: ${{ env.BENCH_WARMUPS }}
             bench: ${{ needs.bench.result }} · ide: ${{ needs.ide.result }} · ide-scale: ${{ needs['ide-scale'].result }} · memory: ${{ needs.memory.result }}
             Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          file_pattern: README.md MEMORY.md
+          # docs/results carries the full per-artifact reports the README's
+          # summary tables link to — same commit, or the links 404.
+          file_pattern: README.md MEMORY.md docs/results/*.md

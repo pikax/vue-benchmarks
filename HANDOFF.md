@@ -133,6 +133,12 @@ closure files exist for the COMPILER and must stay external to the graph.
 - The orchestrator has a 45-min per-surface budget (`SURFACE_TIMEOUT_MS`);
   a cell that hits it is recorded in `surfaceFailures[]`, the sweep continues.
 
+## Git rules (the user's, absolute)
+
+- **NEVER PUSH. EVER.** Not for CI fixes, not when a remote run is broken, not
+  for anything. Commit locally when asked, then say the commit is ready to
+  push. The user pushes.
+
 ## Verification checklist before you claim anything works
 
 1. `node tests/harness/run.mjs` → 715+ pass, 0 fail.
