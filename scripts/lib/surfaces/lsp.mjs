@@ -503,13 +503,20 @@ export function resolveVerterLsp() {
       // The published @verter/lsp-linux-x64-gnu binary arrives without its
       // executable bit (npm tarballs carry file modes, and the platform
       // package is packed on a host that has none), so a fresh install
-      // EACCESes on spawn. Every consumer resolves through here, so restore
-      // the bit at the resolution point instead of in each CI workflow.
+      // EACCESes on spawn. The repair is kept — refusing to run would hide the
+      // measurement AND the defect — but it is LOGGED on the row rather than
+      // silently applied: the package's own claim is "point your editor's LSP
+      // client at node_modules/.bin/verter-lsp", and a drop-in user hits the
+      // EACCES this bit-restore papers over. A worked-around defect is still
+      // a finding.
+      let packagingNote = null;
       if (process.platform !== "win32") {
         try {
           accessSync(resolved.path, fsConstants.X_OK);
         } catch {
           chmodSync(resolved.path, 0o755);
+          packagingNote =
+            "ⓘ PACKAGING DEFECT worked around to measure at all: the published platform binary ships without its executable bit, so a drop-in editor launch EACCESes on a fresh install. The harness restored the bit; the defect is the finding.";
         }
       }
       const version = pkgVersionOf("verter-lsp");
@@ -518,6 +525,7 @@ export function resolveVerterLsp() {
         args: [],
         shell: false,
         labelExtra: version ? `npm ${version}` : "npm package",
+        packagingNote,
       };
     }
   } catch {
@@ -1122,8 +1130,7 @@ export async function runLspSurface(_fixtureDir, options) {
       package: "verter-lsp",
       threading: "lsp",
       artifactLabel: "Hover bytes",
-      notes:
-        "verter-lsp stdio, the native server from the published npm package. $/verter/ready is OBSERVED, never waited for — its workspace load is inside the timed open→hover window like every other server's.",
+      notes: `verter-lsp stdio, the native server from the published npm package. $/verter/ready is OBSERVED, never waited for — its workspace load is inside the timed open→hover window like every other server's.${verter.packagingNote ? ` ${verter.packagingNote}` : ""}`,
       measure: async () =>
         runLspSession({
           name: "Verter",

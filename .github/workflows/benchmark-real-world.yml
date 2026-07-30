@@ -1,0 +1,283 @@
+name: Benchmark (real-world)
+
+# Toolchain benchmarks over pinned checkouts of popular open-source Vue
+# projects, rather than the generated fixtures.
+#
+# MANUAL DISPATCH ONLY, for the same reason as benchmark.yml: a published number
+# should be traceable to a person who asked for it. This workflow additionally
+# clones and installs nine large third-party monorepos, so it is the most
+# expensive thing in the repository — running it on a schedule would be a
+# standing bill nobody reads the output of.
+#
+# ---------------------------------------------------------------------------
+# SHARDING: one job PER PROJECT, every surface and every tool inside it.
+# ---------------------------------------------------------------------------
+#
+# The rule in docs/methodology.md is that no result is ever merged across
+# machines, which is why `benchmark.yml` refuses to shard by surface: lint and
+# typecheck are 70% of that job, splitting them would be the obvious win, and it
+# would put two rows of the same ranking on two different VMs.
+#
+# Sharding by PROJECT is the one split that rule permits, and it is the split
+# this workflow uses. Every comparison the real-world report makes is *within* a
+# corpus — Vue vs Vize vs Verter on Hoppscotch — and the report states outright
+# that corpora are never ranked against each other, because they differ in size
+# and in kind. So the set of numbers that must share a machine is exactly one
+# project's, and that is exactly what one job contains: build + hmr + lint +
+# format + compile, every tool, one runner.
+#
+# The converse is what must not happen: a matrix over SURFACES, with `bundle` on
+# one VM and `lint` on another for the same project. That would be the sharding
+# the methodology forbids, wearing a matrix as a disguise.
+#
+# `fail-fast: false` because a project failing to install is a fact about that
+# project on this runner, not a reason to discard the eight that worked.
+# ---------------------------------------------------------------------------
+
+on:
+  workflow_dispatch:
+    inputs:
+      projects:
+        description: "Project ids to run (comma-separated, blank = all)"
+        required: false
+        default: ""
+      bench_runs:
+        description: "Measured runs per tool"
+        required: false
+        default: "5"
+      bench_warmups:
+        description: "Discarded warmup runs per tool (minimum 1)"
+        required: false
+        default: "1"
+      file_limit:
+        description: "Max SFCs per corpus (blank = NO LIMIT, the full corpus; a limit takes an alphabetical prefix and is for debugging only)"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: benchmark-real-world-${{ github.ref_name }}
+  cancel-in-progress: ${{ github.ref_name != 'main' }}
+
+env:
+  NM_CACHE_PREFIX: nm-v1
+  BENCH_RUNS: ${{ github.event.inputs.bench_runs || '5' }}
+  BENCH_WARMUPS: ${{ github.event.inputs.bench_warmups || '1' }}
+  FILE_LIMIT: ${{ github.event.inputs.file_limit }}
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Decide the matrix from the registry, so the workflow can never drift out of
+  # sync with scripts/lib/real-world/projects.mjs. Adding a project there adds a
+  # job here with no YAML edit.
+  # ---------------------------------------------------------------------------
+  plan:
+    name: Plan matrix
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      include: ${{ steps.plan.outputs.include }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+
+      - id: plan
+        shell: bash
+        run: |
+          REQUESTED="${{ github.event.inputs.projects }}"
+          node -e '
+            const { REAL_WORLD_PROJECTS } = await import("./scripts/lib/real-world/projects.mjs");
+            const requested = process.env.REQUESTED.split(",").map((s) => s.trim()).filter(Boolean);
+            const known = REAL_WORLD_PROJECTS.map((p) => p.id);
+            const unknown = requested.filter((id) => !known.includes(id));
+            if (unknown.length) {
+              console.error(`unknown project ids: ${unknown.join(", ")} — known: ${known.join(", ")}`);
+              process.exit(1);
+            }
+            const ids = requested.length ? requested : known;
+            // Per-project job budget, scaled by corpus size from the registry
+            // (which has drift detection, so the numbers cannot silently rot).
+            // Full-corpus, no-cap measurement means the 1200+ SFC corpora
+            // legitimately need more wall clock; a uniform budget sized for the
+            // median project turns the largest corpus into nine missing tables.
+            const include = ids.map((id) => {
+              const project = REAL_WORLD_PROJECTS.find((p) => p.id === id);
+              const files = Math.max(...(project?.corpora ?? []).map((c) => c.approxFiles ?? 0), 0);
+              return { project: id, timeoutMinutes: files > 1000 ? 120 : 90 };
+            });
+            console.log(`matrix: ${include.map((e) => `${e.project}(${e.timeoutMinutes}m)`).join(", ")}`);
+            require("node:fs").appendFileSync(process.env.GITHUB_OUTPUT, `include=${JSON.stringify(include)}\n`);
+          ' --input-type=module
+        env:
+          REQUESTED: ${{ github.event.inputs.projects }}
+
+  # ---------------------------------------------------------------------------
+  # One project, one runner, every surface, every tool.
+  # ---------------------------------------------------------------------------
+  project:
+    name: ${{ matrix.project }} (Linux)
+    needs: plan
+    runs-on: ubuntu-latest
+    # Scaled per project by the plan job (90 min; 120 for the 1000+ SFC corpora
+    # measured full-corpus with no caps). A budget too tight loses EVERY surface
+    # for the project — and although the per-surface JSONs are uploaded even on
+    # timeout, the merged report is still the artifact people read. Raise the
+    # budget before cutting --runs; the measurement is the cheap half for most
+    # surfaces.
+    timeout-minutes: ${{ matrix.timeoutMinutes }}
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        include: ${{ fromJSON(needs.plan.outputs.include) }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+
+      - name: Restore node_modules cache
+        id: nm-cache
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ env.NM_CACHE_PREFIX }}-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', '.node-version') }}
+
+      - name: Install harness dependencies
+        if: steps.nm-cache.outputs.cache-hit != 'true'
+        run: pnpm install --frozen-lockfile
+
+      # The clone is cached on the PINNED REF, so a re-run of the same ref is a
+      # cache hit and costs nothing. A registry change that moves the ref changes
+      # the key and re-clones, which is the behaviour you want — the cache must
+      # never be able to serve a different commit than the one the report names.
+      - name: Cache project checkout
+        id: project-cache
+        uses: actions/cache@v4
+        with:
+          path: fixtures/real/${{ matrix.project }}
+          key: rw-v1-${{ matrix.project }}-${{ hashFiles('scripts/lib/real-world/projects.mjs') }}
+
+      - name: Fetch and install project
+        run: |
+          node scripts/fetch-real-world.mjs --projects "${{ matrix.project }}"
+
+      - name: Report corpus provenance
+        run: |
+          echo "### Corpus provenance" >> "$GITHUB_STEP_SUMMARY"
+          echo '```json' >> "$GITHUB_STEP_SUMMARY"
+          cat fixtures/real/manifest.json >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      # Every surface and every tool for this project, in ONE step on ONE runner.
+      # This is the part that must not be split.
+      #
+      # `project-test` runs the project's OWN vitest suite and therefore needs the
+      # install above to have succeeded. It degrades to a "no node_modules" note
+      # rather than failing the job, so a project that cannot install on this
+      # runner still yields compile/format/lint/bundle/hmr rows.
+      - name: Measured pass (all surfaces, all tools)
+        env:
+          RUNNER_OS: ${{ runner.os }}
+          BENCH_PHASE: real-world
+        run: |
+          # Empty by default, so the flag is ABSENT and the full corpus is measured.
+          # A default limit used to publish an alphabetical prefix (naive-ui: the
+          # first 200 of 1708 files by path) under a label that read as the whole
+          # project. Truncation is now opt-in and self-declaring.
+          FILE_LIMIT_ARG=""
+          if [ -n "${{ env.FILE_LIMIT }}" ]; then
+            FILE_LIMIT_ARG="--file-limit ${{ env.FILE_LIMIT }}"
+          fi
+          # project-lsp was excluded here for one day (2026-07-30) while "never
+          # finishes" was root-caused. It was a URI-spelling mismatch discarding
+          # every real answer (see canonicalUri in project-lsp.mjs); with the
+          # fix, the full surface completes on hoppscotch — the historic worst
+          # case — with every server answering diagnostics in 0.04-10 s.
+          node scripts/bench-real-world.mjs \
+            --projects "${{ matrix.project }}" \
+            --surfaces compile,format,lint,bundle,hmr,project-test,project-build,project-typecheck,project-component-meta,project-lsp \
+            --runs "${{ env.BENCH_RUNS }}" \
+            --warmups "${{ env.BENCH_WARMUPS }}" \
+            ${FILE_LIMIT_ARG} \
+            --json "results/real-world-${{ runner.os }}-${{ matrix.project }}.json" \
+            --out "results/real-world-${{ runner.os }}-${{ matrix.project }}.md"
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: results-real-world-${{ matrix.project }}
+          # The per-surface JSONs ride along: a job that hits its 90-minute
+          # budget then costs the unfinished surface, not every surface the
+          # project had already completed — those cells were written atomically
+          # as each child finished.
+          path: |
+            results/**
+            work-real/**/surface-json/*.json
+          if-no-files-found: warn
+          retention-days: 30
+
+  # ---------------------------------------------------------------------------
+  # Merge every project's markdown into README.md. Runs only on main, and only
+  # for a dispatch — same publish discipline as benchmark.yml.
+  #
+  # `if: always()` so a project that failed to install does not withhold the
+  # eight that succeeded. update-readme.mjs leaves a section whose artifact is
+  # missing exactly as published rather than overwriting it with a placeholder,
+  # so a partial run cannot erase good results.
+  # ---------------------------------------------------------------------------
+  update-readme:
+    name: Update README (real-world)
+    needs: project
+    if: always() && github.ref_name == 'main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+
+      - name: Download all project results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: results-real-world-*
+          merge-multiple: true
+          path: results
+
+      - name: Merge into README
+        run: node scripts/update-readme.mjs --dir results
+
+      - name: Commit
+        run: |
+          if git diff --quiet -- README.md; then
+            echo "No README change."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "chore: publish real-world benchmark results [skip ci]"
+          git push

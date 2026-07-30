@@ -573,6 +573,21 @@ export async function attachVolarHybridBridge(
       });
     },
     /**
+     * Diagnostics for mirrored documents arrive on THIS connection, not
+     * Volar's. In hybrid mode the Vue server delegates TypeScript semantics to
+     * this half, and typescript-language-server publishes the resulting
+     * diagnostics on its own channel — which this bridge used to receive and
+     * silently drop. The project-lsp diagnostics operation therefore waited on
+     * the Vue socket for a message that structurally never arrives on a real
+     * workspace: verified across two projects (hoppscotch, element-plus), both
+     * engines (tsserver, tsgo) and two TypeScript majors (5.9.3, 6.0.3) before
+     * this hook existed. An editor shows the union of both connections'
+     * diagnostics; subscribing here is the same wire.
+     */
+    onDiagnostics(handler) {
+      tsClient.on("notify:textDocument/publishDiagnostics", handler);
+    },
+    /**
      * Mirror an edit to the TypeScript server.
      *
      * Required for any measurement of the edit loop: Volar answers no

@@ -13,7 +13,16 @@ Throughput benchmarks for the Vue toolchain, measured on one Linux CI runner per
 | **Lint** | eslint-plugin-vue · Vize · Verter · Biome · [Oxlint](https://oxc.rs) (`oxlint`) (last two: `<script>` block only — unranked, see below) |
 | **Component-meta** | vue-component-meta · Verter · (Vize: skipped, no public API) |
 | **LSP + IDE operations** | Volar (JS engine and TNB/tsgo tsdk) · Vize · Verter |
+| **Bundle** (equal-terms build) | Vite 8 (Rolldown) · Vite 7 (Rollup) · Rolldown · Rspack · webpack 5, each × its available Vue integrations |
+| **HMR + dev server** | the same Vite-family cells: dev cold start and hot-update turnaround |
+| **Project build** (own config) | a real project's own `vite build`, baseline vs `unplugin-vue` · `@vizejs/vite-plugin` · `@verter/unplugin` |
+| **Project test** (own suite) | a real project's own Vitest suite, same four |
+| **Project typecheck** (own tsconfig) | a real project checked in place: `vue-tsc` on the JS engine (baseline) and on TNB/tsgo · `verter-tsc` · Vize — engines ranked in separate tables |
+| **Project component-meta** (own tsconfig) | a real project's components read in place: `vue-component-meta` (baseline) · `@verter/component-meta` — gated on components resolved and on per-component prop coverage |
+| **Project LSP** (project as workspace) | a real project as the editor workspace: Volar (JS engine and TNB/tsgo tsdk) · Verter · Vize — ranked per operation (`didOpen → diagnostics`, `hover`) and per engine |
 | **Memory / CPU** | all of the above, sampled separately — published in [MEMORY.md](./MEMORY.md) |
+
+The last six rows run against **real open-source Vue projects** (Element Plus, Naive UI, Vuetify, PrimeVue, Quasar, Ant Design Vue, Hoppscotch, Vue Vben Admin, Nuxt UI) at pinned refs, alongside `compile`, `format` and `lint`. See [Real-world corpora](docs/methodology.md#real-world-corpora) — and note that they are ranked *within* a corpus, never across, that a corpus above `--file-limit` is truncated to an alphabetical prefix and says so, and that a project shipping no lockfile has its checkout-dependent surfaces unranked because the dependency set is not reproducible.
 
 ## How to read the tables
 
@@ -2413,6 +2422,24 @@ Raw runs:
 </details>
 
 <!-- IDE_RESULTS_END -->
+
+## Real-world project results
+
+Toolchain surfaces run against pinned checkouts of popular open-source Vue projects instead of generated fixtures. Published by the **Benchmark (real-world)** workflow, which runs **one job per project** so every tool measured against a given project shares one machine.
+
+**Read these tables within a corpus, never across one.** The corpora differ in size and in kind, and the difference is larger than it looks: of the "big Vue UI libraries", Naive UI, Vuetify and Ant Design Vue contain essentially **no library SFCs at all** — their components are `.tsx`/render functions, and their `.vue` files are documentation demos. Those are real, non-trivial Vue and worth measuring; they are just not the same thing as PrimeVue's 279 published component SFCs or Hoppscotch's application source. Every table states which kind it holds.
+
+The generated `fixtures/N` corpus remains the primary ranking corpus — it is content-unique by construction and carries planted bugs, which is what makes the work gates possible. Real-world corpora exist to catch what a designed corpus cannot: constructs nobody thought to generate.
+
+<!-- REAL_WORLD_RESULTS_START -->
+
+_No real-world results published yet. Run the **Benchmark (real-world)** workflow, or locally:_
+
+```bash
+pnpm fetch:real-world && pnpm bench:real-world
+```
+
+<!-- REAL_WORLD_RESULTS_END -->
 
 ## Contributing
 

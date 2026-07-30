@@ -33,6 +33,11 @@
     "bench:lint": "node scripts/bench.mjs --surfaces lint",
     "bench:component-meta": "node scripts/bench.mjs --surfaces component-meta",
     "bench:lsp": "node scripts/bench.mjs --surfaces lsp --runs 3 --warmups 1",
+    "fetch:real-world": "node scripts/fetch-real-world.mjs",
+    "bench:real-world": "node scripts/bench-real-world.mjs",
+    "bench:real-world:quick": "node scripts/bench-real-world.mjs --projects hoppscotch --file-limit 60 --runs 2 --warmups 1",
+    "bench:bundle": "node scripts/bench-real-world.mjs --surfaces bundle",
+    "bench:hmr": "node scripts/bench-real-world.mjs --surfaces hmr",
     "bench:memory": "node --expose-gc scripts/bench-memory.mjs",
     "bench:memory:small": "node --expose-gc scripts/bench-memory.mjs --fixture fixtures/20 --file-limit 20 --samples 2",
     "e2e:setup": "node scripts/e2e-vscode/setup-workspaces.mjs",
@@ -53,7 +58,12 @@
     "prepublishOnly": "node -e \"console.error('This package is private and not published to npm.'); process.exit(1)\"",
     "bench:ide": "node scripts/ide-bench.mjs",
     "bench:ide:list": "node scripts/ide-bench.mjs --list",
-    "bench:ide:quick": "node scripts/ide-bench.mjs --suite smoke,completion --server all --runs 1"
+    "bench:ide:quick": "node scripts/ide-bench.mjs --suite smoke,completion --server all --runs 1",
+    "bench:project-test": "node scripts/bench-real-world.mjs --surfaces project-test",
+    "bench:project-build": "node scripts/bench-real-world.mjs --surfaces project-build",
+    "bench:project-typecheck": "node scripts/bench-real-world.mjs --surfaces project-typecheck",
+    "bench:project-component-meta": "node scripts/bench-real-world.mjs --surfaces project-component-meta",
+    "bench:project-lsp": "node scripts/bench-real-world.mjs --surfaces project-lsp"
   },
   "dependencies": {
     "@babel/core": "8.0.1",
@@ -90,12 +100,26 @@
     "vue-tsc": "3.3.8"
   },
   "devDependencies": {
+    "@rspack/core": "2.1.7",
+    "@swc/core": "1.15.47",
     "@typescript-eslint/parser": "^8.65.0",
+    "@verter/unplugin": "0.0.1-beta.3",
+    "@vitejs/plugin-vue": "6.0.8",
+    "@vizejs/rspack-plugin": "0.302.0",
+    "@vizejs/vite-plugin": "0.302.0",
     "@vue/test-utils": "2.4.11",
     "jsdom": "30.0.1",
+    "rolldown": "1.2.1",
+    "sass": "1.97.1",
+    "swc-loader": "0.2.7",
     "tinybench": "6.1.2",
     "typescript": "6.0.3",
-    "typescript-go": "npm:typescript@7.0.2"
+    "typescript-go": "npm:typescript@7.0.2",
+    "unplugin-vue": "7.2.0",
+    "vite": "8.1.5",
+    "vite7": "npm:vite@7.3.6",
+    "vue-loader": "17.4.2",
+    "webpack": "5.109.2"
   },
   "engines": {
     "node": ">=22"

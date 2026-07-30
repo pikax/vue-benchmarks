@@ -97,9 +97,13 @@ A third observation is *not* held against it: fervid reports non-fatal `NonVoidH
 
 The compile surface ranks on bytes per millisecond, and nothing used to check that those bytes parsed. A compiler emitting syntactically broken output for part of the corpus is doing less work than one that is not, and would out-rank it on exactly that basis.
 
-So before any timing, each compiler's output for the whole corpus is parsed once. TypeScript syntax is permitted (the corpus is 110/200 `lang="ts"` and `compileScript` passes annotations through for a downstream transpiler); only genuine syntax errors count. A tool that fails is **measured but unranked**, with the failing count and first error in its row notes — the compile-surface analogue of the typecheck and lint work gates.
+So before any timing, each compiler's output for the whole corpus is parsed. TypeScript syntax is permitted (the corpus is 110/200 `lang="ts"` and `compileScript` passes annotations through for a downstream transpiler); only genuine syntax errors count. A tool that fails is **measured but unranked**, with the failing count and first error in its row notes — the compile-surface analogue of the typecheck and lint work gates.
 
-Validity is a property of the compiler, not of a matrix cell, so it is evaluated once on vdom/production/sourcemap-off and carried onto that tool's rows in every cell.
+**The gate runs once per (target × environment) cell, with that cell's flags.** It used to run once on vdom/production and stamp the verdict onto the Vapor and development cells it had never exercised — but Vapor is a different codegen backend and development mode emits different code (HMR wiring, no hoisting), so a pass on one is not evidence about the other. In the direction that matters, a tool whose Vapor output does not parse kept a ranked Vapor row on the strength of its VDOM output. Source maps are *not* a gate dimension: a map is emitted beside the code and cannot change whether the code parses.
+
+Each tool's compiler handle is constructed **inside** the gate's own try, so a throwing constructor costs that one tool a `ⓘ GATE NOT RUN` annotation rather than destroying every row for the corpus — which is what happened when `new VerterHost(…)` and `new Compiler(…)` sat outside it.
+
+**One error policy for `@vue/compiler-sfc`, Vize and Verter in the timed path:** a non-empty `errors` array fails the measure. Vue returns parse and template errors in an array rather than throwing, and the timed path used to discard both — while the Vize row threw on `result.errors.length` and the Verter row threw on `results.filter(r => r.errors?.length)`. That asymmetry billed a file Vue could not parse as cheap work successfully done, with the row left ranked, where the identical failure in a challenger produced ❌. fervid is the documented exception, gated on codegen actually being produced for every file, because its diagnostics include non-fatal HTML-strictness warnings that Vue's SFC parser does not raise — stated on every fervid row rather than applied silently.
 
 **Modes on the row:** Vue official compiler is **1T only** (worker_threads variants removed). Vize/Verter batch pools and Verter's `session` mode — a persistent host across warmups and runs — share the table with the mode in the row label; a pool row against a 1T row is a thread-count comparison, and a session row reuses prior analysis the cache-free rows repeat.
 
@@ -527,6 +531,8 @@ Tool order is **rotated by run index** on every warmup and measured run, so over
 
 **Linux only, and every timing surface runs in one job.** No result is ever merged across machines.
 
+> **The one permitted split: by project, in the real-world workflow.** [`benchmark-real-world.yml`](../.github/workflows/benchmark-real-world.yml) runs a matrix of one job **per project**, with every surface and every tool inside it. That does not violate the rule, it applies it: every comparison the real-world report makes is *within* a corpus (Vue vs Vize vs Verter on Hoppscotch), and the report states outright that corpora are never ranked against each other. So the set of numbers that must share a machine is exactly one project's — which is exactly what one job contains. The split that would still be forbidden is a matrix over **surfaces**, putting `bundle` and `lint` for the *same* project on two VMs; that is the sharding this rule exists to prevent, wearing a matrix as a disguise.
+
 Cross-OS rows were never comparable — this report already forbids it — so a three-OS matrix bought nothing but 3x the runner cost and three more sources of variance. One OS, one runner class, one set of numbers.
 
 The tempting optimisation is to shard by surface — `lint` and `typecheck` are the two biggest and together are ~70% of the job. We don't, because it puts each surface on a different runner, and GitHub runners vary enough that a report stitched together from several VMs is not one measurement. Keeping everything on one box removes that discrepancy outright, and guarantees a comparison class can never accidentally span machines as surfaces are added or regrouped.
@@ -567,6 +573,283 @@ The floor is set against measurement, not caution: the slowest passing ranked op
 
 The **memory** probe stays a separate job on purpose — sampling RSS and CPU alongside timing runs would perturb the very timings it sits next to. That is isolation for a different reason than machine variance.
 
+## Real-world corpora
+
+Everything above measures **generated** fixtures. That corpus is designed — every body content-unique, every construct deliberate, a planted bug in a known place — and that design is what makes the work gates possible. What a designed corpus cannot do is surprise anyone.
+
+The real-world surfaces run the toolchain against SFCs from **pinned checkouts of popular open-source Vue projects**. Fetch with `pnpm fetch:real-world`, measure with `pnpm bench:real-world`. Clones land in `fixtures/real/<id>/` (gitignored) and `fixtures/real/manifest.json` records the **resolved commit SHA** of each — that file, not the tag, is what makes a published real-world number reproducible.
+
+### The corpora are not what the star counts suggest
+
+Every row below was verified against the repository tree at the pinned ref, not taken from the project's README. The intuition "famous Vue UI library ⇒ thousands of SFCs" is wrong for most of the list:
+
+| Project | ref | repo `.vue` | library-source `.vue` | what the rest is |
+| --- | --- | ---: | ---: | --- |
+| Naive UI | `v2.44.1` | 1708 | ~0 | component demos; the components are `.tsx` |
+| PrimeVue | `4.5.5` | 2615 | **279** | showcase/doc fragments |
+| Vuetify | `v4.1.6` | 1254 | ~8 | the docs application; the library is `.ts`/`.tsx` |
+| Quasar | `quasar-v2.23.3` | 1383 | ~3 | playground app + docs examples |
+| Element Plus | `2.14.3` | 1004 | **162** | docs examples + SSR test cases |
+| Ant Design Vue | `4.2.6` | 733 | ~0 | per-component demos; 637 `.tsx` components |
+| Nuxt UI | `v4.10.0` | 720 | **187** | docs app components |
+| Vue Vben Admin | `v5.7.0` | 650 | **329** | app shells and playground views |
+| Hoppscotch | `a4395b3e` (SHA) | 365 | **365** | all application source |
+
+So three of the "obvious" component libraries contribute **no library SFCs at all**. Their `.vue` files are real, hand-written, non-trivial Vue — they are *documentation and demo* SFCs, which skew short and template-heavy next to a library component. Both flavours are worth measuring and they are not the same thing, so every corpus carries an explicit `kind` (`library-source` / `app-source` / `docs-demo`) and the report prints it beside the numbers.
+
+Hoppscotch is pinned to a **commit SHA**, not a tag: its newest tag (`v3.0.1`) predates the rewrite and holds 147 SFCs of 2021-era Postwoman, while `main` holds the 365-SFC application everybody means.
+
+**Rank within a corpus, never across one.** A files/second comparison between Naive UI's 1708 demos and PrimeVue's 279 components measures the corpora.
+
+**A corpus larger than `--file-limit` (default 200) is truncated, and every row says so.** The limit takes an **alphabetical prefix by path**, so "Naive UI, 200 SFCs" is in fact the first 200 of 1708 sorted by path. Every tool gets the identical prefix, so the comparison between tools holds; the prefix is *not* a random sample of the project, so a coverage claim about the project does not. The provenance line now reads `200 of 1708 SFCs (alphabetical prefix, --file-limit 200)` whenever truncation happened, and the JSON records `{limit, truncated, totalAvailable}` per corpus. Raise it with `--file-limit`.
+
+**No lockfile ⇒ the surfaces that execute the project's dependencies are unranked.** Naive UI and Ant Design Vue ship no lockfile at their pinned refs, so `pnpm install` cannot be frozen and the installed dependency set is whatever resolved on the day. `project-test`, `project-build` and `project-typecheck` run *inside* the checkout against that set, so their timings are not reproducible and every row on them — baseline included — is **unranked** for those corpora, with the reason on the row. The corpus-copy surfaces (`compile`, `format`, `lint`, `bundle`, `hmr`) read SFC text and externalise everything else, so the project's dependency resolution cannot move their numbers and they stay ranked. This is a property of the corpus, not of any tool.
+
+**A `node_modules` on disk is not proof of an install.** A `pnpm install` that dies partway leaves a populated but partial tree, and a partial tree resolves some imports and not others — which is exactly the input that makes a checker report a handful of diagnostics very fast and look like the best tool in the table. So a corpus counts as installed only when `node_modules` exists **and** the fetch manifest does not record a failed install; a disagreement between the two is published in the surface methodology rather than silently resolved in either direction.
+
+**A surface that throws is published as a harness gap.** If a surface run fails outright it produces no rows, and a missing table with no explanation is the harness hiding its own failure. Such runs are recorded as `surfaceFailures` in the JSON and listed in the report's methodology notes, stating that they are failures of this harness on this machine and that nothing should be inferred about the tools that would have been measured.
+
+### Bundle and HMR — what is actually built
+
+Neither surface runs a project's own `pnpm build`. That measures the project's chunking, asset and prerender configuration far more than the Vue toolchain, it produces nothing comparable across bundlers, and swapping the bundler under a project's own config is usually impossible.
+
+Instead every cell builds the **same generated app shell** over the **same corpus**, and only the two dimensions under test vary: the bundler, and the Vue plugin.
+
+- **Module graph = the corpus.** Any specifier that does not resolve to a real file outside `node_modules` is marked **external** and left in the output, identically in every cell. So `vue`, `~/composables/x`, `@hoppscotch/data` and `~icons/lucide/check` are all external, and no cell is credited for resolving less or charged for a dependency another happened to have on disk. It also means these surfaces do **not** require the project's install to have succeeded.
+- **External, not stubbed.** An ESM stub cannot satisfy `import { useFoo } from './foo'`, so a stubbing harness drops a different set of modules per bundler. An external import is implemented the same way by Rollup, Rolldown and the webpack family.
+- **`minify: false`, `treeshake: false`** everywhere. Minifying folds a second, bundler-specific tool into the number; tree-shaking would reward a bundler for discarding corpus modules.
+
+**Vite 8 *is* the Rolldown migration** — it depends on `rolldown ~1.1`, and the standalone `rolldown-vite` package is deprecated in its favour. "Vite vs Rolldown" is therefore not a comparison you can construct by installing two Vites; the honest bundler-engine axis is **Vite 7 (Rollup) vs Vite 8 (Rolldown)**. Vite 7 is installed as the npm alias `vite7@npm:vite@7.3.6` so both majors coexist.
+
+#### The bundler suite
+
+Five bundlers in three families, each grouped separately:
+
+| Bundler | Family | Engine | Vue integrations |
+| --- | --- | --- | --- |
+| Vite 8 | vite | Rolldown | `@vitejs/plugin-vue`, `unplugin-vue`, `@vizejs/vite-plugin`, `@verter/unplugin` |
+| Vite 7 | vite | Rollup | same four |
+| Rolldown | rolldown | Rolldown | `unplugin-vue`, `@verter/unplugin` |
+| Rspack | webpack | Rspack | `vue-loader`, `unplugin-vue`, `@vizejs/rspack-plugin`, `@verter/unplugin` |
+| webpack 5 | webpack | webpack | `vue-loader`, `unplugin-vue`, `@verter/unplugin` |
+
+The **bare Rolldown** group exists to isolate Vite itself: Vite 8 and Rolldown bundle with the same engine, so the gap between those groups is what Vite's own pipeline costs.
+
+Two family-specific differences are inherent and stated rather than hidden:
+
+- **The webpack family needs an explicit TypeScript transform.** Every corpus SFC is `<script setup lang="ts">`, so the script block an integration emits is TypeScript. Vite ships a transform (esbuild on 7, oxc on 8); webpack and Rspack do not, and without one every cell died on the first type annotation. Both get **swc** — Rspack's built-in `builtin:swc-loader`, webpack's via `swc-loader` — with identical options, so the TS cost is a constant across the cells being compared. It does mean webpack-family rows include a step the Vite rows get internally.
+- **The webpack family emits CommonJS.** The Vue integrations there produce helper imports that do not survive webpack's strict ESM linking. Output format is not what is being measured; it only has to be the same for every cell in the family.
+
+#### Impartiality: baseline is not favourite
+
+`@vitejs/plugin-vue` (Vite family) and `vue-loader` (webpack family) are the **baselines** — the reference each group is read against, because they are what the ecosystem actually ships on. Baseline does not mean protected. They are gated, bracketed and failed on precisely the same terms as everything else, and the codegen validity gate has bracketed the official `@vue/compiler-sfc` on real-world input before now.
+
+Vize and Verter are under heavy active development and **are expected to fail cases**. That expectation changes nothing about how a failure is recorded: the module and the diagnostic, verbatim, with no softening and no editorialising. A note may explain *what* a tool does differently — Vize front-loads compilation into a plugin-init batch, and a reader needs to know that to interpret the row — but a note must never argue that a slow or failing row should be read charitably.
+
+Three rules keep this honest, and all three cut in every direction:
+
+1. **A tool the harness could not exercise gets no number, and the harness says the gap is its own.** Applied to the `unplugin` rows on the webpack family (which includes the *official* `unplugin-vue`), and to the Vite 7 HMR rows.
+2. **A tool whose output was never checked is annotated as unchecked, not treated as passing.** A codegen gate that could not run, or that was never registered for a package, now prints `ⓘ CODEGEN VALIDITY GATE NOT RUN` on that row. Before, such a row was indistinguishable from one that had genuinely passed — silently favouring whichever tool the harness had failed to gate.
+3. **A harness bug that penalises a tool is a harness bug, and is fixed even when the tool it was penalising is the official one.** The gate called `compileScript` unconditionally, which throws on a template-only SFC — valid Vue that the generated fixtures happen never to contain. On Hoppscotch it bracketed `@vue/compiler-sfc` 3.5 *and* 3.6 for a file they compile correctly. Fixed by gating what each tool actually emits. The same fix was checked against the other compilers: their gate paths take the whole SFC in one call and handle template-only internally, so there was no equivalent flaw to correct.
+
+#### A cell that never ran is not a cell that failed
+
+The surface distinguishes two failure modes, because conflating them publishes false verdicts. Which one applies is decided on the **transform census the driver recorded before it threw** — how many corpus SFCs actually reached the Vue transform — never on the wording of the error:
+
+- **❌ BUILD FAILED** — corpus SFCs were compiled and then the build failed, so the integration's own output is implicated. A finding about the tool. `@verter/unplugin` is here on Hoppscotch: it emits `_createBlock(_resolveDynamicComponent(…), _ key: 1, …)`, missing the props object literal, in `components/app/KernelInterceptor.vue`.
+- **⏭ NOT MEASURED** — the build failed before the Vue transform processed a single corpus SFC. A gap in this harness's wiring for that (integration × bundler) pair and a plugin that throws during initialisation look **identical** from here, so no number and no verdict is published either way, and the row says the ambiguity is the harness's. Currently the `unplugin`-based integrations on the webpack family are in this state; `vue-loader` is wired and passing, so each webpack-family group still has its reference row.
+
+The earlier version of this test searched the error text for `?vue` or `type=script|template`, on the theory that a genuine codegen defect fails inside a Vue sub-request. **Only `vue-loader` emits that query shape.** The unplugin-based integrations name their sub-requests differently, so *their* codegen bugs matched the "harness gap" branch and were published as ⏭ NOT MEASURED — the harness apologising for a bug in a tool. A classification that depends on how an integration happens to name its sub-requests cannot be a fair test of any of them; a count of SFCs that reached a transform is the same measurement for all of them.
+
+The rule generalises: **when the harness cannot exercise a tool, it publishes no number and says the gap is its own.** The HMR surface applies the same rule to its Vite 7 rows.
+
+#### Corpus-compile gate
+
+One untimed build per cell counts how many corpus SFCs reached a transform. A cell reaching fewer than the best cell **in its own bundler group** is measured but **unranked** — a build that compiled a third of the corpus is not a faster build.
+
+The peer anchor is keyed on the **bundler id**, which is the same key the report groups and ranks by. Keying it on the *family* let Vite 7 and Vite 8 anchor each other: a Vite 7 cell could be unranked for compiling less than the same integration under Vite 8 — a table it is never compared in — and a Vite 8 cell could be excused by a Vite 7 peer nobody was reading.
+
+There is a second anchor, the **corpus** itself, because the peer anchor is tautological for a lone survivor:
+
+- A bundler with **one** surviving cell has that cell as its own "best", so it passes the peer test at any coverage at all — a cell compiling 3 of 200 SFCs ranked first in its group unchallenged. Such a cell is unranked unless it cleared the whole corpus: with no peer there is nothing to show whether the missing files are unreachable in this corpus or were skipped by that integration. If it did clear the corpus it is ranked and labelled as the only row that ran, so its 1.00× is not read as beating a reference implementation that is absent.
+- Where **every** surviving cell reached the same count and that count is below the corpus, the rows are ranked and the shortfall is disclosed on each: it is common to every cell, so it is unreachable code in this corpus rather than a fault of any integration.
+
+The count is keyed on the **source SFC**, not the intermediate module id, because plugins rename them. This is not hypothetical twice over: a `.vue`-only counting rule scored `@vizejs/vite-plugin` 0/40 on a build that had in fact compiled all 40 (it hands the bundler `App.vue.ts` sidecars), and an over-strict resolver rule made that same plugin emit 3.7 kB in 28 ms against the 207 kB every other cell produced — a 12× "win" for compiling nothing. Nothing in the wall clock said so; the census did.
+
+#### HMR
+
+Measured in two parts, because they are different costs: **dev cold start** (`createServer` + `listen` + serving the entry) is paid once per session, **update turnaround** is paid on every save. Do not compare a row across the two tables.
+
+- The change is written to disk and then handed to the watcher directly. Waiting for chokidar folds the OS file-watch debounce — platform-dependent, unrelated to any tool here — into every row.
+- The edit goes in the `<template>` block. A `<script setup>` edit makes Vue issue a full page reload instead of a hot update, which is a different and cheaper server path; a cell that full-reloads is measured and **unranked** for that reason.
+- Vize pre-compiles the whole corpus at plugin-init, so its cold-start row carries work the lazy plugins defer to first request. That trade-off is why both tables exist.
+- **Vite-family only.** Webpack and Rspack implement HMR with a different protocol and a different unit of work (an incremental chunk, not a re-transformed module). Those rows are absent rather than approximated.
+- There is no browser executing the app, so no client-side `import.meta.hot.accept` handler is ever registered. Whether the server still announces an update in that state depends on the Vite major — Vite 8 answers for all four plugins, Vite 7 answers only for `@vizejs/vite-plugin`. Rows where nothing arrived are marked **⏭ NOT MEASURED**: that is the harness declining to publish a number, not evidence that a plugin lacks HMR support.
+- **The two tables are gated independently.** They were not: any failure in the HMR round trip skipped that cell's *cold-start* row as well, discarding a measurement that had already succeeded — the server started and the entry transformed, which is the whole of what cold start measures. Because the probe limitation above is Vite-major-specific, that deleted three plugins' cold-start rows on Vite 7 and left the fourth's standing at 1.00× against nothing. A failed HMR probe now costs only the HMR row.
+- **A table whose baseline row is not ranked says so on every surviving row.** Ranking happens per bundler, so if `@vitejs/plugin-vue` is skipped, errored or bracketed for a bundler, the "vs fastest" column of the rows that remain compares challengers with each other only and the top one prints **1.00×** — which reads as "at least as fast as the official plugin" when the official plugin is absent. Those rows are labelled rather than suppressed: the measurement is real, it just is not a comparison against the reference.
+
+### Project test suite (`project-test`)
+
+The bundle surface asks whether an SFC can be **resolved and transformed**. This one asks whether the compiled component actually **works**: it runs a project's own Vitest suite, which mounts and renders the components and asserts on the output. That catches codegen which parses perfectly and behaves wrongly — a class of defect no build surface can reach — and it is the only surface that answers the practical question of whether dropping Vize or Verter into a real project leaves it working.
+
+It is also the only real-world surface that **writes into the checkout**, because running a project's own suite means running inside it. One namespaced config file per challenger is written into the target package and removed in a `finally`; the clone is pinned, so residue from a hard kill clears with `pnpm fetch:real-world --force`.
+
+**Targets are discovered, not listed.** A hard-coded "run this script in this directory" registry goes stale the moment a project reorganises, and a stale entry produces a skipped row that reads like a tool result. Discovery requires a package with `vitest` as a dependency *and* a non-watch script that actually invokes `vitest` — matched on the script body, because a `test` script that shells out to Playwright or jest is not something a Vue plugin can be swapped into. Layout is genuinely irregular: Hoppscotch's `hoppscotch-common` has `vitest.config.mts` and a `do-test` script but no `vite.config` at all, and its build lives in a sibling package.
+
+**Baseline is the project's own toolchain, unmodified** — `@vitejs/plugin-vue` for every project in the registry. Baseline means the reference the other rows are read against, not a protected row: it is gated on tests-executed exactly like every challenger, and if the project's suite fails on this machine, that is what the row says.
+
+Each row states which **swap mechanism** produced it:
+
+| Mechanism | How | Status |
+| --- | --- | --- |
+| `none` | the suite run unmodified | baseline |
+| `override` | a generated config imports the project's real Vitest config, resolves it (it may be an object, a function, or a promise) and replaces **only** the plugin named `vite:vue` | preferred, wired |
+| `alias` | a Node **resolution hook** (`NODE_OPTIONS=--import`) redirects every import of `@vitejs/plugin-vue` to the challenger, so a config that cannot be imported or edited picks it up anyway | wired; fallback only |
+
+The override throws rather than proceeding if it cannot find `vite:vue`. Adding the challenger beside the original would leave two Vue plugins both compiling every SFC — which still produces a number, and the number would be meaningless. The replacement goes in at the **original plugin's index**, not at the front of the array: Vite runs plugins in order, and hoisting the Vue plugin above a project's svg-loader, i18n plugin or macro transform would change which of them sees an `.vue` file first, making the swap a two-variable change.
+
+The base config is resolved with the **same `ConfigEnv` the timed tool uses** — `{command:'serve', mode:'test'}` for `project-test`, `{command:'build', mode:'production'}` for `project-build`. A function-form config branches on it, so a shared hardcoded value (which is what this used to have) resolved the challengers' config in build mode while the baseline `vitest run` resolved it in serve/test mode: a different plugin list and different aliases, with nothing in the output to show it. The parameter is required, with no default, because the wrong value is invisible.
+
+**Known inequality, published on every `override` row.** The project calls `vue({…})` with plugin-vue-specific options — `include`, `script.defineModel`, `template.compilerOptions`, `features` — and those are baked into the plugin *instance*, which exposes no way to read them back out. The substitution therefore constructs the challenger with **no options at all**, while the baseline keeps every one of the project's. That is not a neutral difference: an option the project set could make the baseline do more work (an extra template transform) or less (a narrower `include`). Neither direction is measured, so it is **not** claimed to cancel out — every row generated this way carries the disclosure.
+
+**The alias fallback, and why it is a fallback.** Where a target has no importable config there is no `plugins` array to substitute into, so the swap moves to the only remaining seam: the point where the project's own code asks Node for `@vitejs/plugin-vue`. The timed process runs with `NODE_OPTIONS=--import` pointing at a loader that installs a `resolve` hook redirecting that specifier to the challenger's module. No dependency override, no reinstall, and nothing written into the checkout. `override` is still preferred whenever it is available, because it changes exactly one entry of one array while this changes what a specifier means for the whole process.
+
+Two facts ride on every `alias` row, and the second one is the reason the mechanism is safe to ship at all.
+
+- **⚠ Not equal work, in the opposite direction to `override`.** The project's own `vue({…})` options **do** reach the challenger here. A challenger that does not understand plugin-vue's option shape can therefore fail on the *options* rather than on the SFCs, and an option-shape mismatch and a real incompatibility are hard to tell apart from the outside. This surface does not tell them apart, and the row says so.
+- **The redirect is verified, not assumed.** The hook appends one line per redirect to a marker file, and a row whose marker records **no** redirect is published as **⏭ NOT MEASURED**. A hook that matched nothing leaves the project running its own `@vitejs/plugin-vue` end to end: the run succeeds, the timings look ordinary, and the baseline's number would be published under a challenger's name with nothing in the output to distinguish it. That is the worst failure available on these surfaces and the only one that cannot be spotted after the fact. Every measured run must have fired, not merely one — a series in which the redirect happened once is a series of mixed toolchains.
+
+The hook's *reach* was measured rather than reasoned about, and the first version of it was wrong in exactly the way the marker gate exists to catch. Matching only the bare specifier and its subpaths intercepted `import("@vitejs/plugin-vue")` perfectly and intercepted a real `vite build` **not at all**: Vite bundles the config file and resolves its externalised imports to absolute paths before evaluating it, so by the time Node is asked for the module the specifier is a `file:` URL in which the package name is only a path segment. The marker stayed empty, the project's own plugin compiled every SFC, and the row was withdrawn rather than published. The rule now matches the resolved path segment as well, and `module.registerHooks()` is used rather than the off-thread `module.register()` so the hook also covers `require`. Verified end to end on a real `vite build` and a real `vitest run`: the redirect fires, the substituted plugin is constructed **with the project's own `vue({include: […]})` options**, and the emitted bundle contains the substitute's output rather than the baseline compiler's.
+
+**Test-count gate — on tests PASSED, not tests collected.** A challenger that passes fewer tests than the baseline is **unranked**, as is one that produced no test census at all or exited non-zero having passed nothing. Two bugs made this the load-bearing paragraph it is:
+
+- The gate read tests *collected*. A toolchain whose codegen mounts a broken component still collects every test and then fails them, so a red suite cleared a collection gate — while the artifact column published `testsPassed`, meaning the table showed one number and the ranking decision was made on another. One quantity now serves both.
+- `parseVitestSummary` treated *either* summary total as a successful parse. When every test file fails to collect, Vitest prints `Test Files 3 failed (3)` and `Tests no tests` — a file total, no test total. That parsed "successfully" with `tests: null`, the row was recorded `ok`, and the gate `continue`d over the null: a run that executed **zero tests** was published as the fastest row in the table. A missing test total is now a parse failure, so such a run is a visible ❌.
+
+Tests that *fail* under a challenger while the baseline passes them are reported as a correctness finding about that tool. The gate decides ranking, on passes; the failure count is published next to the row so the reader sees both. The note is worded as a fact and deliberately does not argue that a failing row should stay in the ranking.
+
+Where the baseline produced no census to compare against, the challenger rows are annotated `ⓘ TEST-COUNT GATE NOT RUN` rather than rendering identically to rows that cleared it — the same treatment `applyCodegenGates` gives an ungated compile row, and for the same reason: an unstated ungated row silently favours whichever tool the harness failed to anchor.
+
+### Project build, own config (`project-build`)
+
+`bundle` holds the module graph identical while the bundler *and* the plugin vary — that is what makes a Rollup number comparable to a webpack number. What it cannot tell you is what a **real** build costs, because the generated shell deliberately excludes dependency pre-bundling, chunk splitting across a genuine dependency tree, CSS extraction across a design system, asset pipelines, and the project's own plugin stack.
+
+This surface keeps all of it. It runs the project's own `vite build` with the project's own `vite.config`, and varies exactly one thing: which plugin compiles the SFCs. The bundler is fixed, because the project's config chose it.
+
+- Read `bundle` for *which implementation is faster on equal terms*.
+- Read `project-build` for *what swapping this would cost me in my app*.
+
+Neither supersedes the other and they are not comparable to each other.
+
+**Only reliably swappable targets are measured**: a literal `vite build` script, an importable `vite.config`, and SFCs beneath it. Excluded by construction — `nuxt build` and `quasar build` generate their Vite config at runtime, so there is no `plugins` array to substitute into; workspace fan-out scripts (`pnpm -r`, `turbo run`) would time packages containing no Vue. Fewer packages measured truthfully beats every package measured approximately.
+
+Every build, baseline included, is redirected with `--outDir` into the work tree, so the project's own `dist/` is never written and no run can leave the checkout in a state that changes the next one.
+
+**Output-size gate.** A challenger emitting more than 5% fewer bytes than the baseline is **unranked**: a build that emits materially less is not a faster build until the difference is explained. The tolerance absorbs legitimate codegen differences (helper naming, hoisting choices), not a dropped chunk. Emitting materially *more* is annotated rather than gated — more output is not cheating, but it changes what shipped. Where the baseline produced no output census to anchor against, the challenger rows are annotated `ⓘ OUTPUT-SIZE GATE NOT RUN`, so an ungated row never renders identically to one that cleared the gate.
+
+#### Baseline pre-flight: a broken target is not three tool failures
+
+Before anything is measured, each candidate's **own** build is run untimed, and only a candidate that genuinely builds is measured. Candidates are tried in order; what was rejected, and why, is printed in the surface methodology.
+
+This exists because of a concrete failure. Hoppscotch's `hoppscotch-sh-admin` passes every static check — literal `vite build`, real `vite.config.ts`, 56 SFCs — and still cannot build, because it imports `src/helpers/backend/graphql`, a GraphQL-codegen artifact. Without the pre-flight the surface published **four ❌ rows including the baseline**, which reads as "all three challengers failed" when in fact nothing could build. On Hoppscotch the surface now measures `hoppscotch-agent` and states that `hoppscotch-sh-admin` and `hoppscotch-desktop` were rejected first.
+
+That codegen cannot simply be run either: its `gql-codegen.yml` reads the schema from `../../gql-gen/*.gql`, which Hoppscotch emits by running its NestJS backend. So the package is genuinely not "easy and reliable" to build, and no `prepare` hook fixes it without standing up a server. The honest cost is a thinner target (3 SFCs rather than 56) — stated, rather than papered over with a number that would have been meaningless.
+
+#### Two harness bugs this surface produced, both fixed
+
+Recorded because both were the kind that publish a plausible wrong answer rather than crashing:
+
+- **Target chosen by name.** `project-test` first sorted candidates alphabetically and picked Hoppscotch's `packages/hoppscotch-cli` — which contains **no Vue at all** — over `packages/hoppscotch-common` and its 293 SFCs, then reported the resulting "no `vite:vue` plugin found" as a failure of all three challengers. Targets are now ranked by SFC count, and a target with zero SFCs is not a candidate.
+- **Diagnostic extraction ate characters.** A hand-escaped ANSI-stripping regex collapsed to one matching a bare `m`, silently deleting characters from the very error messages the reports quote verbatim; a sibling bug reported Vite's `transforming...` progress spinner as the cause of every build failure. Both now go through [`ansi.mjs`](../scripts/lib/real-world/ansi.mjs) and an ordered pattern list, with tests pinning that `stripAnsi("module failed")` is unchanged.
+
+### Project typecheck, own tsconfig (`project-typecheck`)
+
+Typechecking a corpus **lifted** out of a monorepo is not offered, and never will be: `~/composables/x` and `@hoppscotch/data` are meaningless outside the project's own alias configuration, so a checker pointed at the lifted copy reports thousands of TS2307s — or, if the tsconfig is wrong the other way, **zero diagnostics very quickly**, which in a table is indistinguishable from a fast, correct checker. `prepareTypecheckDir` refuses the same thing on the generated path.
+
+Running **in place** fixes that, and that is what this surface does: the project's own `tsconfig.json`, its own `paths`, its own installed `node_modules`, in the package with the most SFCs beneath it. It reads the checkout and never writes to it.
+
+| Row | What it is |
+| --- | --- |
+| `vue-tsc` **(JS)** | the official Vue Language Tools CLI on the stock JavaScript TypeScript compiler. **Baseline.** |
+| `vue-tsc (N)` | the *same* vue-tsc with `typescript` aliased to typescript-native-bridge, so the engine is tsgo in-process |
+| `verter-tsc` | Verter's checker on stable tsgo |
+| `Vize` | `vize check --tsconfig …`, native, Corsa when available |
+
+**Engines are grouped, not just tagged** — deliberately unlike the generated-corpus `typecheck` surface above, which keeps both engines in one table behind the `(JS)` tag. Here the rows are ranked in **separate tables**, because a ratio across them measures TypeScript's own Go rewrite at least as much as the Vue tooling on top of it — and the `vue-tsc` (JS) / `vue-tsc (N)` pair, identical but for the engine, is what lets a reader see how much of any gap is which. The engine tag comes from the canonical `engine: "tsc-js"` value the report's `engineTag()` keys on; the row's *label* must not also spell "(JS)", or a non-canonical engine string leaves the row untagged and reading as another native checker.
+
+**Diagnostics are a census, not a pass/fail.** Real projects are not clean at their pinned release, a checker is not wrong for saying so, and a non-zero exit is expected and allowed for every row equally. The counts are published on every row (with `artifactPolarity: informational`, so the renderer's generic "produced less than the largest artifact" warning does not scold the *quietest* checker). Diagnostic equivalence is **not** asserted.
+
+Four gates, all applied to every row including the baseline's:
+
+- **Baseline pre-flight (untimed).** The baseline typechecks each candidate package before anything is measured, and a target is measured only if that produced diagnostics across more than one file, or exited clean. A target the baseline merely *aborts* on publishes no rows at all. Not hypothetical: Hoppscotch's `hoppscotch-common` ships a committed `src/types/post-request.d.ts` with a syntax error at line 1294, and vue-tsc reports exactly that one TS1128 after ~4.3 s having checked **none** of the 293 SFCs. Anchoring a census on that inverts the gate — it marks the checkers that actually completed as the outliers.
+- **Program construction, per measured run.** The same `actuallyChecked` test is applied to every timed run: exit 0, or diagnostics spanning at least two files. It was previously defined, documented, and called only in the pre-flight — so a checker whose *measured* runs aborted during program construction published a fast, ranked row, gated on a census it satisfied with the single diagnostic that stopped it.
+- **TNB activation.** The native row is unranked unless the bridge printed its activation banner on **every** measured run. With `.some()`, a series in which the bridge loaded once and silently fell back to the JavaScript checker four times passed — publishing a JS-engine measurement under a native-engine label, the exact mislabel the gate exists to prevent.
+- **Diagnostic census.** A checker reporting under half the baseline's diagnostics is unranked: it may be skipping files or not checking templates, and doing less finishes sooner. Reporting materially *more* is annotated, not gated — stricter is legitimate. When the baseline reports **zero** diagnostics and exits clean, the ratio test cannot fire at all (`diags < 0 × 0.5` is never true), so on the one corpus state where "reported nothing" is easiest to achieve by not checking, every row used to pass by default; the gate instead requires the row to exit 0 as well. Reporting nothing while failing is not a clean pass.
+
+**Diagnostic counting covers every output shape, with one shared pattern list.** `vue-tsc`/`verter-tsc`/tsgo write `File.vue(3,7): error TS2322:` (or the pretty `File.vue:3:7 - error TS2322:`); `vize check` prints the path once as a heading and indents `error:1:14 [TS2322] …` beneath it, never writing the literal `error TS1234`. An `/error TS\d+/` counter scored Vize **zero** on output where it had just reported real diagnostics — and a zero here is not harmless, because the census gate unranks a row reporting far fewer than the baseline. Mis-parsing a tool's output would bracket that tool for the harness's inability to read it, so the shapes are handled together and the file a diagnostic belongs to is taken from the heading when the line does not carry one.
+
+**Invocation is made as close as the tools allow, and the residual difference is stated.** The tsc-family rows run `--noEmit -p tsconfig.json`. Vize is invoked with **no path pattern**, because it documents that omitting patterns uses the tsconfig's `include`/`exclude`/`files` — the closest analogue of `-p`. Passing `.` (as an earlier revision did) made Vize walk the package directory instead, checking a different file set in an unmeasured direction: on `hoppscotch-desktop` that is 37 files against the tsconfig's 31. Vize still builds its own virtual project rather than a TypeScript program, so identical file sets are **not** asserted; the diagnostic census is what would expose a materially smaller one.
+
+### Project component-meta, own tsconfig (`project-component-meta`)
+
+Extracting component metadata from a **lifted** corpus is refused for the same reason typechecking one is: a metadata extractor whose imports do not resolve does not fail, it returns components with no props, very fast — and in a table that is indistinguishable from a fast, thorough extractor. This surface runs in place, in the package with the most SFCs beneath it, against the project's own `tsconfig.json` and its own installed `node_modules`. It reads the checkout and never writes to it.
+
+| Row | What it is |
+| --- | --- |
+| `vue-component-meta` | official `createChecker(tsconfig)` + `getComponentMeta`. **Baseline.** |
+| `@verter/component-meta` | Verter's published `openComponentMetaSession({root, tsconfig})` + `getComponentMeta` |
+| Vize | no row. The surface **checks** `@vizejs/native` for a metadata API at runtime and reports what it found; declaration emit is a different job and is not substituted for one |
+
+The component set is the **resolved corpus restricted to the target package**, not a private walk, so `--file-limit` and its truncation disclosure apply here exactly as everywhere else. A private walk would quietly measure a different file set from the one the corpus line names.
+
+**Baseline pre-flight.** Each candidate target is probed untimed: the baseline must build a checker, resolve components from a bounded sample, and find declared props on some of them. A target it cannot read publishes **no rows at all** — every other row would be gated against a reference that did no work, which marks the tools that *did* extract metadata as the anomalies.
+
+Three gates:
+
+- **Metadata census.** A row that resolved metadata for fewer components than the baseline is unranked, and so is a row that resolved none — including the baseline's own row, gated identically. Returning `{}` is the fastest thing a metadata extractor can do, and it is the trivial way to win this surface.
+- **Prop coverage.** A row reporting **zero props** for a component that declares props is unranked. This is the gate that catches an empty answer hiding behind a healthy-looking component count.
+- **Member totals are reported, never gated.** props + events + slots is published beside the times and no threshold is applied to it.
+
+The prop-coverage anchor is the part worth reading twice, because the obvious version of it was unfair and measurement caught it. Anchoring on "the baseline found props here" brackets a tool for a **schema disagreement**: on Hoppscotch's first 25 SFCs, `vue-component-meta` reports props for 25 of 25 while only 18 contain a `defineProps`, because it also reports the implicit and inherited instance surface — so `@verter/component-meta`, which reports props on exactly those 18, was unranked for reporting the declared API. The anchor is therefore the **intersection** of "the source declares props" (read off the SFC text, tool-independent) and "the baseline found props". The claim the gate then makes is one no reasonable reading disputes: this component declares props, the reference tool found them, and you reported none.
+
+Metadata **equivalence is not asserted**, and correctness is not checked against the third-party sources — nobody has written down the right answer for these components. This is a throughput surface with a coverage census.
+
+### Project LSP, project as workspace (`project-lsp`)
+
+The generated-corpus `lsp` surface uses a tiny synthetic workspace with a planted marker, which is what makes its hover gate possible — the correct answer is written down. It is also a poor model of an editor session, because the expensive part of a real one is **loading a real project**. This surface keeps that cost: the workspace root is the project package with the most SFCs and its own `tsconfig.json`, the document opened is one of the project's own SFCs, and every server gets the same directory, file and position.
+
+| Row | What it is |
+| --- | --- |
+| `Volar` **(JS)** | `@vue/language-server` v3 with the stock JavaScript TypeScript tsdk. **Baseline.** |
+| `Volar (TNB / tsgo tsdk)` | the *same* Volar with its TypeScript half on typescript-native-bridge |
+| `Verter LSP` | `verter-lsp`, the native server from the published npm package |
+| `Vize LSP` | `vize lsp --stdio` (native server when found, Node entry otherwise — the row says which) |
+
+Both Volar rows are measured as the **two-process product v3 is**: `@vue/language-server` plus `typescript-language-server` with `@vue/typescript-plugin`, joined by the tsserver bridge, the same `.vue` buffer synced to both, each feature asked of both in parallel with the **slower half charged**, and both processes' startup and project load inside the timings.
+
+**Two operations, ranked separately and never pooled** — `didOpen → diagnostics` (cold: the server must load the real project before it can say anything) and `hover` (warm, median of 3, document already open). Each is measured in its **own fresh session**, so the hover row is not credited with a project load the diagnostics row already paid for, and tool-order rotation applies to each operation independently. Within an operation the rows are split again by **TypeScript engine**, for the reason `project-typecheck` splits them: a JS-vs-tsgo ratio measures TypeScript's own Go rewrite at least as much as the Vue layer above it.
+
+**Content gates, and the one claim this surface refuses to make.** There is no planted marker in third-party source, so nobody knows what the right answer is. What can still be established is that a server *answered*:
+
+- **Hover** — the payload must be non-empty on every measured run, at the **single position an untimed baseline pre-flight established the reference server answers at**. Choosing the position any other way would make the gate a test of the harness's cursor placement: a position on whitespace or in a comment would unrank every row alike and read as four broken servers.
+- **Diagnostics** — a run that never published diagnostics for the opened document is an ❌ error, not a fast row; there is no latency to report. Where the baseline published at least one diagnostic, a row publishing none on every run is unranked. Where the baseline published an **empty list** — a legitimate answer, but not an anchor — the gate cannot fire and the row says so rather than rendering as though it had passed.
+
+⚠ **Not equal work on the diagnostics operation, and the direction is known.** `publishDiagnostics` from the Volar rows carries what the *Vue* server computes. Volar v3 delegates TypeScript to a separate tsserver that speaks the **tsserver protocol**, not LSP, so TypeScript diagnostics reach a real editor through the extension and are **not** in that notification — while a single-process server publishes its Vue and TypeScript diagnostics together in one message. The Volar diagnostics rows are therefore answering a **narrower question**, and a narrower question is answered faster. The count is published on every row so the difference is visible rather than inferred, and the gate is deliberately **one-directional** — it fails a row for publishing *nothing*, never for publishing *fewer* — so it cannot punish a server for the broader answer. The hover operation has no such asymmetry: both Volar halves are asked in parallel and the slower is charged.
+
+⚠ **Correctness of the content is NOT asserted for third-party code.** This surface establishes that a server produced an answer where the reference server produced one, and nothing more. Content correctness is gated on the generated corpus (`lsp`), against a symbol whose type is known.
+
+A degraded type backend is detected from stderr and reported on any row, ranked or not (Vize logs a failed Corsa spawn; Verter logs verter-only mode). It is reported rather than used to fail a row on its own — the content gates decide ranking, and this is the explanation for the number in either direction.
+
+### Surfaces deliberately not run on real-world corpora
+
+`typecheck`, `component-meta` and `lsp` stay refused on a **lifted** corpus, and asking for one by name prints the reason and points at the in-place surface instead. A corpus pulled out of a monorepo resolves none of its imports — `~/composables/x`, `@hoppscotch/data` and `~icons/lucide/check` are meaningless outside the project's own alias configuration — so a checker reports thousands of TS2307s, or, if the tsconfig is wrong the other way, nothing at all very quickly.
+
+They are not *absent*, though: `project-typecheck`, `project-component-meta` and `project-lsp` are the versions of those three measurements worth publishing, and all three run in the checkout against the project's own tsconfig. The lifted names are kept as refusals rather than quietly redirected, because "typecheck on a lifted corpus" and `project-typecheck` are different measurements and a reader asking for one must not be handed the other.
+
+### What real-world runs are for
+
+They find things a generated corpus cannot. The first run of the bundle surface against Hoppscotch caught `@verter/unplugin` emitting syntactically invalid JavaScript for a `v-if` on a dynamic component (`_createBlock(_resolveDynamicComponent(…), _ key: 1, …)` — the props object literal is missing), in `packages/hoppscotch-common/src/components/app/KernelInterceptor.vue`. No generated fixture resembles that file. Treat a failure here as a finding about the tool, and a speed number here as secondary to `fixtures/N`.
+
 ## CI layout
 
 | Workflow                                          | When                                | What                                                                                                                                    |
@@ -574,6 +857,7 @@ The **memory** probe stays a separate job on purpose — sampling RSS and CPU al
 | **Test** (`.github/workflows/test.yml`)           | pull_request, `main` push           | `tests/harness/run.mjs` + `tests/confirm/run.mjs`. Install only, no fixtures. **Publishes nothing.**                                    |
 | **PR** (`.github/workflows/pr.yml`)               | pull_request                        | **Smoke only**: build (install + `fixtures/20`) → one throughput pass over every surface at `--runs 1 --warmups 0`. **No** `pnpm confirm` (that runs in `test.yml` on the same event — see [`pr.yml`](../.github/workflows/pr.yml) L92), **no** full bench, **no** README rewrite. |
 | **Benchmark** (`.github/workflows/benchmark.yml`) | `workflow_dispatch` **only**        | build → **bench** + **ide** + **ide-scale** + **memory** → update `README.md` + [`MEMORY.md`](../MEMORY.md). The only workflow that commits. |
+| **Benchmark (real-world)** (`.github/workflows/benchmark-real-world.yml`) | `workflow_dispatch` **only** | Matrix of **one job per project**: clone at the pinned ref → install → `compile,format,lint,bundle,hmr,project-test,project-build,project-typecheck` for every tool on that one runner → `README.md` real-world section. `fail-fast: false`; the clone is cached on the pinned ref. |
 | **E2E VS Code** (`.github/workflows/e2e-vscode.yml`) | `workflow_dispatch` **only**     | Heavy extension-host path (optional). No schedule.                                                                                      |
 
 **All workflows run on `ubuntu-latest`.** One runner class for everything — measurement, correctness and E2E. Platform-specific breakage (Windows file locks, `.cmd` shims, path handling) is consequently **not covered by CI**; run `pnpm confirm` and `pnpm test:harness` locally on macOS/Windows if you need that signal.

@@ -259,7 +259,7 @@ function buildTools({ isProd, vapor, verterMode }) {
       isProduction: isProd,
       customElement: false,
       ssr: false,
-      forceJs: true,
+      forceJs: false, // one TS-passthrough standard for every compiler — see compile.mjs renderProfile
       forceVapor: vapor,
       sourceMap: !isProd,
       hmrStrategy: isProd ? "none" : "vite",

@@ -388,6 +388,38 @@ export const IDE_RANKING_RULES =
 export const RANKING_RULES =
   "Ranked on the **median of measured runs** (each after ≥1 discarded warmup; no cold column — it would measure JIT warmup). One table per surface: engine, invocation and threading are row properties, not table splits — rows tagged **(JS)** run the JavaScript TypeScript compiler (a cross-engine ratio measures TypeScript's rewrite as much as the tool), and a row's label/notes say whether it is a CLI (pays process startup every run), an in-process API, single-threaded or a thread pool. Name markers: ⚠ failed validation (time bracketed, unranked) · ❌ error · ⏭ skipped. Per-row detail is under **Notes** below each table.";
 
+/**
+ * Tools that produced NO measurement, rendered ABOVE the tables.
+ *
+ * Distinct from an unranked row, and the distinction is the point. An unranked
+ * row has a time that is real but not comparable, so it belongs in the table in
+ * brackets. A tool that aborted the process has no time at all — putting it in a
+ * ranking table would imply something was ranked, and there is nothing to rank.
+ *
+ * It is deliberately placed before the tables rather than in a `<details>` at the
+ * bottom: a crash is a louder result than any latency in the table underneath it,
+ * and burying it would be the quiet failure this section exists to prevent. A
+ * reader must never be able to conclude a tool "wasn't tested" when it was tested
+ * and destroyed the process.
+ */
+function renderExcluded(surface) {
+  const excluded = surface.excluded ?? [];
+  if (excluded.length === 0) return [];
+  const lines = [
+    "> **Did not run — excluded from every table below.**",
+    ">",
+    "> These tools produced no measurement on this corpus, so they have no row: a ranking table is for things that were ranked. This is a harder failure than any bracketed row, not a softer one.",
+    ">",
+  ];
+  for (const e of excluded) {
+    const what = e.kind === "process-abort" ? "aborted the benchmark process" : (e.kind ?? "failed");
+    lines.push(`> - **${e.tool}** (\`${e.package}\`) — ${what}: ${e.reason}`);
+    if (e.detail) lines.push(`>   ${e.detail}`);
+  }
+  lines.push("");
+  return lines;
+}
+
 export function renderSurfaceMarkdown(surface) {
   const lines = [];
   lines.push(`### ${surface.label}`);
@@ -397,6 +429,7 @@ export function renderSurfaceMarkdown(surface) {
   );
   lines.push("");
   lines.push(...renderToolLegend(surface));
+  lines.push(...renderExcluded(surface));
 
   // Compile matrix (and any future grouped surface)
   if (Array.isArray(surface.groups) && surface.groups.length > 0) {

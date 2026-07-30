@@ -47,6 +47,56 @@ export function collectVueFiles(dir, limit = Infinity) {
     .slice(0, limit);
 }
 
+/**
+ * Recursive `.vue` collection, returning POSIX-relative paths.
+ *
+ * `collectVueFiles` above is flat by design and stays that way: the generated
+ * corpora are flat, and a recursive walk there would be slower for no gain. Real
+ * projects are not flat — Hoppscotch's 293 SFCs sit up to seven directories deep
+ * — so pointing the flat collector at a cloned repo returns zero files, and a
+ * surface handed zero files reports a very fast, entirely empty run.
+ *
+ * Paths are returned relative and POSIX-separated so the same list can be used
+ * as a copy manifest, a tsconfig `include`, and a report key on every platform.
+ *
+ * The result is sorted, which is what makes `limit` meaningful: a truncated
+ * corpus has to be the *same* truncated corpus for every tool, or the tools are
+ * not being compared on the same input.
+ */
+export function collectVueFilesDeep(dir, { limit = Infinity, roots = [], ignore = [] } = {}) {
+  if (!existsSync(dir)) return [];
+  const skip = new Set(ignore);
+  const out = [];
+
+  const walk = (absDir) => {
+    let entries;
+    try {
+      entries = readdirSync(absDir, { withFileTypes: true });
+    } catch {
+      return;
+    }
+    // Sort at each level so the traversal order — and therefore any `limit`
+    // prefix — is stable across filesystems that do not enumerate in order.
+    for (const entry of entries.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))) {
+      if (skip.has(entry.name)) continue;
+      const abs = join(absDir, entry.name);
+      if (entry.isDirectory()) walk(abs);
+      else if (entry.isFile() && entry.name.endsWith(".vue")) {
+        out.push(relative(dir, abs).split(sep).join("/"));
+      }
+    }
+  };
+
+  const searchRoots = roots.length ? roots.map((r) => join(dir, r)) : [dir];
+  for (const root of searchRoots) walk(root);
+
+  // A file reachable from two overlapping roots must be compiled once, not
+  // twice: a duplicated entry would inflate the file count and hand every tool
+  // the same source twice, which content-hash caches serve for free.
+  const unique = [...new Set(out)].sort();
+  return Number.isFinite(limit) ? unique.slice(0, limit) : unique;
+}
+
 export function collectJsxFiles(dir, limit = Infinity) {
   if (!existsSync(dir)) return [];
   return readdirSync(dir)
@@ -67,17 +117,115 @@ export function readSources(dir, files) {
   }));
 }
 
+/**
+ * Copy a named subset of a corpus into a work directory.
+ *
+ * `files` may contain nested POSIX-relative paths (see `collectVueFilesDeep`),
+ * so each destination's parent directory is created before the copy. Without
+ * that, every real-world corpus copy threw ENOENT on its first nested file and
+ * the surface reported a tool error — which reads as "the tool failed" rather
+ * than "the harness cannot lay out this corpus".
+ */
 export function copyFixtureSubset(inputDir, outputDir, files, extras = []) {
   rmSync(outputDir, { recursive: true, force: true });
   mkdirSync(outputDir, { recursive: true });
+  const ensured = new Set();
+  const ensureDir = (target) => {
+    const parent = dirname(target);
+    if (ensured.has(parent)) return;
+    mkdirSync(parent, { recursive: true });
+    ensured.add(parent);
+  };
   for (const file of files) {
-    copyFileSync(join(inputDir, file), join(outputDir, file));
+    const dest = join(outputDir, file);
+    ensureDir(dest);
+    copyFileSync(join(inputDir, file), dest);
   }
   for (const extra of extras) {
     const src = join(inputDir, extra);
-    if (existsSync(src)) copyFileSync(src, join(outputDir, extra));
+    if (existsSync(src)) {
+      const dest = join(outputDir, extra);
+      ensureDir(dest);
+      copyFileSync(src, dest);
+    }
   }
   return outputDir;
+}
+
+/** Import/export specifiers in a source file, cheaply and syntax-agnostically. */
+const IMPORT_SPECIFIER_RE =
+  /(?:import|export)\s[^'"()]*?from\s*['"]([^'"]+)['"]|import\s*\(\s*['"]([^'"]+)['"]\s*\)|import\s*['"]([^'"]+)['"]/g;
+
+const CLOSURE_RESOLVE_SUFFIXES = ["", ".ts", ".tsx", ".d.ts", ".mts", ".cts", ".js", ".mjs", ".vue"];
+
+/**
+ * Copy the RELATIVE import closure of the staged corpus files.
+ *
+ * A `.vue`-only staged copy hands `@vue/compiler-sfc` an SFC whose
+ * `import type { AlertProps } from './alert'` cannot be read — the compiler
+ * resolves imported prop types on the filesystem, the sibling was never copied,
+ * and on Element Plus 107 of 162 SFCs failed with errors the bundle surface then
+ * attributed to whichever integration hit them first (the official plugin
+ * included). These files exist for the COMPILER's type resolution only; the
+ * bundler-facing resolvers still externalise them, so the module graph remains
+ * exactly the corpus — see corpusOnlyResolver and webpackExternals.
+ *
+ * Only relative specifiers are followed: a bare or aliased specifier
+ * (`@element-plus/hooks`) needs the project's own tsconfig and node_modules,
+ * which staging deliberately does not depend on. What that costs is decided —
+ * and disclosed — by the compilability preflight in prepareBundleApp, not here.
+ */
+export function copyRelativeImportClosure(inputDir, outputDir, seedFiles) {
+  const copied = [];
+  const visited = new Set(seedFiles.map((f) => join(inputDir, f)));
+  const queue = [...visited];
+
+  const tryCopy = (absSrc) => {
+    const rel = relative(inputDir, absSrc);
+    if (!rel || rel.startsWith("..")) return false;
+    let stat;
+    try {
+      stat = statSync(absSrc);
+    } catch {
+      return false;
+    }
+    if (!stat.isFile()) return false;
+    const dest = join(outputDir, rel);
+    if (!existsSync(dest)) {
+      mkdirSync(dirname(dest), { recursive: true });
+      copyFileSync(absSrc, dest);
+      copied.push(rel);
+    }
+    return true;
+  };
+
+  while (queue.length) {
+    const file = queue.pop();
+    let source;
+    try {
+      source = readFileSync(file, "utf8");
+    } catch {
+      continue;
+    }
+    for (const match of source.matchAll(IMPORT_SPECIFIER_RE)) {
+      const spec = match[1] ?? match[2] ?? match[3];
+      if (!spec || !spec.startsWith(".")) continue;
+      const base = join(dirname(file), spec.split("?")[0]);
+      for (const candidate of [
+        ...CLOSURE_RESOLVE_SUFFIXES.map((s) => base + s),
+        ...CLOSURE_RESOLVE_SUFFIXES.filter(Boolean).map((s) => join(base, `index${s}`)),
+      ]) {
+        // First existing candidate wins, exactly one file per specifier — a
+        // specifier that already resolved must not also copy its next-best match.
+        if (visited.has(candidate)) break;
+        if (!tryCopy(candidate)) continue;
+        visited.add(candidate);
+        queue.push(candidate);
+        break;
+      }
+    }
+  }
+  return copied;
 }
 
 export function writeTsconfig(dir, { include = ["**/*.vue", "**/*.ts"], extendsPath } = {}) {

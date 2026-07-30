@@ -75,6 +75,30 @@ export function effectiveWarmups(warmups) {
   return Math.max(MIN_WARMUPS, n);
 }
 
+/**
+ * Warmup count for a table whose DISCARDED WARM PASS is the surface's own
+ * untimed gate or preflight execution.
+ *
+ * Some surfaces already execute every cell once, untimed, before any timing —
+ * the bundle corpus-compile gate builds each cell, the hmr gate probe starts
+ * each cell's server, the LSP preflight loads the same workspace and document.
+ * Those passes run the identical code path a dedicated warmup would, so a
+ * warmup on top repeated seconds-to-minutes of work per cell purely to warm
+ * caches that were already warm.
+ *
+ * The NAME is load-bearing: the wiring test forbids bare numeric warmup
+ * literals in surfaces, so a gate-as-warmup site must import this constant —
+ * and the same test requires any surface using it to say "DISCARDED WARM PASS"
+ * in its methodology, which keeps the justification attached to the number.
+ *
+ * DELIBERATELY NOT the number 0. A numeric zero is indistinguishable from CLI
+ * `--warmups 0`, which effectiveWarmups MUST clamp to 1 — and did, which made
+ * the first version of this constant inert: the warmup it claimed to remove
+ * still ran while three methodology strings said it did not. A sentinel the
+ * clamp cannot see is the only shape that can carry the intent through.
+ */
+export const GATE_IS_THE_WARM_PASS = "gate-is-the-warm-pass";
+
 /** Summary stats over measured runs. Primary metric is the median. */
 function summarize(all) {
   const med = median(all);
@@ -146,7 +170,9 @@ export async function measureVariants(
   { runs = 3, warmups = 1, fileCount } = {},
 ) {
   const active = variants.filter((v) => !v.skip);
-  const warmupPasses = effectiveWarmups(warmups);
+  // The sentinel is checked BEFORE the clamp, because it must never be
+  // expressible as a number: numeric 0 is CLI `--warmups 0` and clamps to 1.
+  const warmupPasses = warmups === GATE_IS_THE_WARM_PASS ? 0 : effectiveWarmups(warmups);
 
   for (let w = 0; w < warmupPasses; w++) {
     for (const v of rotate(active, w)) {

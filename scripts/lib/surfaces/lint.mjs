@@ -83,7 +83,9 @@ async function runEslintWorkers(cwd, files, eslintPath) {
  * Verter: native lint API if present; otherwise skipped.
  */
 export async function runLintSurface(fixtureDir, options) {
-  const files = collectVueFiles(fixtureDir, options.fileLimit);
+  // See compile.mjs: `options.files` carries a caller-supplied (possibly nested)
+  // corpus, which is how the real-world orchestrator feeds cloned projects in.
+  const files = options.files ?? collectVueFiles(fixtureDir, options.fileLimit);
   const bytes = totalBytes(fixtureDir, files);
 
   // Lint against an isolated copy holding exactly the measured subset.

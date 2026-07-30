@@ -206,6 +206,45 @@ function renderIde(files, { start, end }) {
   return chunks.join("\n");
 }
 
+/**
+ * Real-world section: one artifact per PROJECT, spliced in project order.
+ *
+ * The header carries the one warning that cannot live in a per-project artifact,
+ * because it is about the relationship BETWEEN them: these tables are ranked
+ * within a corpus and never across. Element Plus's 162 library components and
+ * Naive UI's 1708 demo SFCs are different code doing different work, so a
+ * files/second comparison between those two tables measures the corpora.
+ */
+function renderRealWorld(files, { start, end }) {
+  const chunks = [
+    start,
+    "",
+    `> Auto-updated ${today()} from the **Benchmark (real-world)** workflow — one job per project, every surface and every tool inside it.`,
+    "> Corpora are pinned checkouts of third-party open-source Vue projects. Sources are unmodified; every table names its ref and resolved commit SHA.",
+    "> **Rank within a corpus, never across it.** The corpora differ in size and in kind — library source, application source, and documentation demos are not the same code.",
+    "> The generated `fixtures/N` corpus remains the primary ranking corpus; these tables exist to catch what a designed corpus cannot.",
+    "",
+    RANKING_RULES,
+    "",
+  ];
+
+  for (const file of [...files].sort()) {
+    const content = stripParagraphs(readFileSync(file, "utf8").trim(), [RANKING_RULES]);
+    const leaf = leafOf(file);
+    // `real-world-Linux-hoppscotch.md` → `hoppscotch`. The platform is already
+    // the first half of the heading; repeating it in the second half is noise.
+    const project = leaf.replace(/^real-world-/, "").replace(/\.md$/, "").replace(/^(Linux|Windows|macOS|win32|darwin|ubuntu)-/i, "");
+    chunks.push(`#### ${platformOf(file)} · ${project}`);
+    chunks.push("");
+    chunks.push(`<!-- source: ${leaf} -->`);
+    chunks.push("");
+    chunks.push(content);
+    chunks.push("");
+  }
+  chunks.push(end);
+  return chunks.join("\n");
+}
+
 const SECTIONS = [
   {
     id: "benchmark",
@@ -222,6 +261,14 @@ const SECTIONS = [
     end: "<!-- IDE_RESULTS_END -->",
     appendHeading: "## IDE operation results",
     render: renderIde,
+  },
+  {
+    id: "real-world",
+    prefix: "real-world-",
+    start: "<!-- REAL_WORLD_RESULTS_START -->",
+    end: "<!-- REAL_WORLD_RESULTS_END -->",
+    appendHeading: "## Real-world project results",
+    render: renderRealWorld,
   },
 ];
 

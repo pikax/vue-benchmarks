@@ -253,9 +253,21 @@ describe("surface invariants", () => {
 
   test("no surface hard-codes a warmup count or a runs count", () => {
     // Run parameters must come from options so `--warmups 0` still clamps to 1.
+    // ONE named exception: a surface whose gate/preflight already executes every
+    // cell untimed on the identical code path may declare that pass as its
+    // discarded warmup — but only via the GATE_IS_THE_WARM_PASS constant (never
+    // a bare 0), and only if the surface SAYS SO in its methodology, so the
+    // justification travels with the number.
     for (const { name, source } of surfaceSources()) {
       assert.doesNotMatch(source, /warmups:\s*\d/, `${name} hard-codes a warmup count`);
       assert.doesNotMatch(source, /\bruns:\s*\d/, `${name} hard-codes a run count`);
+      if (source.includes("GATE_IS_THE_WARM_PASS")) {
+        assert.match(
+          source,
+          /DISCARDED WARM PASS/,
+          `${name} uses GATE_IS_THE_WARM_PASS without disclosing the warm pass in its methodology`,
+        );
+      }
     }
   });
 
@@ -279,13 +291,26 @@ describe("surface invariants", () => {
 describe("bench entry point", () => {
   const benchSource = () => readFileSync(join(repoRoot, "scripts", "bench.mjs"), "utf8");
 
-  test("bench.mjs wires up every surface module", () => {
-    const source = benchSource();
+  test("every surface module is wired into an orchestrator", () => {
+    // There are two orchestrators, not one. `bench.mjs` runs the generated
+    // fixtures; `bench-real-world.mjs` runs pinned third-party checkouts and
+    // owns the surfaces that only make sense there (a bundler needs a real app,
+    // and the generated corpus is a flat directory of components with no entry).
+    //
+    // The point of this test is unchanged: a surface module that no orchestrator
+    // calls is dead code that still looks maintained. Which orchestrator claims
+    // it is not the assertion — being claimed by one of them is.
+    const orchestrators = ["bench.mjs", "bench-real-world.mjs"].map((f) =>
+      readFileSync(join(repoRoot, "scripts", f), "utf8"),
+    );
     const surfaces = collectMjsFiles(join(repoRoot, "scripts", "lib", "surfaces"));
 
     for (const file of surfaces) {
       const expected = expectedSurfaceExport(file);
-      assert.ok(source.includes(expected), `scripts/bench.mjs never references ${expected}`);
+      assert.ok(
+        orchestrators.some((source) => source.includes(expected)),
+        `no orchestrator references ${expected} — scripts/bench.mjs and scripts/bench-real-world.mjs were both checked`,
+      );
     }
   });
 

@@ -123,7 +123,7 @@ const handlers = {
         isProduction: payload.isProd,
         customElement: false,
         ssr: false,
-        forceJs: true,
+        forceJs: false, // one TS-passthrough standard for every compiler — see compile.mjs renderProfile
         forceVapor: payload.vapor,
         sourceMap: !payload.isProd,
         hmrStrategy: payload.isProd ? "none" : "vite",

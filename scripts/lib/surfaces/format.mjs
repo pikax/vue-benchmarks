@@ -45,7 +45,9 @@ function tryResolveBin(name) {
  * do equivalent full-format work (not early-exit check optimizations only).
  */
 export async function runFormatSurface(fixtureDir, options) {
-  const files = collectVueFiles(fixtureDir, options.fileLimit);
+  // See compile.mjs: `options.files` carries a caller-supplied (possibly nested)
+  // corpus, which is how the real-world orchestrator feeds cloned projects in.
+  const files = options.files ?? collectVueFiles(fixtureDir, options.fileLimit);
   const bytes = totalBytes(fixtureDir, files);
   const workRoot = options.workRoot;
 
