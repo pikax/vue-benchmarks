@@ -48,6 +48,7 @@ import {
   aliasRedirectCensus,
   aliasSwapEnv,
   overrideConfigSource,
+  reclassifySwapRefusals,
   resolveChallengerUrl,
 } from "../real-world/plugin-swap.mjs";
 import { applyAliasVerificationGate } from "./project-test.mjs";
@@ -393,6 +394,8 @@ export async function runProjectBuildSurface(resolved, options) {
     rmSync(outRoot, { recursive: true, force: true });
     rmSync(aliasRoot, { recursive: true, force: true });
   }
+
+  reclassifySwapRefusals(results);
 
   // Before the output-size gate: an alias row whose redirect never fired must not
   // be compared against the baseline at all, because it may BE the baseline.

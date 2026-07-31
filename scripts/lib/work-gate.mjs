@@ -128,13 +128,21 @@ function templateBlockOf(source) {
   return m ? m[1] : null;
 }
 
-/** Root for per-tool format-gate runs; each tool gets a fresh copy of the plant. */
+/**
+ * Root for per-tool format-gate runs; each tool gets a fresh copy of the plant.
+ *
+ * The probe file sits in a NESTED directory on purpose: real corpora are
+ * nested, and a formatter invoked with a non-recursive pattern (`*.vue`)
+ * matches nothing there — it exits fast having formatted zero files, and a
+ * root-level probe would still pass it. Prettier topped every real-world
+ * format table exactly this way before the probe moved.
+ */
 export function prepareFormatPlant(workRoot) {
   const dir = join(workRoot, `work-gate-format-${process.pid}-${Date.now().toString(36)}`);
   mkdirSync(dir, { recursive: true });
   return {
     dir,
-    file: "Messy.vue",
+    file: join("nested", "Messy.vue"),
     cleanup: () => rmSync(dir, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 }),
   };
 }
@@ -160,6 +168,7 @@ export function formatterRewritesTemplate(
     rmSync(dir, { recursive: true, force: true });
     mkdirSync(dir, { recursive: true });
     const target = join(dir, plant.file);
+    mkdirSync(dirname(target), { recursive: true });
     writeFileSync(target, MESSY_FORMAT_VUE);
     for (const [name, content] of Object.entries(configFiles)) {
       writeFileSync(join(dir, name), content);

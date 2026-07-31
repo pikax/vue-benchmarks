@@ -112,6 +112,54 @@ guards:
 - Consider committing: NOTHING is committed and the working tree now carries
   two agent-sessions' worth of work. Ask the user before any git action.
 
+## 2026-07-30 results audit (work/audit-ci-results-2026-07-30.md)
+
+An 18-finding audit of the latest CI results, triggered by the maintainer
+noticing "Prettier beating Oxfmt". Harness faults FIXED (all with guard tests):
+
+1. Prettier `--write *.vue` was non-recursive — formatted ZERO files on every
+   nested corpus, ranked 1.00x. Fixed `**/*.vue`; the format gate probe now
+   lives in a NESTED dir so the whole fault class fails the gate (live-proved).
+2. project-test gate now also unranks MORE FAILURES than baseline (pass-count
+   tie no longer clears extra failures); artifact column relabelled "tests
+   passed"; failure note no longer overclaims.
+3. project-lsp diagnostics gate anchors on max across ANY ranked row (Volar v3
+   structurally publishes 0 → baseline-only anchor never fired); baseline gated
+   like everyone else.
+4. HMR: one discarded full round trip per probe at session open (first save was
+   100-900 ms landing in a 2-run median); update table now runs ≥5 rounds.
+5. CV ceiling: rows above CV 50% are bracketed TOO NOISY TO RANK (rows had WON
+   tables at CV 2515%). NOISE_CV_LIMIT_PCT in report.mjs.
+6. IDE smoke suite: settle request before first timed op (cold project load was
+   published as warm "hover"); IDE_SCALE_RUNS 1 → 3 (rankings at n=1).
+7. Misattributions: swap refusal (sentinel `bench: no plugin named`) ⏭ not ❌;
+   project-typecheck retries TS5101/TS5107 deprecation aborts with
+   --ignoreDeprecations 6.0 (NOT 5.0 — 5.0 is a no-op on TS 6.0.3, caught by
+   the adversarial review; verter-tsc is exempted because its clap CLI rejects
+   the flag outright, disclosed on its row) on every accepting tsc-shaped row
+   (targets were deleted); real-world workflow now INSTALLS envs/tnb with a
+   sha-keyed cache + hollow-cache verify step (it never installed it — Node
+   walked up to root typescript, silently removing the whole native-engine
+   axis); golar gets a ⏭ row on project-typecheck instead of silent absence.
+
+An adversarial review of the fix commit (10c9304) found 9 issues, all fixed:
+the two above, plus `target:` on all five typecheck skip rows (targetless skip
+rows split the native table's rendering with a false "ranked alone" heading);
+HMR update-table runs keyed truthfully (per-ROW cap/single-run notes,
+BENCH_UNIFORM_RUNS respected, methodology states the two-table run counts);
+CV ceiling requires n>=3 samples (at n=2 one blip bracketed a baseline);
+hmrRoundTrip only accepts an update message whose path belongs to the probe
+(pathless full-reloads still accepted); project-lsp censusless rows get an
+explicit GATE-NOT-RUN note and the dead baselineIdPrefix param is gone.
+
+Findings NOT fixed here (tool findings / need probes — see the audit file):
+Oxfmt-is-Prettier-for-.vue (legend corrected, row stays ranked), Vue 3.6-rc
+regression on element-plus, Rspack×@verter/unplugin 62x, verter-tsc diagnostic
+explosion magnitude, Verter stateless-host timer question, Vize plugin-vs-batch
+contradiction, component-meta member-census ratio gate, lint startup-floor
+disclosure, navigation-suite server reuse contradiction, throughput
+denominators, cache-demo "(not ranking)" but ranked, per-shard CPU disclosure.
+
 ## Do not regress (each fixed a published-wrong-answer bug)
 
 Everything in the old handoff's list, plus today's: the `-!` prefix family in

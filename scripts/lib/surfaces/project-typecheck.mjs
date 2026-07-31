@@ -236,6 +236,48 @@ function checkerMeta(r) {
 const isWinShell = (bin) => process.platform === "win32" && Boolean(bin) && bin.endsWith(".cmd");
 
 /**
+ * The --ignoreDeprecations value the TS5101/TS5107 retry passes.
+ *
+ * Phase-specific, and a wrong value is accepted SILENTLY: on this harness's
+ * TypeScript 6.0.x the options still emitting TS5101/TS5107 (baseUrl,
+ * moduleResolution node10, target ES5, …) are 6.0-phase deprecations, and
+ * tsc's checkDeprecations silences them only for "6.0" — "5.0" parses fine
+ * and does nothing (verified live 2026-07-31: no flag → TS5101 exit 2;
+ * "5.0" → identical; "6.0" → exit 0). The no-op value shipped once: every
+ * retry still failed and whole targets were deleted again, exactly the
+ * failure the retry exists to prevent. The guard test runs the INSTALLED
+ * tsc against a real TS5101 tsconfig, so a TypeScript bump that moves the
+ * accepted phase fails the suite instead of silently deleting targets.
+ */
+export const IGNORE_DEPRECATIONS_VALUE = "6.0";
+
+/**
+ * CLI args for one tsc-shaped row.
+ *
+ * One builder rather than four inline copies, because the flag placement is
+ * load-bearing in both directions. `acceptsIgnoreDeprecations: false` is
+ * verter-tsc's: its clap CLI hard-rejects flags it does not know
+ * (`--ignoreDeprecations` → `error: unexpected argument`, exit 2, verified
+ * live 2026-07-31), so the retry flag riding on shared args would fail every
+ * verter-tsc measured run in milliseconds on a retry-target and publish a
+ * harness fault as a tool failure. verter-tsc therefore runs WITHOUT the
+ * flag; the methodology and its row notes disclose the asymmetry.
+ */
+export function tscRowArgs(
+  tsconfig,
+  { ignoreDeprecations = false, acceptsIgnoreDeprecations = true } = {},
+) {
+  return [
+    "--noEmit",
+    "-p",
+    tsconfig,
+    ...(ignoreDeprecations && acceptsIgnoreDeprecations
+      ? ["--ignoreDeprecations", IGNORE_DEPRECATIONS_VALUE]
+      : []),
+  ];
+}
+
+/**
  * Every post-measurement gate on this surface, in order, mutating rows in place.
  *
  * Exported and pure so it can be tested against synthetic rows. These gates decide
@@ -384,10 +426,11 @@ export async function runProjectTypecheckSurface(resolved, options) {
   // during program construction inverts the gate: it marks the checkers that
   // completed as the outliers.
   let target = null;
+  let ignoreDeprecations = false;
   const rejectedTargets = [];
   if (vueTsc) {
     for (const candidate of candidates) {
-      const probe = runChecker({
+      let probe = runChecker({
         bin: vueTsc,
         args: ["--noEmit", "-p", candidate.tsconfig],
         cwd: candidate.dir,
@@ -398,11 +441,37 @@ export async function runProjectTypecheckSurface(resolved, options) {
         target = candidate;
         break;
       }
+      // TS5101/TS5107 mean the PROJECT's tsconfig sets options that the
+      // harness's newer TypeScript deprecates — an artifact of running this
+      // harness's engine against a project pinned to an older one, not a fact
+      // about the project or any checker. Whole targets (ant-design-vue,
+      // hoppscotch) were silently deleted by these exits (2026-07-30 audit,
+      // finding 17). Retry once with --ignoreDeprecations (value in
+      // IGNORE_DEPRECATIONS_VALUE — phase-specific, and the wrong phase is a
+      // silent no-op); if the retry genuinely typechecks, the flag rides on
+      // the vue-tsc rows alike (NOT verter-tsc, whose CLI rejects it — see
+      // tscRowArgs) and both the rows and the methodology say so.
+      let retried = false;
+      if (!probe.timedOut && !probe.spawnError && /error TS510[17]\b/.test(stripAnsi(probe.output))) {
+        retried = true;
+        probe = runChecker({
+          bin: vueTsc,
+          args: tscRowArgs(candidate.tsconfig, { ignoreDeprecations: true }),
+          cwd: candidate.dir,
+          timeoutMs,
+          shell: isWinShell(vueTsc),
+        });
+        if (!probe.timedOut && !probe.spawnError && actuallyChecked(probe)) {
+          target = candidate;
+          ignoreDeprecations = true;
+          break;
+        }
+      }
       const detail = probe.timedOut
         ? `baseline vue-tsc timed out after ${timeoutMs} ms`
         : probe.spawnError
           ? `baseline vue-tsc could not start: ${probe.spawnError}`
-          : `baseline vue-tsc exited ${probe.status} reporting ${probe.diagnostics} diagnostic(s) across ${distinctDiagnosticFiles(probe.output)} file(s) — that is program construction failing, not a typecheck. First: ${stripAnsi(probe.output).split("\n").find((l) => /error TS/.test(l))?.trim() ?? "no TS diagnostic"}`;
+          : `baseline vue-tsc exited ${probe.status} reporting ${probe.diagnostics} diagnostic(s) across ${distinctDiagnosticFiles(probe.output)} file(s)${retried ? ` (retried with --ignoreDeprecations ${IGNORE_DEPRECATIONS_VALUE} after TS5101/TS5107 — still failed)` : ""} — that is program construction failing, not a typecheck. First: ${stripAnsi(probe.output).split("\n").find((l) => /error TS/.test(l))?.trim() ?? "no TS diagnostic"}`;
       rejectedTargets.push({ candidate, detail });
     }
   }
@@ -429,7 +498,18 @@ export async function runProjectTypecheckSurface(resolved, options) {
   const vize = tryResolveBin("vize");
 
   const variants = [];
-  const tscArgs = ["--noEmit", "-p", target.tsconfig];
+  // Args for the vue-tsc rows (both engines). When the preflight needed the
+  // TS5101/TS5107 retry, the flag rides on those two rows alike — but NOT on
+  // verter-tsc, whose clap CLI hard-rejects unknown flags (exit 2 in
+  // milliseconds, which would publish a harness fault as a tool failure; see
+  // tscRowArgs), and not on Vize, which parses the tsconfig itself and
+  // neither needs nor accepts the flag. The asymmetry is disclosed in the
+  // methodology and on the verter-tsc row.
+  const tscArgs = tscRowArgs(target.tsconfig, { ignoreDeprecations });
+  const verterTscArgs = tscRowArgs(target.tsconfig, {
+    ignoreDeprecations,
+    acceptsIgnoreDeprecations: false,
+  });
 
   if (vueTsc) {
     variants.push({
@@ -466,12 +546,19 @@ export async function runProjectTypecheckSurface(resolved, options) {
       },
     });
   } else {
+    // Skip rows carry the measured rows' classKey fields (`target`,
+    // `invocation`) too. A targetless row lands in the renderer's untitled
+    // "all" class, which split the engine group into an untitled skip-only
+    // table followed by a false "PROJECT-TYPECHECK — ranked alone" heading
+    // over the rows that ARE ranked together.
     variants.push({
       id: "vue-tsc-js",
       label: "vue-tsc",
       package: "vue-tsc",
       engine: "tsc-js",
       engineClass: "js",
+      target: "project-typecheck",
+      invocation: "cli",
       notes: "vue-tsc binary not found",
       skip: true,
     });
@@ -514,6 +601,9 @@ export async function runProjectTypecheckSurface(resolved, options) {
       label: "vue-tsc (TNB / tsgo)",
       package: "typescript-native-bridge",
       engineClass: "native",
+      // classKey fields — see the vue-tsc-js skip row.
+      target: "project-typecheck",
+      invocation: "cli",
       notes: `Skipped: ${tnb?.notes ?? "typescript-native-bridge env not resolvable"}`,
       skip: true,
     });
@@ -530,11 +620,15 @@ export async function runProjectTypecheckSurface(resolved, options) {
       invocation: "cli",
       artifactLabel: "diagnostics",
       artifactPolarity: "informational",
-      notes: `verter-tsc --noEmit -p ${target.tsconfig}`,
+      notes: `verter-tsc --noEmit -p ${target.tsconfig}${
+        ignoreDeprecations
+          ? " · ⚠ runs WITHOUT the --ignoreDeprecations flag the vue-tsc rows carry on this target — verter-tsc's CLI rejects flags it does not know — so it may abort on the deprecated tsconfig options themselves. If it does, the failure on this row is a real verter-tsc limitation on this tsconfig, not a harness artifact."
+          : ""
+      }`,
       measure: () => {
         const r = runChecker({
           bin: verterTsc,
-          args: tscArgs,
+          args: verterTscArgs,
           cwd: target.dir,
           timeoutMs,
           shell: isWinShell(verterTsc),
@@ -550,6 +644,9 @@ export async function runProjectTypecheckSurface(resolved, options) {
       label: "verter-tsc",
       package: "verter-tsc",
       engineClass: "native",
+      // classKey fields — see the vue-tsc-js skip row.
+      target: "project-typecheck",
+      invocation: "cli",
       notes: "verter-tsc binary not found",
       skip: true,
     });
@@ -595,10 +692,32 @@ export async function runProjectTypecheckSurface(resolved, options) {
       label: "Vize check",
       package: "vize",
       engineClass: "native",
+      // classKey fields — see the vue-tsc-js skip row.
+      target: "project-typecheck",
+      invocation: "cli",
       notes: "vize binary not found",
       skip: true,
     });
   }
+
+  // golar ranks on the generated-corpus typecheck surface but is not wired
+  // into this one. Saying so beats silence: its version appears in every
+  // report's tool table, and a reader who cannot find its row has no way to
+  // tell "excluded for a reason" from "forgotten" (2026-07-30 audit,
+  // finding 17). This is the harness's omission, not a verdict about golar.
+  variants.push({
+    id: "golar-check",
+    label: "Golar typecheck",
+    package: "golar",
+    engineClass: "native",
+    // classKey fields — see the vue-tsc-js skip row. Without `target`, this
+    // unconditional row split the native group's rendering on EVERY run.
+    target: "project-typecheck",
+    invocation: "cli",
+    notes:
+      "⏭ NOT MEASURED — golar is not yet wired into the project-typecheck surface (its own-tsconfig invocation and diagnostic census have not been validated against real projects). A harness omission, not a verdict about golar; it ranks on the generated-corpus typecheck surface.",
+    skip: true,
+  });
 
   const results = await measureVariants(variants, {
     runs: options.runs,
@@ -640,6 +759,11 @@ export async function runProjectTypecheckSurface(resolved, options) {
       `Target: ${target.packageName} (${target.relDir}) — ${target.sfcs} SFCs, checked with the project's OWN ${target.tsconfig} and its own installed dependencies.`,
       `Corpus pin: ${p.ref} @ ${(resolved.sha ?? "").slice(0, 8)}, ${p.releasedAt ? `released ${p.releasedAt}` : `committed ${p.committedAt}`} (${p.releaseKind}), pinned ${p.pinnedAt}. Pins are updated by hand only.`,
       "The target was pre-flighted: the baseline typechecked it untimed first, and it is measured only because that produced diagnostics across more than one file (or exited clean). A target the baseline merely aborts on publishes no rows at all — a fast abort is indistinguishable from a fast pass on a wall-clock table, and every other row would be gated against it.",
+      ...(ignoreDeprecations
+        ? [
+            `The vue-tsc rows (JS and TNB engines) run with --ignoreDeprecations ${IGNORE_DEPRECATIONS_VALUE}: the project's tsconfig sets options this harness's newer TypeScript deprecates (TS5101/TS5107), which is an engine-version artifact of the harness, not a fact about the project. verter-tsc runs WITHOUT the flag — its CLI rejects flags it does not know outright — so on this target it may abort on the deprecated options themselves; if it does, its row shows that failure, which is a real verter-tsc limitation on this tsconfig rather than a harness artifact. Vize parses the tsconfig itself and needs no flag.`,
+          ]
+        : []),
       ...rejectedNotes,
       "Every checker gets the same directory, the same tsconfig and the same non-zero-exit policy. Real projects have pre-existing type errors at their pinned release; a checker is not penalised for reporting them, and no row is forgiven a diagnostic another row is failed for.",
       "Rows are grouped and tagged by ENGINE. `vue-tsc` tagged **(JS)** runs the stock JavaScript TypeScript compiler; `vue-tsc (N)` is the SAME vue-tsc with typescript aliased to typescript-native-bridge (tsgo in-process). The pair isolates the engine, so a JS-vs-native gap should be read as TypeScript's own Go rewrite first and the Vue layer second — and because that gap is not a Vue-tooling result, the two engines are ranked in separate tables rather than one.",

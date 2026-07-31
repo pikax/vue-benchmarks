@@ -153,16 +153,56 @@ jobs:
           node-version-file: .node-version
           cache: pnpm
 
+      # Sha-suffixed key with a prefix restore, mirroring benchmark.yml. An
+      # UNsuffixed key was a poisoning hazard: the cache is saved even when an
+      # install step failed inside the job, so one flaky tnb install on a
+      # cache-miss run stored "root node_modules present, envs/tnb absent"
+      # under the only key — and every later run hit it, skipped the installs,
+      # and silently lost the native-engine axis again. With the sha suffix an
+      # exact hit can only come from a re-run of the same commit, and the
+      # prefix restore still primes pnpm while leaving cache-hit false, so the
+      # installs run and repair whatever the restored state is missing.
       - name: Restore node_modules cache
         id: nm-cache
         uses: actions/cache@v4
         with:
-          path: node_modules
-          key: ${{ env.NM_CACHE_PREFIX }}-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', '.node-version') }}
+          path: |
+            node_modules
+            envs/tnb/node_modules
+          key: ${{ env.NM_CACHE_PREFIX }}-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', 'envs/tnb/pnpm-lock.yaml', '.node-version') }}-${{ github.sha }}
+          restore-keys: |
+            ${{ env.NM_CACHE_PREFIX }}-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', 'envs/tnb/pnpm-lock.yaml', '.node-version') }}-
 
       - name: Install harness dependencies
         if: steps.nm-cache.outputs.cache-hit != 'true'
         run: pnpm install --frozen-lockfile
+
+      # A cache hit is trusted only after proof. Even a same-sha exact hit can
+      # carry the poisoned shape (the save happens although an install step
+      # failed), and the cost of trusting it is the silent loss of every
+      # vue-tsc (N) / Volar (N) row — so the tnb install below is forced
+      # whenever the restored env lacks its typescript package, cheap `test -d`
+      # against a whole missing benchmark axis.
+      - name: Verify cached envs/tnb before trusting it
+        id: tnb-verify
+        run: |
+          if [ -d envs/tnb/node_modules/typescript ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Without this install, `envs/tnb` has no node_modules and Node's
+      # resolution walk-up finds the ROOT typescript instead — the harness
+      # correctly refuses the mislabel and skips every vue-tsc (N) / Volar (N)
+      # row, which silently removed the entire native-engine axis from every
+      # real-world report (2026-07-30 audit, finding 17). Same guarded install
+      # as benchmark.yml; a failure degrades to skipped TNB rows, not a dead
+      # job — and because the cache key is sha-suffixed and the hit verified
+      # above, that degradation now lasts one run, not every run after it.
+      - name: Install typescript-native-bridge env (envs/tnb)
+        if: steps.nm-cache.outputs.cache-hit != 'true' || steps.tnb-verify.outputs.present != 'true'
+        run: pnpm install --dir envs/tnb --ignore-workspace --frozen-lockfile || echo "envs/tnb install failed — vue-tsc (TNB) rows will be skipped"
 
       # The clone is cached on the PINNED REF, so a re-run of the same ref is a
       # cache hit and costs nothing. A registry change that moves the ref changes

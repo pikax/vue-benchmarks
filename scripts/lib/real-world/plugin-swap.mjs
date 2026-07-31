@@ -109,6 +109,37 @@ export const CHALLENGERS = [
 export const VUE_PLUGIN_NAME = "vite:vue";
 
 /**
+ * Reclassify the override config's own refusal from ❌ error to ⏭ skipped.
+ *
+ * The generated config throws `bench: no plugin named "vite:vue"` when the
+ * resolved config carries no swappable plugin (wrappers like @quasar/app-vite
+ * assemble their real Vite config at runtime, so the importable file has no
+ * plugins array). That throw is the harness declining to fabricate a
+ * comparison: nothing ran under the challenger, so nothing failed under it —
+ * publishing it as a challenger ❌ attributed the harness's own refusal to the
+ * tool (2026-07-30 audit, finding 17). Symmetric by construction: only swap
+ * rows load the generated config, so the baseline can never hit this path.
+ *
+ * Keyed on the harness's own `bench:` sentinel prefix, never the bare phrase:
+ * row errors embed the project's output, and a genuine challenger failure
+ * that merely CONTAINS "no plugin named" (a framework adapter's own message,
+ * a test assertion quoting one) must stay an ❌ — converting it to ⏭ would
+ * fabricate a harness-limitation explanation for a real tool failure.
+ */
+const SWAP_REFUSAL_SENTINEL = "bench: no plugin named";
+
+export function reclassifySwapRefusals(results) {
+  for (const row of results) {
+    if (row.status !== "error") continue;
+    if (!String(row.error ?? "").includes(SWAP_REFUSAL_SENTINEL)) continue;
+    row.status = "skipped";
+    row.error = null;
+    row.notes = `${row.notes ? `${row.notes} | ` : ""}⏭ NOT MEASURED — the target's resolved config has no plugin named "${VUE_PLUGIN_NAME}" to substitute (a wrapper assembles the real Vite config at runtime), so there is nothing to swap into. A harness/target limitation, not a result about ${row.package}.`;
+  }
+  return results;
+}
+
+/**
  * Generate an override config.
  *
  * Written as plain ESM into the target package, so the project's own relative

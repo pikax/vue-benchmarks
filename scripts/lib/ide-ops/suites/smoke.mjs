@@ -49,6 +49,20 @@ export const SUITE = {
     openDoc(uri, ws.source);
     await new Promise((r) => setTimeout(r, 50));
 
+    // Settle: one DISCARDED request before any timed op. The first request of
+    // a fresh session absorbs whatever project load the server still has in
+    // flight — observed at 60-180x the very next op's latency — so timing it
+    // as "Hover (script setup)" published cold project load under a
+    // warm-latency label, and whichever op happened to run first wore it
+    // (2026-07-30 audit, finding 7). Cold load has its own measurement (the
+    // scale suite's time-to-usable); every op in this suite means WARM latency.
+    await ask(
+      "textDocument/hover",
+      { textDocument: { uri }, position: ws.scriptProbe },
+      30_000,
+      mergeHover,
+    ).catch(() => {});
+
     const ops = [];
 
     ops.push(

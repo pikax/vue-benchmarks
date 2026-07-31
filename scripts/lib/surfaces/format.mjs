@@ -75,10 +75,16 @@ export async function runFormatSurface(fixtureDir, options) {
       threading: "1t",
       invocation: "cli",
       notes:
-        "prettier --write *.vue (fresh copy each run) · single-threaded by design",
+        "prettier --write **/*.vue (fresh copy each run) · single-threaded by design",
       measure: () => {
         const cwd = nextCopy("prettier");
-        const { ms } = runCommand(prettier, ["--write", "*.vue", "--log-level", "error"], {
+        // RECURSIVE glob. `*.vue` matched nothing on nested real-world corpora,
+        // so Prettier's ~80 ms "win" on every project was CLI boot + "no files
+        // matched" with the non-zero exit swallowed below — ranked 1.00x for
+        // doing zero work (2026-07-30 audit, finding 1). The format work gate
+        // now plants its probe in a NESTED directory so a non-recursive
+        // invocation of any tool fails the gate instead of topping the table.
+        const { ms } = runCommand(prettier, ["--write", "**/*.vue", "--log-level", "error"], {
           cwd,
           // Consistent with the other formatters: a non-zero exit from a
           // style diagnostic must not fail one tool while the others are
@@ -107,7 +113,7 @@ export async function runFormatSurface(fixtureDir, options) {
       threading: "max",
       invocation: "cli",
       notes:
-        "oxfmt --write (Vue-capable Oxc formatter; fresh copy each run) · multi-threaded (self-reports its thread count) — a gap against single-threaded Prettier is partly thread count, not formatter speed",
+        "oxfmt --write (fresh copy each run) · .vue files route through oxfmt's BUNDLED PRETTIER fallback in worker threads, not the Rust core (its dist ships Prettier and exposes Prettier's Vue options) — read this row as Prettier-with-workers until oxfmt formats SFCs natively",
       measure: () => {
         const cwd = nextCopy("oxfmt");
         // oxfmt accepts paths; try write mode flags used by oxfmt CLI
@@ -197,7 +203,7 @@ export async function runFormatSurface(fixtureDir, options) {
       if (v.id === "prettier") {
         return formatterRewritesTemplate(fmtPlant, {
           bin: prettier,
-          args: ["--write", "*.vue", "--log-level", "error"],
+          args: ["--write", "**/*.vue", "--log-level", "error"],
           label: "prettier",
           shell: isWinShell(prettier),
           configFiles: { ".prettierrc.json": PRETTIER_CONFIG },
@@ -250,6 +256,8 @@ export async function runFormatSurface(fixtureDir, options) {
       ".prettierrc.json and biome.json are copied into every work copy so each tool's config actually resolves (config left in the fixture root is not on the work dir's lookup path). Both configs set the same indent, width, quote, semicolon and trailing-comma choices.",
       "All four formatters are CLI invocations and share the same non-zero-exit policy — no tool is failed for a diagnostic another tool is forgiven for.",
       "Output style is NOT normalized across tools — this measures format throughput, not style identity. Spot-checked: on a messy SFC, oxfmt and Prettier produce byte-identical output and Vize reformats template + script + style, so no tool is winning by no-op.",
+      "Oxfmt's .vue path is NOT its Rust core: oxfmt (0.61) bundles Prettier and routes SFCs through it in worker threads — which is also why its output is byte-identical to Prettier's. Its row measures that pipeline, disclosed in its label notes; Vize is currently the only ranked formatter compiling SFCs natively.",
+      "The template-rewrite gate probe lives in a NESTED directory, so a tool invoked non-recursively fails the gate rather than being ranked on an empty match (this exact fault put Prettier at 1.00x on every nested corpus while formatting zero files).",
       "Template-rewrite work gate: each formatter is run against a messy SFC and must actually change the <template> block, or it is measured but unranked. Biome fails this gate — it formats the <script> block and returns template and style byte-identical, so its wall clock is not comparable to a whole-SFC formatter's.",
       "Prettier, Oxfmt, and Vize format the whole SFC; Biome covers the script block only. Rule/option parity is not guaranteed for any of them.",
       "Tool order is rotated on every warmup and measured run; ranking metric is the median of warmed runs.",

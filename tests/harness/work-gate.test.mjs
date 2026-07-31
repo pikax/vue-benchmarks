@@ -469,9 +469,23 @@ describe("prepareFormatPlant + formatterRewritesTemplate", () => {
     const script = join(workRoot, `fake-fmt-${mode}.cjs`);
     writeFileSync(
       script,
-      `const { readFileSync, writeFileSync } = require("node:fs");
+      `const { readFileSync, writeFileSync, readdirSync, statSync } = require("node:fs");
 const { join } = require("node:path");
-const target = join(process.cwd(), "Messy.vue");
+// RECURSIVE, like a well-behaved formatter: the plant nests its probe so a
+// non-recursive tool invocation fails the gate instead of "formatting" an
+// empty match set (the fault that ranked Prettier 1.00x on every nested
+// corpus while it formatted zero files).
+function find(dir) {
+  for (const entry of readdirSync(dir)) {
+    const p = join(dir, entry);
+    if (statSync(p).isDirectory()) {
+      const hit = find(p);
+      if (hit) return hit;
+    } else if (entry === "Messy.vue") return p;
+  }
+  return null;
+}
+const target = find(process.cwd());
 const src = readFileSync(target, "utf8");
 const mode = ${JSON.stringify(mode)};
 if (mode === "crash") process.exit(3);
@@ -500,9 +514,14 @@ writeFileSync(target, out);
     removeDir(workRoot);
   });
 
-  test("the plant dir is created and carries a plant filename", () => {
+  test("the plant dir is created and the probe is NESTED", () => {
     assert.ok(existsSync(plant.dir));
-    assert.equal(plant.file, "Messy.vue");
+    // Nested on purpose: real corpora are nested, and a formatter invoked with
+    // a non-recursive pattern matches nothing there — a root-level probe still
+    // passed it while it formatted zero timed files (2026-07-30 audit,
+    // finding 1). Verified live: with this layout `prettier --write *.vue`
+    // fails the gate and `prettier --write **/*.vue` passes it.
+    assert.equal(plant.file, join("nested", "Messy.vue"));
   });
 
   test("a whole-SFC formatter passes the gate", () => {

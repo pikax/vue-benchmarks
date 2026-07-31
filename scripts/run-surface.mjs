@@ -46,7 +46,7 @@
 import { mkdirSync, renameSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { effectiveWarmups } from "./lib/timing.mjs";
+import { appendRunBudgetDisclosures, effectiveWarmups } from "./lib/timing.mjs";
 import { applyUnreproducibleGate, provenance, resolveCorpus } from "./lib/real-world/corpus.mjs";
 import { runCompileSurface } from "./lib/surfaces/compile.mjs";
 import { runFormatSurface } from "./lib/surfaces/format.mjs";
@@ -159,11 +159,16 @@ async function main() {
   const needsStaging = args.surface === "format" || args.surface === "lint";
   const staged = needsStaging ? stageCorpus(resolved, workRoot) : null;
 
-  const cap = process.env.BENCH_UNIFORM_RUNS === "1" ? Infinity : (SURFACE_RUN_CAPS[args.surface] ?? Infinity);
+  const uniformRuns = process.env.BENCH_UNIFORM_RUNS === "1";
+  const cap = uniformRuns ? Infinity : (SURFACE_RUN_CAPS[args.surface] ?? Infinity);
   const runs = Math.min(args.runs, cap);
 
   const options = {
     runs,
+    // BENCH_UNIFORM_RUNS promises equal run counts EVERYWHERE, which binds a
+    // surface that raises its own table-local run count (hmr's update table)
+    // exactly as it disables the caps here — so the flag is plumbed through.
+    uniformRuns,
     warmups: effectiveWarmups(args.warmups),
     files: resolved.files,
     fileLimit: resolved.files.length,
@@ -175,23 +180,11 @@ async function main() {
   };
 
   const surface = await runner(resolved, options, staged);
-  if (runs < args.runs) {
-    (surface.methodology ??= []).push(
-      args.surface === "project-test"
-        ? `Measured runs capped at ${runs} for this surface (requested ${args.runs}; per-surface runtime budget, 2026-07-30). project-test is a correctness surface — its timing is INDICATIVE, not a ranking a median-of-${args.runs} would sharpen.`
-        : `Measured runs capped at ${runs} for this surface (requested ${args.runs}; per-surface runtime budget, 2026-07-30). Set BENCH_UNIFORM_RUNS=1 for equal run counts everywhere.`,
-    );
-  }
-  if (runs === 1) {
-    // Row-visible, not only in the collapsed Methodology block: "every
-    // reduction disclosed loudly" is the repo's own rule, and a single-run
-    // number rendered as a bold ranked median is not loud. Identical for every
-    // tool on the surface, so it is reader-facing honesty, not a tool verdict.
-    for (const row of surface.variants ?? []) {
-      if (row.skip || row.status === "skipped") continue;
-      row.notes = `${row.notes ?? ""} | ⓘ SINGLE MEASURED RUN — the time is indicative (per-surface runtime budget); there is no median or spread behind it.`.replace(/^ \| /, "");
-    }
-  }
+  // Cap note + single-run stamps, keyed on each row's ACTUAL sample count —
+  // the hmr update table deliberately runs above the cap, and a disclosure
+  // that contradicts the rows it sits over is a falsehood in honesty's
+  // wording. See appendRunBudgetDisclosures.
+  appendRunBudgetDisclosures(surface, { surfaceId: args.surface, runs, requested: args.runs });
   // The no-lockfile rule, applied where every (surface, corpus) pair passes —
   // see applyUnreproducibleGate for the history of it being declared and not
   // enforced.

@@ -32,6 +32,8 @@ import {
 } from "../../scripts/lib/real-world/corpus.mjs";
 import { applyComponentMetaGates } from "../../scripts/lib/surfaces/project-component-meta.mjs";
 import { applyProjectLspGates, hoverCandidates } from "../../scripts/lib/surfaces/project-lsp.mjs";
+import { hmrRoundTrip, updateTableRuns } from "../../scripts/lib/surfaces/hmr.mjs";
+import { appendRunBudgetDisclosures } from "../../scripts/lib/timing.mjs";
 
 function scratchDir() {
   const dir = mkdtempSync(join(tmpdir(), "rw-alias-"));
@@ -530,7 +532,7 @@ test("project-lsp hover gate unranks a server that answered nothing at the basel
   assert.match(results[2].notes, /on 1 of 2 measured run/);
 });
 
-test("project-lsp diagnostic gate anchors on the baseline and says when it could not", () => {
+test("project-lsp diagnostic gate anchors on the maximum any ranked row published", () => {
   const results = [
     lspRow("volar-js-diagnostics", [{ diagnosticsCount: 7 }]),
     // Nothing reported for a document the reference server reported 7 for.
@@ -544,15 +546,56 @@ test("project-lsp diagnostic gate anchors on the baseline and says when it could
   assert.match(results[1].notes, /FAILED DIAGNOSTIC-CONTENT GATE/);
   assert.equal(results[2].status, "ok");
 
-  // An EMPTY baseline list is a legitimate answer but not an anchor, and the row
+  // Volar v3's hybrid can structurally publish 0 (its tsserver half carries the
+  // TS diagnostics), which used to disarm the baseline-only anchor for the whole
+  // table: rows publishing 0 were ranked FIRST against peers publishing dozens.
+  // The anchor is now the max across ranked peers — and the baseline is gated by
+  // it like everyone else.
+  const peerAnchored = [
+    lspRow("volar-js-diagnostics", [{ diagnosticsCount: 0 }]),
+    lspRow("vize-lsp-diagnostics", [{ diagnosticsCount: 62 }]),
+    lspRow("verter-lsp-diagnostics", [{ diagnosticsCount: 0 }, { diagnosticsCount: 0 }]),
+  ];
+  applyProjectLspGates(peerAnchored);
+  assert.equal(peerAnchored[1].status, "ok", "the anchoring row itself stays ranked");
+  assert.equal(peerAnchored[2].status, "unranked");
+  assert.match(peerAnchored[2].notes, /FAILED DIAGNOSTIC-CONTENT GATE/);
+  assert.equal(peerAnchored[0].status, "unranked", "the baseline earns no exemption from its own gate");
+
+  // Every server empty: a legitimate answer but not an anchor, and each row
   // must say so rather than rendering as though it had cleared the gate.
   const clean = [
     lspRow("volar-js-diagnostics", [{ diagnosticsCount: 0 }]),
     lspRow("vize-lsp-diagnostics", [{ diagnosticsCount: 0 }]),
   ];
   applyProjectLspGates(clean);
+  assert.equal(clean[0].status, "ok");
   assert.equal(clean[1].status, "ok");
+  assert.match(clean[0].notes, /GATE NOT RUN/);
   assert.match(clean[1].notes, /GATE NOT RUN/);
+});
+
+test("a diagnostics row with no recorded census says the gate never saw it", () => {
+  // applyProjectLspGates is exported-pure and claims to gate every row, but a
+  // row with EMPTY metaSamples used to fall through the count comparison
+  // silently and render exactly like a row that had passed. Unverified must
+  // say so on the row.
+  const results = [
+    lspRow("volar-js-diagnostics", [{ diagnosticsCount: 7 }]),
+    lspRow("vize-lsp-diagnostics", []),
+  ];
+  applyProjectLspGates(results);
+  assert.equal(results[1].status, "ok", "no census is not a gate failure — there is nothing to rule on");
+  assert.match(results[1].notes, /DIAGNOSTIC-CONTENT GATE NOT RUN/);
+  assert.match(results[1].notes, /no diagnostic census was recorded/);
+  assert.equal(results[0].status, "ok", "the anchoring peer is unaffected");
+  assert.ok(!results[0].notes.includes("no diagnostic census"), "a row WITH a census gets no such note");
+
+  // When EVERY row is censusless, each one says so — the old early exit left
+  // all of them silent at once.
+  const all = [lspRow("volar-js-diagnostics", []), lspRow("verter-lsp-diagnostics", [])];
+  applyProjectLspGates(all);
+  for (const row of all) assert.match(row.notes, /no diagnostic census was recorded/);
 });
 
 test("project-lsp reports a degraded type backend on any row, ranked or not", () => {
@@ -568,6 +611,147 @@ test("project-lsp reports a degraded type backend on any row, ranked or not", ()
   applyProjectLspGates(results);
   assert.equal(results[1].status, "ok", "a fallback is reported, never used to fail a row on its own");
   assert.match(results[1].notes, /BACKEND FALLBACK/);
+});
+
+/* -------------------------------------------------------------------------- */
+/* HMR — round-trip attribution and the update table's run-count exception.    */
+/* -------------------------------------------------------------------------- */
+
+test("hmrRoundTrip only accepts an HMR message that belongs to the probe", async () => {
+  // Warm per-row sessions keep several servers alive over one staged directory
+  // and every round trip writes and restores files, so a stale message can
+  // arrive first — and accepting the first update of ANY type published a
+  // near-zero round trip that measured someone else's write.
+  const { dir, cleanup } = scratchDir();
+  try {
+    mkdirSync(join(dir, "src"), { recursive: true });
+    const original = "<template><div /></template>\n";
+    writeFileSync(join(dir, "src/App.vue"), original);
+    const probe = { rel: "src/App.vue", original };
+    const run = (messages) =>
+      hmrRoundTrip({
+        server: { watcher: { emit() {} } },
+        hmr: {
+          drain() {},
+          // Delivers the queued messages through the round trip's own
+          // predicate, in order — a rejected message must be passed over, the
+          // way the real queue keeps waiting within its timeout.
+          next: async (accept) => {
+            for (const m of messages) if (accept(m)) return m;
+            throw new Error("predicate rejected every queued message");
+          },
+        },
+        appDir: dir,
+        probe,
+        iteration: 0,
+        port: 0,
+      });
+
+    // A stale update for a DIFFERENT module is passed over; the probe's own
+    // later message is the one consumed.
+    const stale = await run([
+      { type: "update", updates: [{ path: "/src/Other.vue" }] },
+      { type: "full-reload", path: "/src/App.vue" },
+    ]);
+    assert.equal(stale.kind, "full-reload", "the wrong-path update must not be the answer");
+
+    // The probe's own update matches through the sub-block query shape
+    // (`?vue&type=template…`) and via acceptedPath; with no update.path there
+    // is nothing to fetch, so no network is touched here.
+    const update = await run([
+      { type: "update", updates: [{ acceptedPath: "/src/App.vue?vue&type=template&index=0" }] },
+    ]);
+    assert.equal(update.kind, "update");
+    assert.equal(update.fetchedBytes, 0);
+
+    // A pathless full-reload stays accepted: plugins that only full-reload may
+    // send no path at all, and rejecting it would reclassify a real reload as
+    // "no HMR message" and delete the row of a plugin that did answer.
+    const reload = await run([{ type: "full-reload" }]);
+    assert.equal(reload.kind, "full-reload");
+
+    // But a full-reload that NAMES a different path is not this probe's answer.
+    await assert.rejects(
+      () => run([{ type: "full-reload", path: "/src/Other.vue" }]),
+      /predicate rejected/,
+    );
+  } finally {
+    cleanup();
+  }
+});
+
+test("the hmr update table obeys BENCH_UNIFORM_RUNS over its own floor", () => {
+  // The floor exists because 2 runs of a millisecond-scale operation is a coin
+  // flip; the escape hatch exists because it promises equal run counts
+  // EVERYWHERE. A floor that ignored the hatch made the published cap note
+  // ("capped at 2") false on the very rows it sat over.
+  assert.equal(updateTableRuns({ runs: 2 }), 5, "the floor lifts the capped default");
+  assert.equal(updateTableRuns({ runs: 7 }), 7, "the floor never lowers a higher request");
+  assert.equal(updateTableRuns({ runs: 2, uniformRuns: true }), 2, "BENCH_UNIFORM_RUNS wins over the floor");
+  assert.equal(updateTableRuns({ runs: 1, uniformRuns: true }), 1);
+});
+
+test("run-budget disclosures are keyed on each row's actual sample count", () => {
+  // The hmr update table deliberately runs above the surface cap, so the old
+  // surface-wide wording published two falsehoods at once: a methodology note
+  // claiming "capped at 2" over rows carrying five samples, and (at --runs 1)
+  // a SINGLE MEASURED RUN stamp on five-sample rows.
+  const surface = {
+    methodology: [],
+    variants: [
+      { id: "start__a", status: "ok", notes: "cold", runs: [1000, 1100] },
+      { id: "hmr__a", status: "ok", notes: "update", runs: [5, 6, 5, 7, 6] },
+      { id: "hmr__b", status: "skipped", notes: "skipped row" },
+    ],
+  };
+  appendRunBudgetDisclosures(surface, { surfaceId: "hmr", runs: 2, requested: 5 });
+  const note = surface.methodology.find((n) => n.includes("capped at 2"));
+  assert.ok(note, "the cap must still be disclosed");
+  assert.match(note, /2 or 5 measured sample/, "the note must state what actually ran");
+  assert.match(note, /BENCH_UNIFORM_RUNS=1/);
+  for (const row of surface.variants) {
+    assert.ok(!(row.notes ?? "").includes("SINGLE MEASURED RUN"), `${row.id} has multiple samples`);
+  }
+
+  // Rows all at the cap: the note must NOT invent a variance that is not there.
+  const flat = {
+    methodology: [],
+    variants: [{ id: "a", status: "ok", notes: "n", runs: [1, 2] }],
+  };
+  appendRunBudgetDisclosures(flat, { surfaceId: "bundle", runs: 2, requested: 5 });
+  assert.ok(!flat.methodology[0].includes("measured sample"), flat.methodology[0]);
+});
+
+test("the single-run stamp lands only on rows that actually have one sample", () => {
+  const surface = {
+    variants: [
+      { id: "start__a", status: "ok", notes: "cold", runs: [1000] },
+      { id: "hmr__a", status: "ok", notes: "update", runs: [5, 6, 5, 7, 6] },
+      { id: "hmr__c", status: "error", notes: "err" },
+    ],
+  };
+  appendRunBudgetDisclosures(surface, { surfaceId: "hmr", runs: 1, requested: 1 });
+  assert.match(surface.variants[0].notes, /SINGLE MEASURED RUN/);
+  assert.ok(
+    !surface.variants[1].notes.includes("SINGLE MEASURED RUN"),
+    "a five-sample row must not be stamped single-run",
+  );
+  assert.ok(!(surface.variants[2].notes ?? "").includes("SINGLE MEASURED RUN"));
+  // runs === requested, so there is no cap to disclose either.
+  assert.ok(!(surface.methodology ?? []).some((n) => n.includes("capped")));
+
+  // project-test keeps its indicative-timing wording when capped to one run.
+  const pt = { variants: [{ id: "t", status: "ok", notes: "n", runs: [60000] }] };
+  appendRunBudgetDisclosures(pt, { surfaceId: "project-test", runs: 1, requested: 5 });
+  assert.ok(pt.methodology.some((n) => /INDICATIVE/.test(n)));
+  assert.match(pt.variants[0].notes, /SINGLE MEASURED RUN/);
+
+  // And run-surface applies all of this at its choke point, with the uniform
+  // escape hatch plumbed into the surface options where hmr can see it.
+  const root = new URL("../../", import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1");
+  const child = readFileSync(join(root, "scripts/run-surface.mjs"), "utf8");
+  assert.match(child, /uniformRuns,/, "BENCH_UNIFORM_RUNS must reach the surface options");
+  assert.match(child, /appendRunBudgetDisclosures\(surface/, "disclosures must run at the choke point");
 });
 
 /* -------------------------------------------------------------------------- */
@@ -667,4 +851,45 @@ test("the two project-* surfaces are wired into every entry point that publishes
   );
   assert.match(methodology, /project-component-meta/);
   assert.match(methodology, /project-lsp/);
+});
+
+test("the real-world workflow cannot serve a poisoned node_modules cache twice", () => {
+  // One flaky tnb install on a cache-miss run used to poison the UNsuffixed
+  // cache key: the cache is saved even when an install step failed, so "root
+  // node_modules present, envs/tnb absent" was stored under the only key and
+  // every later run hit it, skipped the installs, and silently lost the whole
+  // native-engine axis again — the exact silence the tnb install was added to
+  // end (2026-07-30 audit, finding 17).
+  const root = new URL("../../", import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1");
+  const workflow = readFileSync(join(root, ".github/workflows/benchmark-real-world.yml"), "utf8");
+  const keyBase =
+    "\\$\\{\\{ env\\.NM_CACHE_PREFIX \\}\\}-\\$\\{\\{ runner\\.os \\}\\}-\\$\\{\\{ hashFiles\\('pnpm-lock\\.yaml', 'envs/tnb/pnpm-lock\\.yaml', '\\.node-version'\\) \\}\\}";
+
+  // Mechanism 1 — benchmark.yml's pattern: sha-suffixed key + prefix restore.
+  // A poisoned save can then only ever be exact-hit by a re-run of the same
+  // commit; every other run prefix-restores with cache-hit false, so the
+  // installs run and repair the restored state.
+  assert.match(
+    workflow,
+    new RegExp(`key: ${keyBase}-\\$\\{\\{ github\\.sha \\}\\}`),
+    "the nm cache key must be sha-suffixed",
+  );
+  assert.match(
+    workflow,
+    new RegExp(`restore-keys:\\s*\\|\\s*\\n\\s*${keyBase}-`),
+    "a prefix restore-keys must accompany the sha-suffixed key",
+  );
+
+  // Mechanism 2 — even an exact hit is verified before it is trusted: the tnb
+  // install is forced whenever the restored env lacks its typescript package.
+  assert.match(
+    workflow,
+    /\[ -d envs\/tnb\/node_modules\/typescript \]/,
+    "the cached tnb env must be checked for its typescript package",
+  );
+  assert.match(
+    workflow,
+    /steps\.nm-cache\.outputs\.cache-hit != 'true' \|\| steps\.tnb-verify\.outputs\.present != 'true'/,
+    "an absent tnb env must force the install even on an exact cache hit",
+  );
 });

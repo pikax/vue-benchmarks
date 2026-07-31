@@ -19,8 +19,9 @@
  * The first row is the suite run completely unmodified — whatever the project
  * ships, which for every project in the registry is `@vitejs/plugin-vue`. That is
  * the **baseline**, meaning the reference the others are read against. It is not
- * protected: it is gated on tests-executed exactly like every challenger, and if
- * the project's own suite fails on this machine that is what the row says.
+ * protected: its census (tests passed AND failed) is published exactly like
+ * every challenger's, and if the project's own suite fails on this machine
+ * that is what the row says.
  *
  * ## The swap, and how each row says which one it got
  *
@@ -60,6 +61,7 @@ import {
   aliasRedirectCensus,
   aliasSwapEnv,
   overrideConfigSource,
+  reclassifySwapRefusals,
   resolveChallengerUrl,
 } from "../real-world/plugin-swap.mjs";
 
@@ -200,6 +202,7 @@ export function applyTestCountGate(results) {
   const baselineRow = results.find((r) => r.id === "baseline");
   const baselineSample = baselineRow?.metaSamples?.[0] ?? null;
   const baselinePassed = baselineSample?.testsPassed ?? null;
+  const baselineFailed = baselineSample?.testsFailed ?? (baselinePassed !== null ? 0 : null);
 
   for (const row of results) {
     if (row.id === "baseline" || row.status !== "ok") continue;
@@ -226,6 +229,16 @@ export function applyTestCountGate(results) {
     } else if (baselinePassed !== null && passed < baselinePassed) {
       reasons.push(`passed ${passed} tests where the project's own toolchain passed ${baselinePassed}`);
     }
+    // A pass-count tie does not clear a row that FAILS tests the baseline does
+    // not: a toolchain can change what the suite collects, so equal passes can
+    // coexist with extra failures. vue-vben-admin shipped exactly this — three
+    // challengers each failing one test the baseline passes, all three ranked,
+    // one credited with beating the baseline (2026-07-30 audit, finding 6).
+    if (baselineFailed !== null && failed > baselineFailed) {
+      reasons.push(
+        `failed ${failed} test(s) where the project's own toolchain failed ${baselineFailed} — a failing test is not a faster test`,
+      );
+    }
     // A non-zero exit with nothing passing is a suite that collapsed. It is the
     // cheapest possible run and must never be ranked, even when the baseline
     // census is missing and the comparison above could not be made.
@@ -248,7 +261,16 @@ export function applyTestCountGate(results) {
     // fact. It must not read as an argument for keeping a red suite in the
     // ranking: the count gate decides that, on passes.
     if (failed > 0) {
-      row.notes = `${row.notes} | ⚠ ${failed} test(s) FAILED under this toolchain that the project's own toolchain passes — a correctness finding about ${row.package}.`;
+      // The old wording claimed "that the project's own toolchain passes"
+      // unconditionally — an assertion the census can only support when the
+      // baseline's own failure count is known and smaller.
+      const vsBaseline =
+        baselineFailed === null
+          ? " (baseline failure count unknown)"
+          : failed > baselineFailed
+            ? ` that the project's own toolchain does not fail (baseline: ${baselineFailed})`
+            : ` (the project's own toolchain also fails ${baselineFailed})`;
+      row.notes = `${row.notes} | ⚠ ${failed} test(s) FAILED under this toolchain${vsBaseline} — a correctness finding about ${row.package}.`;
     }
   }
   return results;
@@ -304,7 +326,7 @@ export async function runProjectTestSurface(resolved, options) {
       package: "@vitejs/plugin-vue",
       target: "project-test",
       invocation: "vitest CLI",
-      artifactLabel: "tests executed",
+      artifactLabel: "tests passed",
       notes: `${SWAP_MECHANISMS.none} · package ${target.relDir} · script "${target.script}": ${target.scriptBody}${target.config ? ` · config ${target.config}` : " · no config file found"}`,
       measure: () => {
         const r = runVitest(target, { configFile: null, cwd: target.dir, timeoutMs });
@@ -329,7 +351,7 @@ export async function runProjectTestSurface(resolved, options) {
       package: challenger.package,
       target: "project-test",
       invocation: "vitest CLI",
-      artifactLabel: "tests executed",
+      artifactLabel: "tests passed",
     };
 
     // No importable config ⇒ nothing to substitute into, so fall back to the
@@ -432,6 +454,8 @@ export async function runProjectTestSurface(resolved, options) {
     rmSync(aliasRoot, { recursive: true, force: true });
   }
 
+  reclassifySwapRefusals(results);
+
   // Before the count gate: an alias row whose redirect never fired must not be
   // compared against the baseline at all, because it may BE the baseline.
   applyAliasVerificationGate(results);
@@ -446,7 +470,7 @@ export async function runProjectTestSurface(resolved, options) {
     methodology: [
       `Target: ${target.packageName} (${target.relDir}) at ${resolved.project.ref}${resolved.sha ? ` / ${resolved.sha.slice(0, 8)}` : ""} — the project's own Vitest suite, unmodified test code.`,
       "This surface EXECUTES compiled components rather than only bundling them, so it catches codegen that parses correctly and behaves wrongly — a class of defect no build surface can reach. It is also the only surface that answers whether a challenger would actually work in a real project.",
-      "The first row is the project's suite run completely unmodified. That is the BASELINE — the reference the others are read against — and it is gated on tests-executed exactly like every challenger. If the project's own suite fails on this machine, the row says so.",
+      "The first row is the project's suite run completely unmodified. That is the BASELINE — the reference the others are read against — and its pass/fail census is published exactly like every challenger's. If the project's own suite fails on this machine, the row says so.",
       `Swap mechanism is stated per row. Preferred: ${SWAP_MECHANISMS.override}. The generated config replaces ONLY the plugin named 'vite:vue', at that plugin's own index in the array, and throws if it cannot find it — adding a second Vue plugin beside the original would have both compiling every SFC and report a number that means nothing, and hoisting the replacement to the front would change which other plugins see an .vue file first.`,
       `KNOWN INEQUALITY, published on every override row: ${SWAP_MECHANISMS.optionsDropped}. The direction of the resulting error is not measured, so it is not claimed to cancel out.`,
       "The project's config is resolved with the same ConfigEnv vitest uses ({command:'serve', mode:'test'}). A function-form config branches on it, so resolving it as build/production — as an earlier revision did — gave the challengers a different plugin list and different aliases from the baseline while the table claimed one variable changed.",
@@ -454,7 +478,7 @@ export async function runProjectTestSurface(resolved, options) {
       "Alias-verification gate: an alias row is ⏭ NOT MEASURED unless the resolution hook recorded a redirect on EVERY measured run. A hook that matched nothing leaves the project running its own @vitejs/plugin-vue, and the run would be published under a challenger's name with nothing in the output to distinguish it — the worst failure available on this surface, and the only one that cannot be spotted after the fact.",
       "The census is read from the LAST summary block vitest prints, and the file and test lines are always taken from the SAME block. A run can print more than one (a reporter list naming `default` twice, a merged blob report), and the label lines are matched anchored at the start of a line — the previous parser matched each label anywhere in the output with `\\s` able to span newlines, so it could pair a file count from one block with a test count from another and publish a census that describes no single run.",
       "The file census publishes files FAILED as well as the total, because the total alone is misleading. On Hoppscotch's `hoppscotch-common` vitest prints `Test Files 31 failed | 31 passed (62)`: half its 62 spec files never collect, because `@hoppscotch/data` is built by a postinstall that `pnpm fetch:real-world` skips. That is a property of the corpus on this machine and it hits the baseline too, so it is stated on every row rather than only where a challenger loses tests.",
-      "Test-count gate: a challenger that PASSES fewer tests than the baseline is UNRANKED, as is one that produced no test census at all or exited non-zero having passed nothing. A suite that fails to collect — or collects and then fails — is faster, and rewarding that would invert the measurement. Passes, not collections, is the gated quantity, and it is the same number the artifact column publishes.",
+      "Test-count gate: a challenger that PASSES fewer tests than the baseline is UNRANKED, as is one that FAILS more tests than the baseline (a pass-count tie does not clear extra failures — a toolchain can change what the suite collects), one that produced no test census at all, or one that exited non-zero having passed nothing. A suite that fails to collect — or collects and then fails — is faster, and rewarding that would invert the measurement. Passes and failures, not collections, are the gated quantities, and passes is the same number the artifact column publishes.",
       "Failing tests are reported as a correctness finding about the tool. The timing of a row that passed fewer tests than the baseline is bracketed and excluded from ranking by the gate above; the failure count is published next to it so the reader sees both.",
       "vitest is invoked directly rather than through the project's npm script, because --config must reach vitest itself; the script that was bypassed is named in the baseline row's notes.",
       "This is the ONE real-world surface that writes into the checkout — running a project's own suite means running inside it. One namespaced config file per challenger is written and removed in a finally; the clone is pinned, so residue from a hard kill clears with `pnpm fetch:real-world --force`.",

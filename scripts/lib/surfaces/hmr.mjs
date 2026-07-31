@@ -49,6 +49,31 @@ const BASELINE_PLUGIN_ID = "plugin-vue";
 const READY_TIMEOUT_MS = 60_000;
 const HMR_TIMEOUT_MS = 30_000;
 
+/**
+ * Floor on measured runs for the UPDATE table only.
+ *
+ * The per-surface run cap exists for the cold-start table, where every run is
+ * a corpus-scale server start; an update run is a couple of millisecond-scale
+ * round trips against the row's already-warm server, so more runs cost
+ * nothing — and at 2 runs a single contaminated round trip was half the
+ * published median (2026-07-30 audit, finding 4).
+ */
+const HMR_UPDATE_MIN_RUNS = 5;
+
+/**
+ * Measured runs for the update table.
+ *
+ * Exported so the exception is pinned by test in both directions: the floor
+ * must beat the surface cap (2 runs of an ms-scale operation is a coin flip),
+ * and BENCH_UNIFORM_RUNS=1 (`options.uniformRuns`, plumbed by run-surface.mjs)
+ * must beat the floor — that escape hatch promises equal run counts
+ * EVERYWHERE, and a floor that ignored it made the escape hatch and the
+ * published cap note both false.
+ */
+export function updateTableRuns(options) {
+  return options.uniformRuns ? options.runs : Math.max(options.runs, HMR_UPDATE_MIN_RUNS);
+}
+
 function withTimeout(promise, ms, what) {
   let timer;
   return Promise.race([
@@ -276,8 +301,36 @@ export async function hmrRoundTrip({ server, hmr, appDir, probe, iteration, port
   const started = performance.now();
   server.watcher.emit("change", abs);
 
+  // Only a message about THIS probe module counts. Warm sessions keep several
+  // servers alive over one staged directory and every round trip writes and
+  // restores files, so a stale event (another probe's restore, a late watcher
+  // delivery the hermetic-watch config did not swallow) can arrive first —
+  // and taking the first update of ANY type published a near-zero round trip
+  // that measured someone else's write. A message for a different path is
+  // left to keep waiting within the same timeout, never consumed as the
+  // answer. Same URL shape as warmProbeModule; sub-block updates arrive as
+  // `/src/A.vue?vue&type=template…`, so the query is stripped before compare.
+  const probeUrl = `/${probe.rel.split("\\").join("/")}`;
+  const isProbePath = (p) => {
+    if (typeof p !== "string" || p.length === 0) return false;
+    const clean = p.split("?")[0].split("\\").join("/");
+    return clean === probeUrl || clean.endsWith(probeUrl);
+  };
   const message = await withTimeout(
-    hmr.next((m) => m.type === "update" || m.type === "full-reload"),
+    hmr.next((m) => {
+      if (m.type === "update") {
+        return (m.updates ?? []).some((u) => isProbePath(u?.path ?? u?.acceptedPath));
+      }
+      if (m.type === "full-reload") {
+        // A plugin that only full-reloads may send no path at all (Vite's
+        // payload carries one only when it can name it; some senders use the
+        // "*" wildcard). With nothing to match, accept it as before —
+        // rejecting it would reclassify a real reload as "no HMR message"
+        // and delete the row of a plugin that did answer.
+        return m.path == null || m.path === "*" || isProbePath(m.path);
+      }
+      return false;
+    }),
     HMR_TIMEOUT_MS,
     // Worded so the report cannot turn a harness gap into a tool verdict. No
     // message arriving means the server did not consider the module dirty; with
@@ -291,7 +344,12 @@ export async function hmrRoundTrip({ server, hmr, appDir, probe, iteration, port
   const notifyMs = performance.now() - started;
 
   let fetchedBytes = 0;
-  const update = message.type === "update" ? message.updates?.[0] : null;
+  // The PROBE's update, not updates[0]: one message can batch several modules'
+  // updates and the first entry is not necessarily the probe's.
+  const update =
+    message.type === "update"
+      ? ((message.updates ?? []).find((u) => isProbePath(u?.path ?? u?.acceptedPath)) ?? null)
+      : null;
   if (update?.path) {
     const url = `http://127.0.0.1:${port}${update.path}${update.path.includes("?") ? "&" : "?"}t=${Date.now()}`;
     const response = await withTimeout(fetch(url), HMR_TIMEOUT_MS, "HMR module fetch");
@@ -559,6 +617,26 @@ export async function runHmrSurface(resolved, options) {
             );
             for (const p of probes) await warmProbeModule(server, p);
             const hmr = await connectHmr(port);
+            // One DISCARDED full round trip per probe. transformRequest alone
+            // does not warm the whole update path (edit → invalidate → update
+            // message → HTTP fetch of the updated variant): on lazy plugins
+            // the first edit of a session paid 100-900 ms that landed in the
+            // first MEASURED run — at 2 runs, half the published median, and
+            // it systematically favoured the one eager plugin (2026-07-30
+            // audit, finding 4). Real editing is a stream of saves against a
+            // warm server; what the first save costs is cold start's
+            // question, not this table's.
+            for (const [pi, p] of probes.entries()) {
+              await hmrRoundTrip({
+                server,
+                hmr,
+                appDir,
+                probe: p,
+                iteration: `session-warm-${pi}`,
+                port,
+              });
+              writeFileSync(join(appDir, p.rel), p.original);
+            }
             return { server, port, hmr };
           } catch (error) {
             await closeServer(server);
@@ -629,7 +707,9 @@ export async function runHmrSurface(resolved, options) {
       fileCount,
     }),
     await measureVariants(hmrVariants, {
-      runs: options.runs,
+      // Above the surface cap on purpose, below it never; BENCH_UNIFORM_RUNS=1
+      // forces it back to the caller's count — see updateTableRuns.
+      runs: updateTableRuns(options),
       warmups: options.warmups,
       fileCount,
     }),
@@ -679,6 +759,8 @@ export async function runHmrSurface(resolved, options) {
       "Where the baseline (@vitejs/plugin-vue) is not ranked in a bundler's table, every surviving row in that table says so: the vs-fastest column then compares challengers with each other only, and its 1.00x must not be read as beating the reference implementation.",
       "Dev cold start: each measured run starts a FRESH server — that row's question is what a cold session costs, so no run may inherit another's module graph. The DISCARDED WARM PASS is the gate probe, which already started a server and transformed the entry for every surviving cell on the identical code path. The probe runs in fixed cell order and so does measured run 0, so probe-to-first-measure distance is identical per cell; later runs rotate. Run 0 is each cell's second in-process execution and may carry a small JIT residual JS plugins feel more than native ones; the median over measured runs absorbs it.",
       "HMR turnaround: ONE WARM server per row, shared across warmup and measured runs. Real HMR only happens against a long-lived server; the per-run restart this replaced re-paid a corpus-scale startup to measure a milliseconds-long round trip (~31 of naive-ui's 89 sweep minutes were that ceremony). Each round trip edits from the pristine source with a unique marker and restores the file, so no run compounds another's edit.",
+      `Run counts differ by table, deliberately: dev cold start ran ${options.runs} measured run(s) per cell (each is a corpus-scale server start — what the per-surface run cap protects), while the update table ran ${updateTableRuns(options)} measured run(s) per row (each is ${probes.length} millisecond-scale round trip(s) against the row's warm server, where a 2-run median left one contaminated round trip as half the number). BENCH_UNIFORM_RUNS=1 forces both tables to the caller's run count.`,
+      "The session's FIRST save is discarded: one untimed round trip per probe runs at session open, because a module transform alone does not warm the edit→update→fetch path and the first edit of a session costs a lazy plugin 100-900 ms it never pays again. Publishing that in a 2-run median made half of every lazy plugin's number a one-time cost the eager plugin had paid untimed at init — first-save cost is a cold-start question, and this table answers the every-save question.",
     ].filter(Boolean),
   };
 }

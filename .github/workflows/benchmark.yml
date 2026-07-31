@@ -83,7 +83,11 @@ env:
   # the same run count as the in-process throughput surfaces. Measured, not
   # assumed: at --runs 5 the scale suite alone was ~10.8 min.
   IDE_RUNS: "3"
-  IDE_SCALE_RUNS: "1"
+  # 3, not 1: the scale report publishes rankings and per-size "scale factors",
+  # and at n=1 rows 0.1 ms apart were ordered and a cold first sample was sold
+  # as best-in-class scaling (2026-07-30 audit, finding 16). Measured 3.6 min
+  # at 2 passes on a 32-core box; the job timeout keeps ~2x headroom at 3.
+  IDE_SCALE_RUNS: "3"
 
 jobs:
   # ---------------------------------------------------------------------------

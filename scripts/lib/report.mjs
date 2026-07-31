@@ -195,10 +195,46 @@ function classLabel(key) {
 }
 
 /**
+ * Above this CV%, a median is a coin flip, not a result. The ⚠ flag at 10%
+ * means "noisy — read with care"; the ceiling is where reading-with-care stops
+ * helping. Rows were published as table WINNERS at CV 384% and 2515% (one
+ * winning series: 313.5, 0.8, 5.3, 4.9, 86.4 ms) — which rewards whichever
+ * tool has the least stable behaviour, since instability widens the shot at a
+ * lucky median (2026-07-30 audit, finding 8). Applied identically to every
+ * row, baseline included; the time stays visible in brackets like any other
+ * gate failure.
+ *
+ * The ceiling unranks only rows with at least THREE samples. With n=2 the
+ * stddev is |a−b|/√2, so a single page-cache blip beside a minutes-scale
+ * baseline clears 50% with no third sample to adjudicate which run was the
+ * outlier — and the ceiling's own rationale (an unstable series buys more
+ * shots at a lucky median) assumes there are enough draws to shop between.
+ * A two-run row above the ceiling keeps the 10% ⚠ flag, which applies at
+ * any sample count, and stays ranked.
+ */
+export const NOISE_CV_LIMIT_PCT = 50;
+
+/** Minimum samples before the CV ceiling may unrank — see the docblock above. */
+export const NOISE_CV_MIN_SAMPLES = 3;
+
+/**
  * Render one ranking table for a homogeneous set of variants.
  * Primary column = median of measured runs (all warmed).
  */
-function renderVariantTable(variants, { title } = {}) {
+function renderVariantTable(rawVariants, { title } = {}) {
+  const variants = rawVariants.map((v) =>
+    v.status === "ok" &&
+    Number.isFinite(v.cvPct) &&
+    v.cvPct > NOISE_CV_LIMIT_PCT &&
+    Array.isArray(v.runs) &&
+    v.runs.length >= NOISE_CV_MIN_SAMPLES
+      ? {
+          ...v,
+          status: "unranked",
+          notes: `${v.notes ? `${v.notes} | ` : ""}⚠ TOO NOISY TO RANK — CV ${v.cvPct.toFixed(1)}% (ceiling ${NOISE_CV_LIMIT_PCT}%). The median of a series this unstable is a draw from noise, not a result; the time is bracketed and excluded from ranking exactly like a failed gate. Raw runs below.`,
+        }
+      : v,
+  );
   const lines = [];
   if (title) {
     lines.push(`##### ${title}`);
@@ -386,7 +422,7 @@ export const IDE_RANKING_RULES =
   "Ranked **per operation**, never pooled. These operations differ by orders of magnitude and answer unrelated questions, so one table each. A row that failed its content gate is shown in brackets and excluded from ranking — latency without a correct answer is not a comparable measurement.";
 
 export const RANKING_RULES =
-  "Ranked on the **median of measured runs** (each after ≥1 discarded warmup; no cold column — it would measure JIT warmup). One table per surface: engine, invocation and threading are row properties, not table splits — rows tagged **(JS)** run the JavaScript TypeScript compiler (a cross-engine ratio measures TypeScript's rewrite as much as the tool), and a row's label/notes say whether it is a CLI (pays process startup every run), an in-process API, single-threaded or a thread pool. Name markers: ⚠ failed validation (time bracketed, unranked) · ❌ error · ⏭ skipped. Per-row detail is under **Notes** below each table.";
+  "Ranked on the **median of measured runs** (each after ≥1 discarded warmup; no cold column — it would measure JIT warmup). One table per surface: engine, invocation and threading are row properties, not table splits — rows tagged **(JS)** run the JavaScript TypeScript compiler (a cross-engine ratio measures TypeScript's rewrite as much as the tool), and a row's label/notes say whether it is a CLI (pays process startup every run), an in-process API, single-threaded or a thread pool. Name markers: ⚠ failed validation (time bracketed, unranked) · ❌ error · ⏭ skipped. A row above CV 50% with at least three samples is bracketed as TOO NOISY TO RANK, baseline included (a two-run spread has no third sample to adjudicate, so it is flagged, not bracketed). Per-row detail is under **Notes** below each table.";
 
 /**
  * Tools that produced NO measurement, rendered ABOVE the tables.
@@ -533,7 +569,7 @@ export function buildMethodologyNotes() {
   return [
     "Primary ranking metric is the **median of measured runs**. Every measured run is preceded by at least one discarded warmup pass (enforced — `--warmups 0` is clamped to 1).",
     "There is **no cold column**. An unwarmed first run costs a JS compiler ~3.2x its steady state and a native compiler nothing, so ranking on it measures V8 warmup rather than the tool.",
-    "Min / stddev / CV% are reported per row. CV% > 10 is flagged ⚠ — treat that row as noisy (thermal drift or a contended runner), not as a result.",
+    "Min / stddev / CV% are reported per row. CV% > 10 is flagged ⚠ — treat that row as noisy (thermal drift or a contended runner), not as a result. Above CV 50% a row with at least three samples is TOO NOISY TO RANK: bracketed and excluded exactly like a gate failure, baseline included — an unstable series buys more shots at a lucky median, so ranking it rewards instability. A two-run row is never bracketed by the ceiling (its stddev is |a−b|/√2 and there is no third sample to adjudicate); it keeps the ⚠ flag.",
     "Status is a marker on the tool NAME, not a column: ⚠ failed a validation gate (time in brackets, unranked) · ❌ error · ⏭ skipped. Per-row detail is in the collapsible **Notes** under each table, and each surface carries a **Tools** legend naming what actually ran.",
     "Each surface is ONE table. Engine, invocation and threading are row properties, not table splits: a CLI pays process startup on every run (~85ms measured for one native CLI) while an in-process API amortises it, and a thread pool is not a single thread — the row's label and notes say which mode it ran, so compare like with like.",
     "Rows tagged **(JS)** run the JavaScript TypeScript compiler, untagged typecheck/LSP rows run native tsgo. A cross-engine ratio measures TypeScript's Go rewrite as much as the Vue layer on top of it.",

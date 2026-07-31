@@ -1,7 +1,10 @@
 import assert from "node:assert/strict";
-import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { test } from "node:test";
 import { collectVueFilesDeep, copyFixtureSubset } from "../../scripts/lib/fixtures.mjs";
 import {
@@ -19,9 +22,11 @@ import {
   corpusCompileVerdict,
 } from "../../scripts/lib/surfaces/bundle.mjs";
 import {
+  IGNORE_DEPRECATIONS_VALUE,
   actuallyChecked,
   applyTypecheckGates,
   diagnosticCensus,
+  tscRowArgs,
 } from "../../scripts/lib/surfaces/project-typecheck.mjs";
 import { overrideConfigSource } from "../../scripts/lib/real-world/plugin-swap.mjs";
 import { allCells, integrationSpec } from "../../scripts/lib/real-world/bundler-drivers.mjs";
@@ -32,6 +37,7 @@ import {
 } from "../../scripts/lib/real-world/test-targets.mjs";
 import { stripAnsi } from "../../scripts/lib/real-world/ansi.mjs";
 import { SWAP_MECHANISMS, applyTestCountGate } from "../../scripts/lib/surfaces/project-test.mjs";
+import { reclassifySwapRefusals } from "../../scripts/lib/real-world/plugin-swap.mjs";
 
 function scratch() {
   const dir = mkdtempSync(join(tmpdir(), "rw-test-"));
@@ -498,6 +504,76 @@ test("project-test reports a half-collected suite on every row, baseline include
   assert.equal(results[1].status, "ok", "an equal-passing challenger is still ranked");
 });
 
+test("project-test unranks a challenger that fails tests the baseline does not, even on a pass-count tie", () => {
+  // vben shipped exactly this: a toolchain can change what the suite COLLECTS,
+  // so equal passes can coexist with extra failures — three challengers each
+  // failed one test the baseline passes and all three were ranked, one
+  // credited with beating the baseline (2026-07-30 audit, finding 6).
+  const results = [
+    {
+      id: "baseline",
+      package: "@vitejs/plugin-vue",
+      notes: "n",
+      status: "ok",
+      metaSamples: [{ tests: 308, testsPassed: 308, testsFailed: 0, exit: 0 }],
+    },
+    {
+      id: "swap-unplugin",
+      package: "unplugin-vue",
+      notes: "n",
+      status: "ok",
+      metaSamples: [{ tests: 309, testsPassed: 308, testsFailed: 1, exit: 1 }],
+    },
+  ];
+  applyTestCountGate(results);
+  assert.equal(results[1].status, "unranked");
+  assert.match(results[1].notes, /failed 1 test\(s\) where the project's own toolchain failed 0/);
+  // The failure note must not overclaim beyond what the census supports.
+  assert.match(results[1].notes, /does not fail \(baseline: 0\)/);
+});
+
+test("the swap refusal is a harness limitation, never a challenger error", () => {
+  // The generated override config throws when the resolved config has no
+  // 'vite:vue' plugin to substitute (quasar: @quasar/app-vite assembles the
+  // real config at runtime). Nothing ran under the challenger, so nothing
+  // failed under it — three quasar rows were published ❌ for the harness's
+  // own refusal (2026-07-30 audit, finding 17).
+  const results = [
+    { id: "baseline", package: "@vitejs/plugin-vue", notes: "n", status: "ok" },
+    {
+      id: "swap-vize",
+      package: "@vizejs/vite-plugin",
+      notes: "n",
+      status: "error",
+      error: 'vitest produced no summary (exit 1): bench: no plugin named "vite:vue" in vitest.config.ts — refusing to add a second Vue plugin',
+    },
+    { id: "swap-verter", package: "@verter/unplugin", notes: "n", status: "error", error: "Build failed with 5 errors" },
+    {
+      // Row errors embed the PROJECT's output, so a genuine challenger failure
+      // can contain the generic phrase without the harness's `bench:` sentinel
+      // prefix — a framework adapter's own message, a test assertion quoting
+      // one. Reclassifying it would convert a real ❌ into a ⏭ with a
+      // fabricated harness-limitation explanation.
+      id: "swap-unplugin",
+      package: "unplugin-vue",
+      notes: "n",
+      status: "error",
+      error: 'vitest produced no summary (exit 1): Error: no plugin named "vite:vue" could be loaded by the adapter',
+    },
+  ];
+  reclassifySwapRefusals(results);
+  assert.equal(results[1].status, "skipped");
+  assert.match(results[1].notes, /NOT MEASURED/);
+  assert.match(results[1].notes, /not a result about @vizejs\/vite-plugin/);
+  assert.equal(results[2].status, "error", "a genuine challenger failure stays an error");
+  assert.equal(
+    results[3].status,
+    "error",
+    "the bare phrase without the `bench:` sentinel prefix must stay an error",
+  );
+  assert.equal(results[3].notes, "n", "no fabricated explanation may be appended");
+});
+
 test("the project-test swap mechanisms are all documented", () => {
   // Every row states which mechanism produced it; an undocumented mechanism
   // would render as an empty explanation next to a number.
@@ -840,6 +916,111 @@ test("TNB activation gate requires the banner on EVERY measured run", () => {
   ]);
   applyTypecheckGates([{ ...baseline }, solid]);
   assert.equal(solid.status, "ok");
+});
+
+test("the TS5101 retry flag actually silences the INSTALLED TypeScript's deprecations", () => {
+  // The retry's --ignoreDeprecations value is phase-specific and a wrong phase
+  // is a SILENT no-op: on TypeScript 6.0.x the options still emitting
+  // TS5101/TS5107 (baseUrl, moduleResolution node10, …) are 6.0-phase
+  // deprecations and tsc honours only "6.0" — "5.0" parses fine and changes
+  // nothing. The no-op value shipped once, so every retry still exited 2 and
+  // whole typecheck targets (ant-design-vue, hoppscotch) were silently
+  // deleted. This runs the installed tsc against a real TS5101-triggering
+  // tsconfig, so a TypeScript bump that moves the accepted phase fails the
+  // suite instead of the sweep.
+  const { dir, cleanup } = scratch();
+  try {
+    writeFileSync(
+      join(dir, "tsconfig.json"),
+      `${JSON.stringify({
+        compilerOptions: { baseUrl: ".", moduleResolution: "node10", noEmit: true },
+        files: ["a.ts"],
+      })}\n`,
+    );
+    writeFileSync(join(dir, "a.ts"), "export const n: number = 1;\n");
+    const tsc = createRequire(import.meta.url).resolve("typescript/lib/tsc.js");
+    const run = (args) => spawnSync(process.execPath, [tsc, ...args], { cwd: dir, encoding: "utf8" });
+
+    const bare = run(tscRowArgs("tsconfig.json"));
+    assert.notEqual(bare.status, 0, "the fixture must actually trigger the deprecation abort");
+    assert.match(
+      `${bare.stdout}\n${bare.stderr}`,
+      /error TS510[17]/,
+      "expected TS5101/TS5107 from the flagless run",
+    );
+
+    const retried = run(tscRowArgs("tsconfig.json", { ignoreDeprecations: true }));
+    assert.equal(
+      retried.status,
+      0,
+      `--ignoreDeprecations ${IGNORE_DEPRECATIONS_VALUE} no longer silences this TypeScript's deprecations — the retry is a no-op again and every retry target will be silently deleted. Output:\n${retried.stdout}\n${retried.stderr}`,
+    );
+  } finally {
+    cleanup();
+  }
+});
+
+test("the verter-tsc row never carries --ignoreDeprecations, even when the retry is active", () => {
+  // verter-tsc's clap CLI hard-rejects flags it does not know
+  // (`--ignoreDeprecations` → "error: unexpected argument", exit 2, verified
+  // live 2026-07-31). The flag riding on shared args would fail every
+  // verter-tsc measured run on a retry target in milliseconds and publish a
+  // harness fault as a tool failure.
+  assert.deepEqual(tscRowArgs("tsconfig.json", { ignoreDeprecations: true }), [
+    "--noEmit",
+    "-p",
+    "tsconfig.json",
+    "--ignoreDeprecations",
+    IGNORE_DEPRECATIONS_VALUE,
+  ]);
+  assert.deepEqual(
+    tscRowArgs("tsconfig.json", { ignoreDeprecations: true, acceptsIgnoreDeprecations: false }),
+    ["--noEmit", "-p", "tsconfig.json"],
+    "verter-tsc's args must omit the flag its CLI rejects",
+  );
+
+  // The measured rows build their args inline, so the routing is pinned at the
+  // source: verter-tsc must run the flagless variant, never the shared one.
+  const source = readFileSync(
+    fileURLToPath(new URL("../../scripts/lib/surfaces/project-typecheck.mjs", import.meta.url)),
+    "utf8",
+  );
+  assert.match(
+    source,
+    /const verterTscArgs = tscRowArgs\(target\.tsconfig, \{\s*ignoreDeprecations,\s*acceptsIgnoreDeprecations: false,\s*\}\)/,
+    "the flagless args builder must stay wired",
+  );
+  assert.match(
+    source,
+    /bin: verterTsc,\s*args: verterTscArgs,/,
+    "the verter-tsc row must run verterTscArgs, not the shared tscArgs",
+  );
+});
+
+test("every project-typecheck skip row carries the measured rows' classKey target", () => {
+  // report.mjs classes rows by `target`, and a targetless skip row lands in an
+  // untitled "all" class of its own: the native group rendered as an untitled
+  // golar-only table followed by a false "PROJECT-TYPECHECK — ranked alone"
+  // heading over the rows that ARE ranked together. The renderer side is
+  // pinned in report.test.mjs; this pins the surface side, for the golar row
+  // that is pushed unconditionally AND the conditional binary-not-found
+  // fallbacks a full-toolchain environment never exercises.
+  const source = readFileSync(
+    fileURLToPath(new URL("../../scripts/lib/surfaces/project-typecheck.mjs", import.meta.url)),
+    "utf8",
+  );
+  const pushes = source.split("variants.push({").slice(1);
+  const skips = pushes
+    .map((block) => block.slice(0, block.indexOf("});")))
+    .filter((body) => body.includes("skip: true"));
+  assert.ok(skips.length >= 5, `expected the five skip fallbacks, found ${skips.length}`);
+  for (const body of skips) {
+    assert.match(
+      body,
+      /target: "project-typecheck"/,
+      `a skip row without a target splits the rendered group:\n${body}`,
+    );
+  }
 });
 
 test("a failed bundle cell is attributed on the transform census, not the error text", () => {

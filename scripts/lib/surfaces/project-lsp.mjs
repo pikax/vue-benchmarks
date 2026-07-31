@@ -465,9 +465,8 @@ export async function runProjectLspSession({
  * the same thing: latency credited for an answer that was never given.
  *
  * @param {Array<object>} results rows from `measureVariants`
- * @param {string} baselineIdPrefix e.g. `volar-js`
  */
-export function applyProjectLspGates(results, baselineIdPrefix = "volar-js") {
+export function applyProjectLspGates(results) {
   const opOf = (row) => (String(row.id).endsWith("-diagnostics") ? "diagnostics" : "hover");
 
   // 1. Hover content: an empty payload is not a fast answer. Applied to EVERY
@@ -486,49 +485,52 @@ export function applyProjectLspGates(results, baselineIdPrefix = "volar-js") {
   }
 
   // 2. Diagnostics content. Presence is enforced by the session itself (a run with
-  // no publication throws), so what is left is the count, anchored on the
-  // baseline: where the reference server found problems in this file, a server
-  // reporting none did not answer the same question.
-  const baselineDiag = results.find((r) => r.id === `${baselineIdPrefix}-diagnostics`);
-  // The anchor is the MAX the baseline reported across every sample and both
-  // recorded publications (first and first-non-empty). Anchoring on sample 0's
-  // first publication let one racy empty preliminary push — routine from the
-  // TypeScript half's syntax-only pass — silently switch the gate to NOT-RUN
-  // for every row: a single empty message disarming the only guard against
-  // "answered nothing fast".
-  const baselineSamples = baselineDiag?.metaSamples ?? [];
-  const baselineCount = baselineSamples.length
-    ? Math.max(
-        ...baselineSamples.map((m) =>
-          Math.max(m.diagnosticsCount ?? 0, m.firstNonEmptyDiagnosticsCount ?? 0),
-        ),
-      )
-    : null;
-  if (baselineDiag && baselineDiag.status === "ok" && baselineCount === 0) {
-    // The baseline itself gets the disclosure the challengers get — a clean
-    // reference is a fact worth stating on the row it comes from, not only in
-    // the NOT-RUN notes it produces on everyone else.
-    baselineDiag.notes = `${baselineDiag.notes} | ⓘ this baseline published an EMPTY diagnostic list for this document on every sample, so the diagnostic-content gate cannot anchor on it and runs for no row in this table.`;
-  }
-  for (const row of results) {
-    if (row.status !== "ok" || opOf(row) !== "diagnostics") continue;
-    if (row.id === `${baselineIdPrefix}-diagnostics`) continue;
-    const counts = (row.metaSamples ?? []).map((m) =>
-      Math.max(m.diagnosticsCount ?? 0, m.firstNonEmptyDiagnosticsCount ?? 0),
+  // no publication throws), so what is left is the count.
+  //
+  // The anchor is the MAX **any OK row** reported, across every sample and both
+  // recorded publications (first and first-non-empty). It used to be the
+  // baseline alone — but Volar v3's hybrid routes most TypeScript diagnostics
+  // over its tsserver half, and on corpora where that half stays silent the
+  // baseline structurally publishes 0, so a baseline-only anchor never fired:
+  // rows publishing 0 diagnostics were ranked FIRST against peers publishing
+  // 4-62 (2026-07-30 audit, finding 3). A document one server finds problems
+  // in has reportable content, whoever that server is; publishing none there
+  // is not the same job done faster. Applied to EVERY row including the
+  // baseline — the reference implementation earns no exemption from its own
+  // gate. Max over samples still holds: one racy empty preliminary push must
+  // not disarm the only guard against "answered nothing fast".
+  const diagCountOf = (row) => {
+    const samples = row.metaSamples ?? [];
+    if (samples.length === 0) return null;
+    return Math.max(
+      ...samples.map((m) => Math.max(m.diagnosticsCount ?? 0, m.firstNonEmptyDiagnosticsCount ?? 0)),
     );
-    if (!baselineDiag || baselineDiag.status !== "ok" || baselineCount === null) {
-      row.notes = `${row.notes} | ⓘ DIAGNOSTIC-CONTENT GATE NOT RUN — ${
-        baselineDiag ? `the baseline diagnostics row is itself ${baselineDiag.status}` : "there is no baseline diagnostics row"
-      }, so this row's diagnostic count was never compared with the reference server's. Ranked, but unverified rather than verified-equal.`;
+  };
+  const diagRows = results.filter((r) => r.status === "ok" && opOf(r) === "diagnostics");
+  let anchor = { row: null, count: null };
+  for (const row of diagRows) {
+    const count = diagCountOf(row);
+    if (count !== null && count > (anchor.count ?? -1)) anchor = { row, count };
+  }
+  for (const row of diagRows) {
+    // A row with NO recorded census cannot be evaluated, and this function is
+    // exported-pure with a claim to gate every row — so the row must say the
+    // gate never saw it instead of rendering as though it had passed. (When
+    // every row is censusless, the anchor is null and each row gets this note
+    // rather than a silent early exit.)
+    if (diagCountOf(row) === null) {
+      row.notes = `${row.notes} | ⓘ DIAGNOSTIC-CONTENT GATE NOT RUN — no diagnostic census was recorded for this row, so the content gate could not evaluate it. Ranked, but unverified rather than verified-equal.`;
       continue;
     }
-    if (baselineCount === 0) {
-      row.notes = `${row.notes} | ⓘ DIAGNOSTIC-CONTENT GATE NOT RUN — the baseline published an EMPTY diagnostic list for this document, which is a legitimate answer but not one another row can be measured against. Ranked, but unverified rather than verified-equal.`;
+    if (anchor.count === 0) {
+      row.notes = `${row.notes} | ⓘ DIAGNOSTIC-CONTENT GATE NOT RUN — every server published an EMPTY diagnostic list for this document. That is a legitimate answer, but not one any row can be measured against. Ranked, but unverified rather than verified-equal.`;
       continue;
     }
-    if (counts.length > 0 && counts.every((c) => c === 0)) {
+    if (row === anchor.row) continue;
+    const count = diagCountOf(row);
+    if (count === 0) {
       row.status = "unranked";
-      row.notes = `${row.notes} | ⚠ FAILED DIAGNOSTIC-CONTENT GATE — published 0 diagnostics for a document the baseline published ${baselineCount} for. Answering "nothing to report" fast is not the same job as answering. Measured but UNRANKED. (Diagnostic EQUIVALENCE is not asserted; the counts are published so a suspicious row is visible.)`;
+      row.notes = `${row.notes} | ⚠ FAILED DIAGNOSTIC-CONTENT GATE — published 0 diagnostics for a document ${anchor.row.package ?? anchor.row.id} published ${anchor.count} for. Answering "nothing to report" fast is not the same job as answering. Measured but UNRANKED. (Diagnostic EQUIVALENCE is not asserted; the counts are published so a suspicious row is visible.)`;
     }
   }
 
@@ -955,7 +957,7 @@ export async function runProjectLspSurface(resolved, options) {
     fileCount: 1,
   });
 
-  applyProjectLspGates(results, "volar-js");
+  applyProjectLspGates(results);
 
   // One group per OPERATION × ENGINE CLASS. Operations are never pooled (they
   // differ by orders of magnitude and answer unrelated questions) and engines are
@@ -996,7 +998,7 @@ export async function runProjectLspSurface(resolved, options) {
       `Workspace root: ${target.packageName} (${target.relDir}) — the project's own directory, its own tsconfig.json and its own installed dependencies, with ${target.sfcs} SFCs beneath it. Nothing is copied out and nothing is written in.`,
       `Operation budget: ${Math.round(opTimeoutMs / 1000)} s, scaled by corpus size (+30 s per 500 SFCs past the first 500, capped at 300 s) and IDENTICAL for every server — a flat budget sized on small corpora turned "slow but real project load" into "the server never answered" on large ones, a harness budget in tool-verdict clothing.`,
       "Every row runs a dedicated, discarded warmup session before its measured sessions. (The baseline preflight was considered as a substitute warm pass and rejected: it warms the shared workspace files for every server, but only the baseline's own binaries and tsdk — a per-server asymmetry a warm pass must not have.)",
-      "Diagnostics rows time the FIRST publication for the opened document, which can be an empty preliminary; the count it carried and the first NON-EMPTY publication (time and count) are all published, and the diagnostic-content gate anchors on the maximum the baseline reported across all samples so one racy empty message cannot disarm it.",
+      "Diagnostics rows time the FIRST publication for the opened document, which can be an empty preliminary; the count it carried and the first NON-EMPTY publication (time and count) are all published, and the diagnostic-content gate anchors on the maximum ANY ranked row reported across all samples so one racy empty message cannot disarm it.",
       `Document: ${probe.key}. Hover position: line ${probe.positions[0]?.line}, character ${probe.positions[0]?.character} — the identifier \`${probe.symbol}\`, chosen by an untimed BASELINE pre-flight because it is a position the reference server actually answers at.`,
       `Corpus pin: ${p.ref} @ ${(resolved.sha ?? "").slice(0, 8)}, ${p.releasedAt ? `released ${p.releasedAt}` : `committed ${p.committedAt}`} (${p.releaseKind}), pinned ${p.pinnedAt}.`,
       ...rejectedNotes,
@@ -1004,7 +1006,7 @@ export async function runProjectLspSurface(resolved, options) {
       "Volar is measured as the two-process product it is in v3: @vue/language-server has no in-process TypeScript language service, so typescript-language-server with @vue/typescript-plugin is started too, the same .vue buffer is synced to both, and each feature is asked of both in parallel with the SLOWER half charged. Both processes' startup and project load are inside the timings.",
       "Rows are grouped by TypeScript ENGINE as well as by operation. `Volar (JS)` runs the stock JavaScript TypeScript compiler; `Volar (TNB / tsgo tsdk)` is the SAME Volar with its tsserver half on typescript-native-bridge. The pair isolates the engine, and because a JS-vs-native gap is not a Vue-tooling result the two are ranked in separate tables rather than one.",
       "HOVER CONTENT GATE: a row is UNRANKED unless it returned a non-empty hover on EVERY measured run, at the single position the baseline answered at untimed. An empty or absent answer is not a fast answer.",
-      "DIAGNOSTIC CONTENT GATE: a run that never published diagnostics for the opened document is an ❌ error, not a fast row — there is no latency to report. Where the baseline published at least one diagnostic, a row publishing none on every run is UNRANKED. Where the baseline published an empty list, the gate cannot fire and the row says so rather than rendering as though it had passed.",
+      "DIAGNOSTIC CONTENT GATE: a run that never published diagnostics for the opened document is an ❌ error, not a fast row — there is no latency to report. The anchor is the maximum ANY ranked row published (not the baseline alone: Volar v3 routes most TypeScript diagnostics over its tsserver half, and where that half is silent a baseline-only anchor never fires, ranking 0-diagnostic rows first against peers publishing dozens). Where any server published at least one diagnostic, a row publishing none on every run is UNRANKED — baseline included; the note names the anchoring server. Where every server published an empty list, the gate cannot fire and each row says so rather than rendering as though it had passed.",
       "⚠ NOT EQUAL WORK on the diagnostics operation, and the direction is known. `textDocument/publishDiagnostics` from the Volar rows carries what the VUE server computes; Volar v3 delegates TypeScript to a separate tsserver that speaks the tsserver protocol rather than LSP, so TypeScript diagnostics reach a real editor through the extension and are NOT in this notification. A single-process server publishes its Vue and TypeScript diagnostics together in one message. So the Volar diagnostics rows are answering a NARROWER question than the Verter and Vize rows, and answering a narrower question is faster. The diagnostic COUNT is published on every row so the difference is visible rather than inferred, and the gate is deliberately one-directional (it fails a row for publishing nothing, never for publishing fewer) so it cannot punish a server for the broader answer. The hover operation does not have this asymmetry: both Volar halves are asked and the slower is charged.",
       "⚠ CORRECTNESS OF THE CONTENT IS NOT ASSERTED. These are third-party sources with no planted marker, so nobody has written down what the right hover text or the right diagnostic set is for them. This surface establishes that a server ANSWERED where the reference server answered, and nothing more. Content correctness is gated on the generated corpus (`lsp`), against a symbol whose type is known.",
       "The retry budget and per-request timeout are identical for every server, and retry sleeps fall inside the measured window — an asymmetric budget would silently subsidise whichever server got the larger one. Readiness is established the same way for every server, by retrying the operation until it answers, so whoever needs project-load time pays for it in the metric.",

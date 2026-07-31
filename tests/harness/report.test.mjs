@@ -89,6 +89,72 @@ function notesLineFor(markdown, name) {
   );
 }
 
+describe("noise ceiling", () => {
+  test("a row above the CV ceiling is bracketed and never wins, baseline included", () => {
+    // Rows were published as table WINNERS at CV 384% and 2515% — an unstable
+    // series buys more shots at a lucky median, so ranking it rewards
+    // instability (2026-07-30 audit, finding 8).
+    const md = renderSurfaceMarkdown(
+      surface([
+        okRow({ label: "Erratic", medianMs: 5, stddevMs: 130, cvPct: 2515.5 }),
+        okRow({ label: "Steady", medianMs: 18, stddevMs: 1, cvPct: 4.2 }),
+      ]),
+    );
+    const rows = rowsByLabel(md);
+    assert.ok(rows["Erratic ⚠"], "the noisy row carries the unranked marker");
+    assert.equal(rows["Erratic ⚠"][COL.primary], "(5.0 ms)", "time bracketed, still visible");
+    assert.equal(rows["Erratic ⚠"][COL.vsFastest], "not ranked");
+    assert.equal(rows.Steady[COL.vsFastest], "1.00x", "the stable row anchors the ranking");
+    assert.match(notesLineFor(md, "Erratic ⚠"), /TOO NOISY TO RANK — CV 2515\.5%/);
+  });
+
+  test("the 10% noise flag alone does not unrank", () => {
+    const md = renderSurfaceMarkdown(
+      surface([
+        okRow({ label: "Flagged", medianMs: 5, cvPct: 15.8 }),
+        okRow({ label: "Quiet", medianMs: 18, cvPct: 4.2 }),
+      ]),
+    );
+    const rows = rowsByLabel(md);
+    assert.ok(rows.Flagged, "a merely-noisy row keeps its name unmarked");
+    assert.equal(rows.Flagged[COL.vsFastest], "1.00x");
+    assert.match(rows.Flagged[COL.cv], /15\.8% ⚠/);
+  });
+
+  test("the ceiling needs three samples — a two-run spread is flagged, never bracketed", () => {
+    // With n=2 the stddev is |a−b|/√2, so one page-cache blip beside a
+    // minutes-scale baseline clears any ceiling with no third sample to say
+    // which run was the outlier — the ceiling's own rationale ("more shots at
+    // a lucky median") assumes there are draws to shop between. The 10% ⚠
+    // flag still marks the row at any sample count.
+    const md = renderSurfaceMarkdown(
+      surface([
+        okRow({ label: "TwoRuns", medianMs: 60_000, stddevMs: 48_000, cvPct: 80, runs: [26_000, 94_000] }),
+        okRow({ label: "Steady", medianMs: 90_000, stddevMs: 900, cvPct: 1, runs: [89_000, 91_000] }),
+      ]),
+    );
+    const rows = rowsByLabel(md);
+    assert.ok(rows.TwoRuns, "a two-run row above the ceiling keeps its unmarked name");
+    assert.equal(rows.TwoRuns[COL.vsFastest], "1.00x", "and stays ranked");
+    assert.match(rows.TwoRuns[COL.cv], /80\.0% ⚠/, "the noise flag applies at any n");
+    assert.ok(!md.includes("TOO NOISY TO RANK"), "no bracketing without a third sample");
+  });
+
+  test("the same CV with three samples is bracketed", () => {
+    const md = renderSurfaceMarkdown(
+      surface([
+        okRow({ label: "ThreeRuns", medianMs: 60_000, stddevMs: 48_000, cvPct: 80, runs: [26_000, 60_000, 94_000] }),
+        okRow({ label: "Steady", medianMs: 90_000, cvPct: 1 }),
+      ]),
+    );
+    const rows = rowsByLabel(md);
+    assert.ok(rows["ThreeRuns ⚠"], "three samples above the ceiling bracket the row");
+    assert.equal(rows["ThreeRuns ⚠"][COL.vsFastest], "not ranked");
+    assert.match(notesLineFor(md, "ThreeRuns ⚠"), /TOO NOISY TO RANK — CV 80\.0%/);
+    assert.equal(rows.Steady[COL.vsFastest], "1.00x");
+  });
+});
+
 describe("ranking order", () => {
   test("rows are sorted by median ascending regardless of declaration order", () => {
     const md = renderSurfaceMarkdown(
@@ -457,6 +523,42 @@ describe("comparison classes (one table per surface)", () => {
 
     assert.equal(collectMarkdownTables(md).length, 1);
     assert.deepEqual(classTitles(md), [], "no class heading when there is only one class");
+  });
+
+  test("a skip row carrying the measured rows' target shares their single table", () => {
+    // The live fault this pins (project-typecheck's golar ⏭ row): a skip row
+    // WITHOUT `target` falls into classKey's untitled "all" class, so a group
+    // whose measured rows are all `target: project-typecheck` rendered as an
+    // untitled skip-only table followed by a false "PROJECT-TYPECHECK — ranked
+    // alone" heading over the rows that ARE ranked together. With the field on
+    // the skip row, the group is one class and one table again.
+    const native = [
+      okRow({ label: "verter-tsc", target: "project-typecheck", invocation: "cli", medianMs: 500 }),
+      okRow({ label: "Vize check", target: "project-typecheck", invocation: "cli", medianMs: 700 }),
+      {
+        ...okRow({ label: "Golar typecheck" }),
+        status: "skipped",
+        medianMs: undefined,
+        runs: undefined,
+        target: "project-typecheck",
+        invocation: "cli",
+        notes: "⏭ NOT MEASURED — not yet wired into this surface.",
+      },
+    ];
+    const md = renderSurfaceMarkdown(
+      surface([], {
+        groups: [
+          { id: "engine-native", label: "Native tsgo engines — ranked together", variants: native },
+        ],
+        groupingNote: "Grouped by engine.",
+      }),
+    );
+
+    assert.ok(!md.includes("— ranked alone"), "no per-class heading may appear inside the group");
+    const tables = collectMarkdownTables(md);
+    assert.equal(tables.length, 1, "the skip row shares the measured rows' single table");
+    const labels = tables[0].body.map((cells) => cells[0]);
+    assert.ok(labels.includes("Golar typecheck ⏭"), labels.join(" | "));
   });
 });
 

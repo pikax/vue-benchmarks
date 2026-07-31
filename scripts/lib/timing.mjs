@@ -291,6 +291,59 @@ export async function measureVariants(
   return results;
 }
 
+/**
+ * Per-surface run-budget disclosures, applied by run-surface.mjs after a
+ * surface returns. Mutates the surface; returns it for chaining.
+ *
+ * Both notes are keyed on each ROW's actual sample count (`row.runs`), never
+ * on the surface-wide requested count. A surface may deliberately run one of
+ * its tables ABOVE the cap (hmr's update table measures millisecond-scale
+ * round trips against a warm server), and against such rows the old
+ * surface-wide wording published two falsehoods at once: a methodology note
+ * claiming "capped at 2" over rows carrying five samples, and a "SINGLE
+ * MEASURED RUN" stamp on rows with five. A loud disclosure that is wrong is
+ * worse than none — it teaches the reader to distrust the true ones.
+ *
+ * @param {object} surface the surface result (variants + methodology)
+ * @param {{surfaceId: string, runs: number, requested: number}} opts
+ *        `runs` is the capped per-surface run count actually passed to the
+ *        surface, `requested` the caller's --runs.
+ */
+export function appendRunBudgetDisclosures(surface, { surfaceId, runs, requested }) {
+  const rows = surface.variants ?? [];
+  const sampleCounts = [
+    ...new Set(rows.filter((r) => Array.isArray(r.runs)).map((r) => r.runs.length)),
+  ].sort((a, b) => a - b);
+
+  if (runs < requested) {
+    const beyondCap = sampleCounts.some((n) => n > runs);
+    (surface.methodology ??= []).push(
+      surfaceId === "project-test"
+        ? `Measured runs capped at ${runs} for this surface (requested ${requested}; per-surface runtime budget, 2026-07-30). project-test is a correctness surface — its timing is INDICATIVE, not a ranking a median-of-${requested} would sharpen.`
+        : `Measured runs capped at ${runs} for this surface (requested ${requested}; per-surface runtime budget, 2026-07-30).${
+            beyondCap
+              ? ` Rows here carry ${sampleCounts.join(" or ")} measured sample(s): a table may run MORE than the cap where its per-run cost is milliseconds — the surface's own methodology says which table and why.`
+              : ""
+          } Set BENCH_UNIFORM_RUNS=1 for equal run counts everywhere.`,
+    );
+  }
+
+  // Row-visible, not only in the collapsed Methodology block: "every
+  // reduction disclosed loudly" is the repo's own rule, and a single-run
+  // number rendered as a bold ranked median is not loud. Applied per row —
+  // only a row that actually has ONE sample is a single-run number.
+  for (const row of rows) {
+    if (row.skip || row.status === "skipped" || row.status === "error") continue;
+    if (!Array.isArray(row.runs) || row.runs.length !== 1) continue;
+    row.notes =
+      `${row.notes ?? ""} | ⓘ SINGLE MEASURED RUN — the time is indicative (per-surface runtime budget); there is no median or spread behind it.`.replace(
+        /^ \| /,
+        "",
+      );
+  }
+  return surface;
+}
+
 export function pathWithNodeBins(cwd) {
   const dirs = [];
   let current = cwd;
