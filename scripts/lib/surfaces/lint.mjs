@@ -6,9 +6,12 @@ import { createRequire } from "node:module";
 import { collectVueFiles, prepareLintDir, totalBytes } from "../fixtures.mjs";
 import { measureVariants, resolveBin, runCommand, timedAsync, timedSync } from "../timing.mjs";
 import {
+  applyFileCoverageGate,
   applyWorkGate,
   cliReportsPlantedIssue,
+  countCoveredFiles,
   eslintReportsPlant,
+  plantForCoverage,
   prepareLintPlant,
 } from "../work-gate.mjs";
 
@@ -429,11 +432,64 @@ export async function runLintSurface(fixtureDir, options) {
     plant.cleanup();
   }
 
+  // File-coverage census, untimed, one pass per directory-WALK tool: a plant
+  // dir where every corpus file carries a guaranteed-reportable issue, each
+  // tool run once with its timed invocation (enumeration-only flag changes
+  // below, disclosed), and coverage counted as the distinct corpus files the
+  // tool names. Explicit-list rows (the eslint API rows, VerterHost) are
+  // handed exactly the corpus by construction and are annotated as such
+  // instead of probed. Walk tools were probed live before this existed:
+  // eslint and oxlint name all 50/50 nested files; vize covers the corpus plus
+  // eslint.config.mjs; biome checks the corpus plus the three config files —
+  // extras are disclosed, skipped corpus files unrank.
+  const coverage = new Map();
+  {
+    const { readFileSync, writeFileSync } = require("node:fs");
+    const coverageDir = prepareLintDir(fixtureDir, files, options.workRoot, `n${files.length}-coverage`);
+    for (const f of files) {
+      const p = join(coverageDir, f);
+      writeFileSync(p, plantForCoverage(readFileSync(p, "utf8")));
+    }
+    const walkCensus = (ids, bin, args, { env = {} } = {}) => {
+      if (!bin) return;
+      try {
+        const r = runCommand(bin, args, {
+          cwd: coverageDir,
+          allowNonZeroExit: true,
+          shell: isWinShell(bin),
+          env,
+        });
+        const { covered } = countCoveredFiles(`${r.stdout ?? ""}\n${r.stderr ?? ""}`, files, {
+          absPrefix: coverageDir,
+        });
+        for (const id of ids) coverage.set(id, { covered, corpus: files.length });
+      } catch (error) {
+        for (const id of ids)
+          coverage.set(id, { covered: null, corpus: files.length, error: String(error?.message ?? error) });
+      }
+    };
+    // eslint CLI: the JSON reporter prints every linted file (absolute paths),
+    // problems or none — presence in the report IS coverage.
+    walkCensus(["eslint-plugin-vue-cli"], eslintBin, [".", "--format", "json"]);
+    // vize: --quiet suppresses the per-file output the census counts; dropped
+    // for the census ONLY (it changes what is printed, not what is linted).
+    walkCensus(["vize-lint-1t", "vize-lint-max"], vize, ["lint", "."]);
+    // biome: the default reporter caps diagnostics well below corpus size;
+    // lifted for the census ONLY.
+    walkCensus(["biome-lint-1t", "biome-lint-max"], biome, ["lint", ".", "--max-diagnostics=none"]);
+    walkCensus(["oxlint-1t", "oxlint-max"], oxlint, ["."]);
+    for (const id of ["eslint-plugin-vue-1t", "eslint-plugin-vue-workers", "verter-lint-host"]) {
+      coverage.set(id, { covered: files.length, corpus: files.length, byConstruction: true });
+    }
+  }
+
   const results = await measureVariants(variants, {
     runs: options.runs,
     warmups: options.warmups,
     fileCount: files.length,
   });
+
+  applyFileCoverageGate(results, coverage, { verb: "named", what: "planted corpus files" });
 
   // Fix label typo if any
   for (const r of results) {
@@ -446,7 +502,7 @@ export async function runLintSurface(fixtureDir, options) {
     files: files.length,
     bytes,
     methodology: [
-      "Every tool lints an identical isolated copy of the corpus (work/lint/…), so tools that take an explicit file list and tools that walk a directory see exactly the same files.",
+      "Every tool lints an identical isolated copy of the corpus (work/lint/…). That tools see the SAME FILES is enforced, not assumed: an untimed FILE-COVERAGE census plants a guaranteed-reportable issue in every corpus file (`debugger` in script, `v-html` in template) and runs each directory-walk tool once — a ranked tool that fails to name every corpus file is measured but UNRANKED. Explicit-list invocations (the eslint API rows, VerterHost) are handed exactly the corpus by construction and say so. Census-only output changes (vize without --quiet, biome --max-diagnostics=none) alter what is printed, never what is linted; a walk tool that also lints a config file beside the corpus is disclosed, not gated.",
       "In-process and CLI rows share the table; the row label says which mode ran. A CLI pays process startup on every run (~85ms measured for a native CLI); an in-process API pays it once — read same-mode rows against each other. eslint runs in BOTH modes and is the reference point between them.",
       "No single invocation mode covers every tool — vize lint is CLI-only, VerterHost.lint is in-process-only — which is why the mode is on the row instead of one mode being dropped.",
       "eslint-plugin-vue uses flat recommended config generated with fixtures.",

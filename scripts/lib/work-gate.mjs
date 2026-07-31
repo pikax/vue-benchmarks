@@ -16,6 +16,7 @@ import { basename, dirname, isAbsolute, join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { runCommand } from "./timing.mjs";
 import { OXLINT_CONFIG } from "./fixtures.mjs";
+import { stripAnsi } from "./real-world/ansi.mjs";
 
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../..");
 
@@ -126,6 +127,122 @@ const t=1
 function templateBlockOf(source) {
   const m = source.match(/<template[^>]*>([\s\S]*?)<\/template>/i);
   return m ? m[1] : null;
+}
+
+/**
+ * Make a source non-conformant for ANY formatter under this harness's shared
+ * configs: trailing spaces on every non-blank line, plus a stack of blank
+ * lines before a closing template tag when one exists. Every formatter probed
+ * (Prettier, oxfmt, Vize — and Biome's script formatting, when it applies any)
+ * strips trailing whitespace, so a planted file that comes back byte-identical
+ * was not visited. Used by the per-tool file-coverage census.
+ */
+export function dirtyForCoverage(source) {
+  return source
+    .split("\n")
+    .map((line) => (line.trim() ? `${line}   ` : line))
+    .join("\n")
+    .replace("</template>", "\n\n\n</template>");
+}
+
+/**
+ * Same-file-set gate: tools processing different file sets are not
+ * apples-to-apples, however similar the clock looks.
+ *
+ * `coverage` maps variant id → { covered, corpus, extras?, error? }, produced
+ * by an UNTIMED census pass per tool using its exact timed invocation. Rules,
+ * applied identically to every row, baseline included:
+ * - covered < corpus on an ok row → UNRANKED, with both numbers on the row.
+ *   Prettier's non-recursive glob (0 of N files, ranked 1.00x on every nested
+ *   corpus) is the fault class this exists to catch.
+ * - covered < corpus on an already-unranked/errored row → the census is
+ *   appended as fact; the earlier verdict stands.
+ * - full coverage → a ⓘ census note, so a reader can see the parity was
+ *   verified rather than assumed. Extras (config files a directory walk also
+ *   touched) are disclosed, not gated.
+ * - census failed to run → ⓘ "coverage unverified", never a silent pass.
+ */
+export function applyFileCoverageGate(results, coverage, { verb = "processed", what = "corpus files" } = {}) {
+  for (const row of results) {
+    const c = coverage.get(row.id);
+    if (!c) continue;
+    if (c.covered === null || c.covered === undefined) {
+      row.notes = `${row.notes} | ⓘ FILE COVERAGE UNVERIFIED — the census pass failed to run${c.error ? ` (${c.error})` : ""}; this row is not proven to ${verb} the same file set as the rows beside it.`;
+      continue;
+    }
+    if (c.byConstruction) {
+      row.notes = `${row.notes} | ⓘ file coverage by construction: this invocation is handed the ${c.corpus} corpus files as an explicit list, not a directory walk.`;
+      continue;
+    }
+    const extras = c.extras?.length ? ` (also touched: ${c.extras.join(", ")} — a directory-walk side effect, disclosed not gated)` : "";
+    if (c.covered < c.corpus) {
+      if (row.status === "ok") {
+        row.status = "unranked";
+        row.notes = `${row.notes} | ⚠ FAILED FILE-COVERAGE GATE — ${verb} ${c.covered} of ${c.corpus} ${what}${extras}. A tool covering fewer files finishes sooner; that is a different job, not a faster one. Measured but UNRANKED.`;
+      } else {
+        row.notes = `${row.notes} | ⓘ file-coverage census: ${verb} ${c.covered} of ${c.corpus} ${what}${extras}.`;
+      }
+    } else {
+      row.notes = `${row.notes} | ⓘ file coverage verified: ${verb} ${c.covered}/${c.corpus} ${what}${extras}.`;
+    }
+  }
+  return results;
+}
+
+/**
+ * Plant a guaranteed-reportable issue in EVERY block a linter might read:
+ * `debugger;` at the top of the script block (flagged by eslint-adjacent rule
+ * sets, oxlint, biome and vize alike — probed) and a `v-html` div in the
+ * template for the Vue-aware linters. A file with neither block gains a script
+ * block, so no corpus file is plant-free. Used by the per-tool lint
+ * file-coverage census: a linter that visited a file has something to say
+ * about it, so a file it never names was not visited.
+ */
+export function plantForCoverage(source) {
+  let out = source;
+  if (/<script[^>]*>/i.test(out)) {
+    out = out.replace(/<script([^>]*)>/i, (m) => `${m}\ndebugger;`);
+  } else {
+    out = `${out}\n<script>\ndebugger;\n</script>\n`;
+  }
+  if (out.includes("</template>")) {
+    out = out.replace("</template>", `<div v-html="'x'"></div>\n</template>`);
+  }
+  return out;
+}
+
+/**
+ * How many of `rels` (repo-relative posix-ish paths) a tool's output names.
+ *
+ * Matching is by path with a boundary check on the preceding character, so a
+ * root-level `index.vue` is NOT satisfied by a mention of `nested/index.vue`
+ * (real corpora repeat basenames constantly), while absolute paths — eslint's
+ * JSON reporter prints them — still match their relative tail... except that
+ * an absolute mention also has `/` before the tail, so absolute matching goes
+ * through `absPrefix`: pass the census directory and mentions of
+ * `<absPrefix>/<rel>` count too.
+ */
+export function countCoveredFiles(output, rels, { absPrefix = null } = {}) {
+  // ANSI first (vize colours its filenames, and the escape sequence ends in a
+  // word character right before the name, which would trip the boundary), then
+  // backslashes, then slash runs (eslint's JSON reporter escapes backslashes,
+  // so normalizing "\\" leaves "//" where one separator belongs).
+  const text = stripAnsi(output)
+    .replace(/\\/g, "/")
+    .replace(/\/{2,}/g, "/");
+  const prefix = absPrefix
+    ? absPrefix.replace(/\\/g, "/").replace(/\/{2,}/g, "/").replace(/\/+$/, "")
+    : null;
+  let covered = 0;
+  const missing = [];
+  for (const rel of rels) {
+    const relPosix = rel.replace(/\\/g, "/");
+    const escaped = relPosix.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const boundary = new RegExp(`(^|[^\\w/.-])${escaped}`, "m");
+    if (boundary.test(text) || (prefix && text.includes(`${prefix}/${relPosix}`))) covered++;
+    else missing.push(relPosix);
+  }
+  return { covered, missing };
 }
 
 /**

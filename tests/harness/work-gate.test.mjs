@@ -12,10 +12,14 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, dirname, join, resolve } from "node:path";
 
 import {
+  applyFileCoverageGate,
   applyWorkGate,
   cliReportsPlantedIssue,
   corpusGateFor,
+  countCoveredFiles,
+  dirtyForCoverage,
   formatterRewritesTemplate,
+  plantForCoverage,
   prepareCorpusPlant,
   prepareFormatPlant,
   prepareLintPlant,
@@ -650,5 +654,93 @@ describe("applyWorkGate", () => {
     applyWorkGate(variants, () => undefined);
 
     assert.equal(variants[0].unranked, true);
+  });
+});
+
+/**
+ * Same-file-set enforcement. Tools processing different file sets are not
+ * apples-to-apples — Prettier's non-recursive glob formatted ZERO files on
+ * every nested corpus and ranked 1.00x. The census plants an issue every tool
+ * must react to in EVERY corpus file, so "never named / never rewritten"
+ * means "never visited".
+ */
+describe("file-coverage census", () => {
+  test("dirtyForCoverage makes every non-blank line non-conformant", () => {
+    const out = dirtyForCoverage("<template>\n  <div/>\n\n</template>\n");
+    assert.match(out, /<div\/> {3}\n/, "trailing spaces on content lines");
+    assert.match(out, /\n\n\n\n<\/template>/, "blank-line stack before the closing tag");
+    assert.doesNotMatch(out, /^ {3}$/m, "blank lines stay blank — some formatters preserve them");
+  });
+
+  test("plantForCoverage reaches script-only, template-only and full SFCs", () => {
+    const full = plantForCoverage("<template><a/></template>\n<script>x</script>");
+    assert.match(full, /<script>\ndebugger;/);
+    assert.match(full, /v-html/);
+
+    const scriptOnly = plantForCoverage("<script setup>const a = 1</script>");
+    assert.match(scriptOnly, /<script setup>\ndebugger;/);
+    assert.doesNotMatch(scriptOnly, /v-html/);
+
+    const templateOnly = plantForCoverage("<template><a/></template>");
+    assert.match(templateOnly, /v-html/);
+    assert.match(templateOnly, /<script>\ndebugger;\n<\/script>/, "gains a script block so no file is plant-free");
+  });
+
+  test("countCoveredFiles survives ANSI-wrapped names and JSON-escaped absolute paths", () => {
+    const rels = ["Comp0.vue", "nested/Comp1.vue"];
+    // vize colours filenames; the escape sequence ends in a word char right
+    // before the name.
+    const ansi = "\u001b[38;2;92;157;255;1mComp0.vue\u001b[0m:3:6\n╭─[\u001b[1mnested/Comp1.vue\u001b[0m:1:1]";
+    assert.equal(countCoveredFiles(ansi, rels).covered, 2);
+
+    // eslint --format json escapes backslashes, leaving "//" after naive
+    // normalisation.
+    const json = String.raw`[{"filePath":"D:\\work\\lint\\cov\\Comp0.vue"},{"filePath":"D:\\work\\lint\\cov\\nested\\Comp1.vue"}]`;
+    assert.equal(countCoveredFiles(json, rels, { absPrefix: String.raw`D:\work\lint\cov` }).covered, 2);
+  });
+
+  test("a nested mention does not satisfy a root file of the same basename", () => {
+    // Real corpora repeat basenames constantly (index.vue everywhere); a
+    // substring match would mark the root file covered because a NESTED one
+    // was mentioned, and the gate would sleep through a skipped file.
+    const { covered, missing } = countCoveredFiles("warning at nested/index.vue:1:1", [
+      "index.vue",
+      "nested/index.vue",
+    ]);
+    assert.equal(covered, 1);
+    assert.deepEqual(missing, ["index.vue"]);
+  });
+
+  test("the gate unranks partial coverage, keeps earlier verdicts, discloses the rest", () => {
+    const rows = [
+      { id: "full", status: "ok", notes: "n" },
+      { id: "partial", status: "ok", notes: "n" },
+      { id: "already-unranked", status: "unranked", notes: "n" },
+      { id: "constructed", status: "ok", notes: "n" },
+      { id: "unprobed", status: "ok", notes: "n" },
+    ];
+    const coverage = new Map([
+      ["full", { covered: 50, corpus: 50, extras: ["biome.json"] }],
+      ["partial", { covered: 33, corpus: 50 }],
+      ["already-unranked", { covered: 0, corpus: 50 }],
+      ["constructed", { covered: 50, corpus: 50, byConstruction: true }],
+      ["unprobed", { covered: null, corpus: 50, error: "spawn failed" }],
+    ]);
+    applyFileCoverageGate(rows, coverage, { verb: "named", what: "planted corpus files" });
+
+    assert.equal(rows[0].status, "ok");
+    assert.match(rows[0].notes, /file coverage verified: named 50\/50/);
+    assert.match(rows[0].notes, /also touched: biome\.json/, "walk extras disclosed, not gated");
+
+    assert.equal(rows[1].status, "unranked");
+    assert.match(rows[1].notes, /FAILED FILE-COVERAGE GATE — named 33 of 50/);
+
+    assert.equal(rows[2].status, "unranked", "an earlier verdict stands");
+    assert.match(rows[2].notes, /file-coverage census: named 0 of 50/);
+    assert.doesNotMatch(rows[2].notes, /FAILED FILE-COVERAGE GATE/, "no second gate verdict on top");
+
+    assert.match(rows[3].notes, /by construction/);
+    assert.match(rows[4].notes, /FILE COVERAGE UNVERIFIED/);
+    assert.equal(rows[4].status, "ok", "unverified warns, it does not convict");
   });
 });
