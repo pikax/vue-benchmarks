@@ -27,8 +27,8 @@ importers:
         specifier: 0.0.1-beta.3
         version: 0.0.1-beta.3
       '@vizejs/musea-mcp-server':
-        specifier: 0.302.0
-        version: 0.302.0(zod@3.25.76)
+        specifier: 0.310.0
+        version: 0.310.0(zod@3.25.76)
       '@vizejs/native':
         specifier: 0.302.0
         version: 0.302.0
@@ -239,6 +239,11 @@ packages:
     engines: {node: '>=6.0.0'}
     hasBin: true
 
+  '@babel/parser@7.29.8':
+    resolution: {integrity: sha512-E8lTAYNB1KW+FH+VGJuZM1ioAx2E6oVlvQFRrf5P8ZZmsiJXYAD9vTFV7yyEURNzgh1dFqMZuO6tUwcARbqFCA==}
+    engines: {node: '>=6.0.0'}
+    hasBin: true
+
   '@babel/parser@8.0.4':
     resolution: {integrity: sha512-srpptsAkEbbNIC/q8nT7o+m6CQe8CJUTV/t7MYc9NnWlgYVtHOb7JH6SorxMhN0kuRJjVqXbKClG6xSbPtzz+g==}
     engines: {node: ^22.18.0 || >=24.11.0}
@@ -260,6 +265,10 @@ packages:
 
   '@babel/types@7.29.7':
     resolution: {integrity: sha512-4zBIxpPzowiZpusoFkyGVwakdRJUyuH5PxQ/PrqghfdFWWasvnCdPfQXHrenDai+gyLARulZjZowCOj6fjT4pA==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/types@7.29.8':
+    resolution: {integrity: sha512-Vj1jF3cPfxg7OAfoI7QnVKLoILlm2JF9pnVHrX8qx7AHMiYWT+NDAA7jChlNgRS4WTLc/fD1lXLmPixluj+3Gg==}
     engines: {node: '>=6.9.0'}
 
   '@babel/types@8.0.4':
@@ -2263,13 +2272,19 @@ packages:
       vite: ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
       vue: ^3.2.25
 
-  '@vizejs/musea-mcp-server@0.302.0':
-    resolution: {integrity: sha512-utQ3iKtvPYB4c9+0zrIH+gI7+TN3zIWLkj5AOKbHaSAnj/vx++l6ADiRxIVCVit9CZ0V4QumEdaBeSHcLfvaYg==}
+  '@vizejs/musea-mcp-server@0.310.0':
+    resolution: {integrity: sha512-+KydGnIEJTTdfsFn0tGUTGzVFpM0N/GfmKrVvT4ftpxHU4auiVFN9Pc0yG21kwOjva/0lRPVQTGBr8EOTw+nsw==}
     engines: {node: '>=22'}
     hasBin: true
 
   '@vizejs/native-darwin-arm64@0.302.0':
     resolution: {integrity: sha512-0blm35VyIaRL2fJwvHwK4dtb6nnMqSQtuqdyLheNcM4qhjM47h72uz20+PWEN2e4/1DOLwKIf36hSw9TZYG6wQ==}
+    engines: {node: '>=22'}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@vizejs/native-darwin-arm64@0.310.0':
+    resolution: {integrity: sha512-VAPhY9vACEgSlP630jLs57jPSlzGHpLGlhTCMgqSpkcPO6wIcxuNYj5qXhA/MatYm/xw5Bj6gujFCxqYvKmurQ==}
     engines: {node: '>=22'}
     cpu: [arm64]
     os: [darwin]
@@ -2280,8 +2295,20 @@ packages:
     cpu: [x64]
     os: [darwin]
 
+  '@vizejs/native-darwin-x64@0.310.0':
+    resolution: {integrity: sha512-/Vb5yMayMF9nQq81RcOa2ERMQWGg6OW6DG0ZgM2jugKK94+C9Wpc6Nz3lP7DqNWX9+aK7UyUCt3it2eGNjfsQA==}
+    engines: {node: '>=22'}
+    cpu: [x64]
+    os: [darwin]
+
   '@vizejs/native-linux-arm64-gnu@0.302.0':
     resolution: {integrity: sha512-rTDusTl2VJWRCP6Lo/ldPAhwP1O5+lyMNjia8uzrDS9XUyUS2aXdm/XqSmWmgmMzQsVKSzhiZeInzstpZ2KTGA==}
+    engines: {node: '>=22'}
+    cpu: [arm64]
+    os: [linux]
+
+  '@vizejs/native-linux-arm64-gnu@0.310.0':
+    resolution: {integrity: sha512-a6vZik4U9KTUdgQAv16EkPTCVja0AMqp7+E0x80WaVItgZt/WZtbgq2HbaI0OlngyIn5pMlTir3cFnf4BOlDug==}
     engines: {node: '>=22'}
     cpu: [arm64]
     os: [linux]
@@ -2292,8 +2319,20 @@ packages:
     cpu: [arm64]
     os: [linux]
 
+  '@vizejs/native-linux-arm64-musl@0.310.0':
+    resolution: {integrity: sha512-rW4Jc1zTsqLy2qni2FLqnypO6gyfXdmoNkOFjev0fbZcp5CYFvQqAWK2MQJsI1eDNcun+1q3QOWpTCpteSIFyg==}
+    engines: {node: '>=22'}
+    cpu: [arm64]
+    os: [linux]
+
   '@vizejs/native-linux-x64-gnu@0.302.0':
     resolution: {integrity: sha512-f9iQYUQ6oUAIcJRBbtSmvL46/vldydV62bCDtcqyDhY9Vzhs25lQ7ZpfYXL4tUTMIjfdDvw8j3AQ2vJw2tw4/A==}
+    engines: {node: '>=22'}
+    cpu: [x64]
+    os: [linux]
+
+  '@vizejs/native-linux-x64-gnu@0.310.0':
+    resolution: {integrity: sha512-gSdBzryI9wIcSnexZjQUKqmefxyipd0lDZLFSdfz5L8xBKE1AkdRKk758uHaOreF8dGKt9R8hnVWHyzp9m3iZA==}
     engines: {node: '>=22'}
     cpu: [x64]
     os: [linux]
@@ -2304,8 +2343,20 @@ packages:
     cpu: [x64]
     os: [linux]
 
+  '@vizejs/native-linux-x64-musl@0.310.0':
+    resolution: {integrity: sha512-rCr79Wr0kyYHoT6xHGLCzJYgsSNw49JZ670+84+hkB/7ggyTiq+dBXRbNUmSHaQFo8sULBCtbKvwEwD2ByxBYQ==}
+    engines: {node: '>=22'}
+    cpu: [x64]
+    os: [linux]
+
   '@vizejs/native-win32-arm64-msvc@0.302.0':
     resolution: {integrity: sha512-Bfs9w7K5Kh3TctsHN/tU6ThLQkc6JSKK+emVkkoCSXP+Fye8Qv50VB8BHX14JEy0p+5EVT17kL/XBxAJxra64g==}
+    engines: {node: '>=22'}
+    cpu: [arm64]
+    os: [win32]
+
+  '@vizejs/native-win32-arm64-msvc@0.310.0':
+    resolution: {integrity: sha512-yej0/jqg4GLQq/aCtZaTtiHKvwc84lIXAS4pGykVFEnhowATt/4jb8igGHOrbeehL3axuVfQQcALtv77s0sYPg==}
     engines: {node: '>=22'}
     cpu: [arm64]
     os: [win32]
@@ -2316,8 +2367,18 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@vizejs/native-win32-x64-msvc@0.310.0':
+    resolution: {integrity: sha512-GdxgFqL9RaEY5vXQP83mx5POpY1aAsLcGT3ggaS1Y4Lxeev89D08WwZM/VyQJq4X50rOiCvo+epspkL0rCAG/w==}
+    engines: {node: '>=22'}
+    cpu: [x64]
+    os: [win32]
+
   '@vizejs/native@0.302.0':
     resolution: {integrity: sha512-Hu9bQuIFYbP2Onl5w7N1PJNlfS1pBX4IzxjJo36s8fWmEe5mvYFxPIWDr9aZuCJMvxZqG9/E9meanaRAEF/cwg==}
+    engines: {node: '>=22'}
+
+  '@vizejs/native@0.310.0':
+    resolution: {integrity: sha512-d796eCUyEu+kKmQZdm9+n1wYU4A+P1AKoZo0ifkmW1Oa/dChaxGbMhAwrZNYjcLX95LMpvHCz2G0b3ZGppk3tg==}
     engines: {node: '>=22'}
 
   '@vizejs/rspack-plugin@0.302.0':
@@ -3067,8 +3128,8 @@ packages:
   fast-levenshtein@2.0.6:
     resolution: {integrity: sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==}
 
-  fast-uri@3.1.4:
-    resolution: {integrity: sha512-8JnbkQ4juDyvYs4mgFGQqg4yCYtFDtUtmp2QIQq11ZZe5CFQ5wcqm1rqDgAh/QdMySuBnPzMUiJUNZG5N/AiQw==}
+  fast-uri@3.1.5:
+    resolution: {integrity: sha512-gHwA1O9LDIcKunMKhObS/HimwtehO1nPUECKAu5TpKgaO19fcWEl4bliWe1jWxVFvIXztJjjQ4L8XQ1EU9f7Jw==}
 
   fdir@6.5.0:
     resolution: {integrity: sha512-tIbYtZbucOs0BRGqPJkshJUYdL+SDH7dVM8gjy+ERp3WAUjLEFJE+02kanyHtwjWOnwrKYBiwAmM0p4kLJAnXg==}
@@ -3186,8 +3247,8 @@ packages:
     resolution: {integrity: sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==}
     hasBin: true
 
-  hono@4.12.32:
-    resolution: {integrity: sha512-XcuyW9qE2kJn07PkecMOBd5Vq/hMy7mmGw+idz1yblbg9N17ijJODrvPkn7/dwL3Kulj8LcRJ69DLOWf91dRUg==}
+  hono@4.12.34:
+    resolution: {integrity: sha512-GqXJqY/xJkJmuloTrnV1ZEXG3fqte+VjkUqoRNZXcrUidiUOP4fMSIHHY4tsqZBK++kVyWmt/AAfSUuy57/eSA==}
     engines: {node: '>=16.9.0'}
 
   html-encoding-sniffer@6.0.0:
@@ -3233,8 +3294,8 @@ packages:
   ini@1.3.8:
     resolution: {integrity: sha512-JV/yugV2uzW5iMRSiZAyDtQd+nxtUnjeLt0acNdw98kKLrvuRVyB80tsREOE7yvGVgalhZ6RNXCmEHkUKBKxew==}
 
-  ip-address@10.3.1:
-    resolution: {integrity: sha512-1e9d3kb97NHJTIJDZW9rKqW2h6+dFa50Dy0fpPSMQp2ADje5gvKsXmdiK6dwY5t76TaTt5+P5N1Y/LoToIxP6g==}
+  ip-address@10.4.0:
+    resolution: {integrity: sha512-oSK96Grm3aP6OrS263xVxbNDGVL7rzBtYdpGqlDG8iQdoenDoTs/nkki+DflYbAEE8Xl6o5YxhxlrKvI3nqKXQ==}
     engines: {node: '>= 12'}
 
   ipaddr.js@1.9.1:
@@ -3303,8 +3364,8 @@ packages:
     resolution: {integrity: sha512-7vuh85V5cdDofPyxn58nrPjBktZo0u9x1g8WtjQol+jZDaE+fhN+cIvTj11GndBnMnyfrUOG1sZQxCdjKh+DKg==}
     engines: {node: '>= 10.13.0'}
 
-  jose@6.2.4:
-    resolution: {integrity: sha512-N8acGzVsQy6M/fjFcxtysNc4Q379TcM5dM/qKkNtsHFji88yANnXTr7BLeP75iPnFwBfQzM/jg2BZ9+HZrHCZA==}
+  jose@6.2.8:
+    resolution: {integrity: sha512-Bsdjwm3Qsd/P0jR+BHDe3LytDfY7WBq2HmCCLIwuVRHMuEC9ae7/R474GIUdF1NgCyZjzVo/A9DOiOBtXq8ZoQ==}
 
   js-beautify@1.15.4:
     resolution: {integrity: sha512-9/KXeZUKKJwqCXUdBxFJ3vPh467OCckSBmYDwSK/EtV090K+iMJ7zx2S3HLVDIWFQdqMIsZWbnaGiba18aWhaA==}
@@ -4563,6 +4624,10 @@ snapshots:
     dependencies:
       '@babel/types': 7.29.7
 
+  '@babel/parser@7.29.8':
+    dependencies:
+      '@babel/types': 7.29.8
+
   '@babel/parser@8.0.4':
     dependencies:
       '@babel/types': 8.0.4
@@ -4589,6 +4654,11 @@ snapshots:
       obug: 2.1.4
 
   '@babel/types@7.29.7':
+    dependencies:
+      '@babel/helper-string-parser': 7.29.7
+      '@babel/helper-validator-identifier': 7.29.7
+
+  '@babel/types@7.29.8':
     dependencies:
       '@babel/helper-string-parser': 7.29.7
       '@babel/helper-validator-identifier': 7.29.7
@@ -4909,9 +4979,9 @@ snapshots:
   '@golar/win32-x64@0.1.10':
     optional: true
 
-  '@hono/node-server@1.19.17(hono@4.12.32)':
+  '@hono/node-server@1.19.17(hono@4.12.34)':
     dependencies:
-      hono: 4.12.32
+      hono: 4.12.34
 
   '@humanfs/core@0.19.2':
     dependencies:
@@ -4966,7 +5036,7 @@ snapshots:
 
   '@modelcontextprotocol/sdk@1.29.0(zod@3.25.76)':
     dependencies:
-      '@hono/node-server': 1.19.17(hono@4.12.32)
+      '@hono/node-server': 1.19.17(hono@4.12.34)
       ajv: 8.20.0
       ajv-formats: 3.0.1(ajv@8.20.0)
       content-type: 1.0.5
@@ -4976,8 +5046,8 @@ snapshots:
       eventsource-parser: 3.1.0
       express: 5.2.1
       express-rate-limit: 8.6.1(express@5.2.1)
-      hono: 4.12.32
-      jose: 6.2.4
+      hono: 4.12.34
+      jose: 6.2.8
       json-schema-typed: 8.0.2
       pkce-challenge: 5.0.1
       raw-body: 3.0.2
@@ -5936,10 +6006,10 @@ snapshots:
       vite: 8.1.5(@types/node@26.1.2)(esbuild@0.28.1)(sass@1.97.1)(terser@5.49.0)
       vue: 3.5.40(typescript@6.0.3)
 
-  '@vizejs/musea-mcp-server@0.302.0(zod@3.25.76)':
+  '@vizejs/musea-mcp-server@0.310.0(zod@3.25.76)':
     dependencies:
       '@modelcontextprotocol/sdk': 1.29.0(zod@3.25.76)
-      '@vizejs/native': 0.302.0
+      '@vizejs/native': 0.310.0
       '@vue/compiler-dom': 3.5.35
       typescript: 6.0.3
     transitivePeerDependencies:
@@ -5950,25 +6020,49 @@ snapshots:
   '@vizejs/native-darwin-arm64@0.302.0':
     optional: true
 
+  '@vizejs/native-darwin-arm64@0.310.0':
+    optional: true
+
   '@vizejs/native-darwin-x64@0.302.0':
+    optional: true
+
+  '@vizejs/native-darwin-x64@0.310.0':
     optional: true
 
   '@vizejs/native-linux-arm64-gnu@0.302.0':
     optional: true
 
+  '@vizejs/native-linux-arm64-gnu@0.310.0':
+    optional: true
+
   '@vizejs/native-linux-arm64-musl@0.302.0':
+    optional: true
+
+  '@vizejs/native-linux-arm64-musl@0.310.0':
     optional: true
 
   '@vizejs/native-linux-x64-gnu@0.302.0':
     optional: true
 
+  '@vizejs/native-linux-x64-gnu@0.310.0':
+    optional: true
+
   '@vizejs/native-linux-x64-musl@0.302.0':
+    optional: true
+
+  '@vizejs/native-linux-x64-musl@0.310.0':
     optional: true
 
   '@vizejs/native-win32-arm64-msvc@0.302.0':
     optional: true
 
+  '@vizejs/native-win32-arm64-msvc@0.310.0':
+    optional: true
+
   '@vizejs/native-win32-x64-msvc@0.302.0':
+    optional: true
+
+  '@vizejs/native-win32-x64-msvc@0.310.0':
     optional: true
 
   '@vizejs/native@0.302.0':
@@ -5981,6 +6075,17 @@ snapshots:
       '@vizejs/native-linux-x64-musl': 0.302.0
       '@vizejs/native-win32-arm64-msvc': 0.302.0
       '@vizejs/native-win32-x64-msvc': 0.302.0
+
+  '@vizejs/native@0.310.0':
+    optionalDependencies:
+      '@vizejs/native-darwin-arm64': 0.310.0
+      '@vizejs/native-darwin-x64': 0.310.0
+      '@vizejs/native-linux-arm64-gnu': 0.310.0
+      '@vizejs/native-linux-arm64-musl': 0.310.0
+      '@vizejs/native-linux-x64-gnu': 0.310.0
+      '@vizejs/native-linux-x64-musl': 0.310.0
+      '@vizejs/native-win32-arm64-msvc': 0.310.0
+      '@vizejs/native-win32-x64-msvc': 0.310.0
 
   '@vizejs/rspack-plugin@0.302.0(@rspack/core@2.1.7)':
     dependencies:
@@ -6173,7 +6278,7 @@ snapshots:
 
   '@vue/compiler-core@3.5.35':
     dependencies:
-      '@babel/parser': 7.29.7
+      '@babel/parser': 7.29.8
       '@vue/shared': 3.5.35
       entities: 7.0.1
       estree-walker: 2.0.2
@@ -6475,7 +6580,7 @@ snapshots:
   ajv@8.20.0:
     dependencies:
       fast-deep-equal: 3.1.3
-      fast-uri: 3.1.4
+      fast-uri: 3.1.5
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
 
@@ -6846,7 +6951,7 @@ snapshots:
     dependencies:
       debug: 4.4.3(supports-color@8.1.1)
       express: 5.2.1
-      ip-address: 10.3.1
+      ip-address: 10.4.0
     transitivePeerDependencies:
       - supports-color
 
@@ -6889,7 +6994,7 @@ snapshots:
 
   fast-levenshtein@2.0.6: {}
 
-  fast-uri@3.1.4: {}
+  fast-uri@3.1.5: {}
 
   fdir@6.5.0(picomatch@4.0.5):
     optionalDependencies:
@@ -7009,7 +7114,7 @@ snapshots:
 
   he@1.2.0: {}
 
-  hono@4.12.32: {}
+  hono@4.12.34: {}
 
   html-encoding-sniffer@6.0.0:
     dependencies:
@@ -7057,7 +7162,7 @@ snapshots:
 
   ini@1.3.8: {}
 
-  ip-address@10.3.1: {}
+  ip-address@10.4.0: {}
 
   ipaddr.js@1.9.1: {}
 
@@ -7113,7 +7218,7 @@ snapshots:
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
-  jose@6.2.4: {}
+  jose@6.2.8: {}
 
   js-beautify@1.15.4:
     dependencies:
