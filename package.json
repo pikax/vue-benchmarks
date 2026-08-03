@@ -110,7 +110,7 @@
     "@vue/test-utils": "2.4.11",
     "jsdom": "30.0.1",
     "rolldown": "1.2.1",
-    "sass": "1.97.1",
+    "sass": "1.102.0",
     "swc-loader": "0.2.7",
     "tinybench": "6.1.2",
     "typescript": "6.0.3",
