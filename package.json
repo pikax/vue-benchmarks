@@ -72,7 +72,7 @@
     "@golar/vue": "0.1.10",
     "@verter/component-meta": "0.0.1-beta.3",
     "@verter/native": "0.0.1-beta.3",
-    "@vizejs/musea-mcp-server": "0.302.0",
+    "@vizejs/musea-mcp-server": "0.345.0",
     "@vizejs/native": "0.302.0",
     "@vscode/test-electron": "3.1.0",
     "@vue-jsx-vapor/compiler-rs": "3.2.19",
