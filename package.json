@@ -78,10 +78,10 @@
     "@vue-jsx-vapor/compiler-rs": "3.2.19",
     "@vue-jsx-vapor/eslint": "3.2.19",
     "@vue/babel-plugin-jsx": "3.0.0",
-    "@vue/compiler-sfc": "3.5.40",
+    "@vue/compiler-sfc": "3.5.41",
     "@vue/compiler-sfc-36": "npm:@vue/compiler-sfc@3.6.0-rc.2",
-    "@vue/language-server": "3.3.8",
-    "@vue/typescript-plugin": "3.3.8",
+    "@vue/language-server": "3.3.9",
+    "@vue/typescript-plugin": "3.3.9",
     "eslint": "10.8.0",
     "eslint-plugin-vue": "10.10.0",
     "golar": "0.1.10",
@@ -94,10 +94,10 @@
     "verter-mcp": "0.0.1-beta.3",
     "verter-tsc": "0.0.1-beta.3",
     "vize": "0.302.0",
-    "vue": "3.5.40",
-    "vue-component-meta": "3.3.8",
+    "vue": "3.5.41",
+    "vue-component-meta": "3.3.9",
     "vue-jsx-vapor": "3.2.19",
-    "vue-tsc": "3.3.8"
+    "vue-tsc": "3.3.9"
   },
   "devDependencies": {
     "@rspack/core": "2.1.7",
