@@ -64,7 +64,7 @@ Four surfaces (`jsx-compile`, `format`, `lint`, `component-meta`) also have [no 
 
 <!-- BENCHMARK_RESULTS_START -->
 
-> Auto-updated 2026-07-30 from the **Benchmark** workflow (rolldown-style: measure on CI → commit README on `main` with `[skip ci]`).
+> Auto-updated 2026-08-16 from the **Benchmark** workflow (rolldown-style: measure on CI → commit README on `main` with `[skip ci]`).
 > Numbers are reference-only; re-run on your hardware for local relevance.
 > Every measured run is warmed (>= 1 discarded pass); the ranking metric is the median. There is no cold column.
 
@@ -90,14 +90,14 @@ Target: `vdom` · Environment: `production` · Source map: `off`
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Code bytes | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize native batch (max threads) | **20.6 ms** | 19.3 ms | 1.3 ms | 6.5% | 1.00x | 609,596 | 9.7k files/s |
-| Verter compileMany (session cache) | **30.8 ms** | 29.3 ms | 4.6 ms | 15.0% ⚠ | 1.49x | 541,003 | 6.5k files/s |
-| Vize native loop (1T) | **46.8 ms** | 41.3 ms | 3.1 ms | 6.6% | 2.27x | 609,596 | 4.3k files/s |
-| Verter compileMany (stateless) | **141.6 ms** | 138.8 ms | 4.6 ms | 3.2% | 6.86x | 541,003 | 1.4k files/s |
-| @vue/compiler-sfc 3.5 (1T) | **187.5 ms** | 181.1 ms | 8.3 ms | 4.4% | 9.08x | 670,030 | 1.1k files/s |
-| @vue/compiler-sfc 3.6 (1T) | **196.5 ms** | 187.7 ms | 15.3 ms | 7.8% | 9.52x | 670,030 | 1.0k files/s |
-| fervid compileSync (1T) ⚠ | (47.4 ms) | (46.5 ms) | – | – | not ranked | (764,880) | – |
-| fervid compileAsync (4-thread libuv pool) ⚠ | (29.9 ms) | (26.2 ms) | – | – | not ranked | (764,880) | – |
+| Vize native batch (max threads) | **22.8 ms** | 19.6 ms | 2.4 ms | 10.4% ⚠ | 1.00x | 609,596 | 8.8k files/s |
+| Verter compileMany (session cache) | **24.6 ms** | 20.7 ms | 3.3 ms | 13.2% ⚠ | 1.08x | 548,989 | 8.1k files/s |
+| Vize native loop (1T) | **55.9 ms** | 54.6 ms | 0.7 ms | 1.3% | 2.45x | 609,596 | 3.6k files/s |
+| Verter compileMany (stateless) | **124.3 ms** | 118.8 ms | 4.2 ms | 3.4% | 5.45x | 548,989 | 1.6k files/s |
+| @vue/compiler-sfc 3.5 (1T) | **177.9 ms** | 173.3 ms | 8.6 ms | 4.8% | 7.79x | 670,030 | 1.1k files/s |
+| @vue/compiler-sfc 3.6 (1T) | **182.2 ms** | 179.5 ms | 5.8 ms | 3.2% | 7.98x | 670,030 | 1.1k files/s |
+| fervid compileSync (1T) ⚠ | (57.4 ms) | (56.4 ms) | – | – | not ranked | (775,738) | – |
+| fervid compileAsync (4-thread libuv pool) ⚠ | (26.2 ms) | (25.4 ms) | – | – | not ranked | (775,738) | – |
 
 #### VDOM · development · sourcemap off
 
@@ -105,14 +105,14 @@ Target: `vdom` · Environment: `development` · Source map: `off`
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Code bytes | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize native batch (max threads) | **16.0 ms** | 15.6 ms | 0.4 ms | 2.4% | 1.00x | 609,596 | 12.5k files/s |
-| Verter compileMany (session cache) | **27.2 ms** | 20.3 ms | 4.7 ms | 17.4% ⚠ | 1.69x | 663,894 | 7.4k files/s |
-| Vize native loop (1T) | **42.7 ms** | 40.5 ms | 1.2 ms | 2.9% | 2.66x | 609,596 | 4.7k files/s |
-| Verter compileMany (stateless) | **130.7 ms** | 127.7 ms | 5.5 ms | 4.2% | 8.15x | 663,894 | 1.5k files/s |
-| @vue/compiler-sfc 3.5 (1T) | **156.8 ms** | 152.0 ms | 6.0 ms | 3.8% | 9.78x | 656,372 | 1.3k files/s |
-| @vue/compiler-sfc 3.6 (1T) | **164.3 ms** | 155.1 ms | 5.3 ms | 3.3% | 10.24x | 656,372 | 1.2k files/s |
-| fervid compileSync (1T) ⚠ | (46.1 ms) | (45.6 ms) | – | – | not ranked | (777,008) | – |
-| fervid compileAsync (4-thread libuv pool) ⚠ | (26.0 ms) | (24.1 ms) | – | – | not ranked | (777,008) | – |
+| Vize native batch (max threads) | **24.3 ms** | 18.6 ms | 2.5 ms | 10.4% ⚠ | 1.00x | 609,596 | 8.2k files/s |
+| Verter compileMany (session cache) | **25.9 ms** | 17.8 ms | 6.1 ms | 23.5% ⚠ | 1.07x | 671,880 | 7.7k files/s |
+| Vize native loop (1T) | **55.2 ms** | 54.0 ms | 1.5 ms | 2.7% | 2.28x | 609,596 | 3.6k files/s |
+| Verter compileMany (stateless) | **126.0 ms** | 117.2 ms | 7.6 ms | 6.0% | 5.20x | 671,880 | 1.6k files/s |
+| @vue/compiler-sfc 3.6 (1T) | **167.1 ms** | 152.8 ms | 8.8 ms | 5.3% | 6.89x | 656,372 | 1.2k files/s |
+| @vue/compiler-sfc 3.5 (1T) | **168.7 ms** | 151.7 ms | 8.7 ms | 5.2% | 6.96x | 656,372 | 1.2k files/s |
+| fervid compileSync (1T) ⚠ | (57.1 ms) | (56.9 ms) | – | – | not ranked | (787,866) | – |
+| fervid compileAsync (4-thread libuv pool) ⚠ | (31.1 ms) | (25.0 ms) | – | – | not ranked | (787,866) | – |
 
 #### VAPOR · production · sourcemap off
 
@@ -120,11 +120,11 @@ Target: `vapor` · Environment: `production` · Source map: `off`
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Code bytes | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize native batch (max threads) | **17.2 ms** | 16.9 ms | 0.8 ms | 4.9% | 1.00x | 754,214 | 11.6k files/s |
-| Verter compileMany (session cache) | **22.4 ms** | 18.5 ms | 5.1 ms | 22.9% ⚠ | 1.30x | 577,324 | 8.9k files/s |
-| Vize native loop (1T) | **43.8 ms** | 43.4 ms | 0.4 ms | 1.0% | 2.55x | 754,214 | 4.6k files/s |
-| Verter compileMany (stateless) | **130.4 ms** | 126.5 ms | 2.2 ms | 1.7% | 7.59x | 577,324 | 1.5k files/s |
-| @vue/compiler-sfc 3.6 (1T) | **302.7 ms** | 293.2 ms | 15.5 ms | 5.1% | 17.61x | 690,938 | 661 files/s |
+| Verter compileMany (session cache) | **19.1 ms** | 18.2 ms | 4.5 ms | 23.3% ⚠ | 1.00x | 585,310 | 10.5k files/s |
+| Vize native batch (max threads) | **20.1 ms** | 19.6 ms | 0.6 ms | 2.8% | 1.05x | 754,214 | 9.9k files/s |
+| Vize native loop (1T) | **57.2 ms** | 56.8 ms | 1.5 ms | 2.6% | 2.99x | 754,214 | 3.5k files/s |
+| Verter compileMany (stateless) | **120.5 ms** | 117.1 ms | 4.5 ms | 3.8% | 6.30x | 585,310 | 1.7k files/s |
+| @vue/compiler-sfc 3.6 (1T) | **300.3 ms** | 282.7 ms | 11.4 ms | 3.8% | 15.69x | 681,563 | 666 files/s |
 | @vue/compiler-sfc 3.5 (vapor) ⏭ | skipped | – | – | – | – | – | – |
 | fervid (vapor) ⏭ | skipped | – | – | – | – | – | – |
 
@@ -134,11 +134,11 @@ Target: `vapor` · Environment: `development` · Source map: `off`
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Code bytes | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize native batch (max threads) | **16.7 ms** | 16.6 ms | 0.2 ms | 1.1% | 1.00x | 754,214 | 12.0k files/s |
-| Verter compileMany (session cache) | **23.0 ms** | 16.3 ms | 3.2 ms | 13.9% ⚠ | 1.38x | 613,062 | 8.7k files/s |
-| Vize native loop (1T) | **44.2 ms** | 43.9 ms | 0.9 ms | 1.9% | 2.64x | 754,214 | 4.5k files/s |
-| Verter compileMany (stateless) | **133.7 ms** | 131.3 ms | 1.9 ms | 1.4% | 8.00x | 613,062 | 1.5k files/s |
-| @vue/compiler-sfc 3.6 (1T) | **280.7 ms** | 273.0 ms | 5.7 ms | 2.0% | 16.79x | 692,676 | 713 files/s |
+| Verter compileMany (session cache) | **19.5 ms** | 17.5 ms | 3.6 ms | 18.4% ⚠ | 1.00x | 621,048 | 10.2k files/s |
+| Vize native batch (max threads) | **20.2 ms** | 19.7 ms | 0.4 ms | 2.1% | 1.03x | 754,214 | 9.9k files/s |
+| Vize native loop (1T) | **57.0 ms** | 56.6 ms | 1.1 ms | 1.9% | 2.92x | 754,214 | 3.5k files/s |
+| Verter compileMany (stateless) | **120.2 ms** | 119.2 ms | 2.6 ms | 2.1% | 6.16x | 621,048 | 1.7k files/s |
+| @vue/compiler-sfc 3.6 (1T) | **280.0 ms** | 273.9 ms | 42.3 ms | 15.1% ⚠ | 14.34x | 683,301 | 714 files/s |
 | @vue/compiler-sfc 3.5 (vapor) ⏭ | skipped | – | – | – | – | – | – |
 | fervid (vapor) ⏭ | skipped | – | – | – | – | – | – |
 
@@ -150,15 +150,15 @@ Files: **200** · Bytes: **38,804**
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| @vue-jsx-vapor/compiler-rs (vapor) | **3.0 ms** | 2.6 ms | 0.2 ms | 7.9% | 1.00x | n/a | 66.0k files/s |
-| vue-jsx-vapor/api | **3.2 ms** | 3.1 ms | 0.1 ms | 2.6% | 1.06x | n/a | 62.5k files/s |
+| @vue-jsx-vapor/compiler-rs (vapor) | **3.1 ms** | 2.8 ms | 0.2 ms | 5.3% | 1.00x | n/a | 64.4k files/s |
+| vue-jsx-vapor/api | **3.4 ms** | 3.3 ms | 0.1 ms | 2.4% | 1.09x | n/a | 58.9k files/s |
 
 ##### VDOM — ranked alone
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| @vue-jsx-vapor/compiler-rs (interop VDOM) | **2.3 ms** | 2.2 ms | 0.3 ms | 12.1% ⚠ | 1.00x | n/a | 86.0k files/s |
-| @vue/babel-plugin-jsx (Babel VDOM) | **129.2 ms** | 114.5 ms | 16.8 ms | 13.0% ⚠ | 55.57x | n/a | 1.5k files/s |
+| @vue-jsx-vapor/compiler-rs (interop VDOM) | **2.5 ms** | 2.5 ms | 0.1 ms | 4.4% | 1.00x | n/a | 79.0k files/s |
+| @vue/babel-plugin-jsx (Babel VDOM) | **117.0 ms** | 115.3 ms | 8.5 ms | 7.3% | 46.24x | n/a | 1.7k files/s |
 
 ### Typecheck
 
@@ -166,12 +166,12 @@ Files: **200** · Bytes: **285,701**
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Diagnostics | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize | **414.9 ms** | 410.4 ms | 16.2 ms | 3.9% | 1.00x | 0 | 482 files/s |
-| verter-tsc | **1.03 s** | 1.01 s | 11.7 ms | 1.1% | 2.48x | 420 | 195 files/s |
-| Golar typecheck | **1.48 s** | 1.46 s | 11.1 ms | 0.7% | 3.57x | 0 | 135 files/s |
-| Golar (lint+check) | **1.49 s** | 1.48 s | 10.1 ms | 0.7% | 3.59x | 0 | 134 files/s |
-| vue-tsc (N) | **2.18 s** | 2.16 s | 16.6 ms | 0.8% | 5.26x | 0 | 92 files/s |
-| vue-tsc (JS) | **4.49 s** | 4.47 s | 21.6 ms | 0.5% | 10.83x | 0 | 44 files/s |
+| verter-tsc | **1.09 s** | 1.07 s | 16.1 ms | 1.5% | 1.00x | 420 | 183 files/s |
+| Golar (lint+check) | **1.57 s** | 1.53 s | 24.5 ms | 1.6% | 1.43x | 0 | 128 files/s |
+| Golar typecheck | **1.58 s** | 1.55 s | 18.3 ms | 1.2% | 1.45x | 0 | 126 files/s |
+| Vize | **1.64 s** | 1.62 s | 22.0 ms | 1.3% | 1.50x | 0 | 122 files/s |
+| vue-tsc (N) | **2.27 s** | 2.25 s | 15.1 ms | 0.7% | 2.08x | 0 | 88 files/s |
+| vue-tsc (JS) | **4.85 s** | 4.78 s | 44.2 ms | 0.9% | 4.44x | 0 | 41 files/s |
 
 ### Format
 
@@ -179,10 +179,10 @@ Files: **200** · Bytes: **285,701**
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize | **127.3 ms** | 125.0 ms | 10.5 ms | 8.2% | 1.00x | n/a | 1.6k files/s |
-| Oxfmt | **3.04 s** | 3.00 s | 37.2 ms | 1.2% | 23.89x | n/a | 66 files/s |
-| Prettier | **3.74 s** | 3.66 s | 38.4 ms | 1.0% | 29.38x | n/a | 53 files/s |
-| Biome format ⚠ | (106.3 ms) | (104.8 ms) | – | – | not ranked | – | – |
+| Vize | **125.9 ms** | 120.6 ms | 2.7 ms | 2.1% | 1.00x | n/a | 1.6k files/s |
+| Oxfmt | **3.15 s** | 3.14 s | 48.5 ms | 1.5% | 25.05x | n/a | 63 files/s |
+| Prettier | **3.66 s** | 3.59 s | 40.6 ms | 1.1% | 29.07x | n/a | 55 files/s |
+| Biome format ⚠ | (119.2 ms) | (118.1 ms) | – | – | not ranked | – | – |
 
 ### Lint
 
@@ -190,16 +190,16 @@ Files: **200** · Bytes: **285,701**
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize lint (max threads) | **62.9 ms** | 61.4 ms | 2.2 ms | 3.5% | 1.00x | n/a | 3.2k files/s |
-| Vize lint (1T) | **77.4 ms** | 75.4 ms | 2.3 ms | 2.9% | 1.23x | n/a | 2.6k files/s |
-| Verter host lint | **154.4 ms** | 151.1 ms | 4.1 ms | 2.7% | 2.46x | n/a | 1.3k files/s |
-| eslint-plugin-vue (1T) | **1.68 s** | 1.55 s | 101.8 ms | 6.0% | 26.77x | n/a | 119 files/s |
-| eslint-plugin-vue (CLI) | **2.84 s** | 2.80 s | 34.0 ms | 1.2% | 45.15x | n/a | 70 files/s |
-| eslint-plugin-vue (4 workers) | **3.27 s** | 3.26 s | 14.8 ms | 0.5% | 52.04x | n/a | 61 files/s |
-| Biome lint (1T) ⚠ | (331.1 ms) | (329.5 ms) | – | – | not ranked | – | – |
-| Biome lint (max threads) ⚠ | (168.7 ms) | (167.3 ms) | – | – | not ranked | – | – |
-| Oxlint (1T) ⚠ | (67.8 ms) | (66.7 ms) | – | – | not ranked | – | – |
-| Oxlint (max threads) ⚠ | (64.0 ms) | (59.8 ms) | – | – | not ranked | – | – |
+| Vize lint (max threads) | **82.8 ms** | 81.2 ms | 1.7 ms | 2.1% | 1.00x | n/a | 2.4k files/s |
+| Vize lint (1T) | **101.8 ms** | 98.5 ms | 8.9 ms | 8.8% | 1.23x | n/a | 2.0k files/s |
+| Verter host lint | **149.7 ms** | 147.0 ms | 2.1 ms | 1.4% | 1.81x | n/a | 1.3k files/s |
+| eslint-plugin-vue (1T) | **1.66 s** | 1.61 s | 94.1 ms | 5.7% | 20.10x | n/a | 120 files/s |
+| eslint-plugin-vue (CLI) | **3.06 s** | 3.06 s | 13.5 ms | 0.4% | 37.03x | n/a | 65 files/s |
+| eslint-plugin-vue (4 workers) | **3.44 s** | 3.36 s | 51.7 ms | 1.5% | 41.62x | n/a | 58 files/s |
+| Biome lint (1T) ⚠ | (364.9 ms) | (361.1 ms) | – | – | not ranked | – | – |
+| Biome lint (max threads) ⚠ | (186.9 ms) | (180.7 ms) | – | – | not ranked | – | – |
+| Oxlint (1T) ⚠ | (81.0 ms) | (77.7 ms) | – | – | not ranked | – | – |
+| Oxlint (max threads) ⚠ | (79.2 ms) | (72.9 ms) | – | – | not ranked | – | – |
 
 ### Component-meta
 
@@ -207,8 +207,8 @@ Files: **100** · Bytes: **142,771**
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Meta members | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| @verter/component-meta | **513.2 ms** | 497.9 ms | 16.4 ms | 3.2% | 1.00x | 88 | 195 files/s |
-| vue-component-meta | **927.6 ms** | 845.0 ms | 174.4 ms | 18.8% ⚠ | 1.81x | 1,343 | 108 files/s |
+| @verter/component-meta | **464.5 ms** | 459.8 ms | 17.3 ms | 3.7% | 1.00x | 88 | 215 files/s |
+| vue-component-meta | **922.9 ms** | 889.3 ms | 243.8 ms | 26.4% ⚠ | 1.99x | 1,343 | 108 files/s |
 | Vize component-meta ⏭ | skipped | – | – | – | – | – | – |
 
 ### LSP (editor language server)
@@ -217,10 +217,10 @@ Files: **1** · Bytes: **745**
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Hover bytes | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Verter | **295.3 ms** | 286.8 ms | 10.7 ms | 3.6% | 1.00x | 113 ⚠ | 3 files/s |
-| Vize | **362.4 ms** | 358.6 ms | 5.3 ms | 1.5% | 1.23x | 412 | 3 files/s |
-| Volar (N) | **992.9 ms** | 979.4 ms | 8.6 ms | 0.9% | 3.36x | 114 ⚠ | 1 files/s |
-| Volar (JS) | **1.02 s** | 1.01 s | 50.2 ms | 4.9% | 3.46x | 114 ⚠ | 1 files/s |
+| Verter | **281.9 ms** | 273.2 ms | 6.5 ms | 2.3% | 1.00x | 113 ⚠ | 4 files/s |
+| Volar (N) | **414.5 ms** | 411.2 ms | 2.0 ms | 0.5% | 1.47x | 114 ⚠ | 2 files/s |
+| Vize | **430.0 ms** | 424.9 ms | 5.8 ms | 1.3% | 1.53x | 341 | 2 files/s |
+| Volar (JS) | **1.13 s** | 1.10 s | 17.5 ms | 1.6% | 4.00x | 114 ⚠ | 1 files/s |
 
 
 
@@ -242,14 +242,14 @@ Target: `vdom` · Environment: `production` · Source map: `off`
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Code bytes | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize native batch (max threads) | **4.1 ms** | 4.0 ms | 0.2 ms | 4.1% | 1.00x | 107,800 | 48.2k files/s |
-| fervid compileSync (1T) | **6.7 ms** | 6.6 ms | 0.0 ms | 0.5% | 1.61x | 106,600 | 30.0k files/s |
-| Verter compileMany (session cache) | **8.7 ms** | 8.1 ms | 0.8 ms | 9.6% | 2.10x | 140,600 | 23.0k files/s |
-| fervid compileAsync (4-thread libuv pool) | **9.8 ms** | 9.1 ms | 1.1 ms | 11.1% ⚠ | 2.37x | 106,600 | 20.3k files/s |
-| Vize native loop (1T) | **10.3 ms** | 10.1 ms | 0.2 ms | 2.1% | 2.48x | 107,800 | 19.5k files/s |
-| @vue/compiler-sfc 3.6 (1T) | **39.5 ms** | 36.7 ms | 3.9 ms | 9.9% | 9.52x | 153,800 | 5.1k files/s |
-| @vue/compiler-sfc 3.5 (1T) | **39.5 ms** | 37.4 ms | 3.1 ms | 7.8% | 9.54x | 153,800 | 5.1k files/s |
-| Verter compileMany (stateless) | **112.1 ms** | 108.6 ms | 5.0 ms | 4.4% | 27.05x | 140,600 | 1.8k files/s |
+| Vize native batch (max threads) | **6.8 ms** | 6.7 ms | 0.1 ms | 1.3% | 1.00x | 107,800 | 29.5k files/s |
+| fervid compileAsync (4-thread libuv pool) | **8.3 ms** | 8.0 ms | 0.4 ms | 4.5% | 1.22x | 120,600 | 24.1k files/s |
+| fervid compileSync (1T) | **8.8 ms** | 8.7 ms | 0.1 ms | 0.6% | 1.29x | 120,600 | 22.8k files/s |
+| Verter compileMany (session cache) | **9.9 ms** | 9.0 ms | 1.4 ms | 13.7% ⚠ | 1.47x | 140,600 | 20.1k files/s |
+| Vize native loop (1T) | **16.0 ms** | 15.9 ms | 0.1 ms | 0.4% | 2.35x | 107,800 | 12.5k files/s |
+| @vue/compiler-sfc 3.5 (1T) | **48.4 ms** | 47.4 ms | 1.3 ms | 2.8% | 7.13x | 153,800 | 4.1k files/s |
+| @vue/compiler-sfc 3.6 (1T) | **52.1 ms** | 51.5 ms | 0.8 ms | 1.6% | 7.67x | 153,800 | 3.8k files/s |
+| Verter compileMany (stateless) | **104.1 ms** | 97.8 ms | 8.9 ms | 8.6% | 15.34x | 140,600 | 1.9k files/s |
 
 
 
@@ -267,7 +267,7 @@ Servers here are Volar, **Volar on the TNB/tsgo tsdk**, Vize and Verter. Three c
 
 <!-- IDE_RESULTS_START -->
 
-> Auto-updated 2026-07-30 from the **Benchmark** workflow (`ide` job — per-operation editor benchmarks).
+> Auto-updated 2026-08-16 from the **Benchmark** workflow (`ide` job — per-operation editor benchmarks).
 > Ranked **per operation**, never pooled: `didOpen→diagnostics` and `foldingRange` answer unrelated questions.
 > Same-VM rule holds within the job; these numbers are not comparable to the timing tables above.
 
@@ -283,8 +283,8 @@ Servers here are Volar, **Volar on the TNB/tsgo tsdk**, Vize and Verter. Three c
 
 ## IDE operation results
 
-- **Generated:** 2026-07-29T16:07:26.544Z
-- **Runner:** linux/x64 · Node v22.23.1
+- **Generated:** 2026-08-16T09:15:20.140Z
+- **Runner:** linux/x64 · Node v22.23.2
 - **Runs / warmups:** 3 / 1
 
 ### IDE · background
@@ -295,55 +295,55 @@ Files: **1** · Bytes: **0**
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize | **0.6 ms** | 0.6 ms | 0.0 ms | 1.9% | 1.00x | 15 | n/a |
-| Volar (N) | **642.1 ms** | 639.7 ms | 12.7 ms | 2.0% | 1092.98x | 48 | n/a |
-| Volar (JS) | **736.8 ms** | 729.2 ms | 28.9 ms | 3.9% | 1254.20x | 48 | n/a |
-| Verter ⚠ | (31.4 ms) | (26.6 ms) | – | – | not ranked | – | – |
+| Vize | **0.6 ms** | 0.6 ms | 0.0 ms | 5.3% | 1.00x | 15 | n/a |
+| Volar (N) | **359.6 ms** | 335.6 ms | 17.3 ms | 4.9% | 625.51x | 48 | n/a |
+| Volar (JS) | **808.4 ms** | 787.5 ms | 56.5 ms | 6.8% | 1406.27x | 48 | n/a |
+| Verter ⚠ | (33.7 ms) | (32.2 ms) | – | – | not ranked | – | – |
 
 #### Semantic tokens (delta after edit)
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (JS) ⚠ | (1.0 ms) | (1.0 ms) | – | – | not ranked | – | – |
-| Volar (N) ⚠ | (1.1 ms) | (1.0 ms) | – | – | not ranked | – | – |
-| Vize ⚠ | (0.6 ms) | (0.6 ms) | – | – | not ranked | – | – |
-| Verter ⚠ | (0.5 ms) | (0.4 ms) | – | – | not ranked | – | – |
+| Volar (JS) ⚠ | (1.1 ms) | (0.9 ms) | – | – | not ranked | – | – |
+| Volar (N) ⚠ | (1.0 ms) | (1.0 ms) | – | – | not ranked | – | – |
+| Vize ⚠ | (0.4 ms) | (0.4 ms) | – | – | not ranked | – | – |
+| Verter ⚠ | (0.6 ms) | (0.6 ms) | – | – | not ranked | – | – |
 
 #### Document symbols (outline)
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Verter | **0.4 ms** | 0.4 ms | 0.0 ms | 7.3% | 1.00x | 12 | n/a |
-| Volar (N) | **16.8 ms** | 16.6 ms | 0.2 ms | 1.0% | 42.81x | 25 | n/a |
-| Volar (JS) | **17.4 ms** | 17.2 ms | 1.6 ms | 9.0% | 44.27x | 25 | n/a |
-| Vize ⚠ | (0.2 ms) | (0.2 ms) | – | – | not ranked | (2) | – |
+| Verter | **0.5 ms** | 0.5 ms | 0.1 ms | 11.4% ⚠ | 1.00x | 12 | n/a |
+| Volar (N) | **17.0 ms** | 16.8 ms | 0.2 ms | 1.3% | 31.71x | 25 | n/a |
+| Volar (JS) | **17.5 ms** | 16.6 ms | 3.5 ms | 18.4% ⚠ | 32.49x | 25 | n/a |
+| Vize ⚠ | (0.3 ms) | (0.3 ms) | – | – | not ranked | (2) | – |
 
 #### Document highlight (caret move)
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize | **0.2 ms** | 0.2 ms | 0.0 ms | 6.0% | 1.00x | 4 | n/a |
-| Verter | **0.3 ms** | 0.2 ms | 0.0 ms | 15.7% ⚠ | 1.28x | 4 | n/a |
-| Volar (JS) | **17.5 ms** | 17.4 ms | 0.2 ms | 0.9% | 83.38x | 5 | n/a |
-| Volar (N) | **29.7 ms** | 29.5 ms | 1.3 ms | 4.2% | 141.52x | 5 | n/a |
+| Vize | **0.2 ms** | 0.2 ms | 0.0 ms | 5.9% | 1.00x | 4 | n/a |
+| Volar (JS) | **18.6 ms** | 18.3 ms | 0.5 ms | 2.5% | 76.50x | 5 | n/a |
+| Volar (N) | **30.7 ms** | 30.0 ms | 0.7 ms | 2.3% | 126.19x | 5 | n/a |
+| Verter ⚠ | (0.5 ms) | (0.4 ms) | – | – | not ranked | (4) | – |
 
 #### Inlay hints (document range)
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize | **0.4 ms** | 0.4 ms | 0.0 ms | 2.5% | 1.00x | 2 | n/a |
-| Volar (JS) | **68.3 ms** | 68.1 ms | 0.4 ms | 0.6% | 152.99x | 14 | n/a |
-| Volar (N) | **140.0 ms** | 134.9 ms | 3.6 ms | 2.6% | 313.41x | 14 | n/a |
-| Verter ⚠ | (0.2 ms) | (0.2 ms) | – | – | not ranked | – | – |
+| Vize | **0.4 ms** | 0.4 ms | 0.0 ms | 3.2% | 1.00x | 2 | n/a |
+| Volar (JS) | **74.0 ms** | 71.9 ms | 1.5 ms | 2.1% | 167.98x | 14 | n/a |
+| Volar (N) | **176.5 ms** | 174.8 ms | 6.8 ms | 3.8% | 400.56x | 14 | n/a |
+| Verter ⚠ | (0.6 ms) | (0.4 ms) | – | – | not ranked | – | – |
 
 #### Folding ranges
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize | **0.2 ms** | 0.2 ms | 0.0 ms | 14.2% ⚠ | 1.00x | 2 | n/a |
-| Verter | **0.3 ms** | 0.2 ms | 0.1 ms | 20.4% ⚠ | 1.52x | 7 | n/a |
-| Volar (JS) | **10.0 ms** | 9.3 ms | 3.3 ms | 28.6% ⚠ | 56.65x | 13 | n/a |
-| Volar (N) | **21.0 ms** | 20.5 ms | 0.5 ms | 2.4% | 119.39x | 13 | n/a |
+| Vize | **0.2 ms** | 0.2 ms | 0.0 ms | 5.9% | 1.00x | 9 | n/a |
+| Verter | **0.5 ms** | 0.3 ms | 0.1 ms | 21.2% ⚠ | 2.02x | 7 | n/a |
+| Volar (N) | **6.6 ms** | 6.4 ms | 1.4 ms | 19.7% ⚠ | 29.02x | 13 | n/a |
+| Volar (JS) | **123.5 ms** | 119.8 ms | 3.1 ms | 2.5% | 544.11x | 13 | n/a |
 
 ### IDE · completion
 
@@ -353,82 +353,82 @@ Files: **1** · Bytes: **0**
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Verter | **0.8 ms** | 0.8 ms | 0.0 ms | 4.7% | 1.00x | 3 | n/a |
-| Volar (N) | **3.0 ms** | 2.7 ms | 0.4 ms | 13.6% ⚠ | 3.59x | 3 | n/a |
-| Volar (JS) | **38.9 ms** | 3.1 ms | 20.7 ms | 76.6% ⚠ | 46.12x | 3 | n/a |
-| Vize ⚠ | (5.01 s) | (5.01 s) | – | – | not ranked | – | – |
+| Verter | **0.8 ms** | 0.8 ms | 0.1 ms | 9.1% | 1.00x | 3 | n/a |
+| Vize | **1.0 ms** | 1.0 ms | 0.0 ms | 2.7% | 1.27x | 3 | n/a |
+| Volar (N) | **1.8 ms** | 1.8 ms | 0.2 ms | 9.3% | 2.27x | 3 | n/a |
+| Volar (JS) ⚠ | (4.3 ms) | (3.9 ms) | – | – | not ranked | (3) | – |
 
 #### Completion: component tag &lt;Ch
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Verter | **33.7 ms** | 32.5 ms | 9.6 ms | 25.0% ⚠ | 1.00x | 1,193 | n/a |
-| Volar (JS) | **42.1 ms** | 40.6 ms | 2.4 ms | 5.6% | 1.25x | 192 | n/a |
-| Volar (N) | **65.6 ms** | 58.9 ms | 4.3 ms | 6.8% | 1.95x | 192 | n/a |
-| Vize ⚠ | (5.01 s) | (5.00 s) | – | – | not ranked | – | – |
+| Verter | **35.8 ms** | 34.8 ms | 10.6 ms | 25.5% ⚠ | 1.00x | 1,193 | n/a |
+| Volar (N) | **37.8 ms** | 37.0 ms | 0.5 ms | 1.3% | 1.06x | 192 | n/a |
+| Volar (JS) | **41.7 ms** | 39.8 ms | 3.5 ms | 8.2% | 1.16x | 192 | n/a |
+| Vize ⚠ | (0.6 ms) | (0.6 ms) | – | – | not ranked | (42) | – |
 
 #### Completion: prop name &lt;C :
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Verter | **5.2 ms** | 1.7 ms | 2.0 ms | 50.5% ⚠ | 1.00x | 16 | n/a |
-| Volar (N) | **17.0 ms** | 14.2 ms | 2.0 ms | 12.0% ⚠ | 3.30x | 26 | n/a |
-| Volar (JS) | **118.0 ms** | 108.3 ms | 26.3 ms | 20.5% ⚠ | 22.90x | 26 | n/a |
-| Vize ⚠ | (5.01 s) | (5.01 s) | – | – | not ranked | – | – |
+| Verter | **1.8 ms** | 1.5 ms | 0.2 ms | 13.2% ⚠ | 1.00x | 16 | n/a |
+| Volar (N) | **40.1 ms** | 39.5 ms | 0.3 ms | 0.8% | 22.06x | 26 | n/a |
+| Volar (JS) ⚠ | (27.3 ms) | (18.9 ms) | – | – | not ranked | (26) | – |
+| Vize ⚠ | (0.4 ms) | (0.4 ms) | – | – | not ranked | (4) | – |
 
 #### Completion: event name &lt;C @
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (N) | **8.2 ms** | 7.8 ms | 0.4 ms | 5.3% | 1.00x | 25 | n/a |
-| Volar (JS) | **10.8 ms** | 10.7 ms | 30.8 ms | 108.1% ⚠ | 1.32x | 25 | n/a |
-| Vize ⚠ | (5.01 s) | (5.01 s) | – | – | not ranked | – | – |
-| Verter ⚠ | (0.4 ms) | (0.3 ms) | – | – | not ranked | (0) | – |
+| Volar (N) | **7.4 ms** | 7.2 ms | 0.2 ms | 2.4% | 1.00x | 25 | n/a |
+| Volar (JS) ⚠ | (134.8 ms) | (15.0 ms) | – | – | not ranked | (25) | – |
+| Vize ⚠ | (0.4 ms) | (0.4 ms) | – | – | not ranked | (12) | – |
+| Verter ⚠ | (0.3 ms) | (0.3 ms) | – | – | not ranked | (0) | – |
 
 #### Completion: directive v-
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (N) | **16.7 ms** | 15.7 ms | 0.9 ms | 5.5% | 1.00x | 498 | n/a |
-| Volar (JS) | **28.2 ms** | 25.1 ms | 2.5 ms | 9.1% | 1.68x | 498 | n/a |
-| Vize ⚠ | (5.00 s) | (5.00 s) | – | – | not ranked | – | – |
-| Verter ⚠ | (0.3 ms) | (0.3 ms) | – | – | not ranked | (3) | – |
+| Vize | **0.4 ms** | 0.4 ms | 0.0 ms | 2.6% | 1.00x | 15 | n/a |
+| Volar (N) | **16.4 ms** | 16.3 ms | 1.1 ms | 6.7% | 43.47x | 498 | n/a |
+| Volar (JS) | **26.5 ms** | 23.8 ms | 2.6 ms | 9.9% | 70.24x | 498 | n/a |
+| Verter ⚠ | (0.4 ms) | (0.4 ms) | – | – | not ranked | (3) | – |
 
 #### Completion: slot name &lt;template #
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Verter | **0.3 ms** | 0.3 ms | 0.2 ms | 49.1% ⚠ | 1.00x | 2 | n/a |
-| Volar (N) | **14.6 ms** | 14.3 ms | 0.8 ms | 5.6% | 50.64x | 500 | n/a |
-| Volar (JS) | **71.2 ms** | 15.2 ms | 43.5 ms | 69.7% ⚠ | 247.14x | 500 | n/a |
-| Vize ⚠ | (5.01 s) | (5.00 s) | – | – | not ranked | – | – |
+| Verter | **0.3 ms** | 0.3 ms | 0.0 ms | 10.4% ⚠ | 1.00x | 2 | n/a |
+| Vize | **0.6 ms** | 0.5 ms | 0.1 ms | 11.0% ⚠ | 1.72x | 30 | n/a |
+| Volar (N) | **14.9 ms** | 13.7 ms | 0.8 ms | 5.4% | 42.81x | 500 | n/a |
+| Volar (JS) | **15.5 ms** | 14.8 ms | 1.4 ms | 8.8% | 44.45x | 500 | n/a |
 
 #### Completion: auto-import
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (JS) | **31.7 ms** | 29.3 ms | 4.7 ms | 14.1% ⚠ | 1.00x | 1,077 | n/a |
-| Volar (N) | **52.8 ms** | 52.3 ms | 3.1 ms | 5.8% | 1.67x | 1,077 | n/a |
-| Vize ⚠ | (5.01 s) | (5.01 s) | – | – | not ranked | – | – |
-| Verter ⚠ | (0.4 ms) | (0.3 ms) | – | – | not ranked | (9) | – |
+| Volar (JS) | **38.2 ms** | 31.7 ms | 4.3 ms | 11.8% ⚠ | 1.00x | 1,077 | n/a |
+| Volar (N) | **48.7 ms** | 32.2 ms | 11.8 ms | 26.0% ⚠ | 1.28x | 1,073 | n/a |
+| Vize ⚠ | (92.7 ms) | (90.6 ms) | – | – | not ranked | (1,103) | – |
+| Verter ⚠ | (0.4 ms) | (0.4 ms) | – | – | not ranked | (9) | – |
 
 #### Resolve: auto-import edit
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (N) | **24.4 ms** | 24.0 ms | 0.3 ms | 1.0% | 1.00x | 241 | n/a |
-| Volar (JS) | **39.9 ms** | 35.6 ms | 6.1 ms | 14.8% ⚠ | 1.64x | 241 | n/a |
-| Vize ⚠ | (0.0 ms) | (0.0 ms) | – | – | not ranked | – | – |
+| Volar (JS) | **49.7 ms** | 48.2 ms | 2.8 ms | 5.6% | 1.00x | 241 | n/a |
+| Volar (N) | **162.8 ms** | 160.3 ms | 3.9 ms | 2.4% | 3.28x | 241 | n/a |
+| Vize ⚠ | (0.3 ms) | (0.3 ms) | – | – | not ranked | (0) | – |
 | Verter ⚠ | (0.0 ms) | (0.0 ms) | – | – | not ranked | – | – |
 
 #### Resolve: script member detail
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (N) | **2.4 ms** | 2.2 ms | 0.1 ms | 4.2% | 1.00x | 25 | n/a |
-| Volar (JS) | **2.7 ms** | 2.5 ms | 0.6 ms | 19.2% ⚠ | 1.14x | 25 | n/a |
-| Verter | **4.3 ms** | 4.3 ms | 0.5 ms | 11.2% ⚠ | 1.83x | 25 | n/a |
-| Vize ⚠ | (0.0 ms) | (0.0 ms) | – | – | not ranked | – | – |
+| Volar (JS) | **3.1 ms** | 2.8 ms | 0.4 ms | 11.3% ⚠ | 1.00x | 25 | n/a |
+| Verter | **4.3 ms** | 4.2 ms | 0.4 ms | 9.0% | 1.40x | 25 | n/a |
+| Volar (N) | **8.2 ms** | 8.0 ms | 0.8 ms | 9.1% | 2.63x | 25 | n/a |
+| Vize ⚠ | (0.2 ms) | (0.2 ms) | – | – | not ranked | (0) | – |
 
 ### IDE · edit-loop
 
@@ -447,82 +447,82 @@ Files: **1** · Bytes: **0**
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize | **129.9 ms** | 80.7 ms | 30.9 ms | 26.6% ⚠ | 1.00x | 1 | n/a |
-| Volar (JS) | **381.3 ms** | 377.8 ms | 2.2 ms | 0.6% | 2.93x | 1 | n/a |
-| Volar (N) | **394.4 ms** | 393.5 ms | 1.0 ms | 0.3% | 3.04x | 1 | n/a |
-| Verter | **498.4 ms** | 480.7 ms | 11.5 ms | 2.3% | 3.84x | 1 | n/a |
+| Vize | **149.9 ms** | 144.9 ms | 9.5 ms | 6.2% | 1.00x | 1 | n/a |
+| Volar (JS) | **412.1 ms** | 407.4 ms | 5.6 ms | 1.4% | 2.75x | 1 | n/a |
+| Volar (N) | **461.1 ms** | 451.1 ms | 9.8 ms | 2.1% | 3.08x | 1 | n/a |
+| Verter | **506.2 ms** | 495.2 ms | 6.7 ms | 1.3% | 3.38x | 1 | n/a |
 
 #### Edit fixes it -> diagnostic clears
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize | **141.3 ms** | 90.1 ms | 31.3 ms | 24.8% ⚠ | 1.00x | 0 | n/a |
-| Volar (N) | **393.6 ms** | 392.9 ms | 9.2 ms | 2.3% | 2.79x | 0 | n/a |
-| Verter | **429.9 ms** | 417.0 ms | 69.5 ms | 15.0% ⚠ | 3.04x | 0 | n/a |
-| Volar (JS) | **459.5 ms** | 456.9 ms | 1.8 ms | 0.4% | 3.25x | 0 | n/a |
+| Vize | **145.9 ms** | 143.1 ms | 5.4 ms | 3.6% | 1.00x | 0 | n/a |
+| Volar (N) | **382.1 ms** | 380.0 ms | 1.4 ms | 0.4% | 2.62x | 0 | n/a |
+| Volar (JS) | **465.4 ms** | 460.7 ms | 5.7 ms | 1.2% | 3.19x | 0 | n/a |
+| Verter | **661.5 ms** | 657.1 ms | 16.6 ms | 2.5% | 4.53x | 0 | n/a |
 
 #### Hover after retype -> NEW type
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (N) | **35.4 ms** | 35.2 ms | 0.8 ms | 2.1% | 1.00x | 47 | n/a |
-| Volar (JS) | **51.3 ms** | 50.6 ms | 3.3 ms | 6.3% | 1.45x | 47 | n/a |
-| Verter | **53.2 ms** | 50.6 ms | 4.3 ms | 8.0% | 1.50x | 40 | n/a |
-| Vize | **138.4 ms** | 96.4 ms | 24.5 ms | 19.6% ⚠ | 3.91x | 111 | n/a |
+| Volar (N) | **16.2 ms** | 15.8 ms | 0.7 ms | 4.5% | 1.00x | 47 | n/a |
+| Volar (JS) | **53.2 ms** | 51.9 ms | 1.0 ms | 2.0% | 3.30x | 47 | n/a |
+| Verter | **86.6 ms** | 82.9 ms | 5.0 ms | 5.8% | 5.36x | 40 | n/a |
+| Vize | **233.3 ms** | 209.8 ms | 13.7 ms | 6.1% | 14.44x | 40 | n/a |
 
 #### ... same hover, time to correct
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (N) | **35.4 ms** | 35.2 ms | 0.8 ms | 2.1% | 1.00x | 1 | n/a |
-| Volar (JS) | **51.3 ms** | 50.6 ms | 3.3 ms | 6.3% | 1.45x | 1 | n/a |
-| Verter | **53.2 ms** | 50.6 ms | 4.3 ms | 8.0% | 1.50x | 1 | n/a |
-| Vize | **138.4 ms** | 96.4 ms | 24.5 ms | 19.6% ⚠ | 3.91x | 1 | n/a |
+| Volar (N) | **16.2 ms** | 15.8 ms | 0.7 ms | 4.5% | 1.00x | 1 | n/a |
+| Volar (JS) | **53.2 ms** | 51.9 ms | 1.0 ms | 2.0% | 3.30x | 1 | n/a |
+| Verter | **86.6 ms** | 82.9 ms | 5.0 ms | 5.8% | 5.36x | 1 | n/a |
+| Vize | **233.3 ms** | 209.8 ms | 13.7 ms | 6.1% | 14.44x | 1 | n/a |
 
 #### Steady state: edits 1-5 (median)
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Verter | **32.5 ms** | 31.6 ms | 15.8 ms | 38.4% ⚠ | 1.00x | n/a | n/a |
-| Volar (N) | **37.5 ms** | 37.5 ms | 1.2 ms | 3.1% | 1.15x | n/a | n/a |
-| Volar (JS) | **39.7 ms** | 39.2 ms | 1.1 ms | 2.7% | 1.22x | n/a | n/a |
-| Vize | **139.4 ms** | 136.9 ms | 3.6 ms | 2.5% | 4.29x | n/a | n/a |
+| Volar (N) | **15.3 ms** | 14.9 ms | 0.3 ms | 1.9% | 1.00x | n/a | n/a |
+| Volar (JS) | **42.1 ms** | 40.4 ms | 1.4 ms | 3.4% | 2.75x | n/a | n/a |
+| Verter | **56.2 ms** | 50.5 ms | 3.4 ms | 6.3% | 3.67x | n/a | n/a |
+| Vize | **175.2 ms** | 168.2 ms | 5.8 ms | 3.3% | 11.44x | n/a | n/a |
 
 #### Steady state: edits 6-10 (median)
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (N) | **32.5 ms** | 30.9 ms | 0.9 ms | 2.9% | 1.00x | -5 | n/a |
-| Verter | **32.7 ms** | 27.6 ms | 4.1 ms | 12.8% ⚠ | 1.01x | -24 | n/a |
-| Volar (JS) | **33.3 ms** | 32.8 ms | 0.3 ms | 1.0% | 1.03x | -6 | n/a |
-| Vize | **139.4 ms** | 138.4 ms | 0.6 ms | 0.5% | 4.29x | -4 | n/a |
+| Volar (N) | **14.9 ms** | 14.9 ms | 0.0 ms | 0.1% | 1.00x | 0 | n/a |
+| Volar (JS) | **33.9 ms** | 32.9 ms | 1.4 ms | 4.0% | 2.27x | -9 | n/a |
+| Verter | **58.4 ms** | 48.1 ms | 6.2 ms | 11.3% ⚠ | 3.92x | -8 | n/a |
+| Vize | **171.2 ms** | 168.7 ms | 5.8 ms | 3.3% | 11.48x | -0 | n/a |
 
 #### Child prop retype -> Parent diagnostic
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize | **224.7 ms** | 215.5 ms | 29.5 ms | 12.5% ⚠ | 1.00x | 1 | n/a |
-| Volar (JS) | **377.9 ms** | 376.1 ms | 1.1 ms | 0.3% | 1.68x | 1 | n/a |
-| Volar (N) | **378.2 ms** | 378.0 ms | 0.7 ms | 0.2% | 1.68x | 1 | n/a |
+| Vize | **304.5 ms** | 297.7 ms | 28.0 ms | 8.8% | 1.00x | 1 | n/a |
+| Volar (JS) | **378.2 ms** | 376.2 ms | 1.7 ms | 0.4% | 1.24x | 1 | n/a |
+| Volar (N) | **383.6 ms** | 383.2 ms | 0.3 ms | 0.1% | 1.26x | 1 | n/a |
 | Verter ⚠ | (4.00 s) | (4.00 s) | – | – | not ranked | (0) | – |
 
 #### Child prop retype -> Parent hover
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (N) | **58.4 ms** | 57.5 ms | 8.5 ms | 13.5% ⚠ | 1.00x | 42 | n/a |
-| Volar (JS) | **104.2 ms** | 103.3 ms | 1.7 ms | 1.7% | 1.79x | 42 | n/a |
-| Vize ⚠ | (224.7 ms) | (221.3 ms) | – | – | not ranked | (113) | – |
-| Verter ⚠ | (4.8 ms) | (4.6 ms) | – | – | not ranked | (42) | – |
+| Volar (N) | **64.2 ms** | 63.3 ms | 6.1 ms | 9.0% | 1.00x | 42 | n/a |
+| Volar (JS) | **106.2 ms** | 104.5 ms | 5.6 ms | 5.1% | 1.65x | 42 | n/a |
+| Vize | **338.8 ms** | 333.2 ms | 8.1 ms | 2.4% | 5.28x | 42 | n/a |
+| Verter ⚠ | (4.7 ms) | (4.5 ms) | – | – | not ranked | (42) | – |
 
 #### ... Parent hover, time to correct
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (N) | **58.4 ms** | 57.5 ms | 8.5 ms | 13.5% ⚠ | 1.00x | 1 | n/a |
-| Volar (JS) | **104.2 ms** | 103.3 ms | 1.7 ms | 1.7% | 1.79x | 1 | n/a |
-| Verter | **433.8 ms** | 432.0 ms | 83.6 ms | 17.4% ⚠ | 7.43x | 3 | n/a |
-| Vize ⚠ | (3.07 s) | (3.07 s) | – | – | not ranked | (15) | – |
+| Volar (N) | **64.2 ms** | 63.3 ms | 6.1 ms | 9.0% | 1.00x | 1 | n/a |
+| Volar (JS) | **106.2 ms** | 104.5 ms | 5.6 ms | 5.1% | 1.65x | 1 | n/a |
+| Vize | **338.8 ms** | 333.2 ms | 8.1 ms | 2.4% | 5.28x | 1 | n/a |
+| Verter | **499.6 ms** | 460.2 ms | 25.8 ms | 5.3% | 7.78x | 3 | n/a |
 
 ### IDE · navigation
 
@@ -532,82 +532,82 @@ Files: **1** · Bytes: **0**
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Verter | **0.8 ms** | 0.6 ms | 0.3 ms | 32.8% ⚠ | 1.00x | 1 | n/a |
-| Volar (N) | **9.0 ms** | 8.9 ms | 0.3 ms | 3.2% | 10.70x | 1 | n/a |
-| Volar (JS) | **195.3 ms** | 185.5 ms | 9.1 ms | 4.7% | 232.19x | 1 | n/a |
-| Vize ⚠ | (3.4 ms) | (3.3 ms) | – | – | not ranked | – | – |
+| Vize | **0.3 ms** | 0.3 ms | 0.1 ms | 19.6% ⚠ | 1.00x | 1 | n/a |
+| Volar (N) | **28.3 ms** | 26.0 ms | 3.4 ms | 11.8% ⚠ | 80.80x | 1 | n/a |
+| Volar (JS) | **215.2 ms** | 206.9 ms | 7.0 ms | 3.3% | 615.58x | 1 | n/a |
+| Verter ⚠ | (0.7 ms) | (0.5 ms) | – | – | not ranked | (1) | – |
 
 #### Definition: imported fn (script)
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Verter | **0.4 ms** | 0.4 ms | 0.0 ms | 3.8% | 1.00x | 1 | n/a |
-| Volar (JS) | **7.0 ms** | 6.7 ms | 0.3 ms | 4.0% | 17.37x | 1 | n/a |
-| Volar (N) | **25.7 ms** | 24.6 ms | 5.6 ms | 19.9% ⚠ | 63.56x | 1 | n/a |
-| Vize ⚠ | (2.8 ms) | (2.7 ms) | – | – | not ranked | – | – |
+| Vize | **4.2 ms** | 4.1 ms | 0.1 ms | 2.3% | 1.00x | 1 | n/a |
+| Volar (N) | **5.9 ms** | 5.7 ms | 0.7 ms | 10.8% ⚠ | 1.40x | 1 | n/a |
+| Volar (JS) | **6.8 ms** | 6.6 ms | 2.5 ms | 30.4% ⚠ | 1.63x | 1 | n/a |
+| Verter ⚠ | (0.5 ms) | (0.4 ms) | – | – | not ranked | (1) | – |
 
 #### Type definition: typed binding
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (N) | **6.0 ms** | 5.6 ms | 2.4 ms | 32.9% ⚠ | 1.00x | 1 | n/a |
-| Volar (JS) | **19.6 ms** | 19.1 ms | 4.0 ms | 18.7% ⚠ | 3.25x | 1 | n/a |
-| Verter | **19.6 ms** | 3.7 ms | 10.2 ms | 66.5% ⚠ | 3.25x | 1 | n/a |
-| Vize ⚠ | (0.2 ms) | (0.2 ms) | – | – | not ranked | – | – |
+| Volar (JS) | **21.7 ms** | 20.5 ms | 2.9 ms | 12.8% ⚠ | 1.00x | 1 | n/a |
+| Verter | **35.6 ms** | 30.9 ms | 6.3 ms | 17.3% ⚠ | 1.64x | 1 | n/a |
+| Volar (N) | **67.3 ms** | 44.8 ms | 18.6 ms | 28.8% ⚠ | 3.10x | 1 | n/a |
+| Vize ⚠ | (0.3 ms) | (0.2 ms) | – | – | not ranked | – | – |
 
 #### References: prop -> parent template
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (JS) | **116.2 ms** | 113.2 ms | 8.1 ms | 6.8% | 1.00x | 4 | n/a |
-| Volar (N) | **354.3 ms** | 349.7 ms | 8.5 ms | 2.4% | 3.05x | 4 | n/a |
-| Vize ⚠ | (0.7 ms) | (0.6 ms) | – | – | not ranked | – | – |
-| Verter ⚠ | (98.4 ms) | (72.8 ms) | – | – | not ranked | (3) | – |
+| Volar (N) | **78.4 ms** | 63.4 ms | 19.1 ms | 23.6% ⚠ | 1.00x | 4 | n/a |
+| Volar (JS) | **123.1 ms** | 122.8 ms | 1.7 ms | 1.4% | 1.57x | 4 | n/a |
+| Vize ⚠ | (7.2 ms) | (6.9 ms) | – | – | not ranked | (2) | – |
+| Verter ⚠ | (103.8 ms) | (86.9 ms) | – | – | not ranked | (3) | – |
 
 #### Prepare rename: prop
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (JS) | **6.2 ms** | 5.0 ms | 1.3 ms | 21.2% ⚠ | 1.00x | n/a | n/a |
-| Volar (N) | **6.7 ms** | 6.4 ms | 0.2 ms | 3.3% | 1.07x | n/a | n/a |
-| Vize ⚠ | (0.6 ms) | (0.6 ms) | – | – | not ranked | – | – |
+| Vize | **1.7 ms** | 1.7 ms | 0.0 ms | 2.4% | 1.00x | n/a | n/a |
+| Volar (JS) | **5.7 ms** | 5.2 ms | 0.4 ms | 7.4% | 3.34x | n/a | n/a |
+| Volar (N) ⚠ | (4.4 ms) | (4.2 ms) | – | – | not ranked | – | – |
 | Verter ⚠ | (0.3 ms) | (0.3 ms) | – | – | not ranked | – | – |
 
 #### Rename prop (cross-file edit)
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (JS) | **3.5 ms** | 3.0 ms | 0.4 ms | 11.4% ⚠ | 1.00x | 4 | n/a |
-| Volar (N) | **4.6 ms** | 4.3 ms | 0.3 ms | 6.7% | 1.32x | 4 | n/a |
-| Vize ⚠ | (0.6 ms) | (0.6 ms) | – | – | not ranked | – | – |
-| Verter ⚠ | (1.3 ms) | (1.2 ms) | – | – | not ranked | (3) | – |
+| Volar (JS) | **3.1 ms** | 3.0 ms | 0.3 ms | 7.9% | 1.00x | 4 | n/a |
+| Volar (N) | **4.0 ms** | 3.6 ms | 0.4 ms | 9.8% | 1.31x | 4 | n/a |
+| Vize ⚠ | (5.4 ms) | (5.4 ms) | – | – | not ranked | (2) | – |
+| Verter ⚠ | (1.3 ms) | (1.3 ms) | – | – | not ranked | (3) | – |
 
 #### Code action at diagnostic
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (JS) | **32.1 ms** | 31.7 ms | 2.4 ms | 7.2% | 1.00x | 2 | n/a |
-| Volar (N) | **77.1 ms** | 76.8 ms | 12.4 ms | 14.7% ⚠ | 2.40x | 2 | n/a |
-| Vize ⚠ | (0.4 ms) | (0.4 ms) | – | – | not ranked | – | – |
-| Verter ⚠ | (0.7 ms) | (0.6 ms) | – | – | not ranked | (0) | – |
+| Volar (JS) | **34.8 ms** | 33.7 ms | 1.8 ms | 5.1% | 1.00x | 2 | n/a |
+| Volar (N) | **736.3 ms** | 728.8 ms | 6.9 ms | 0.9% | 21.17x | 2 | n/a |
+| Vize ⚠ | (0.4 ms) | (0.4 ms) | – | – | not ranked | (0) | – |
+| Verter ⚠ | (0.7 ms) | (0.5 ms) | – | – | not ranked | (0) | – |
 
 #### Signature help after `(`
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (JS) | **16.2 ms** | 15.7 ms | 0.4 ms | 2.5% | 1.00x | 1 | n/a |
-| Volar (N) | **32.6 ms** | 31.5 ms | 0.7 ms | 2.2% | 2.01x | 1 | n/a |
-| Vize ⚠ | (146.4 ms) | (140.3 ms) | – | – | not ranked | – | – |
-| Verter ⚠ | (6.1 ms) | (4.9 ms) | – | – | not ranked | (0) | – |
+| Volar (JS) | **17.0 ms** | 16.5 ms | 0.7 ms | 4.1% | 1.00x | 1 | n/a |
+| Volar (N) | **23.0 ms** | 22.4 ms | 0.4 ms | 1.9% | 1.35x | 1 | n/a |
+| Vize | **248.3 ms** | 230.3 ms | 16.1 ms | 6.5% | 14.58x | 1 | n/a |
+| Verter ⚠ | (5.1 ms) | (5.0 ms) | – | – | not ranked | (0) | – |
 
 #### Format unformatted SFC
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (JS) | **62.3 ms** | 61.7 ms | 2.4 ms | 3.8% | 1.00x | 1 | n/a |
-| Volar (N) | **63.4 ms** | 61.0 ms | 3.9 ms | 6.1% | 1.02x | 1 | n/a |
-| Vize ⚠ | (0.5 ms) | (0.5 ms) | – | – | not ranked | – | – |
-| Verter ⚠ | (0.2 ms) | (0.2 ms) | – | – | not ranked | (0) | – |
+| Volar (JS) | **66.0 ms** | 65.0 ms | 1.7 ms | 2.6% | 1.00x | 1 | n/a |
+| Volar (N) | **129.7 ms** | 127.7 ms | 2.1 ms | 1.6% | 1.97x | 1 | n/a |
+| Vize ⚠ | (0.5 ms) | (0.5 ms) | – | – | not ranked | (1) | – |
+| Verter ⚠ | (0.3 ms) | (0.3 ms) | – | – | not ranked | (0) | – |
 
 ### IDE · smoke
 
@@ -617,19 +617,19 @@ Files: **1** · Bytes: **0**
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Verter | **251.1 ms** | 222.1 ms | 22.8 ms | 9.2% | 1.00x | 89 | n/a |
-| Vize | **304.6 ms** | 261.3 ms | 28.4 ms | 9.7% | 1.21x | 388 | n/a |
-| Volar (JS) | **1.07 s** | 1.06 s | 11.0 ms | 1.0% | 4.27x | 90 | n/a |
-| Volar (N) | **1.10 s** | 1.09 s | 7.4 ms | 0.7% | 4.38x | 90 | n/a |
+| Vize | **7.3 ms** | 6.9 ms | 0.3 ms | 3.8% | 1.00x | 317 | n/a |
+| Volar (JS) | **184.8 ms** | 179.6 ms | 3.4 ms | 1.9% | 25.44x | 90 | n/a |
+| Volar (N) ⚠ | (14.2 ms) | (4.0 ms) | – | – | not ranked | (90) | – |
+| Verter ⚠ | (29.2 ms) | (0.7 ms) | – | – | not ranked | (89) | – |
 
 #### Hover (template interpolation)
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Verter | **1.4 ms** | 1.0 ms | 0.6 ms | 36.8% ⚠ | 1.00x | 74 | n/a |
-| Vize | **4.9 ms** | 4.7 ms | 0.2 ms | 4.0% | 3.58x | 107 | n/a |
-| Volar (N) | **10.9 ms** | 10.7 ms | 0.1 ms | 1.3% | 7.99x | 43 | n/a |
-| Volar (JS) | **199.8 ms** | 199.1 ms | 2.4 ms | 1.2% | 145.89x | 43 | n/a |
+| Vize | **1.8 ms** | 1.7 ms | 0.0 ms | 1.9% | 1.00x | 38 | n/a |
+| Volar (N) | **5.3 ms** | 5.2 ms | 1.6 ms | 25.7% ⚠ | 2.94x | 43 | n/a |
+| Volar (JS) | **36.2 ms** | 33.5 ms | 2.1 ms | 5.9% | 20.21x | 43 | n/a |
+| Verter ⚠ | (1.2 ms) | (0.9 ms) | – | – | not ranked | (74) | – |
 
 ### IDE · Typing loop (composite)
 
@@ -637,10 +637,10 @@ Files: **1** · Bytes: **0**
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (N) | **432.8 ms** | 432.8 ms | n/a | n/a | 1.00x | n/a | n/a |
-| Volar (JS) | **471.5 ms** | 471.5 ms | n/a | n/a | 1.09x | n/a | n/a |
-| Verter | **552.4 ms** | 552.4 ms | n/a | n/a | 1.28x | n/a | n/a |
-| Vize ⚠ | (5.27 s) | (5.27 s) | – | – | not ranked | – | – |
+| Vize | **384.2 ms** | 384.2 ms | n/a | n/a | 1.00x | n/a | n/a |
+| Volar (JS) | **469.7 ms** | 469.7 ms | n/a | n/a | 1.22x | n/a | n/a |
+| Volar (N) | **479.0 ms** | 479.0 ms | n/a | n/a | 1.25x | n/a | n/a |
+| Verter | **593.6 ms** | 593.6 ms | n/a | n/a | 1.54x | n/a | n/a |
 
 
 
@@ -652,9 +652,9 @@ Files: **1** · Bytes: **0**
 
 ## IDE operation results
 
-- **Generated:** 2026-07-29T15:56:04.487Z
-- **Runner:** linux/x64 · Node v22.23.1
-- **Runs / warmups:** 1 / 1
+- **Generated:** 2026-08-16T09:14:33.058Z
+- **Runner:** linux/x64 · Node v22.23.2
+- **Runs / warmups:** 3 / 1
 
 ### IDE · scale
 
@@ -664,134 +664,134 @@ Files: **1** · Bytes: **0**
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Verter | **231.1 ms** | 231.1 ms | n/a | n/a | 1.00x | 21 | n/a |
-| Vize | **383.1 ms** | 383.1 ms | n/a | n/a | 1.66x | 21 | n/a |
-| Volar (N) | **1.83 s** | 1.83 s | n/a | n/a | 7.93x | 21 | n/a |
-| Volar (JS) | **1.95 s** | 1.95 s | n/a | n/a | 8.42x | 21 | n/a |
+| Vize | **390.5 ms** | 388.3 ms | 14.9 ms | 3.8% | 1.00x | 21 | n/a |
+| Volar (N) | **993.4 ms** | 976.5 ms | 17.0 ms | 1.7% | 2.54x | 21 | n/a |
+| Volar (JS) | **1.57 s** | 1.55 s | 17.5 ms | 1.1% | 4.03x | 21 | n/a |
+| Verter ⚠ | (317.4 ms) | (187.3 ms) | – | – | not ranked | (21) | – |
 
 #### Completion @20 files
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize | **1.1 ms** | 1.1 ms | n/a | n/a | 1.00x | 7 | n/a |
-| Verter | **167.4 ms** | 167.4 ms | n/a | n/a | 154.13x | 7 | n/a |
-| Volar (JS) | **209.5 ms** | 209.5 ms | n/a | n/a | 192.89x | 276 | n/a |
-| Volar (N) | **404.9 ms** | 404.9 ms | n/a | n/a | 372.79x | 276 | n/a |
+| Vize | **0.5 ms** | 0.5 ms | 0.1 ms | 15.9% ⚠ | 1.00x | 7 | n/a |
+| Verter | **136.6 ms** | 112.0 ms | 15.5 ms | 11.9% ⚠ | 273.87x | 7 | n/a |
+| Volar (N) | **146.0 ms** | 127.0 ms | 11.2 ms | 8.0% | 292.74x | 276 | n/a |
+| Volar (JS) | **180.4 ms** | 172.1 ms | 5.5 ms | 3.1% | 361.77x | 276 | n/a |
 
 #### References @20 files
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (JS) | **453.7 ms** | 453.7 ms | n/a | n/a | 1.00x | 22 | n/a |
-| Volar (N) | **556.2 ms** | 556.2 ms | n/a | n/a | 1.23x | 22 | n/a |
-| Vize ⚠ | (0.7 ms) | (0.7 ms) | – | – | not ranked | (1) | – |
-| Verter ⚠ | (32.4 ms) | (32.4 ms) | – | – | not ranked | (0) | – |
+| Volar (N) | **137.6 ms** | 136.6 ms | 3.2 ms | 2.3% | 1.00x | 22 | n/a |
+| Volar (JS) | **254.3 ms** | 251.0 ms | 7.1 ms | 2.8% | 1.85x | 22 | n/a |
+| Vize ⚠ | (7.3 ms) | (7.1 ms) | – | – | not ranked | (2) | – |
+| Verter ⚠ | (35.1 ms) | (0.6 ms) | – | – | not ranked | (0) | – |
 
 #### Hover warm @20 files
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (N) | **1.3 ms** | 1.3 ms | n/a | n/a | 1.00x | 131 | n/a |
-| Volar (JS) | **1.4 ms** | 1.4 ms | n/a | n/a | 1.07x | 131 | n/a |
-| Vize | **1.9 ms** | 1.9 ms | n/a | n/a | 1.48x | 429 | n/a |
-| Verter | **2.8 ms** | 2.8 ms | n/a | n/a | 2.13x | 130 | n/a |
+| Verter | **0.6 ms** | 0.6 ms | 0.0 ms | 7.3% | 1.00x | 130 | n/a |
+| Volar (N) | **1.4 ms** | 1.4 ms | 0.1 ms | 6.9% | 2.35x | 131 | n/a |
+| Volar (JS) | **1.7 ms** | 1.6 ms | 0.4 ms | 19.9% ⚠ | 2.76x | 131 | n/a |
+| Vize ⚠ | (2.2 ms) | (2.1 ms) | – | – | not ranked | (358) | – |
 
 #### Time-to-usable @100 files
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Verter | **324.3 ms** | 324.3 ms | n/a | n/a | 1.00x | 101 | n/a |
-| Vize | **381.7 ms** | 381.7 ms | n/a | n/a | 1.18x | 101 | n/a |
-| Volar (JS) | **2.11 s** | 2.11 s | n/a | n/a | 6.51x | 101 | n/a |
-| Volar (N) | **2.12 s** | 2.12 s | n/a | n/a | 6.52x | 101 | n/a |
+| Verter | **287.7 ms** | 265.9 ms | 24.0 ms | 8.3% | 1.00x | 101 | n/a |
+| Vize | **403.9 ms** | 403.2 ms | 5.9 ms | 1.4% | 1.40x | 101 | n/a |
+| Volar (N) | **1.15 s** | 1.12 s | 16.0 ms | 1.4% | 4.00x | 101 | n/a |
+| Volar (JS) | **1.75 s** | 1.74 s | 16.1 ms | 0.9% | 6.10x | 101 | n/a |
 
 #### Completion @100 files
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize | **1.2 ms** | 1.2 ms | n/a | n/a | 1.00x | 7 | n/a |
-| Volar (JS) | **222.4 ms** | 222.4 ms | n/a | n/a | 185.44x | 356 | n/a |
-| Verter | **249.1 ms** | 249.1 ms | n/a | n/a | 207.73x | 7 | n/a |
-| Volar (N) | **429.8 ms** | 429.8 ms | n/a | n/a | 358.39x | 356 | n/a |
+| Vize | **0.5 ms** | 0.5 ms | 0.2 ms | 36.7% ⚠ | 1.00x | 7 | n/a |
+| Verter | **117.0 ms** | 116.8 ms | 14.1 ms | 11.3% ⚠ | 243.26x | 7 | n/a |
+| Volar (N) | **135.7 ms** | 130.0 ms | 8.2 ms | 5.9% | 282.19x | 356 | n/a |
+| Volar (JS) | **182.2 ms** | 162.3 ms | 13.3 ms | 7.5% | 378.92x | 356 | n/a |
 
 #### References @100 files
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (JS) | **1.29 s** | 1.29 s | n/a | n/a | 1.00x | 102 | n/a |
-| Volar (N) | **2.14 s** | 2.14 s | n/a | n/a | 1.66x | 102 | n/a |
-| Vize ⚠ | (0.7 ms) | (0.7 ms) | – | – | not ranked | (1) | – |
-| Verter ⚠ | (62.8 ms) | (62.8 ms) | – | – | not ranked | (0) | – |
+| Volar (N) | **565.3 ms** | 563.8 ms | 7.3 ms | 1.3% | 1.00x | 102 | n/a |
+| Volar (JS) | **948.4 ms** | 927.3 ms | 31.5 ms | 3.3% | 1.68x | 102 | n/a |
+| Vize ⚠ | (7.1 ms) | (6.9 ms) | – | – | not ranked | (2) | – |
+| Verter ⚠ | (32.9 ms) | (27.4 ms) | – | – | not ranked | (0) | – |
 
 #### Hover warm @100 files
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (N) | **1.3 ms** | 1.3 ms | n/a | n/a | 1.00x | 131 | n/a |
-| Volar (JS) | **1.3 ms** | 1.3 ms | n/a | n/a | 1.00x | 131 | n/a |
-| Verter | **1.6 ms** | 1.6 ms | n/a | n/a | 1.21x | 130 | n/a |
-| Vize | **1.8 ms** | 1.8 ms | n/a | n/a | 1.40x | 429 | n/a |
+| Verter | **0.7 ms** | 0.6 ms | 0.2 ms | 21.3% ⚠ | 1.00x | 130 | n/a |
+| Volar (N) | **1.6 ms** | 1.5 ms | 0.1 ms | 5.1% | 2.24x | 131 | n/a |
+| Vize | **2.2 ms** | 2.1 ms | 1.4 ms | 48.6% ⚠ | 3.09x | 358 | n/a |
+| Volar (JS) ⚠ | (1.9 ms) | (1.6 ms) | – | – | not ranked | (131) | – |
 
 #### Time-to-usable @500 files
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize | **382.7 ms** | 382.7 ms | n/a | n/a | 1.00x | 501 | n/a |
-| Verter | **454.8 ms** | 454.8 ms | n/a | n/a | 1.19x | 501 | n/a |
-| Volar (JS) | **3.07 s** | 3.07 s | n/a | n/a | 8.02x | 501 | n/a |
-| Volar (N) | **3.52 s** | 3.52 s | n/a | n/a | 9.20x | 501 | n/a |
+| Verter | **259.4 ms** | 209.5 ms | 122.4 ms | 40.3% ⚠ | 1.00x | 501 | n/a |
+| Vize | **393.0 ms** | 388.4 ms | 9.5 ms | 2.4% | 1.51x | 501 | n/a |
+| Volar (N) | **1.79 s** | 1.76 s | 21.8 ms | 1.2% | 6.91x | 501 | n/a |
+| Volar (JS) | **2.65 s** | 2.65 s | 18.7 ms | 0.7% | 10.21x | 501 | n/a |
 
 #### Completion @500 files
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize | **1.1 ms** | 1.1 ms | n/a | n/a | 1.00x | 7 | n/a |
-| Verter | **140.9 ms** | 140.9 ms | n/a | n/a | 129.46x | 7 | n/a |
-| Volar (JS) | **244.1 ms** | 244.1 ms | n/a | n/a | 224.30x | 756 | n/a |
-| Volar (N) | **603.3 ms** | 603.3 ms | n/a | n/a | 554.45x | 756 | n/a |
+| Vize | **0.5 ms** | 0.5 ms | 0.1 ms | 17.2% ⚠ | 1.00x | 7 | n/a |
+| Verter | **146.4 ms** | 140.4 ms | 46.7 ms | 27.4% ⚠ | 297.56x | 7 | n/a |
+| Volar (N) | **193.2 ms** | 192.2 ms | 3.2 ms | 1.6% | 392.63x | 756 | n/a |
+| Volar (JS) | **242.4 ms** | 199.7 ms | 25.1 ms | 11.0% ⚠ | 492.74x | 756 | n/a |
 
 #### References @500 files
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (JS) | **17.65 s** | 17.65 s | n/a | n/a | 1.00x | 502 | n/a |
-| Volar (N) | **38.91 s** | 38.91 s | n/a | n/a | 2.21x | 502 | n/a |
-| Vize ⚠ | (0.7 ms) | (0.7 ms) | – | – | not ranked | (1) | – |
-| Verter ⚠ | (1.0 ms) | (1.0 ms) | – | – | not ranked | (0) | – |
+| Volar (N) | **9.27 s** | 9.13 s | 104.1 ms | 1.1% | 1.00x | 502 | n/a |
+| Volar (JS) | **13.71 s** | 13.07 s | 698.0 ms | 5.1% | 1.48x | 502 | n/a |
+| Vize ⚠ | (7.3 ms) | (6.7 ms) | – | – | not ranked | (2) | – |
+| Verter ⚠ | (29.8 ms) | (26.6 ms) | – | – | not ranked | (0) | – |
 
 #### Hover warm @500 files
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Verter | **0.8 ms** | 0.8 ms | n/a | n/a | 1.00x | 130 | n/a |
-| Volar (JS) | **1.3 ms** | 1.3 ms | n/a | n/a | 1.52x | 131 | n/a |
-| Volar (N) | **1.3 ms** | 1.3 ms | n/a | n/a | 1.57x | 131 | n/a |
-| Vize | **1.9 ms** | 1.9 ms | n/a | n/a | 2.22x | 429 | n/a |
+| Verter | **1.3 ms** | 0.7 ms | 0.3 ms | 28.4% ⚠ | 1.00x | 130 | n/a |
+| Volar (JS) | **1.4 ms** | 1.3 ms | 0.7 ms | 39.5% ⚠ | 1.05x | 131 | n/a |
+| Vize | **2.1 ms** | 1.9 ms | 0.5 ms | 21.9% ⚠ | 1.61x | 358 | n/a |
+| Volar (N) | **3.4 ms** | 3.1 ms | 0.2 ms | 5.1% | 2.65x | 131 | n/a |
 
 #### Scale × time-to-usable 20→500
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Scale factor 20→500 (×, lower is better) | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (JS) | – | – | – | – | – | 1.58 | – |
-| Volar (N) | – | – | – | – | – | 1.92 | – |
-| Vize | – | – | – | – | – | 1 | – |
-| Verter | – | – | – | – | – | 1.97 | – |
+| Volar (JS) | – | – | – | – | – | 1.71 | – |
+| Volar (N) | – | – | – | – | – | 1.77 | – |
+| Vize | – | – | – | – | – | 0.95 | – |
+| Verter | – | – | – | – | – | 1.39 | – |
 
 #### Scale × completion 20→500
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Scale factor 20→500 (×, lower is better) | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (JS) | – | – | – | – | – | 1.16 | – |
-| Volar (N) | – | – | – | – | – | 1.49 | – |
-| Vize | – | – | – | – | – | 1 | – |
-| Verter | – | – | – | – | – | 0.84 | – |
+| Volar (JS) | – | – | – | – | – | 1.11 | – |
+| Volar (N) | – | – | – | – | – | 1.35 | – |
+| Vize | – | – | – | – | – | 0.99 | – |
+| Verter | – | – | – | – | – | 1.04 | – |
 
 #### Scale × references 20→500
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Scale factor 20→500 (×, lower is better) | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (JS) | – | – | – | – | – | 38.89 | – |
-| Volar (N) | – | – | – | – | – | 69.96 | – |
+| Volar (JS) | – | – | – | – | – | 52.07 | – |
+| Volar (N) | – | – | – | – | – | 67.4 | – |
 | Vize ⚠ | – | – | – | – | not ranked | – | – |
 | Verter ⚠ | – | – | – | – | not ranked | – | – |
 
@@ -799,10 +799,10 @@ Files: **1** · Bytes: **0**
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Scale factor 20→500 (×, lower is better) | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (JS) | – | – | – | – | – | 0.93 | – |
-| Volar (N) | – | – | – | – | – | 1.02 | – |
-| Vize | – | – | – | – | – | 0.98 | – |
-| Verter | – | – | – | – | – | 0.31 | – |
+| Volar (JS) | – | – | – | – | – | 1.1 | – |
+| Volar (N) | – | – | – | – | – | 2.4 | – |
+| Vize | – | – | – | – | – | 1.31 | – |
+| Verter | – | – | – | – | – | 2.19 | – |
 
 ### IDE · Typing loop (composite)
 
