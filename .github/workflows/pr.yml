@@ -51,7 +51,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Cache node_modules for sibling jobs
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: node_modules
           key: ${{ env.NM_CACHE_PREFIX }}-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', '.node-version') }}

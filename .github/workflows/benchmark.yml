@@ -127,7 +127,7 @@ jobs:
       # so each of bench/ide/memory re-installed it — the same setup paid three
       # times. Its lockfile is part of the key so a change to either invalidates.
       - name: Cache node_modules for bench jobs
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             node_modules

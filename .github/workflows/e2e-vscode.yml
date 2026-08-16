@@ -89,7 +89,7 @@ jobs:
       # a build that only changes when stable ships. Cached separately from
       # node_modules because it is invalidated by a different thing entirely.
       - name: Cache VS Code download
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: .vscode-test
           key: vscode-test-${{ runner.os }}-stable-${{ steps.cache-period.outputs.month }}
@@ -99,7 +99,7 @@ jobs:
       # Marketplace extension installs are three network round-trips that do not
       # change between runs unless the pinned ids change.
       - name: Cache marketplace extensions
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.vscode/extensions
           key: vscode-exts-${{ runner.os }}-${{ github.event.inputs.vize_extension || 'ubugeeei.vize' }}-${{ github.event.inputs.verter_extension || 'verter.verter-vscode' }}

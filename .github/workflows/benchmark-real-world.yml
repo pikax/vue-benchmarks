@@ -164,7 +164,7 @@ jobs:
       # installs run and repair whatever the restored state is missing.
       - name: Restore node_modules cache
         id: nm-cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             node_modules
@@ -210,7 +210,7 @@ jobs:
       # never be able to serve a different commit than the one the report names.
       - name: Cache project checkout
         id: project-cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: fixtures/real/${{ matrix.project }}
           key: rw-v1-${{ matrix.project }}-${{ hashFiles('scripts/lib/real-world/projects.mjs') }}
