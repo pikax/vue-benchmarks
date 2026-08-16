@@ -6,7 +6,7 @@
  */
 import { after, before, describe, test } from "node:test";
 import assert from "node:assert/strict";
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
@@ -97,7 +97,7 @@ describe("copyFixtureSubset", () => {
       "does-not-exist.json",
     ]);
 
-    assert.deepEqual(listDir(out), [".prettierrc.json", ...fixture.files.slice(0, 2)].sort());
+    assert.deepEqual(listDir(out), [".git", ".prettierrc.json", ...fixture.files.slice(0, 2)].sort());
   });
 
   test("wipes the destination first so a stale file cannot join the corpus", () => {
@@ -107,7 +107,21 @@ describe("copyFixtureSubset", () => {
 
     copyFixtureSubset(fixture.dir, out, fixture.files.slice(0, 1), []);
 
-    assert.deepEqual(listDir(out), [fixture.files[0]]);
+    assert.deepEqual(listDir(out), [".git", fixture.files[0]]);
+  });
+
+  test("every copy carries a repo-boundary marker so ancestor .gitignore rules cannot empty a walk", () => {
+    // Work copies live inside this repository, whose .gitignore excludes the
+    // work/ dir they sit in. Ignore-crate walkers (oxfmt 0.63+, oxlint) apply
+    // ancestor .gitignore rules up to the nearest repo boundary — without a
+    // boundary of the copy's own, oxfmt 0.63 walked ZERO corpus files
+    // ("all matched files may have been excluded by ignore rules") and its
+    // bracketed time measured startup. The marker is an empty .git dir, which
+    // is what a real project root has where these copies did not.
+    const out = copyFixtureSubset(fixture.dir, join(work, "boundary"), fixture.files.slice(0, 1), []);
+
+    assert.ok(statSync(join(out, ".git")).isDirectory(), ".git boundary marker must be a directory");
+    assert.deepEqual(listDir(join(out, ".git")), [], "the marker is empty — it only marks the boundary");
   });
 });
 
@@ -128,7 +142,7 @@ describe("prepareTypecheckDir", () => {
   });
 
   test("contains exactly the measured corpus plus the project scaffolding", () => {
-    assert.deepEqual(listDir(out), [...fixture.files, "env.d.ts", "golar.config.ts", "package.json", "tsconfig.json"].sort());
+    assert.deepEqual(listDir(out), [".git", ...fixture.files, "env.d.ts", "golar.config.ts", "package.json", "tsconfig.json"].sort());
   });
 
   test("resolves vue even when --work points OUTSIDE the repo", () => {
@@ -272,7 +286,7 @@ describe("prepareFormatCopy", () => {
 
   test("copies exactly the measured corpus", () => {
     const out = prepareFormatCopy(fixture.dir, fixture.files, work, "prettier", 2);
-    assert.deepEqual(listDir(out), [".prettierrc.json", ...fixture.files].sort());
+    assert.deepEqual(listDir(out), [".git", ".prettierrc.json", ...fixture.files].sort());
   });
 
   test("every invocation gets its own fresh directory", () => {

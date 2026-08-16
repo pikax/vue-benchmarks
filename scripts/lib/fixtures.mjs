@@ -129,6 +129,16 @@ export function readSources(dir, files) {
 export function copyFixtureSubset(inputDir, outputDir, files, extras = []) {
   rmSync(outputDir, { recursive: true, force: true });
   mkdirSync(outputDir, { recursive: true });
+  // Repo-boundary marker. Ignore-crate walkers (oxfmt 0.63+, oxlint) apply
+  // .gitignore rules from ANCESTOR directories up to the nearest repo root,
+  // and every work copy lives inside this repository, whose .gitignore
+  // excludes /work/ — so without a boundary of its own a directory-walk tool
+  // sees an EMPTY corpus and its row measures startup time. Observed live on
+  // oxfmt 0.63 (0.61 did not yet honour ancestor ignore files): it exited
+  // "all matched files may have been excluded by ignore rules" and rewrote
+  // 0 of 20 planted files. An empty .git dir is what a real project root has
+  // where these copies did not, and it changes no tool's invocation.
+  mkdirSync(join(outputDir, ".git"));
   const ensured = new Set();
   const ensureDir = (target) => {
     const parent = dirname(target);

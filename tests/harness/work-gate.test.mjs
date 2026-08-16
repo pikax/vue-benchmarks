@@ -8,7 +8,7 @@
  */
 import { after, before, describe, test } from "node:test";
 import assert from "node:assert/strict";
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { basename, dirname, join, resolve } from "node:path";
 
 import {
@@ -458,6 +458,14 @@ describe("prepareLintPlant", () => {
     assert.equal(gate, OXLINT_CONFIG);
     assert.ok(JSON.parse(gate).plugins.includes("vue"));
   });
+
+  test("the plant is its own repo boundary, so a gitignore-honouring walker still sees it", () => {
+    // The plant lives under the repo's ignored work/ dir. A walk tool that
+    // applies ancestor .gitignore rules (oxlint) must miss the plant because
+    // of its RULES, not because the repo's own ignore file hid the plant from
+    // its walk — that verdict would certify nothing about the tool.
+    assert.ok(statSync(join(plant.dir, ".git")).isDirectory());
+  });
 });
 
 describe("prepareFormatPlant + formatterRewritesTemplate", () => {
@@ -516,6 +524,16 @@ writeFileSync(target, out);
   after(() => {
     plant?.cleanup();
     removeDir(workRoot);
+  });
+
+  test("each tool's gate run happens inside its own repo boundary", () => {
+    // Same invariant as the lint plant: the gate must fail a formatter for not
+    // rewriting templates, never because an ancestor .gitignore (this repo's
+    // work/ exclusion) emptied its walk — the fault that unranked oxfmt 0.63
+    // while 0.61, which did not honour ancestor ignore files, was ranked.
+    const tool = fakeFormatter("noop");
+    formatterRewritesTemplate(plant, { bin: tool.bin, args: tool.args, label: "boundary" });
+    assert.ok(statSync(join(plant.dir, "boundary", ".git")).isDirectory());
   });
 
   test("the plant dir is created and the probe is NESTED", () => {

@@ -13,7 +13,7 @@ single largest fairness caveat in this repo:
 
 | tool         | Vue layer     | TS engine            |
 | ------------ | ------------- | -------------------- |
-| `vue-tsc`    | language-tools | TypeScript 5.9.3 (JS) |
+| `vue-tsc`    | language-tools | TypeScript 6.0.3 (JS) |
 | `vize check` | Vize          | tsgo (native)        |
 | `verter-tsc` | Verter        | tsgo (native)        |
 | `golar`      | golar         | tsgo (native)        |
@@ -47,8 +47,8 @@ so the root `node_modules` is untouched. Engine selection is **bin-relative**:
 from `cwd`, so invoking this directory's binary against a fixture elsewhere
 still uses TNB. Verified, not assumed.
 
-Versions are pinned to match the root install exactly (`vue-tsc@3.3.8`,
-`vue@3.5.40`). If you bump one, bump both — otherwise the comparison silently
+Versions are pinned to match the root install exactly (`vue-tsc@3.3.10`,
+`vue@3.5.41`). If you bump one, bump both — otherwise the comparison silently
 acquires a second variable.
 
 ## Install

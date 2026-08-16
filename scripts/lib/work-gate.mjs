@@ -284,6 +284,11 @@ export function formatterRewritesTemplate(
   try {
     rmSync(dir, { recursive: true, force: true });
     mkdirSync(dir, { recursive: true });
+    // Repo-boundary marker — see copyFixtureSubset. Without it a walk tool
+    // that honours ancestor .gitignore rules (oxfmt 0.63+) sees zero files
+    // under the repo's ignored work/ dir and fails this gate for walking
+    // reasons, not formatting ones.
+    mkdirSync(join(dir, ".git"));
     const target = join(dir, plant.file);
     mkdirSync(dirname(target), { recursive: true });
     writeFileSync(target, MESSY_FORMAT_VUE);
@@ -605,6 +610,10 @@ export function prepareCorpusPlant(checkDir) {
 export function prepareLintPlant(workRoot) {
   const dir = join(workRoot, `work-gate-lint-${process.pid}-${Date.now().toString(36)}`);
   mkdirSync(dir, { recursive: true });
+  // Repo-boundary marker — see copyFixtureSubset. A gitignore-honouring walk
+  // tool (oxlint) must miss the plant because of its RULES, not because the
+  // repo's own .gitignore hid the plant dir from its walk.
+  mkdirSync(join(dir, ".git"));
   writeFileSync(join(dir, "Dirty.vue"), DIRTY_VUE);
   writeFileSync(join(dir, ".oxlintrc.json"), OXLINT_CONFIG);
   writeFileSync(

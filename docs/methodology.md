@@ -153,7 +153,7 @@ CI also runs a non-ranking compile pass on `fixtures/{N}-repeated` so content-ha
 
 | Tool             | Package                     | Command / API                                 | TypeScript engine |
 | ---------------- | --------------------------- | --------------------------------------------- | ----------------- |
-| Vue TSC          | `vue-tsc`                   | `vue-tsc --noEmit -p tsconfig.json`           | **TypeScript 5.9 (JS)** |
+| Vue TSC          | `vue-tsc`                   | `vue-tsc --noEmit -p tsconfig.json`           | **TypeScript 6.0 (JS)** |
 | Vue TSC (TNB)    | `typescript-native-bridge`  | same command, `envs/tnb` install              | tsgo **stable** 7.0.2 (in-process NAPI/FFI) |
 | Golar            | `golar` + `@golar/vue`      | `golar typecheck` (+ default mode separately) | typescript-go (native) |
 | Vize             | `vize`                      | `vize check . --tsconfig …`                   | tsgo **nightly** (`@typescript/native-preview` 7.0.0-dev) |
@@ -231,11 +231,11 @@ Two consequences for how the tables read:
 
 Emitting diagnostics is not a gate failure, so the row is not bracketed. The condition on reading its time: the rows in this class did not produce equivalent output — one emitted 442 diagnostics on 200 files, the others emitted 0.
 
-**Verter + tsgo:** `verter-tsc` requires the TypeScript **7 native** engine (stable `>=7.0.2,<7.1.0`), not `typescript@5` and not nightly `@typescript/native-preview`. This repo pins:
+**Verter + tsgo:** `verter-tsc` requires the TypeScript **7 native** engine (stable `>=7.0.2,<7.1.0`), not the JS-engine `typescript` and not nightly `@typescript/native-preview`. This repo pins:
 
 | Package | Role |
 | --- | --- |
-| `typescript@5.9.x` | vue-tsc / vue-component-meta |
+| `typescript@6.0.x` | vue-tsc / vue-component-meta |
 | `typescript-go` (`npm:typescript@7.0.2`) | Verter tsgo engine |
 
 The harness sets `VERTER_TSGO_BIN` to the platform native binary (`tsc.exe` / `tsc` under `@typescript/typescript-<platform>`). Override with `VERTER_TSGO_BIN=/path/to/tsgo` if needed.
@@ -256,6 +256,15 @@ config by walking up from the file, and the work dir is not under the fixture
 dir. The two configs set the same indent, line width, quote style, semicolon
 and trailing-comma choices, so neither is doing more rewriting than the other
 because of style settings alone.
+
+Every work copy and gate plant also carries an empty `.git` directory as a
+**repo-boundary marker**. Walk tools that honour ancestor `.gitignore` rules
+(oxfmt 0.63+; oxlint on the lint surface) otherwise inherit *this* repository's
+exclusion of the `work/` dir the copies live in and walk zero files — observed
+live on oxfmt 0.63, which exited "all matched files may have been excluded by
+ignore rules" and rewrote 0 planted files, where 0.61 (no ancestor-ignore
+handling yet) was ranked. A real project root has the boundary; the marker
+changes no tool's invocation.
 
 **Template-rewrite work gate.** Each formatter is run against a messy SFC whose
 template, script and style are all badly formatted, and must actually change the
