@@ -21,7 +21,13 @@ import {
   verterSkippedTsImporter,
 } from "../confirm/lib/ts-import-vue.mjs";
 import { createSuite, formatReport, summarize } from "../confirm/lib/harness.mjs";
-import { formatMs, formatRss, formatTypecheckDoc } from "../confirm/lib/typecheck-doc.mjs";
+import {
+  formatMs,
+  formatRss,
+  formatRunnerLine,
+  formatTypecheckDoc,
+  formatTypecheckReadmeSummary,
+} from "../confirm/lib/typecheck-doc.mjs";
 import { runCliMeasured } from "../confirm/lib/run-cli.mjs";
 import { scoreFallthroughPair } from "../confirm/lib/fallthrough-attrs.mjs";
 
@@ -155,10 +161,20 @@ describe("scoreFallthroughPair", () => {
 
 describe("typecheck.md generator", () => {
   test("renders a matrix and does not treat warn as a pass", () => {
+    const runner = {
+      label: "Linux",
+      platform: "linux",
+      arch: "x64",
+      cpuCount: 4,
+      cpuModel: "Test CPU",
+      totalmem: 16 * 1024 ** 3,
+      node: "v22.0.0",
+      ci: true,
+      runUrl: "https://github.com/x/y/actions/runs/1",
+    };
     const md = formatTypecheckDoc({
       generatedAt: "2026-08-18T00:00:00.000Z",
-      platform: "linux",
-      ci: true,
+      runner,
       results: [
         { suite: "typecheck", caseId: "fallthrough-mono-ok", tool: "vue-tsc", status: "pass", message: "clean" },
         { suite: "typecheck", caseId: "fallthrough-mono-ok", tool: "vize-check", status: "fail", message: "expected clean" },
@@ -181,7 +197,13 @@ describe("typecheck.md generator", () => {
     assert.match(md, /\[Time and memory\]\(#time-and-memory\)/);
     assert.match(md, /on \*\*Linux CI\*\*/);
     assert.match(md, /This table is from \*\*Linux CI\*\*/);
-    assert.match(md, /Test workflow/);
+    assert.match(md, /Benchmark/);
+    assert.match(md, /\*\*Runner:\*\*/);
+    assert.match(md, /4 CPUs/);
+    assert.match(md, /Test CPU/);
+    assert.match(md, /16\.0 GB/);
+    assert.match(md, /Node v22\.0\.0/);
+    assert.match(md, /actions\/runs\/1/);
     assert.ok(
       md.indexOf("## Time and memory") > md.indexOf("## Template narrowing"),
       "Time and memory stays after the status matrices",
@@ -194,6 +216,53 @@ describe("typecheck.md generator", () => {
       md,
       /<script setup>/,
       "raw <script setup> in a table cell is eaten by the markdown preview",
+    );
+  });
+
+  test("README summary is pass/warn counts plus a link, with runner specs", () => {
+    const runner = {
+      label: "Linux",
+      platform: "linux",
+      arch: "x64",
+      cpuCount: 4,
+      cpuModel: "Test CPU",
+      totalmem: 16 * 1024 ** 3,
+      node: "v22.0.0",
+      ci: true,
+      runUrl: "https://github.com/x/y/actions/runs/1",
+    };
+    const md = formatTypecheckReadmeSummary({
+      generatedAt: "2026-08-18T00:00:00.000Z",
+      runner,
+      results: [
+        { suite: "typecheck", caseId: "a", tool: "vue-tsc", status: "pass" },
+        { suite: "typecheck", caseId: "a", tool: "vize-check", status: "warn", message: "EXTRA" },
+        { suite: "typecheck", caseId: "b", tool: "vue-tsc", status: "fail" },
+      ],
+    });
+    assert.match(md, /<!-- TYPECHECK_CONFIRM_START -->/);
+    assert.match(md, /docs\/typecheck\.md/);
+    assert.match(md, /\*\*Runner:\*\*/);
+    assert.match(md, /4 CPUs · Test CPU · 16\.0 GB/);
+    assert.match(md, /\| vue-tsc \| 1 \| 0 \| 1 \| 0 \|/);
+    assert.match(md, /\| vize \| 0 \| 1 \| 0 \| 0 \|/);
+    assert.match(md, /vize-check.*`a`/);
+    assert.doesNotMatch(md, /<script setup>/);
+  });
+
+  test("formatRunnerLine matches the bench report shape", () => {
+    assert.match(
+      formatRunnerLine({
+        label: "Linux",
+        platform: "linux",
+        arch: "x64",
+        cpuCount: 2,
+        cpuModel: "Xeon",
+        totalmem: 8 * 1024 ** 3,
+        node: "v22.1.0",
+        ci: true,
+      }),
+      /\*\*Runner:\*\* Linux · linux\/x64 · 2 CPUs · Xeon · 8\.0 GB · Node v22\.1\.0/,
     );
   });
 

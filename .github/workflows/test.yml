@@ -1,6 +1,8 @@
 name: Test
 
-# Gate that runs on every pull request and every push to `main`:
+# VALIDATION ONLY. This workflow never publishes and never commits.
+#
+# It is the gate that runs on every pull request and every push to `main`:
 #
 #   tests/harness/run.mjs   — self-tests of the benchmark machinery itself
 #                             (measurement protocol, ranking/report rendering,
@@ -10,17 +12,13 @@ name: Test
 #   tests/confirm/run.mjs   — correctness confirmation suite. Real tools, real
 #                             assertions; known upstream bugs are allowlisted in
 #                             tests/confirm/known-failures.json, an UNLISTED
-#                             failure fails the build. Also writes
-#                             docs/typecheck.md (pass/fail + one-shot time/RSS).
+#                             failure fails the build. Writes docs/typecheck.md
+#                             on the runner only — the Benchmark workflow is
+#                             what commits that file (and the README summary).
 #
 # Neither suite reads the generated corpora, so there is no `scripts/generate.mjs`
 # step and no fixtures artifact: `pnpm install --frozen-lockfile` is the whole
-# setup.
-#
-# On `main` only, a follow-up job commits docs/typecheck.md so the published
-# matrix and Time and memory table are Linux CI's, not a laptop run. That is
-# the only write this workflow makes. Throughput / MEMORY.md publishing stays
-# on `benchmark.yml` (manual dispatch).
+# setup. Publishing is `benchmark.yml` (manual dispatch).
 #
 # LINUX ONLY, like every other workflow here. Platform-specific breakage
 # (Windows file locks, .cmd shims, path handling) is not covered by CI.
@@ -83,57 +81,5 @@ jobs:
           path: |
             results/confirm.md
             results/confirm.json
-            docs/typecheck.md
           if-no-files-found: ignore
           retention-days: 7
-
-  # On main, persist the Linux-generated typecheck matrix + time/memory table.
-  # PRs already ran confirm above; they do not write the repo (forks have no
-  # contents: write). [skip ci] so the docs-only commit does not re-enter this
-  # workflow.
-  publish-typecheck-doc:
-    name: Publish docs/typecheck.md
-    needs: test
-    if: >-
-      github.event_name == 'push' &&
-      github.ref == 'refs/heads/main' &&
-      needs.test.result == 'success'
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Download confirmation artifacts
-        uses: actions/download-artifact@v8
-        with:
-          name: confirm-report-linux
-          path: ./_confirm
-
-      - name: Install generated typecheck.md
-        run: |
-          mkdir -p docs
-          src=""
-          for c in ./_confirm/docs/typecheck.md ./_confirm/typecheck.md; do
-            if [ -f "$c" ]; then src="$c"; break; fi
-          done
-          if [ -z "$src" ]; then
-            echo "docs/typecheck.md missing from confirm-report-linux artifact" >&2
-            find ./_confirm -type f
-            exit 1
-          fi
-          cp "$src" docs/typecheck.md
-
-      - name: Commit docs/typecheck.md
-        uses: stefanzweifel/git-auto-commit-action@v7
-        with:
-          commit_message: |
-            chore: publish typecheck confirmation results [skip ci]
-
-            Linux CI rewrite of docs/typecheck.md from tests/confirm/run.mjs
-            (pass/fail matrix + one-shot wall clock / peak RSS).
-            Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          file_pattern: docs/typecheck.md

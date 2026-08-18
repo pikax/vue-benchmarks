@@ -38,6 +38,41 @@ The last six rows run against **real open-source Vue projects** (Element Plus, N
 
 📖 **[How to read the tables →](docs/how-to-read.md)** — the ranking metric (median of warmed runs), the ⚠/❌/⏭ name markers, and why a fast tool can be *measured but unranked* (Biome, Oxlint). Corpus design, work gates, comparison classes, caveats: **[docs/methodology.md](docs/methodology.md)**.
 
+<!-- TYPECHECK_CONFIRM_START -->
+
+## Typecheck confirmation
+
+Correctness plants (not throughput). **124** plants. Generated 2026-08-18T14:47:43.517Z on **Windows**.
+
+- **Runner:** Windows · win32/x64 · 32 CPUs · AMD Ryzen 9 7950X 16-Core Processor · 127.2 GB · Node v26.5.0
+
+Full matrix, plants, documented gaps, and time/memory: [docs/typecheck.md](docs/typecheck.md).
+
+| Tool | pass | warn | fail | skip |
+| --- | ---: | ---: | ---: | ---: |
+| vue-tsc | 118 | 5 | 1 | 0 |
+| vize | 101 | 0 | 17 | 6 |
+| verter-tsc | 101 | 2 | 21 | 0 |
+| golar | 117 | 5 | 2 | 0 |
+| **all** | 437 | 12 | 41 | 6 |
+
+Disclosed extra harness behaviour (warn, not a pass):
+
+- `golar-typecheck` / `fallthrough-mono-ok`
+- `vue-tsc` / `fallthrough-mono-ok`
+- `golar-typecheck` / `fallthrough-vif-both-mono-ok`
+- `vue-tsc` / `fallthrough-vif-both-mono-ok`
+- `golar-typecheck` / `fallthrough-vif-static-ok`
+- `vue-tsc` / `fallthrough-vif-static-ok`
+- `golar-typecheck` / `fallthrough-vif-static-prop-ok`
+- `vue-tsc` / `fallthrough-vif-static-prop-ok`
+- `golar-typecheck` / `generic-fallthrough-mono-ok`
+- `vue-tsc` / `generic-fallthrough-mono-ok`
+- `verter-tsc` / `ts-import-vue-bad`
+- `verter-tsc` / `ts-import-vue-ok`
+
+<!-- TYPECHECK_CONFIRM_END -->
+
 ## Quick start
 
 ```bash

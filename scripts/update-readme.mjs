@@ -26,6 +26,10 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSy
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { IDE_RANKING_RULES, RANKING_RULES } from "./lib/report.mjs";
+import {
+  formatTypecheckDoc,
+  formatTypecheckReadmeSummary,
+} from "../tests/confirm/lib/typecheck-doc.mjs";
 
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -920,7 +924,68 @@ export function buildResultsIndex(readme) {
     if (notesMatch) entries.unshift(`[how to read](${DETAILS_DIR}/${notesMatch[1]})`);
     rows.push(`- **[${title}](#${slug})**${entries.length ? ` — ${entries.join(" · ")}` : ""}`);
   }
+  if (readme.includes("<!-- TYPECHECK_CONFIRM_START -->")) {
+    rows.push(
+      "- **[Typecheck confirmation](#typecheck-confirmation)** — [full matrix](docs/typecheck.md)",
+    );
+  }
   return rows.join("\n");
+}
+
+const TYPECHECK_CONFIRM_START = "<!-- TYPECHECK_CONFIRM_START -->";
+const TYPECHECK_CONFIRM_END = "<!-- TYPECHECK_CONFIRM_END -->";
+
+function findConfirmJson(dir) {
+  const hits = [];
+  function visit(p) {
+    if (!existsSync(p)) return;
+    const st = statSync(p);
+    if (st.isFile() && /confirm\.json$/i.test(p)) hits.push(p);
+    else if (st.isDirectory()) {
+      for (const name of readdirSync(p)) visit(join(p, name));
+    }
+  }
+  visit(dir);
+  return hits[0] ?? null;
+}
+
+/**
+ * Publish docs/typecheck.md + the README pass/warn summary from confirm.json.
+ * Absence of the artifact leaves both files untouched (same rule as bench).
+ */
+export function spliceTypecheckConfirm(readme, dir) {
+  const jsonPath = findConfirmJson(dir);
+  if (!jsonPath) {
+    console.log(
+      "[typecheck-confirm] no confirm.json in artifacts — existing section LEFT UNTOUCHED",
+    );
+    return readme;
+  }
+  const data = JSON.parse(readFileSync(jsonPath, "utf8"));
+  const results = data.results || [];
+  const generatedAt = data.generatedAt || new Date().toISOString();
+  const runner = data.runner;
+  writeFileSync(
+    join(rootDir, "docs", "typecheck.md"),
+    formatTypecheckDoc({ results, generatedAt, runner }),
+    "utf8",
+  );
+  const summary = formatTypecheckReadmeSummary({ results, generatedAt, runner });
+  if (readme.includes(TYPECHECK_CONFIRM_START) && readme.includes(TYPECHECK_CONFIRM_END)) {
+    readme = readme.replace(
+      new RegExp(`${TYPECHECK_CONFIRM_START}[\\s\\S]*?${TYPECHECK_CONFIRM_END}`),
+      () => summary,
+    );
+  } else {
+    const hook = "## Quick start";
+    if (readme.includes(hook)) {
+      readme = readme.replace(hook, `${summary}\n\n${hook}`);
+    } else {
+      readme = `${readme.trimEnd()}\n\n${summary}\n`;
+    }
+  }
+  console.log(`[typecheck-confirm] published from ${jsonPath}`);
+  return readme;
 }
 
 export function spliceIndex(readme) {
@@ -997,6 +1062,7 @@ function main() {
     );
   }
 
+  readme = spliceTypecheckConfirm(readme, dir);
   readme = spliceIndex(readme);
 
   if (readme === before) {

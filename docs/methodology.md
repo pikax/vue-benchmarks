@@ -863,9 +863,9 @@ They find things a generated corpus cannot. The first run of the bundle surface 
 
 | Workflow                                          | When                                | What                                                                                                                                    |
 | ------------------------------------------------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| **Test** (`.github/workflows/test.yml`)           | pull_request, `main` push           | `tests/harness/run.mjs` + `tests/confirm/run.mjs`. Install only, no fixtures. On `main`, commits `docs/typecheck.md` (Linux pass/fail + one-shot time/RSS). Throughput / MEMORY.md stay on Benchmark. |
+| **Test** (`.github/workflows/test.yml`)           | pull_request, `main` push           | `tests/harness/run.mjs` + `tests/confirm/run.mjs`. Install only, no fixtures. **Publishes nothing.**                                    |
 | **PR** (`.github/workflows/pr.yml`)               | pull_request                        | **Smoke only**: build (install + `fixtures/20`) → one throughput pass over every surface at `--runs 1 --warmups 0`. **No** `pnpm confirm` (that runs in `test.yml` on the same event — see [`pr.yml`](../.github/workflows/pr.yml) L92), **no** full bench, **no** README rewrite. |
-| **Benchmark** (`.github/workflows/benchmark.yml`) | `workflow_dispatch` **only**        | build → **bench** + **ide** + **ide-scale** + **memory** → update `README.md` + [`MEMORY.md`](../MEMORY.md). The only workflow that commits. |
+| **Benchmark** (`.github/workflows/benchmark.yml`) | `workflow_dispatch` **only**        | build → **bench** + **ide** + **ide-scale** + **memory** + **confirm** → update `README.md` + [`MEMORY.md`](../MEMORY.md) + [`docs/typecheck.md`](typecheck.md). The only workflow that commits. |
 | **Benchmark (real-world)** (`.github/workflows/benchmark-real-world.yml`) | `workflow_dispatch` **only** | Matrix of **one job per project**: clone at the pinned ref → install → `compile,format,lint,bundle,hmr,project-test,project-build,project-typecheck` for every tool on that one runner → `README.md` real-world section. `fail-fast: false`; the clone is cached on the pinned ref. |
 | **E2E VS Code** (`.github/workflows/e2e-vscode.yml`) | `workflow_dispatch` **only**     | Heavy extension-host path (optional). No schedule.                                                                                      |
 
@@ -876,7 +876,7 @@ They find things a generated corpus cannot. The first run of the bundle surface 
 Doc updates follow the [rolldown/benchmarks](https://github.com/rolldown/benchmarks) pattern:
 
 1. Measure on a single Linux runner; upload `results/*` artifacts.
-2. On a `main` dispatch, a final job downloads artifacts, runs `scripts/update-readme.mjs` and `scripts/update-memory-readme.mjs`, and **auto-commits** `README.md` + `MEMORY.md` with `[skip ci]`.
+2. On a `main` dispatch, a final job downloads artifacts, runs `scripts/update-readme.mjs` and `scripts/update-memory-readme.mjs`, and **auto-commits** `README.md` + `MEMORY.md` + `docs/typecheck.md` with `[skip ci]`.
 
 A section whose artifacts are missing — because its job failed, or was not part of the run — is **left exactly as published**. It is never replaced with a "no artifacts" placeholder, so a partial run can never erase good results and commit the erasure.
 
@@ -987,10 +987,10 @@ work/                       # ephemeral copies (gitignored)
 results/                    # local + CI reports (gitignored; published copies live
                             #   in the README / MEMORY.md marker sections)
 .github/workflows/
-  test.yml                  # harness + confirm on PR / main push; commits docs/typecheck.md on main
+  test.yml                  # harness + confirm on PR / main push (publishes nothing)
   pr.yml                    # PR smoke: tiny throughput pass only (no confirm)
   benchmark.yml             # manual dispatch: bench + ide + ide-scale + memory
-                            #   → README / MEMORY.md
+                            #   + confirm → README / MEMORY.md / docs/typecheck.md
   e2e-vscode.yml            # optional VS Code E2E (manual dispatch)
 ```
 

@@ -5,7 +5,9 @@ A tool is compatible only if it reports the planted error (or stays clean) on ev
 vue-tsc (Volar) is the usual reference, but it is **not assumed perfect** — a plant it fails is a real gap and is listed as such.
 
 Generated from `pnpm confirm:typecheck` at 2026-08-18T14:47:43.517Z on **Windows**.
-On `main`, the Test workflow re-runs this on Linux and commits the file. Do not hand-edit the results.
+- **Runner:** Windows · win32/x64 · 32 CPUs · AMD Ryzen 9 7950X 16-Core Processor · 127.2 GB · Node v26.5.0
+
+On a **Benchmark** dispatch, Linux CI re-runs this and commits the file. Do not hand-edit the results.
 
 ## How plants are judged
 
@@ -310,7 +312,7 @@ These fails are real. They are allow-listed only so the PR gate stays a useful s
 
 ## Time and memory
 
-This table is from **Windows**. Rows from another machine are not comparable. Published figures on `main` come from Linux CI.
+This table is from **Windows**. Rows from another machine are not comparable. Published figures come from a Benchmark workflow Linux run.
 
 One spawn per cell on the **shared** tsconfig. Wall clock is spawn → exit (not a ranked throughput number: no warmup, one run, tiny fixtures). RSS uses the same method as `pnpm bench:memory`:
 
@@ -453,4 +455,4 @@ FallthroughAttributes retries and other extra-config runs are **not** in this ta
 pnpm confirm:typecheck
 ```
 
-Writes `results/confirm.json`, `results/confirm.md`, and refreshes this file. On `main`, Linux CI does the same and commits the result (`[skip ci]`).
+Writes `results/confirm.json`, `results/confirm.md`, and refreshes this file. A Benchmark dispatch on `main` commits this file and a README summary (`[skip ci]`).

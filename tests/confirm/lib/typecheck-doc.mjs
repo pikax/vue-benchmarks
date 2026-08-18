@@ -5,6 +5,7 @@
  * The results tables are generated so they cannot drift from confirm.json.
  */
 import { readdirSync, readFileSync } from "node:fs";
+import os from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -171,7 +172,7 @@ function appendTimeAndMemory(lines, metas, byCase, host) {
   lines.push("## Time and memory");
   lines.push("");
   lines.push(
-    `This table is from **${host}**. Rows from another machine are not comparable. Published figures on \`main\` come from Linux CI.`,
+    `This table is from **${host}**. Rows from another machine are not comparable. Published figures come from a Benchmark workflow Linux run.`,
   );
   lines.push("");
   lines.push(
@@ -224,20 +225,113 @@ function hostLabel(platform, ci) {
   return ci ? `${os} CI` : os;
 }
 
+/** Same shape the throughput reports publish (`scripts/bench.mjs` runner). */
+export function collectRunner() {
+  const env = process.env;
+  const server = env.GITHUB_SERVER_URL;
+  const repo = env.GITHUB_REPOSITORY;
+  const runId = env.GITHUB_RUN_ID;
+  return {
+    label: env.RUNNER_OS ?? env.VIZE_BENCH_RUNNER ?? "local",
+    platform: process.platform,
+    arch: process.arch,
+    cpuCount: os.cpus().length,
+    cpuModel: (os.cpus()[0]?.model ?? "unknown").trim(),
+    totalmem: os.totalmem(),
+    node: process.version,
+    ci: Boolean(env.CI),
+    runUrl: server && repo && runId ? `${server}/${repo}/actions/runs/${runId}` : "",
+  };
+}
+
+export function formatRunnerLine(runner) {
+  if (!runner) return "";
+  const mem =
+    Number.isFinite(runner.totalmem) && runner.totalmem > 0
+      ? ` · ${(runner.totalmem / 1024 ** 3).toFixed(1)} GB`
+      : "";
+  const host = hostLabel(runner.platform, runner.ci);
+  const label = runner.label && runner.label !== "local" ? runner.label : host;
+  return `- **Runner:** ${label} · ${runner.platform}/${runner.arch} · ${runner.cpuCount} CPUs · ${runner.cpuModel}${mem} · Node ${runner.node}`;
+}
+
+/**
+ * Compact README block: per-tool pass/warn/fail/skip + warn list + link.
+ * Includes the same runner line as the full doc.
+ */
+export function formatTypecheckReadmeSummary({ results, generatedAt, runner }) {
+  const typecheckRows = results.filter((r) => r.suite === "typecheck");
+  const plants = new Set(typecheckRows.map((r) => r.caseId)).size;
+  const host = hostLabel(runner?.platform ?? process.platform, runner?.ci ?? Boolean(process.env.CI));
+  const lines = [];
+  lines.push("<!-- TYPECHECK_CONFIRM_START -->");
+  lines.push("");
+  lines.push("## Typecheck confirmation");
+  lines.push("");
+  lines.push(
+    `Correctness plants (not throughput). **${plants}** plants. Generated ${generatedAt} on **${host}**.`,
+  );
+  lines.push("");
+  const runnerLine = formatRunnerLine(runner);
+  if (runnerLine) lines.push(runnerLine);
+  if (runner?.runUrl) lines.push(`- **CI run:** ${runner.runUrl}`);
+  lines.push("");
+  lines.push("Full matrix, plants, documented gaps, and time/memory: [docs/typecheck.md](docs/typecheck.md).");
+  lines.push("");
+  lines.push("| Tool | pass | warn | fail | skip |");
+  lines.push("| --- | ---: | ---: | ---: | ---: |");
+  const totals = { pass: 0, warn: 0, fail: 0, skip: 0 };
+  for (const t of TOOLS) {
+    const rows = typecheckRows.filter((r) => r.tool === t);
+    const n = (status) => rows.filter((r) => r.status === status).length;
+    const cell = { pass: n("pass"), warn: n("warn"), fail: n("fail"), skip: n("skip") };
+    for (const k of Object.keys(totals)) totals[k] += cell[k];
+    lines.push(`| ${TOOL_LABEL[t]} | ${cell.pass} | ${cell.warn} | ${cell.fail} | ${cell.skip} |`);
+  }
+  lines.push(`| **all** | ${totals.pass} | ${totals.warn} | ${totals.fail} | ${totals.skip} |`);
+  lines.push("");
+  const warns = typecheckRows.filter((r) => r.status === "warn");
+  if (warns.length) {
+    lines.push("Disclosed extra harness behaviour (warn, not a pass):");
+    lines.push("");
+    for (const r of warns.sort((a, b) => `${a.caseId}/${a.tool}`.localeCompare(`${b.caseId}/${b.tool}`))) {
+      lines.push(`- \`${r.tool}\` / \`${r.caseId}\``);
+    }
+    lines.push("");
+  }
+  lines.push("<!-- TYPECHECK_CONFIRM_END -->");
+  return lines.join("\n");
+}
+
 /**
  * @param {{
  *   results: Array<{ suite: string, caseId: string, tool: string, status: string, message?: string }>,
  *   generatedAt: string,
  *   platform?: string,
  *   ci?: boolean,
+ *   runner?: ReturnType<typeof collectRunner>,
  * }} opts
  */
 export function formatTypecheckDoc({
   results,
   generatedAt,
-  platform = process.platform,
-  ci = Boolean(process.env.CI),
+  platform,
+  ci,
+  runner,
 }) {
+  runner = runner ?? {
+    platform: platform ?? process.platform,
+    ci: ci ?? Boolean(process.env.CI),
+    arch: process.arch,
+    cpuCount: 0,
+    cpuModel: "",
+    totalmem: 0,
+    node: process.version,
+    label: "local",
+    runUrl: "",
+  };
+  platform = runner.platform;
+  ci = Boolean(runner.ci);
   const metas = loadMetas();
   const byCase = resultMap(results);
   const known = loadKnownFailureKeys();
@@ -257,8 +351,12 @@ export function formatTypecheckDoc({
   lines.push("");
   const host = hostLabel(platform, ci);
   lines.push(`Generated from \`pnpm confirm:typecheck\` at ${generatedAt} on **${host}**.`);
+  const runnerLine = formatRunnerLine(runner);
+  if (runnerLine) lines.push(runnerLine);
+  if (runner.runUrl) lines.push(`- **CI run:** ${runner.runUrl}`);
+  lines.push("");
   lines.push(
-    "On `main`, the Test workflow re-runs this on Linux and commits the file. Do not hand-edit the results.",
+    "On a **Benchmark** dispatch, Linux CI re-runs this and commits the file. Do not hand-edit the results.",
   );
   lines.push("");
 
@@ -404,7 +502,7 @@ export function formatTypecheckDoc({
   lines.push("```");
   lines.push("");
   lines.push(
-    "Writes `results/confirm.json`, `results/confirm.md`, and refreshes this file. On `main`, Linux CI does the same and commits the result (`[skip ci]`).",
+    "Writes `results/confirm.json`, `results/confirm.md`, and refreshes this file. A Benchmark dispatch on `main` commits this file and a README summary (`[skip ci]`).",
   );
   lines.push("");
   return lines.join("\n");

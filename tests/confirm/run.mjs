@@ -18,7 +18,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { formatReport, printConsole, summarize } from "./lib/harness.mjs";
-import { formatTypecheckDoc } from "./lib/typecheck-doc.mjs";
+import { collectRunner, formatTypecheckDoc } from "./lib/typecheck-doc.mjs";
 import { runCompileSuite } from "./suites/compile.mjs";
 import { runJsxCompileConfirmSuite } from "./suites/jsx-compile.mjs";
 import { runLintSuite } from "./suites/lint.mjs";
@@ -186,6 +186,9 @@ async function main() {
   const outMd = args.out || join(rootDir, "results", "confirm.md");
   const outJson = args.json || join(rootDir, "results", "confirm.json");
 
+  const generatedAt = new Date().toISOString();
+  const runner = collectRunner();
+
   mkdirSync(dirname(outMd), { recursive: true });
   writeFileSync(outMd, report, "utf8");
   writeFileSync(
@@ -193,7 +196,8 @@ async function main() {
     JSON.stringify(
       {
         kind: "confirmation",
-        generatedAt: new Date().toISOString(),
+        generatedAt,
+        runner,
         summary,
         results: all,
       },
@@ -210,9 +214,8 @@ async function main() {
       typecheckDoc,
       formatTypecheckDoc({
         results: all,
-        generatedAt: new Date().toISOString(),
-        platform: process.platform,
-        ci: Boolean(process.env.CI),
+        generatedAt,
+        runner,
       }),
       "utf8",
     );

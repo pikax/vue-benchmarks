@@ -399,8 +399,46 @@ jobs:
           retention-days: 30
 
   # ---------------------------------------------------------------------------
-  # README + MEMORY.md update (rolldown-style). The ONLY publishing job in the
-  # repository.
+  # CONFIRM — typecheck correctness plants. Isolated from SPEED/MEMORY.
+  # Writes docs/typecheck.md (matrix + one-shot wall/RSS) for the publish job.
+  # ---------------------------------------------------------------------------
+  confirm:
+    name: Confirm typecheck (Linux)
+    needs: build
+    runs-on: ubuntu-latest
+    # One measured CLI spawn per plant×tool (~500) plus fallthrough retries.
+    timeout-minutes: 40
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: ./.github/actions/restore-workspace
+        with:
+          fixtures-artifact: fixtures-bench-linux
+          node-modules-cache-key: ${{ env.NM_CACHE_PREFIX }}-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', 'envs/tnb/pnpm-lock.yaml', '.node-version') }}-${{ github.sha }}
+
+      - name: Typecheck confirmation (correctness + one-shot time/RSS)
+        env:
+          RUNNER_OS: ${{ runner.os }}
+        run: node tests/confirm/run.mjs --surfaces typecheck
+
+      - name: Upload typecheck confirmation
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: results-confirm-linux
+          path: |
+            results/confirm.json
+            results/confirm.md
+            docs/typecheck.md
+          if-no-files-found: warn
+          retention-days: 30
+
+  # ---------------------------------------------------------------------------
+  # README + MEMORY.md + docs/typecheck.md update (rolldown-style). The ONLY
+  # publishing job in the repository.
   #
   # Gate, explicitly and not by accident:
   #   - workflow_dispatch only. A fork PR could not obtain `contents: write`
@@ -417,8 +455,8 @@ jobs:
   # auto-commit the erasure.
   # ---------------------------------------------------------------------------
   update-readme:
-    name: Update README + MEMORY.md
-    needs: [bench, ide, ide-scale, memory]
+    name: Update README + MEMORY.md + typecheck.md
+    needs: [bench, ide, ide-scale, memory, confirm]
     runs-on: ubuntu-latest
     # Download artifacts, run two updaters, one commit. Seconds of work.
     timeout-minutes: 20
@@ -426,7 +464,7 @@ jobs:
       always() &&
       github.event_name == 'workflow_dispatch' &&
       github.ref == 'refs/heads/main' &&
-      (needs.bench.result == 'success' || needs.ide.result == 'success' || needs['ide-scale'].result == 'success' || needs.memory.result == 'success')
+      (needs.bench.result == 'success' || needs.ide.result == 'success' || needs['ide-scale'].result == 'success' || needs.memory.result == 'success' || needs.confirm.result == 'success')
     permissions:
       contents: write
 
@@ -482,8 +520,9 @@ jobs:
             run never erases results it did not measure.
 
             fixtures: ${{ env.FIXTURE_COUNT }} SFCs · runs: ${{ env.BENCH_RUNS }} · warmups: ${{ env.BENCH_WARMUPS }}
-            bench: ${{ needs.bench.result }} · ide: ${{ needs.ide.result }} · ide-scale: ${{ needs['ide-scale'].result }} · memory: ${{ needs.memory.result }}
+            bench: ${{ needs.bench.result }} · ide: ${{ needs.ide.result }} · ide-scale: ${{ needs['ide-scale'].result }} · memory: ${{ needs.memory.result }} · confirm: ${{ needs.confirm.result }}
             Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           # docs/results carries the full per-artifact reports the README's
           # summary tables link to — same commit, or the links 404.
-          file_pattern: README.md MEMORY.md docs/results/*.md
+          # docs/typecheck.md is the full confirm matrix (Benchmark only).
+          file_pattern: README.md MEMORY.md docs/results/*.md docs/typecheck.md
