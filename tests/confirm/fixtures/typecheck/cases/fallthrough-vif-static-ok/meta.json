@@ -1,0 +1,7 @@
+{
+  "id": "fallthrough-vif-static-ok",
+  "group": "fallthrough-root",
+  "needsFallthroughAttributes": true,
+  "description": "inheritAttrs default + v-if=\"true\" (statically single root): id may fall through",
+  "expectErrors": false
+}

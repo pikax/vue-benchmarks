@@ -1,0 +1,5 @@
+{
+  "id": "component-ref-expose-ok",
+  "description": "useTemplateRef on a child can call a method declared in defineExpose",
+  "expectErrors": false
+}

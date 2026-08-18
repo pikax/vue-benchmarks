@@ -1,0 +1,6 @@
+{
+  "id": "v-if-discriminant-ok",
+  "description": "v-if on a tagged-union discriminant narrows each branch to the matching variant",
+  "expectErrors": false,
+  "requires": ["v-if-narrow"]
+}

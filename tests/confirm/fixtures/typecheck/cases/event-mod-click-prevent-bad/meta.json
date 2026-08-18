@@ -1,0 +1,8 @@
+{
+  "id": "event-mod-click-prevent-bad",
+  "description": ".prevent does not change @click from MouseEvent to KeyboardEvent",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS2322", "TS2345", "MouseEvent", "KeyboardEvent", "not assignable"],
+  "requires": ["dom-events"]
+}

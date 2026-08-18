@@ -1,0 +1,10 @@
+<script setup lang="ts">
+import Child from "./Child.vue";
+</script>
+
+<template>
+  <Child>
+    <template #header="{ title }">{{ title.toUpperCase() }}</template>
+    <template #default="{ msg }">{{ msg.toUpperCase() }}</template>
+  </Child>
+</template>

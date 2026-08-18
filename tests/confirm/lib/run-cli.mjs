@@ -1,9 +1,10 @@
 import { spawnSync } from "node:child_process";
-import { existsSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { existsSync, readFileSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
 import { withTsgoEnv } from "../../../scripts/lib/tsgo.mjs";
+import { measureCli } from "../../../scripts/lib/measure-cli.mjs";
 
 const require = createRequire(import.meta.url);
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../../..");
@@ -21,7 +22,6 @@ export function resolveBin(name) {
   for (const c of candidates) {
     if (existsSync(c)) return c;
   }
-  // package bin field
   try {
     const pkgPath = require.resolve(`${name}/package.json`, {
       paths: [rootDir],
@@ -39,42 +39,98 @@ export function resolveBin(name) {
 }
 
 /**
- * @returns {{ status: number|null, stdout: string, stderr: string, combined: string }}
+ * Same resolution as the memory probe (`memory-tasks.mjs` tryCli): JS package
+ * bins run under `node` so Windows never goes through a .cmd wrapper, and
+ * native bins are spawned directly. RSS then belongs to the real tool process
+ * on every OS.
  */
-export function runCli(bin, args, { cwd, env = {}, timeout = 120_000 } = {}) {
-  if (!bin) {
-    return {
-      status: null,
-      stdout: "",
-      stderr: "binary not found",
-      combined: "binary not found",
-    };
+export function resolveSpawnable(name) {
+  let pkgPath = join(rootDir, "node_modules", name, "package.json");
+  if (!existsSync(pkgPath)) {
+    try {
+      pkgPath = require.resolve(`${name}/package.json`, { paths: [rootDir] });
+    } catch {
+      pkgPath = null;
+    }
   }
+  if (pkgPath && existsSync(pkgPath)) {
+    try {
+      const pkg = JSON.parse(readFileSync(pkgPath, "utf8"));
+      const binField = typeof pkg.bin === "string" ? pkg.bin : pkg.bin?.[name];
+      if (binField) {
+        const abs = resolve(dirname(pkgPath), binField);
+        if (existsSync(abs)) {
+          let isNodeScript = /\.(c?js|mjs)$/i.test(abs);
+          if (!isNodeScript) {
+            try {
+              const head = readFileSync(abs, "utf8").slice(0, 80);
+              if (/node/i.test(head) && (head.startsWith("#!") || head.includes("import "))) {
+                isNodeScript = true;
+              }
+            } catch {
+              /* binary */
+            }
+          }
+          if (isNodeScript) {
+            return { bin: process.execPath, argsPrefix: [abs], shell: false };
+          }
+          return { bin: abs, argsPrefix: [], shell: false };
+        }
+      }
+    } catch {
+      /* fall through */
+    }
+  }
+  const shim = resolveBin(name);
+  if (!shim) return null;
+  return {
+    bin: shim,
+    argsPrefix: [],
+    shell: process.platform === "win32" && /\.cmd$/i.test(shim),
+  };
+}
+
+function cliEnv(extra = {}) {
   const nodePath = [join(rootDir, "node_modules"), process.env.NODE_PATH ?? ""]
     .filter(Boolean)
     .join(process.platform === "win32" ? ";" : ":");
-
   const pathSep = process.platform === "win32" ? ";" : ":";
   const pathEnv = `${join(rootDir, "node_modules", ".bin")}${pathSep}${process.env.PATH || ""}`;
+  return withTsgoEnv(
+    {
+      ...process.env,
+      NODE_PATH: nodePath,
+      PATH: pathEnv,
+      ...extra,
+    },
+    rootDir,
+  );
+}
 
+function emptyRun(reason) {
+  return {
+    status: null,
+    stdout: "",
+    stderr: reason,
+    combined: reason,
+    ms: 0,
+  };
+}
+
+/**
+ * @returns {{ status: number|null, stdout: string, stderr: string, combined: string, ms: number }}
+ */
+export function runCli(bin, args, { cwd, env = {}, timeout = 120_000 } = {}) {
+  if (!bin) return emptyRun("binary not found");
+  const t0 = performance.now();
   const r = spawnSync(bin, args, {
     cwd,
     encoding: "utf8",
     timeout,
-    env: withTsgoEnv(
-      {
-        ...process.env,
-        NODE_PATH: nodePath,
-        PATH: pathEnv,
-        ...env,
-      },
-      rootDir,
-    ),
-    // Avoid shell on Windows when we have a .cmd path — still need shell for .cmd
+    env: cliEnv(env),
     shell: process.platform === "win32" && /\.cmd$/i.test(bin),
     maxBuffer: 20 * 1024 * 1024,
   });
-
   const stdout = r.stdout || "";
   const stderr = r.stderr || "";
   return {
@@ -83,7 +139,53 @@ export function runCli(bin, args, { cwd, env = {}, timeout = 120_000 } = {}) {
     stderr,
     combined: stdout + stderr,
     error: r.error,
+    ms: performance.now() - t0,
   };
+}
+
+/**
+ * Timed spawn + peak RSS. Delegates to `scripts/lib/measure-cli.mjs`, the
+ * same method as `pnpm bench:memory` (Windows: in-process WorkingSet sample
+ * inside PowerShell; Linux/macOS: spawn + pidTreeRssBytes poll).
+ *
+ * `bin` may be a path or a `{ bin, argsPrefix, shell }` from resolveSpawnable.
+ */
+export function runCliMeasured(bin, args, { cwd, env = {}, timeout = 120_000 } = {}) {
+  const spec =
+    bin && typeof bin === "object" && bin.bin
+      ? bin
+      : bin
+        ? {
+            bin,
+            argsPrefix: [],
+            shell: process.platform === "win32" && /\.cmd$/i.test(bin),
+          }
+        : null;
+  if (!spec) return Promise.resolve(emptyRun("binary not found"));
+  // Only extras — measureCli already spreads process.env. Dumping the full
+  // environment into the Windows ProcessStartInfo script breaks on values
+  // that contain quotes.
+  const nodePath = [join(rootDir, "node_modules"), process.env.NODE_PATH ?? ""]
+    .filter(Boolean)
+    .join(process.platform === "win32" ? ";" : ":");
+  const pathSep = process.platform === "win32" ? ";" : ":";
+  const pathEnv = `${join(rootDir, "node_modules", ".bin")}${pathSep}${process.env.PATH || ""}`;
+  return measureCli({
+    bin: spec.bin,
+    args: [...(spec.argsPrefix || []), ...(args || [])],
+    cwd,
+    env: withTsgoEnv(
+      {
+        NODE_PATH: nodePath,
+        PATH: pathEnv,
+        NO_COLOR: "1",
+        ...env,
+      },
+      rootDir,
+    ),
+    timeoutMs: timeout,
+    shell: spec.shell ?? false,
+  });
 }
 
 export { rootDir };

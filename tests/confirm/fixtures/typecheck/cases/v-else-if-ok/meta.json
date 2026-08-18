@@ -1,0 +1,6 @@
+{
+  "id": "v-else-if-ok",
+  "description": "typeof guards on v-if / v-else-if narrow a string | number union in the template",
+  "expectErrors": false,
+  "requires": ["v-if-narrow"]
+}

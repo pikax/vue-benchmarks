@@ -1,0 +1,6 @@
+{
+  "id": "event-mod-submit-prevent-ok",
+  "description": "@submit.prevent accepts an Event handler (clean)",
+  "expectErrors": false,
+  "requires": ["dom-events"]
+}

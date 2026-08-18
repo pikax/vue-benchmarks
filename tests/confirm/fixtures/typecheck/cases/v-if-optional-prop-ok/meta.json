@@ -1,0 +1,6 @@
+{
+  "id": "v-if-optional-prop-ok",
+  "description": "v-if on an optional prop narrows it to string before toUpperCase",
+  "expectErrors": false,
+  "requires": ["v-if-narrow"]
+}

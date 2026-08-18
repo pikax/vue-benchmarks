@@ -1,0 +1,8 @@
+{
+  "id": "inherit-attrs-default-unknown",
+  "description": "Default inheritAttrs (no defineOptions) still errors on undeclared attrs under strictTemplates",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS2353", "id", "does not exist"],
+  "requires": ["strict-component-attrs"]
+}

@@ -1,0 +1,9 @@
+{
+  "id": "fallthrough-mono-false-bad",
+  "group": "fallthrough-root",
+  "needsFallthroughAttributes": true,
+  "description": "inheritAttrs:false + single root: undeclared id must still error under fallthroughAttributes",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS2353", "id", "does not exist"]
+}

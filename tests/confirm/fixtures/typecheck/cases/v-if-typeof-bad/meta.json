@@ -1,0 +1,8 @@
+{
+  "id": "v-if-typeof-bad",
+  "description": "string | number without a typeof guard must reject toUpperCase",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS2339", "toUpperCase", "does not exist"],
+  "requires": ["v-if-narrow"]
+}

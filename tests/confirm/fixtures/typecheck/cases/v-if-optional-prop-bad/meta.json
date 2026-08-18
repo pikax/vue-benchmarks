@@ -1,0 +1,8 @@
+{
+  "id": "v-if-optional-prop-bad",
+  "description": "Optional prop used without v-if must report possibly undefined",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS18048", "TS2532", "possibly", "undefined"],
+  "requires": ["v-if-narrow"]
+}

@@ -1,0 +1,6 @@
+{
+  "id": "provide-inject-ok",
+  "description": "inject(key, default) is a definite string when the default is provided",
+  "expectErrors": false,
+  "requires": ["script-types"]
+}

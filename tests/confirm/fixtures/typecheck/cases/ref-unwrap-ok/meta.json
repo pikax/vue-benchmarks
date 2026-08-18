@@ -1,0 +1,6 @@
+{
+  "id": "ref-unwrap-ok",
+  "description": "Template auto-unwraps a number ref so count + 1 is valid",
+  "expectErrors": false,
+  "requires": ["template-bindings"]
+}

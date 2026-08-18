@@ -1,0 +1,6 @@
+{
+  "id": "with-defaults-ok",
+  "description": "withDefaults makes an optional prop defined in the template (toUpperCase is safe)",
+  "expectErrors": false,
+  "requires": ["script-types"]
+}

@@ -1,0 +1,8 @@
+{
+  "id": "emit-wrong-arg",
+  "description": "emit('change', string) where the payload is typed as number",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS2345", "TS2322", "string", "number", "not assignable"],
+  "requires": ["emits"]
+}

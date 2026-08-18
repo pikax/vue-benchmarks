@@ -1,0 +1,9 @@
+{
+  "id": "fallthrough-vif-static-multi-bad",
+  "group": "fallthrough-root",
+  "needsFallthroughAttributes": true,
+  "description": "inheritAttrs default + v-if=\"true\" whose branch is multi-root: undeclared id must error",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS2353", "id", "does not exist"]
+}

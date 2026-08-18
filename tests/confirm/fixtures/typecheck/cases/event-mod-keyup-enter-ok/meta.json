@@ -1,0 +1,6 @@
+{
+  "id": "event-mod-keyup-enter-ok",
+  "description": "@keyup.enter keeps KeyboardEvent (key modifiers are not event-type rewrites)",
+  "expectErrors": false,
+  "requires": ["dom-events"]
+}

@@ -1,0 +1,6 @@
+{
+  "id": "event-mod-click-stop-prevent-ok",
+  "description": "Chained @click.stop.prevent is still a MouseEvent handler (clean)",
+  "expectErrors": false,
+  "requires": ["dom-events"]
+}

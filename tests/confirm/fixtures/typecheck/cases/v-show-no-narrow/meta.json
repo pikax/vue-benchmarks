@@ -1,0 +1,8 @@
+{
+  "id": "v-show-no-narrow",
+  "description": "v-show does not narrow; reading .name on a nullable ref must still error",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS18047", "TS18048", "possibly", "null", "undefined"],
+  "requires": ["v-if-narrow"]
+}

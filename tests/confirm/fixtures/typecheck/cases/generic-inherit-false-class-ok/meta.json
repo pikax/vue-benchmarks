@@ -1,0 +1,6 @@
+{
+  "id": "generic-inherit-false-class-ok",
+  "group": "generics",
+  "description": "Generic + inheritAttrs:false still allows class",
+  "expectErrors": false
+}

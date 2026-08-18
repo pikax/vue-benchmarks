@@ -126,6 +126,15 @@ export function pidTreeRssBytes(pid) {
       } catch {
         /* no children file */
       }
+    } else if (process.platform === "darwin") {
+      // pgrep -P is the cheap child list; ps rss is KB. No kernel peak is
+      // readable from outside the process, so the caller must poll.
+      const r = spawnSync("pgrep", ["-P", String(pid)], { encoding: "utf8" });
+      if (r.status === 0) {
+        for (const k of String(r.stdout).trim().split(/\s+/).filter(Boolean)) {
+          total += pidRssBytes(Number(k)) || 0;
+        }
+      }
     }
   } catch {
     /* fall through */

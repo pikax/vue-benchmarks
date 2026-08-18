@@ -1,0 +1,8 @@
+{
+  "id": "v-else-if-bad",
+  "description": "typeof === 'string' branch must reject number-only methods (toFixed)",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS2339", "toFixed", "does not exist"],
+  "requires": ["v-if-narrow"]
+}

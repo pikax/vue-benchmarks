@@ -1,0 +1,6 @@
+{
+  "id": "define-model-get-set-ok",
+  "description": "defineModel get/set transformers whose in/out types match T stay clean",
+  "expectErrors": false,
+  "requires": ["v-model"]
+}

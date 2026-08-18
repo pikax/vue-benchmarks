@@ -1,0 +1,6 @@
+{
+  "id": "computed-unwrap-ok",
+  "description": "Template auto-unwraps a computed number so toFixed is valid",
+  "expectErrors": false,
+  "requires": ["template-bindings"]
+}

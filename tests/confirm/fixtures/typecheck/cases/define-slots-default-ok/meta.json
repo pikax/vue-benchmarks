@@ -1,0 +1,4 @@
+{
+  "id": "define-slots-default-ok",
+  "description": "defineSlots default props flow into the parent's #default destructure (clean)"
+}

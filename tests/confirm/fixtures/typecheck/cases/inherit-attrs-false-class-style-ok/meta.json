@@ -1,0 +1,5 @@
+{
+  "id": "inherit-attrs-false-class-style-ok",
+  "description": "inheritAttrs: false still allows class and style on the component",
+  "expectErrors": false
+}

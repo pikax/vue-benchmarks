@@ -1,0 +1,6 @@
+{
+  "id": "native-v-model-number-ok",
+  "description": "Native <input v-model.number> accepts a number ref (clean)",
+  "expectErrors": false,
+  "requires": ["v-model"]
+}

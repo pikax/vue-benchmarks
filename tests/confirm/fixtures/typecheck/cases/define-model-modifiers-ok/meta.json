@@ -1,0 +1,6 @@
+{
+  "id": "define-model-modifiers-ok",
+  "description": "defineModel<string, 'trim' | 'capitalize'> + v-model.trim; child reads modifiers.trim (clean)",
+  "expectErrors": false,
+  "requires": ["v-model"]
+}

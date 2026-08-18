@@ -1,0 +1,7 @@
+{
+  "id": "generic-fallthrough-mono-ok",
+  "group": "generics",
+  "needsFallthroughAttributes": true,
+  "description": "Generic + inheritAttrs default + single root: native id falls through",
+  "expectErrors": false
+}

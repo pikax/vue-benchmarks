@@ -1,0 +1,6 @@
+{
+  "id": "ts-import-vue-bad",
+  "description": ".ts file imports an SFC; @ts-expect-error on a string assigned to a number prop (unused if the import is any)",
+  "expectErrors": false,
+  "tsImporter": "main.ts"
+}

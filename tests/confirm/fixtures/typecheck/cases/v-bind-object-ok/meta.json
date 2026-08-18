@@ -1,0 +1,6 @@
+{
+  "id": "v-bind-object-ok",
+  "description": "v-bind=\"object\" whose fields match the child props is clean",
+  "expectErrors": false,
+  "requires": ["prop-types"]
+}

@@ -1,0 +1,8 @@
+{
+  "id": "event-mod-click-prevent-dollar-bad",
+  "description": "$event on @click.prevent is still MouseEvent (no .key)",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS2339", "TS2551", "key", "MouseEvent"],
+  "requires": ["dom-events"]
+}

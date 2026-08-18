@@ -1,0 +1,6 @@
+{
+  "id": "v-if-else-ok",
+  "description": "v-if / v-else: narrowed user.name in the true branch, literal in the else",
+  "expectErrors": false,
+  "requires": ["v-if-narrow"]
+}

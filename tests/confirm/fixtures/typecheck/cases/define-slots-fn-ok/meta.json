@@ -1,0 +1,4 @@
+{
+  "id": "define-slots-fn-ok",
+  "description": "Slot callback prop (id: number) => void called with a number (clean)"
+}

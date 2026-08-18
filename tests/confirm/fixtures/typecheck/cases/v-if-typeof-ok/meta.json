@@ -1,0 +1,6 @@
+{
+  "id": "v-if-typeof-ok",
+  "description": "typeof === 'number' in v-if narrows a string | number ref for toFixed",
+  "expectErrors": false,
+  "requires": ["v-if-narrow"]
+}

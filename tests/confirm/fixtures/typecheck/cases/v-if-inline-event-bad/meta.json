@@ -1,0 +1,8 @@
+{
+  "id": "v-if-inline-event-bad",
+  "description": "Inline @click reads .name on a nullable ref with no v-if guard",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS18047", "TS18048", "possibly", "null", "undefined"],
+  "requires": ["v-if-narrow"]
+}

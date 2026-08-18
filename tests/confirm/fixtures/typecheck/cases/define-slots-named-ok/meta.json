@@ -1,0 +1,4 @@
+{
+  "id": "define-slots-named-ok",
+  "description": "Named + default defineSlots used at their declared payload types (clean)"
+}

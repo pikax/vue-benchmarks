@@ -1,0 +1,4 @@
+{
+  "id": "slot-v-bind-ok",
+  "description": "Child slot v-bind object whose fields match defineSlots stays clean"
+}

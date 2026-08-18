@@ -1,0 +1,7 @@
+{
+  "id": "fallthrough-mono-ok",
+  "group": "fallthrough-root",
+  "needsFallthroughAttributes": true,
+  "description": "inheritAttrs default + single root: native id falls through (fallthroughAttributes)",
+  "expectErrors": false
+}

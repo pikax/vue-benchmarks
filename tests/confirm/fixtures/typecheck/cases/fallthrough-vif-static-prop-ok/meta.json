@@ -1,0 +1,7 @@
+{
+  "id": "fallthrough-vif-static-prop-ok",
+  "group": "fallthrough-root",
+  "needsFallthroughAttributes": true,
+  "description": "inheritAttrs default + v-if on a literal-true prop: statically single root, id may fall through",
+  "expectErrors": false
+}

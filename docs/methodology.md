@@ -462,7 +462,7 @@ pnpm confirm:component-meta
 | **compile**        | Each SFC compiler emits code that mounts under `@vue/test-utils` and matches expected DOM/behavior (counter, props, `v-if`, `v-for`, slots, `inheritAttrs` true/false).                                                                                                                               |
 | **jsx-compile**    | `vue-jsx-vapor` / `@vue-jsx-vapor/compiler-rs` / `@vue/babel-plugin-jsx` transforms plant JSX into code matching expected vapor/VDOM patterns.                                                                                                                                                        |
 | **lint**           | Clean fixtures → 0 issues; planted dirty fixtures → at least the expected issue count (and matching rule/code when the tool has that rule).                                                                                                                                                           |
-| **typecheck**      | Clean projects stay clean; planted bugs in `<script>` and `<template>` are reported (`v-if` narrowing, event closures, wrong/unknown props, emit/`v-model` types, native element handler types, `inheritAttrs` + strictTemplates).                                                                    |
+| **typecheck**      | Clean projects stay clean; planted bugs in `<script>` and `<template>` are reported. Full plant list, inheritAttrs/root-shape rules, and the last pass/fail matrix: [docs/typecheck.md](typecheck.md).                                                                                                 |
 | **component-meta** | Extracted public API matches plants: prop names/types/required/defaults, emits, slots, `defineExpose`. Tools are normalized to a common shape — schema phrasing may differ; missing API surface is a FAIL. Vize is scored via `generateDeclaration` (declaration emit, not a dedicated meta package). |
 
 Results: `results/confirm.md` + `results/confirm.json`. Exit code **1** on any FAIL; **skip** is allowed (e.g. verter-tsc without tsgo).
@@ -863,7 +863,7 @@ They find things a generated corpus cannot. The first run of the bundle surface 
 
 | Workflow                                          | When                                | What                                                                                                                                    |
 | ------------------------------------------------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| **Test** (`.github/workflows/test.yml`)           | pull_request, `main` push           | `tests/harness/run.mjs` + `tests/confirm/run.mjs`. Install only, no fixtures. **Publishes nothing.**                                    |
+| **Test** (`.github/workflows/test.yml`)           | pull_request, `main` push           | `tests/harness/run.mjs` + `tests/confirm/run.mjs`. Install only, no fixtures. On `main`, commits `docs/typecheck.md` (Linux pass/fail + one-shot time/RSS). Throughput / MEMORY.md stay on Benchmark. |
 | **PR** (`.github/workflows/pr.yml`)               | pull_request                        | **Smoke only**: build (install + `fixtures/20`) → one throughput pass over every surface at `--runs 1 --warmups 0`. **No** `pnpm confirm` (that runs in `test.yml` on the same event — see [`pr.yml`](../.github/workflows/pr.yml) L92), **no** full bench, **no** README rewrite. |
 | **Benchmark** (`.github/workflows/benchmark.yml`) | `workflow_dispatch` **only**        | build → **bench** + **ide** + **ide-scale** + **memory** → update `README.md` + [`MEMORY.md`](../MEMORY.md). The only workflow that commits. |
 | **Benchmark (real-world)** (`.github/workflows/benchmark-real-world.yml`) | `workflow_dispatch` **only** | Matrix of **one job per project**: clone at the pinned ref → install → `compile,format,lint,bundle,hmr,project-test,project-build,project-typecheck` for every tool on that one runner → `README.md` real-world section. `fail-fast: false`; the clone is cached on the pinned ref. |
@@ -987,7 +987,7 @@ work/                       # ephemeral copies (gitignored)
 results/                    # local + CI reports (gitignored; published copies live
                             #   in the README / MEMORY.md marker sections)
 .github/workflows/
-  test.yml                  # harness + confirm on PR / main push (publishes nothing)
+  test.yml                  # harness + confirm on PR / main push; commits docs/typecheck.md on main
   pr.yml                    # PR smoke: tiny throughput pass only (no confirm)
   benchmark.yml             # manual dispatch: bench + ide + ide-scale + memory
                             #   → README / MEMORY.md

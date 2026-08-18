@@ -1,0 +1,10 @@
+<script setup lang="ts">
+defineProps<{
+  count: number;
+  label: string;
+}>();
+</script>
+
+<template>
+  <span>{{ label }}:{{ count }}</span>
+</template>

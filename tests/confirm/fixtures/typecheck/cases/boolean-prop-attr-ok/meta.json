@@ -1,0 +1,6 @@
+{
+  "id": "boolean-prop-attr-ok",
+  "description": "Boolean presence attribute `<Child enabled />` satisfies enabled: boolean",
+  "expectErrors": false,
+  "requires": ["prop-types"]
+}

@@ -1,0 +1,6 @@
+{
+  "id": "generic-slot-ok",
+  "group": "generics",
+  "description": "Generic scoped slot exposes T so item.label is a string",
+  "expectErrors": false
+}

@@ -1,0 +1,8 @@
+{
+  "id": "style-binding-bad",
+  "description": ":style bound to a number must error",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS2322", "TS2345", "number", "not assignable", "style"],
+  "requires": ["dom-events"]
+}

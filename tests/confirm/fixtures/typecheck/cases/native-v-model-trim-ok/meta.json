@@ -1,0 +1,6 @@
+{
+  "id": "native-v-model-trim-ok",
+  "description": "Native <input v-model.trim> accepts a string ref (clean)",
+  "expectErrors": false,
+  "requires": ["v-model"]
+}

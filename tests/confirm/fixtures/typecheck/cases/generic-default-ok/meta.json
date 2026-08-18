@@ -1,0 +1,6 @@
+{
+  "id": "generic-default-ok",
+  "group": "generics",
+  "description": "Generic with a default type param (T = string) accepts a string value",
+  "expectErrors": false
+}

@@ -1,0 +1,7 @@
+{
+  "id": "define-slots-fn-bad",
+  "description": "Slot callback typed (id: number) => void must reject a string argument",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS2345", "TS2322", "number", "string", "not assignable"]
+}

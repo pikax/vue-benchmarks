@@ -1,0 +1,5 @@
+{
+  "id": "inherit-attrs-default-class-style-ok",
+  "description": "Default inheritAttrs still allows class and style (AllowedComponentProps)",
+  "expectErrors": false
+}

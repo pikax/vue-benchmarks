@@ -1,0 +1,8 @@
+{
+  "id": "ref-unwrap-bad",
+  "description": "Auto-unwrapped number ref must reject string methods in the template",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS2339", "toUpperCase", "does not exist"],
+  "requires": ["template-bindings"]
+}

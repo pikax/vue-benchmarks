@@ -1,0 +1,6 @@
+{
+  "id": "event-mod-component-once-ok",
+  "description": "@change.once on a typed emit still receives the number payload (clean)",
+  "expectErrors": false,
+  "requires": ["emits"]
+}

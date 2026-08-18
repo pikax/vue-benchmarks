@@ -1,0 +1,6 @@
+{
+  "id": "define-model-named-modifiers-ok",
+  "description": "Named defineModel + v-model:title.trim matches the declared modifier (clean)",
+  "expectErrors": false,
+  "requires": ["v-model"]
+}

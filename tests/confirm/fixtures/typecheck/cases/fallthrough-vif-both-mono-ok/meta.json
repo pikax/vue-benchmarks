@@ -1,0 +1,7 @@
+{
+  "id": "fallthrough-vif-both-mono-ok",
+  "group": "fallthrough-root",
+  "needsFallthroughAttributes": true,
+  "description": "inheritAttrs default + v-if/v-else both single-root: id may fall through (always one root)",
+  "expectErrors": false
+}

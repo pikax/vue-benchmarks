@@ -1,0 +1,9 @@
+{
+  "id": "fallthrough-vif-mono-multi-bad",
+  "group": "fallthrough-root",
+  "needsFallthroughAttributes": true,
+  "description": "inheritAttrs default + v-if mono / v-else multi-root: undeclared id must error",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS2353", "id", "does not exist"]
+}

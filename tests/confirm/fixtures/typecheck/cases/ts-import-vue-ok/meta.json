@@ -1,0 +1,6 @@
+{
+  "id": "ts-import-vue-ok",
+  "description": ".ts file imports an SFC and passes correctly typed props",
+  "expectErrors": false,
+  "tsImporter": "main.ts"
+}

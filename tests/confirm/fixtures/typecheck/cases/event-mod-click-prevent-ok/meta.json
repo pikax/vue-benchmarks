@@ -1,0 +1,6 @@
+{
+  "id": "event-mod-click-prevent-ok",
+  "description": "@click.prevent keeps the native MouseEvent handler type (clean)",
+  "expectErrors": false,
+  "requires": ["dom-events"]
+}

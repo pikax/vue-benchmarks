@@ -1,0 +1,6 @@
+{
+  "id": "define-model-default-ok",
+  "description": "Unnamed defineModel<string> accepts v-model on a string ref (clean)",
+  "expectErrors": false,
+  "requires": ["v-model"]
+}

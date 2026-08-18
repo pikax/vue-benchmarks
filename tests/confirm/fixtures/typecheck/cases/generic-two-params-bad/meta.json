@@ -1,0 +1,8 @@
+{
+  "id": "generic-two-params-bad",
+  "group": "generics",
+  "description": "Two-param generic: slot payload inferred as number must reject a string-only consumer",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS2345", "TS2322", "number", "string", "not assignable"]
+}

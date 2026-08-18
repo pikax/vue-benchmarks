@@ -1,0 +1,6 @@
+{
+  "id": "event-mod-click-ctrl-ok",
+  "description": "System modifier @click.ctrl is still a MouseEvent handler (clean)",
+  "expectErrors": false,
+  "requires": ["dom-events"]
+}

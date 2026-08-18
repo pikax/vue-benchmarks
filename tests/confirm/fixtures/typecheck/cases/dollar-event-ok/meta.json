@@ -1,0 +1,6 @@
+{
+  "id": "dollar-event-ok",
+  "description": "$event on native @click is a MouseEvent and has preventDefault",
+  "expectErrors": false,
+  "requires": ["dom-events"]
+}

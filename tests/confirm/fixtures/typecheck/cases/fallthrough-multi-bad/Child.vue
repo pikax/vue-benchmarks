@@ -1,0 +1,10 @@
+<script setup lang="ts">
+defineProps<{
+  title: string;
+}>();
+</script>
+
+<template>
+  <div class="a">{{ title }}</div>
+  <span class="b">x</span>
+</template>

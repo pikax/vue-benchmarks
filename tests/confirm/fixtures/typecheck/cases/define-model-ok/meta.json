@@ -1,0 +1,6 @@
+{
+  "id": "define-model-ok",
+  "description": "Named defineModel bindings with matching ref types stay clean",
+  "expectErrors": false,
+  "requires": ["v-model"]
+}

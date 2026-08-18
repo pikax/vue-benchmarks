@@ -33,6 +33,51 @@
   "typecheck/inherit-attrs-false-unknown/verter-tsc": "verter-tsc unconditionally exempts data-* and aria-* prefixed attributes from strictTemplates undeclared-prop checking (aria-zzz is silent, notdeclared errors), so the planted unknown attribute is missed. Unrelated to inheritAttrs.",
   "typecheck/attrs-aria-data-unknown/verter-tsc": "Same root cause as above — this case isolates the data-*/aria-* prefix exemption directly.",
   "typecheck/generic-component-ok/verter-tsc": "verter-tsc emits 3 spurious diagnostics about its own virtual code on a CLEAN generic <script setup> component: ___VERTER___Attrs requires 1 type argument, ___VERTER___attributes is not generic, Cannot find name 'items'.",
+  "typecheck/component-ref-expose-bad/vize-check": "vize does not typecheck defineExpose on a component template ref — hide() on a child that only exposes focus is silent. vue-tsc, verter-tsc and golar all report TS2339.",
+  "typecheck/missing-required-prop/golar-typecheck": "golar typecheck does not report a missing required child prop (<Child /> where title: string is required). vue-tsc, vize and verter-tsc all do.",
+  "typecheck/v-if-discriminant-ok/verter-tsc": "verter-tsc does not auto-unwrap a ref in a tagged-union v-if (pet.kind): it types pet as Ref<Dog | Cat> and reports Property 'kind' does not exist. vue-tsc, vize and golar unwrap correctly and stay clean.",
+
+  "typecheck/fallthrough-mono-ok/verter-tsc": "verter-tsc does not honour vueCompilerOptions.fallthroughAttributes: a native id on a single-root inheritAttrs-default child is reported as an extra prop (TS2353). vue-tsc and golar accept the fallthrough.",
+  "typecheck/fallthrough-vif-both-mono-ok/verter-tsc": "Same as fallthrough-mono-ok/verter-tsc — v-if/v-else both single-root is still treated as an unknown id.",
+  "typecheck/fallthrough-vif-static-ok/verter-tsc": "Same as fallthrough-mono-ok/verter-tsc — statically true v-if single root still errors on fallthrough id.",
+  "typecheck/fallthrough-vif-static-prop-ok/verter-tsc": "Same as fallthrough-mono-ok/verter-tsc — literal-true prop still errors on fallthrough id.",
+
+  "typecheck/fallthrough-mono-false-bad/vize-check": "vize does not reject undeclared attrs under fallthroughAttributes (inheritAttrs:false + single root, id= is silent). Same gap as its missing strict-component-attrs capability, now visible because this family is not skipped.",
+  "typecheck/fallthrough-multi-bad/vize-check": "vize does not reject undeclared attrs on a multi-root fragment under fallthroughAttributes (id= is silent). vue-tsc, verter-tsc and golar all report TS2353.",
+  "typecheck/fallthrough-multi-false-bad/vize-check": "vize does not reject undeclared attrs on inheritAttrs:false + multi-root under fallthroughAttributes.",
+  "typecheck/fallthrough-native-type-bad/vize-check": "vize does not typecheck fallthrough native attrs: :disabled=\"'nope'\" on a single <button> root is silent. vue-tsc, verter-tsc and golar report the string/boolean mismatch.",
+  "typecheck/fallthrough-vif-both-mono-false-bad/vize-check": "vize does not reject undeclared id when inheritAttrs is false and both v-if branches are single-root.",
+  "typecheck/fallthrough-vif-static-multi-bad/vize-check": "vize does not reject undeclared id when v-if=\"true\" expands to a fragment.",
+
+  "typecheck/fallthrough-vif-mono-multi-bad/vue-tsc": "vue-tsc (Volar) treats v-if single-root / v-else fragment as fallthrough-eligible and accepts undeclared id. Runtime is not always one root. verter-tsc reports TS2353. A Volar gap, not a plant bug.",
+  "typecheck/fallthrough-vif-mono-multi-bad/golar-typecheck": "golar matches Volar here: v-if mono / v-else multi is treated as a single fallthrough target. verter-tsc reports the extra id.",
+  "typecheck/fallthrough-vif-mono-multi-bad/vize-check": "vize is silent on undeclared id for v-if mono / v-else multi (same missing fallthrough/attr check as its other fallthrough misses).",
+
+  "typecheck/generic-default-ok/verter-tsc": "Same virtual-code leak as generic-component-ok/verter-tsc: ___VERTER___attributes is not generic on a CLEAN generic SFC.",
+  "typecheck/generic-emit-ok/verter-tsc": "Same virtual-code leak as generic-component-ok/verter-tsc on a CLEAN generic + defineEmits SFC.",
+  "typecheck/generic-fallthrough-mono-ok/verter-tsc": "Same virtual-code leak as generic-component-ok/verter-tsc on a CLEAN generic single-root SFC.",
+  "typecheck/generic-inherit-false-class-ok/verter-tsc": "Same virtual-code leak as generic-component-ok/verter-tsc on a CLEAN generic + inheritAttrs:false SFC.",
+  "typecheck/generic-multi-root-ok/verter-tsc": "Same virtual-code leak as generic-component-ok/verter-tsc on a CLEAN generic multi-root SFC.",
+  "typecheck/generic-slot-ok/verter-tsc": "Same virtual-code leak as generic-component-ok/verter-tsc on a CLEAN generic + defineSlots SFC.",
+  "typecheck/generic-two-params-ok/verter-tsc": "Same virtual-code leak as generic-component-ok/verter-tsc: ___VERTER___Attrs requires 2 type arguments on a CLEAN two-param generic SFC.",
+
+  "typecheck/generic-slot-bad/vize-check": "vize does not typecheck a generic scoped-slot payload (item.id number passed to a string-only fn is silent). vue-tsc, verter-tsc and golar report the mismatch.",
+  "typecheck/generic-two-params-bad/vize-check": "vize does not typecheck a two-param generic slot payload (inferred number vs string-only consumer is silent).",
+
+  "typecheck/define-model-modifiers-ok/vize-check": "vize types defineModel as a single Ref, not the [model, modifiers] tuple, so `const [model, modifiers] = defineModel<string, 'trim' | 'capitalize'>()` is TS2488 (Ref is not iterable). vue-tsc and golar accept the tuple and the v-model.trim call site.",
+  "typecheck/define-model-modifiers-ok/verter-tsc": "verter-tsc does not type defineModel modifiers at the call site: v-model.trim on a string model is reported as extra props on the child (TS2322) rather than accepted. vue-tsc and golar stay clean.",
+  "typecheck/define-model-modifiers-read-bad/vize-check": "Same defineModel-as-Ref gap as define-model-modifiers-ok/vize-check: the tuple destructure is TS2488, so modifiers.nope is never checked. vue-tsc and golar report TS2339 on nope.",
+  "typecheck/define-model-modifiers-read-bad/verter-tsc": "verter-tsc emits a virtual-code leak (Generic type 'Prettify' requires 1 type argument) on defineModel<string, 'trim' | 'capitalize'> and never reports modifiers.nope. vue-tsc and golar report TS2339.",
+  "typecheck/define-model-modifiers-unknown-bad/vize-check": "Same defineModel-as-Ref gap: the child tuple is TS2488 and v-model.nope is not reported. vue-tsc and golar report TS2353 on the unknown modifier.",
+  "typecheck/define-model-named-modifiers-ok/vize-check": "Same defineModel-as-Ref gap on a named model: `const [title, modifiers] = defineModel<string, 'trim'>('title')` is TS2488. vue-tsc and golar stay clean.",
+  "typecheck/define-model-named-modifiers-ok/verter-tsc": "Same as define-model-modifiers-ok/verter-tsc — v-model:title.trim is rejected as extra props (TS2322) instead of accepted as a declared modifier.",
+
+  "typecheck/slot-default-implicit-ok/verter-tsc": "verter-tsc errors on a CLEAN implicit default <slot />: Property '$slots' does not exist on the generated component type. vue-tsc, vize and golar stay clean.",
+  "typecheck/slot-provide-type-bad/vize-check": "vize does not typecheck props passed into <slot> against defineSlots ( :msg=\"1\" where msg: string is silent). vue-tsc, verter-tsc and golar report TS2322.",
+  "typecheck/slot-unknown-prop-bad/vize-check": "vize does not typecheck scoped-slot destructure extras ({ missing } on a { msg: string } payload is silent). vue-tsc, verter-tsc and golar report TS2339.",
+  "typecheck/slot-v-bind-bad/vize-check": "vize does not typecheck <slot v-bind> against defineSlots (item.id: string vs number is silent). vue-tsc and golar report the mismatch.",
+  "typecheck/slot-v-bind-bad/verter-tsc": "verter-tsc does not type <slot v-bind=\"obj\"> as the slot payload: it reports TS2554 Expected 1 arguments, but got 0 instead of the id string/number mismatch. vue-tsc and golar report the payload mismatch.",
+  "typecheck/slot-v-bind-ok/verter-tsc": "Same <slot v-bind> hole as slot-v-bind-bad/verter-tsc on a CLEAN fixture: TS2554 Expected 1 arguments, but got 0. vue-tsc, vize and golar stay clean.",
 
   "component-meta/generic-props/vize-declaration-meta": "vize generateDeclaration emits unparseable TypeScript for generic components — `export type Props<T extends { id: number } = any> = <{ ... }>;` wraps the body in angle brackets (3 TS parse errors). Only generic components are affected.",
 

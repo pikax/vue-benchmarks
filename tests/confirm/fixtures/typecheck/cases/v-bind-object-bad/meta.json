@@ -1,0 +1,8 @@
+{
+  "id": "v-bind-object-bad",
+  "description": "v-bind object with count: string must not satisfy count: number",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS2322", "TS2345", "string", "number", "not assignable"],
+  "requires": ["prop-types"]
+}

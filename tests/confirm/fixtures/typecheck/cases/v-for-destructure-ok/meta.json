@@ -1,0 +1,6 @@
+{
+  "id": "v-for-destructure-ok",
+  "description": "Destructured v-for bindings keep their field types",
+  "expectErrors": false,
+  "requires": ["template-bindings"]
+}

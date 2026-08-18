@@ -1,0 +1,6 @@
+{
+  "id": "generic-multi-root-ok",
+  "group": "generics",
+  "description": "Generic multi-root SFC with correct props stays clean (no extra attrs)",
+  "expectErrors": false
+}

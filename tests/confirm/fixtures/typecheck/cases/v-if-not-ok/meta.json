@@ -1,0 +1,6 @@
+{
+  "id": "v-if-not-ok",
+  "description": "v-if=\"!user\" / v-else must narrow the else branch to the object",
+  "expectErrors": false,
+  "requires": ["v-if-narrow"]
+}

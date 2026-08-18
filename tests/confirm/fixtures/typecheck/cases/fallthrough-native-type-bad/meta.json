@@ -1,0 +1,9 @@
+{
+  "id": "fallthrough-native-type-bad",
+  "group": "fallthrough-root",
+  "needsFallthroughAttributes": true,
+  "description": "inheritAttrs default + single <button> root: fallthrough :disabled=\"string\" must error",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS2322", "TS2345", "string", "boolean", "not assignable"]
+}

@@ -1,0 +1,6 @@
+{
+  "id": "native-input-v-model-ok",
+  "description": "Native <input> v-model accepts a string ref",
+  "expectErrors": false,
+  "requires": ["v-model"]
+}

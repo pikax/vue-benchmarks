@@ -1,0 +1,8 @@
+{
+  "id": "v-if-else-bad",
+  "description": "v-else branch must treat the nullable ref as null, so .name is an error",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS18047", "TS2339", "TS18048", "possibly", "null", "does not exist"],
+  "requires": ["v-if-narrow"]
+}

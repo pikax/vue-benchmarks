@@ -1,0 +1,6 @@
+{
+  "id": "emit-ok",
+  "description": "defineEmits typed payload: correct event name and number arg",
+  "expectErrors": false,
+  "requires": ["emits"]
+}

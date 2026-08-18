@@ -18,6 +18,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { formatReport, printConsole, summarize } from "./lib/harness.mjs";
+import { formatTypecheckDoc } from "./lib/typecheck-doc.mjs";
 import { runCompileSuite } from "./suites/compile.mjs";
 import { runJsxCompileConfirmSuite } from "./suites/jsx-compile.mjs";
 import { runLintSuite } from "./suites/lint.mjs";
@@ -63,6 +64,13 @@ function reportKnownFailures(results, { strict = false } = {}) {
     results.filter((r) => /pass/i.test(r.status ?? "")).map(resultKey),
   );
   const fixed = Object.keys(known).filter((k) => passingKeys.has(k));
+
+  const warnings = results.filter((r) => /warn/i.test(r.status ?? ""));
+  if (warnings.length) {
+    console.log(`Disclosed extra-harness behaviour (warn, not a pass): ${warnings.length}`);
+    for (const r of warnings) console.log(`  · ${resultKey(r)} — ${r.message ?? "warned"}`);
+    console.log("");
+  }
 
   console.log("");
   if (expected.length) {
@@ -194,6 +202,22 @@ async function main() {
     ),
     "utf8",
   );
+
+  const typecheckRows = all.filter((r) => r.suite === "typecheck");
+  if (typecheckRows.length) {
+    const typecheckDoc = join(rootDir, "docs", "typecheck.md");
+    writeFileSync(
+      typecheckDoc,
+      formatTypecheckDoc({
+        results: all,
+        generatedAt: new Date().toISOString(),
+        platform: process.platform,
+        ci: Boolean(process.env.CI),
+      }),
+      "utf8",
+    );
+    console.log(`Wrote ${typecheckDoc}`);
+  }
 
   console.log(`\nWrote ${outMd}`);
   console.log(`Wrote ${outJson}`);

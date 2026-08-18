@@ -1,0 +1,9 @@
+{
+  "id": "generic-inherit-false-unknown",
+  "group": "generics",
+  "description": "Generic + inheritAttrs:false: undeclared extra attr must error",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS2353", "extra", "does not exist"],
+  "requires": ["strict-component-attrs"]
+}

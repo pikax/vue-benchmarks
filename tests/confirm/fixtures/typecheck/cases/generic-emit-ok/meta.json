@@ -1,0 +1,6 @@
+{
+  "id": "generic-emit-ok",
+  "group": "generics",
+  "description": "Generic emit payload matches the inferred T from the value prop",
+  "expectErrors": false
+}

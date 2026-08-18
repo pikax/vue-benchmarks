@@ -1,0 +1,6 @@
+{
+  "id": "v-if-inline-event-ok",
+  "description": "v-if on an element narrows a nullable ref inside that element's @click and interpolation",
+  "expectErrors": false,
+  "requires": ["v-if-narrow"]
+}

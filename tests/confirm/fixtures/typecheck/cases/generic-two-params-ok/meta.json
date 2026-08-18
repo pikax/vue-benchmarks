@@ -1,0 +1,6 @@
+{
+  "id": "generic-two-params-ok",
+  "group": "generics",
+  "description": "Generic component with two type params and matching bindings",
+  "expectErrors": false
+}

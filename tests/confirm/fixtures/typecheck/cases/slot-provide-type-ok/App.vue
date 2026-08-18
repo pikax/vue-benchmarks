@@ -1,0 +1,11 @@
+<script setup lang="ts">
+defineSlots<{
+  default(props: { msg: string }): unknown;
+}>();
+</script>
+
+<template>
+  <div>
+    <slot :msg="'hello'" />
+  </div>
+</template>

@@ -1,0 +1,8 @@
+{
+  "id": "v-if-discriminant-bad",
+  "description": "After narrowing to kind === 'dog', accessing cat-only meow() must error",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS2339", "meow", "does not exist"],
+  "requires": ["v-if-narrow"]
+}

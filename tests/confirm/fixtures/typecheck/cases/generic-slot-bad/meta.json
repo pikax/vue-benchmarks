@@ -1,0 +1,8 @@
+{
+  "id": "generic-slot-bad",
+  "group": "generics",
+  "description": "Generic scoped slot: item.id (number) must reject a string-only consumer",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS2345", "TS2322", "number", "string", "not assignable"]
+}

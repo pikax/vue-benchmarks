@@ -1,0 +1,4 @@
+{
+  "id": "slot-default-implicit-ok",
+  "description": "Default slot without defineSlots accepts parent children (clean)"
+}

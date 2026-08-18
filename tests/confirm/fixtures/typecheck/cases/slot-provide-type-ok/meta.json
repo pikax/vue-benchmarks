@@ -1,0 +1,4 @@
+{
+  "id": "slot-provide-type-ok",
+  "description": "Child <slot :msg> matches defineSlots default payload (clean)"
+}
