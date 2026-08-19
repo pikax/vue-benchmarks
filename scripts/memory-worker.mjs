@@ -17,6 +17,7 @@ import {
   pidTreeRssBytes,
   sampleWhile,
   summarizeSamples,
+  windowsTreeRssPsFunction,
 } from "./lib/memory.mjs";
 import { copyFixtureSubset } from "./lib/fixtures.mjs";
 
@@ -277,6 +278,7 @@ function runCliWindows(cli) {
 
   const ps = `
 $ErrorActionPreference = 'Stop'
+${windowsTreeRssPsFunction()}
 $psi = New-Object System.Diagnostics.ProcessStartInfo
 $psi.FileName = '${escapePsSingle(cli.bin)}'
 $psi.Arguments = [string]::Join(' ', @(${argList || "''"}))
@@ -300,12 +302,20 @@ $outTask = $p.StandardOutput.ReadToEndAsync()
 $errTask = $p.StandardError.ReadToEndAsync()
 $ws = New-Object System.Collections.Generic.List[Int64]
 $priv = New-Object System.Collections.Generic.List[Int64]
+$lastScan = -9999.0
 $timedOut = $false
 while (-not $p.HasExited) {
   if ($sw.Elapsed.TotalMilliseconds -gt ${timeoutMs}) {
     $timedOut = $true
     try { $p.Kill() } catch {}
     break
+  }
+  if ($sw.Elapsed.TotalMilliseconds - $lastScan -ge 50) {
+    try {
+      $snap = Measure-TreeWorkingSet $p.Id
+      if ($snap.Total -gt 0) { [void]$ws.Add([Int64]$snap.Total) }
+    } catch {}
+    $lastScan = $sw.Elapsed.TotalMilliseconds
   }
   try {
     $p.Refresh()
@@ -322,12 +332,17 @@ if ($timedOut) {
 $p.WaitForExit()
 $sw.Stop()
 try {
+  $snap = Measure-TreeWorkingSet $p.Id
+  if ($snap.Total -gt 0) { [void]$ws.Add([Int64]$snap.Total) }
+} catch {}
+try {
   $p.Refresh()
-  if ($p.WorkingSet64 -gt 0) { [void]$ws.Add([Int64]$p.WorkingSet64) }
+  if ($p.PeakWorkingSet64 -gt 0) { [void]$ws.Add([Int64]$p.PeakWorkingSet64) }
+} catch {}
+try {
+  $p.Refresh()
   if ($p.PrivateMemorySize64 -gt 0) { [void]$priv.Add([Int64]$p.PrivateMemorySize64) }
 } catch {}
-# Kernel high-water mark: exact peak regardless of what polling missed.
-try { if ($p.PeakWorkingSet64 -gt 0) { [void]$ws.Add([Int64]$p.PeakWorkingSet64) } } catch {}
 if ($ws.Count -eq 0) {
   Write-Output 'EMPTY'
   exit 0
@@ -445,7 +460,7 @@ Write-Output ("{0} {1} {2} {3} {4} {5} {6} {7} {8} {9}" -f $wsMin, $wsMax, $wsAv
       };
     })(),
     isolation: "cli-child-rss",
-    note: "RSS=WorkingSet; alloc≈PrivateMemorySize64; CPU=TotalProcessorTime (tool process only)",
+    note: "RSS=WorkingSet of the full descendant tree (tool + child tsgo/tsc); alloc≈PrivateMemorySize64 of the root process; CPU=TotalProcessorTime of the root process",
   };
 }
 

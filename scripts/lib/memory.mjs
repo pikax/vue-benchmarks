@@ -4,7 +4,8 @@
  */
 
 import { spawnSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import v8 from "node:v8";
 import os from "node:os";
 
@@ -97,10 +98,10 @@ export function pidRssBytes(pid) {
 /**
  * Sum RSS of several process trees (e.g. Volar Vue half + TypeScript half).
  *
- * Each pid is sampled as a tree so Node wrappers and workers count; the
- * trees are then added. That is an upper bound if the processes peak at
- * different times, and the right number when they are the two halves of one
- * product.
+ * Each pid is sampled as a tree so Node wrappers, workers, and the TypeScript
+ * engine they spawn (tsgo / native tsc / tsserver) count. The trees are then
+ * added. That is an upper bound if the processes peak at different times, and
+ * the right number when they are the two halves of one product.
  */
 export function sumPidTreeRssBytes(pids) {
   let tree = 0;
@@ -115,51 +116,197 @@ export function sumPidTreeRssBytes(pids) {
 }
 
 /**
- * RSS for a process and its direct children (helps Windows .cmd → node wrappers).
+ * Child TypeScript engine vs the Vue tool that launched it.
+ *
+ * verter-tsc spawnSync's a native bin that then spawn's `tsc.exe` (tsgo).
+ * Volar's *language server* has a sibling `tsserver`. vue-tsc CLI, golar,
+ * and vize check host the checker **in-process** — their RSS is the root
+ * process high-water mark (PeakWorkingSet / VmHWM), not a child column.
  */
-export function pidTreeRssBytes(pid) {
-  if (!pid || pid <= 0) return null;
-  let total = pidRssBytes(pid) || 0;
+export function isTypeScriptEngineProcess({ name = "", cmdline = "" } = {}) {
+  const n = String(name)
+    .replace(/\.exe$/i, "")
+    .split(/[/\\]/)
+    .pop()
+    .toLowerCase();
+  if (n === "tsgo" || n === "corsa" || n === "tsc") return true;
+  const cmd = String(cmdline).replace(/\0/g, " ");
+  if (/(^|[\\/\s])tsserver(\.js)?(\s|$)/i.test(cmd)) return true;
+  if (/(^|[\\/\s])tsgo(\.exe)?(\s|$)/i.test(cmd)) return true;
+  return false;
+}
+
+/** PowerShell helpers used by measure-cli / memory-worker to sample a full tree. */
+export function windowsTreeRssPsFunction() {
+  return `
+# Cheap: Get-Process by name. WMI ParentProcessId in the wait loop stalls
+# for seconds and we miss PeakWorkingSet of in-process checkers (vue-tsc,
+# golar, vize) and never see verter-tsc.exe / tsc.exe children.
+function Measure-TreeWorkingSet([int]$RootId, [datetime]$Started) {
+  $tool = [int64]0
+  $engine = [int64]0
+  $cutoff = $Started.AddSeconds(-2)
+  Get-Process -Name verter-tsc,tsgo,tsc,corsa -ErrorAction SilentlyContinue | ForEach-Object {
+    if ($_.StartTime -lt $cutoff) { return }
+    $n = $_.ProcessName.ToLowerInvariant()
+    $ws = [int64]$_.WorkingSet64
+    try { $hwm = [int64]$_.PeakWorkingSet64; if ($hwm -gt $ws) { $ws = $hwm } } catch {}
+    if ($n -eq 'tsgo' -or $n -eq 'tsc' -or $n -eq 'corsa') { $engine += $ws } else { $tool += $ws }
+  }
+  return @{ Tool = $tool; Engine = $engine; Total = ($tool + $engine) }
+}
+`.trim();
+}
+
+function linuxChildPids(pid) {
+  const kids = new Set();
   try {
-    if (process.platform === "win32") {
-      const r = spawnSync(
-        "powershell.exe",
-        [
-          "-NoProfile",
-          "-NonInteractive",
-          "-Command",
-          `$p=${pid}; $ids=@($p); $ids += @(Get-CimInstance Win32_Process -Filter "ParentProcessId=$p" -ErrorAction SilentlyContinue | ForEach-Object { $_.ProcessId }); ($ids | ForEach-Object { try { (Get-Process -Id $_ -ErrorAction Stop).WorkingSet64 } catch { 0 } } | Measure-Object -Sum).Sum`,
-        ],
-        { encoding: "utf8", windowsHide: true },
-      );
-      const n = Number(String(r.stdout).trim());
-      if (Number.isFinite(n) && n > 0) return n;
-    } else if (process.platform === "linux") {
+    for (const task of readdirSync(`/proc/${pid}/task`)) {
       try {
-        const kids = readFileSync(`/proc/${pid}/task/${pid}/children`, "utf8")
-          .trim()
-          .split(/\s+/)
-          .filter(Boolean);
-        for (const k of kids) {
-          total += pidRssBytes(Number(k)) || 0;
+        const raw = readFileSync(`/proc/${pid}/task/${task}/children`, "utf8").trim();
+        for (const k of raw.split(/\s+/).filter(Boolean)) {
+          const n = Number(k);
+          if (Number.isFinite(n) && n > 0) kids.add(n);
         }
       } catch {
-        /* no children file */
-      }
-    } else if (process.platform === "darwin") {
-      // pgrep -P is the cheap child list; ps rss is KB. No kernel peak is
-      // readable from outside the process, so the caller must poll.
-      const r = spawnSync("pgrep", ["-P", String(pid)], { encoding: "utf8" });
-      if (r.status === 0) {
-        for (const k of String(r.stdout).trim().split(/\s+/).filter(Boolean)) {
-          total += pidRssBytes(Number(k)) || 0;
-        }
+        /* task gone */
       }
     }
   } catch {
-    /* fall through */
+    /* process gone */
   }
-  return total > 0 ? total : null;
+  return [...kids];
+}
+
+function darwinChildPids(pid) {
+  const r = spawnSync("pgrep", ["-P", String(pid)], { encoding: "utf8" });
+  if (r.status !== 0) return [];
+  return String(r.stdout)
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map(Number)
+    .filter((n) => Number.isFinite(n) && n > 0);
+}
+
+function posixMember(pid) {
+  let name = "";
+  let cmdline = "";
+  if (process.platform === "linux") {
+    try {
+      name = readFileSync(`/proc/${pid}/comm`, "utf8").trim();
+    } catch {
+      /* gone */
+    }
+    try {
+      cmdline = readFileSync(`/proc/${pid}/cmdline`, "utf8").replace(/\0/g, " ").trim();
+    } catch {
+      /* gone */
+    }
+  } else {
+    const ps = spawnSync("ps", ["-o", "comm=", "-p", String(pid)], { encoding: "utf8" });
+    if (ps.status === 0) name = String(ps.stdout).trim();
+    const cmd = spawnSync("ps", ["-o", "command=", "-p", String(pid)], { encoding: "utf8" });
+    if (cmd.status === 0) cmdline = String(cmd.stdout).trim();
+  }
+  return { pid, rssBytes: pidRssBytes(pid) || 0, name, cmdline };
+}
+
+function collectDescendantPids(rootPid) {
+  const ids = [];
+  const seen = new Set();
+  const queue = [rootPid];
+  const childrenOf = process.platform === "darwin" ? darwinChildPids : linuxChildPids;
+  while (queue.length) {
+    const pid = queue.shift();
+    if (!Number.isFinite(pid) || pid <= 0 || seen.has(pid)) continue;
+    seen.add(pid);
+    ids.push(pid);
+    for (const k of childrenOf(pid)) queue.push(k);
+  }
+  return ids;
+}
+
+/**
+ * Every process in the tree (root + descendants), with RSS and enough identity
+ * to tell a Vue tool from the TypeScript engine it spawned.
+ */
+export function listPidTreeMembers(pid) {
+  if (!pid || pid <= 0) return [];
+  if (process.platform === "win32") {
+    const script = `${windowsTreeRssPsFunction()}
+$proc = Get-Process -Id ${Number(pid)} -ErrorAction SilentlyContinue
+$started = if ($proc) { $proc.StartTime } else { [datetime]::Now }
+$snap = Measure-TreeWorkingSet ${Number(pid)} $started
+Write-Output ('{0}|{1}|0' -f ${Number(pid)}, $snap.Tool)
+if ($snap.Engine -gt 0) { Write-Output ('0|{0}|1' -f $snap.Engine) }
+`;
+    const psFile = join(os.tmpdir(), `vue-bench-rss-tree-${process.pid}-${Date.now()}.ps1`);
+    writeFileSync(psFile, script, "utf8");
+    let r;
+    try {
+      r = spawnSync("powershell.exe", ["-NoProfile", "-NonInteractive", "-File", psFile], {
+        encoding: "utf8",
+        windowsHide: true,
+      });
+    } finally {
+      try {
+        unlinkSync(psFile);
+      } catch {
+        /* leftover tmp */
+      }
+    }
+    if (r.status !== 0) return [];
+    return String(r.stdout)
+      .trim()
+      .split(/\r?\n/)
+      .filter(Boolean)
+      .map((line) => {
+        const [id, ws, eng] = line.split("|");
+        return {
+          pid: Number(id),
+          rssBytes: Number(ws) || 0,
+          name: "",
+          cmdline: "",
+          engine: eng === "1",
+        };
+      })
+      .filter((m) => Number.isFinite(m.pid) && m.pid > 0);
+  }
+  return collectDescendantPids(pid).map((id) => {
+    const m = posixMember(id);
+    return { ...m, engine: isTypeScriptEngineProcess(m) };
+  });
+}
+
+/**
+ * RSS of a process tree split into the Vue tool vs a child TypeScript engine.
+ *
+ * Walks grandchildren, not just direct children — verter-tsc is
+ * `node run.js` → `verter-tsc.exe` → `tsc.exe` (tsgo). Direct-only sampling
+ * published the Node launcher (~70 MB) and dropped tsgo.
+ */
+export function pidTreeRssBreakdown(pid) {
+  const empty = { totalBytes: 0, toolBytes: 0, engineBytes: 0, members: [] };
+  if (!pid || pid <= 0) return empty;
+  const members = listPidTreeMembers(pid);
+  let toolBytes = 0;
+  let engineBytes = 0;
+  for (const m of members) {
+    const n = Number.isFinite(m.rssBytes) && m.rssBytes > 0 ? m.rssBytes : 0;
+    if (m.engine) engineBytes += n;
+    else toolBytes += n;
+  }
+  const totalBytes = toolBytes + engineBytes;
+  return { totalBytes, toolBytes, engineBytes, members };
+}
+
+/**
+ * RSS for a process and every descendant (Node wrappers, native bins, tsgo).
+ */
+export function pidTreeRssBytes(pid) {
+  const n = pidTreeRssBreakdown(pid).totalBytes;
+  return n > 0 ? n : null;
 }
 
 /** Linux: utime+stime ticks → ms (approx). */

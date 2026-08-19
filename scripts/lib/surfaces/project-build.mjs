@@ -89,6 +89,7 @@ async function runViteBuild({ cwd, configFile, outDir, timeoutMs, env = {} }) {
     cwd,
     timeoutMs,
     shell: process.platform === "win32",
+    sampleRss: true,
     env: {
       CI: "1",
       NODE_ENV: "production",

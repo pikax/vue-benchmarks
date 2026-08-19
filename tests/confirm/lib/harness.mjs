@@ -7,6 +7,8 @@ function row(suite, caseId, tool, status, message, detail) {
   const r = { suite, caseId, tool, status, message, detail };
   if (Number.isFinite(detail?.ms)) r.ms = detail.ms;
   if (Number.isFinite(detail?.rssMb)) r.rssMb = detail.rssMb;
+  if (Number.isFinite(detail?.rssToolMb)) r.rssToolMb = detail.rssToolMb;
+  if (Number.isFinite(detail?.rssEngineMb)) r.rssEngineMb = detail.rssEngineMb;
   return r;
 }
 

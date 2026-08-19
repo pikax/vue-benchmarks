@@ -15,7 +15,7 @@ import {
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createSuite } from "../lib/harness.mjs";
-import { resolveSpawnable, runCliMeasured, rootDir } from "../lib/run-cli.mjs";
+import { resolveSpawnable, runCli, runCliMeasured, rootDir } from "../lib/run-cli.mjs";
 import { effectiveWarmups, median } from "../../../scripts/lib/timing.mjs";
 import {
   combinedFromDiags,
@@ -153,12 +153,19 @@ function writeFallthroughExtraTsconfig(dest) {
   return rel;
 }
 
+function mb(bytes) {
+  return Number.isFinite(bytes) && bytes > 0 ? Number((bytes / (1024 * 1024)).toFixed(1)) : undefined;
+}
+
 function resourcesFrom(run) {
   const out = {};
   if (Number.isFinite(run?.ms)) out.ms = Number(run.ms.toFixed(1));
-  if (Number.isFinite(run?.rssBytes) && run.rssBytes > 0) {
-    out.rssMb = Number((run.rssBytes / (1024 * 1024)).toFixed(1));
-  }
+  const rssMb = mb(run?.rssBytes);
+  const rssToolMb = mb(run?.rssToolBytes);
+  const rssEngineMb = mb(run?.rssEngineBytes);
+  if (rssMb) out.rssMb = rssMb;
+  if (rssToolMb) out.rssToolMb = rssToolMb;
+  if (rssEngineMb) out.rssEngineMb = rssEngineMb;
   return out;
 }
 
@@ -244,6 +251,13 @@ function toolSupports(toolId, requires) {
   return requires.every((r) => caps.includes(r));
 }
 
+function invoke(spec, args, { cwd, timeout, sampleRss = false }) {
+  if (sampleRss) return runCliMeasured(spec, args, { cwd, timeout, sampleRss: true });
+  const bin = spec && spec.bin ? spec.bin : spec;
+  const prefix = spec && spec.argsPrefix ? spec.argsPrefix : [];
+  return Promise.resolve(runCli(bin, [...prefix, ...(args || [])], { cwd, timeout }));
+}
+
 function toolRunners(cwd, { timeout = 120_000 } = {}) {
   const vueTsc = resolveSpawnable("vue-tsc");
   const vize = resolveSpawnable("vize");
@@ -254,22 +268,28 @@ function toolRunners(cwd, { timeout = 120_000 } = {}) {
     {
       id: "vue-tsc",
       available: Boolean(vueTsc),
-      run: () => runCliMeasured(vueTsc, ["--noEmit", "-p", "tsconfig.json"], { cwd, timeout }),
-      runProject: (rel) => runCliMeasured(vueTsc, ["--noEmit", "-p", rel], { cwd, timeout }),
+      run: (opts = {}) =>
+        invoke(vueTsc, ["--noEmit", "-p", "tsconfig.json"], { cwd, timeout, sampleRss: opts.sampleRss }),
+      runProject: (rel, opts = {}) =>
+        invoke(vueTsc, ["--noEmit", "-p", rel], { cwd, timeout, sampleRss: opts.sampleRss }),
       unavailable: "vue-tsc binary not found",
     },
     {
       id: "vize-check",
       available: Boolean(vize),
-      run: () => runCliMeasured(vize, ["check", ".", "--tsconfig", "tsconfig.json"], { cwd, timeout }),
-      runProject: (rel) => runCliMeasured(vize, ["check", ".", "--tsconfig", rel], { cwd, timeout }),
+      run: (opts = {}) =>
+        invoke(vize, ["check", ".", "--tsconfig", "tsconfig.json"], { cwd, timeout, sampleRss: opts.sampleRss }),
+      runProject: (rel, opts = {}) =>
+        invoke(vize, ["check", ".", "--tsconfig", rel], { cwd, timeout, sampleRss: opts.sampleRss }),
       unavailable: "vize binary not found",
     },
     {
       id: "verter-tsc",
       available: Boolean(verterTsc),
-      run: () => runCliMeasured(verterTsc, ["--noEmit", "-p", "tsconfig.json"], { cwd, timeout }),
-      runProject: (rel) => runCliMeasured(verterTsc, ["--noEmit", "-p", rel], { cwd, timeout }),
+      run: (opts = {}) =>
+        invoke(verterTsc, ["--noEmit", "-p", "tsconfig.json"], { cwd, timeout, sampleRss: opts.sampleRss }),
+      runProject: (rel, opts = {}) =>
+        invoke(verterTsc, ["--noEmit", "-p", rel], { cwd, timeout, sampleRss: opts.sampleRss }),
       unavailable: "verter-tsc binary not found",
       /**
        * verter-tsc requires tsgo for its typecheck surface; detect and skip.
@@ -289,16 +309,16 @@ function toolRunners(cwd, { timeout = 120_000 } = {}) {
     {
       id: "golar-typecheck",
       available: Boolean(golar),
-      run: () => runCliMeasured(golar, ["typecheck"], { cwd, timeout }),
+      run: (opts = {}) => invoke(golar, ["typecheck"], { cwd, timeout, sampleRss: opts.sampleRss }),
       // golar reads tsconfig.json only — swap, run, restore. Never leave the
       // extra option in the shared file for the next tool.
-      async runProject(rel) {
+      async runProject(rel, opts = {}) {
         const main = join(cwd, "tsconfig.json");
         const extra = join(cwd, rel);
         const backup = readFileSync(main, "utf8");
         writeFileSync(main, readFileSync(extra, "utf8"));
         try {
-          return await runCliMeasured(golar, ["typecheck"], { cwd, timeout });
+          return await invoke(golar, ["typecheck"], { cwd, timeout, sampleRss: opts.sampleRss });
         } finally {
           writeFileSync(main, backup);
         }
@@ -317,6 +337,12 @@ function toolRunners(cwd, { timeout = 120_000 } = {}) {
 export async function runTypecheckSuite(opts = {}) {
   const suite = createSuite("typecheck");
   mkdirSync(workRoot, { recursive: true });
+
+  if (opts.allPlantsOnly) {
+    const allSuite = createSuite("typecheck-all");
+    await runTypecheckAllPlants(allSuite, opts);
+    return allSuite.results;
+  }
 
   for (const caseId of listCases()) {
     const { dest, meta, pins } = prepareCase(caseId);
@@ -576,19 +602,22 @@ export function scoreCombinedRun(cases, toolId, result) {
   let pass = 0;
   let fail = 0;
   let skip = 0;
+  const plants = [];
   for (const { caseId, meta } of cases) {
     if (!toolSupports(toolId, meta.requires)) {
       skip++;
+      plants.push({ caseId, skip: true, ok: false, message: `tool lacks capability: ${(meta.requires || []).join(", ")}` });
       continue;
     }
     const subset = diagsForCase(diags, caseId);
     const score = scoreOne(meta, { ...result, combined: combinedFromDiags(subset) });
     if (score.ok) pass++;
     else fail++;
+    plants.push({ caseId, skip: false, ok: score.ok, message: score.message });
   }
   const scored = pass + fail;
   const passPct = scored ? (100 * pass) / scored : 0;
-  return { pass, fail, skip, scored, passPct };
+  return { pass, fail, skip, scored, passPct, plants };
 }
 
 /**
@@ -613,9 +642,11 @@ function runLooksBroken(result) {
 }
 
 /**
- * Extra check: one project, one tsconfig, every plant. Warmups are discarded;
- * wall is the median of measured runs; peak RSS is the max of those runs.
- * Pass rate is per-plant scoring of the last measured dump.
+ * Extra check: one project, one tsconfig, every plant.
+ * Speed and memory are **separate** spawns so the RSS sampler cannot inflate wall.
+ *   speed  — warmups discarded; wall is the median of measured runs
+ *   memory — one sampled spawn afterwards; peak RSS only (wall discarded)
+ * Pass rate is per-plant scoring of the last speed dump.
  */
 export async function runTypecheckAllPlants(suite = createSuite("typecheck-all"), opts = {}) {
   const { runs, warmups } = allPlantsRunCounts(process.env, opts);
@@ -628,6 +659,7 @@ export async function runTypecheckAllPlants(suite = createSuite("typecheck-all")
     }
 
     let skipReason = null;
+    console.log(`  → ${tool.id}  speed: ${warmups} warmup(s) + ${runs} run(s) over ${cases.length} plants`);
     for (let i = 0; i < warmups; i++) {
       const warm = await tool.run();
       if (tool.after) {
@@ -646,7 +678,6 @@ export async function runTypecheckAllPlants(suite = createSuite("typecheck-all")
     }
 
     const measuredMs = [];
-    const measuredRss = [];
     let last = null;
     for (let i = 0; i < runs; i++) {
       const result = await tool.run();
@@ -661,21 +692,37 @@ export async function runTypecheckAllPlants(suite = createSuite("typecheck-all")
       if (skipReason) break;
       last = result;
       if (Number.isFinite(result.ms)) measuredMs.push(result.ms);
-      if (Number.isFinite(result.rssBytes) && result.rssBytes > 0) measuredRss.push(result.rssBytes);
+      console.log(
+        `    speed ${i + 1}/${runs}  ${Number.isFinite(result.ms) ? `${result.ms.toFixed(0)}ms` : "–"}`,
+      );
     }
     if (skipReason || !last) {
       suite.skip("all-plants", tool.id, skipReason || "no measured run");
       continue;
     }
 
+    console.log(`  → ${tool.id}  memory: 1 sampled run`);
+    const mem = await tool.run({ sampleRss: true });
+    const memBroken = runLooksBroken(mem);
+    const peakRss = { total: 0, tool: 0, engine: 0 };
+    if (!memBroken && Number.isFinite(mem.rssBytes) && mem.rssBytes > 0) {
+      peakRss.total = mem.rssBytes;
+      peakRss.tool = mem.rssToolBytes || 0;
+      peakRss.engine = mem.rssEngineBytes || 0;
+    }
+    const rssMb = peakRss.total > 0 ? mb(peakRss.total) : undefined;
+    const engMb = peakRss.engine > 0 ? mb(peakRss.engine) : undefined;
+    console.log(
+      `    rss ${rssMb ?? "–"} MB (engine ${engMb ?? "–"})${memBroken ? ` — ${memBroken}` : ""}`,
+    );
+
     const tally = scoreCombinedRun(cases, tool.id, last);
     const ms = measuredMs.length ? median(measuredMs) : last.ms;
-    const rssMb = measuredRss.length
-      ? Number((Math.max(...measuredRss) / (1024 * 1024)).toFixed(1))
-      : resourcesFrom(last).rssMb;
     const measured = {
       ms: Number.isFinite(ms) ? Number(ms.toFixed(1)) : undefined,
       rssMb,
+      rssToolMb: peakRss.tool > 0 ? mb(peakRss.tool) : undefined,
+      rssEngineMb: peakRss.engine > 0 ? mb(peakRss.engine) : undefined,
       runs: measuredMs.map((n) => Number(n.toFixed(1))),
       warmups,
       runCount: runs,

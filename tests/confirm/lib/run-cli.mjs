@@ -144,13 +144,12 @@ export function runCli(bin, args, { cwd, env = {}, timeout = 120_000 } = {}) {
 }
 
 /**
- * Timed spawn + peak RSS. Delegates to `scripts/lib/measure-cli.mjs`, the
- * same method as `pnpm bench:memory` (Windows: in-process WorkingSet sample
- * inside PowerShell; Linux/macOS: spawn + pidTreeRssBytes poll).
+ * Timed spawn. Pass `sampleRss: true` only on a memory pass — polling the
+ * process tree must not run beside a wall-clock measurement.
  *
  * `bin` may be a path or a `{ bin, argsPrefix, shell }` from resolveSpawnable.
  */
-export function runCliMeasured(bin, args, { cwd, env = {}, timeout = 120_000 } = {}) {
+export function runCliMeasured(bin, args, { cwd, env = {}, timeout = 120_000, sampleRss = false } = {}) {
   const spec =
     bin && typeof bin === "object" && bin.bin
       ? bin
@@ -185,6 +184,7 @@ export function runCliMeasured(bin, args, { cwd, env = {}, timeout = 120_000 } =
     ),
     timeoutMs: timeout,
     shell: spec.shell ?? false,
+    sampleRss,
   });
 }
 

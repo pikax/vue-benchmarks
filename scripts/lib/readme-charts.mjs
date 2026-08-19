@@ -124,18 +124,35 @@ function groupBars(usable, lowerIsBetter) {
   const map = new Map();
   for (const b of usable) {
     const key = b.label;
-    if (!map.has(key)) map.set(key, { label: key, ranked: true, warm: null, cold: null, value: null });
+    if (!map.has(key)) {
+      map.set(key, {
+        label: key,
+        ranked: true,
+        warm: null,
+        cold: null,
+        toolRss: null,
+        engineRss: null,
+        value: null,
+      });
+    }
     const g = map.get(key);
     if (b.ranked === false) g.ranked = false;
     if (b.series === "warm") g.warm = b.value;
     else if (b.series === "cold") g.cold = b.value;
+    else if (b.series === "tool") g.toolRss = b.value;
+    else if (b.series === "engine") g.engineRss = b.value;
     else g.value = b.value;
   }
   const groups = [...map.values()].map((g) => {
+    const stackedRss = Number.isFinite(g.toolRss) && Number.isFinite(g.engineRss);
     const stacked = Number.isFinite(g.warm) && Number.isFinite(g.cold);
-    const sortValue = stacked ? g.cold : (g.value ?? g.cold ?? g.warm ?? 0);
-    const barValue = stacked ? Math.max(g.cold, g.warm) : sortValue;
-    return { ...g, stacked, sortValue, barValue };
+    const sortValue = stackedRss
+      ? g.toolRss + g.engineRss
+      : stacked
+        ? g.cold
+        : (g.value ?? g.cold ?? g.warm ?? 0);
+    const barValue = stackedRss ? g.toolRss + g.engineRss : stacked ? Math.max(g.cold, g.warm) : sortValue;
+    return { ...g, stacked, stackedRss, sortValue, barValue };
   });
   groups.sort((a, b) => {
     if (a.ranked !== b.ranked) return a.ranked ? -1 : 1;
@@ -149,11 +166,12 @@ export function barChartSvg({ title, unit = "ms", bars, lowerIsBetter = true, ma
   if (usable.length === 0) return "";
   const groups = groupBars(usable, lowerIsBetter);
   const stacked = groups.some((g) => g.stacked);
+  const stackedRss = groups.some((g) => g.stackedRss);
 
   const padL = 16;
   const labelW = 248;
   const rightPad = 110;
-  const top = stacked ? 52 : 44;
+  const top = stacked || stackedRss ? 52 : 44;
   const rowH = 36;
   const barH = 22;
   const bottom = 28;
@@ -201,7 +219,19 @@ export function barChartSvg({ title, unit = "ms", bars, lowerIsBetter = true, ma
     let segments = "";
     let valueLabel;
     let totalW;
-    if (g.stacked) {
+    if (g.stackedRss) {
+      const toolW = Math.max(0, (g.toolRss / max) * plotW);
+      const engineW = Math.max(0, (g.engineRss / max) * plotW);
+      const totalStack = toolW + engineW;
+      segments = `<rect class="track" x="${labelW}" y="${y + 5}" width="${plotW}" height="${barH}" rx="5"/>
+      <rect class="tool-rss" x="${labelW}" y="${y + 5}" width="${Math.max(4, toolW).toFixed(1)}" height="${barH}" rx="5" fill="${fill}"/>
+      <rect class="engine-rss" x="${labelW + toolW}" y="${y + 5}" width="${Math.max(g.engineRss > 0 ? 4 : 0, engineW).toFixed(1)}" height="${barH}" rx="5" fill="${fill}" fill-opacity="0.38"/>`;
+      valueLabel =
+        g.engineRss > 0
+          ? `${formatBarValue(g.toolRss, unit)} + ${formatBarValue(g.engineRss, unit)} = ${formatBarValue(g.barValue, unit)}${unranked}`
+          : `${formatBarValue(g.barValue, unit)}${unranked}`;
+      totalW = Math.max(4, totalStack);
+    } else if (g.stacked) {
       const warmW = Math.max(4, (g.warm / max) * plotW);
       const coldW = Math.max(warmW, (g.cold / max) * plotW);
       const extra = Math.max(0, coldW - warmW);
@@ -231,12 +261,17 @@ export function barChartSvg({ title, unit = "ms", bars, lowerIsBetter = true, ma
       ${valueEl}`;
   });
 
-  const legend = stacked
+  const legend = stackedRss
     ? `<rect x="${padL}" y="28" width="10" height="10" rx="2" fill="#111827"/>
+  <text class="muted" x="${padL + 14}" y="37" font-size="11">tool</text>
+  <rect x="${padL + 54}" y="28" width="10" height="10" rx="2" fill="#111827" fill-opacity="0.38"/>
+  <text class="muted" x="${padL + 68}" y="37" font-size="11">tsgo / tsc</text>`
+    : stacked
+      ? `<rect x="${padL}" y="28" width="10" height="10" rx="2" fill="#111827"/>
   <text class="muted" x="${padL + 14}" y="37" font-size="11">warm</text>
   <rect x="${padL + 58}" y="28" width="10" height="10" rx="2" fill="#111827" fill-opacity="0.38"/>
   <text class="muted" x="${padL + 72}" y="37" font-size="11">cold</text>`
-    : "";
+      : "";
 
   const better = lowerIsBetter ? "lower is better" : "higher is better";
   return `<?xml version="1.0" encoding="UTF-8"?>
@@ -839,6 +874,8 @@ function allPlantTools(rows) {
         label: ALL_PLANT_LABELS[r.tool] || r.tool,
         ms: Number(r.ms ?? d.ms),
         rssMb: Number(r.rssMb ?? d.rssMb),
+        rssToolMb: Number(r.rssToolMb ?? d.rssToolMb),
+        rssEngineMb: Number(r.rssEngineMb ?? d.rssEngineMb),
         passPct: Number(d.passPct ?? r.passPct),
         pass: Number(d.pass ?? r.pass),
         scored: Number(d.scored ?? r.scored),
@@ -874,21 +911,43 @@ export function typecheckAllLanding(rows, { writeChart, chartsHref = "docs/resul
     out.push("");
   }
 
-  const rssBars = tools
-    .filter((t) => Number.isFinite(t.rssMb) && t.rssMb > 0)
-    .map((t) => ({ label: t.label, value: t.rssMb, ranked: true }));
+  const rssTools = tools.filter((t) => Number.isFinite(t.rssMb) && t.rssMb > 0);
+  const rssBars = rssTools.flatMap((t) => {
+    const engine = Number.isFinite(t.rssEngineMb) && t.rssEngineMb > 0 ? t.rssEngineMb : 0;
+    const tool = Number.isFinite(t.rssToolMb) && t.rssToolMb > 0 ? t.rssToolMb : t.rssMb - engine;
+    if (engine > 0 && tool >= 0) {
+      return [
+        { label: t.label, series: "tool", value: tool, ranked: true },
+        { label: t.label, series: "engine", value: engine, ranked: true },
+      ];
+    }
+    return [{ label: t.label, value: t.rssMb, ranked: true }];
+  });
   if (rssBars.length && writeChart) {
     const file = "typecheck-all-rss.svg";
     writeChart(file, barChartSvg({ title: "All plants · peak RSS (one tsconfig)", unit: "MB", bars: rssBars }));
     out.push(`![All plants peak RSS](${chartsHref}/${file})`, "");
   }
-  if (rssBars.length) {
-    out.push("| Tool | **Peak RSS** |", "| --- | ---: |");
-    for (const t of [...tools].sort((a, b) => (a.rssMb ?? Infinity) - (b.rssMb ?? Infinity))) {
-      if (!Number.isFinite(t.rssMb) || t.rssMb <= 0) continue;
-      out.push(`| ${t.label} | **${t.rssMb.toFixed(1)} MB** |`);
+  if (rssTools.length) {
+    out.push("| Tool | Tool | tsgo / tsc | **Total** |", "| --- | ---: | ---: | ---: |");
+    for (const t of [...rssTools].sort((a, b) => (a.rssMb ?? Infinity) - (b.rssMb ?? Infinity))) {
+      const engine = Number.isFinite(t.rssEngineMb) && t.rssEngineMb > 0 ? t.rssEngineMb : null;
+      const tool =
+        Number.isFinite(t.rssToolMb) && t.rssToolMb > 0
+          ? t.rssToolMb
+          : engine != null
+            ? t.rssMb - engine
+            : t.rssMb;
+      const engineCell = engine != null ? `${engine.toFixed(1)} MB` : "—";
+      out.push(
+        `| ${t.label} | ${tool.toFixed(1)} MB | ${engineCell} | **${t.rssMb.toFixed(1)} MB** |`,
+      );
     }
     out.push("");
+    out.push(
+      "Engine is a **child** `tsgo` / native `tsc` / `tsserver`. vue-tsc, golar, and vize host the checker **in-process** — Peak RSS is that process's high-water mark (Tool = Total, engine —).",
+      "",
+    );
   }
 
   const pctBars = tools

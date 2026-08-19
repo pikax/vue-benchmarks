@@ -118,6 +118,7 @@ function parseArgs(argv) {
     help: false,
     runs: process.env.BENCH_RUNS || "",
     warmups: process.env.BENCH_WARMUPS || "",
+    allPlants: false,
   };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
@@ -127,6 +128,7 @@ function parseArgs(argv) {
     else if (a === "--strict") args.strict = true;
     else if (a === "--runs") args.runs = argv[++i];
     else if (a === "--warmups") args.warmups = argv[++i];
+    else if (a === "--all" || a === "--all-plants") args.allPlants = true;
     else if (a === "--help" || a === "-h") args.help = true;
   }
   return args;
@@ -138,11 +140,15 @@ function help() {
 Usage:
   node tests/confirm/run.mjs [--surfaces compile,jsx-compile,lint,typecheck,component-meta,format,lsp]
                              [--json path] [--out path.md] [--strict]
-                             [--runs N] [--warmups N]
+                             [--runs N] [--warmups N] [--all]
 
   --runs / --warmups  apply to the all-plants typecheck (one tsconfig).
                       Default: BENCH_RUNS / BENCH_WARMUPS, else 5 / 1
-                      (same as the Benchmark workflow). Per-plant cells stay one-shot.
+                      (same as the Benchmark workflow).
+  --all               typecheck: one spawn per tool over every plant (CI).
+                      Skip the per-case spawn loop. Plant ✓/✗ come from the
+                      combined dump. Local pnpm confirm:typecheck without
+                      --all still runs each plant on its own.
 
 Exit code:
   0  no unexpected failures (skips allowed; known upstream bugs allowed)
@@ -183,8 +189,14 @@ async function main() {
     all.push(...(await runLintSuite()));
   }
   if (surfaces.includes("typecheck")) {
-    console.log("→ typecheck");
-    all.push(...(await runTypecheckSuite({ runs: args.runs, warmups: args.warmups })));
+    console.log(args.allPlants ? "→ typecheck (all plants, one tsconfig)" : "→ typecheck");
+    all.push(
+      ...(await runTypecheckSuite({
+        runs: args.runs,
+        warmups: args.warmups,
+        allPlantsOnly: args.allPlants,
+      })),
+    );
   }
   if (surfaces.includes("component-meta") || surfaces.includes("meta")) {
     console.log("→ component-meta");
@@ -229,7 +241,7 @@ async function main() {
     "utf8",
   );
 
-  const typecheckRows = all.filter((r) => r.suite === "typecheck");
+  const typecheckRows = all.filter((r) => r.suite === "typecheck" || r.suite === "typecheck-all");
   if (typecheckRows.length) {
     const typecheckDoc = join(rootDir, "docs", "typecheck.md");
     writeFileSync(
@@ -248,6 +260,9 @@ async function main() {
   console.log(`\nWrote ${outMd}`);
   console.log(`Wrote ${outJson}`);
 
+  // --all scores plants from the combined dump for docs/typecheck.md. Those
+  // rows are not the per-case spawn gate (fallthrough retries, extra tsconfig).
+  // CI therefore gates typecheck on the typecheck-all row only.
   process.exit(reportKnownFailures(all, { strict: args.strict }));
 }
 

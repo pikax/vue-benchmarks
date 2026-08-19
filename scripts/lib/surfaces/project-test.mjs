@@ -84,6 +84,7 @@ async function runVitest(target, { configFile, cwd, timeoutMs, env = {} }) {
     cwd,
     timeoutMs,
     shell: process.platform === "win32",
+    sampleRss: true,
     env: {
       CI: "1",
       NO_COLOR: "1",

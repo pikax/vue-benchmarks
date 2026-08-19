@@ -106,7 +106,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: pnpm/action-setup@v6
+      - uses: pnpm/action-setup@v6.0.9
 
       - uses: actions/setup-node@v7
         with:
@@ -400,15 +400,15 @@ jobs:
 
   # ---------------------------------------------------------------------------
   # CONFIRM — typecheck correctness plants. Isolated from SPEED/MEMORY.
-  # Writes docs/typecheck.md (matrix + one-shot wall/RSS + all-plants) for publish.
+  # Writes docs/typecheck.md (combined --all spawn: matrix + wall/RSS) for publish.
   # ---------------------------------------------------------------------------
   confirm:
     name: Confirm typecheck (Linux)
     needs: build
     runs-on: ubuntu-latest
-    # Per-plant cells (~500) plus fallthrough retries, then all-plants with the
-    # same --runs/--warmups as the bench job (5 + 1 by default).
-    timeout-minutes: 60
+    # --all: one spawn per tool over every plant. --runs/--warmups match the
+    # bench job (5 + 1 by default). Per-case typecheck spawns are local-only.
+    timeout-minutes: 25
     defaults:
       run:
         shell: bash
@@ -420,11 +420,11 @@ jobs:
           fixtures-artifact: fixtures-bench-linux
           node-modules-cache-key: ${{ env.NM_CACHE_PREFIX }}-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', 'envs/tnb/pnpm-lock.yaml', '.node-version') }}-${{ github.sha }}
 
-      - name: Typecheck confirmation (correctness + all-plants)
+      - name: Typecheck confirmation (--all)
         env:
           RUNNER_OS: ${{ runner.os }}
         run: |
-          node tests/confirm/run.mjs --surfaces typecheck \
+          node tests/confirm/run.mjs --surfaces typecheck --all \
             --runs "${{ env.BENCH_RUNS }}" \
             --warmups "${{ env.BENCH_WARMUPS }}"
 
@@ -484,7 +484,7 @@ jobs:
           pattern: results-*
           merge-multiple: true
 
-      - uses: pnpm/action-setup@v6
+      - uses: pnpm/action-setup@v6.0.9
 
       - uses: actions/setup-node@v7
         with:

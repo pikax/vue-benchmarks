@@ -333,7 +333,7 @@ Files: **1** · Bytes: **745**
 
 ## Typecheck confirmation
 
-> 📄 **[Full matrix →](docs/typecheck.md)** — plants, documented gaps, per-plant time/memory. **142** plants. Generated 2026-08-19T12:36:13.372Z.
+> 📄 **[Full matrix →](docs/typecheck.md)** — plants, documented gaps, per-plant time/memory. **0** plants. Generated 2026-08-19T18:13:47.784Z.
 
 ### All plants (one tsconfig)
 
@@ -343,19 +343,21 @@ One spawn per tool over every plant. Pass rate is a **percentage** of scored pla
 
 | Tool | **Wall** | vs fastest |
 | --- | ---: | ---: |
-| golar | **814 ms** | 1.00x |
-| vize | **1.20 s** | 1.48x |
-| vue-tsc | **2.02 s** | 2.48x |
-| verter-tsc | **2.69 s** | 3.30x |
+| golar | **920 ms** | 1.00x |
+| vize | **1.28 s** | 1.39x |
+| vue-tsc | **2.50 s** | 2.72x |
+| verter-tsc | **2.82 s** | 3.07x |
 
 ![All plants peak RSS](docs/results/charts/typecheck-all-rss.svg)
 
-| Tool | **Peak RSS** |
-| --- | ---: |
-| verter-tsc | **68.8 MB** |
-| vize | **91.2 MB** |
-| golar | **343.7 MB** |
-| vue-tsc | **351.6 MB** |
+| Tool | Tool | tsgo / tsc | **Total** |
+| --- | ---: | ---: | ---: |
+| golar | 323.1 MB | — | **323.1 MB** |
+| vue-tsc | 350.2 MB | — | **350.2 MB** |
+| vize | 90.5 MB | 292.2 MB | **382.7 MB** |
+| verter-tsc | 351.1 MB | 363.9 MB | **715.0 MB** |
+
+Engine is a **child** `tsgo` / native `tsc` / `tsserver`. vue-tsc, golar, and vize host the checker **in-process** — Peak RSS is that process's high-water mark (Tool = Total, engine —).
 
 ![All plants pass rate](docs/results/charts/typecheck-all-pass.svg)
 

@@ -9,12 +9,13 @@ name: Test
 #                             the planted-bug work gate, corpus preparation,
 #                             module wiring). Spawns no compiler, runs no
 #                             benchmark, finishes in seconds.
-#   tests/confirm/run.mjs   — correctness confirmation suite. Real tools, real
-#                             assertions; known upstream bugs are allowlisted in
-#                             tests/confirm/known-failures.json, an UNLISTED
-#                             failure fails the build. Writes docs/typecheck.md
-#                             on the runner only — the Benchmark workflow is
-#                             what commits that file (and the README summary).
+#   tests/confirm/run.mjs --all
+#                             correctness confirmation suite. Typecheck is one
+#                             spawn per tool over every plant (not ~500 per-case
+#                             spawns). Known upstream bugs are allowlisted in
+#                             tests/confirm/known-failures.json. Writes
+#                             docs/typecheck.md on the runner only — Benchmark
+#                             is what commits that file (and the README summary).
 #
 # Neither suite reads the generated corpora, so there is no `scripts/generate.mjs`
 # step and no fixtures artifact: `pnpm install --frozen-lockfile` is the whole
@@ -42,17 +43,16 @@ jobs:
   test:
     name: Tests (Linux)
     runs-on: ubuntu-latest
-    # harness ~3s; typecheck confirm is one measured CLI spawn per plant×tool
-    # (~500 vue-tsc/vize/verter/golar runs plus fallthrough retries). 40 keeps
-    # headroom on a slow runner without inheriting the 6-hour default.
-    timeout-minutes: 40
+    # harness ~3s; typecheck confirm is --all (one spawn per tool over every
+    # plant, not ~500 per-case spawns). 20 keeps headroom on a slow runner.
+    timeout-minutes: 20
     defaults:
       run:
         shell: bash
     steps:
       - uses: actions/checkout@v7
 
-      - uses: pnpm/action-setup@v6
+      - uses: pnpm/action-setup@v6.0.9
 
       - uses: actions/setup-node@v7
         with:
@@ -68,7 +68,7 @@ jobs:
         run: node tests/harness/run.mjs
 
       - name: Confirmation suite (correctness)
-        run: node tests/confirm/run.mjs
+        run: node tests/confirm/run.mjs --all
 
       # run.mjs writes results/confirm.{md,json} by default. Keep them on a
       # failing run — that report is how you tell a new tool bug from a

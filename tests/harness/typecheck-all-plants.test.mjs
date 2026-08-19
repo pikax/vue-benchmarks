@@ -1,7 +1,8 @@
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync, rmSync } from "node:fs";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 import { diagsForCase, combinedFromDiags } from "../confirm/lib/diagnostics.mjs";
 import {
@@ -12,6 +13,22 @@ import {
 import { typecheckAllLanding } from "../../scripts/lib/readme-charts.mjs";
 import { compactHighlightBody } from "../../scripts/lib/readme-charts.mjs";
 import { formatTypecheckDoc } from "../confirm/lib/typecheck-doc.mjs";
+
+const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "../..");
+
+describe("CI typecheck uses --all, not per-case spawns", () => {
+  test("test.yml and benchmark.yml pass --all", () => {
+    const testYml = readFileSync(join(repoRoot, ".github/workflows/test.yml"), "utf8");
+    const benchYml = readFileSync(join(repoRoot, ".github/workflows/benchmark.yml"), "utf8");
+    assert.match(testYml, /tests\/confirm\/run\.mjs --all/);
+    assert.match(benchYml, /--surfaces typecheck --all/);
+    assert.doesNotMatch(
+      benchYml,
+      /Per-plant cells \(~500\)/,
+      "benchmark confirm must not still describe the per-case loop",
+    );
+  });
+});
 
 describe("allPlantsRunCounts", () => {
   test("defaults match the Benchmark workflow (5 runs, 1 warmup)", () => {

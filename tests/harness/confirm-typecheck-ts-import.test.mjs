@@ -178,7 +178,7 @@ describe("typecheck.md generator", () => {
       generatedAt: "2026-08-18T00:00:00.000Z",
       runner,
       results: [
-        { suite: "typecheck", caseId: "fallthrough-mono-ok", tool: "vue-tsc", status: "pass", message: "clean" },
+        { suite: "typecheck", caseId: "fallthrough-mono-ok", tool: "vue-tsc", status: "pass", message: "clean", ms: 12, rssMb: 80 },
         { suite: "typecheck", caseId: "fallthrough-mono-ok", tool: "vize-check", status: "fail", message: "expected clean" },
         { suite: "typecheck", caseId: "ts-import-vue-bad", tool: "verter-tsc", status: "warn", message: "EXTRA TSCONFIG" },
       ],
@@ -389,13 +389,13 @@ describe("runCliMeasured", () => {
     mkdirSync(dir, { recursive: true });
     const script = join(dir, "confirm-measure-probe.mjs");
     writeFileSync(script, "console.log(42);\n");
-    const r = await runCliMeasured(process.execPath, [script]);
+    const r = await runCliMeasured(process.execPath, [script], { sampleRss: true });
     assert.equal(r.status, 0, r.stderr || r.error?.message || "exit");
     assert.match(r.stdout, /42/);
     assert.ok(Number.isFinite(r.ms) && r.ms >= 0);
     assert.ok(
       Number.isFinite(r.rssBytes) && r.rssBytes > 1024 * 1024,
-      `rssBytes=${r.rssBytes} (linux=/proc VmHWM, darwin=ps, win=PeakWorkingSet64)`,
+      `rssBytes=${r.rssBytes} (full descendant tree WorkingSet / RSS)`,
     );
   });
 });

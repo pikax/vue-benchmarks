@@ -3,11 +3,13 @@
  *
  * Same method as `scripts/memory-worker.mjs` `runCli` / `runCliWindows`.
  *
- *   win32  PowerShell Process.Start samples WorkingSet64 in-process
+ *   win32  PowerShell Process.Start samples the full descendant tree
  *          (Node→PowerShell roundtrips miss short-lived CLIs).
- *          PeakWorkingSet64 is the kernel high-water mark.
- *   linux  spawn + poll pidTreeRssBytes (/proc) and fold in VmHWM
- *   darwin spawn + poll pidTreeRssBytes (ps + pgrep -P children)
+ *   linux  spawn + poll pidTreeRssBreakdown (/proc, all descendants)
+ *   darwin spawn + poll pidTreeRssBreakdown (ps + recursive pgrep -P)
+ *
+ * RSS is split into the Vue tool vs a child TypeScript engine (tsgo /
+ * native tsc / tsserver). In-process engines stay in the tool column.
  *
  * stdout/stderr are captured so confirm can score diagnostics.
  */
@@ -15,7 +17,7 @@ import { spawn, spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { pidPeakRssBytes, pidTreeRssBytes } from "./memory.mjs";
+import { pidPeakRssBytes, pidTreeRssBreakdown, windowsTreeRssPsFunction } from "./memory.mjs";
 
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../..");
 
@@ -31,7 +33,11 @@ function escapePsSingle(s) {
  *   env?: Record<string, string>,
  *   timeoutMs?: number,
  *   shell?: boolean,
+ *   sampleRss?: boolean,
  * }} cli
+ *
+ * `sampleRss: false` (speed) never polls the process tree — sampling CIM /proc
+ * belongs on a separate memory pass so it cannot inflate wall clock.
  */
 export async function measureCli(cli) {
   if (process.platform === "win32") {
@@ -40,9 +46,19 @@ export async function measureCli(cli) {
   return measureCliPosix(cli);
 }
 
+function rssResult(peak) {
+  const total = peak?.total || 0;
+  if (!(total > 0)) return {};
+  const out = { rssBytes: total };
+  if (peak.tool > 0) out.rssToolBytes = peak.tool;
+  if (peak.engine > 0) out.rssEngineBytes = peak.engine;
+  return out;
+}
+
 async function measureCliPosix(cli) {
   const timeoutMs = Number(cli.timeoutMs ?? 120_000);
-  const rssSamples = [];
+  const sampleRss = cli.sampleRss === true; // off unless the memory pass asked
+  const peak = { total: 0, tool: 0, engine: 0 };
   const wall0 = process.hrtime.bigint();
 
   return new Promise((resolve) => {
@@ -65,14 +81,26 @@ async function measureCliPosix(cli) {
     });
 
     const sample = () => {
-      if (!child.pid) return;
-      const tree = pidTreeRssBytes(child.pid);
-      const exact = process.platform === "linux" ? pidPeakRssBytes(child.pid) : null;
-      const n = Math.max(tree || 0, exact || 0);
-      if (n > 0) rssSamples.push(n);
+      if (!sampleRss || !child.pid) return;
+      const b = pidTreeRssBreakdown(child.pid);
+      const hwm = pidPeakRssBytes(child.pid) || 0;
+      if (b.engineBytes > 0) {
+        if (b.totalBytes > peak.total) {
+          peak.total = b.totalBytes;
+          peak.tool = b.toolBytes;
+          peak.engine = b.engineBytes;
+        }
+      } else {
+        const n = Math.max(b.totalBytes, hwm);
+        if (n > peak.total) {
+          peak.total = n;
+          peak.tool = n;
+          peak.engine = 0;
+        }
+      }
     };
-    const iv = setInterval(sample, 1);
-    if (typeof iv.unref === "function") iv.unref();
+    const iv = sampleRss ? setInterval(sample, 1) : null;
+    if (iv && typeof iv.unref === "function") iv.unref();
     sample();
 
     let timedOut = false;
@@ -88,10 +116,9 @@ async function measureCliPosix(cli) {
 
     const done = (status, error) => {
       sample();
-      clearInterval(iv);
+      if (iv) clearInterval(iv);
       clearTimeout(killer);
       const ms = Number(process.hrtime.bigint() - wall0) / 1e6;
-      const peak = rssSamples.length ? Math.max(...rssSamples) : undefined;
       resolve({
         status: timedOut ? null : status,
         stdout,
@@ -99,7 +126,7 @@ async function measureCliPosix(cli) {
         combined: stdout + stderr,
         error: timedOut ? new Error(`timeout after ${timeoutMs}ms`) : error,
         ms,
-        rssBytes: Number.isFinite(peak) && peak > 0 ? peak : undefined,
+        ...rssResult(peak),
       });
     };
 
@@ -110,6 +137,7 @@ async function measureCliPosix(cli) {
 
 function measureCliWindows(cli) {
   const timeoutMs = Number(cli.timeoutMs ?? 120_000);
+  const sampleRss = cli.sampleRss === true;
   const stamp = `${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
   const work = join(rootDir, "work", "confirm-measure");
   mkdirSync(work, { recursive: true });
@@ -124,8 +152,57 @@ function measureCliWindows(cli) {
     .map(([k, v]) => `$psi.Environment['${escapePsSingle(k)}'] = '${escapePsSingle(v)}'`)
     .join("; ");
 
+  const rssBlock = sampleRss
+    ? `
+${windowsTreeRssPsFunction()}
+$peakTotal = [int64]0
+$peakTool = [int64]0
+$peakEngine = [int64]0
+$lastScan = -9999.0
+$rootHwm = [int64]0
+function Note-Snap($snap) {
+  if ($snap -eq $null) { return }
+  $tool = $script:rootHwm + $snap.Tool
+  $eng = $snap.Engine
+  $tot = $tool + $eng
+  if ($tot -gt $script:peakTotal) {
+    $script:peakTotal = $tot
+    $script:peakTool = $tool
+    $script:peakEngine = $eng
+  }
+}
+function Note-Root {
+  $pref = $ErrorActionPreference
+  $ErrorActionPreference = 'Continue'
+  try {
+    $p.Refresh()
+    $ws = [int64]$p.WorkingSet64
+    $hwm = [int64]$p.PeakWorkingSet64
+    $root = [math]::Max($ws, $hwm)
+    if ($root -gt $script:rootHwm) { $script:rootHwm = $root }
+    $tool = $script:rootHwm
+    $eng = $script:peakEngine
+    $tot = $tool + $eng
+    if ($tot -gt $script:peakTotal) {
+      $script:peakTotal = $tot
+      $script:peakTool = $tool
+    }
+  } catch {}
+  $ErrorActionPreference = $pref
+}
+`
+    : `
+$peakTotal = [int64]0
+$peakTool = [int64]0
+$peakEngine = [int64]0
+$lastScan = 0
+function Note-Snap($snap) {}
+function Note-Root {}
+`;
+
   const ps = `
 $ErrorActionPreference = 'Stop'
+${rssBlock}
 $psi = New-Object System.Diagnostics.ProcessStartInfo
 $psi.FileName = '${escapePsSingle(cli.bin)}'
 $psi.Arguments = [string]::Join(' ', @(${argList || "''"}))
@@ -137,44 +214,44 @@ $psi.CreateNoWindow = $true
 ${envLines}
 $sw = [System.Diagnostics.Stopwatch]::StartNew()
 $p = [System.Diagnostics.Process]::Start($psi)
+$started = [datetime]::Now
+try { $started = $p.StartTime } catch {}
 $outTask = $p.StandardOutput.ReadToEndAsync()
 $errTask = $p.StandardError.ReadToEndAsync()
-$ws = New-Object System.Collections.Generic.List[Int64]
+Note-Root
 $timedOut = $false
-while (-not $p.HasExited) {
+while (-not $p.WaitForExit(10)) {
   if ($sw.Elapsed.TotalMilliseconds -gt ${timeoutMs}) {
     $timedOut = $true
     try { $p.Kill() } catch {}
     break
   }
-  try {
-    $p.Refresh()
-    if ($p.WorkingSet64 -gt 0) { [void]$ws.Add([Int64]$p.WorkingSet64) }
-  } catch {}
-  Start-Sleep -Milliseconds 1
+  Note-Root
+  if (${sampleRss ? "$true" : "$false"} -and $sw.Elapsed.TotalMilliseconds - $lastScan -ge 50) {
+    try { Note-Snap (Measure-TreeWorkingSet $p.Id $started) } catch {}
+    $lastScan = $sw.Elapsed.TotalMilliseconds
+  }
 }
 if ($timedOut) {
   try { $p.WaitForExit(5000) } catch {}
   Write-Output 'TIMEOUT'
   exit 0
 }
-$p.WaitForExit()
 $sw.Stop()
-try {
-  $p.Refresh()
-  if ($p.WorkingSet64 -gt 0) { [void]$ws.Add([Int64]$p.WorkingSet64) }
-} catch {}
-try { if ($p.PeakWorkingSet64 -gt 0) { [void]$ws.Add([Int64]$p.PeakWorkingSet64) } } catch {}
+Note-Root
+if (${sampleRss ? "$true" : "$false"}) {
+  try { Note-Snap (Measure-TreeWorkingSet $p.Id $started) } catch {}
+  Note-Root
+}
 $stdout = $outTask.GetAwaiter().GetResult()
 $stderr = $errTask.GetAwaiter().GetResult()
 [System.IO.File]::WriteAllText('${escapePsSingle(outFile)}', $stdout)
 [System.IO.File]::WriteAllText('${escapePsSingle(errFile)}', $stderr)
-if ($ws.Count -eq 0) {
+if ($peakTotal -le 0) {
   Write-Output ('EMPTY {0} {1}' -f $p.ExitCode, [math]::Round($sw.Elapsed.TotalMilliseconds, 2))
   exit 0
 }
-$wsMax = ($ws | Measure-Object -Maximum).Maximum
-Write-Output ('{0} {1} {2}' -f $p.ExitCode, [math]::Round($sw.Elapsed.TotalMilliseconds, 2), $wsMax)
+Write-Output ('{0} {1} {2} {3} {4}' -f $p.ExitCode, [math]::Round($sw.Elapsed.TotalMilliseconds, 2), $peakTotal, $peakTool, $peakEngine)
 `;
 
   writeFileSync(psFile, ps, "utf8");
@@ -232,8 +309,9 @@ Write-Output ('{0} {1} {2}' -f $p.ExitCode, [math]::Round($sw.Elapsed.TotalMilli
 
   const parts = line.split(/\s+/);
   if (parts[0] === "EMPTY") {
+    const code = Number(parts[1]);
     return {
-      status: Number(parts[1]) || null,
+      status: Number.isFinite(code) ? code : null,
       stdout,
       stderr,
       combined: stdout + stderr,
@@ -244,12 +322,18 @@ Write-Output ('{0} {1} {2}' -f $p.ExitCode, [math]::Round($sw.Elapsed.TotalMilli
   const status = Number(parts[0]);
   const ms = Number(parts[1]);
   const rssBytes = Number(parts[2]);
+  const rssToolBytes = Number(parts[3]);
+  const rssEngineBytes = Number(parts[4]);
   return {
     status: Number.isFinite(status) ? status : null,
     stdout,
     stderr,
     combined: stdout + stderr,
     ms: Number.isFinite(ms) ? ms : 0,
-    rssBytes: Number.isFinite(rssBytes) && rssBytes > 0 ? rssBytes : undefined,
+    ...rssResult({
+      total: Number.isFinite(rssBytes) ? rssBytes : 0,
+      tool: Number.isFinite(rssToolBytes) ? rssToolBytes : 0,
+      engine: Number.isFinite(rssEngineBytes) ? rssEngineBytes : 0,
+    }),
   };
 }

@@ -192,6 +192,7 @@ async function runChecker({ bin, args, cwd, timeoutMs, env = {}, shell = false }
     cwd,
     timeoutMs,
     shell,
+    sampleRss: true,
     env: {
       CI: "1",
       NO_COLOR: "1",

@@ -129,7 +129,7 @@ function cell(status) {
 }
 
 function resultMap(results) {
-  /** @type {Map<string, Map<string, { status: string, message?: string, ms?: number, rssMb?: number }>>} */
+  /** @type {Map<string, Map<string, { status: string, message?: string, ms?: number, rssMb?: number, rssToolMb?: number, rssEngineMb?: number }>>} */
   const byCase = new Map();
   for (const r of results) {
     if (r.suite !== "typecheck") continue;
@@ -139,6 +139,8 @@ function resultMap(results) {
       message: r.message,
       ms: r.ms,
       rssMb: r.rssMb,
+      rssToolMb: r.rssToolMb,
+      rssEngineMb: r.rssEngineMb,
     });
   }
   return byCase;
@@ -176,13 +178,23 @@ export function formatRss(mb) {
 function resourceCell(r) {
   if (!r || r.status === "skip") return "–";
   const time = formatMs(r.ms);
-  const mem = formatRss(r.rssMb);
+  const total = formatRss(r.rssMb);
+  const tool = formatRss(r.rssToolMb);
+  const engine = formatRss(r.rssEngineMb);
+  let mem = total;
+  if (engine !== "–" && (tool !== "–" || total !== "–")) {
+    mem = `${tool !== "–" ? tool : "–"} + ${engine} = ${total}`;
+  }
   if (time === "–" && mem === "–") return "–";
   if (mem === "–") return time;
   return `${time} / ${mem}`;
 }
 
 function appendTimeAndMemory(lines, metas, byCase, host) {
+  const hasRss = [...byCase.values()].some((tools) =>
+    [...tools.values()].some((r) => Number.isFinite(r?.rssMb) && r.rssMb > 0),
+  );
+  if (!hasRss) return;
   lines.push("## Time and memory");
   lines.push("");
   lines.push(
@@ -190,11 +202,8 @@ function appendTimeAndMemory(lines, metas, byCase, host) {
   );
   lines.push("");
   lines.push(
-    "One spawn per cell on the **shared** tsconfig. Wall clock is spawn → exit (not a ranked throughput number: no warmup, one run, tiny fixtures). RSS uses the same method as `pnpm bench:memory`:",
+    "One spawn per cell on the **shared** tsconfig. Wall clock is spawn → exit (not a ranked throughput number: no warmup, one run, tiny fixtures). RSS is the **full descendant tree** on Linux, macOS, and Windows, split as `tool + tsgo/tsc = total` when the checker spawns a TypeScript engine (vize/verter `tsgo` or native `tsc`; Volar `tsserver`). In-process engines (vue-tsc's JS TypeScript, golar's in-process tsgo) cannot be split — that cell is just total.",
   );
-  lines.push("");
-  lines.push("- Linux / macOS: poll `pidTreeRssBytes` (`/proc` or `ps` + children); Linux also folds in `VmHWM`");
-  lines.push("- Windows: PowerShell `Process.Start` samples `WorkingSet64` in-process and folds in `PeakWorkingSet64`");
   lines.push("");
   lines.push(
     "FallthroughAttributes retries and other extra-config runs are **not** in this table. Skip cells are –. Do not compare these to the `typecheck` throughput surface in the README.",
@@ -249,7 +258,7 @@ function appendAllPlants(lines, results, { chartsHref = "results/charts", writeC
   );
   lines.push("");
   lines.push(
-    "Wall is the **median** of the same measured-run count as the Benchmark job (`--runs`, default 5), after discarded warmups (`--warmups`, default 1, minimum 1). Peak RSS is the max of those measured runs. Pass rate is scored plants that met their pin (skips excluded), as a **percentage**.",
+    "Wall is the **median** of a **speed** pass (`--runs`, default 5, after `--warmups`, default 1) with **no** RSS sampler. Peak RSS is a **separate memory pass** (one sampled spawn after speed) so process-tree polling cannot inflate the clock. Engine RSS is a child `tsgo` / native `tsc` / `tsserver` when one was spawned. Pass rate is scored plants that met their pin (skips excluded), as a **percentage**.",
   );
   lines.push("");
   if (landing.trim()) lines.push(landing.trim(), "");
@@ -385,9 +394,9 @@ export function formatTypecheckDoc({
 
   lines.push("## How plants are judged");
   lines.push("");
-  lines.push("- Each case is a tiny project under `tests/confirm/fixtures/typecheck/cases/<id>/`. The per-plant matrix is still one spawn per case.");
+  lines.push("- Each case is a tiny project under `tests/confirm/fixtures/typecheck/cases/<id>/`. CI scores the matrix from **one spawn per tool** (`--all`) over every plant. `pnpm confirm:typecheck` without `--all` still runs each plant as its own spawn (fallthrough / extra-tsconfig retries).");
   lines.push(
-    "- **All plants (one tsconfig)** — extra check: every plant is copied under `cases/<id>/` and typechecked in **one** process with the shared `tsconfig.json` (no per-case overlay, no fallthroughAttributes retry). Wall is the median of the Benchmark job's `--runs` (default 5) after `--warmups` (default 1). Peak RSS is the max of those measured runs. Pass rate is the per-plant score of the last measured dump, as a percentage of scored plants (skips excluded).",
+    "- **All plants (one tsconfig)** — extra check: every plant is copied under `cases/<id>/` and typechecked in **one** process with the shared `tsconfig.json` (no per-case overlay, no fallthroughAttributes retry). Wall is a speed pass (no RSS sampler). Peak RSS is a **separate** memory spawn. Pass rate is the per-plant score of the last speed dump, as a percentage of scored plants (skips excluded).",
   );
   lines.push(
     "- Every tool runs on the **same shared tsconfig** (`strictTemplates: true`). Extra TypeScript flags that only one tool needs are **not** added globally.",
@@ -462,14 +471,20 @@ export function formatTypecheckDoc({
   lines.push("");
   lines.push(`- plants: **${metas.length}**`);
   lines.push(`- pass: **${pass}** · fail: **${fail}** · skip: **${skip}** · warn: **${warn}**`);
-  lines.push("- wall clock + peak RSS per plant × tool: [Time and memory](#time-and-memory)");
+  const byCasePreview = resultMap(results);
+  const hasPlantRss = [...byCasePreview.values()].some((tools) =>
+    [...tools.values()].some((r) => Number.isFinite(r?.rssMb) && r.rssMb > 0),
+  );
+  if (hasPlantRss) {
+    lines.push("- wall clock + peak RSS per plant × tool: [Time and memory](#time-and-memory)");
+  }
   lines.push("- one-spawn combined run: [All plants (one tsconfig)](#all-plants-one-tsconfig)");
   lines.push("");
 
   appendAllPlants(lines, results, { chartsHref: "results/charts", writeChart });
   lines.push("");
 
-  for (const [groupId, groupTitle] of GROUPS) {
+  if (typecheckRows.length) for (const [groupId, groupTitle] of GROUPS) {
     const rows = metas.filter((m) => m.group === groupId);
     if (!rows.length) continue;
     lines.push(`## ${groupTitle}`);
@@ -528,7 +543,8 @@ export function formatTypecheckDoc({
   lines.push("## Running");
   lines.push("");
   lines.push("```bash");
-  lines.push("pnpm confirm:typecheck");
+  lines.push("pnpm confirm:typecheck          # local: per-plant + all-plants");
+  lines.push("pnpm confirm --all              # CI: one typecheck spawn per tool");
   lines.push("```");
   lines.push("");
   lines.push(
