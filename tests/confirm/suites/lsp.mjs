@@ -4,7 +4,7 @@
  * One small workspace, one session per server:
  *   hover-template-binding      hover {{ greeting }} mentions a type
  *   definition-component        go-to-definition on <Child /> lands in Child.vue
- *   diagnostics-template        publishDiagnostics (or pull) names plantedBadProp
+ *   diagnostics-template        publishDiagnostics (or pull) names the extra-prop plant
  *   diagnostics-clear-after-fix didChange to App.fixed.vue clears that plant
  *
  * Missing server binary → skip, same as typecheck. Bootstrap failure → skip.
@@ -43,6 +43,11 @@ const CASES = [
 
 const BINDING = "greeting";
 const BINDING_VALUE = "confirm-lsp";
+// Vue templates write extra attrs in kebab-case. CamelCase (`plantedBadProp`)
+// trips vize's vue/attribute-hyphenation lint, whose message does not name the
+// attribute, so the plant never matches even when the server is otherwise
+// healthy. Volar/Verter still report the camelized TypeScript name.
+const PLANTED_ATTR = "planted-bad-prop";
 const PLANTED_PROP = "plantedBadProp";
 
 const INIT_TIMEOUT_MS = 30_000;
@@ -98,8 +103,15 @@ function diagnosticText(d) {
 }
 
 function mentionsPlant(diags) {
+  return (Array.isArray(diags) ? diags : []).some((d) => {
+    const text = diagnosticText(d);
+    return text.includes(PLANTED_PROP) || text.includes(PLANTED_ATTR);
+  });
+}
+
+function typecheckUnavailable(diags) {
   return (Array.isArray(diags) ? diags : []).some((d) =>
-    diagnosticText(d).includes(PLANTED_PROP),
+    /type checking is unavailable/i.test(diagnosticText(d)),
   );
 }
 
@@ -443,18 +455,39 @@ async function runServerCases(suite, server, ws) {
     try {
       const hover = await hoverWithRetry(session.ask, session.appUri, ws.hoverProbe);
       const text = contentText(hover);
-      record(
-        suite,
-        "hover-template-binding",
-        server.id,
-        hoverMentionsType(text),
-        hoverMentionsType(text)
-          ? `template hover mentions a type (${text.replace(/\s+/g, " ").trim().slice(0, 120)})`
-          : text
-            ? `template hover has no type (string/number): ${text.replace(/\s+/g, " ").trim().slice(0, 160)}`
-            : "empty hover payload at {{ greeting }}",
-        { snippet: text.slice(0, 400), ms: Number((performance.now() - t0).toFixed(1)) },
-      );
+      const typed = hoverMentionsType(text);
+      // Corsa-down is a degraded backend, not a hover-content bug. Linux CI
+      // reaches Corsa and 0.350.2 now answers with a type; Windows often
+      // publishes "Type checking is unavailable" and the generic binding prose.
+      if (!typed) {
+        const until = performance.now() + 2_000;
+        while (
+          performance.now() < until &&
+          !typecheckUnavailable(session.diags.merged())
+        ) {
+          await sleep(100);
+        }
+      }
+      if (!typed && typecheckUnavailable(session.diags.merged())) {
+        suite.skip(
+          "hover-template-binding",
+          server.id,
+          "type checking unavailable (Corsa not reachable) — hover has no TypeScript type",
+        );
+      } else {
+        record(
+          suite,
+          "hover-template-binding",
+          server.id,
+          typed,
+          typed
+            ? `template hover mentions a type (${text.replace(/\s+/g, " ").trim().slice(0, 120)})`
+            : text
+              ? `template hover has no type (string/number): ${text.replace(/\s+/g, " ").trim().slice(0, 160)}`
+              : "empty hover payload at {{ greeting }}",
+          { snippet: text.slice(0, 400), ms: Number((performance.now() - t0).toFixed(1)) },
+        );
+      }
     } catch (error) {
       suite.fail("hover-template-binding", server.id, `hover request failed: ${error.message}`);
     }
@@ -487,8 +520,22 @@ async function runServerCases(suite, server, ws) {
     }
 
     // --- diagnostics-template ---
+    if (typecheckUnavailable(session.diags.merged())) {
+      const why =
+        "type checking unavailable (Corsa not reachable) — extra-prop plant cannot be confirmed";
+      suite.skip("diagnostics-template", server.id, why);
+      suite.skip("diagnostics-clear-after-fix", server.id, why);
+      return;
+    }
     const dirty = await waitForPlant(session, { wantPresent: true, timeoutMs: DIAG_WAIT_MS });
     const sawPlant = mentionsPlant(dirty);
+    if (!sawPlant && typecheckUnavailable(dirty)) {
+      const why =
+        "type checking unavailable (Corsa not reachable) — extra-prop plant cannot be confirmed";
+      suite.skip("diagnostics-template", server.id, why);
+      suite.skip("diagnostics-clear-after-fix", server.id, why);
+      return;
+    }
     record(
       suite,
       "diagnostics-template",

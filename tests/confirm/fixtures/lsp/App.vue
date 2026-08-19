@@ -1,7 +1,7 @@
 <template>
   <section>
     <p>{{ greeting }}</p>
-    <Child :title="greeting" plantedBadProp="nope" />
+    <Child :title="greeting" planted-bad-prop="nope" />
   </section>
 </template>
 

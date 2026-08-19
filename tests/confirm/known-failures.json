@@ -91,5 +91,6 @@
   "compile/css-v-bind/fervid": "fervid sets __scopeId but emits no useCssVars() call in setup(), so a <style> v-bind(themeColor) never injects its CSS custom property and the bound value is never applied.",
   "compile/v-show/fervid": "fervid emits the v-show directive binding correctly (_withDirectives with _vShow) but omits the 512 /* NEED_PATCH */ patch flag, so toggling the bound value never updates display. Same root cause as compile/custom-directive/fervid and the documented verter case.",
 
-  "lsp/hover-template-binding/vize": "Vize hover on a script-setup const inside {{ }} returns generic binding prose (`Binding from <script setup>`, auto-unwrap notes) with no TypeScript type. Volar answers `(property) greeting: \"confirm-lsp\"` and Verter `const greeting: \"confirm-lsp\"`."
+  "lsp/diagnostics-template/vize": "vize does not publish a type error for an undeclared extra component attribute (`planted-bad-prop` / plantedBadProp). `vize check` on the same fixture is silent; vue-tsc reports TS2353. Volar and Verter LSP both name the extra prop. When the plant was camelCase, LSP only published vue/attribute-hyphenation (message does not name the attr).",
+  "lsp/diagnostics-clear-after-fix/vize": "Same extra-prop hole as diagnostics-template/vize — the planted attr never appears as a type diagnostic, so clear-after-fix cannot be confirmed."
 }
