@@ -161,6 +161,23 @@ function groupBars(usable, lowerIsBetter) {
   return groups;
 }
 
+/** Approximate text width so labels stay inside the viewBox (Safari clips overflow). */
+function fitLabel(text, maxPx, fontPx) {
+  const em = fontPx * 0.62;
+  const s = String(text);
+  if (s.length * em <= maxPx) return s;
+  const budget = Math.max(1, Math.floor((maxPx - em) / em));
+  return `${s.slice(0, budget)}…`;
+}
+
+const SVG_FILL = { label: "#111827", muted: "#6b7280", onbar: "#ffffff" };
+
+function svgText(cls, attrs, content) {
+  const fill = cls.includes("onbar") ? SVG_FILL.onbar : cls.includes("muted") ? SVG_FILL.muted : SVG_FILL.label;
+  const extra = attrs.trim() ? ` ${attrs.trim()}` : "";
+  return `<text class="${cls}" fill="${fill}"${extra}>${content}</text>`;
+}
+
 export function barChartSvg({ title, unit = "ms", bars, lowerIsBetter = true, maxValue }) {
   const usable = bars.filter((b) => Number.isFinite(b.value) && b.value >= 0);
   if (usable.length === 0) return "";
@@ -169,9 +186,12 @@ export function barChartSvg({ title, unit = "ms", bars, lowerIsBetter = true, ma
   const stackedRss = groups.some((g) => g.stackedRss);
 
   const padL = 16;
+  const nameX = 36;
   const labelW = 248;
   const rightPad = 110;
-  const top = stacked || stackedRss ? 52 : 44;
+  // Two-line header: title + "lower is better". Safari as <img> clips
+  // text-anchor=end at the viewBox edge, which is where the caption used to sit.
+  const top = stacked || stackedRss ? 64 : 56;
   const rowH = 36;
   const barH = 22;
   const bottom = 28;
@@ -180,6 +200,7 @@ export function barChartSvg({ title, unit = "ms", bars, lowerIsBetter = true, ma
   const plotW = width - labelW - rightPad;
   const dataMax = Math.max(...groups.map((g) => g.barValue), Number.EPSILON);
   const max = Number.isFinite(maxValue) && maxValue > 0 ? maxValue : unit === "%" ? 100 : dataMax;
+  const nameMaxPx = labelW - nameX - 8;
 
   const escape = (s) =>
     String(s)
@@ -197,7 +218,7 @@ export function barChartSvg({ title, unit = "ms", bars, lowerIsBetter = true, ma
     const v = max * frac;
     axis.push(
       `<line class="grid" x1="${x}" y1="${top - 8}" x2="${x}" y2="${plotBottom}" />`,
-      `<text class="muted" x="${x}" y="${height - 8}" text-anchor="middle" font-size="11">${escape(formatBarValue(v, unit))}</text>`,
+      svgText("muted", `x="${x}" y="${height - 8}" text-anchor="middle" font-size="11"`, escape(formatBarValue(v, unit))),
     );
   }
 
@@ -212,9 +233,10 @@ export function barChartSvg({ title, unit = "ms", bars, lowerIsBetter = true, ma
       );
     }
     const fill = g.ranked === false ? `url(#${hatchId})` : color;
-    const name = g.label.length > 36 ? `${g.label.slice(0, 35)}…` : g.label;
+    const name = fitLabel(g.label, nameMaxPx, 13);
     const nameClass = g.ranked === false ? "label struck" : "label";
     const unranked = g.ranked === false ? " · unranked" : "";
+    const nameOpacity = g.ranked === false ? ` fill-opacity="0.62"` : "";
 
     let segments = "";
     let valueLabel;
@@ -253,48 +275,57 @@ export function barChartSvg({ title, unit = "ms", bars, lowerIsBetter = true, ma
     }
     const valueInside = totalW > 96;
     const valueEl = valueInside
-      ? `<text class="onbar" x="${labelW + totalW - 8}" y="${y + 16}" text-anchor="end" font-size="12" font-weight="600">${escape(valueLabel)}</text>`
-      : `<text class="label" x="${labelW + totalW + 8}" y="${y + 16}" font-size="12" font-weight="600">${escape(valueLabel)}</text>`;
-    return `<text class="muted" x="${padL}" y="${y + 16}" font-size="11">${i + 1}</text>
-      <text class="${nameClass}" x="${labelW - 12}" y="${y + 16}" text-anchor="end" font-size="13">${escape(name)}</text>
+      ? svgText("onbar", `x="${labelW + 8}" y="${y + 21}" font-size="12" font-weight="600"`, escape(valueLabel))
+      : svgText("label", `x="${labelW + totalW + 8}" y="${y + 21}" font-size="12" font-weight="600"`, escape(valueLabel));
+    const strike =
+      g.ranked === false
+        ? `<line class="strike" x1="${nameX}" y1="${y + 16}" x2="${labelW - 8}" y2="${y + 16}" />`
+        : "";
+    return `${svgText("muted", `x="${padL}" y="${y + 21}" font-size="11"`, String(i + 1))}
+      ${svgText(nameClass, `x="${nameX}" y="${y + 21}" font-size="13"${nameOpacity}`, escape(name))}
+      ${strike}
       ${segments}
       ${valueEl}`;
   });
 
+  const legendY = 42;
   const legend = stackedRss
-    ? `<rect x="${padL}" y="28" width="10" height="10" rx="2" fill="#111827"/>
-  <text class="muted" x="${padL + 14}" y="37" font-size="11">tool</text>
-  <rect x="${padL + 54}" y="28" width="10" height="10" rx="2" fill="#111827" fill-opacity="0.38"/>
-  <text class="muted" x="${padL + 68}" y="37" font-size="11">tsgo / tsc</text>`
+    ? `<rect x="${padL + 130}" y="${legendY - 9}" width="10" height="10" rx="2" fill="#111827"/>
+  ${svgText("muted", `x="${padL + 144}" y="${legendY}" font-size="11"`, "tool")}
+  <rect x="${padL + 178}" y="${legendY - 9}" width="10" height="10" rx="2" fill="#111827" fill-opacity="0.38"/>
+  ${svgText("muted", `x="${padL + 192}" y="${legendY}" font-size="11"`, "tsgo / tsc")}`
     : stacked
-      ? `<rect x="${padL}" y="28" width="10" height="10" rx="2" fill="#111827"/>
-  <text class="muted" x="${padL + 14}" y="37" font-size="11">warm</text>
-  <rect x="${padL + 58}" y="28" width="10" height="10" rx="2" fill="#111827" fill-opacity="0.38"/>
-  <text class="muted" x="${padL + 72}" y="37" font-size="11">cold</text>`
+      ? `<rect x="${padL + 130}" y="${legendY - 9}" width="10" height="10" rx="2" fill="#111827"/>
+  ${svgText("muted", `x="${padL + 144}" y="${legendY}" font-size="11"`, "warm")}
+  <rect x="${padL + 188}" y="${legendY - 9}" width="10" height="10" rx="2" fill="#111827" fill-opacity="0.38"/>
+  ${svgText("muted", `x="${padL + 202}" y="${legendY}" font-size="11"`, "cold")}`
       : "";
 
   const better = lowerIsBetter ? "lower is better" : "higher is better";
+  const chartTitle = fitLabel(title, width - padL * 2, 15);
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escape(title)}">
   <title>${escape(title)} (${better})</title>
   <style><![CDATA[
-    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+    text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
     .label { fill: #111827; }
-    .struck { text-decoration: line-through; opacity: 0.62; }
+    .struck { fill-opacity: 0.62; }
     .muted { fill: #6b7280; }
     .onbar { fill: #ffffff; }
     .track { fill: #111827; fill-opacity: 0.06; }
     .grid { stroke: #111827; stroke-opacity: 0.08; }
+    .strike { stroke: #111827; stroke-opacity: 0.45; }
     @media (prefers-color-scheme: dark) {
       .label { fill: #f9fafb; }
       .muted { fill: #9ca3af; }
       .track { fill: #f9fafb; fill-opacity: 0.08; }
       .grid { stroke: #f9fafb; stroke-opacity: 0.12; }
+      .strike { stroke: #f9fafb; }
     }
   ]]></style>
   ${hatches.length ? `<defs>${hatches.join("")}</defs>` : ""}
-  <text class="label" x="${padL}" y="22" font-size="15" font-weight="600">${escape(title)}</text>
-  <text class="muted" x="${width - padL}" y="22" text-anchor="end" font-size="11">${escape(better)}</text>
+  ${svgText("label", `x="${padL}" y="20" font-size="15" font-weight="600"`, escape(chartTitle))}
+  ${svgText("muted", `x="${padL}" y="36" font-size="11"`, escape(better))}
   ${legend}
   ${axis.join("\n  ")}
   ${rows.join("\n  ")}
@@ -865,14 +896,28 @@ const ALL_PLANT_LABELS = {
   "golar-typecheck": "golar",
 };
 
+function finiteRuns(d) {
+  return (Array.isArray(d?.runs) ? d.runs : []).map(Number).filter(Number.isFinite);
+}
+
+function mean(values) {
+  if (!values.length) return Number.NaN;
+  return values.reduce((a, b) => a + b, 0) / values.length;
+}
+
 function allPlantTools(rows) {
   return (rows || [])
     .filter((r) => (r.suite === "typecheck-all" || r.caseId === "all-plants") && r.status !== "skip")
     .map((r) => {
       const d = r.detail || {};
+      const runs = finiteRuns(d);
+      const avgMs = Number(d.avgMs);
       return {
         label: ALL_PLANT_LABELS[r.tool] || r.tool,
         ms: Number(r.ms ?? d.ms),
+        avgMs: Number.isFinite(avgMs) ? avgMs : runs.length ? mean(runs) : Number.NaN,
+        minMs: Number.isFinite(Number(d.minMs)) ? Number(d.minMs) : runs.length ? Math.min(...runs) : Number.NaN,
+        maxMs: Number.isFinite(Number(d.maxMs)) ? Number(d.maxMs) : runs.length ? Math.max(...runs) : Number.NaN,
         rssMb: Number(r.rssMb ?? d.rssMb),
         rssToolMb: Number(r.rssToolMb ?? d.rssToolMb),
         rssEngineMb: Number(r.rssEngineMb ?? d.rssEngineMb),
@@ -903,10 +948,20 @@ export function typecheckAllLanding(rows, { writeChart, chartsHref = "docs/resul
   }
   if (wallBars.length) {
     const fastest = Math.min(...wallBars.map((b) => b.value));
-    out.push("| Tool | **Wall** | vs fastest |", "| --- | ---: | ---: |");
+    const showAvg = tools.some((t) => Number.isFinite(t.avgMs));
+    out.push(
+      showAvg ? "| Tool | **Median** | Avg | vs fastest |" : "| Tool | **Wall** | vs fastest |",
+      showAvg ? "| --- | ---: | ---: | ---: |" : "| --- | ---: | ---: |",
+    );
     for (const t of [...tools].sort((a, b) => (a.ms ?? Infinity) - (b.ms ?? Infinity))) {
       if (!Number.isFinite(t.ms)) continue;
-      out.push(`| ${t.label} | **${formatDuration(t.ms)}** | ${(t.ms / fastest).toFixed(2)}x |`);
+      const vs = `${(t.ms / fastest).toFixed(2)}x`;
+      if (showAvg) {
+        const avg = Number.isFinite(t.avgMs) ? formatDuration(t.avgMs) : "–";
+        out.push(`| ${t.label} | **${formatDuration(t.ms)}** | ${avg} | ${vs} |`);
+      } else {
+        out.push(`| ${t.label} | **${formatDuration(t.ms)}** | ${vs} |`);
+      }
     }
     out.push("");
   }

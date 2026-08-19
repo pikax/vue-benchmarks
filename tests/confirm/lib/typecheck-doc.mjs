@@ -128,11 +128,30 @@ function cell(status) {
   return "–";
 }
 
+/** Per-plant rows. `--all` does not spawn per case — score the combined dump. */
+function typecheckPlantRows(results) {
+  const direct = (results || []).filter((r) => r.suite === "typecheck");
+  if (direct.length) return direct;
+  const out = [];
+  for (const r of results || []) {
+    if (r.suite !== "typecheck-all" && r.caseId !== "all-plants") continue;
+    for (const p of r.detail?.plants || []) {
+      out.push({
+        suite: "typecheck",
+        caseId: p.caseId,
+        tool: r.tool,
+        status: p.skip ? "skip" : p.ok ? "pass" : "fail",
+        message: p.message,
+      });
+    }
+  }
+  return out;
+}
+
 function resultMap(results) {
   /** @type {Map<string, Map<string, { status: string, message?: string, ms?: number, rssMb?: number, rssToolMb?: number, rssEngineMb?: number }>>} */
   const byCase = new Map();
-  for (const r of results) {
-    if (r.suite !== "typecheck") continue;
+  for (const r of typecheckPlantRows(results)) {
     if (!byCase.has(r.caseId)) byCase.set(r.caseId, new Map());
     byCase.get(r.caseId).set(r.tool, {
       status: r.status,
@@ -258,7 +277,7 @@ function appendAllPlants(lines, results, { chartsHref = "results/charts", writeC
   );
   lines.push("");
   lines.push(
-    "Wall is the **median** of a **speed** pass (`--runs`, default 5, after `--warmups`, default 1) with **no** RSS sampler. Peak RSS is a **separate memory pass** (one sampled spawn after speed) so process-tree polling cannot inflate the clock. Engine RSS is a child `tsgo` / native `tsc` / `tsserver` when one was spawned. Pass rate is scored plants that met their pin (skips excluded), as a **percentage**.",
+    "Wall ranking uses the **median** of a **speed** pass (`--runs`, default 5, after `--warmups`, default 1) with **no** RSS sampler; **Avg** is the arithmetic mean of those same measured runs. Peak RSS is a **separate memory pass** (one sampled spawn after speed) so process-tree polling cannot inflate the clock. Engine RSS is a child `tsgo` / native `tsc` / `tsserver` when one was spawned. Pass rate is scored plants that met their pin (skips excluded), as a **percentage**.",
   );
   lines.push("");
   if (landing.trim()) lines.push(landing.trim(), "");
@@ -305,8 +324,10 @@ export function formatRunnerLine(runner) {
  * in the top “This run” section, not repeated here.
  */
 export function formatTypecheckReadmeSummary({ results, generatedAt, runner }) {
-  const typecheckRows = results.filter((r) => r.suite === "typecheck");
-  const plants = new Set(typecheckRows.map((r) => r.caseId)).size;
+  const typecheckRows = typecheckPlantRows(results);
+  const plants = typecheckRows.length
+    ? new Set(typecheckRows.map((r) => r.caseId)).size
+    : loadMetas().length;
   const lines = [];
   lines.push("<!-- TYPECHECK_CONFIRM_START -->");
   lines.push("");
@@ -461,7 +482,7 @@ export function formatTypecheckDoc({
   lines.push("| – | no row (tool did not run this case) |");
   lines.push("");
 
-  const typecheckRows = results.filter((r) => r.suite === "typecheck");
+  const typecheckRows = typecheckPlantRows(results);
   const pass = typecheckRows.filter((r) => r.status === "pass").length;
   const fail = typecheckRows.filter((r) => r.status === "fail").length;
   const skip = typecheckRows.filter((r) => r.status === "skip").length;

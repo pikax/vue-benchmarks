@@ -176,6 +176,42 @@ describe("formatTypecheckDoc all-plants section", () => {
     assert.match(md, /## All plants \(one tsconfig\)/);
     assert.match(md, /90%/);
   });
+
+  test("--all dump (no per-plant suite rows) still fills the matrix, summary, and wall avg", () => {
+    const md = formatTypecheckDoc({
+      generatedAt: "2026-08-19T00:00:00.000Z",
+      runner: { platform: "linux", ci: true, arch: "x64", cpuCount: 4, cpuModel: "Test", totalmem: 8e9, node: "v22" },
+      results: [
+        {
+          suite: "typecheck-all",
+          caseId: "all-plants",
+          tool: "vue-tsc",
+          status: "pass",
+          ms: 3000,
+          rssMb: 100,
+          detail: {
+            ms: 3000,
+            avgMs: 3100,
+            runs: [2900, 3000, 3100, 3200, 3300],
+            passPct: 50,
+            pass: 1,
+            fail: 1,
+            skip: 0,
+            scored: 2,
+            plants: [
+              { caseId: "clean-basic", skip: false, ok: true, message: "clean" },
+              { caseId: "wrong-prop-type", skip: false, ok: false, message: "missed" },
+            ],
+          },
+        },
+      ],
+    });
+    assert.match(md, /pass: \*\*1\*\* · fail: \*\*1\*\*/);
+    assert.match(md, /clean-basic/);
+    assert.match(md, /\*\*Median\*\*/);
+    assert.match(md, /Avg/);
+    assert.match(md, /3\.10 s/);
+  });
 });
 
 describe("bench landing omits JSX", () => {

@@ -16,7 +16,7 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createSuite } from "../lib/harness.mjs";
 import { resolveSpawnable, runCli, runCliMeasured, rootDir } from "../lib/run-cli.mjs";
-import { effectiveWarmups, median } from "../../../scripts/lib/timing.mjs";
+import { effectiveWarmups, mean, median } from "../../../scripts/lib/timing.mjs";
 import {
   combinedFromDiags,
   diagsForCase,
@@ -644,7 +644,7 @@ function runLooksBroken(result) {
 /**
  * Extra check: one project, one tsconfig, every plant.
  * Speed and memory are **separate** spawns so the RSS sampler cannot inflate wall.
- *   speed  — warmups discarded; wall is the median of measured runs
+ *   speed  — warmups discarded; wall is the median (and avg/min/max) of measured runs
  *   memory — one sampled spawn afterwards; peak RSS only (wall discarded)
  * Pass rate is per-plant scoring of the last speed dump.
  */
@@ -718,8 +718,12 @@ export async function runTypecheckAllPlants(suite = createSuite("typecheck-all")
 
     const tally = scoreCombinedRun(cases, tool.id, last);
     const ms = measuredMs.length ? median(measuredMs) : last.ms;
+    const avgMs = measuredMs.length ? mean(measuredMs) : last.ms;
     const measured = {
       ms: Number.isFinite(ms) ? Number(ms.toFixed(1)) : undefined,
+      avgMs: Number.isFinite(avgMs) ? Number(avgMs.toFixed(1)) : undefined,
+      minMs: measuredMs.length ? Number(Math.min(...measuredMs).toFixed(1)) : undefined,
+      maxMs: measuredMs.length ? Number(Math.max(...measuredMs).toFixed(1)) : undefined,
       rssMb,
       rssToolMb: peakRss.tool > 0 ? mb(peakRss.tool) : undefined,
       rssEngineMb: peakRss.engine > 0 ? mb(peakRss.engine) : undefined,
@@ -730,6 +734,8 @@ export async function runTypecheckAllPlants(suite = createSuite("typecheck-all")
     };
     const msg = `${tally.passPct.toFixed(0)}% (${tally.pass}/${tally.scored}) · median ${
       Number.isFinite(measured.ms) ? `${(measured.ms / 1000).toFixed(2)}s` : "–"
+    } · avg ${
+      Number.isFinite(measured.avgMs) ? `${(measured.avgMs / 1000).toFixed(2)}s` : "–"
     } of ${runs} after ${warmups} warmup(s)`;
     suite.pass("all-plants", tool.id, msg, measured);
   }

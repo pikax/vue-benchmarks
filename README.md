@@ -333,7 +333,7 @@ Files: **1** · Bytes: **745**
 
 ## Typecheck confirmation
 
-> 📄 **[Full matrix →](docs/typecheck.md)** — plants, documented gaps, per-plant time/memory. **0** plants. Generated 2026-08-19T18:33:13.434Z.
+> 📄 **[Full matrix →](docs/typecheck.md)** — plants, documented gaps, per-plant time/memory. **142** plants. Generated 2026-08-19T18:33:13.434Z.
 
 ### All plants (one tsconfig)
 
@@ -341,12 +341,12 @@ One spawn per tool over every plant. Pass rate is a **percentage** of scored pla
 
 ![All plants wall](docs/results/charts/typecheck-all-wall.svg)
 
-| Tool | **Wall** | vs fastest |
-| --- | ---: | ---: |
-| vize | **603 ms** | 1.00x |
-| verter-tsc | **755 ms** | 1.25x |
-| golar | **915 ms** | 1.52x |
-| vue-tsc | **3.18 s** | 5.28x |
+| Tool | **Median** | Avg | vs fastest |
+| --- | ---: | ---: | ---: |
+| vize | **603 ms** | 602 ms | 1.00x |
+| verter-tsc | **755 ms** | 756 ms | 1.25x |
+| golar | **915 ms** | 913 ms | 1.52x |
+| vue-tsc | **3.18 s** | 3.17 s | 5.28x |
 
 ![All plants peak RSS](docs/results/charts/typecheck-all-rss.svg)
 

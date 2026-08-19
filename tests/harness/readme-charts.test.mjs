@@ -103,6 +103,23 @@ describe("barChartSvg", () => {
     assert.match(svg, /class="track"/);
   });
 
+  test("Safari-as-img: caption and names are start-anchored with presentation fills", () => {
+    const svg = barChartSvg({
+      title: "Typecheck",
+      unit: "ms",
+      bars: [
+        { label: "verter-tsc", value: 1090, ranked: true },
+        { label: "Verter compileMany (session cache)", value: 2000, ranked: true },
+      ],
+    });
+    assert.match(svg, /fill="#6b7280"[^>]*>lower is better</);
+    assert.doesNotMatch(svg, /text-anchor="end"[^>]*>lower is better</);
+    assert.match(svg, /x="16" y="36"[^>]*>lower is better</);
+    assert.match(svg, /fill="#111827"[^>]*>verter-tsc</);
+    assert.doesNotMatch(svg, /text-anchor="end"[^>]*>verter-tsc</);
+    assert.match(svg, />Verter compileMany/);
+  });
+
   test("empty bars → empty string", () => {
     assert.equal(barChartSvg({ title: "x", bars: [] }), "");
   });
