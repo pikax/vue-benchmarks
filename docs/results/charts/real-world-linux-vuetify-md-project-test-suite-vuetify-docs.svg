@@ -23,31 +23,31 @@
   <line class="grid" x1="248" y1="36" x2="248" y2="188" />
   <text class="muted" x="248" y="208" text-anchor="middle" font-size="11">0.0 ms</text>
   <line class="grid" x1="348.5" y1="36" x2="348.5" y2="188" />
-  <text class="muted" x="348.5" y="208" text-anchor="middle" font-size="11">10.6 s</text>
+  <text class="muted" x="348.5" y="208" text-anchor="middle" font-size="11">11.5 s</text>
   <line class="grid" x1="449" y1="36" x2="449" y2="188" />
-  <text class="muted" x="449" y="208" text-anchor="middle" font-size="11">21.2 s</text>
+  <text class="muted" x="449" y="208" text-anchor="middle" font-size="11">23.0 s</text>
   <line class="grid" x1="549.5" y1="36" x2="549.5" y2="188" />
-  <text class="muted" x="549.5" y="208" text-anchor="middle" font-size="11">31.9 s</text>
+  <text class="muted" x="549.5" y="208" text-anchor="middle" font-size="11">34.5 s</text>
   <line class="grid" x1="650" y1="36" x2="650" y2="188" />
-  <text class="muted" x="650" y="208" text-anchor="middle" font-size="11">42.5 s</text>
+  <text class="muted" x="650" y="208" text-anchor="middle" font-size="11">46.1 s</text>
   <text class="muted" x="16" y="60" font-size="11">1</text>
-      <text class="label" x="236" y="60" text-anchor="end" font-size="13">vuetify — project's own toolchain (…</text>
+      <text class="label" x="236" y="60" text-anchor="end" font-size="13">vuetify — unplugin-vue</text>
       <rect class="track" x="248" y="49" width="402" height="22" rx="5"/>
-      <rect x="248" y="49" width="395.7" height="22" rx="5" fill="#64748b"/>
-      <text class="onbar" x="635.659604519774" y="60" text-anchor="end" font-size="12" font-weight="600">41.8 s</text>
+      <rect x="248" y="49" width="393.2" height="22" rx="5" fill="#42b883"/>
+      <text class="onbar" x="633.1849761181068" y="60" text-anchor="end" font-size="12" font-weight="600">45.0 s</text>
   <text class="muted" x="16" y="96" font-size="11">2</text>
       <text class="label" x="236" y="96" text-anchor="end" font-size="13">vuetify — @verter/unplugin</text>
       <rect class="track" x="248" y="85" width="402" height="22" rx="5"/>
-      <rect x="248" y="85" width="399.7" height="22" rx="5" fill="#e11d48"/>
-      <text class="onbar" x="639.7288135593221" y="96" text-anchor="end" font-size="12" font-weight="600">42.2 s</text>
+      <rect x="248" y="85" width="394.5" height="22" rx="5" fill="#e11d48"/>
+      <text class="onbar" x="634.4941380807643" y="96" text-anchor="end" font-size="12" font-weight="600">45.2 s</text>
   <text class="muted" x="16" y="132" font-size="11">3</text>
-      <text class="label" x="236" y="132" text-anchor="end" font-size="13">vuetify — unplugin-vue</text>
+      <text class="label" x="236" y="132" text-anchor="end" font-size="13">vuetify — project's own toolchain (…</text>
       <rect class="track" x="248" y="121" width="402" height="22" rx="5"/>
-      <rect x="248" y="121" width="401.1" height="22" rx="5" fill="#42b883"/>
-      <text class="onbar" x="641.0536723163841" y="132" text-anchor="end" font-size="12" font-weight="600">42.4 s</text>
+      <rect x="248" y="121" width="395.1" height="22" rx="5" fill="#64748b"/>
+      <text class="onbar" x="635.1050803300043" y="132" text-anchor="end" font-size="12" font-weight="600">45.3 s</text>
   <text class="muted" x="16" y="168" font-size="11">4</text>
       <text class="label" x="236" y="168" text-anchor="end" font-size="13">vuetify — @vizejs/vite-plugin</text>
       <rect class="track" x="248" y="157" width="402" height="22" rx="5"/>
       <rect x="248" y="157" width="402.0" height="22" rx="5" fill="#2563eb"/>
-      <text class="onbar" x="642" y="168" text-anchor="end" font-size="12" font-weight="600">42.5 s</text>
+      <text class="onbar" x="642" y="168" text-anchor="end" font-size="12" font-weight="600">46.1 s</text>
 </svg>

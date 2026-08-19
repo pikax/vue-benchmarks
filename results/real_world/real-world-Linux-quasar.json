@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "kind": "real-world",
-  "generatedAt": "2026-08-16T09:59:03.817Z",
+  "generatedAt": "2026-08-19T18:49:58.161Z",
   "fixture": "fixtures/real",
   "fileCount": 252,
   "corpora": [
@@ -51,22 +51,22 @@
     "arch": "x64",
     "cpuCount": 4,
     "cpuModel": "INTEL(R) XEON(R) PLATINUM 8573C",
-    "totalmem": 16765374464,
+    "totalmem": 16765378560,
     "node": "v22.23.2"
   },
   "commit": {
-    "sha": "b0f41622696d7d0f66900976f51587b169418e2b",
+    "sha": "94f6696b1c7b6f54928678126b9831febd70b4ff",
     "ref": "main",
     "repository": "pikax/vue-benchmarks",
-    "runUrl": "https://github.com/pikax/vue-benchmarks/actions/runs/31938755068"
+    "runUrl": "https://github.com/pikax/vue-benchmarks/actions/runs/32287855785"
   },
   "versions": {
     "node": "v22.23.2",
     "vue": "3.5.41",
     "@vue/compiler-sfc": "3.5.41",
     "@vue/compiler-sfc-36": "3.6.0-rc.4",
-    "vize": "0.347.7",
-    "@vizejs/native": "0.347.7",
+    "vize": "0.350.2",
+    "@vizejs/native": "0.350.2",
     "@verter/native": "0.0.1-beta.3",
     "@fervid/napi": "0.4.1",
     "verter-tsc": "0.0.1-beta.3",
@@ -81,18 +81,19 @@
     "golar": "0.1.10",
     "@golar/vue": "0.1.10",
     "prettier": "3.9.6",
-    "oxfmt": "0.63.0",
-    "oxlint": "1.78.0",
-    "@biomejs/biome": "2.5.8",
+    "oxfmt": "0.64.0",
+    "oxlint": "1.79.0",
+    "eslint-plugin-vue": "10.10.0",
+    "@biomejs/biome": "2.5.9",
     "typescript": "6.0.3",
-    "cli:vize": "0.347.7",
+    "cli:vize": "0.350.2",
     "cli:vue-tsc": "6.0.3",
     "cli:verter-tsc": "0.0.1-beta.3",
     "cli:golar": "0.1.10",
     "cli:prettier": "3.9.6",
-    "cli:oxfmt": "0.63.0",
-    "cli:oxlint": "1.78.0",
-    "cli:biome": "2.5.8",
+    "cli:oxfmt": "0.64.0",
+    "cli:oxlint": "1.79.0",
+    "cli:biome": "2.5.9",
     "vue-jsx-vapor": "3.2.21",
     "@vue-jsx-vapor/compiler-rs": "3.2.21",
     "@vue/babel-plugin-jsx": "3.0.0",
@@ -174,18 +175,18 @@
               "files": 252,
               "status": "ok",
               "runs": [
-                355.755,
-                473.474,
-                337.846,
-                329.038,
-                326.594
+                380.828,
+                389.236,
+                373.406,
+                402.683,
+                391.267
               ],
-              "medianMs": 337.846,
-              "minMs": 326.594,
-              "maxMs": 473.474,
-              "meanMs": 364.541,
-              "stddevMs": 61.961,
-              "cvPct": 18.3,
+              "medianMs": 389.236,
+              "minMs": 373.406,
+              "maxMs": 402.683,
+              "meanMs": 387.484,
+              "stddevMs": 11.078,
+              "cvPct": 2.8,
               "metaSamples": [
                 {
                   "artifact": 3573111
@@ -205,7 +206,7 @@
               ],
               "artifactMedian": 3573111,
               "warmupPasses": 1,
-              "throughput": "746 files/s"
+              "throughput": "647 files/s"
             },
             {
               "id": "vue-3.6-1t-vdom-prod-smoff",
@@ -221,18 +222,18 @@
               "files": 252,
               "status": "ok",
               "runs": [
-                361.987,
-                369.927,
-                348.508,
-                327.328,
-                332.921
+                377.116,
+                378.925,
+                375.513,
+                550.67,
+                372.662
               ],
-              "medianMs": 348.508,
-              "minMs": 327.328,
-              "maxMs": 369.927,
-              "meanMs": 348.134,
-              "stddevMs": 18.244,
-              "cvPct": 5.2,
+              "medianMs": 377.116,
+              "minMs": 372.662,
+              "maxMs": 550.67,
+              "meanMs": 410.977,
+              "stddevMs": 78.125,
+              "cvPct": 20.7,
               "metaSamples": [
                 {
                   "artifact": 3573111
@@ -252,7 +253,7 @@
               ],
               "artifactMedian": 3573111,
               "warmupPasses": 1,
-              "throughput": "723 files/s"
+              "throughput": "668 files/s"
             },
             {
               "id": "vize-1t-vdom-prod-smoff",
@@ -268,18 +269,18 @@
               "files": 252,
               "status": "ok",
               "runs": [
-                133.349,
-                135.133,
-                134.6,
-                134.196,
-                133.283
+                133.131,
+                134.011,
+                143.785,
+                135.759,
+                139.568
               ],
-              "medianMs": 134.196,
-              "minMs": 133.283,
-              "maxMs": 135.133,
-              "meanMs": 134.112,
-              "stddevMs": 0.8,
-              "cvPct": 0.6,
+              "medianMs": 135.759,
+              "minMs": 133.131,
+              "maxMs": 143.785,
+              "meanMs": 137.251,
+              "stddevMs": 4.409,
+              "cvPct": 3.2,
               "metaSamples": [
                 {
                   "artifact": 3481835
@@ -315,18 +316,18 @@
               "files": 252,
               "status": "ok",
               "runs": [
-                55.46,
-                54.302,
-                58.156,
-                55.38,
-                54.271
+                55.519,
+                55.534,
+                55.718,
+                55.704,
+                70.079
               ],
-              "medianMs": 55.38,
-              "minMs": 54.271,
-              "maxMs": 58.156,
-              "meanMs": 55.514,
-              "stddevMs": 1.582,
-              "cvPct": 2.9,
+              "medianMs": 55.704,
+              "minMs": 55.519,
+              "maxMs": 70.079,
+              "meanMs": 58.511,
+              "stddevMs": 6.467,
+              "cvPct": 11.6,
               "metaSamples": [
                 {
                   "artifact": 3481835
@@ -346,7 +347,7 @@
               ],
               "artifactMedian": 3481835,
               "warmupPasses": 1,
-              "throughput": "4.6k files/s"
+              "throughput": "4.5k files/s"
             },
             {
               "id": "fervid-1t-vdom-prod-smoff",
@@ -362,18 +363,18 @@
               "files": 252,
               "status": "unranked",
               "runs": [
-                151.419,
-                152.7,
-                152.949,
-                151.963,
-                152.093
+                153.439,
+                151.412,
+                157.859,
+                157.581,
+                152.323
               ],
-              "medianMs": 152.093,
-              "minMs": 151.419,
-              "maxMs": 152.949,
-              "meanMs": 152.225,
-              "stddevMs": 0.609,
-              "cvPct": 0.4,
+              "medianMs": 153.439,
+              "minMs": 151.412,
+              "maxMs": 157.859,
+              "meanMs": 154.523,
+              "stddevMs": 3.007,
+              "cvPct": 2,
               "metaSamples": [
                 {
                   "artifact": 5189721,
@@ -419,18 +420,18 @@
               "files": 252,
               "status": "unranked",
               "runs": [
-                70.331,
-                70.102,
-                75.771,
-                71.408,
-                68.557
+                68.951,
+                72.847,
+                70.718,
+                71.135,
+                95.595
               ],
-              "medianMs": 70.331,
-              "minMs": 68.557,
-              "maxMs": 75.771,
-              "meanMs": 71.234,
-              "stddevMs": 2.733,
-              "cvPct": 3.9,
+              "medianMs": 71.135,
+              "minMs": 68.951,
+              "maxMs": 95.595,
+              "meanMs": 75.849,
+              "stddevMs": 11.125,
+              "cvPct": 15.6,
               "metaSamples": [
                 {
                   "artifact": 5189721,
@@ -476,18 +477,18 @@
               "files": 252,
               "status": "ok",
               "runs": [
-                213.76,
-                208.908,
-                213.464,
-                198.663,
-                206.772
+                203.013,
+                221.233,
+                205.157,
+                198.199,
+                213.359
               ],
-              "medianMs": 208.908,
-              "minMs": 198.663,
-              "maxMs": 213.76,
-              "meanMs": 208.313,
-              "stddevMs": 6.166,
-              "cvPct": 3,
+              "medianMs": 205.157,
+              "minMs": 198.199,
+              "maxMs": 221.233,
+              "meanMs": 208.192,
+              "stddevMs": 9.119,
+              "cvPct": 4.4,
               "metaSamples": [
                 {
                   "artifact": 2349481,
@@ -545,18 +546,18 @@
               "files": 252,
               "status": "ok",
               "runs": [
-                43.323,
-                48.925,
-                46.095,
-                46.475,
-                46.951
+                49.868,
+                51.855,
+                49.138,
+                51.331,
+                52.043
               ],
-              "medianMs": 46.475,
-              "minMs": 43.323,
-              "maxMs": 48.925,
-              "meanMs": 46.354,
-              "stddevMs": 2.015,
-              "cvPct": 4.3,
+              "medianMs": 51.331,
+              "minMs": 49.138,
+              "maxMs": 52.043,
+              "meanMs": 50.847,
+              "stddevMs": 1.281,
+              "cvPct": 2.5,
               "metaSamples": [
                 {
                   "artifact": 2349481,
@@ -598,7 +599,7 @@
               "cacheHitsLast": 0,
               "artifactMedian": 2349481,
               "warmupPasses": 1,
-              "throughput": "5.4k files/s"
+              "throughput": "4.9k files/s"
             }
           ]
         }
@@ -618,18 +619,18 @@
           "files": 252,
           "status": "ok",
           "runs": [
-            355.755,
-            473.474,
-            337.846,
-            329.038,
-            326.594
+            380.828,
+            389.236,
+            373.406,
+            402.683,
+            391.267
           ],
-          "medianMs": 337.846,
-          "minMs": 326.594,
-          "maxMs": 473.474,
-          "meanMs": 364.541,
-          "stddevMs": 61.961,
-          "cvPct": 18.3,
+          "medianMs": 389.236,
+          "minMs": 373.406,
+          "maxMs": 402.683,
+          "meanMs": 387.484,
+          "stddevMs": 11.078,
+          "cvPct": 2.8,
           "metaSamples": [
             {
               "artifact": 3573111
@@ -649,7 +650,7 @@
           ],
           "artifactMedian": 3573111,
           "warmupPasses": 1,
-          "throughput": "746 files/s"
+          "throughput": "647 files/s"
         },
         {
           "id": "vue-3.6-1t-vdom-prod-smoff",
@@ -665,18 +666,18 @@
           "files": 252,
           "status": "ok",
           "runs": [
-            361.987,
-            369.927,
-            348.508,
-            327.328,
-            332.921
+            377.116,
+            378.925,
+            375.513,
+            550.67,
+            372.662
           ],
-          "medianMs": 348.508,
-          "minMs": 327.328,
-          "maxMs": 369.927,
-          "meanMs": 348.134,
-          "stddevMs": 18.244,
-          "cvPct": 5.2,
+          "medianMs": 377.116,
+          "minMs": 372.662,
+          "maxMs": 550.67,
+          "meanMs": 410.977,
+          "stddevMs": 78.125,
+          "cvPct": 20.7,
           "metaSamples": [
             {
               "artifact": 3573111
@@ -696,7 +697,7 @@
           ],
           "artifactMedian": 3573111,
           "warmupPasses": 1,
-          "throughput": "723 files/s"
+          "throughput": "668 files/s"
         },
         {
           "id": "vize-1t-vdom-prod-smoff",
@@ -712,18 +713,18 @@
           "files": 252,
           "status": "ok",
           "runs": [
-            133.349,
-            135.133,
-            134.6,
-            134.196,
-            133.283
+            133.131,
+            134.011,
+            143.785,
+            135.759,
+            139.568
           ],
-          "medianMs": 134.196,
-          "minMs": 133.283,
-          "maxMs": 135.133,
-          "meanMs": 134.112,
-          "stddevMs": 0.8,
-          "cvPct": 0.6,
+          "medianMs": 135.759,
+          "minMs": 133.131,
+          "maxMs": 143.785,
+          "meanMs": 137.251,
+          "stddevMs": 4.409,
+          "cvPct": 3.2,
           "metaSamples": [
             {
               "artifact": 3481835
@@ -759,18 +760,18 @@
           "files": 252,
           "status": "ok",
           "runs": [
-            55.46,
-            54.302,
-            58.156,
-            55.38,
-            54.271
+            55.519,
+            55.534,
+            55.718,
+            55.704,
+            70.079
           ],
-          "medianMs": 55.38,
-          "minMs": 54.271,
-          "maxMs": 58.156,
-          "meanMs": 55.514,
-          "stddevMs": 1.582,
-          "cvPct": 2.9,
+          "medianMs": 55.704,
+          "minMs": 55.519,
+          "maxMs": 70.079,
+          "meanMs": 58.511,
+          "stddevMs": 6.467,
+          "cvPct": 11.6,
           "metaSamples": [
             {
               "artifact": 3481835
@@ -790,7 +791,7 @@
           ],
           "artifactMedian": 3481835,
           "warmupPasses": 1,
-          "throughput": "4.6k files/s"
+          "throughput": "4.5k files/s"
         },
         {
           "id": "fervid-1t-vdom-prod-smoff",
@@ -806,18 +807,18 @@
           "files": 252,
           "status": "unranked",
           "runs": [
-            151.419,
-            152.7,
-            152.949,
-            151.963,
-            152.093
+            153.439,
+            151.412,
+            157.859,
+            157.581,
+            152.323
           ],
-          "medianMs": 152.093,
-          "minMs": 151.419,
-          "maxMs": 152.949,
-          "meanMs": 152.225,
-          "stddevMs": 0.609,
-          "cvPct": 0.4,
+          "medianMs": 153.439,
+          "minMs": 151.412,
+          "maxMs": 157.859,
+          "meanMs": 154.523,
+          "stddevMs": 3.007,
+          "cvPct": 2,
           "metaSamples": [
             {
               "artifact": 5189721,
@@ -863,18 +864,18 @@
           "files": 252,
           "status": "unranked",
           "runs": [
-            70.331,
-            70.102,
-            75.771,
-            71.408,
-            68.557
+            68.951,
+            72.847,
+            70.718,
+            71.135,
+            95.595
           ],
-          "medianMs": 70.331,
-          "minMs": 68.557,
-          "maxMs": 75.771,
-          "meanMs": 71.234,
-          "stddevMs": 2.733,
-          "cvPct": 3.9,
+          "medianMs": 71.135,
+          "minMs": 68.951,
+          "maxMs": 95.595,
+          "meanMs": 75.849,
+          "stddevMs": 11.125,
+          "cvPct": 15.6,
           "metaSamples": [
             {
               "artifact": 5189721,
@@ -920,18 +921,18 @@
           "files": 252,
           "status": "ok",
           "runs": [
-            213.76,
-            208.908,
-            213.464,
-            198.663,
-            206.772
+            203.013,
+            221.233,
+            205.157,
+            198.199,
+            213.359
           ],
-          "medianMs": 208.908,
-          "minMs": 198.663,
-          "maxMs": 213.76,
-          "meanMs": 208.313,
-          "stddevMs": 6.166,
-          "cvPct": 3,
+          "medianMs": 205.157,
+          "minMs": 198.199,
+          "maxMs": 221.233,
+          "meanMs": 208.192,
+          "stddevMs": 9.119,
+          "cvPct": 4.4,
           "metaSamples": [
             {
               "artifact": 2349481,
@@ -989,18 +990,18 @@
           "files": 252,
           "status": "ok",
           "runs": [
-            43.323,
-            48.925,
-            46.095,
-            46.475,
-            46.951
+            49.868,
+            51.855,
+            49.138,
+            51.331,
+            52.043
           ],
-          "medianMs": 46.475,
-          "minMs": 43.323,
-          "maxMs": 48.925,
-          "meanMs": 46.354,
-          "stddevMs": 2.015,
-          "cvPct": 4.3,
+          "medianMs": 51.331,
+          "minMs": 49.138,
+          "maxMs": 52.043,
+          "meanMs": 50.847,
+          "stddevMs": 1.281,
+          "cvPct": 2.5,
           "metaSamples": [
             {
               "artifact": 2349481,
@@ -1042,7 +1043,7 @@
           "cacheHitsLast": 0,
           "artifactMedian": 2349481,
           "warmupPasses": 1,
-          "throughput": "5.4k files/s"
+          "throughput": "4.9k files/s"
         }
       ],
       "provenance": "quasar:playground @ quasar-v2.23.3 (db082a44, released 2026-07-28, github-release; pinned 2026-07-29) · 252 SFCs · app-source · MIT"
@@ -1076,20 +1077,20 @@
           "files": 252,
           "status": "ok",
           "runs": [
-            6036.085,
-            6158.958,
-            6189.262,
-            6120.091,
-            6155.432
+            6385.444,
+            6496.001,
+            6389.438,
+            6401.006,
+            6373.243
           ],
-          "medianMs": 6155.432,
-          "minMs": 6036.085,
-          "maxMs": 6189.262,
-          "meanMs": 6131.966,
-          "stddevMs": 58.941,
-          "cvPct": 1,
+          "medianMs": 6389.438,
+          "minMs": 6373.243,
+          "maxMs": 6496.001,
+          "meanMs": 6409.026,
+          "stddevMs": 49.622,
+          "cvPct": 0.8,
           "warmupPasses": 1,
-          "throughput": "41 files/s"
+          "throughput": "39 files/s"
         },
         {
           "id": "oxfmt",
@@ -1101,20 +1102,20 @@
           "files": 252,
           "status": "ok",
           "runs": [
-            5538.224,
-            5564.621,
-            5620.125,
-            5736.409,
-            5477.599
+            5804.284,
+            5810.452,
+            5757.957,
+            5801.983,
+            5744.369
           ],
-          "medianMs": 5564.621,
-          "minMs": 5477.599,
-          "maxMs": 5736.409,
-          "meanMs": 5587.396,
-          "stddevMs": 97.811,
-          "cvPct": 1.8,
+          "medianMs": 5801.983,
+          "minMs": 5744.369,
+          "maxMs": 5810.452,
+          "meanMs": 5783.809,
+          "stddevMs": 30.345,
+          "cvPct": 0.5,
           "warmupPasses": 1,
-          "throughput": "45 files/s"
+          "throughput": "43 files/s"
         },
         {
           "id": "vize-fmt",
@@ -1126,20 +1127,20 @@
           "files": 252,
           "status": "ok",
           "runs": [
-            228.749,
-            131.914,
-            132.941,
-            135.368,
-            157.484
+            155.499,
+            186.568,
+            154.602,
+            151.074,
+            149.703
           ],
-          "medianMs": 135.368,
-          "minMs": 131.914,
-          "maxMs": 228.749,
-          "meanMs": 157.291,
-          "stddevMs": 41.303,
-          "cvPct": 30.5,
+          "medianMs": 154.602,
+          "minMs": 149.703,
+          "maxMs": 186.568,
+          "meanMs": 159.489,
+          "stddevMs": 15.327,
+          "cvPct": 9.9,
           "warmupPasses": 1,
-          "throughput": "1.9k files/s"
+          "throughput": "1.6k files/s"
         },
         {
           "id": "biome-fmt",
@@ -1151,18 +1152,18 @@
           "files": 252,
           "status": "unranked",
           "runs": [
-            119.825,
-            118.491,
-            119.207,
-            119.957,
-            118.873
+            124.162,
+            130.918,
+            126.204,
+            123.113,
+            125.669
           ],
-          "medianMs": 119.207,
-          "minMs": 118.491,
-          "maxMs": 119.957,
-          "meanMs": 119.271,
-          "stddevMs": 0.622,
-          "cvPct": 0.5,
+          "medianMs": 125.669,
+          "minMs": 123.113,
+          "maxMs": 130.918,
+          "meanMs": 126.013,
+          "stddevMs": 3.002,
+          "cvPct": 2.4,
           "warmupPasses": 1,
           "throughput": "n/a"
         }
@@ -1200,20 +1201,20 @@
           "files": 252,
           "status": "ok",
           "runs": [
-            3397.251,
-            4037.443,
-            3242.203,
-            3142.106,
-            4001.233
+            3719.803,
+            4408.164,
+            3645.589,
+            3564.647,
+            5128.584
           ],
-          "medianMs": 3397.251,
-          "minMs": 3142.106,
-          "maxMs": 4037.443,
-          "meanMs": 3564.047,
-          "stddevMs": 425.639,
-          "cvPct": 12.5,
+          "medianMs": 3719.803,
+          "minMs": 3564.647,
+          "maxMs": 5128.584,
+          "meanMs": 4093.357,
+          "stddevMs": 669.024,
+          "cvPct": 18,
           "warmupPasses": 1,
-          "throughput": "74 files/s"
+          "throughput": "68 files/s"
         },
         {
           "id": "eslint-plugin-vue-workers",
@@ -1225,20 +1226,20 @@
           "files": 252,
           "status": "ok",
           "runs": [
-            5271.871,
-            5528.172,
-            5520.852,
-            5472.2,
-            5458.029
+            5601.728,
+            5688.167,
+            5710.027,
+            5685.241,
+            5675.62
           ],
-          "medianMs": 5472.2,
-          "minMs": 5271.871,
-          "maxMs": 5528.172,
-          "meanMs": 5450.225,
-          "stddevMs": 104.185,
-          "cvPct": 1.9,
+          "medianMs": 5685.241,
+          "minMs": 5601.728,
+          "maxMs": 5710.027,
+          "meanMs": 5672.157,
+          "stddevMs": 41.334,
+          "cvPct": 0.7,
           "warmupPasses": 1,
-          "throughput": "46 files/s"
+          "throughput": "44 files/s"
         },
         {
           "id": "eslint-plugin-vue-cli",
@@ -1250,20 +1251,20 @@
           "files": 252,
           "status": "ok",
           "runs": [
-            4830.86,
-            4898.532,
-            4822.583,
-            4969.768,
-            4984.187
+            5303.612,
+            5303.331,
+            5197.147,
+            5369.955,
+            5191.082
           ],
-          "medianMs": 4898.532,
-          "minMs": 4822.583,
-          "maxMs": 4984.187,
-          "meanMs": 4901.186,
-          "stddevMs": 75.372,
+          "medianMs": 5303.331,
+          "minMs": 5191.082,
+          "maxMs": 5369.955,
+          "meanMs": 5273.025,
+          "stddevMs": 77.009,
           "cvPct": 1.5,
           "warmupPasses": 1,
-          "throughput": "51 files/s"
+          "throughput": "48 files/s"
         },
         {
           "id": "vize-lint-1t",
@@ -1271,22 +1272,22 @@
           "package": "vize",
           "threading": "1t",
           "invocation": "cli",
-          "notes": "vize lint . with RAYON_NUM_THREADS=1 | ⓘ file coverage verified: named 252/252 planted corpus files.",
+          "notes": "vize lint . with RAYON_NUM_THREADS=1 | ⚠ FAILED FILE-COVERAGE GATE — named 251 of 252 planted corpus files. A tool covering fewer files finishes sooner; that is a different job, not a faster one. Measured but UNRANKED.",
           "files": 252,
-          "status": "ok",
+          "status": "unranked",
           "runs": [
-            130.193,
-            134.123,
-            130.411,
-            143.512,
-            134.747
+            135.885,
+            136.694,
+            134.856,
+            143.768,
+            135.994
           ],
-          "medianMs": 134.123,
-          "minMs": 130.193,
-          "maxMs": 143.512,
-          "meanMs": 134.597,
-          "stddevMs": 5.4,
-          "cvPct": 4,
+          "medianMs": 135.994,
+          "minMs": 134.856,
+          "maxMs": 143.768,
+          "meanMs": 137.439,
+          "stddevMs": 3.598,
+          "cvPct": 2.6,
           "warmupPasses": 1,
           "throughput": "1.9k files/s"
         },
@@ -1296,24 +1297,24 @@
           "package": "vize",
           "threading": "max",
           "invocation": "cli",
-          "notes": "vize lint . using default Rayon pool (all cores) | ⓘ file coverage verified: named 252/252 planted corpus files.",
+          "notes": "vize lint . using default Rayon pool (all cores) | ⚠ FAILED FILE-COVERAGE GATE — named 251 of 252 planted corpus files. A tool covering fewer files finishes sooner; that is a different job, not a faster one. Measured but UNRANKED.",
           "files": 252,
-          "status": "ok",
+          "status": "unranked",
           "runs": [
-            81.681,
-            83.596,
-            82.355,
-            83.442,
-            87.142
+            85.782,
+            93.802,
+            89.872,
+            88.057,
+            89.288
           ],
-          "medianMs": 83.442,
-          "minMs": 81.681,
-          "maxMs": 87.142,
-          "meanMs": 83.643,
-          "stddevMs": 2.109,
-          "cvPct": 2.5,
+          "medianMs": 89.288,
+          "minMs": 85.782,
+          "maxMs": 93.802,
+          "meanMs": 89.36,
+          "stddevMs": 2.937,
+          "cvPct": 3.3,
           "warmupPasses": 1,
-          "throughput": "3.0k files/s"
+          "throughput": "2.8k files/s"
         },
         {
           "id": "biome-lint-1t",
@@ -1325,18 +1326,18 @@
           "files": 252,
           "status": "unranked",
           "runs": [
-            394.793,
-            402.061,
-            383.392,
-            411.467,
-            399.127
+            399.379,
+            406.916,
+            415.424,
+            403.942,
+            405.711
           ],
-          "medianMs": 399.127,
-          "minMs": 383.392,
-          "maxMs": 411.467,
-          "meanMs": 398.168,
-          "stddevMs": 10.279,
-          "cvPct": 2.6,
+          "medianMs": 405.711,
+          "minMs": 399.379,
+          "maxMs": 415.424,
+          "meanMs": 406.274,
+          "stddevMs": 5.862,
+          "cvPct": 1.4,
           "warmupPasses": 1,
           "throughput": "n/a"
         },
@@ -1350,18 +1351,18 @@
           "files": 252,
           "status": "unranked",
           "runs": [
-            182.785,
-            188.131,
-            176.904,
-            186.556,
-            190.277
+            185.886,
+            190.15,
+            183.906,
+            188.133,
+            187.309
           ],
-          "medianMs": 186.556,
-          "minMs": 176.904,
-          "maxMs": 190.277,
-          "meanMs": 184.931,
-          "stddevMs": 5.256,
-          "cvPct": 2.8,
+          "medianMs": 187.309,
+          "minMs": 183.906,
+          "maxMs": 190.15,
+          "meanMs": 187.077,
+          "stddevMs": 2.35,
+          "cvPct": 1.3,
           "warmupPasses": 1,
           "throughput": "n/a"
         },
@@ -1375,18 +1376,18 @@
           "files": 252,
           "status": "unranked",
           "runs": [
-            64.332,
-            68.07,
-            79.985,
-            75.997,
-            68.03
+            72.861,
+            77.667,
+            69.302,
+            67.549,
+            70.954
           ],
-          "medianMs": 68.07,
-          "minMs": 64.332,
-          "maxMs": 79.985,
-          "meanMs": 71.283,
-          "stddevMs": 6.465,
-          "cvPct": 9.5,
+          "medianMs": 70.954,
+          "minMs": 67.549,
+          "maxMs": 77.667,
+          "meanMs": 71.667,
+          "stddevMs": 3.889,
+          "cvPct": 5.5,
           "warmupPasses": 1,
           "throughput": "n/a"
         },
@@ -1400,18 +1401,18 @@
           "files": 252,
           "status": "unranked",
           "runs": [
-            55.905,
-            60.581,
-            62.628,
-            57.697,
-            59.097
+            59.405,
+            62.651,
+            57.738,
+            61.04,
+            63.309
           ],
-          "medianMs": 59.097,
-          "minMs": 55.905,
-          "maxMs": 62.628,
-          "meanMs": 59.182,
-          "stddevMs": 2.588,
-          "cvPct": 4.4,
+          "medianMs": 61.04,
+          "minMs": 57.738,
+          "maxMs": 63.309,
+          "meanMs": 60.829,
+          "stddevMs": 2.297,
+          "cvPct": 3.8,
           "warmupPasses": 1,
           "throughput": "n/a"
         },
@@ -1425,20 +1426,20 @@
           "files": 252,
           "status": "ok",
           "runs": [
-            491.449,
-            487.185,
-            480.11,
-            479.37,
-            484.036
+            481.243,
+            486.723,
+            486.185,
+            484.295,
+            487.165
           ],
-          "medianMs": 484.036,
-          "minMs": 479.37,
-          "maxMs": 491.449,
-          "meanMs": 484.43,
-          "stddevMs": 5.032,
-          "cvPct": 1,
+          "medianMs": 486.185,
+          "minMs": 481.243,
+          "maxMs": 487.165,
+          "meanMs": 485.122,
+          "stddevMs": 2.429,
+          "cvPct": 0.5,
           "warmupPasses": 1,
-          "throughput": "521 files/s"
+          "throughput": "518 files/s"
         }
       ],
       "provenance": "quasar:playground @ quasar-v2.23.3 (db082a44, released 2026-07-28, github-release; pinned 2026-07-29) · 252 SFCs · app-source · MIT"
@@ -1462,10 +1463,10 @@
               "invocation": "in-process API",
               "engine": "rolldown",
               "artifactLabel": "output bytes",
-              "notes": "❌ BUILD FAILED on this corpus after the Vue transform ran — the Vue transform compiled 252/252 corpus SFCs before the failure (305 transforms total) — Build failed with 11 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/quasar/bundle/quasar-playground/ui/playground/src/App.vue?vue&type=style&index=0&lang.sass",
+              "notes": "❌ BUILD FAILED on this corpus after the Vue transform ran — the Vue transform compiled 252/252 corpus SFCs before the failure (305 transforms total) — Build failed with 11 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/quasar/bundle/quasar-playground/ui/playground/src/pages/components/list-expansion-item.vue?vue&type=style&index=0&lang.sass",
               "files": 252,
               "status": "error",
-              "error": "Build failed with 11 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/quasar/bundle/quasar-playground/ui/playground/src/App.vue?vue&type=style&index=0&lang.sass",
+              "error": "Build failed with 11 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/quasar/bundle/quasar-playground/ui/playground/src/pages/components/list-expansion-item.vue?vue&type=style&index=0&lang.sass",
               "throughput": "n/a"
             },
             {
@@ -1477,10 +1478,10 @@
               "invocation": "in-process API",
               "engine": "rolldown",
               "artifactLabel": "output bytes",
-              "notes": "❌ BUILD FAILED on this corpus after the Vue transform ran — the Vue transform compiled 252/252 corpus SFCs before the failure (305 transforms total) — Build failed with 11 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/quasar/bundle/quasar-playground/ui/playground/src/App.vue?vue&type=style&index=0&lang.sass",
+              "notes": "❌ BUILD FAILED on this corpus after the Vue transform ran — the Vue transform compiled 252/252 corpus SFCs before the failure (305 transforms total) — Build failed with 11 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/quasar/bundle/quasar-playground/ui/playground/src/pages/components/list-item.vue?vue&type=style&index=0&lang.sass",
               "files": 252,
               "status": "error",
-              "error": "Build failed with 11 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/quasar/bundle/quasar-playground/ui/playground/src/App.vue?vue&type=style&index=0&lang.sass",
+              "error": "Build failed with 11 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/quasar/bundle/quasar-playground/ui/playground/src/pages/components/list-item.vue?vue&type=style&index=0&lang.sass",
               "throughput": "n/a"
             },
             {
@@ -1492,10 +1493,10 @@
               "invocation": "in-process API",
               "engine": "rolldown",
               "artifactLabel": "output bytes",
-              "notes": "❌ BUILD FAILED on this corpus after the Vue transform ran — the Vue transform compiled 252/252 corpus SFCs before the failure (307 transforms total) — Build failed with 11 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/quasar/bundle/quasar-playground/ui/playground/src/App.vue?vue=&type=style&index=0&lang=sass.sass",
+              "notes": "❌ BUILD FAILED on this corpus after the Vue transform ran — the Vue transform compiled 252/252 corpus SFCs before the failure (307 transforms total) — Build failed with 11 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/quasar/bundle/quasar-playground/ui/playground/src/App.vue?vue=&type=style&index=0&lang=sass.sass.sass.sass",
               "files": 252,
               "status": "error",
-              "error": "Build failed with 11 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/quasar/bundle/quasar-playground/ui/playground/src/App.vue?vue=&type=style&index=0&lang=sass.sass",
+              "error": "Build failed with 11 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/quasar/bundle/quasar-playground/ui/playground/src/App.vue?vue=&type=style&index=0&lang=sass.sass.sass.sass",
               "throughput": "n/a"
             },
             {
@@ -1586,10 +1587,10 @@
               "invocation": "in-process API",
               "engine": "rspack",
               "artifactLabel": "output bytes",
-              "notes": "❌ BUILD FAILED on this corpus after the Vue transform ran — the Vue transform compiled 252/252 corpus SFCs before the failure (377 transforms total) —   × Module Error (from /home/runner/work/vue-benchmarks/vue-benchmarks/node_modules/.pnpm/@vizejs+rspack-plugin@0.347.7_@rspack+core@2.1.10/node_modules/@vizejs/rspack-plugin/dist/loader/scope-loader.mjs):   │ [vize] CSS parse error: Unexpected end of input at /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/quasar/bundle/quasar-playground/ui/playground/src/pages/form/file-picker.vue:4:1 ",
+              "notes": "❌ BUILD FAILED on this corpus after the Vue transform ran — the Vue transform compiled 252/252 corpus SFCs before the failure (377 transforms total) —   × Module Error (from /home/runner/work/vue-benchmarks/vue-benchmarks/node_modules/.pnpm/@vizejs+rspack-plugin@0.350.2_@rspack+core@2.1.10/node_modules/@vizejs/rspack-plugin/dist/loader/scope-loader.mjs):   │ [vize] CSS parse error: Unexpected end of input at /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/quasar/bundle/quasar-playground/ui/playground/src/pages/form/file-picker.vue:4:1 ",
               "files": 252,
               "status": "error",
-              "error": "  × Module Error (from /home/runner/work/vue-benchmarks/vue-benchmarks/node_modules/.pnpm/@vizejs+rspack-plugin@0.347.7_@rspack+core@2.1.10/node_modules/@vizejs/rspack-plugin/dist/loader/scope-loader.mjs):   │ [vize] CSS parse error: Unexpected end of input at /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/quasar/bundle/quasar-playground/ui/playground/src/pages/form/file-picker.vue:4:1 ",
+              "error": "  × Module Error (from /home/runner/work/vue-benchmarks/vue-benchmarks/node_modules/.pnpm/@vizejs+rspack-plugin@0.350.2_@rspack+core@2.1.10/node_modules/@vizejs/rspack-plugin/dist/loader/scope-loader.mjs):   │ [vize] CSS parse error: Unexpected end of input at /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/quasar/bundle/quasar-playground/ui/playground/src/pages/form/file-picker.vue:4:1 ",
               "throughput": "n/a"
             },
             {
@@ -1683,10 +1684,10 @@
           "invocation": "in-process API",
           "engine": "rolldown",
           "artifactLabel": "output bytes",
-          "notes": "❌ BUILD FAILED on this corpus after the Vue transform ran — the Vue transform compiled 252/252 corpus SFCs before the failure (305 transforms total) — Build failed with 11 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/quasar/bundle/quasar-playground/ui/playground/src/App.vue?vue&type=style&index=0&lang.sass",
+          "notes": "❌ BUILD FAILED on this corpus after the Vue transform ran — the Vue transform compiled 252/252 corpus SFCs before the failure (305 transforms total) — Build failed with 11 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/quasar/bundle/quasar-playground/ui/playground/src/pages/components/list-expansion-item.vue?vue&type=style&index=0&lang.sass",
           "files": 252,
           "status": "error",
-          "error": "Build failed with 11 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/quasar/bundle/quasar-playground/ui/playground/src/App.vue?vue&type=style&index=0&lang.sass",
+          "error": "Build failed with 11 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/quasar/bundle/quasar-playground/ui/playground/src/pages/components/list-expansion-item.vue?vue&type=style&index=0&lang.sass",
           "throughput": "n/a"
         },
         {
@@ -1698,10 +1699,10 @@
           "invocation": "in-process API",
           "engine": "rolldown",
           "artifactLabel": "output bytes",
-          "notes": "❌ BUILD FAILED on this corpus after the Vue transform ran — the Vue transform compiled 252/252 corpus SFCs before the failure (305 transforms total) — Build failed with 11 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/quasar/bundle/quasar-playground/ui/playground/src/App.vue?vue&type=style&index=0&lang.sass",
+          "notes": "❌ BUILD FAILED on this corpus after the Vue transform ran — the Vue transform compiled 252/252 corpus SFCs before the failure (305 transforms total) — Build failed with 11 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/quasar/bundle/quasar-playground/ui/playground/src/pages/components/list-item.vue?vue&type=style&index=0&lang.sass",
           "files": 252,
           "status": "error",
-          "error": "Build failed with 11 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/quasar/bundle/quasar-playground/ui/playground/src/App.vue?vue&type=style&index=0&lang.sass",
+          "error": "Build failed with 11 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/quasar/bundle/quasar-playground/ui/playground/src/pages/components/list-item.vue?vue&type=style&index=0&lang.sass",
           "throughput": "n/a"
         },
         {
@@ -1713,10 +1714,10 @@
           "invocation": "in-process API",
           "engine": "rolldown",
           "artifactLabel": "output bytes",
-          "notes": "❌ BUILD FAILED on this corpus after the Vue transform ran — the Vue transform compiled 252/252 corpus SFCs before the failure (307 transforms total) — Build failed with 11 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/quasar/bundle/quasar-playground/ui/playground/src/App.vue?vue=&type=style&index=0&lang=sass.sass",
+          "notes": "❌ BUILD FAILED on this corpus after the Vue transform ran — the Vue transform compiled 252/252 corpus SFCs before the failure (307 transforms total) — Build failed with 11 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/quasar/bundle/quasar-playground/ui/playground/src/App.vue?vue=&type=style&index=0&lang=sass.sass.sass.sass",
           "files": 252,
           "status": "error",
-          "error": "Build failed with 11 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/quasar/bundle/quasar-playground/ui/playground/src/App.vue?vue=&type=style&index=0&lang=sass.sass",
+          "error": "Build failed with 11 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/quasar/bundle/quasar-playground/ui/playground/src/App.vue?vue=&type=style&index=0&lang=sass.sass.sass.sass",
           "throughput": "n/a"
         },
         {
@@ -1773,10 +1774,10 @@
           "invocation": "in-process API",
           "engine": "rspack",
           "artifactLabel": "output bytes",
-          "notes": "❌ BUILD FAILED on this corpus after the Vue transform ran — the Vue transform compiled 252/252 corpus SFCs before the failure (377 transforms total) —   × Module Error (from /home/runner/work/vue-benchmarks/vue-benchmarks/node_modules/.pnpm/@vizejs+rspack-plugin@0.347.7_@rspack+core@2.1.10/node_modules/@vizejs/rspack-plugin/dist/loader/scope-loader.mjs):   │ [vize] CSS parse error: Unexpected end of input at /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/quasar/bundle/quasar-playground/ui/playground/src/pages/form/file-picker.vue:4:1 ",
+          "notes": "❌ BUILD FAILED on this corpus after the Vue transform ran — the Vue transform compiled 252/252 corpus SFCs before the failure (377 transforms total) —   × Module Error (from /home/runner/work/vue-benchmarks/vue-benchmarks/node_modules/.pnpm/@vizejs+rspack-plugin@0.350.2_@rspack+core@2.1.10/node_modules/@vizejs/rspack-plugin/dist/loader/scope-loader.mjs):   │ [vize] CSS parse error: Unexpected end of input at /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/quasar/bundle/quasar-playground/ui/playground/src/pages/form/file-picker.vue:4:1 ",
           "files": 252,
           "status": "error",
-          "error": "  × Module Error (from /home/runner/work/vue-benchmarks/vue-benchmarks/node_modules/.pnpm/@vizejs+rspack-plugin@0.347.7_@rspack+core@2.1.10/node_modules/@vizejs/rspack-plugin/dist/loader/scope-loader.mjs):   │ [vize] CSS parse error: Unexpected end of input at /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/quasar/bundle/quasar-playground/ui/playground/src/pages/form/file-picker.vue:4:1 ",
+          "error": "  × Module Error (from /home/runner/work/vue-benchmarks/vue-benchmarks/node_modules/.pnpm/@vizejs+rspack-plugin@0.350.2_@rspack+core@2.1.10/node_modules/@vizejs/rspack-plugin/dist/loader/scope-loader.mjs):   │ [vize] CSS parse error: Unexpected end of input at /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/quasar/bundle/quasar-playground/ui/playground/src/pages/form/file-picker.vue:4:1 ",
           "throughput": "n/a"
         },
         {
@@ -1921,17 +1922,17 @@
               "files": 252,
               "status": "ok",
               "runs": [
-                35.582,
-                24.39
+                34.823,
+                28.878
               ],
-              "medianMs": 29.986,
-              "minMs": 24.39,
-              "maxMs": 35.582,
-              "meanMs": 29.986,
-              "stddevMs": 7.914,
-              "cvPct": 26.4,
+              "medianMs": 31.851,
+              "minMs": 28.878,
+              "maxMs": 34.823,
+              "meanMs": 31.851,
+              "stddevMs": 4.204,
+              "cvPct": 13.2,
               "warmupPasses": 0,
-              "throughput": "8.4k files/s"
+              "throughput": "7.9k files/s"
             },
             {
               "id": "start__vite8__unplugin-vue",
@@ -1945,17 +1946,17 @@
               "files": 252,
               "status": "ok",
               "runs": [
-                28.437,
-                71.637
+                30.097,
+                31.92
               ],
-              "medianMs": 50.037,
-              "minMs": 28.437,
-              "maxMs": 71.637,
-              "meanMs": 50.037,
-              "stddevMs": 30.547,
-              "cvPct": 61,
+              "medianMs": 31.009,
+              "minMs": 30.097,
+              "maxMs": 31.92,
+              "meanMs": 31.009,
+              "stddevMs": 1.289,
+              "cvPct": 4.2,
               "warmupPasses": 0,
-              "throughput": "5.0k files/s"
+              "throughput": "8.1k files/s"
             },
             {
               "id": "start__vite8__vize",
@@ -1969,17 +1970,17 @@
               "files": 252,
               "status": "ok",
               "runs": [
-                64.498,
-                56.267
+                91.688,
+                73.17
               ],
-              "medianMs": 60.383,
-              "minMs": 56.267,
-              "maxMs": 64.498,
-              "meanMs": 60.383,
-              "stddevMs": 5.82,
-              "cvPct": 9.6,
+              "medianMs": 82.429,
+              "minMs": 73.17,
+              "maxMs": 91.688,
+              "meanMs": 82.429,
+              "stddevMs": 13.094,
+              "cvPct": 15.9,
               "warmupPasses": 0,
-              "throughput": "4.2k files/s"
+              "throughput": "3.1k files/s"
             },
             {
               "id": "start__vite8__verter",
@@ -1993,17 +1994,17 @@
               "files": 252,
               "status": "ok",
               "runs": [
-                65.362,
-                23.397
+                65.164,
+                30.758
               ],
-              "medianMs": 44.379,
-              "minMs": 23.397,
-              "maxMs": 65.362,
-              "meanMs": 44.379,
-              "stddevMs": 29.674,
-              "cvPct": 66.9,
+              "medianMs": 47.961,
+              "minMs": 30.758,
+              "maxMs": 65.164,
+              "meanMs": 47.961,
+              "stddevMs": 24.329,
+              "cvPct": 50.7,
               "warmupPasses": 0,
-              "throughput": "5.7k files/s"
+              "throughput": "5.3k files/s"
             },
             {
               "id": "start__rolldown__plugin-vue",
@@ -2180,53 +2181,53 @@
               "files": 252,
               "status": "ok",
               "runs": [
-                19.995,
-                6.517,
-                7.746,
-                6.237,
-                6.495
+                21.207,
+                7.209,
+                8.896,
+                7.216,
+                7.217
               ],
-              "medianMs": 6.517,
-              "minMs": 6.237,
-              "maxMs": 19.995,
-              "meanMs": 9.398,
-              "stddevMs": 5.953,
-              "cvPct": 91.3,
+              "medianMs": 7.217,
+              "minMs": 7.209,
+              "maxMs": 21.207,
+              "meanMs": 10.349,
+              "stddevMs": 6.113,
+              "cvPct": 84.7,
               "metaSamples": [
                 {
                   "artifact": 38266,
-                  "notifyMs": 4.038,
+                  "notifyMs": 3.41,
                   "kind": "update",
                   "probeFiles": 2
                 },
                 {
                   "artifact": 38266,
-                  "notifyMs": 2.17,
+                  "notifyMs": 2.519,
                   "kind": "update",
                   "probeFiles": 2
                 },
                 {
                   "artifact": 38266,
-                  "notifyMs": 3.483,
+                  "notifyMs": 4.326,
                   "kind": "update",
                   "probeFiles": 2
                 },
                 {
                   "artifact": 38266,
-                  "notifyMs": 2.402,
+                  "notifyMs": 2.742,
                   "kind": "update",
                   "probeFiles": 2
                 },
                 {
                   "artifact": 38266,
-                  "notifyMs": 2.07,
+                  "notifyMs": 2.435,
                   "kind": "update",
                   "probeFiles": 2
                 }
               ],
               "artifactMedian": 38266,
               "warmupPasses": 1,
-              "throughput": "38.7k files/s"
+              "throughput": "34.9k files/s"
             },
             {
               "id": "hmr__vite8__unplugin-vue",
@@ -2241,53 +2242,53 @@
               "files": 252,
               "status": "ok",
               "runs": [
-                7.832,
-                13.951,
-                7.542,
-                7.619,
-                6.955
+                19.877,
+                7.701,
+                7.997,
+                9.041,
+                6.957
               ],
-              "medianMs": 7.619,
-              "minMs": 6.955,
-              "maxMs": 13.951,
-              "meanMs": 8.78,
-              "stddevMs": 2.909,
-              "cvPct": 38.2,
+              "medianMs": 7.997,
+              "minMs": 6.957,
+              "maxMs": 19.877,
+              "meanMs": 10.315,
+              "stddevMs": 5.398,
+              "cvPct": 67.5,
               "metaSamples": [
                 {
                   "artifact": 38268,
-                  "notifyMs": 2.493,
+                  "notifyMs": 3.83,
                   "kind": "update",
                   "probeFiles": 2
                 },
                 {
                   "artifact": 38268,
-                  "notifyMs": 2.474,
+                  "notifyMs": 2.898,
                   "kind": "update",
                   "probeFiles": 2
                 },
                 {
                   "artifact": 38268,
-                  "notifyMs": 2.199,
+                  "notifyMs": 2.73,
                   "kind": "update",
                   "probeFiles": 2
                 },
                 {
                   "artifact": 38268,
-                  "notifyMs": 2.207,
+                  "notifyMs": 2.898,
                   "kind": "update",
                   "probeFiles": 2
                 },
                 {
                   "artifact": 38268,
-                  "notifyMs": 2.609,
+                  "notifyMs": 2.767,
                   "kind": "update",
                   "probeFiles": 2
                 }
               ],
               "artifactMedian": 38268,
               "warmupPasses": 1,
-              "throughput": "33.1k files/s"
+              "throughput": "31.5k files/s"
             },
             {
               "id": "hmr__vite8__vize",
@@ -2315,46 +2316,46 @@
               "files": 252,
               "status": "unranked",
               "runs": [
-                0.584,
-                0.505,
-                0.5,
-                0.482,
-                0.504
+                0.624,
+                0.631,
+                0.592,
+                0.611,
+                0.608
               ],
-              "medianMs": 0.504,
-              "minMs": 0.482,
-              "maxMs": 0.584,
-              "meanMs": 0.515,
-              "stddevMs": 0.04,
-              "cvPct": 7.9,
+              "medianMs": 0.611,
+              "minMs": 0.592,
+              "maxMs": 0.631,
+              "meanMs": 0.613,
+              "stddevMs": 0.015,
+              "cvPct": 2.5,
               "metaSamples": [
                 {
                   "artifact": 0,
-                  "notifyMs": 0.583,
+                  "notifyMs": 0.623,
                   "kind": "full-reload",
                   "probeFiles": 2
                 },
                 {
                   "artifact": 0,
-                  "notifyMs": 0.505,
+                  "notifyMs": 0.631,
                   "kind": "full-reload",
                   "probeFiles": 2
                 },
                 {
                   "artifact": 0,
-                  "notifyMs": 0.499,
+                  "notifyMs": 0.591,
                   "kind": "full-reload",
                   "probeFiles": 2
                 },
                 {
                   "artifact": 0,
-                  "notifyMs": 0.481,
+                  "notifyMs": 0.611,
                   "kind": "full-reload",
                   "probeFiles": 2
                 },
                 {
                   "artifact": 0,
-                  "notifyMs": 0.504,
+                  "notifyMs": 0.608,
                   "kind": "full-reload",
                   "probeFiles": 2
                 }
@@ -2536,17 +2537,17 @@
           "files": 252,
           "status": "ok",
           "runs": [
-            35.582,
-            24.39
+            34.823,
+            28.878
           ],
-          "medianMs": 29.986,
-          "minMs": 24.39,
-          "maxMs": 35.582,
-          "meanMs": 29.986,
-          "stddevMs": 7.914,
-          "cvPct": 26.4,
+          "medianMs": 31.851,
+          "minMs": 28.878,
+          "maxMs": 34.823,
+          "meanMs": 31.851,
+          "stddevMs": 4.204,
+          "cvPct": 13.2,
           "warmupPasses": 0,
-          "throughput": "8.4k files/s"
+          "throughput": "7.9k files/s"
         },
         {
           "id": "start__vite8__unplugin-vue",
@@ -2560,17 +2561,17 @@
           "files": 252,
           "status": "ok",
           "runs": [
-            28.437,
-            71.637
+            30.097,
+            31.92
           ],
-          "medianMs": 50.037,
-          "minMs": 28.437,
-          "maxMs": 71.637,
-          "meanMs": 50.037,
-          "stddevMs": 30.547,
-          "cvPct": 61,
+          "medianMs": 31.009,
+          "minMs": 30.097,
+          "maxMs": 31.92,
+          "meanMs": 31.009,
+          "stddevMs": 1.289,
+          "cvPct": 4.2,
           "warmupPasses": 0,
-          "throughput": "5.0k files/s"
+          "throughput": "8.1k files/s"
         },
         {
           "id": "start__vite8__vize",
@@ -2584,17 +2585,17 @@
           "files": 252,
           "status": "ok",
           "runs": [
-            64.498,
-            56.267
+            91.688,
+            73.17
           ],
-          "medianMs": 60.383,
-          "minMs": 56.267,
-          "maxMs": 64.498,
-          "meanMs": 60.383,
-          "stddevMs": 5.82,
-          "cvPct": 9.6,
+          "medianMs": 82.429,
+          "minMs": 73.17,
+          "maxMs": 91.688,
+          "meanMs": 82.429,
+          "stddevMs": 13.094,
+          "cvPct": 15.9,
           "warmupPasses": 0,
-          "throughput": "4.2k files/s"
+          "throughput": "3.1k files/s"
         },
         {
           "id": "start__vite8__verter",
@@ -2608,17 +2609,17 @@
           "files": 252,
           "status": "ok",
           "runs": [
-            65.362,
-            23.397
+            65.164,
+            30.758
           ],
-          "medianMs": 44.379,
-          "minMs": 23.397,
-          "maxMs": 65.362,
-          "meanMs": 44.379,
-          "stddevMs": 29.674,
-          "cvPct": 66.9,
+          "medianMs": 47.961,
+          "minMs": 30.758,
+          "maxMs": 65.164,
+          "meanMs": 47.961,
+          "stddevMs": 24.329,
+          "cvPct": 50.7,
           "warmupPasses": 0,
-          "throughput": "5.7k files/s"
+          "throughput": "5.3k files/s"
         },
         {
           "id": "start__rolldown__plugin-vue",
@@ -2789,53 +2790,53 @@
           "files": 252,
           "status": "ok",
           "runs": [
-            19.995,
-            6.517,
-            7.746,
-            6.237,
-            6.495
+            21.207,
+            7.209,
+            8.896,
+            7.216,
+            7.217
           ],
-          "medianMs": 6.517,
-          "minMs": 6.237,
-          "maxMs": 19.995,
-          "meanMs": 9.398,
-          "stddevMs": 5.953,
-          "cvPct": 91.3,
+          "medianMs": 7.217,
+          "minMs": 7.209,
+          "maxMs": 21.207,
+          "meanMs": 10.349,
+          "stddevMs": 6.113,
+          "cvPct": 84.7,
           "metaSamples": [
             {
               "artifact": 38266,
-              "notifyMs": 4.038,
+              "notifyMs": 3.41,
               "kind": "update",
               "probeFiles": 2
             },
             {
               "artifact": 38266,
-              "notifyMs": 2.17,
+              "notifyMs": 2.519,
               "kind": "update",
               "probeFiles": 2
             },
             {
               "artifact": 38266,
-              "notifyMs": 3.483,
+              "notifyMs": 4.326,
               "kind": "update",
               "probeFiles": 2
             },
             {
               "artifact": 38266,
-              "notifyMs": 2.402,
+              "notifyMs": 2.742,
               "kind": "update",
               "probeFiles": 2
             },
             {
               "artifact": 38266,
-              "notifyMs": 2.07,
+              "notifyMs": 2.435,
               "kind": "update",
               "probeFiles": 2
             }
           ],
           "artifactMedian": 38266,
           "warmupPasses": 1,
-          "throughput": "38.7k files/s"
+          "throughput": "34.9k files/s"
         },
         {
           "id": "hmr__vite8__unplugin-vue",
@@ -2850,53 +2851,53 @@
           "files": 252,
           "status": "ok",
           "runs": [
-            7.832,
-            13.951,
-            7.542,
-            7.619,
-            6.955
+            19.877,
+            7.701,
+            7.997,
+            9.041,
+            6.957
           ],
-          "medianMs": 7.619,
-          "minMs": 6.955,
-          "maxMs": 13.951,
-          "meanMs": 8.78,
-          "stddevMs": 2.909,
-          "cvPct": 38.2,
+          "medianMs": 7.997,
+          "minMs": 6.957,
+          "maxMs": 19.877,
+          "meanMs": 10.315,
+          "stddevMs": 5.398,
+          "cvPct": 67.5,
           "metaSamples": [
             {
               "artifact": 38268,
-              "notifyMs": 2.493,
+              "notifyMs": 3.83,
               "kind": "update",
               "probeFiles": 2
             },
             {
               "artifact": 38268,
-              "notifyMs": 2.474,
+              "notifyMs": 2.898,
               "kind": "update",
               "probeFiles": 2
             },
             {
               "artifact": 38268,
-              "notifyMs": 2.199,
+              "notifyMs": 2.73,
               "kind": "update",
               "probeFiles": 2
             },
             {
               "artifact": 38268,
-              "notifyMs": 2.207,
+              "notifyMs": 2.898,
               "kind": "update",
               "probeFiles": 2
             },
             {
               "artifact": 38268,
-              "notifyMs": 2.609,
+              "notifyMs": 2.767,
               "kind": "update",
               "probeFiles": 2
             }
           ],
           "artifactMedian": 38268,
           "warmupPasses": 1,
-          "throughput": "33.1k files/s"
+          "throughput": "31.5k files/s"
         },
         {
           "id": "hmr__vite8__vize",
@@ -2924,46 +2925,46 @@
           "files": 252,
           "status": "unranked",
           "runs": [
-            0.584,
-            0.505,
-            0.5,
-            0.482,
-            0.504
+            0.624,
+            0.631,
+            0.592,
+            0.611,
+            0.608
           ],
-          "medianMs": 0.504,
-          "minMs": 0.482,
-          "maxMs": 0.584,
-          "meanMs": 0.515,
-          "stddevMs": 0.04,
-          "cvPct": 7.9,
+          "medianMs": 0.611,
+          "minMs": 0.592,
+          "maxMs": 0.631,
+          "meanMs": 0.613,
+          "stddevMs": 0.015,
+          "cvPct": 2.5,
           "metaSamples": [
             {
               "artifact": 0,
-              "notifyMs": 0.583,
+              "notifyMs": 0.623,
               "kind": "full-reload",
               "probeFiles": 2
             },
             {
               "artifact": 0,
-              "notifyMs": 0.505,
+              "notifyMs": 0.631,
               "kind": "full-reload",
               "probeFiles": 2
             },
             {
               "artifact": 0,
-              "notifyMs": 0.499,
+              "notifyMs": 0.591,
               "kind": "full-reload",
               "probeFiles": 2
             },
             {
               "artifact": 0,
-              "notifyMs": 0.481,
+              "notifyMs": 0.611,
               "kind": "full-reload",
               "probeFiles": 2
             },
             {
               "artifact": 0,
-              "notifyMs": 0.504,
+              "notifyMs": 0.608,
               "kind": "full-reload",
               "probeFiles": 2
             }
@@ -3169,12 +3170,12 @@
           "files": 252,
           "status": "ok",
           "runs": [
-            2979.186
+            3353.465
           ],
-          "medianMs": 2979.186,
-          "minMs": 2979.186,
-          "maxMs": 2979.186,
-          "meanMs": 2979.186,
+          "medianMs": 3353.465,
+          "minMs": 3353.465,
+          "maxMs": 3353.465,
+          "meanMs": 3353.465,
           "stddevMs": null,
           "cvPct": null,
           "metaSamples": [
@@ -3188,12 +3189,17 @@
               "filesFailed": 1,
               "summaryBlocks": 1,
               "parsed": true,
-              "exit": 1
+              "exit": 1,
+              "rssBytes": 477966336
             }
           ],
           "artifactMedian": 226,
+          "rssMaxMb": 455.8,
+          "rssRunsMb": [
+            455.82421875
+          ],
           "warmupPasses": 1,
-          "throughput": "85 files/s"
+          "throughput": "75 files/s"
         },
         {
           "id": "swap-unplugin-vue",
@@ -3292,34 +3298,41 @@
               "files": 255,
               "status": "ok",
               "runs": [
-                8000.24,
-                8007.934
+                8604.515,
+                8499.338
               ],
-              "medianMs": 8004.087,
-              "minMs": 8000.24,
-              "maxMs": 8007.934,
-              "meanMs": 8004.087,
-              "stddevMs": 5.44,
-              "cvPct": 0.1,
+              "medianMs": 8551.926,
+              "minMs": 8499.338,
+              "maxMs": 8604.515,
+              "meanMs": 8551.926,
+              "stddevMs": 74.371,
+              "cvPct": 0.9,
               "metaSamples": [
                 {
                   "artifact": 0,
                   "diagnostics": 0,
                   "diagnosticFiles": 0,
                   "exit": 0,
-                  "checked": true
+                  "checked": true,
+                  "rssBytes": 530235392
                 },
                 {
                   "artifact": 0,
                   "diagnostics": 0,
                   "diagnosticFiles": 0,
                   "exit": 0,
-                  "checked": true
+                  "checked": true,
+                  "rssBytes": 529428480
                 }
               ],
               "artifactMedian": 0,
+              "rssMaxMb": 505.3,
+              "rssRunsMb": [
+                505.671875,
+                504.90234375
+              ],
               "warmupPasses": 1,
-              "throughput": "32 files/s"
+              "throughput": "30 files/s"
             }
           ]
         },
@@ -3340,15 +3353,15 @@
               "files": 255,
               "status": "ok",
               "runs": [
-                1765.997,
-                1744.279
+                1886.973,
+                1906.984
               ],
-              "medianMs": 1755.138,
-              "minMs": 1744.279,
-              "maxMs": 1765.997,
-              "meanMs": 1755.138,
-              "stddevMs": 15.357,
-              "cvPct": 0.9,
+              "medianMs": 1896.978,
+              "minMs": 1886.973,
+              "maxMs": 1906.984,
+              "meanMs": 1896.978,
+              "stddevMs": 14.15,
+              "cvPct": 0.7,
               "metaSamples": [
                 {
                   "artifact": 0,
@@ -3356,6 +3369,7 @@
                   "diagnosticFiles": 0,
                   "exit": 0,
                   "checked": true,
+                  "rssBytes": 777596928,
                   "tnbActive": true
                 },
                 {
@@ -3364,12 +3378,18 @@
                   "diagnosticFiles": 0,
                   "exit": 0,
                   "checked": true,
+                  "rssBytes": 762961920,
                   "tnbActive": true
                 }
               ],
               "artifactMedian": 0,
+              "rssMaxMb": 734.6,
+              "rssRunsMb": [
+                741.57421875,
+                727.6171875
+              ],
               "warmupPasses": 1,
-              "throughput": "145 files/s"
+              "throughput": "134 files/s"
             },
             {
               "id": "verter-tsc",
@@ -3384,34 +3404,41 @@
               "files": 255,
               "status": "unranked",
               "runs": [
-                317.545,
-                326.43
+                350.059,
+                349.182
               ],
-              "medianMs": 321.988,
-              "minMs": 317.545,
-              "maxMs": 326.43,
-              "meanMs": 321.988,
-              "stddevMs": 6.283,
-              "cvPct": 2,
+              "medianMs": 349.62,
+              "minMs": 349.182,
+              "maxMs": 350.059,
+              "meanMs": 349.62,
+              "stddevMs": 0.62,
+              "cvPct": 0.2,
               "metaSamples": [
                 {
                   "artifact": 11,
                   "diagnostics": 11,
                   "diagnosticFiles": 3,
                   "exit": 1,
-                  "checked": true
+                  "checked": true,
+                  "rssBytes": 143228928
                 },
                 {
                   "artifact": 11,
                   "diagnostics": 11,
                   "diagnosticFiles": 3,
                   "exit": 1,
-                  "checked": true
+                  "checked": true,
+                  "rssBytes": 143089664
                 }
               ],
               "artifactMedian": 11,
+              "rssMaxMb": 136.5,
+              "rssRunsMb": [
+                136.59375,
+                136.4609375
+              ],
               "warmupPasses": 1,
-              "throughput": "792 files/s"
+              "throughput": "729 files/s"
             },
             {
               "id": "vize-check",
@@ -3426,34 +3453,41 @@
               "files": 255,
               "status": "ok",
               "runs": [
-                2175.364,
-                2150.725
+                2380.297,
+                2336.897
               ],
-              "medianMs": 2163.044,
-              "minMs": 2150.725,
-              "maxMs": 2175.364,
-              "meanMs": 2163.044,
-              "stddevMs": 17.422,
-              "cvPct": 0.8,
+              "medianMs": 2358.597,
+              "minMs": 2336.897,
+              "maxMs": 2380.297,
+              "meanMs": 2358.597,
+              "stddevMs": 30.688,
+              "cvPct": 1.3,
               "metaSamples": [
                 {
                   "artifact": 0,
                   "diagnostics": 0,
                   "diagnosticFiles": 0,
                   "exit": 0,
-                  "checked": true
+                  "checked": true,
+                  "rssBytes": 411398144
                 },
                 {
                   "artifact": 0,
                   "diagnostics": 0,
                   "diagnosticFiles": 0,
                   "exit": 0,
-                  "checked": true
+                  "checked": true,
+                  "rssBytes": 407506944
                 }
               ],
               "artifactMedian": 0,
+              "rssMaxMb": 390.5,
+              "rssRunsMb": [
+                392.33984375,
+                388.62890625
+              ],
               "warmupPasses": 1,
-              "throughput": "118 files/s"
+              "throughput": "108 files/s"
             },
             {
               "id": "golar-check",
@@ -3484,34 +3518,41 @@
           "files": 255,
           "status": "ok",
           "runs": [
-            8000.24,
-            8007.934
+            8604.515,
+            8499.338
           ],
-          "medianMs": 8004.087,
-          "minMs": 8000.24,
-          "maxMs": 8007.934,
-          "meanMs": 8004.087,
-          "stddevMs": 5.44,
-          "cvPct": 0.1,
+          "medianMs": 8551.926,
+          "minMs": 8499.338,
+          "maxMs": 8604.515,
+          "meanMs": 8551.926,
+          "stddevMs": 74.371,
+          "cvPct": 0.9,
           "metaSamples": [
             {
               "artifact": 0,
               "diagnostics": 0,
               "diagnosticFiles": 0,
               "exit": 0,
-              "checked": true
+              "checked": true,
+              "rssBytes": 530235392
             },
             {
               "artifact": 0,
               "diagnostics": 0,
               "diagnosticFiles": 0,
               "exit": 0,
-              "checked": true
+              "checked": true,
+              "rssBytes": 529428480
             }
           ],
           "artifactMedian": 0,
+          "rssMaxMb": 505.3,
+          "rssRunsMb": [
+            505.671875,
+            504.90234375
+          ],
           "warmupPasses": 1,
-          "throughput": "32 files/s"
+          "throughput": "30 files/s"
         },
         {
           "id": "vue-tsc-native",
@@ -3526,15 +3567,15 @@
           "files": 255,
           "status": "ok",
           "runs": [
-            1765.997,
-            1744.279
+            1886.973,
+            1906.984
           ],
-          "medianMs": 1755.138,
-          "minMs": 1744.279,
-          "maxMs": 1765.997,
-          "meanMs": 1755.138,
-          "stddevMs": 15.357,
-          "cvPct": 0.9,
+          "medianMs": 1896.978,
+          "minMs": 1886.973,
+          "maxMs": 1906.984,
+          "meanMs": 1896.978,
+          "stddevMs": 14.15,
+          "cvPct": 0.7,
           "metaSamples": [
             {
               "artifact": 0,
@@ -3542,6 +3583,7 @@
               "diagnosticFiles": 0,
               "exit": 0,
               "checked": true,
+              "rssBytes": 777596928,
               "tnbActive": true
             },
             {
@@ -3550,12 +3592,18 @@
               "diagnosticFiles": 0,
               "exit": 0,
               "checked": true,
+              "rssBytes": 762961920,
               "tnbActive": true
             }
           ],
           "artifactMedian": 0,
+          "rssMaxMb": 734.6,
+          "rssRunsMb": [
+            741.57421875,
+            727.6171875
+          ],
           "warmupPasses": 1,
-          "throughput": "145 files/s"
+          "throughput": "134 files/s"
         },
         {
           "id": "verter-tsc",
@@ -3570,34 +3618,41 @@
           "files": 255,
           "status": "unranked",
           "runs": [
-            317.545,
-            326.43
+            350.059,
+            349.182
           ],
-          "medianMs": 321.988,
-          "minMs": 317.545,
-          "maxMs": 326.43,
-          "meanMs": 321.988,
-          "stddevMs": 6.283,
-          "cvPct": 2,
+          "medianMs": 349.62,
+          "minMs": 349.182,
+          "maxMs": 350.059,
+          "meanMs": 349.62,
+          "stddevMs": 0.62,
+          "cvPct": 0.2,
           "metaSamples": [
             {
               "artifact": 11,
               "diagnostics": 11,
               "diagnosticFiles": 3,
               "exit": 1,
-              "checked": true
+              "checked": true,
+              "rssBytes": 143228928
             },
             {
               "artifact": 11,
               "diagnostics": 11,
               "diagnosticFiles": 3,
               "exit": 1,
-              "checked": true
+              "checked": true,
+              "rssBytes": 143089664
             }
           ],
           "artifactMedian": 11,
+          "rssMaxMb": 136.5,
+          "rssRunsMb": [
+            136.59375,
+            136.4609375
+          ],
           "warmupPasses": 1,
-          "throughput": "792 files/s"
+          "throughput": "729 files/s"
         },
         {
           "id": "vize-check",
@@ -3612,34 +3667,41 @@
           "files": 255,
           "status": "ok",
           "runs": [
-            2175.364,
-            2150.725
+            2380.297,
+            2336.897
           ],
-          "medianMs": 2163.044,
-          "minMs": 2150.725,
-          "maxMs": 2175.364,
-          "meanMs": 2163.044,
-          "stddevMs": 17.422,
-          "cvPct": 0.8,
+          "medianMs": 2358.597,
+          "minMs": 2336.897,
+          "maxMs": 2380.297,
+          "meanMs": 2358.597,
+          "stddevMs": 30.688,
+          "cvPct": 1.3,
           "metaSamples": [
             {
               "artifact": 0,
               "diagnostics": 0,
               "diagnosticFiles": 0,
               "exit": 0,
-              "checked": true
+              "checked": true,
+              "rssBytes": 411398144
             },
             {
               "artifact": 0,
               "diagnostics": 0,
               "diagnosticFiles": 0,
               "exit": 0,
-              "checked": true
+              "checked": true,
+              "rssBytes": 407506944
             }
           ],
           "artifactMedian": 0,
+          "rssMaxMb": 390.5,
+          "rssRunsMb": [
+            392.33984375,
+            388.62890625
+          ],
           "warmupPasses": 1,
-          "throughput": "118 files/s"
+          "throughput": "108 files/s"
         },
         {
           "id": "golar-check",
@@ -3702,26 +3764,26 @@
               "artifactPolarity": "informational",
               "engine": "tsc-js",
               "artifactLabel": "diagnostics published",
-              "notes": "BASELINE · official Vue language server v3 in hybrid (two-process) mode — the only mode v3 has. The measured unit is the pair: @vue/language-server plus typescript-language-server with @vue/typescript-plugin, joined by the tsserver bridge. Both processes' startup and project load of the real project are inside the timings. HOVER asks both halves in parallel and charges the slower; DIAGNOSTICS times the first publication for the document from either half (which may be an empty preliminary — the count it carried and the first NON-EMPTY publication are both published). · operation: didOpen → diagnostics · workspace ui, document ui/playground/src/App.vue | ⚠ FAILED DIAGNOSTIC-CONTENT GATE — published 0 diagnostics for a document vize published 10 for. Answering \"nothing to report\" fast is not the same job as answering. Measured but UNRANKED. (Diagnostic EQUIVALENCE is not asserted; the counts are published so a suspicious row is visible.)",
+              "notes": "BASELINE · official Vue language server v3 in hybrid (two-process) mode — the only mode v3 has. The measured unit is the pair: @vue/language-server plus typescript-language-server with @vue/typescript-plugin, joined by the tsserver bridge. Both processes' startup and project load of the real project are inside the timings. HOVER asks both halves in parallel and charges the slower; DIAGNOSTICS times the first publication for the document from either half (which may be an empty preliminary — the count it carried and the first NON-EMPTY publication are both published). · operation: didOpen → diagnostics · workspace ui, document ui/playground/src/App.vue | ⚠ FAILED DIAGNOSTIC-CONTENT GATE — published 0 diagnostics for a document vize published 9 for. Answering \"nothing to report\" fast is not the same job as answering. Measured but UNRANKED. (Diagnostic EQUIVALENCE is not asserted; the counts are published so a suspicious row is visible.)",
               "files": 1,
               "status": "unranked",
               "runs": [
-                5138.139,
-                5151.617,
-                5141.202,
-                5098.895,
-                5124.108
+                5606.706,
+                5621.631,
+                5656.999,
+                5757.26,
+                5735.641
               ],
-              "medianMs": 5138.139,
-              "minMs": 5098.895,
-              "maxMs": 5151.617,
-              "meanMs": 5130.792,
-              "stddevMs": 20.36,
-              "cvPct": 0.4,
+              "medianMs": 5656.999,
+              "minMs": 5606.706,
+              "maxMs": 5757.26,
+              "meanMs": 5675.647,
+              "stddevMs": 67.599,
+              "cvPct": 1.2,
               "metaSamples": [
                 {
-                  "initializeMs": 489.3379339999992,
-                  "didOpenToDiagnosticsMs": 5138.139091000001,
+                  "initializeMs": 553.7344410000005,
+                  "didOpenToDiagnosticsMs": 5606.705914999999,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -3735,8 +3797,8 @@
                   "artifact": 0
                 },
                 {
-                  "initializeMs": 499.58465399999113,
-                  "didOpenToDiagnosticsMs": 5151.616723999992,
+                  "initializeMs": 520.6301830000011,
+                  "didOpenToDiagnosticsMs": 5621.6307769999985,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -3750,8 +3812,8 @@
                   "artifact": 0
                 },
                 {
-                  "initializeMs": 502.4028699999908,
-                  "didOpenToDiagnosticsMs": 5141.201839999994,
+                  "initializeMs": 528.880971999999,
+                  "didOpenToDiagnosticsMs": 5656.999282000004,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -3765,8 +3827,8 @@
                   "artifact": 0
                 },
                 {
-                  "initializeMs": 469.1508929999982,
-                  "didOpenToDiagnosticsMs": 5098.894855000006,
+                  "initializeMs": 533.3329549999908,
+                  "didOpenToDiagnosticsMs": 5757.260204999999,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -3780,8 +3842,8 @@
                   "artifact": 0
                 },
                 {
-                  "initializeMs": 497.4530120000127,
-                  "didOpenToDiagnosticsMs": 5124.108070000002,
+                  "initializeMs": 554.3280749999976,
+                  "didOpenToDiagnosticsMs": 5735.640677999996,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -3813,26 +3875,26 @@
               "artifactPolarity": "informational",
               "engine": "tsgo via typescript-native-bridge",
               "artifactLabel": "diagnostics published",
-              "notes": "Identical to the Volar row except the TypeScript half runs on typescript-native-bridge (tsgo): same @vue/language-server, same @vue/typescript-plugin, same bridge, tsdk pointed at TNB 6.0.3-bridge.13.tsgo.7.0.2 tsdk. Exactly one variable against the baseline — the TypeScript engine — which is why the two are ranked in separate tables. · operation: didOpen → diagnostics · workspace ui, document ui/playground/src/App.vue | ⚠ FAILED DIAGNOSTIC-CONTENT GATE — published 0 diagnostics for a document vize published 10 for. Answering \"nothing to report\" fast is not the same job as answering. Measured but UNRANKED. (Diagnostic EQUIVALENCE is not asserted; the counts are published so a suspicious row is visible.)",
+              "notes": "Identical to the Volar row except the TypeScript half runs on typescript-native-bridge (tsgo): same @vue/language-server, same @vue/typescript-plugin, same bridge, tsdk pointed at TNB 6.0.3-bridge.13.tsgo.7.0.2 tsdk. Exactly one variable against the baseline — the TypeScript engine — which is why the two are ranked in separate tables. · operation: didOpen → diagnostics · workspace ui, document ui/playground/src/App.vue",
               "files": 1,
-              "status": "unranked",
+              "status": "ok",
               "runs": [
-                3744.914,
-                3738.136,
-                3743.393,
-                3715.708,
-                3751.292
+                3976.092,
+                4008.116,
+                3973.326,
+                4094.314,
+                4080.114
               ],
-              "medianMs": 3743.393,
-              "minMs": 3715.708,
-              "maxMs": 3751.292,
-              "meanMs": 3738.689,
-              "stddevMs": 13.676,
-              "cvPct": 0.4,
+              "medianMs": 4008.116,
+              "minMs": 3973.326,
+              "maxMs": 4094.314,
+              "meanMs": 4026.392,
+              "stddevMs": 57.401,
+              "cvPct": 1.4,
               "metaSamples": [
                 {
-                  "initializeMs": 615.8164309999993,
-                  "didOpenToDiagnosticsMs": 3744.914067000005,
+                  "initializeMs": 628.3843479999996,
+                  "didOpenToDiagnosticsMs": 3976.092002999998,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -3846,8 +3908,8 @@
                   "artifact": 0
                 },
                 {
-                  "initializeMs": 502.5331359999982,
-                  "didOpenToDiagnosticsMs": 3738.1355269999985,
+                  "initializeMs": 547.1829349999971,
+                  "didOpenToDiagnosticsMs": 4008.116258000002,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -3861,8 +3923,8 @@
                   "artifact": 0
                 },
                 {
-                  "initializeMs": 620.4343150000059,
-                  "didOpenToDiagnosticsMs": 3743.3928790000064,
+                  "initializeMs": 621.3023970000067,
+                  "didOpenToDiagnosticsMs": 3973.3263930000103,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -3876,11 +3938,11 @@
                   "artifact": 0
                 },
                 {
-                  "initializeMs": 610.6135789999971,
-                  "didOpenToDiagnosticsMs": 3715.707574,
+                  "initializeMs": 645.8023990000074,
+                  "didOpenToDiagnosticsMs": 4094.3139429999865,
                   "diagnosticsCount": 0,
-                  "firstNonEmptyDiagnosticsMs": null,
-                  "firstNonEmptyDiagnosticsCount": null,
+                  "firstNonEmptyDiagnosticsMs": 4110.130104999989,
+                  "firstNonEmptyDiagnosticsCount": 3,
                   "hoverMs": null,
                   "hoverAnswered": false,
                   "hoverBytes": 0,
@@ -3891,8 +3953,8 @@
                   "artifact": 0
                 },
                 {
-                  "initializeMs": 624.1032359999954,
-                  "didOpenToDiagnosticsMs": 3751.2918069999723,
+                  "initializeMs": 638.1512260000163,
+                  "didOpenToDiagnosticsMs": 4080.1144629999762,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -3922,39 +3984,24 @@
               "files": 1,
               "status": "ok",
               "runs": [
-                363.843,
-                273.202,
-                413.838,
-                309.93,
-                269.617
+                315.647,
+                287.019,
+                408.661,
+                299.715,
+                299.098
               ],
-              "medianMs": 309.93,
-              "minMs": 269.617,
-              "maxMs": 413.838,
-              "meanMs": 326.086,
-              "stddevMs": 61.993,
-              "cvPct": 20,
+              "medianMs": 299.715,
+              "minMs": 287.019,
+              "maxMs": 408.661,
+              "meanMs": 322.028,
+              "stddevMs": 49.486,
+              "cvPct": 16.5,
               "metaSamples": [
                 {
-                  "initializeMs": 10.59299099999771,
-                  "didOpenToDiagnosticsMs": 363.8431169999967,
-                  "diagnosticsCount": 0,
-                  "firstNonEmptyDiagnosticsMs": null,
-                  "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": null,
-                  "hoverAnswered": false,
-                  "hoverBytes": 0,
-                  "hoverSample": "",
-                  "hoverPosition": null,
-                  "backendFallback": null,
-                  "bridgeFailures": null,
-                  "artifact": 0
-                },
-                {
-                  "initializeMs": 11.227344999999332,
-                  "didOpenToDiagnosticsMs": 273.2023059999992,
+                  "initializeMs": 10.257015999995929,
+                  "didOpenToDiagnosticsMs": 315.64663100000325,
                   "diagnosticsCount": 3,
-                  "firstNonEmptyDiagnosticsMs": 273.20268000000215,
+                  "firstNonEmptyDiagnosticsMs": 315.6472240000003,
                   "firstNonEmptyDiagnosticsCount": 3,
                   "hoverMs": null,
                   "hoverAnswered": false,
@@ -3966,10 +4013,10 @@
                   "artifact": 3
                 },
                 {
-                  "initializeMs": 9.468336999998428,
-                  "didOpenToDiagnosticsMs": 413.8378229999944,
+                  "initializeMs": 7.861332000000402,
+                  "didOpenToDiagnosticsMs": 287.01908399999957,
                   "diagnosticsCount": 3,
-                  "firstNonEmptyDiagnosticsMs": 413.838493999996,
+                  "firstNonEmptyDiagnosticsMs": 287.0194360000023,
                   "firstNonEmptyDiagnosticsCount": 3,
                   "hoverMs": null,
                   "hoverAnswered": false,
@@ -3981,10 +4028,10 @@
                   "artifact": 3
                 },
                 {
-                  "initializeMs": 16.65071300001,
-                  "didOpenToDiagnosticsMs": 309.9302100000059,
+                  "initializeMs": 12.170125999997254,
+                  "didOpenToDiagnosticsMs": 408.66121200000634,
                   "diagnosticsCount": 3,
-                  "firstNonEmptyDiagnosticsMs": 309.9307620000036,
+                  "firstNonEmptyDiagnosticsMs": 408.66163000000233,
                   "firstNonEmptyDiagnosticsCount": 3,
                   "hoverMs": null,
                   "hoverAnswered": false,
@@ -3996,10 +4043,25 @@
                   "artifact": 3
                 },
                 {
-                  "initializeMs": 12.148883999994723,
-                  "didOpenToDiagnosticsMs": 269.61748699998134,
+                  "initializeMs": 9.063057000006665,
+                  "didOpenToDiagnosticsMs": 299.7146550000034,
                   "diagnosticsCount": 3,
-                  "firstNonEmptyDiagnosticsMs": 269.61796099998173,
+                  "firstNonEmptyDiagnosticsMs": 299.71510000000126,
+                  "firstNonEmptyDiagnosticsCount": 3,
+                  "hoverMs": null,
+                  "hoverAnswered": false,
+                  "hoverBytes": 0,
+                  "hoverSample": "",
+                  "hoverPosition": null,
+                  "backendFallback": null,
+                  "bridgeFailures": null,
+                  "artifact": 3
+                },
+                {
+                  "initializeMs": 12.850122000003466,
+                  "didOpenToDiagnosticsMs": 299.0983899999992,
+                  "diagnosticsCount": 3,
+                  "firstNonEmptyDiagnosticsMs": 299.0986559999874,
                   "firstNonEmptyDiagnosticsCount": 3,
                   "hoverMs": null,
                   "hoverAnswered": false,
@@ -4027,25 +4089,25 @@
               "files": 1,
               "status": "ok",
               "runs": [
-                474.842,
-                442.079,
-                448.981,
-                395.201,
-                457.778
+                433.307,
+                428.154,
+                422.071,
+                443.986,
+                424.974
               ],
-              "medianMs": 448.981,
-              "minMs": 395.201,
-              "maxMs": 474.842,
-              "meanMs": 443.776,
-              "stddevMs": 29.794,
-              "cvPct": 6.6,
+              "medianMs": 428.154,
+              "minMs": 422.071,
+              "maxMs": 443.986,
+              "meanMs": 430.498,
+              "stddevMs": 8.615,
+              "cvPct": 2,
               "metaSamples": [
                 {
-                  "initializeMs": 36.936185000005935,
-                  "didOpenToDiagnosticsMs": 474.8417730000001,
-                  "diagnosticsCount": 10,
-                  "firstNonEmptyDiagnosticsMs": 474.8421160000071,
-                  "firstNonEmptyDiagnosticsCount": 10,
+                  "initializeMs": 41.11273899999651,
+                  "didOpenToDiagnosticsMs": 433.30726100000174,
+                  "diagnosticsCount": 9,
+                  "firstNonEmptyDiagnosticsMs": 433.30762400000094,
+                  "firstNonEmptyDiagnosticsCount": 9,
                   "hoverMs": null,
                   "hoverAnswered": false,
                   "hoverBytes": 0,
@@ -4053,14 +4115,14 @@
                   "hoverPosition": null,
                   "backendFallback": null,
                   "bridgeFailures": null,
-                  "artifact": 10
+                  "artifact": 9
                 },
                 {
-                  "initializeMs": 37.96429799999896,
-                  "didOpenToDiagnosticsMs": 442.07919499999844,
-                  "diagnosticsCount": 10,
-                  "firstNonEmptyDiagnosticsMs": 442.0795950000029,
-                  "firstNonEmptyDiagnosticsCount": 10,
+                  "initializeMs": 38.94286999999895,
+                  "didOpenToDiagnosticsMs": 428.15423100000044,
+                  "diagnosticsCount": 9,
+                  "firstNonEmptyDiagnosticsMs": 428.15492000000086,
+                  "firstNonEmptyDiagnosticsCount": 9,
                   "hoverMs": null,
                   "hoverAnswered": false,
                   "hoverBytes": 0,
@@ -4068,14 +4130,14 @@
                   "hoverPosition": null,
                   "backendFallback": null,
                   "bridgeFailures": null,
-                  "artifact": 10
+                  "artifact": 9
                 },
                 {
-                  "initializeMs": 38.85562099999515,
-                  "didOpenToDiagnosticsMs": 448.98063599999296,
-                  "diagnosticsCount": 10,
-                  "firstNonEmptyDiagnosticsMs": 448.9810379999981,
-                  "firstNonEmptyDiagnosticsCount": 10,
+                  "initializeMs": 36.73916800000006,
+                  "didOpenToDiagnosticsMs": 422.0708200000081,
+                  "diagnosticsCount": 9,
+                  "firstNonEmptyDiagnosticsMs": 422.07156300000497,
+                  "firstNonEmptyDiagnosticsCount": 9,
                   "hoverMs": null,
                   "hoverAnswered": false,
                   "hoverBytes": 0,
@@ -4083,14 +4145,14 @@
                   "hoverPosition": null,
                   "backendFallback": null,
                   "bridgeFailures": null,
-                  "artifact": 10
+                  "artifact": 9
                 },
                 {
-                  "initializeMs": 46.370318000001134,
-                  "didOpenToDiagnosticsMs": 395.2013069999957,
-                  "diagnosticsCount": 10,
-                  "firstNonEmptyDiagnosticsMs": 395.20175899998867,
-                  "firstNonEmptyDiagnosticsCount": 10,
+                  "initializeMs": 50.31749499999569,
+                  "didOpenToDiagnosticsMs": 443.98598699999275,
+                  "diagnosticsCount": 9,
+                  "firstNonEmptyDiagnosticsMs": 443.98664099999587,
+                  "firstNonEmptyDiagnosticsCount": 9,
                   "hoverMs": null,
                   "hoverAnswered": false,
                   "hoverBytes": 0,
@@ -4098,14 +4160,14 @@
                   "hoverPosition": null,
                   "backendFallback": null,
                   "bridgeFailures": null,
-                  "artifact": 10
+                  "artifact": 9
                 },
                 {
-                  "initializeMs": 36.99666599999182,
-                  "didOpenToDiagnosticsMs": 457.77834799999255,
-                  "diagnosticsCount": 10,
-                  "firstNonEmptyDiagnosticsMs": 457.77881399999023,
-                  "firstNonEmptyDiagnosticsCount": 10,
+                  "initializeMs": 39.00959800000419,
+                  "didOpenToDiagnosticsMs": 424.9739330000011,
+                  "diagnosticsCount": 9,
+                  "firstNonEmptyDiagnosticsMs": 424.97431900000083,
+                  "firstNonEmptyDiagnosticsCount": 9,
                   "hoverMs": null,
                   "hoverAnswered": false,
                   "hoverBytes": 0,
@@ -4113,10 +4175,10 @@
                   "hoverPosition": null,
                   "backendFallback": null,
                   "bridgeFailures": null,
-                  "artifact": 10
+                  "artifact": 9
                 }
               ],
-              "artifactMedian": 10,
+              "artifactMedian": 9,
               "warmupPasses": 1,
               "throughput": "2 files/s"
             }
@@ -4138,26 +4200,26 @@
               "files": 1,
               "status": "ok",
               "runs": [
-                2.005,
-                5.069,
-                1.964,
-                1.962,
-                2.666
+                2.183,
+                2.248,
+                2.387,
+                2.242,
+                2.116
               ],
-              "medianMs": 2.005,
-              "minMs": 1.962,
-              "maxMs": 5.069,
-              "meanMs": 2.733,
-              "stddevMs": 1.34,
-              "cvPct": 66.8,
+              "medianMs": 2.242,
+              "minMs": 2.116,
+              "maxMs": 2.387,
+              "meanMs": 2.235,
+              "stddevMs": 0.1,
+              "cvPct": 4.5,
               "metaSamples": [
                 {
-                  "initializeMs": 454.39286799999536,
-                  "didOpenToDiagnosticsMs": 5157.013051999995,
+                  "initializeMs": 488.88051700000506,
+                  "didOpenToDiagnosticsMs": 5648.827021000005,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 2.0053210000041872,
+                  "hoverMs": 2.1831100000053993,
                   "hoverAnswered": true,
                   "hoverBytes": 37,
                   "hoverSample": "```typescript\nconst langList: any\n```",
@@ -4171,12 +4233,12 @@
                   "artifact": 37
                 },
                 {
-                  "initializeMs": 465.44643799999903,
-                  "didOpenToDiagnosticsMs": 5288.385543000004,
+                  "initializeMs": 489.8865259999948,
+                  "didOpenToDiagnosticsMs": 5675.397145000003,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 5.068616000004113,
+                  "hoverMs": 2.2484849999964354,
                   "hoverAnswered": true,
                   "hoverBytes": 37,
                   "hoverSample": "```typescript\nconst langList: any\n```",
@@ -4190,12 +4252,12 @@
                   "artifact": 37
                 },
                 {
-                  "initializeMs": 460.7175600000046,
-                  "didOpenToDiagnosticsMs": 5154.4553180000075,
+                  "initializeMs": 479.2820810000121,
+                  "didOpenToDiagnosticsMs": 5671.917887999996,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 1.96360599999025,
+                  "hoverMs": 2.3869379999960074,
                   "hoverAnswered": true,
                   "hoverBytes": 37,
                   "hoverSample": "```typescript\nconst langList: any\n```",
@@ -4209,12 +4271,12 @@
                   "artifact": 37
                 },
                 {
-                  "initializeMs": 459.90305100000114,
-                  "didOpenToDiagnosticsMs": 5180.612935000012,
+                  "initializeMs": 492.6168619999953,
+                  "didOpenToDiagnosticsMs": 5627.202621000004,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 1.9620140000042738,
+                  "hoverMs": 2.241718999997829,
                   "hoverAnswered": true,
                   "hoverBytes": 37,
                   "hoverSample": "```typescript\nconst langList: any\n```",
@@ -4228,12 +4290,12 @@
                   "artifact": 37
                 },
                 {
-                  "initializeMs": 521.8002479999996,
-                  "didOpenToDiagnosticsMs": 5124.756737000003,
+                  "initializeMs": 543.4627970000001,
+                  "didOpenToDiagnosticsMs": 5660.599833,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 2.6663359999947716,
+                  "hoverMs": 2.1160970000055386,
                   "hoverAnswered": true,
                   "hoverBytes": 37,
                   "hoverSample": "```typescript\nconst langList: any\n```",
@@ -4249,7 +4311,7 @@
               ],
               "artifactMedian": 37,
               "warmupPasses": 1,
-              "throughput": "499 files/s"
+              "throughput": "446 files/s"
             }
           ]
         },
@@ -4269,26 +4331,26 @@
               "files": 1,
               "status": "ok",
               "runs": [
-                5.16,
-                8.33,
-                9.234,
-                6.374,
-                9.327
+                9.773,
+                10.414,
+                9.885,
+                6.377,
+                7.586
               ],
-              "medianMs": 8.33,
-              "minMs": 5.16,
-              "maxMs": 9.327,
-              "meanMs": 7.685,
-              "stddevMs": 1.844,
-              "cvPct": 22.1,
+              "medianMs": 9.773,
+              "minMs": 6.377,
+              "maxMs": 10.414,
+              "meanMs": 8.807,
+              "stddevMs": 1.737,
+              "cvPct": 17.8,
               "metaSamples": [
                 {
-                  "initializeMs": 568.833706999998,
-                  "didOpenToDiagnosticsMs": 3735.3988880000034,
+                  "initializeMs": 584.039549000001,
+                  "didOpenToDiagnosticsMs": 3962.0076710000067,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 5.160495999996783,
+                  "hoverMs": 9.773245000003953,
                   "hoverAnswered": true,
                   "hoverBytes": 37,
                   "hoverSample": "```typescript\nconst langList: any\n```",
@@ -4302,12 +4364,12 @@
                   "artifact": 37
                 },
                 {
-                  "initializeMs": 559.3470489999963,
-                  "didOpenToDiagnosticsMs": 3745.335779000001,
+                  "initializeMs": 619.1430069999988,
+                  "didOpenToDiagnosticsMs": 4003.298972000004,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 8.330379999999423,
+                  "hoverMs": 10.413675000003423,
                   "hoverAnswered": true,
                   "hoverBytes": 37,
                   "hoverSample": "```typescript\nconst langList: any\n```",
@@ -4321,12 +4383,12 @@
                   "artifact": 37
                 },
                 {
-                  "initializeMs": 594.2962700000062,
-                  "didOpenToDiagnosticsMs": 3722.2378739999986,
+                  "initializeMs": 587.8186469999928,
+                  "didOpenToDiagnosticsMs": 3990.8671250000043,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 9.233609999995679,
+                  "hoverMs": 9.885036000006949,
                   "hoverAnswered": true,
                   "hoverBytes": 37,
                   "hoverSample": "```typescript\nconst langList: any\n```",
@@ -4340,12 +4402,12 @@
                   "artifact": 37
                 },
                 {
-                  "initializeMs": 543.4831510000076,
-                  "didOpenToDiagnosticsMs": 3775.500946,
+                  "initializeMs": 561.2401659999887,
+                  "didOpenToDiagnosticsMs": 4025.8408530000015,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 6.374409000010928,
+                  "hoverMs": 6.376900000002934,
                   "hoverAnswered": true,
                   "hoverBytes": 37,
                   "hoverSample": "```typescript\nconst langList: any\n```",
@@ -4359,12 +4421,12 @@
                   "artifact": 37
                 },
                 {
-                  "initializeMs": 567.5882810000039,
-                  "didOpenToDiagnosticsMs": 3766.5849880000023,
+                  "initializeMs": 596.6712479999987,
+                  "didOpenToDiagnosticsMs": 4104.176227999997,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 9.326773000007961,
+                  "hoverMs": 7.586072999984026,
                   "hoverAnswered": true,
                   "hoverBytes": 37,
                   "hoverSample": "```typescript\nconst langList: any\n```",
@@ -4380,7 +4442,7 @@
               ],
               "artifactMedian": 37,
               "warmupPasses": 1,
-              "throughput": "120 files/s"
+              "throughput": "102 files/s"
             },
             {
               "id": "verter-lsp-hover",
@@ -4394,26 +4456,26 @@
               "files": 1,
               "status": "ok",
               "runs": [
-                1.079,
-                0.729,
-                0.742,
-                28.691,
-                0.673
+                1.319,
+                0.701,
+                0.829,
+                1.188,
+                0.95
               ],
-              "medianMs": 0.742,
-              "minMs": 0.673,
-              "maxMs": 28.691,
-              "meanMs": 6.383,
-              "stddevMs": 12.472,
-              "cvPct": 1680.8,
+              "medianMs": 0.95,
+              "minMs": 0.701,
+              "maxMs": 1.319,
+              "meanMs": 0.997,
+              "stddevMs": 0.254,
+              "cvPct": 26.7,
               "metaSamples": [
                 {
-                  "initializeMs": 10.569562000004225,
+                  "initializeMs": 10.233087999993586,
                   "didOpenToDiagnosticsMs": null,
                   "diagnosticsCount": null,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 1.0786999999982072,
+                  "hoverMs": 1.3185819999998785,
                   "hoverAnswered": true,
                   "hoverBytes": 37,
                   "hoverSample": "```typescript\nconst langList: any\n```",
@@ -4427,12 +4489,12 @@
                   "artifact": 37
                 },
                 {
-                  "initializeMs": 9.117908999993233,
+                  "initializeMs": 10.198935000007623,
                   "didOpenToDiagnosticsMs": null,
                   "diagnosticsCount": null,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 0.7293239999999059,
+                  "hoverMs": 0.7006479999981821,
                   "hoverAnswered": true,
                   "hoverBytes": 37,
                   "hoverSample": "```typescript\nconst langList: any\n```",
@@ -4446,12 +4508,12 @@
                   "artifact": 37
                 },
                 {
-                  "initializeMs": 10.351630999997724,
+                  "initializeMs": 8.20609800000966,
                   "didOpenToDiagnosticsMs": null,
                   "diagnosticsCount": null,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 0.7423130000097444,
+                  "hoverMs": 0.8293770000018412,
                   "hoverAnswered": true,
                   "hoverBytes": 37,
                   "hoverSample": "```typescript\nconst langList: any\n```",
@@ -4465,12 +4527,12 @@
                   "artifact": 37
                 },
                 {
-                  "initializeMs": 11.081002999999328,
-                  "didOpenToDiagnosticsMs": 47.55772199999774,
-                  "diagnosticsCount": 0,
+                  "initializeMs": 10.965463000000454,
+                  "didOpenToDiagnosticsMs": null,
+                  "diagnosticsCount": null,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 28.691071000008378,
+                  "hoverMs": 1.1881089999951655,
                   "hoverAnswered": true,
                   "hoverBytes": 37,
                   "hoverSample": "```typescript\nconst langList: any\n```",
@@ -4484,12 +4546,12 @@
                   "artifact": 37
                 },
                 {
-                  "initializeMs": 13.6344209999952,
+                  "initializeMs": 10.227309000008972,
                   "didOpenToDiagnosticsMs": null,
                   "diagnosticsCount": null,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 0.6731670000008307,
+                  "hoverMs": 0.9501520000048913,
                   "hoverAnswered": true,
                   "hoverBytes": 37,
                   "hoverSample": "```typescript\nconst langList: any\n```",
@@ -4505,7 +4567,7 @@
               ],
               "artifactMedian": 37,
               "warmupPasses": 1,
-              "throughput": "1.3k files/s"
+              "throughput": "1.1k files/s"
             },
             {
               "id": "vize-lsp-hover",
@@ -4519,29 +4581,29 @@
               "files": 1,
               "status": "ok",
               "runs": [
-                3.211,
-                5.343,
-                3.672,
-                7.687,
-                3.673
+                3.979,
+                4,
+                3.695,
+                3.581,
+                4.529
               ],
-              "medianMs": 3.673,
-              "minMs": 3.211,
-              "maxMs": 7.687,
-              "meanMs": 4.717,
-              "stddevMs": 1.848,
-              "cvPct": 50.3,
+              "medianMs": 3.979,
+              "minMs": 3.581,
+              "maxMs": 4.529,
+              "meanMs": 3.957,
+              "stddevMs": 0.367,
+              "cvPct": 9.2,
               "metaSamples": [
                 {
-                  "initializeMs": 37.518402000001515,
-                  "didOpenToDiagnosticsMs": 572.542942,
-                  "diagnosticsCount": 10,
-                  "firstNonEmptyDiagnosticsMs": 572.5433439999979,
-                  "firstNonEmptyDiagnosticsCount": 10,
-                  "hoverMs": 3.210922999998729,
+                  "initializeMs": 41.45134400000097,
+                  "didOpenToDiagnosticsMs": 462.87910700000066,
+                  "diagnosticsCount": 9,
+                  "firstNonEmptyDiagnosticsMs": 462.8796020000009,
+                  "firstNonEmptyDiagnosticsCount": 9,
+                  "hoverMs": 3.97944699999789,
                   "hoverAnswered": true,
-                  "hoverBytes": 265,
-                  "hoverSample": "```typescript\nconst langList: any\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Recommended order: <script> -> <template> -> <style>\n\n[📖 View rule document",
+                  "hoverBytes": 37,
+                  "hoverSample": "```typescript\nconst langList: any\n```",
                   "hoverPosition": {
                     "line": 94,
                     "character": 6,
@@ -4549,18 +4611,18 @@
                   },
                   "backendFallback": null,
                   "bridgeFailures": null,
-                  "artifact": 265
+                  "artifact": 37
                 },
                 {
-                  "initializeMs": 36.01872199999343,
-                  "didOpenToDiagnosticsMs": 577.2619450000057,
-                  "diagnosticsCount": 10,
-                  "firstNonEmptyDiagnosticsMs": 577.2624179999984,
-                  "firstNonEmptyDiagnosticsCount": 10,
-                  "hoverMs": 5.342964999988908,
+                  "initializeMs": 39.551963000005344,
+                  "didOpenToDiagnosticsMs": 473.24903500000073,
+                  "diagnosticsCount": 9,
+                  "firstNonEmptyDiagnosticsMs": 473.2495510000008,
+                  "firstNonEmptyDiagnosticsCount": 9,
+                  "hoverMs": 4.000144000005093,
                   "hoverAnswered": true,
-                  "hoverBytes": 265,
-                  "hoverSample": "```typescript\nconst langList: any\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Recommended order: <script> -> <template> -> <style>\n\n[📖 View rule document",
+                  "hoverBytes": 37,
+                  "hoverSample": "```typescript\nconst langList: any\n```",
                   "hoverPosition": {
                     "line": 94,
                     "character": 6,
@@ -4568,18 +4630,18 @@
                   },
                   "backendFallback": null,
                   "bridgeFailures": null,
-                  "artifact": 265
+                  "artifact": 37
                 },
                 {
-                  "initializeMs": 38.320905000000494,
-                  "didOpenToDiagnosticsMs": 575.7062850000075,
-                  "diagnosticsCount": 10,
-                  "firstNonEmptyDiagnosticsMs": 575.7069540000084,
-                  "firstNonEmptyDiagnosticsCount": 10,
-                  "hoverMs": 3.6718959999998333,
+                  "initializeMs": 40.005664999989676,
+                  "didOpenToDiagnosticsMs": 484.8112300000066,
+                  "diagnosticsCount": 9,
+                  "firstNonEmptyDiagnosticsMs": 484.8117530000018,
+                  "firstNonEmptyDiagnosticsCount": 9,
+                  "hoverMs": 3.695278999992297,
                   "hoverAnswered": true,
-                  "hoverBytes": 265,
-                  "hoverSample": "```typescript\nconst langList: any\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Recommended order: <script> -> <template> -> <style>\n\n[📖 View rule document",
+                  "hoverBytes": 37,
+                  "hoverSample": "```typescript\nconst langList: any\n```",
                   "hoverPosition": {
                     "line": 94,
                     "character": 6,
@@ -4587,18 +4649,18 @@
                   },
                   "backendFallback": null,
                   "bridgeFailures": null,
-                  "artifact": 265
+                  "artifact": 37
                 },
                 {
-                  "initializeMs": 37.64208099999814,
-                  "didOpenToDiagnosticsMs": 580.2843900000007,
-                  "diagnosticsCount": 10,
-                  "firstNonEmptyDiagnosticsMs": 580.2848589999921,
-                  "firstNonEmptyDiagnosticsCount": 10,
-                  "hoverMs": 7.687206000002334,
+                  "initializeMs": 38.52203600000939,
+                  "didOpenToDiagnosticsMs": 485.0437149999925,
+                  "diagnosticsCount": 9,
+                  "firstNonEmptyDiagnosticsMs": 485.04413199999544,
+                  "firstNonEmptyDiagnosticsCount": 9,
+                  "hoverMs": 3.5807539999950677,
                   "hoverAnswered": true,
-                  "hoverBytes": 265,
-                  "hoverSample": "```typescript\nconst langList: any\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Recommended order: <script> -> <template> -> <style>\n\n[📖 View rule document",
+                  "hoverBytes": 37,
+                  "hoverSample": "```typescript\nconst langList: any\n```",
                   "hoverPosition": {
                     "line": 94,
                     "character": 6,
@@ -4606,18 +4668,18 @@
                   },
                   "backendFallback": null,
                   "bridgeFailures": null,
-                  "artifact": 265
+                  "artifact": 37
                 },
                 {
-                  "initializeMs": 39.03536699998949,
-                  "didOpenToDiagnosticsMs": 585.2340360000089,
-                  "diagnosticsCount": 10,
-                  "firstNonEmptyDiagnosticsMs": 585.2347750000044,
-                  "firstNonEmptyDiagnosticsCount": 10,
-                  "hoverMs": 3.6731929999950808,
+                  "initializeMs": 35.71281099997577,
+                  "didOpenToDiagnosticsMs": 492.923157000012,
+                  "diagnosticsCount": 9,
+                  "firstNonEmptyDiagnosticsMs": 492.9238830000104,
+                  "firstNonEmptyDiagnosticsCount": 9,
+                  "hoverMs": 4.528510000003735,
                   "hoverAnswered": true,
-                  "hoverBytes": 265,
-                  "hoverSample": "```typescript\nconst langList: any\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Recommended order: <script> -> <template> -> <style>\n\n[📖 View rule document",
+                  "hoverBytes": 37,
+                  "hoverSample": "```typescript\nconst langList: any\n```",
                   "hoverPosition": {
                     "line": 94,
                     "character": 6,
@@ -4625,12 +4687,12 @@
                   },
                   "backendFallback": null,
                   "bridgeFailures": null,
-                  "artifact": 265
+                  "artifact": 37
                 }
               ],
-              "artifactMedian": 265,
+              "artifactMedian": 37,
               "warmupPasses": 1,
-              "throughput": "272 files/s"
+              "throughput": "251 files/s"
             }
           ]
         }
@@ -4645,26 +4707,26 @@
           "artifactPolarity": "informational",
           "engine": "tsc-js",
           "artifactLabel": "diagnostics published",
-          "notes": "BASELINE · official Vue language server v3 in hybrid (two-process) mode — the only mode v3 has. The measured unit is the pair: @vue/language-server plus typescript-language-server with @vue/typescript-plugin, joined by the tsserver bridge. Both processes' startup and project load of the real project are inside the timings. HOVER asks both halves in parallel and charges the slower; DIAGNOSTICS times the first publication for the document from either half (which may be an empty preliminary — the count it carried and the first NON-EMPTY publication are both published). · operation: didOpen → diagnostics · workspace ui, document ui/playground/src/App.vue | ⚠ FAILED DIAGNOSTIC-CONTENT GATE — published 0 diagnostics for a document vize published 10 for. Answering \"nothing to report\" fast is not the same job as answering. Measured but UNRANKED. (Diagnostic EQUIVALENCE is not asserted; the counts are published so a suspicious row is visible.)",
+          "notes": "BASELINE · official Vue language server v3 in hybrid (two-process) mode — the only mode v3 has. The measured unit is the pair: @vue/language-server plus typescript-language-server with @vue/typescript-plugin, joined by the tsserver bridge. Both processes' startup and project load of the real project are inside the timings. HOVER asks both halves in parallel and charges the slower; DIAGNOSTICS times the first publication for the document from either half (which may be an empty preliminary — the count it carried and the first NON-EMPTY publication are both published). · operation: didOpen → diagnostics · workspace ui, document ui/playground/src/App.vue | ⚠ FAILED DIAGNOSTIC-CONTENT GATE — published 0 diagnostics for a document vize published 9 for. Answering \"nothing to report\" fast is not the same job as answering. Measured but UNRANKED. (Diagnostic EQUIVALENCE is not asserted; the counts are published so a suspicious row is visible.)",
           "files": 1,
           "status": "unranked",
           "runs": [
-            5138.139,
-            5151.617,
-            5141.202,
-            5098.895,
-            5124.108
+            5606.706,
+            5621.631,
+            5656.999,
+            5757.26,
+            5735.641
           ],
-          "medianMs": 5138.139,
-          "minMs": 5098.895,
-          "maxMs": 5151.617,
-          "meanMs": 5130.792,
-          "stddevMs": 20.36,
-          "cvPct": 0.4,
+          "medianMs": 5656.999,
+          "minMs": 5606.706,
+          "maxMs": 5757.26,
+          "meanMs": 5675.647,
+          "stddevMs": 67.599,
+          "cvPct": 1.2,
           "metaSamples": [
             {
-              "initializeMs": 489.3379339999992,
-              "didOpenToDiagnosticsMs": 5138.139091000001,
+              "initializeMs": 553.7344410000005,
+              "didOpenToDiagnosticsMs": 5606.705914999999,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -4678,8 +4740,8 @@
               "artifact": 0
             },
             {
-              "initializeMs": 499.58465399999113,
-              "didOpenToDiagnosticsMs": 5151.616723999992,
+              "initializeMs": 520.6301830000011,
+              "didOpenToDiagnosticsMs": 5621.6307769999985,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -4693,8 +4755,8 @@
               "artifact": 0
             },
             {
-              "initializeMs": 502.4028699999908,
-              "didOpenToDiagnosticsMs": 5141.201839999994,
+              "initializeMs": 528.880971999999,
+              "didOpenToDiagnosticsMs": 5656.999282000004,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -4708,8 +4770,8 @@
               "artifact": 0
             },
             {
-              "initializeMs": 469.1508929999982,
-              "didOpenToDiagnosticsMs": 5098.894855000006,
+              "initializeMs": 533.3329549999908,
+              "didOpenToDiagnosticsMs": 5757.260204999999,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -4723,8 +4785,8 @@
               "artifact": 0
             },
             {
-              "initializeMs": 497.4530120000127,
-              "didOpenToDiagnosticsMs": 5124.108070000002,
+              "initializeMs": 554.3280749999976,
+              "didOpenToDiagnosticsMs": 5735.640677999996,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -4750,26 +4812,26 @@
           "artifactPolarity": "informational",
           "engine": "tsgo via typescript-native-bridge",
           "artifactLabel": "diagnostics published",
-          "notes": "Identical to the Volar row except the TypeScript half runs on typescript-native-bridge (tsgo): same @vue/language-server, same @vue/typescript-plugin, same bridge, tsdk pointed at TNB 6.0.3-bridge.13.tsgo.7.0.2 tsdk. Exactly one variable against the baseline — the TypeScript engine — which is why the two are ranked in separate tables. · operation: didOpen → diagnostics · workspace ui, document ui/playground/src/App.vue | ⚠ FAILED DIAGNOSTIC-CONTENT GATE — published 0 diagnostics for a document vize published 10 for. Answering \"nothing to report\" fast is not the same job as answering. Measured but UNRANKED. (Diagnostic EQUIVALENCE is not asserted; the counts are published so a suspicious row is visible.)",
+          "notes": "Identical to the Volar row except the TypeScript half runs on typescript-native-bridge (tsgo): same @vue/language-server, same @vue/typescript-plugin, same bridge, tsdk pointed at TNB 6.0.3-bridge.13.tsgo.7.0.2 tsdk. Exactly one variable against the baseline — the TypeScript engine — which is why the two are ranked in separate tables. · operation: didOpen → diagnostics · workspace ui, document ui/playground/src/App.vue",
           "files": 1,
-          "status": "unranked",
+          "status": "ok",
           "runs": [
-            3744.914,
-            3738.136,
-            3743.393,
-            3715.708,
-            3751.292
+            3976.092,
+            4008.116,
+            3973.326,
+            4094.314,
+            4080.114
           ],
-          "medianMs": 3743.393,
-          "minMs": 3715.708,
-          "maxMs": 3751.292,
-          "meanMs": 3738.689,
-          "stddevMs": 13.676,
-          "cvPct": 0.4,
+          "medianMs": 4008.116,
+          "minMs": 3973.326,
+          "maxMs": 4094.314,
+          "meanMs": 4026.392,
+          "stddevMs": 57.401,
+          "cvPct": 1.4,
           "metaSamples": [
             {
-              "initializeMs": 615.8164309999993,
-              "didOpenToDiagnosticsMs": 3744.914067000005,
+              "initializeMs": 628.3843479999996,
+              "didOpenToDiagnosticsMs": 3976.092002999998,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -4783,8 +4845,8 @@
               "artifact": 0
             },
             {
-              "initializeMs": 502.5331359999982,
-              "didOpenToDiagnosticsMs": 3738.1355269999985,
+              "initializeMs": 547.1829349999971,
+              "didOpenToDiagnosticsMs": 4008.116258000002,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -4798,8 +4860,8 @@
               "artifact": 0
             },
             {
-              "initializeMs": 620.4343150000059,
-              "didOpenToDiagnosticsMs": 3743.3928790000064,
+              "initializeMs": 621.3023970000067,
+              "didOpenToDiagnosticsMs": 3973.3263930000103,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -4813,11 +4875,11 @@
               "artifact": 0
             },
             {
-              "initializeMs": 610.6135789999971,
-              "didOpenToDiagnosticsMs": 3715.707574,
+              "initializeMs": 645.8023990000074,
+              "didOpenToDiagnosticsMs": 4094.3139429999865,
               "diagnosticsCount": 0,
-              "firstNonEmptyDiagnosticsMs": null,
-              "firstNonEmptyDiagnosticsCount": null,
+              "firstNonEmptyDiagnosticsMs": 4110.130104999989,
+              "firstNonEmptyDiagnosticsCount": 3,
               "hoverMs": null,
               "hoverAnswered": false,
               "hoverBytes": 0,
@@ -4828,8 +4890,8 @@
               "artifact": 0
             },
             {
-              "initializeMs": 624.1032359999954,
-              "didOpenToDiagnosticsMs": 3751.2918069999723,
+              "initializeMs": 638.1512260000163,
+              "didOpenToDiagnosticsMs": 4080.1144629999762,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -4859,39 +4921,24 @@
           "files": 1,
           "status": "ok",
           "runs": [
-            363.843,
-            273.202,
-            413.838,
-            309.93,
-            269.617
+            315.647,
+            287.019,
+            408.661,
+            299.715,
+            299.098
           ],
-          "medianMs": 309.93,
-          "minMs": 269.617,
-          "maxMs": 413.838,
-          "meanMs": 326.086,
-          "stddevMs": 61.993,
-          "cvPct": 20,
+          "medianMs": 299.715,
+          "minMs": 287.019,
+          "maxMs": 408.661,
+          "meanMs": 322.028,
+          "stddevMs": 49.486,
+          "cvPct": 16.5,
           "metaSamples": [
             {
-              "initializeMs": 10.59299099999771,
-              "didOpenToDiagnosticsMs": 363.8431169999967,
-              "diagnosticsCount": 0,
-              "firstNonEmptyDiagnosticsMs": null,
-              "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": null,
-              "hoverAnswered": false,
-              "hoverBytes": 0,
-              "hoverSample": "",
-              "hoverPosition": null,
-              "backendFallback": null,
-              "bridgeFailures": null,
-              "artifact": 0
-            },
-            {
-              "initializeMs": 11.227344999999332,
-              "didOpenToDiagnosticsMs": 273.2023059999992,
+              "initializeMs": 10.257015999995929,
+              "didOpenToDiagnosticsMs": 315.64663100000325,
               "diagnosticsCount": 3,
-              "firstNonEmptyDiagnosticsMs": 273.20268000000215,
+              "firstNonEmptyDiagnosticsMs": 315.6472240000003,
               "firstNonEmptyDiagnosticsCount": 3,
               "hoverMs": null,
               "hoverAnswered": false,
@@ -4903,10 +4950,10 @@
               "artifact": 3
             },
             {
-              "initializeMs": 9.468336999998428,
-              "didOpenToDiagnosticsMs": 413.8378229999944,
+              "initializeMs": 7.861332000000402,
+              "didOpenToDiagnosticsMs": 287.01908399999957,
               "diagnosticsCount": 3,
-              "firstNonEmptyDiagnosticsMs": 413.838493999996,
+              "firstNonEmptyDiagnosticsMs": 287.0194360000023,
               "firstNonEmptyDiagnosticsCount": 3,
               "hoverMs": null,
               "hoverAnswered": false,
@@ -4918,10 +4965,10 @@
               "artifact": 3
             },
             {
-              "initializeMs": 16.65071300001,
-              "didOpenToDiagnosticsMs": 309.9302100000059,
+              "initializeMs": 12.170125999997254,
+              "didOpenToDiagnosticsMs": 408.66121200000634,
               "diagnosticsCount": 3,
-              "firstNonEmptyDiagnosticsMs": 309.9307620000036,
+              "firstNonEmptyDiagnosticsMs": 408.66163000000233,
               "firstNonEmptyDiagnosticsCount": 3,
               "hoverMs": null,
               "hoverAnswered": false,
@@ -4933,10 +4980,25 @@
               "artifact": 3
             },
             {
-              "initializeMs": 12.148883999994723,
-              "didOpenToDiagnosticsMs": 269.61748699998134,
+              "initializeMs": 9.063057000006665,
+              "didOpenToDiagnosticsMs": 299.7146550000034,
               "diagnosticsCount": 3,
-              "firstNonEmptyDiagnosticsMs": 269.61796099998173,
+              "firstNonEmptyDiagnosticsMs": 299.71510000000126,
+              "firstNonEmptyDiagnosticsCount": 3,
+              "hoverMs": null,
+              "hoverAnswered": false,
+              "hoverBytes": 0,
+              "hoverSample": "",
+              "hoverPosition": null,
+              "backendFallback": null,
+              "bridgeFailures": null,
+              "artifact": 3
+            },
+            {
+              "initializeMs": 12.850122000003466,
+              "didOpenToDiagnosticsMs": 299.0983899999992,
+              "diagnosticsCount": 3,
+              "firstNonEmptyDiagnosticsMs": 299.0986559999874,
               "firstNonEmptyDiagnosticsCount": 3,
               "hoverMs": null,
               "hoverAnswered": false,
@@ -4964,25 +5026,25 @@
           "files": 1,
           "status": "ok",
           "runs": [
-            474.842,
-            442.079,
-            448.981,
-            395.201,
-            457.778
+            433.307,
+            428.154,
+            422.071,
+            443.986,
+            424.974
           ],
-          "medianMs": 448.981,
-          "minMs": 395.201,
-          "maxMs": 474.842,
-          "meanMs": 443.776,
-          "stddevMs": 29.794,
-          "cvPct": 6.6,
+          "medianMs": 428.154,
+          "minMs": 422.071,
+          "maxMs": 443.986,
+          "meanMs": 430.498,
+          "stddevMs": 8.615,
+          "cvPct": 2,
           "metaSamples": [
             {
-              "initializeMs": 36.936185000005935,
-              "didOpenToDiagnosticsMs": 474.8417730000001,
-              "diagnosticsCount": 10,
-              "firstNonEmptyDiagnosticsMs": 474.8421160000071,
-              "firstNonEmptyDiagnosticsCount": 10,
+              "initializeMs": 41.11273899999651,
+              "didOpenToDiagnosticsMs": 433.30726100000174,
+              "diagnosticsCount": 9,
+              "firstNonEmptyDiagnosticsMs": 433.30762400000094,
+              "firstNonEmptyDiagnosticsCount": 9,
               "hoverMs": null,
               "hoverAnswered": false,
               "hoverBytes": 0,
@@ -4990,14 +5052,14 @@
               "hoverPosition": null,
               "backendFallback": null,
               "bridgeFailures": null,
-              "artifact": 10
+              "artifact": 9
             },
             {
-              "initializeMs": 37.96429799999896,
-              "didOpenToDiagnosticsMs": 442.07919499999844,
-              "diagnosticsCount": 10,
-              "firstNonEmptyDiagnosticsMs": 442.0795950000029,
-              "firstNonEmptyDiagnosticsCount": 10,
+              "initializeMs": 38.94286999999895,
+              "didOpenToDiagnosticsMs": 428.15423100000044,
+              "diagnosticsCount": 9,
+              "firstNonEmptyDiagnosticsMs": 428.15492000000086,
+              "firstNonEmptyDiagnosticsCount": 9,
               "hoverMs": null,
               "hoverAnswered": false,
               "hoverBytes": 0,
@@ -5005,14 +5067,14 @@
               "hoverPosition": null,
               "backendFallback": null,
               "bridgeFailures": null,
-              "artifact": 10
+              "artifact": 9
             },
             {
-              "initializeMs": 38.85562099999515,
-              "didOpenToDiagnosticsMs": 448.98063599999296,
-              "diagnosticsCount": 10,
-              "firstNonEmptyDiagnosticsMs": 448.9810379999981,
-              "firstNonEmptyDiagnosticsCount": 10,
+              "initializeMs": 36.73916800000006,
+              "didOpenToDiagnosticsMs": 422.0708200000081,
+              "diagnosticsCount": 9,
+              "firstNonEmptyDiagnosticsMs": 422.07156300000497,
+              "firstNonEmptyDiagnosticsCount": 9,
               "hoverMs": null,
               "hoverAnswered": false,
               "hoverBytes": 0,
@@ -5020,14 +5082,14 @@
               "hoverPosition": null,
               "backendFallback": null,
               "bridgeFailures": null,
-              "artifact": 10
+              "artifact": 9
             },
             {
-              "initializeMs": 46.370318000001134,
-              "didOpenToDiagnosticsMs": 395.2013069999957,
-              "diagnosticsCount": 10,
-              "firstNonEmptyDiagnosticsMs": 395.20175899998867,
-              "firstNonEmptyDiagnosticsCount": 10,
+              "initializeMs": 50.31749499999569,
+              "didOpenToDiagnosticsMs": 443.98598699999275,
+              "diagnosticsCount": 9,
+              "firstNonEmptyDiagnosticsMs": 443.98664099999587,
+              "firstNonEmptyDiagnosticsCount": 9,
               "hoverMs": null,
               "hoverAnswered": false,
               "hoverBytes": 0,
@@ -5035,14 +5097,14 @@
               "hoverPosition": null,
               "backendFallback": null,
               "bridgeFailures": null,
-              "artifact": 10
+              "artifact": 9
             },
             {
-              "initializeMs": 36.99666599999182,
-              "didOpenToDiagnosticsMs": 457.77834799999255,
-              "diagnosticsCount": 10,
-              "firstNonEmptyDiagnosticsMs": 457.77881399999023,
-              "firstNonEmptyDiagnosticsCount": 10,
+              "initializeMs": 39.00959800000419,
+              "didOpenToDiagnosticsMs": 424.9739330000011,
+              "diagnosticsCount": 9,
+              "firstNonEmptyDiagnosticsMs": 424.97431900000083,
+              "firstNonEmptyDiagnosticsCount": 9,
               "hoverMs": null,
               "hoverAnswered": false,
               "hoverBytes": 0,
@@ -5050,10 +5112,10 @@
               "hoverPosition": null,
               "backendFallback": null,
               "bridgeFailures": null,
-              "artifact": 10
+              "artifact": 9
             }
           ],
-          "artifactMedian": 10,
+          "artifactMedian": 9,
           "warmupPasses": 1,
           "throughput": "2 files/s"
         },
@@ -5069,26 +5131,26 @@
           "files": 1,
           "status": "ok",
           "runs": [
-            2.005,
-            5.069,
-            1.964,
-            1.962,
-            2.666
+            2.183,
+            2.248,
+            2.387,
+            2.242,
+            2.116
           ],
-          "medianMs": 2.005,
-          "minMs": 1.962,
-          "maxMs": 5.069,
-          "meanMs": 2.733,
-          "stddevMs": 1.34,
-          "cvPct": 66.8,
+          "medianMs": 2.242,
+          "minMs": 2.116,
+          "maxMs": 2.387,
+          "meanMs": 2.235,
+          "stddevMs": 0.1,
+          "cvPct": 4.5,
           "metaSamples": [
             {
-              "initializeMs": 454.39286799999536,
-              "didOpenToDiagnosticsMs": 5157.013051999995,
+              "initializeMs": 488.88051700000506,
+              "didOpenToDiagnosticsMs": 5648.827021000005,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 2.0053210000041872,
+              "hoverMs": 2.1831100000053993,
               "hoverAnswered": true,
               "hoverBytes": 37,
               "hoverSample": "```typescript\nconst langList: any\n```",
@@ -5102,12 +5164,12 @@
               "artifact": 37
             },
             {
-              "initializeMs": 465.44643799999903,
-              "didOpenToDiagnosticsMs": 5288.385543000004,
+              "initializeMs": 489.8865259999948,
+              "didOpenToDiagnosticsMs": 5675.397145000003,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 5.068616000004113,
+              "hoverMs": 2.2484849999964354,
               "hoverAnswered": true,
               "hoverBytes": 37,
               "hoverSample": "```typescript\nconst langList: any\n```",
@@ -5121,12 +5183,12 @@
               "artifact": 37
             },
             {
-              "initializeMs": 460.7175600000046,
-              "didOpenToDiagnosticsMs": 5154.4553180000075,
+              "initializeMs": 479.2820810000121,
+              "didOpenToDiagnosticsMs": 5671.917887999996,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 1.96360599999025,
+              "hoverMs": 2.3869379999960074,
               "hoverAnswered": true,
               "hoverBytes": 37,
               "hoverSample": "```typescript\nconst langList: any\n```",
@@ -5140,12 +5202,12 @@
               "artifact": 37
             },
             {
-              "initializeMs": 459.90305100000114,
-              "didOpenToDiagnosticsMs": 5180.612935000012,
+              "initializeMs": 492.6168619999953,
+              "didOpenToDiagnosticsMs": 5627.202621000004,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 1.9620140000042738,
+              "hoverMs": 2.241718999997829,
               "hoverAnswered": true,
               "hoverBytes": 37,
               "hoverSample": "```typescript\nconst langList: any\n```",
@@ -5159,12 +5221,12 @@
               "artifact": 37
             },
             {
-              "initializeMs": 521.8002479999996,
-              "didOpenToDiagnosticsMs": 5124.756737000003,
+              "initializeMs": 543.4627970000001,
+              "didOpenToDiagnosticsMs": 5660.599833,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 2.6663359999947716,
+              "hoverMs": 2.1160970000055386,
               "hoverAnswered": true,
               "hoverBytes": 37,
               "hoverSample": "```typescript\nconst langList: any\n```",
@@ -5180,7 +5242,7 @@
           ],
           "artifactMedian": 37,
           "warmupPasses": 1,
-          "throughput": "499 files/s"
+          "throughput": "446 files/s"
         },
         {
           "id": "volar-tnb-hover",
@@ -5194,26 +5256,26 @@
           "files": 1,
           "status": "ok",
           "runs": [
-            5.16,
-            8.33,
-            9.234,
-            6.374,
-            9.327
+            9.773,
+            10.414,
+            9.885,
+            6.377,
+            7.586
           ],
-          "medianMs": 8.33,
-          "minMs": 5.16,
-          "maxMs": 9.327,
-          "meanMs": 7.685,
-          "stddevMs": 1.844,
-          "cvPct": 22.1,
+          "medianMs": 9.773,
+          "minMs": 6.377,
+          "maxMs": 10.414,
+          "meanMs": 8.807,
+          "stddevMs": 1.737,
+          "cvPct": 17.8,
           "metaSamples": [
             {
-              "initializeMs": 568.833706999998,
-              "didOpenToDiagnosticsMs": 3735.3988880000034,
+              "initializeMs": 584.039549000001,
+              "didOpenToDiagnosticsMs": 3962.0076710000067,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 5.160495999996783,
+              "hoverMs": 9.773245000003953,
               "hoverAnswered": true,
               "hoverBytes": 37,
               "hoverSample": "```typescript\nconst langList: any\n```",
@@ -5227,12 +5289,12 @@
               "artifact": 37
             },
             {
-              "initializeMs": 559.3470489999963,
-              "didOpenToDiagnosticsMs": 3745.335779000001,
+              "initializeMs": 619.1430069999988,
+              "didOpenToDiagnosticsMs": 4003.298972000004,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 8.330379999999423,
+              "hoverMs": 10.413675000003423,
               "hoverAnswered": true,
               "hoverBytes": 37,
               "hoverSample": "```typescript\nconst langList: any\n```",
@@ -5246,12 +5308,12 @@
               "artifact": 37
             },
             {
-              "initializeMs": 594.2962700000062,
-              "didOpenToDiagnosticsMs": 3722.2378739999986,
+              "initializeMs": 587.8186469999928,
+              "didOpenToDiagnosticsMs": 3990.8671250000043,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 9.233609999995679,
+              "hoverMs": 9.885036000006949,
               "hoverAnswered": true,
               "hoverBytes": 37,
               "hoverSample": "```typescript\nconst langList: any\n```",
@@ -5265,12 +5327,12 @@
               "artifact": 37
             },
             {
-              "initializeMs": 543.4831510000076,
-              "didOpenToDiagnosticsMs": 3775.500946,
+              "initializeMs": 561.2401659999887,
+              "didOpenToDiagnosticsMs": 4025.8408530000015,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 6.374409000010928,
+              "hoverMs": 6.376900000002934,
               "hoverAnswered": true,
               "hoverBytes": 37,
               "hoverSample": "```typescript\nconst langList: any\n```",
@@ -5284,12 +5346,12 @@
               "artifact": 37
             },
             {
-              "initializeMs": 567.5882810000039,
-              "didOpenToDiagnosticsMs": 3766.5849880000023,
+              "initializeMs": 596.6712479999987,
+              "didOpenToDiagnosticsMs": 4104.176227999997,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 9.326773000007961,
+              "hoverMs": 7.586072999984026,
               "hoverAnswered": true,
               "hoverBytes": 37,
               "hoverSample": "```typescript\nconst langList: any\n```",
@@ -5305,7 +5367,7 @@
           ],
           "artifactMedian": 37,
           "warmupPasses": 1,
-          "throughput": "120 files/s"
+          "throughput": "102 files/s"
         },
         {
           "id": "verter-lsp-hover",
@@ -5319,26 +5381,26 @@
           "files": 1,
           "status": "ok",
           "runs": [
-            1.079,
-            0.729,
-            0.742,
-            28.691,
-            0.673
+            1.319,
+            0.701,
+            0.829,
+            1.188,
+            0.95
           ],
-          "medianMs": 0.742,
-          "minMs": 0.673,
-          "maxMs": 28.691,
-          "meanMs": 6.383,
-          "stddevMs": 12.472,
-          "cvPct": 1680.8,
+          "medianMs": 0.95,
+          "minMs": 0.701,
+          "maxMs": 1.319,
+          "meanMs": 0.997,
+          "stddevMs": 0.254,
+          "cvPct": 26.7,
           "metaSamples": [
             {
-              "initializeMs": 10.569562000004225,
+              "initializeMs": 10.233087999993586,
               "didOpenToDiagnosticsMs": null,
               "diagnosticsCount": null,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 1.0786999999982072,
+              "hoverMs": 1.3185819999998785,
               "hoverAnswered": true,
               "hoverBytes": 37,
               "hoverSample": "```typescript\nconst langList: any\n```",
@@ -5352,12 +5414,12 @@
               "artifact": 37
             },
             {
-              "initializeMs": 9.117908999993233,
+              "initializeMs": 10.198935000007623,
               "didOpenToDiagnosticsMs": null,
               "diagnosticsCount": null,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 0.7293239999999059,
+              "hoverMs": 0.7006479999981821,
               "hoverAnswered": true,
               "hoverBytes": 37,
               "hoverSample": "```typescript\nconst langList: any\n```",
@@ -5371,12 +5433,12 @@
               "artifact": 37
             },
             {
-              "initializeMs": 10.351630999997724,
+              "initializeMs": 8.20609800000966,
               "didOpenToDiagnosticsMs": null,
               "diagnosticsCount": null,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 0.7423130000097444,
+              "hoverMs": 0.8293770000018412,
               "hoverAnswered": true,
               "hoverBytes": 37,
               "hoverSample": "```typescript\nconst langList: any\n```",
@@ -5390,12 +5452,12 @@
               "artifact": 37
             },
             {
-              "initializeMs": 11.081002999999328,
-              "didOpenToDiagnosticsMs": 47.55772199999774,
-              "diagnosticsCount": 0,
+              "initializeMs": 10.965463000000454,
+              "didOpenToDiagnosticsMs": null,
+              "diagnosticsCount": null,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 28.691071000008378,
+              "hoverMs": 1.1881089999951655,
               "hoverAnswered": true,
               "hoverBytes": 37,
               "hoverSample": "```typescript\nconst langList: any\n```",
@@ -5409,12 +5471,12 @@
               "artifact": 37
             },
             {
-              "initializeMs": 13.6344209999952,
+              "initializeMs": 10.227309000008972,
               "didOpenToDiagnosticsMs": null,
               "diagnosticsCount": null,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 0.6731670000008307,
+              "hoverMs": 0.9501520000048913,
               "hoverAnswered": true,
               "hoverBytes": 37,
               "hoverSample": "```typescript\nconst langList: any\n```",
@@ -5430,7 +5492,7 @@
           ],
           "artifactMedian": 37,
           "warmupPasses": 1,
-          "throughput": "1.3k files/s"
+          "throughput": "1.1k files/s"
         },
         {
           "id": "vize-lsp-hover",
@@ -5444,29 +5506,29 @@
           "files": 1,
           "status": "ok",
           "runs": [
-            3.211,
-            5.343,
-            3.672,
-            7.687,
-            3.673
+            3.979,
+            4,
+            3.695,
+            3.581,
+            4.529
           ],
-          "medianMs": 3.673,
-          "minMs": 3.211,
-          "maxMs": 7.687,
-          "meanMs": 4.717,
-          "stddevMs": 1.848,
-          "cvPct": 50.3,
+          "medianMs": 3.979,
+          "minMs": 3.581,
+          "maxMs": 4.529,
+          "meanMs": 3.957,
+          "stddevMs": 0.367,
+          "cvPct": 9.2,
           "metaSamples": [
             {
-              "initializeMs": 37.518402000001515,
-              "didOpenToDiagnosticsMs": 572.542942,
-              "diagnosticsCount": 10,
-              "firstNonEmptyDiagnosticsMs": 572.5433439999979,
-              "firstNonEmptyDiagnosticsCount": 10,
-              "hoverMs": 3.210922999998729,
+              "initializeMs": 41.45134400000097,
+              "didOpenToDiagnosticsMs": 462.87910700000066,
+              "diagnosticsCount": 9,
+              "firstNonEmptyDiagnosticsMs": 462.8796020000009,
+              "firstNonEmptyDiagnosticsCount": 9,
+              "hoverMs": 3.97944699999789,
               "hoverAnswered": true,
-              "hoverBytes": 265,
-              "hoverSample": "```typescript\nconst langList: any\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Recommended order: <script> -> <template> -> <style>\n\n[📖 View rule document",
+              "hoverBytes": 37,
+              "hoverSample": "```typescript\nconst langList: any\n```",
               "hoverPosition": {
                 "line": 94,
                 "character": 6,
@@ -5474,18 +5536,18 @@
               },
               "backendFallback": null,
               "bridgeFailures": null,
-              "artifact": 265
+              "artifact": 37
             },
             {
-              "initializeMs": 36.01872199999343,
-              "didOpenToDiagnosticsMs": 577.2619450000057,
-              "diagnosticsCount": 10,
-              "firstNonEmptyDiagnosticsMs": 577.2624179999984,
-              "firstNonEmptyDiagnosticsCount": 10,
-              "hoverMs": 5.342964999988908,
+              "initializeMs": 39.551963000005344,
+              "didOpenToDiagnosticsMs": 473.24903500000073,
+              "diagnosticsCount": 9,
+              "firstNonEmptyDiagnosticsMs": 473.2495510000008,
+              "firstNonEmptyDiagnosticsCount": 9,
+              "hoverMs": 4.000144000005093,
               "hoverAnswered": true,
-              "hoverBytes": 265,
-              "hoverSample": "```typescript\nconst langList: any\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Recommended order: <script> -> <template> -> <style>\n\n[📖 View rule document",
+              "hoverBytes": 37,
+              "hoverSample": "```typescript\nconst langList: any\n```",
               "hoverPosition": {
                 "line": 94,
                 "character": 6,
@@ -5493,18 +5555,18 @@
               },
               "backendFallback": null,
               "bridgeFailures": null,
-              "artifact": 265
+              "artifact": 37
             },
             {
-              "initializeMs": 38.320905000000494,
-              "didOpenToDiagnosticsMs": 575.7062850000075,
-              "diagnosticsCount": 10,
-              "firstNonEmptyDiagnosticsMs": 575.7069540000084,
-              "firstNonEmptyDiagnosticsCount": 10,
-              "hoverMs": 3.6718959999998333,
+              "initializeMs": 40.005664999989676,
+              "didOpenToDiagnosticsMs": 484.8112300000066,
+              "diagnosticsCount": 9,
+              "firstNonEmptyDiagnosticsMs": 484.8117530000018,
+              "firstNonEmptyDiagnosticsCount": 9,
+              "hoverMs": 3.695278999992297,
               "hoverAnswered": true,
-              "hoverBytes": 265,
-              "hoverSample": "```typescript\nconst langList: any\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Recommended order: <script> -> <template> -> <style>\n\n[📖 View rule document",
+              "hoverBytes": 37,
+              "hoverSample": "```typescript\nconst langList: any\n```",
               "hoverPosition": {
                 "line": 94,
                 "character": 6,
@@ -5512,18 +5574,18 @@
               },
               "backendFallback": null,
               "bridgeFailures": null,
-              "artifact": 265
+              "artifact": 37
             },
             {
-              "initializeMs": 37.64208099999814,
-              "didOpenToDiagnosticsMs": 580.2843900000007,
-              "diagnosticsCount": 10,
-              "firstNonEmptyDiagnosticsMs": 580.2848589999921,
-              "firstNonEmptyDiagnosticsCount": 10,
-              "hoverMs": 7.687206000002334,
+              "initializeMs": 38.52203600000939,
+              "didOpenToDiagnosticsMs": 485.0437149999925,
+              "diagnosticsCount": 9,
+              "firstNonEmptyDiagnosticsMs": 485.04413199999544,
+              "firstNonEmptyDiagnosticsCount": 9,
+              "hoverMs": 3.5807539999950677,
               "hoverAnswered": true,
-              "hoverBytes": 265,
-              "hoverSample": "```typescript\nconst langList: any\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Recommended order: <script> -> <template> -> <style>\n\n[📖 View rule document",
+              "hoverBytes": 37,
+              "hoverSample": "```typescript\nconst langList: any\n```",
               "hoverPosition": {
                 "line": 94,
                 "character": 6,
@@ -5531,18 +5593,18 @@
               },
               "backendFallback": null,
               "bridgeFailures": null,
-              "artifact": 265
+              "artifact": 37
             },
             {
-              "initializeMs": 39.03536699998949,
-              "didOpenToDiagnosticsMs": 585.2340360000089,
-              "diagnosticsCount": 10,
-              "firstNonEmptyDiagnosticsMs": 585.2347750000044,
-              "firstNonEmptyDiagnosticsCount": 10,
-              "hoverMs": 3.6731929999950808,
+              "initializeMs": 35.71281099997577,
+              "didOpenToDiagnosticsMs": 492.923157000012,
+              "diagnosticsCount": 9,
+              "firstNonEmptyDiagnosticsMs": 492.9238830000104,
+              "firstNonEmptyDiagnosticsCount": 9,
+              "hoverMs": 4.528510000003735,
               "hoverAnswered": true,
-              "hoverBytes": 265,
-              "hoverSample": "```typescript\nconst langList: any\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Recommended order: <script> -> <template> -> <style>\n\n[📖 View rule document",
+              "hoverBytes": 37,
+              "hoverSample": "```typescript\nconst langList: any\n```",
               "hoverPosition": {
                 "line": 94,
                 "character": 6,
@@ -5550,12 +5612,12 @@
               },
               "backendFallback": null,
               "bridgeFailures": null,
-              "artifact": 265
+              "artifact": 37
             }
           ],
-          "artifactMedian": 265,
+          "artifactMedian": 37,
           "warmupPasses": 1,
-          "throughput": "272 files/s"
+          "throughput": "251 files/s"
         }
       ],
       "methodology": [

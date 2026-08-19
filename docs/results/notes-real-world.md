@@ -24,6 +24,7 @@ Ranked on the **median of measured runs** (each after ≥1 discarded warmup; no 
 - Two independent measurements. Cold start is paid once per session; HMR turnaround is paid on every save. Do not compare a row across the two tables.
 - Ranked **per operation** — never pooled. The two operations differ by orders of magnitude and answer unrelated questions (cold project load vs a warm request), and a ratio across engines measures TypeScript's own Go rewrite at least as much as the Vue layer on top of it. A row that failed its content gate is shown in brackets and excluded from ranking: latency without an answer is not a comparable measurement.
 - ⓘ One table for both TypeScript engines — rows tagged **(JS)** run the JavaScript compiler, the rest native tsgo; a cross-engine ratio measures TypeScript's Go rewrite as much as the Vue layer on top of it.
+- > Whole process tree of the timed run (not Vue-attributed). Volar includes both halves.
 
 ## Tools
 

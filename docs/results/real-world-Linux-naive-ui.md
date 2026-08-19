@@ -5,12 +5,12 @@
 
 ## Benchmark Results
 
-- **Generated:** 2026-08-16T10:39:26.052Z
+- **Generated:** 2026-08-19T19:53:29.682Z
 - **Fixture:** `fixtures/real` (1682 SFCs)
 - **Runs / warmups:** 5 / 1
-- **Runner:** Linux · linux/x64 · 4 CPUs · AMD EPYC 7763 64-Core Processor
+- **Runner:** Linux · linux/x64 · 4 CPUs · AMD EPYC 9V74 80-Core Processor
 - **Node:** v22.23.2
-- **CI run:** https://github.com/pikax/vue-benchmarks/actions/runs/31938755068
+- **CI run:** https://github.com/pikax/vue-benchmarks/actions/runs/32287855785
 
 ### Tool versions
 
@@ -19,8 +19,8 @@
 | vue | 3.5.41 |
 | @vue/compiler-sfc | 3.5.41 |
 | @vue/compiler-sfc-36 | 3.6.0-rc.4 |
-| vize | 0.347.7 |
-| @vizejs/native | 0.347.7 |
+| vize | 0.350.2 |
+| @vizejs/native | 0.350.2 |
 | @verter/native | 0.0.1-beta.3 |
 | @fervid/napi | 0.4.1 |
 | verter-tsc | 0.0.1-beta.3 |
@@ -35,18 +35,19 @@
 | golar | 0.1.10 |
 | @golar/vue | 0.1.10 |
 | prettier | 3.9.6 |
-| oxfmt | 0.63.0 |
-| oxlint | 1.78.0 |
-| @biomejs/biome | 2.5.8 |
+| oxfmt | 0.64.0 |
+| oxlint | 1.79.0 |
+| eslint-plugin-vue | 10.10.0 |
+| @biomejs/biome | 2.5.9 |
 | typescript | 6.0.3 |
-| cli:vize | 0.347.7 |
+| cli:vize | 0.350.2 |
 | cli:vue-tsc | 6.0.3 |
 | cli:verter-tsc | 0.0.1-beta.3 |
 | cli:golar | 0.1.10 |
 | cli:prettier | 3.9.6 |
-| cli:oxfmt | 0.63.0 |
-| cli:oxlint | 1.78.0 |
-| cli:biome | 2.5.8 |
+| cli:oxfmt | 0.64.0 |
+| cli:oxlint | 1.79.0 |
+| cli:biome | 2.5.9 |
 | vue-jsx-vapor | 3.2.21 |
 | @vue-jsx-vapor/compiler-rs | 3.2.21 |
 | @vue/babel-plugin-jsx | 3.0.0 |
@@ -76,14 +77,14 @@ Target: `vdom` · Environment: `production` · Source map: `off`
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Code bytes | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Verter compileMany (session cache) | **121.1 ms** | 116.0 ms | 3.3 ms | 2.7% | 1.00x | 3,452,696 | 13.9k files/s |
-| Vize native batch (max threads) | **121.9 ms** | 121.0 ms | 5.5 ms | 4.5% | 1.01x | 3,747,593 | 13.8k files/s |
-| Vize native loop (1T) | **340.8 ms** | 339.4 ms | 5.1 ms | 1.5% | 2.81x | 3,747,593 | 4.9k files/s |
-| @vue/compiler-sfc 3.5 (1T) | **639.2 ms** | 632.4 ms | 23.6 ms | 3.7% | 5.28x | 4,153,090 | 2.6k files/s |
-| @vue/compiler-sfc 3.6 (1T) | **692.8 ms** | 682.3 ms | 25.2 ms | 3.6% | 5.72x | 4,153,090 | 2.4k files/s |
-| Verter compileMany (stateless) | **3.87 s** | 3.84 s | 50.8 ms | 1.3% | 31.96x | 3,452,696 | 435 files/s |
-| fervid compileSync (1T) ⚠ | (264.0 ms) | (263.7 ms) | – | – | not ranked | (5,367,958) | – |
-| fervid compileAsync (4-thread libuv pool) ⚠ | (134.5 ms) | (132.0 ms) | – | – | not ranked | (5,367,958) | – |
+| Verter compileMany (session cache) | **112.4 ms** | 108.2 ms | 7.1 ms | 6.3% | 1.00x | 3,452,696 | 15.0k files/s |
+| Vize native batch (max threads) | **117.1 ms** | 113.9 ms | 4.7 ms | 4.0% | 1.04x | 3,747,593 | 14.4k files/s |
+| Vize native loop (1T) | **333.3 ms** | 332.2 ms | 4.1 ms | 1.2% | 2.96x | 3,747,593 | 5.0k files/s |
+| @vue/compiler-sfc 3.5 (1T) | **614.7 ms** | 591.4 ms | 20.3 ms | 3.3% | 5.47x | 4,153,090 | 2.7k files/s |
+| @vue/compiler-sfc 3.6 (1T) | **654.8 ms** | 629.2 ms | 25.5 ms | 3.9% | 5.82x | 4,153,090 | 2.6k files/s |
+| Verter compileMany (stateless) | **4.27 s** | 4.05 s | 208.1 ms | 4.9% | 38.00x | 3,452,696 | 394 files/s |
+| fervid compileSync (1T) ⚠ | (248.2 ms) | (246.8 ms) | – | – | not ranked | (5,367,958) | – |
+| fervid compileAsync (4-thread libuv pool) ⚠ | (132.1 ms) | (119.7 ms) | – | – | not ranked | (5,367,958) | – |
 
 <details><summary>Notes</summary>
 
@@ -100,14 +101,14 @@ Target: `vdom` · Environment: `production` · Source map: `off`
 
 <details><summary>Raw runs</summary>
 
-- **Verter compileMany (session cache)**: 116.0 ms, 116.1 ms, 121.7 ms, 122.9 ms, 121.1 ms
-- **Vize native batch (max threads)**: 121.9 ms, 121.7 ms, 129.8 ms, 132.9 ms, 121.0 ms
-- **Vize native loop (1T)**: 340.8 ms, 351.8 ms, 342.8 ms, 339.4 ms, 339.7 ms
-- **@vue/compiler-sfc 3.5 (1T)**: 682.6 ms, 672.2 ms, 632.4 ms, 633.9 ms, 639.2 ms
-- **@vue/compiler-sfc 3.6 (1T)**: 737.4 ms, 726.7 ms, 682.3 ms, 686.4 ms, 692.8 ms
-- **Verter compileMany (stateless)**: 3.96 s, 3.90 s, 3.84 s, 3.87 s, 3.84 s
-- **fervid compileSync (1T)**: 267.2 ms, 264.6 ms, 264.0 ms, 263.7 ms, 263.8 ms
-- **fervid compileAsync (4-thread libuv pool)**: 134.5 ms, 132.0 ms, 149.0 ms, 145.8 ms, 134.1 ms
+- **Verter compileMany (session cache)**: 119.1 ms, 108.2 ms, 112.4 ms, 110.2 ms, 125.4 ms
+- **Vize native batch (max threads)**: 117.1 ms, 114.5 ms, 113.9 ms, 125.5 ms, 119.7 ms
+- **Vize native loop (1T)**: 332.2 ms, 333.3 ms, 333.2 ms, 337.5 ms, 341.9 ms
+- **@vue/compiler-sfc 3.5 (1T)**: 637.7 ms, 626.9 ms, 614.7 ms, 591.4 ms, 593.7 ms
+- **@vue/compiler-sfc 3.6 (1T)**: 691.2 ms, 678.4 ms, 629.2 ms, 642.1 ms, 654.8 ms
+- **Verter compileMany (stateless)**: 4.16 s, 4.05 s, 4.27 s, 4.52 s, 4.50 s
+- **fervid compileSync (1T)**: 249.2 ms, 250.4 ms, 248.2 ms, 246.8 ms, 247.5 ms
+- **fervid compileAsync (4-thread libuv pool)**: 132.1 ms, 144.5 ms, 119.7 ms, 123.1 ms, 143.8 ms
 
 </details>
 
@@ -154,10 +155,10 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize | **492.1 ms** | 473.3 ms | 33.9 ms | 6.9% | 1.00x | n/a | 3.4k files/s |
-| Oxfmt | **6.43 s** | 6.38 s | 50.1 ms | 0.8% | 13.08x | n/a | 261 files/s |
-| Prettier | **11.36 s** | 11.30 s | 36.5 ms | 0.3% | 23.09x | n/a | 148 files/s |
-| Biome format ⚠ | (339.4 ms) | (338.6 ms) | – | – | not ranked | – | – |
+| Vize | **451.0 ms** | 440.4 ms | 8.9 ms | 2.0% | 1.00x | n/a | 3.7k files/s |
+| Oxfmt | **6.08 s** | 5.97 s | 124.2 ms | 2.0% | 13.48x | n/a | 277 files/s |
+| Prettier | **10.76 s** | 10.68 s | 114.0 ms | 1.1% | 23.86x | n/a | 156 files/s |
+| Biome format ⚠ | (332.5 ms) | (331.4 ms) | – | – | not ranked | – | – |
 
 <details><summary>Notes</summary>
 
@@ -184,10 +185,10 @@ Tools:
 
 Raw runs:
 
-- **Vize**: 505.6 ms, 492.1 ms, 473.3 ms, 559.3 ms, 482.4 ms
-- **Oxfmt**: 6.51 s, 6.43 s, 6.38 s, 6.46 s, 6.43 s
-- **Prettier**: 11.34 s, 11.38 s, 11.30 s, 11.40 s, 11.36 s
-- **Biome format**: 338.6 ms, 340.5 ms, 340.7 ms, 339.4 ms, 338.7 ms
+- **Vize**: 442.0 ms, 451.0 ms, 440.4 ms, 462.6 ms, 451.3 ms
+- **Oxfmt**: 6.30 s, 6.08 s, 6.08 s, 6.04 s, 5.97 s
+- **Prettier**: 10.98 s, 10.76 s, 10.73 s, 10.68 s, 10.79 s
+- **Biome format**: 339.7 ms, 336.3 ms, 332.5 ms, 331.4 ms, 332.2 ms
 
 </details>
 
@@ -204,16 +205,16 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize lint (max threads) | **133.2 ms** | 131.7 ms | 0.8 ms | 0.6% | 1.00x | n/a | 12.6k files/s |
-| Vize lint (1T) | **234.2 ms** | 230.8 ms | 12.4 ms | 5.3% | 1.76x | n/a | 7.2k files/s |
-| Verter host lint | **1.12 s** | 1.10 s | 11.0 ms | 1.0% | 8.40x | n/a | 1.5k files/s |
-| eslint-plugin-vue (1T) | **6.89 s** | 6.78 s | 390.1 ms | 5.7% | 51.72x | n/a | 244 files/s |
-| eslint-plugin-vue (4 workers) | **8.13 s** | 8.08 s | 45.5 ms | 0.6% | 61.01x | n/a | 207 files/s |
-| eslint-plugin-vue (CLI) | **9.04 s** | 8.98 s | 81.4 ms | 0.9% | 67.88x | n/a | 186 files/s |
-| Biome lint (1T) ⚠ | (1.77 s) | (1.76 s) | – | – | not ranked | – | – |
-| Biome lint (max threads) ⚠ | (692.6 ms) | (688.9 ms) | – | – | not ranked | – | – |
-| Oxlint (1T) ⚠ | (126.8 ms) | (122.4 ms) | – | – | not ranked | – | – |
-| Oxlint (max threads) ⚠ | (88.0 ms) | (85.5 ms) | – | – | not ranked | – | – |
+| Vize lint (max threads) | **128.7 ms** | 128.4 ms | 0.5 ms | 0.4% | 1.00x | n/a | 13.1k files/s |
+| Vize lint (1T) | **218.2 ms** | 215.4 ms | 5.2 ms | 2.4% | 1.70x | n/a | 7.7k files/s |
+| Verter host lint | **1.07 s** | 1.06 s | 9.3 ms | 0.9% | 8.33x | n/a | 1.6k files/s |
+| eslint-plugin-vue (1T) | **7.19 s** | 6.64 s | 349.6 ms | 4.9% | 55.83x | n/a | 234 files/s |
+| eslint-plugin-vue (4 workers) | **7.69 s** | 7.64 s | 66.8 ms | 0.9% | 59.74x | n/a | 219 files/s |
+| eslint-plugin-vue (CLI) | **8.79 s** | 8.53 s | 161.3 ms | 1.8% | 68.31x | n/a | 191 files/s |
+| Biome lint (1T) ⚠ | (1.88 s) | (1.86 s) | – | – | not ranked | – | – |
+| Biome lint (max threads) ⚠ | (706.9 ms) | (704.4 ms) | – | – | not ranked | – | – |
+| Oxlint (1T) ⚠ | (116.2 ms) | (115.4 ms) | – | – | not ranked | – | – |
+| Oxlint (max threads) ⚠ | (87.0 ms) | (85.7 ms) | – | – | not ranked | – | – |
 
 <details><summary>Notes</summary>
 
@@ -248,16 +249,16 @@ Tools:
 
 Raw runs:
 
-- **Vize lint (max threads)**: 131.7 ms, 133.4 ms, 133.0 ms, 133.2 ms, 133.8 ms
-- **Vize lint (1T)**: 231.7 ms, 234.2 ms, 235.0 ms, 260.4 ms, 230.8 ms
-- **Verter host lint**: 1.12 s, 1.10 s, 1.12 s, 1.10 s, 1.12 s
-- **eslint-plugin-vue (1T)**: 7.34 s, 7.66 s, 6.78 s, 6.89 s, 6.80 s
-- **eslint-plugin-vue (4 workers)**: 8.17 s, 8.17 s, 8.13 s, 8.09 s, 8.08 s
-- **eslint-plugin-vue (CLI)**: 8.98 s, 9.18 s, 9.00 s, 9.09 s, 9.04 s
-- **Biome lint (1T)**: 1.77 s, 1.77 s, 1.77 s, 1.76 s, 1.79 s
-- **Biome lint (max threads)**: 691.2 ms, 692.6 ms, 693.8 ms, 688.9 ms, 693.9 ms
-- **Oxlint (1T)**: 122.4 ms, 135.9 ms, 124.4 ms, 126.8 ms, 127.9 ms
-- **Oxlint (max threads)**: 87.0 ms, 92.4 ms, 89.9 ms, 85.5 ms, 88.0 ms
+- **Vize lint (max threads)**: 128.8 ms, 128.5 ms, 129.6 ms, 128.4 ms, 128.7 ms
+- **Vize lint (1T)**: 215.4 ms, 216.1 ms, 219.3 ms, 228.3 ms, 218.2 ms
+- **Verter host lint**: 1.08 s, 1.07 s, 1.06 s, 1.06 s, 1.07 s
+- **eslint-plugin-vue (1T)**: 7.19 s, 7.46 s, 6.83 s, 6.64 s, 7.37 s
+- **eslint-plugin-vue (4 workers)**: 7.71 s, 7.69 s, 7.64 s, 7.82 s, 7.67 s
+- **eslint-plugin-vue (CLI)**: 8.79 s, 8.72 s, 8.53 s, 8.87 s, 8.96 s
+- **Biome lint (1T)**: 1.86 s, 1.87 s, 1.89 s, 1.88 s, 1.88 s
+- **Biome lint (max threads)**: 706.4 ms, 710.5 ms, 704.4 ms, 713.0 ms, 706.9 ms
+- **Oxlint (1T)**: 116.0 ms, 122.3 ms, 116.2 ms, 115.4 ms, 119.7 ms
+- **Oxlint (max threads)**: 86.4 ms, 87.0 ms, 87.3 ms, 85.7 ms, 87.5 ms
 
 </details>
 
@@ -271,15 +272,15 @@ Grouped by **bundler**, ranked within each group by Vue integration. Rows from d
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | output bytes | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vite 8 (Rolldown) × @vitejs/plugin-vue | **2.81 s** | 2.66 s | 210.4 ms | 7.5% | 1.00x | 3,006,141 | 599 files/s |
-| Vite 8 (Rolldown) × unplugin-vue | **2.99 s** | 2.95 s | 55.9 ms | 1.9% | 1.07x | 2,999,866 | 562 files/s |
-| Vite 8 (Rolldown) × @vizejs/vite-plugin | **3.57 s** | 3.35 s | 305.8 ms | 8.6% | 1.27x | 2,890,036 | 472 files/s |
-| Vite 8 (Rolldown) × @verter/unplugin | **4.19 s** | 3.95 s | 340.4 ms | 8.1% | 1.49x | 3,310,547 | 401 files/s |
+| Vite 8 (Rolldown) × unplugin-vue | **2.35 s** | 2.31 s | 50.6 ms | 2.2% | 1.00x | 2,999,866 | 716 files/s |
+| Vite 8 (Rolldown) × @vitejs/plugin-vue | **2.37 s** | 2.35 s | 33.1 ms | 1.4% | 1.01x | 3,006,141 | 710 files/s |
+| Vite 8 (Rolldown) × @vizejs/vite-plugin | **3.30 s** | 3.10 s | 276.1 ms | 8.4% | 1.40x | 2,890,036 | 510 files/s |
+| Vite 8 (Rolldown) × @verter/unplugin | **3.91 s** | 3.73 s | 263.6 ms | 6.7% | 1.67x | 3,310,547 | 430 files/s |
 
 <details><summary>Notes</summary>
 
-- **Vite 8 (Rolldown) × @vitejs/plugin-vue**: lazy per-module transform · compiled 1682/1682 corpus SFCs · 120 style sub-requests · 3,006,141 output bytes | The official Vite Vue plugin — the reference implementation for this surface. | Vite 8 bundles with Rolldown (depends on rolldown ~1.1).
 - **Vite 8 (Rolldown) × unplugin-vue**: lazy per-module transform · compiled 1682/1682 corpus SFCs · 120 style sub-requests · 2,999,866 output bytes | Bundler-agnostic build of the official @vue/compiler-sfc pipeline. | Vite 8 bundles with Rolldown (depends on rolldown ~1.1).
+- **Vite 8 (Rolldown) × @vitejs/plugin-vue**: lazy per-module transform · compiled 1682/1682 corpus SFCs · 120 style sub-requests · 3,006,141 output bytes | The official Vite Vue plugin — the reference implementation for this surface. | Vite 8 bundles with Rolldown (depends on rolldown ~1.1).
 - **Vite 8 (Rolldown) × @vizejs/vite-plugin**: eager native batch pre-compile · compiled 1682/1682 corpus SFCs · 122 style sub-requests · 2,890,036 output bytes | Different strategy: compiles the whole corpus in a native batch when the plugin initialises, then serves each module from that result, handing the bundler `.vue.ts` sidecars rather than `.vue` ids. The pre-pass is inside the timed region, so the total is comparable to the lazy rows; what is not comparable is per-module cost, since this row front-loads what the others spread out. | Vite 8 bundles with Rolldown (depends on rolldown ~1.1).
 - **Vite 8 (Rolldown) × @verter/unplugin**: lazy per-module transform · compiled 1682/1682 corpus SFCs · 122 style sub-requests · 3,310,547 output bytes | Verter's universal bundler plugin (unplugin; vite entry point). | Vite 8 bundles with Rolldown (depends on rolldown ~1.1).
 
@@ -287,10 +288,10 @@ Grouped by **bundler**, ranked within each group by Vue integration. Rows from d
 
 <details><summary>Raw runs</summary>
 
-- **Vite 8 (Rolldown) × @vitejs/plugin-vue**: 2.66 s, 2.96 s
-- **Vite 8 (Rolldown) × unplugin-vue**: 2.95 s, 3.03 s
-- **Vite 8 (Rolldown) × @vizejs/vite-plugin**: 3.35 s, 3.78 s
-- **Vite 8 (Rolldown) × @verter/unplugin**: 3.95 s, 4.43 s
+- **Vite 8 (Rolldown) × unplugin-vue**: 2.31 s, 2.38 s
+- **Vite 8 (Rolldown) × @vitejs/plugin-vue**: 2.39 s, 2.35 s
+- **Vite 8 (Rolldown) × @vizejs/vite-plugin**: 3.10 s, 3.49 s
+- **Vite 8 (Rolldown) × @verter/unplugin**: 3.73 s, 4.10 s
 
 </details>
 
@@ -313,9 +314,9 @@ Grouped by **bundler**, ranked within each group by Vue integration. Rows from d
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | output bytes | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Rspack × unplugin-vue | **4.20 s** | 3.96 s | 329.0 ms | 7.8% | 1.00x | 9,965,394 | 401 files/s |
-| Rspack × vue-loader | **4.96 s** | 4.76 s | 281.9 ms | 5.7% | 1.18x | 13,727,292 | 339 files/s |
-| Rspack × @verter/unplugin | **257.66 s** | 256.04 s | 2.30 s | 0.9% | 61.39x | 9,284,079 | 7 files/s |
+| Rspack × unplugin-vue | **4.03 s** | 3.91 s | 176.1 ms | 4.4% | 1.00x | 9,965,394 | 417 files/s |
+| Rspack × vue-loader | **4.75 s** | 4.68 s | 103.2 ms | 2.2% | 1.18x | 13,727,292 | 354 files/s |
+| Rspack × @verter/unplugin | **254.67 s** | 253.85 s | 1.17 s | 0.5% | 63.15x | 9,284,079 | 7 files/s |
 | Rspack × @vizejs/rspack-plugin ❌ | error | – | – | – | – | – | – |
 
 <details><summary>Notes</summary>
@@ -329,9 +330,9 @@ Grouped by **bundler**, ranked within each group by Vue integration. Rows from d
 
 <details><summary>Raw runs</summary>
 
-- **Rspack × unplugin-vue**: 3.96 s, 4.43 s
-- **Rspack × vue-loader**: 4.76 s, 5.16 s
-- **Rspack × @verter/unplugin**: 256.04 s, 259.29 s
+- **Rspack × unplugin-vue**: 3.91 s, 4.16 s
+- **Rspack × vue-loader**: 4.68 s, 4.82 s
+- **Rspack × @verter/unplugin**: 253.85 s, 255.50 s
 
 </details>
 
@@ -339,9 +340,9 @@ Grouped by **bundler**, ranked within each group by Vue integration. Rows from d
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | output bytes | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| webpack 5 × @verter/unplugin | **5.57 s** | 5.57 s | 7.5 ms | 0.1% | 1.00x | 11,803,088 | 302 files/s |
-| webpack 5 × vue-loader | **7.31 s** | 6.67 s | 906.3 ms | 12.4% ⚠ | 1.31x | 21,574,013 | 230 files/s |
-| webpack 5 × unplugin-vue | **8.98 s** | 8.94 s | 56.2 ms | 0.6% | 1.61x | 15,359,135 | 187 files/s |
+| webpack 5 × @verter/unplugin | **5.60 s** | 5.20 s | 572.4 ms | 10.2% ⚠ | 1.00x | 11,803,088 | 300 files/s |
+| webpack 5 × vue-loader | **7.67 s** | 7.39 s | 392.2 ms | 5.1% | 1.37x | 21,574,013 | 219 files/s |
+| webpack 5 × unplugin-vue | **8.99 s** | 8.95 s | 47.7 ms | 0.5% | 1.60x | 15,359,135 | 187 files/s |
 | webpack 5 × @vizejs/rspack-plugin ⏭ | skipped | – | – | – | – | – | – |
 
 <details><summary>Notes</summary>
@@ -355,9 +356,9 @@ Grouped by **bundler**, ranked within each group by Vue integration. Rows from d
 
 <details><summary>Raw runs</summary>
 
-- **webpack 5 × @verter/unplugin**: 5.58 s, 5.57 s
-- **webpack 5 × vue-loader**: 7.95 s, 6.67 s
-- **webpack 5 × unplugin-vue**: 8.94 s, 9.02 s
+- **webpack 5 × @verter/unplugin**: 6.01 s, 5.20 s
+- **webpack 5 × vue-loader**: 7.95 s, 7.39 s
+- **webpack 5 × unplugin-vue**: 9.02 s, 8.95 s
 
 </details>
 
@@ -436,15 +437,15 @@ Two independent measurements. Cold start is paid once per session; HMR turnaroun
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vite 8 (Rolldown) × @verter/unplugin | **212.9 ms** | 184.3 ms | 40.4 ms | 19.0% ⚠ | 1.00x | n/a | 7.9k files/s |
-| Vite 8 (Rolldown) × unplugin-vue | **222.8 ms** | 210.6 ms | 17.2 ms | 7.7% | 1.05x | n/a | 7.5k files/s |
-| Vite 8 (Rolldown) × @vitejs/plugin-vue | **228.0 ms** | 210.6 ms | 24.7 ms | 10.8% ⚠ | 1.07x | n/a | 7.4k files/s |
-| Vite 8 (Rolldown) × @vizejs/vite-plugin | **382.6 ms** | 380.1 ms | 3.5 ms | 0.9% | 1.80x | n/a | 4.4k files/s |
+| Vite 8 (Rolldown) × unplugin-vue | **170.8 ms** | 169.8 ms | 1.4 ms | 0.8% | 1.00x | n/a | 9.8k files/s |
+| Vite 8 (Rolldown) × @verter/unplugin | **171.2 ms** | 162.7 ms | 12.0 ms | 7.0% | 1.00x | n/a | 9.8k files/s |
+| Vite 8 (Rolldown) × @vitejs/plugin-vue | **183.2 ms** | 169.2 ms | 19.9 ms | 10.8% ⚠ | 1.07x | n/a | 9.2k files/s |
+| Vite 8 (Rolldown) × @vizejs/vite-plugin | **329.0 ms** | 328.1 ms | 1.3 ms | 0.4% | 1.93x | n/a | 5.1k files/s |
 
 <details><summary>Notes</summary>
 
-- **Vite 8 (Rolldown) × @verter/unplugin**: createServer + listen + transformRequest('/bench-entry.js') — the ENTRY MODULE only: lazy plugins defer per-SFC compilation to first request, which is untimed here, while an eager plugin (Vize) pays its full 1682-SFC batch inside this window. That strategy difference is the point of this table, not noise in it · lazy per-module transform
 - **Vite 8 (Rolldown) × unplugin-vue**: createServer + listen + transformRequest('/bench-entry.js') — the ENTRY MODULE only: lazy plugins defer per-SFC compilation to first request, which is untimed here, while an eager plugin (Vize) pays its full 1682-SFC batch inside this window. That strategy difference is the point of this table, not noise in it · lazy per-module transform
+- **Vite 8 (Rolldown) × @verter/unplugin**: createServer + listen + transformRequest('/bench-entry.js') — the ENTRY MODULE only: lazy plugins defer per-SFC compilation to first request, which is untimed here, while an eager plugin (Vize) pays its full 1682-SFC batch inside this window. That strategy difference is the point of this table, not noise in it · lazy per-module transform
 - **Vite 8 (Rolldown) × @vitejs/plugin-vue**: createServer + listen + transformRequest('/bench-entry.js') — the ENTRY MODULE only: lazy plugins defer per-SFC compilation to first request, which is untimed here, while an eager plugin (Vize) pays its full 1682-SFC batch inside this window. That strategy difference is the point of this table, not noise in it · lazy per-module transform
 - **Vite 8 (Rolldown) × @vizejs/vite-plugin**: createServer + listen + transformRequest('/bench-entry.js') — the ENTRY MODULE only: lazy plugins defer per-SFC compilation to first request, which is untimed here, while an eager plugin (Vize) pays its full 1682-SFC batch inside this window. That strategy difference is the point of this table, not noise in it · eager native batch pre-compile
 
@@ -470,10 +471,10 @@ Two independent measurements. Cold start is paid once per session; HMR turnaroun
 
 <details><summary>Raw runs</summary>
 
-- **Vite 8 (Rolldown) × @verter/unplugin**: 184.3 ms, 241.5 ms
-- **Vite 8 (Rolldown) × unplugin-vue**: 235.0 ms, 210.6 ms
-- **Vite 8 (Rolldown) × @vitejs/plugin-vue**: 245.5 ms, 210.6 ms
-- **Vite 8 (Rolldown) × @vizejs/vite-plugin**: 385.1 ms, 380.1 ms
+- **Vite 8 (Rolldown) × unplugin-vue**: 169.8 ms, 171.8 ms
+- **Vite 8 (Rolldown) × @verter/unplugin**: 162.7 ms, 179.7 ms
+- **Vite 8 (Rolldown) × @vitejs/plugin-vue**: 197.2 ms, 169.2 ms
+- **Vite 8 (Rolldown) × @vizejs/vite-plugin**: 329.9 ms, 328.1 ms
 
 </details>
 
@@ -519,8 +520,8 @@ Two independent measurements. Cold start is paid once per session; HMR turnaroun
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | module bytes | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vite 8 (Rolldown) × @vitejs/plugin-vue | **5.3 ms** | 5.3 ms | 1.2 ms | 23.0% ⚠ | 1.00x | 14,548 | 319.0k files/s |
-| Vite 8 (Rolldown) × unplugin-vue | **5.6 ms** | 5.3 ms | 1.1 ms | 19.6% ⚠ | 1.05x | 14,550 | 302.6k files/s |
+| Vite 8 (Rolldown) × @vitejs/plugin-vue | **5.3 ms** | 5.1 ms | 0.9 ms | 17.2% ⚠ | 1.00x | 14,548 | 319.1k files/s |
+| Vite 8 (Rolldown) × unplugin-vue | **5.4 ms** | 5.3 ms | 1.0 ms | 19.4% ⚠ | 1.02x | 14,550 | 312.5k files/s |
 | Vite 8 (Rolldown) × @vizejs/vite-plugin ⏭ | skipped | – | – | – | – | – | – |
 | Vite 8 (Rolldown) × @verter/unplugin ⚠ | (0.7 ms) | (0.7 ms) | – | – | not ranked | (0) | – |
 
@@ -553,8 +554,8 @@ Two independent measurements. Cold start is paid once per session; HMR turnaroun
 
 <details><summary>Raw runs</summary>
 
-- **Vite 8 (Rolldown) × @vitejs/plugin-vue**: 7.3 ms, 5.3 ms, 5.3 ms, 7.7 ms, 5.3 ms
-- **Vite 8 (Rolldown) × unplugin-vue**: 7.9 ms, 5.4 ms, 5.6 ms, 5.6 ms, 5.3 ms
+- **Vite 8 (Rolldown) × @vitejs/plugin-vue**: 7.3 ms, 5.2 ms, 5.3 ms, 5.5 ms, 5.1 ms
+- **Vite 8 (Rolldown) × unplugin-vue**: 5.6 ms, 5.3 ms, 7.7 ms, 5.4 ms, 5.3 ms
 - **Vite 8 (Rolldown) × @verter/unplugin**: 0.8 ms, 0.8 ms, 0.7 ms, 0.7 ms, 0.7 ms
 
 </details>
@@ -589,10 +590,10 @@ Files: **1,682** · Bytes: **1,751,750**
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | tests passed | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| naive-ui — project's own toolchain (baseline) ⚠ | (281.04 s) | (281.04 s) | – | – | not ranked | (1,007) | – |
-| naive-ui — unplugin-vue ⚠ | (281.57 s) | (281.57 s) | – | – | not ranked | (1,007) | – |
-| naive-ui — @vizejs/vite-plugin ⚠ | (282.95 s) | (282.95 s) | – | – | not ranked | (1,007) | – |
-| naive-ui — @verter/unplugin ⚠ | (282.00 s) | (282.00 s) | – | – | not ranked | (1,007) | – |
+| naive-ui — project's own toolchain (baseline) ⚠ | (301.58 s) | (301.58 s) | – | – | not ranked | (1,007) | – |
+| naive-ui — unplugin-vue ⚠ | (301.97 s) | (301.97 s) | – | – | not ranked | (1,007) | – |
+| naive-ui — @vizejs/vite-plugin ⚠ | (304.76 s) | (304.76 s) | – | – | not ranked | (1,007) | – |
+| naive-ui — @verter/unplugin ⚠ | (307.77 s) | (307.77 s) | – | – | not ranked | (1,007) | – |
 
 <details><summary>Notes</summary>
 
@@ -602,6 +603,17 @@ Files: **1,682** · Bytes: **1,751,750**
 - **naive-ui — @verter/unplugin ⚠**: a generated config that imports the project's real config and replaces only the Vue plugin · extends vite.config.mts · resolved with ConfigEnv {command:'serve', mode:'test'}, matching how vitest resolves it for the baseline · Verter's universal bundler plugin, substituted for the project's Vue plugin. · ⚠ NOT EQUAL WORK — the project's own vue({...}) options are DROPPED: the challenger is constructed with no options, because plugin-vue bakes them into the instance and exposes no way to read them back. The baseline row keeps them. This row may therefore be doing more or less work than the baseline, in an unmeasured direction | ⓘ 1 of 189 test FILES failed to collect under this toolchain, so their tests never ran. The gate below compares tests PASSED, which is the quantity that shrinks when a file collapses; this line is here so a half-collected suite is visible rather than inferred from a file total that looks whole. | ⚠ 1 test(s) FAILED under this toolchain (the project's own toolchain also fails 1) — a correctness finding about @verter/unplugin. | ⓘ SINGLE MEASURED RUN — the time is indicative (per-surface runtime budget); there is no median or spread behind it. | ⚠ UNRANKED — NO LOCKFILE: naive-ui ships no lockfile at the pinned ref, so its install cannot be frozen and the dependency set is whatever resolved when fetch ran. Timings that execute the project's own installed dependencies are therefore not reproducible, and rows on project-test, project-build, project-typecheck, project-component-meta, project-lsp are UNRANKED for this corpus. This is a property of the corpus, not of any tool, and it applies to every row equally.
 
 </details>
+
+#### Peak RSS
+
+> Whole process tree of the timed run (not Vue-attributed). Volar includes both halves.
+
+| Tool | **Peak RSS** |
+| --- | ---: |
+| naive-ui — @vizejs/vite-plugin ⚠ | (1537.3 MB) |
+| naive-ui — @verter/unplugin ⚠ | (1540.5 MB) |
+| naive-ui — project's own toolchain (baseline) ⚠ | (1583.2 MB) |
+| naive-ui — unplugin-vue ⚠ | (1661.0 MB) |
 
 <details><summary>Methodology</summary>
 
@@ -625,10 +637,10 @@ Files: **1,682** · Bytes: **1,751,750**
 
 Raw runs:
 
-- **naive-ui — project's own toolchain (baseline)**: 281.04 s
-- **naive-ui — unplugin-vue**: 281.57 s
-- **naive-ui — @vizejs/vite-plugin**: 282.95 s
-- **naive-ui — @verter/unplugin**: 282.00 s
+- **naive-ui — project's own toolchain (baseline)**: 301.58 s
+- **naive-ui — unplugin-vue**: 301.97 s
+- **naive-ui — @vizejs/vite-plugin**: 304.76 s
+- **naive-ui — @verter/unplugin**: 307.77 s
 
 </details>
 
@@ -666,7 +678,7 @@ Grouped by **TypeScript engine**, ranked within each group. The JS engine and na
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | diagnostics | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| vue-tsc (JS) ⚠ | (51.25 s) | (51.02 s) | – | – | not ranked | (63) | – |
+| vue-tsc (JS) ⚠ | (53.11 s) | (52.98 s) | – | – | not ranked | (63) | – |
 
 <details><summary>Notes</summary>
 
@@ -676,17 +688,25 @@ Grouped by **TypeScript engine**, ranked within each group. The JS engine and na
 
 <details><summary>Raw runs</summary>
 
-- **vue-tsc (JS)**: 51.02 s, 51.48 s
+- **vue-tsc (JS)**: 52.98 s, 53.23 s
 
 </details>
+#### Peak RSS
+
+> Whole process tree of the timed run (not Vue-attributed). Volar includes both halves.
+
+| Tool | **Peak RSS** |
+| --- | ---: |
+| vue-tsc (JS) ⚠ | (2487.2 MB) |
+
 
 #### Native tsgo engines — ranked together
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | diagnostics | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| vue-tsc (N) ⚠ | (43.30 s) | (11.86 s) | – | – | not ranked | (63) | – |
-| verter-tsc ⚠ | (10.68 s) | (10.64 s) | – | – | not ranked | (5,546) | – |
-| Vize ⚠ | (18.41 s) | (18.40 s) | – | – | not ranked | (50) | – |
+| vue-tsc (N) ⚠ | (44.87 s) | (12.09 s) | – | – | not ranked | (63) | – |
+| verter-tsc ⚠ | (10.61 s) | (10.45 s) | – | – | not ranked | (5,546) | – |
+| Vize ⚠ | (19.03 s) | (18.89 s) | – | – | not ranked | (48) | – |
 | Golar typecheck ⏭ | skipped | – | – | – | – | – | – |
 
 <details><summary>Notes</summary>
@@ -700,11 +720,21 @@ Grouped by **TypeScript engine**, ranked within each group. The JS engine and na
 
 <details><summary>Raw runs</summary>
 
-- **vue-tsc (N)**: 74.73 s, 11.86 s
-- **verter-tsc**: 10.71 s, 10.64 s
-- **Vize**: 18.42 s, 18.40 s
+- **vue-tsc (N)**: 77.64 s, 12.09 s
+- **verter-tsc**: 10.77 s, 10.45 s
+- **Vize**: 19.16 s, 18.89 s
 
 </details>
+#### Peak RSS
+
+> Whole process tree of the timed run (not Vue-attributed). Volar includes both halves.
+
+| Tool | **Peak RSS** |
+| --- | ---: |
+| verter-tsc ⚠ | (1363.1 MB) |
+| vue-tsc (N) ⚠ | (2923.9 MB) |
+| Vize ⚠ | (3167.7 MB) |
+
 
 <details><summary>Methodology</summary>
 
@@ -732,8 +762,8 @@ Files: **1,682** · Bytes: **1,751,750**
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | components resolved | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| vue-component-meta ⚠ | (9.68 s) | (9.34 s) | – | – | not ranked | (1,682) | – |
-| @verter/component-meta ⚠ | (9.40 s) | (9.30 s) | – | – | not ranked | (1,682) | – |
+| vue-component-meta ⚠ | (9.97 s) | (8.94 s) | – | – | not ranked | (1,682) | – |
+| @verter/component-meta ⚠ | (10.65 s) | (10.55 s) | – | – | not ranked | (1,682) | – |
 | Vize component-meta ⏭ | skipped | – | – | – | – | – | – |
 
 <details><summary>Notes</summary>
@@ -761,8 +791,8 @@ Files: **1,682** · Bytes: **1,751,750**
 
 Raw runs:
 
-- **vue-component-meta**: 10.35 s, 9.68 s, 9.76 s, 9.34 s, 9.46 s
-- **@verter/component-meta**: 9.31 s, 9.30 s, 10.09 s, 10.02 s, 9.40 s
+- **vue-component-meta**: 10.16 s, 10.03 s, 9.97 s, 8.94 s, 9.57 s
+- **@verter/component-meta**: 10.58 s, 10.76 s, 10.96 s, 10.65 s, 10.55 s
 
 </details>
 
@@ -783,7 +813,7 @@ Ranked **per operation** and, within an operation, **per TypeScript engine** —
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | diagnostics published | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (JS) ⚠ | (11.29 s) | (11.21 s) | – | – | not ranked | (0) | – |
+| Volar (JS) ⚠ | (11.13 s) | (11.06 s) | – | – | not ranked | (0) | – |
 
 <details><summary>Notes</summary>
 
@@ -793,7 +823,7 @@ Ranked **per operation** and, within an operation, **per TypeScript engine** —
 
 <details><summary>Raw runs</summary>
 
-- **Volar (JS)**: 11.29 s, 11.21 s, 11.38 s, 11.32 s, 11.26 s
+- **Volar (JS)**: 11.33 s, 11.06 s, 11.13 s, 11.07 s, 11.14 s
 
 </details>
 
@@ -801,9 +831,9 @@ Ranked **per operation** and, within an operation, **per TypeScript engine** —
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | diagnostics published | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (N) ⚠ | (8.75 s) | (8.67 s) | – | – | not ranked | (0) | – |
-| Verter ⚠ | (1.54 s) | (1.48 s) | – | – | not ranked | (2) | – |
-| Vize ⚠ | (1.44 s) | (1.40 s) | – | – | not ranked | (2) | – |
+| Volar (N) ⚠ | (8.70 s) | (8.60 s) | – | – | not ranked | (0) | – |
+| Verter ⚠ | (1.46 s) | (1.43 s) | – | – | not ranked | (2) | – |
+| Vize ⚠ | (1.30 s) | (1.27 s) | – | – | not ranked | (2) | – |
 
 <details><summary>Notes</summary>
 
@@ -815,9 +845,9 @@ Ranked **per operation** and, within an operation, **per TypeScript engine** —
 
 <details><summary>Raw runs</summary>
 
-- **Volar (N)**: 8.82 s, 8.74 s, 8.75 s, 8.78 s, 8.67 s
-- **Verter**: 1.48 s, 1.54 s, 1.54 s, 1.54 s, 1.53 s
-- **Vize**: 1.42 s, 1.48 s, 1.44 s, 1.44 s, 1.40 s
+- **Volar (N)**: 8.71 s, 8.70 s, 8.63 s, 8.60 s, 8.76 s
+- **Verter**: 1.50 s, 1.51 s, 1.43 s, 1.43 s, 1.46 s
+- **Vize**: 1.27 s, 1.34 s, 1.27 s, 1.30 s, 1.30 s
 
 </details>
 
@@ -825,7 +855,7 @@ Ranked **per operation** and, within an operation, **per TypeScript engine** —
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | hover bytes | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (JS) ⚠ | (2.9 ms) | (2.6 ms) | – | – | not ranked | (91) | – |
+| Volar (JS) ⚠ | (3.1 ms) | (3.0 ms) | – | – | not ranked | (91) | – |
 
 <details><summary>Notes</summary>
 
@@ -835,7 +865,7 @@ Ranked **per operation** and, within an operation, **per TypeScript engine** —
 
 <details><summary>Raw runs</summary>
 
-- **Volar (JS)**: 2.8 ms, 2.6 ms, 2.9 ms, 248.9 ms, 3.0 ms
+- **Volar (JS)**: 3.1 ms, 3.0 ms, 3.0 ms, 3.3 ms, 3.2 ms
 
 </details>
 
@@ -843,9 +873,9 @@ Ranked **per operation** and, within an operation, **per TypeScript engine** —
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | hover bytes | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (N) ⚠ | (43.2 ms) | (31.8 ms) | – | – | not ranked | (91) | – |
-| Verter ⚠ | (1.2 ms) | (1.1 ms) | – | – | not ranked | (91) | – |
-| Vize ⚠ | (2.1 ms) | (2.0 ms) | – | – | not ranked | (91) | – |
+| Volar (N) ⚠ | (47.1 ms) | (35.0 ms) | – | – | not ranked | (91) | – |
+| Verter ⚠ | (1.1 ms) | (1.1 ms) | – | – | not ranked | (91) | – |
+| Vize ⚠ | (2.1 ms) | (2.1 ms) | – | – | not ranked | (91) | – |
 
 <details><summary>Notes</summary>
 
@@ -857,9 +887,9 @@ Ranked **per operation** and, within an operation, **per TypeScript engine** —
 
 <details><summary>Raw runs</summary>
 
-- **Volar (N)**: 43.2 ms, 31.8 ms, 49.3 ms, 35.6 ms, 48.8 ms
-- **Verter**: 1.2 ms, 9.3 ms, 1.7 ms, 1.1 ms, 1.1 ms
-- **Vize**: 2.1 ms, 2.1 ms, 2.0 ms, 2.2 ms, 2.1 ms
+- **Volar (N)**: 35.0 ms, 60.7 ms, 63.9 ms, 35.4 ms, 47.1 ms
+- **Verter**: 1.6 ms, 1.1 ms, 1.2 ms, 1.1 ms, 1.1 ms
+- **Vize**: 2.2 ms, 2.1 ms, 2.1 ms, 2.1 ms, 2.1 ms
 
 </details>
 

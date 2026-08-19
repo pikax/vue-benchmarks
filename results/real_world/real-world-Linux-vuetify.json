@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "kind": "real-world",
-  "generatedAt": "2026-08-16T09:46:37.987Z",
+  "generatedAt": "2026-08-19T18:58:29.037Z",
   "fixture": "fixtures/real",
   "fileCount": 1246,
   "corpora": [
@@ -50,23 +50,23 @@
     "platform": "linux",
     "arch": "x64",
     "cpuCount": 4,
-    "cpuModel": "AMD EPYC 7763 64-Core Processor",
+    "cpuModel": "AMD EPYC 9V74 80-Core Processor",
     "totalmem": 16766414848,
     "node": "v22.23.2"
   },
   "commit": {
-    "sha": "b0f41622696d7d0f66900976f51587b169418e2b",
+    "sha": "94f6696b1c7b6f54928678126b9831febd70b4ff",
     "ref": "main",
     "repository": "pikax/vue-benchmarks",
-    "runUrl": "https://github.com/pikax/vue-benchmarks/actions/runs/31938755068"
+    "runUrl": "https://github.com/pikax/vue-benchmarks/actions/runs/32287855785"
   },
   "versions": {
     "node": "v22.23.2",
     "vue": "3.5.41",
     "@vue/compiler-sfc": "3.5.41",
     "@vue/compiler-sfc-36": "3.6.0-rc.4",
-    "vize": "0.347.7",
-    "@vizejs/native": "0.347.7",
+    "vize": "0.350.2",
+    "@vizejs/native": "0.350.2",
     "@verter/native": "0.0.1-beta.3",
     "@fervid/napi": "0.4.1",
     "verter-tsc": "0.0.1-beta.3",
@@ -81,18 +81,19 @@
     "golar": "0.1.10",
     "@golar/vue": "0.1.10",
     "prettier": "3.9.6",
-    "oxfmt": "0.63.0",
-    "oxlint": "1.78.0",
-    "@biomejs/biome": "2.5.8",
+    "oxfmt": "0.64.0",
+    "oxlint": "1.79.0",
+    "eslint-plugin-vue": "10.10.0",
+    "@biomejs/biome": "2.5.9",
     "typescript": "6.0.3",
-    "cli:vize": "0.347.7",
+    "cli:vize": "0.350.2",
     "cli:vue-tsc": "6.0.3",
     "cli:verter-tsc": "0.0.1-beta.3",
     "cli:golar": "0.1.10",
     "cli:prettier": "3.9.6",
-    "cli:oxfmt": "0.63.0",
-    "cli:oxlint": "1.78.0",
-    "cli:biome": "2.5.8",
+    "cli:oxfmt": "0.64.0",
+    "cli:oxlint": "1.79.0",
+    "cli:biome": "2.5.9",
     "vue-jsx-vapor": "3.2.21",
     "@vue-jsx-vapor/compiler-rs": "3.2.21",
     "@vue/babel-plugin-jsx": "3.0.0",
@@ -183,18 +184,65 @@
               "files": 1246,
               "status": "ok",
               "runs": [
-                821.225,
-                814.614,
-                795.624,
-                769.843,
-                758.317
+                806.63,
+                709.525,
+                679.398,
+                710.14,
+                670.251
               ],
-              "medianMs": 795.624,
-              "minMs": 758.317,
-              "maxMs": 821.225,
-              "meanMs": 791.925,
-              "stddevMs": 27.405,
-              "cvPct": 3.4,
+              "medianMs": 709.525,
+              "minMs": 670.251,
+              "maxMs": 806.63,
+              "meanMs": 715.189,
+              "stddevMs": 54.128,
+              "cvPct": 7.6,
+              "metaSamples": [
+                {
+                  "artifact": 4396000
+                },
+                {
+                  "artifact": 4396000
+                },
+                {
+                  "artifact": 4396000
+                },
+                {
+                  "artifact": 4396000
+                },
+                {
+                  "artifact": 4396000
+                }
+              ],
+              "artifactMedian": 4396000,
+              "warmupPasses": 1,
+              "throughput": "1.8k files/s"
+            },
+            {
+              "id": "vue-3.6-1t-vdom-prod-smoff",
+              "label": "@vue/compiler-sfc 3.6 (1T)",
+              "package": "@vue/compiler-sfc-36",
+              "target": "vdom",
+              "env": "production",
+              "sourceMap": false,
+              "threading": "1t",
+              "invocation": "in-process",
+              "artifactLabel": "Code bytes",
+              "notes": "Official 3.6 VDOM, isProd=true, sourceMap=false",
+              "files": 1246,
+              "status": "ok",
+              "runs": [
+                809.082,
+                761.892,
+                756.234,
+                728.735,
+                712.94
+              ],
+              "medianMs": 756.234,
+              "minMs": 712.94,
+              "maxMs": 809.082,
+              "meanMs": 753.777,
+              "stddevMs": 36.828,
+              "cvPct": 4.9,
               "metaSamples": [
                 {
                   "artifact": 4396000
@@ -217,53 +265,6 @@
               "throughput": "1.6k files/s"
             },
             {
-              "id": "vue-3.6-1t-vdom-prod-smoff",
-              "label": "@vue/compiler-sfc 3.6 (1T)",
-              "package": "@vue/compiler-sfc-36",
-              "target": "vdom",
-              "env": "production",
-              "sourceMap": false,
-              "threading": "1t",
-              "invocation": "in-process",
-              "artifactLabel": "Code bytes",
-              "notes": "Official 3.6 VDOM, isProd=true, sourceMap=false",
-              "files": 1246,
-              "status": "ok",
-              "runs": [
-                846.173,
-                833.923,
-                830.495,
-                749.673,
-                797.83
-              ],
-              "medianMs": 830.495,
-              "minMs": 749.673,
-              "maxMs": 846.173,
-              "meanMs": 811.619,
-              "stddevMs": 38.972,
-              "cvPct": 4.7,
-              "metaSamples": [
-                {
-                  "artifact": 4396000
-                },
-                {
-                  "artifact": 4396000
-                },
-                {
-                  "artifact": 4396000
-                },
-                {
-                  "artifact": 4396000
-                },
-                {
-                  "artifact": 4396000
-                }
-              ],
-              "artifactMedian": 4396000,
-              "warmupPasses": 1,
-              "throughput": "1.5k files/s"
-            },
-            {
               "id": "vize-1t-vdom-prod-smoff",
               "label": "Vize native loop (1T)",
               "package": "@vizejs/native",
@@ -277,18 +278,18 @@
               "files": 1246,
               "status": "ok",
               "runs": [
-                296.704,
-                292.457,
-                290.221,
-                292.304,
-                293.6
+                282.585,
+                283.99,
+                288.58,
+                282.245,
+                284.365
               ],
-              "medianMs": 292.457,
-              "minMs": 290.221,
-              "maxMs": 296.704,
-              "meanMs": 293.057,
-              "stddevMs": 2.375,
-              "cvPct": 0.8,
+              "medianMs": 283.99,
+              "minMs": 282.245,
+              "maxMs": 288.58,
+              "meanMs": 284.353,
+              "stddevMs": 2.528,
+              "cvPct": 0.9,
               "metaSamples": [
                 {
                   "artifact": 4143182
@@ -308,7 +309,7 @@
               ],
               "artifactMedian": 4143182,
               "warmupPasses": 1,
-              "throughput": "4.3k files/s"
+              "throughput": "4.4k files/s"
             },
             {
               "id": "vize-batch-vdom-prod-smoff",
@@ -324,18 +325,18 @@
               "files": 1246,
               "status": "ok",
               "runs": [
-                107.038,
-                102.657,
-                101.969,
-                101.891,
-                108.522
+                96.229,
+                99.741,
+                96.749,
+                97.062,
+                98.539
               ],
-              "medianMs": 102.657,
-              "minMs": 101.891,
-              "maxMs": 108.522,
-              "meanMs": 104.415,
-              "stddevMs": 3.13,
-              "cvPct": 3,
+              "medianMs": 97.062,
+              "minMs": 96.229,
+              "maxMs": 99.741,
+              "meanMs": 97.664,
+              "stddevMs": 1.444,
+              "cvPct": 1.5,
               "metaSamples": [
                 {
                   "artifact": 4143182
@@ -355,7 +356,7 @@
               ],
               "artifactMedian": 4143182,
               "warmupPasses": 1,
-              "throughput": "12.1k files/s"
+              "throughput": "12.8k files/s"
             },
             {
               "id": "verter-stateless-vdom-prod-smoff",
@@ -371,18 +372,18 @@
               "files": 1246,
               "status": "unranked",
               "runs": [
-                2409.577,
-                2363.748,
-                2385.341,
-                2526.992,
-                2473.664
+                2517.533,
+                2509.934,
+                2492.146,
+                2589.802,
+                2564.391
               ],
-              "medianMs": 2409.577,
-              "minMs": 2363.748,
-              "maxMs": 2526.992,
-              "meanMs": 2431.864,
-              "stddevMs": 67.263,
-              "cvPct": 2.8,
+              "medianMs": 2517.533,
+              "minMs": 2492.146,
+              "maxMs": 2589.802,
+              "meanMs": 2534.761,
+              "stddevMs": 40.733,
+              "cvPct": 1.6,
               "metaSamples": [
                 {
                   "artifact": 3308945,
@@ -440,18 +441,18 @@
               "files": 1246,
               "status": "unranked",
               "runs": [
-                113.576,
-                96.32,
-                92.78,
-                117.351,
-                92.199
+                107.492,
+                84.104,
+                85.119,
+                95.435,
+                87.108
               ],
-              "medianMs": 96.32,
-              "minMs": 92.199,
-              "maxMs": 117.351,
-              "meanMs": 102.445,
-              "stddevMs": 12.062,
-              "cvPct": 12.5,
+              "medianMs": 87.108,
+              "minMs": 84.104,
+              "maxMs": 107.492,
+              "meanMs": 91.852,
+              "stddevMs": 9.815,
+              "cvPct": 11.3,
               "metaSamples": [
                 {
                   "artifact": 3308945,
@@ -513,18 +514,65 @@
           "files": 1246,
           "status": "ok",
           "runs": [
-            821.225,
-            814.614,
-            795.624,
-            769.843,
-            758.317
+            806.63,
+            709.525,
+            679.398,
+            710.14,
+            670.251
           ],
-          "medianMs": 795.624,
-          "minMs": 758.317,
-          "maxMs": 821.225,
-          "meanMs": 791.925,
-          "stddevMs": 27.405,
-          "cvPct": 3.4,
+          "medianMs": 709.525,
+          "minMs": 670.251,
+          "maxMs": 806.63,
+          "meanMs": 715.189,
+          "stddevMs": 54.128,
+          "cvPct": 7.6,
+          "metaSamples": [
+            {
+              "artifact": 4396000
+            },
+            {
+              "artifact": 4396000
+            },
+            {
+              "artifact": 4396000
+            },
+            {
+              "artifact": 4396000
+            },
+            {
+              "artifact": 4396000
+            }
+          ],
+          "artifactMedian": 4396000,
+          "warmupPasses": 1,
+          "throughput": "1.8k files/s"
+        },
+        {
+          "id": "vue-3.6-1t-vdom-prod-smoff",
+          "label": "@vue/compiler-sfc 3.6 (1T)",
+          "package": "@vue/compiler-sfc-36",
+          "target": "vdom",
+          "env": "production",
+          "sourceMap": false,
+          "threading": "1t",
+          "invocation": "in-process",
+          "artifactLabel": "Code bytes",
+          "notes": "Official 3.6 VDOM, isProd=true, sourceMap=false",
+          "files": 1246,
+          "status": "ok",
+          "runs": [
+            809.082,
+            761.892,
+            756.234,
+            728.735,
+            712.94
+          ],
+          "medianMs": 756.234,
+          "minMs": 712.94,
+          "maxMs": 809.082,
+          "meanMs": 753.777,
+          "stddevMs": 36.828,
+          "cvPct": 4.9,
           "metaSamples": [
             {
               "artifact": 4396000
@@ -547,53 +595,6 @@
           "throughput": "1.6k files/s"
         },
         {
-          "id": "vue-3.6-1t-vdom-prod-smoff",
-          "label": "@vue/compiler-sfc 3.6 (1T)",
-          "package": "@vue/compiler-sfc-36",
-          "target": "vdom",
-          "env": "production",
-          "sourceMap": false,
-          "threading": "1t",
-          "invocation": "in-process",
-          "artifactLabel": "Code bytes",
-          "notes": "Official 3.6 VDOM, isProd=true, sourceMap=false",
-          "files": 1246,
-          "status": "ok",
-          "runs": [
-            846.173,
-            833.923,
-            830.495,
-            749.673,
-            797.83
-          ],
-          "medianMs": 830.495,
-          "minMs": 749.673,
-          "maxMs": 846.173,
-          "meanMs": 811.619,
-          "stddevMs": 38.972,
-          "cvPct": 4.7,
-          "metaSamples": [
-            {
-              "artifact": 4396000
-            },
-            {
-              "artifact": 4396000
-            },
-            {
-              "artifact": 4396000
-            },
-            {
-              "artifact": 4396000
-            },
-            {
-              "artifact": 4396000
-            }
-          ],
-          "artifactMedian": 4396000,
-          "warmupPasses": 1,
-          "throughput": "1.5k files/s"
-        },
-        {
           "id": "vize-1t-vdom-prod-smoff",
           "label": "Vize native loop (1T)",
           "package": "@vizejs/native",
@@ -607,18 +608,18 @@
           "files": 1246,
           "status": "ok",
           "runs": [
-            296.704,
-            292.457,
-            290.221,
-            292.304,
-            293.6
+            282.585,
+            283.99,
+            288.58,
+            282.245,
+            284.365
           ],
-          "medianMs": 292.457,
-          "minMs": 290.221,
-          "maxMs": 296.704,
-          "meanMs": 293.057,
-          "stddevMs": 2.375,
-          "cvPct": 0.8,
+          "medianMs": 283.99,
+          "minMs": 282.245,
+          "maxMs": 288.58,
+          "meanMs": 284.353,
+          "stddevMs": 2.528,
+          "cvPct": 0.9,
           "metaSamples": [
             {
               "artifact": 4143182
@@ -638,7 +639,7 @@
           ],
           "artifactMedian": 4143182,
           "warmupPasses": 1,
-          "throughput": "4.3k files/s"
+          "throughput": "4.4k files/s"
         },
         {
           "id": "vize-batch-vdom-prod-smoff",
@@ -654,18 +655,18 @@
           "files": 1246,
           "status": "ok",
           "runs": [
-            107.038,
-            102.657,
-            101.969,
-            101.891,
-            108.522
+            96.229,
+            99.741,
+            96.749,
+            97.062,
+            98.539
           ],
-          "medianMs": 102.657,
-          "minMs": 101.891,
-          "maxMs": 108.522,
-          "meanMs": 104.415,
-          "stddevMs": 3.13,
-          "cvPct": 3,
+          "medianMs": 97.062,
+          "minMs": 96.229,
+          "maxMs": 99.741,
+          "meanMs": 97.664,
+          "stddevMs": 1.444,
+          "cvPct": 1.5,
           "metaSamples": [
             {
               "artifact": 4143182
@@ -685,7 +686,7 @@
           ],
           "artifactMedian": 4143182,
           "warmupPasses": 1,
-          "throughput": "12.1k files/s"
+          "throughput": "12.8k files/s"
         },
         {
           "id": "verter-stateless-vdom-prod-smoff",
@@ -701,18 +702,18 @@
           "files": 1246,
           "status": "unranked",
           "runs": [
-            2409.577,
-            2363.748,
-            2385.341,
-            2526.992,
-            2473.664
+            2517.533,
+            2509.934,
+            2492.146,
+            2589.802,
+            2564.391
           ],
-          "medianMs": 2409.577,
-          "minMs": 2363.748,
-          "maxMs": 2526.992,
-          "meanMs": 2431.864,
-          "stddevMs": 67.263,
-          "cvPct": 2.8,
+          "medianMs": 2517.533,
+          "minMs": 2492.146,
+          "maxMs": 2589.802,
+          "meanMs": 2534.761,
+          "stddevMs": 40.733,
+          "cvPct": 1.6,
           "metaSamples": [
             {
               "artifact": 3308945,
@@ -770,18 +771,18 @@
           "files": 1246,
           "status": "unranked",
           "runs": [
-            113.576,
-            96.32,
-            92.78,
-            117.351,
-            92.199
+            107.492,
+            84.104,
+            85.119,
+            95.435,
+            87.108
           ],
-          "medianMs": 96.32,
-          "minMs": 92.199,
-          "maxMs": 117.351,
-          "meanMs": 102.445,
-          "stddevMs": 12.062,
-          "cvPct": 12.5,
+          "medianMs": 87.108,
+          "minMs": 84.104,
+          "maxMs": 107.492,
+          "meanMs": 91.852,
+          "stddevMs": 9.815,
+          "cvPct": 11.3,
           "metaSamples": [
             {
               "artifact": 3308945,
@@ -857,20 +858,20 @@
           "files": 1246,
           "status": "ok",
           "runs": [
-            10097.786,
-            9890.67,
-            9748.237,
-            10183.226,
-            9991.118
+            9489.039,
+            9732.475,
+            9766.355,
+            9488.192,
+            9545.225
           ],
-          "medianMs": 9991.118,
-          "minMs": 9748.237,
-          "maxMs": 10183.226,
-          "meanMs": 9982.207,
-          "stddevMs": 171.003,
-          "cvPct": 1.7,
+          "medianMs": 9545.225,
+          "minMs": 9488.192,
+          "maxMs": 9766.355,
+          "meanMs": 9604.257,
+          "stddevMs": 135.043,
+          "cvPct": 1.4,
           "warmupPasses": 1,
-          "throughput": "125 files/s"
+          "throughput": "131 files/s"
         },
         {
           "id": "oxfmt",
@@ -882,20 +883,20 @@
           "files": 1246,
           "status": "ok",
           "runs": [
-            6412.883,
-            6454.961,
-            6467.204,
-            6608.26,
-            6661.562
+            6361.37,
+            6060.047,
+            6190.379,
+            6069.814,
+            6298.313
           ],
-          "medianMs": 6467.204,
-          "minMs": 6412.883,
-          "maxMs": 6661.562,
-          "meanMs": 6520.974,
-          "stddevMs": 107.606,
-          "cvPct": 1.7,
+          "medianMs": 6190.379,
+          "minMs": 6060.047,
+          "maxMs": 6361.37,
+          "meanMs": 6195.985,
+          "stddevMs": 134.4,
+          "cvPct": 2.2,
           "warmupPasses": 1,
-          "throughput": "193 files/s"
+          "throughput": "201 files/s"
         },
         {
           "id": "vize-fmt",
@@ -907,20 +908,20 @@
           "files": 1246,
           "status": "ok",
           "runs": [
-            411.745,
-            401.284,
-            398.337,
-            431.08,
-            393.017
+            358.603,
+            345.68,
+            354.432,
+            360.577,
+            341.227
           ],
-          "medianMs": 401.284,
-          "minMs": 393.017,
-          "maxMs": 431.08,
-          "meanMs": 407.093,
-          "stddevMs": 15.046,
-          "cvPct": 3.7,
+          "medianMs": 354.432,
+          "minMs": 341.227,
+          "maxMs": 360.577,
+          "meanMs": 352.104,
+          "stddevMs": 8.352,
+          "cvPct": 2.4,
           "warmupPasses": 1,
-          "throughput": "3.1k files/s"
+          "throughput": "3.5k files/s"
         },
         {
           "id": "biome-fmt",
@@ -932,18 +933,18 @@
           "files": 1246,
           "status": "unranked",
           "runs": [
-            271.022,
-            269.425,
-            267.731,
-            270.239,
-            271.835
+            276.163,
+            269.482,
+            268.674,
+            267.81,
+            265.961
           ],
-          "medianMs": 270.239,
-          "minMs": 267.731,
-          "maxMs": 271.835,
-          "meanMs": 270.05,
-          "stddevMs": 1.576,
-          "cvPct": 0.6,
+          "medianMs": 268.674,
+          "minMs": 265.961,
+          "maxMs": 276.163,
+          "meanMs": 269.618,
+          "stddevMs": 3.886,
+          "cvPct": 1.4,
           "warmupPasses": 1,
           "throughput": "n/a"
         }
@@ -981,20 +982,20 @@
           "files": 1246,
           "status": "ok",
           "runs": [
-            7718.392,
-            7493.529,
-            7786.081,
-            7903.892,
-            7621.378
+            6561.411,
+            7557.025,
+            7590.406,
+            7423.667,
+            7451.33
           ],
-          "medianMs": 7718.392,
-          "minMs": 7493.529,
-          "maxMs": 7903.892,
-          "meanMs": 7704.654,
-          "stddevMs": 156.544,
-          "cvPct": 2,
+          "medianMs": 7451.33,
+          "minMs": 6561.411,
+          "maxMs": 7590.406,
+          "meanMs": 7316.768,
+          "stddevMs": 427.989,
+          "cvPct": 5.7,
           "warmupPasses": 1,
-          "throughput": "161 files/s"
+          "throughput": "167 files/s"
         },
         {
           "id": "eslint-plugin-vue-workers",
@@ -1006,20 +1007,20 @@
           "files": 1246,
           "status": "ok",
           "runs": [
-            8277.498,
-            8503.777,
-            8279.301,
-            8375.424,
-            8335.446
+            8203.878,
+            8123.773,
+            8056.143,
+            8004.284,
+            8121.264
           ],
-          "medianMs": 8335.446,
-          "minMs": 8277.498,
-          "maxMs": 8503.777,
-          "meanMs": 8354.289,
-          "stddevMs": 93.097,
-          "cvPct": 1.1,
+          "medianMs": 8121.264,
+          "minMs": 8004.284,
+          "maxMs": 8203.878,
+          "meanMs": 8101.868,
+          "stddevMs": 75.623,
+          "cvPct": 0.9,
           "warmupPasses": 1,
-          "throughput": "149 files/s"
+          "throughput": "153 files/s"
         },
         {
           "id": "eslint-plugin-vue-cli",
@@ -1031,20 +1032,20 @@
           "files": 1246,
           "status": "ok",
           "runs": [
-            8829.706,
-            9122.206,
-            8978.934,
-            9507.491,
-            9219.674
+            8684.676,
+            8959.059,
+            8945.975,
+            8785.041,
+            8969.971
           ],
-          "medianMs": 9122.206,
-          "minMs": 8829.706,
-          "maxMs": 9507.491,
-          "meanMs": 9131.602,
-          "stddevMs": 256.703,
-          "cvPct": 2.8,
+          "medianMs": 8945.975,
+          "minMs": 8684.676,
+          "maxMs": 8969.971,
+          "meanMs": 8868.944,
+          "stddevMs": 127.726,
+          "cvPct": 1.4,
           "warmupPasses": 1,
-          "throughput": "137 files/s"
+          "throughput": "139 files/s"
         },
         {
           "id": "vize-lint-1t",
@@ -1056,20 +1057,20 @@
           "files": 1246,
           "status": "ok",
           "runs": [
-            238.459,
-            240.42,
-            240.728,
-            249.443,
-            242.219
+            227.599,
+            231.277,
+            233.198,
+            236.87,
+            230.826
           ],
-          "medianMs": 240.728,
-          "minMs": 238.459,
-          "maxMs": 249.443,
-          "meanMs": 242.254,
-          "stddevMs": 4.236,
-          "cvPct": 1.8,
+          "medianMs": 231.277,
+          "minMs": 227.599,
+          "maxMs": 236.87,
+          "meanMs": 231.954,
+          "stddevMs": 3.406,
+          "cvPct": 1.5,
           "warmupPasses": 1,
-          "throughput": "5.2k files/s"
+          "throughput": "5.4k files/s"
         },
         {
           "id": "vize-lint-max",
@@ -1081,20 +1082,20 @@
           "files": 1246,
           "status": "ok",
           "runs": [
-            126.764,
-            129.725,
-            128.943,
-            131.084,
-            131.27
+            128.229,
+            133.159,
+            129.377,
+            133.188,
+            132.616
           ],
-          "medianMs": 129.725,
-          "minMs": 126.764,
-          "maxMs": 131.27,
-          "meanMs": 129.557,
-          "stddevMs": 1.835,
-          "cvPct": 1.4,
+          "medianMs": 132.616,
+          "minMs": 128.229,
+          "maxMs": 133.188,
+          "meanMs": 131.314,
+          "stddevMs": 2.339,
+          "cvPct": 1.8,
           "warmupPasses": 1,
-          "throughput": "9.6k files/s"
+          "throughput": "9.4k files/s"
         },
         {
           "id": "biome-lint-1t",
@@ -1106,18 +1107,18 @@
           "files": 1246,
           "status": "unranked",
           "runs": [
-            1327.34,
-            1300.378,
-            1331.948,
-            1300.702,
-            1302.763
+            1409.886,
+            1398.997,
+            1398.12,
+            1398.698,
+            1394.248
           ],
-          "medianMs": 1302.763,
-          "minMs": 1300.378,
-          "maxMs": 1331.948,
-          "meanMs": 1312.626,
-          "stddevMs": 15.647,
-          "cvPct": 1.2,
+          "medianMs": 1398.698,
+          "minMs": 1394.248,
+          "maxMs": 1409.886,
+          "meanMs": 1399.99,
+          "stddevMs": 5.853,
+          "cvPct": 0.4,
           "warmupPasses": 1,
           "throughput": "n/a"
         },
@@ -1131,18 +1132,18 @@
           "files": 1246,
           "status": "unranked",
           "runs": [
-            529.547,
-            530.565,
-            534.304,
-            531.519,
-            527.452
+            554.463,
+            544.116,
+            544.87,
+            548.485,
+            554.99
           ],
-          "medianMs": 530.565,
-          "minMs": 527.452,
-          "maxMs": 534.304,
-          "meanMs": 530.677,
-          "stddevMs": 2.528,
-          "cvPct": 0.5,
+          "medianMs": 548.485,
+          "minMs": 544.116,
+          "maxMs": 554.99,
+          "meanMs": 549.385,
+          "stddevMs": 5.152,
+          "cvPct": 0.9,
           "warmupPasses": 1,
           "throughput": "n/a"
         },
@@ -1156,18 +1157,18 @@
           "files": 1246,
           "status": "unranked",
           "runs": [
-            118.382,
-            123.862,
-            123.882,
-            119.856,
-            131.131
+            116.389,
+            116.451,
+            123.118,
+            116.387,
+            121.47
           ],
-          "medianMs": 123.862,
-          "minMs": 118.382,
-          "maxMs": 131.131,
-          "meanMs": 123.423,
-          "stddevMs": 4.949,
-          "cvPct": 4,
+          "medianMs": 116.451,
+          "minMs": 116.387,
+          "maxMs": 123.118,
+          "meanMs": 118.763,
+          "stddevMs": 3.276,
+          "cvPct": 2.8,
           "warmupPasses": 1,
           "throughput": "n/a"
         },
@@ -1181,17 +1182,17 @@
           "files": 1246,
           "status": "unranked",
           "runs": [
-            82.544,
-            87.183,
-            91.128,
-            85.676,
-            87.973
+            85.109,
+            90.95,
+            90.185,
+            83.947,
+            90.035
           ],
-          "medianMs": 87.183,
-          "minMs": 82.544,
-          "maxMs": 91.128,
-          "meanMs": 86.901,
-          "stddevMs": 3.146,
+          "medianMs": 90.035,
+          "minMs": 83.947,
+          "maxMs": 90.95,
+          "meanMs": 88.045,
+          "stddevMs": 3.255,
           "cvPct": 3.6,
           "warmupPasses": 1,
           "throughput": "n/a"
@@ -1206,18 +1207,18 @@
           "files": 1246,
           "status": "ok",
           "runs": [
-            709.114,
-            719.918,
-            701.942,
-            691.547,
-            697.144
+            691.765,
+            699.079,
+            692.088,
+            690.203,
+            688.792
           ],
-          "medianMs": 701.942,
-          "minMs": 691.547,
-          "maxMs": 719.918,
-          "meanMs": 703.933,
-          "stddevMs": 11.021,
-          "cvPct": 1.6,
+          "medianMs": 691.765,
+          "minMs": 688.792,
+          "maxMs": 699.079,
+          "meanMs": 692.385,
+          "stddevMs": 3.967,
+          "cvPct": 0.6,
           "warmupPasses": 1,
           "throughput": "1.8k files/s"
         }
@@ -1247,15 +1248,15 @@
               "files": 1246,
               "status": "ok",
               "runs": [
-                2063.974,
-                1752.57
+                1787.576,
+                1727.651
               ],
-              "medianMs": 1908.272,
-              "minMs": 1752.57,
-              "maxMs": 2063.974,
-              "meanMs": 1908.272,
-              "stddevMs": 220.196,
-              "cvPct": 11.5,
+              "medianMs": 1757.613,
+              "minMs": 1727.651,
+              "maxMs": 1787.576,
+              "meanMs": 1757.613,
+              "stddevMs": 42.373,
+              "cvPct": 2.4,
               "metaSamples": [
                 {
                   "artifact": 3319011,
@@ -1272,7 +1273,7 @@
               ],
               "artifactMedian": 3319011,
               "warmupPasses": 0,
-              "throughput": "653 files/s"
+              "throughput": "709 files/s"
             },
             {
               "id": "vite8__unplugin-vue",
@@ -1287,15 +1288,15 @@
               "files": 1246,
               "status": "ok",
               "runs": [
-                1805.522,
-                1819.162
+                1715.751,
+                1747.252
               ],
-              "medianMs": 1812.342,
-              "minMs": 1805.522,
-              "maxMs": 1819.162,
-              "meanMs": 1812.342,
-              "stddevMs": 9.645,
-              "cvPct": 0.5,
+              "medianMs": 1731.501,
+              "minMs": 1715.751,
+              "maxMs": 1747.252,
+              "meanMs": 1731.501,
+              "stddevMs": 22.275,
+              "cvPct": 1.3,
               "metaSamples": [
                 {
                   "artifact": 3313636,
@@ -1312,7 +1313,7 @@
               ],
               "artifactMedian": 3313636,
               "warmupPasses": 0,
-              "throughput": "688 files/s"
+              "throughput": "720 files/s"
             },
             {
               "id": "vite8__vize",
@@ -1327,15 +1328,15 @@
               "files": 1246,
               "status": "ok",
               "runs": [
-                2585.597,
-                2391.652
+                2258.835,
+                2301.073
               ],
-              "medianMs": 2488.624,
-              "minMs": 2391.652,
-              "maxMs": 2585.597,
-              "meanMs": 2488.624,
-              "stddevMs": 137.14,
-              "cvPct": 5.5,
+              "medianMs": 2279.954,
+              "minMs": 2258.835,
+              "maxMs": 2301.073,
+              "meanMs": 2279.954,
+              "stddevMs": 29.867,
+              "cvPct": 1.3,
               "metaSamples": [
                 {
                   "artifact": 3174196,
@@ -1352,7 +1353,7 @@
               ],
               "artifactMedian": 3174196,
               "warmupPasses": 0,
-              "throughput": "501 files/s"
+              "throughput": "547 files/s"
             },
             {
               "id": "vite8__verter",
@@ -1416,15 +1417,15 @@
               "files": 1246,
               "status": "ok",
               "runs": [
-                4357.828,
-                3867.791
+                3797.627,
+                3866.308
               ],
-              "medianMs": 4112.81,
-              "minMs": 3867.791,
-              "maxMs": 4357.828,
-              "meanMs": 4112.81,
-              "stddevMs": 346.508,
-              "cvPct": 8.4,
+              "medianMs": 3831.967,
+              "minMs": 3797.627,
+              "maxMs": 3866.308,
+              "meanMs": 3831.967,
+              "stddevMs": 48.565,
+              "cvPct": 1.3,
               "metaSamples": [
                 {
                   "artifact": 12130642,
@@ -1441,7 +1442,7 @@
               ],
               "artifactMedian": 12130642,
               "warmupPasses": 0,
-              "throughput": "303 files/s"
+              "throughput": "325 files/s"
             },
             {
               "id": "rspack__unplugin-vue",
@@ -1456,15 +1457,15 @@
               "files": 1246,
               "status": "ok",
               "runs": [
-                3244.619,
-                3176.496
+                3275.06,
+                3111.928
               ],
-              "medianMs": 3210.557,
-              "minMs": 3176.496,
-              "maxMs": 3244.619,
-              "meanMs": 3210.557,
-              "stddevMs": 48.17,
-              "cvPct": 1.5,
+              "medianMs": 3193.494,
+              "minMs": 3111.928,
+              "maxMs": 3275.06,
+              "meanMs": 3193.494,
+              "stddevMs": 115.352,
+              "cvPct": 3.6,
               "metaSamples": [
                 {
                   "artifact": 8532156,
@@ -1481,7 +1482,7 @@
               ],
               "artifactMedian": 8532156,
               "warmupPasses": 0,
-              "throughput": "388 files/s"
+              "throughput": "390 files/s"
             },
             {
               "id": "rspack__vize",
@@ -1492,10 +1493,10 @@
               "invocation": "in-process API",
               "engine": "rspack",
               "artifactLabel": "output bytes",
-              "notes": "❌ BUILD FAILED on this corpus after the Vue transform ran — the Vue transform compiled 1246/1246 corpus SFCs before the failure (1455 transforms total) —   × Module Error (from /home/runner/work/vue-benchmarks/vue-benchmarks/node_modules/.pnpm/@vizejs+rspack-plugin@0.347.7_@rspack+core@2.1.10/node_modules/@vizejs/rspack-plugin/dist/loader/scope-loader.mjs):   │ [vize] CSS parse error: Unexpected end of input at /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/vuetify/bundle/vuetify-docs/packages/docs/src/App.vue:7:1 ",
+              "notes": "❌ BUILD FAILED on this corpus after the Vue transform ran — the Vue transform compiled 1246/1246 corpus SFCs before the failure (1455 transforms total) —   × Module Error (from /home/runner/work/vue-benchmarks/vue-benchmarks/node_modules/.pnpm/@vizejs+rspack-plugin@0.350.2_@rspack+core@2.1.10/node_modules/@vizejs/rspack-plugin/dist/loader/scope-loader.mjs):   │ [vize] CSS parse error: Unexpected end of input at /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/vuetify/bundle/vuetify-docs/packages/docs/src/App.vue:7:1 ",
               "files": 1246,
               "status": "error",
-              "error": "  × Module Error (from /home/runner/work/vue-benchmarks/vue-benchmarks/node_modules/.pnpm/@vizejs+rspack-plugin@0.347.7_@rspack+core@2.1.10/node_modules/@vizejs/rspack-plugin/dist/loader/scope-loader.mjs):   │ [vize] CSS parse error: Unexpected end of input at /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/vuetify/bundle/vuetify-docs/packages/docs/src/App.vue:7:1 ",
+              "error": "  × Module Error (from /home/runner/work/vue-benchmarks/vue-benchmarks/node_modules/.pnpm/@vizejs+rspack-plugin@0.350.2_@rspack+core@2.1.10/node_modules/@vizejs/rspack-plugin/dist/loader/scope-loader.mjs):   │ [vize] CSS parse error: Unexpected end of input at /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/vuetify/bundle/vuetify-docs/packages/docs/src/App.vue:7:1 ",
               "throughput": "n/a"
             },
             {
@@ -1532,15 +1533,15 @@
               "files": 1246,
               "status": "ok",
               "runs": [
-                6005.864,
-                5193.944
+                4791.155,
+                5735.569
               ],
-              "medianMs": 5599.904,
-              "minMs": 5193.944,
-              "maxMs": 6005.864,
-              "meanMs": 5599.904,
-              "stddevMs": 574.114,
-              "cvPct": 10.3,
+              "medianMs": 5263.362,
+              "minMs": 4791.155,
+              "maxMs": 5735.569,
+              "meanMs": 5263.362,
+              "stddevMs": 667.802,
+              "cvPct": 12.7,
               "metaSamples": [
                 {
                   "artifact": 17765615,
@@ -1557,7 +1558,7 @@
               ],
               "artifactMedian": 17765615,
               "warmupPasses": 0,
-              "throughput": "223 files/s"
+              "throughput": "237 files/s"
             },
             {
               "id": "webpack__unplugin-vue",
@@ -1572,15 +1573,15 @@
               "files": 1246,
               "status": "ok",
               "runs": [
-                3997.126,
-                4321.328
+                4693.293,
+                4177.226
               ],
-              "medianMs": 4159.227,
-              "minMs": 3997.126,
-              "maxMs": 4321.328,
-              "meanMs": 4159.227,
-              "stddevMs": 229.245,
-              "cvPct": 5.5,
+              "medianMs": 4435.26,
+              "minMs": 4177.226,
+              "maxMs": 4693.293,
+              "meanMs": 4435.26,
+              "stddevMs": 364.914,
+              "cvPct": 8.2,
               "metaSamples": [
                 {
                   "artifact": 9858560,
@@ -1597,7 +1598,7 @@
               ],
               "artifactMedian": 9858560,
               "warmupPasses": 0,
-              "throughput": "300 files/s"
+              "throughput": "281 files/s"
             },
             {
               "id": "webpack__verter",
@@ -1608,10 +1609,10 @@
               "invocation": "in-process API",
               "engine": "webpack",
               "artifactLabel": "output bytes",
-              "notes": "❌ BUILD FAILED on this corpus after the Vue transform ran — the Vue transform compiled 1246/1246 corpus SFCs before the failure (1492 transforms total) — Module build failed (from ../../../../node_modules/.pnpm/swc-loader@0.2.7_@swc+core@1.16.0_webpack@5.109.2_@swc+core@1.16.0_esbuild@0.28.1_lightningcss@1.33.0_/node_modules/swc-loader/src/index.js): Error:   x Expected ',', got 'ident'      ,-[/home/runner/work/vue-benchmarks/vue-benchmarks/work-real/vuetify/bundle/vuetify-docs/packages/docs/src/components/doc/Releases.vue:185:1]",
+              "notes": "❌ BUILD FAILED on this corpus after the Vue transform ran — the Vue transform compiled 1246/1246 corpus SFCs before the failure (1492 transforms total) — Module build failed (from ../../../../node_modules/.pnpm/swc-loader@0.2.7_@swc+core@1.16.1_webpack@5.109.2_@swc+core@1.16.1_esbuild@0.28.1_lightningcss@1.33.0_/node_modules/swc-loader/src/index.js): Error:   x Expected ',', got 'ident'      ,-[/home/runner/work/vue-benchmarks/vue-benchmarks/work-real/vuetify/bundle/vuetify-docs/packages/docs/src/components/doc/Releases.vue:185:1]",
               "files": 1246,
               "status": "error",
-              "error": "Module build failed (from ../../../../node_modules/.pnpm/swc-loader@0.2.7_@swc+core@1.16.0_webpack@5.109.2_@swc+core@1.16.0_esbuild@0.28.1_lightningcss@1.33.0_/node_modules/swc-loader/src/index.js): Error:   x Expected ',', got 'ident'      ,-[/home/runner/work/vue-benchmarks/vue-benchmarks/work-real/vuetify/bundle/vuetify-docs/packages/docs/src/components/doc/Releases.vue:185:1]",
+              "error": "Module build failed (from ../../../../node_modules/.pnpm/swc-loader@0.2.7_@swc+core@1.16.1_webpack@5.109.2_@swc+core@1.16.1_esbuild@0.28.1_lightningcss@1.33.0_/node_modules/swc-loader/src/index.js): Error:   x Expected ',', got 'ident'      ,-[/home/runner/work/vue-benchmarks/vue-benchmarks/work-real/vuetify/bundle/vuetify-docs/packages/docs/src/components/doc/Releases.vue:185:1]",
               "throughput": "n/a"
             },
             {
@@ -1643,15 +1644,15 @@
           "files": 1246,
           "status": "ok",
           "runs": [
-            2063.974,
-            1752.57
+            1787.576,
+            1727.651
           ],
-          "medianMs": 1908.272,
-          "minMs": 1752.57,
-          "maxMs": 2063.974,
-          "meanMs": 1908.272,
-          "stddevMs": 220.196,
-          "cvPct": 11.5,
+          "medianMs": 1757.613,
+          "minMs": 1727.651,
+          "maxMs": 1787.576,
+          "meanMs": 1757.613,
+          "stddevMs": 42.373,
+          "cvPct": 2.4,
           "metaSamples": [
             {
               "artifact": 3319011,
@@ -1668,7 +1669,7 @@
           ],
           "artifactMedian": 3319011,
           "warmupPasses": 0,
-          "throughput": "653 files/s"
+          "throughput": "709 files/s"
         },
         {
           "id": "vite8__unplugin-vue",
@@ -1683,15 +1684,15 @@
           "files": 1246,
           "status": "ok",
           "runs": [
-            1805.522,
-            1819.162
+            1715.751,
+            1747.252
           ],
-          "medianMs": 1812.342,
-          "minMs": 1805.522,
-          "maxMs": 1819.162,
-          "meanMs": 1812.342,
-          "stddevMs": 9.645,
-          "cvPct": 0.5,
+          "medianMs": 1731.501,
+          "minMs": 1715.751,
+          "maxMs": 1747.252,
+          "meanMs": 1731.501,
+          "stddevMs": 22.275,
+          "cvPct": 1.3,
           "metaSamples": [
             {
               "artifact": 3313636,
@@ -1708,7 +1709,7 @@
           ],
           "artifactMedian": 3313636,
           "warmupPasses": 0,
-          "throughput": "688 files/s"
+          "throughput": "720 files/s"
         },
         {
           "id": "vite8__vize",
@@ -1723,15 +1724,15 @@
           "files": 1246,
           "status": "ok",
           "runs": [
-            2585.597,
-            2391.652
+            2258.835,
+            2301.073
           ],
-          "medianMs": 2488.624,
-          "minMs": 2391.652,
-          "maxMs": 2585.597,
-          "meanMs": 2488.624,
-          "stddevMs": 137.14,
-          "cvPct": 5.5,
+          "medianMs": 2279.954,
+          "minMs": 2258.835,
+          "maxMs": 2301.073,
+          "meanMs": 2279.954,
+          "stddevMs": 29.867,
+          "cvPct": 1.3,
           "metaSamples": [
             {
               "artifact": 3174196,
@@ -1748,7 +1749,7 @@
           ],
           "artifactMedian": 3174196,
           "warmupPasses": 0,
-          "throughput": "501 files/s"
+          "throughput": "547 files/s"
         },
         {
           "id": "vite8__verter",
@@ -1778,15 +1779,15 @@
           "files": 1246,
           "status": "ok",
           "runs": [
-            4357.828,
-            3867.791
+            3797.627,
+            3866.308
           ],
-          "medianMs": 4112.81,
-          "minMs": 3867.791,
-          "maxMs": 4357.828,
-          "meanMs": 4112.81,
-          "stddevMs": 346.508,
-          "cvPct": 8.4,
+          "medianMs": 3831.967,
+          "minMs": 3797.627,
+          "maxMs": 3866.308,
+          "meanMs": 3831.967,
+          "stddevMs": 48.565,
+          "cvPct": 1.3,
           "metaSamples": [
             {
               "artifact": 12130642,
@@ -1803,7 +1804,7 @@
           ],
           "artifactMedian": 12130642,
           "warmupPasses": 0,
-          "throughput": "303 files/s"
+          "throughput": "325 files/s"
         },
         {
           "id": "rspack__unplugin-vue",
@@ -1818,15 +1819,15 @@
           "files": 1246,
           "status": "ok",
           "runs": [
-            3244.619,
-            3176.496
+            3275.06,
+            3111.928
           ],
-          "medianMs": 3210.557,
-          "minMs": 3176.496,
-          "maxMs": 3244.619,
-          "meanMs": 3210.557,
-          "stddevMs": 48.17,
-          "cvPct": 1.5,
+          "medianMs": 3193.494,
+          "minMs": 3111.928,
+          "maxMs": 3275.06,
+          "meanMs": 3193.494,
+          "stddevMs": 115.352,
+          "cvPct": 3.6,
           "metaSamples": [
             {
               "artifact": 8532156,
@@ -1843,7 +1844,7 @@
           ],
           "artifactMedian": 8532156,
           "warmupPasses": 0,
-          "throughput": "388 files/s"
+          "throughput": "390 files/s"
         },
         {
           "id": "rspack__vize",
@@ -1854,10 +1855,10 @@
           "invocation": "in-process API",
           "engine": "rspack",
           "artifactLabel": "output bytes",
-          "notes": "❌ BUILD FAILED on this corpus after the Vue transform ran — the Vue transform compiled 1246/1246 corpus SFCs before the failure (1455 transforms total) —   × Module Error (from /home/runner/work/vue-benchmarks/vue-benchmarks/node_modules/.pnpm/@vizejs+rspack-plugin@0.347.7_@rspack+core@2.1.10/node_modules/@vizejs/rspack-plugin/dist/loader/scope-loader.mjs):   │ [vize] CSS parse error: Unexpected end of input at /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/vuetify/bundle/vuetify-docs/packages/docs/src/App.vue:7:1 ",
+          "notes": "❌ BUILD FAILED on this corpus after the Vue transform ran — the Vue transform compiled 1246/1246 corpus SFCs before the failure (1455 transforms total) —   × Module Error (from /home/runner/work/vue-benchmarks/vue-benchmarks/node_modules/.pnpm/@vizejs+rspack-plugin@0.350.2_@rspack+core@2.1.10/node_modules/@vizejs/rspack-plugin/dist/loader/scope-loader.mjs):   │ [vize] CSS parse error: Unexpected end of input at /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/vuetify/bundle/vuetify-docs/packages/docs/src/App.vue:7:1 ",
           "files": 1246,
           "status": "error",
-          "error": "  × Module Error (from /home/runner/work/vue-benchmarks/vue-benchmarks/node_modules/.pnpm/@vizejs+rspack-plugin@0.347.7_@rspack+core@2.1.10/node_modules/@vizejs/rspack-plugin/dist/loader/scope-loader.mjs):   │ [vize] CSS parse error: Unexpected end of input at /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/vuetify/bundle/vuetify-docs/packages/docs/src/App.vue:7:1 ",
+          "error": "  × Module Error (from /home/runner/work/vue-benchmarks/vue-benchmarks/node_modules/.pnpm/@vizejs+rspack-plugin@0.350.2_@rspack+core@2.1.10/node_modules/@vizejs/rspack-plugin/dist/loader/scope-loader.mjs):   │ [vize] CSS parse error: Unexpected end of input at /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/vuetify/bundle/vuetify-docs/packages/docs/src/App.vue:7:1 ",
           "throughput": "n/a"
         },
         {
@@ -1888,15 +1889,15 @@
           "files": 1246,
           "status": "ok",
           "runs": [
-            6005.864,
-            5193.944
+            4791.155,
+            5735.569
           ],
-          "medianMs": 5599.904,
-          "minMs": 5193.944,
-          "maxMs": 6005.864,
-          "meanMs": 5599.904,
-          "stddevMs": 574.114,
-          "cvPct": 10.3,
+          "medianMs": 5263.362,
+          "minMs": 4791.155,
+          "maxMs": 5735.569,
+          "meanMs": 5263.362,
+          "stddevMs": 667.802,
+          "cvPct": 12.7,
           "metaSamples": [
             {
               "artifact": 17765615,
@@ -1913,7 +1914,7 @@
           ],
           "artifactMedian": 17765615,
           "warmupPasses": 0,
-          "throughput": "223 files/s"
+          "throughput": "237 files/s"
         },
         {
           "id": "webpack__unplugin-vue",
@@ -1928,15 +1929,15 @@
           "files": 1246,
           "status": "ok",
           "runs": [
-            3997.126,
-            4321.328
+            4693.293,
+            4177.226
           ],
-          "medianMs": 4159.227,
-          "minMs": 3997.126,
-          "maxMs": 4321.328,
-          "meanMs": 4159.227,
-          "stddevMs": 229.245,
-          "cvPct": 5.5,
+          "medianMs": 4435.26,
+          "minMs": 4177.226,
+          "maxMs": 4693.293,
+          "meanMs": 4435.26,
+          "stddevMs": 364.914,
+          "cvPct": 8.2,
           "metaSamples": [
             {
               "artifact": 9858560,
@@ -1953,7 +1954,7 @@
           ],
           "artifactMedian": 9858560,
           "warmupPasses": 0,
-          "throughput": "300 files/s"
+          "throughput": "281 files/s"
         },
         {
           "id": "webpack__verter",
@@ -1964,10 +1965,10 @@
           "invocation": "in-process API",
           "engine": "webpack",
           "artifactLabel": "output bytes",
-          "notes": "❌ BUILD FAILED on this corpus after the Vue transform ran — the Vue transform compiled 1246/1246 corpus SFCs before the failure (1492 transforms total) — Module build failed (from ../../../../node_modules/.pnpm/swc-loader@0.2.7_@swc+core@1.16.0_webpack@5.109.2_@swc+core@1.16.0_esbuild@0.28.1_lightningcss@1.33.0_/node_modules/swc-loader/src/index.js): Error:   x Expected ',', got 'ident'      ,-[/home/runner/work/vue-benchmarks/vue-benchmarks/work-real/vuetify/bundle/vuetify-docs/packages/docs/src/components/doc/Releases.vue:185:1]",
+          "notes": "❌ BUILD FAILED on this corpus after the Vue transform ran — the Vue transform compiled 1246/1246 corpus SFCs before the failure (1492 transforms total) — Module build failed (from ../../../../node_modules/.pnpm/swc-loader@0.2.7_@swc+core@1.16.1_webpack@5.109.2_@swc+core@1.16.1_esbuild@0.28.1_lightningcss@1.33.0_/node_modules/swc-loader/src/index.js): Error:   x Expected ',', got 'ident'      ,-[/home/runner/work/vue-benchmarks/vue-benchmarks/work-real/vuetify/bundle/vuetify-docs/packages/docs/src/components/doc/Releases.vue:185:1]",
           "files": 1246,
           "status": "error",
-          "error": "Module build failed (from ../../../../node_modules/.pnpm/swc-loader@0.2.7_@swc+core@1.16.0_webpack@5.109.2_@swc+core@1.16.0_esbuild@0.28.1_lightningcss@1.33.0_/node_modules/swc-loader/src/index.js): Error:   x Expected ',', got 'ident'      ,-[/home/runner/work/vue-benchmarks/vue-benchmarks/work-real/vuetify/bundle/vuetify-docs/packages/docs/src/components/doc/Releases.vue:185:1]",
+          "error": "Module build failed (from ../../../../node_modules/.pnpm/swc-loader@0.2.7_@swc+core@1.16.1_webpack@5.109.2_@swc+core@1.16.1_esbuild@0.28.1_lightningcss@1.33.0_/node_modules/swc-loader/src/index.js): Error:   x Expected ',', got 'ident'      ,-[/home/runner/work/vue-benchmarks/vue-benchmarks/work-real/vuetify/bundle/vuetify-docs/packages/docs/src/components/doc/Releases.vue:185:1]",
           "throughput": "n/a"
         },
         {
@@ -2052,17 +2053,17 @@
               "files": 1246,
               "status": "ok",
               "runs": [
-                180.007,
-                115.445
+                163.574,
+                157.43
               ],
-              "medianMs": 147.726,
-              "minMs": 115.445,
-              "maxMs": 180.007,
-              "meanMs": 147.726,
-              "stddevMs": 45.652,
-              "cvPct": 30.9,
+              "medianMs": 160.502,
+              "minMs": 157.43,
+              "maxMs": 163.574,
+              "meanMs": 160.502,
+              "stddevMs": 4.344,
+              "cvPct": 2.7,
               "warmupPasses": 0,
-              "throughput": "8.4k files/s"
+              "throughput": "7.8k files/s"
             },
             {
               "id": "start__vite8__unplugin-vue",
@@ -2076,17 +2077,17 @@
               "files": 1246,
               "status": "ok",
               "runs": [
-                171.966,
-                147.196
+                131.55,
+                139.682
               ],
-              "medianMs": 159.581,
-              "minMs": 147.196,
-              "maxMs": 171.966,
-              "meanMs": 159.581,
-              "stddevMs": 17.515,
-              "cvPct": 11,
+              "medianMs": 135.616,
+              "minMs": 131.55,
+              "maxMs": 139.682,
+              "meanMs": 135.616,
+              "stddevMs": 5.75,
+              "cvPct": 4.2,
               "warmupPasses": 0,
-              "throughput": "7.8k files/s"
+              "throughput": "9.2k files/s"
             },
             {
               "id": "start__vite8__vize",
@@ -2100,17 +2101,17 @@
               "files": 1246,
               "status": "ok",
               "runs": [
-                272.987,
-                254.335
+                254.76,
+                255.919
               ],
-              "medianMs": 263.661,
-              "minMs": 254.335,
-              "maxMs": 272.987,
-              "meanMs": 263.661,
-              "stddevMs": 13.189,
-              "cvPct": 5,
+              "medianMs": 255.339,
+              "minMs": 254.76,
+              "maxMs": 255.919,
+              "meanMs": 255.339,
+              "stddevMs": 0.82,
+              "cvPct": 0.3,
               "warmupPasses": 0,
-              "throughput": "4.7k files/s"
+              "throughput": "4.9k files/s"
             },
             {
               "id": "start__vite8__verter",
@@ -2124,17 +2125,17 @@
               "files": 1246,
               "status": "ok",
               "runs": [
-                151.191,
-                182.854
+                126.001,
+                213.874
               ],
-              "medianMs": 167.023,
-              "minMs": 151.191,
-              "maxMs": 182.854,
-              "meanMs": 167.023,
-              "stddevMs": 22.389,
-              "cvPct": 13.4,
+              "medianMs": 169.938,
+              "minMs": 126.001,
+              "maxMs": 213.874,
+              "meanMs": 169.938,
+              "stddevMs": 62.136,
+              "cvPct": 36.6,
               "warmupPasses": 0,
-              "throughput": "7.5k files/s"
+              "throughput": "7.3k files/s"
             },
             {
               "id": "start__rolldown__plugin-vue",
@@ -2311,53 +2312,53 @@
               "files": 1246,
               "status": "ok",
               "runs": [
-                85.207,
-                9.542,
-                8.518,
-                9.601,
-                7.235
+                87.734,
+                8.051,
+                11.013,
+                8.032,
+                8.181
               ],
-              "medianMs": 9.542,
-              "minMs": 7.235,
-              "maxMs": 85.207,
-              "meanMs": 24.021,
-              "stddevMs": 34.218,
-              "cvPct": 358.6,
+              "medianMs": 8.181,
+              "minMs": 8.032,
+              "maxMs": 87.734,
+              "meanMs": 24.602,
+              "stddevMs": 35.315,
+              "cvPct": 431.7,
               "metaSamples": [
                 {
                   "artifact": 19855,
-                  "notifyMs": 63.552,
+                  "notifyMs": 66.806,
                   "kind": "update",
                   "probeFiles": 2
                 },
                 {
                   "artifact": 19855,
-                  "notifyMs": 3.536,
+                  "notifyMs": 3.676,
                   "kind": "update",
                   "probeFiles": 2
                 },
                 {
                   "artifact": 19855,
-                  "notifyMs": 4.482,
+                  "notifyMs": 4.736,
                   "kind": "update",
                   "probeFiles": 2
                 },
                 {
                   "artifact": 19855,
-                  "notifyMs": 4.1,
+                  "notifyMs": 4.219,
                   "kind": "update",
                   "probeFiles": 2
                 },
                 {
                   "artifact": 19855,
-                  "notifyMs": 3.053,
+                  "notifyMs": 3.455,
                   "kind": "update",
                   "probeFiles": 2
                 }
               ],
               "artifactMedian": 19855,
               "warmupPasses": 1,
-              "throughput": "130.6k files/s"
+              "throughput": "152.3k files/s"
             },
             {
               "id": "hmr__vite8__unplugin-vue",
@@ -2372,53 +2373,53 @@
               "files": 1246,
               "status": "ok",
               "runs": [
-                8.708,
-                7.867,
-                7.984,
-                8.047,
-                8.352
+                12.544,
+                8.434,
+                8.256,
+                11.633,
+                8.727
               ],
-              "medianMs": 8.047,
-              "minMs": 7.867,
-              "maxMs": 8.708,
-              "meanMs": 8.192,
-              "stddevMs": 0.34,
-              "cvPct": 4.2,
+              "medianMs": 8.727,
+              "minMs": 8.256,
+              "maxMs": 12.544,
+              "meanMs": 9.919,
+              "stddevMs": 2.014,
+              "cvPct": 23.1,
               "metaSamples": [
                 {
                   "artifact": 19857,
-                  "notifyMs": 4.623,
+                  "notifyMs": 5.482,
                   "kind": "update",
                   "probeFiles": 2
                 },
                 {
                   "artifact": 19857,
-                  "notifyMs": 3.698,
+                  "notifyMs": 4.444,
                   "kind": "update",
                   "probeFiles": 2
                 },
                 {
                   "artifact": 19857,
-                  "notifyMs": 3.878,
+                  "notifyMs": 4.169,
                   "kind": "update",
                   "probeFiles": 2
                 },
                 {
                   "artifact": 19857,
-                  "notifyMs": 3.955,
+                  "notifyMs": 7.203,
                   "kind": "update",
                   "probeFiles": 2
                 },
                 {
                   "artifact": 19857,
-                  "notifyMs": 4.305,
+                  "notifyMs": 4.645,
                   "kind": "update",
                   "probeFiles": 2
                 }
               ],
               "artifactMedian": 19857,
               "warmupPasses": 1,
-              "throughput": "154.8k files/s"
+              "throughput": "142.8k files/s"
             },
             {
               "id": "hmr__vite8__vize",
@@ -2446,46 +2447,46 @@
               "files": 1246,
               "status": "unranked",
               "runs": [
-                1.196,
-                1.48,
-                1.211,
-                1.261,
-                1.217
+                1.534,
+                1.594,
+                1.274,
+                1.491,
+                1.292
               ],
-              "medianMs": 1.217,
-              "minMs": 1.196,
-              "maxMs": 1.48,
-              "meanMs": 1.273,
-              "stddevMs": 0.118,
-              "cvPct": 9.7,
+              "medianMs": 1.491,
+              "minMs": 1.274,
+              "maxMs": 1.594,
+              "meanMs": 1.437,
+              "stddevMs": 0.145,
+              "cvPct": 9.8,
               "metaSamples": [
                 {
                   "artifact": 0,
-                  "notifyMs": 1.195,
+                  "notifyMs": 1.534,
                   "kind": "full-reload",
                   "probeFiles": 2
                 },
                 {
                   "artifact": 0,
-                  "notifyMs": 1.48,
+                  "notifyMs": 1.593,
                   "kind": "full-reload",
                   "probeFiles": 2
                 },
                 {
                   "artifact": 0,
-                  "notifyMs": 1.211,
+                  "notifyMs": 1.274,
                   "kind": "full-reload",
                   "probeFiles": 2
                 },
                 {
                   "artifact": 0,
-                  "notifyMs": 1.26,
+                  "notifyMs": 1.49,
                   "kind": "full-reload",
                   "probeFiles": 2
                 },
                 {
                   "artifact": 0,
-                  "notifyMs": 1.216,
+                  "notifyMs": 1.291,
                   "kind": "full-reload",
                   "probeFiles": 2
                 }
@@ -2667,17 +2668,17 @@
           "files": 1246,
           "status": "ok",
           "runs": [
-            180.007,
-            115.445
+            163.574,
+            157.43
           ],
-          "medianMs": 147.726,
-          "minMs": 115.445,
-          "maxMs": 180.007,
-          "meanMs": 147.726,
-          "stddevMs": 45.652,
-          "cvPct": 30.9,
+          "medianMs": 160.502,
+          "minMs": 157.43,
+          "maxMs": 163.574,
+          "meanMs": 160.502,
+          "stddevMs": 4.344,
+          "cvPct": 2.7,
           "warmupPasses": 0,
-          "throughput": "8.4k files/s"
+          "throughput": "7.8k files/s"
         },
         {
           "id": "start__vite8__unplugin-vue",
@@ -2691,17 +2692,17 @@
           "files": 1246,
           "status": "ok",
           "runs": [
-            171.966,
-            147.196
+            131.55,
+            139.682
           ],
-          "medianMs": 159.581,
-          "minMs": 147.196,
-          "maxMs": 171.966,
-          "meanMs": 159.581,
-          "stddevMs": 17.515,
-          "cvPct": 11,
+          "medianMs": 135.616,
+          "minMs": 131.55,
+          "maxMs": 139.682,
+          "meanMs": 135.616,
+          "stddevMs": 5.75,
+          "cvPct": 4.2,
           "warmupPasses": 0,
-          "throughput": "7.8k files/s"
+          "throughput": "9.2k files/s"
         },
         {
           "id": "start__vite8__vize",
@@ -2715,17 +2716,17 @@
           "files": 1246,
           "status": "ok",
           "runs": [
-            272.987,
-            254.335
+            254.76,
+            255.919
           ],
-          "medianMs": 263.661,
-          "minMs": 254.335,
-          "maxMs": 272.987,
-          "meanMs": 263.661,
-          "stddevMs": 13.189,
-          "cvPct": 5,
+          "medianMs": 255.339,
+          "minMs": 254.76,
+          "maxMs": 255.919,
+          "meanMs": 255.339,
+          "stddevMs": 0.82,
+          "cvPct": 0.3,
           "warmupPasses": 0,
-          "throughput": "4.7k files/s"
+          "throughput": "4.9k files/s"
         },
         {
           "id": "start__vite8__verter",
@@ -2739,17 +2740,17 @@
           "files": 1246,
           "status": "ok",
           "runs": [
-            151.191,
-            182.854
+            126.001,
+            213.874
           ],
-          "medianMs": 167.023,
-          "minMs": 151.191,
-          "maxMs": 182.854,
-          "meanMs": 167.023,
-          "stddevMs": 22.389,
-          "cvPct": 13.4,
+          "medianMs": 169.938,
+          "minMs": 126.001,
+          "maxMs": 213.874,
+          "meanMs": 169.938,
+          "stddevMs": 62.136,
+          "cvPct": 36.6,
           "warmupPasses": 0,
-          "throughput": "7.5k files/s"
+          "throughput": "7.3k files/s"
         },
         {
           "id": "start__rolldown__plugin-vue",
@@ -2920,53 +2921,53 @@
           "files": 1246,
           "status": "ok",
           "runs": [
-            85.207,
-            9.542,
-            8.518,
-            9.601,
-            7.235
+            87.734,
+            8.051,
+            11.013,
+            8.032,
+            8.181
           ],
-          "medianMs": 9.542,
-          "minMs": 7.235,
-          "maxMs": 85.207,
-          "meanMs": 24.021,
-          "stddevMs": 34.218,
-          "cvPct": 358.6,
+          "medianMs": 8.181,
+          "minMs": 8.032,
+          "maxMs": 87.734,
+          "meanMs": 24.602,
+          "stddevMs": 35.315,
+          "cvPct": 431.7,
           "metaSamples": [
             {
               "artifact": 19855,
-              "notifyMs": 63.552,
+              "notifyMs": 66.806,
               "kind": "update",
               "probeFiles": 2
             },
             {
               "artifact": 19855,
-              "notifyMs": 3.536,
+              "notifyMs": 3.676,
               "kind": "update",
               "probeFiles": 2
             },
             {
               "artifact": 19855,
-              "notifyMs": 4.482,
+              "notifyMs": 4.736,
               "kind": "update",
               "probeFiles": 2
             },
             {
               "artifact": 19855,
-              "notifyMs": 4.1,
+              "notifyMs": 4.219,
               "kind": "update",
               "probeFiles": 2
             },
             {
               "artifact": 19855,
-              "notifyMs": 3.053,
+              "notifyMs": 3.455,
               "kind": "update",
               "probeFiles": 2
             }
           ],
           "artifactMedian": 19855,
           "warmupPasses": 1,
-          "throughput": "130.6k files/s"
+          "throughput": "152.3k files/s"
         },
         {
           "id": "hmr__vite8__unplugin-vue",
@@ -2981,53 +2982,53 @@
           "files": 1246,
           "status": "ok",
           "runs": [
-            8.708,
-            7.867,
-            7.984,
-            8.047,
-            8.352
+            12.544,
+            8.434,
+            8.256,
+            11.633,
+            8.727
           ],
-          "medianMs": 8.047,
-          "minMs": 7.867,
-          "maxMs": 8.708,
-          "meanMs": 8.192,
-          "stddevMs": 0.34,
-          "cvPct": 4.2,
+          "medianMs": 8.727,
+          "minMs": 8.256,
+          "maxMs": 12.544,
+          "meanMs": 9.919,
+          "stddevMs": 2.014,
+          "cvPct": 23.1,
           "metaSamples": [
             {
               "artifact": 19857,
-              "notifyMs": 4.623,
+              "notifyMs": 5.482,
               "kind": "update",
               "probeFiles": 2
             },
             {
               "artifact": 19857,
-              "notifyMs": 3.698,
+              "notifyMs": 4.444,
               "kind": "update",
               "probeFiles": 2
             },
             {
               "artifact": 19857,
-              "notifyMs": 3.878,
+              "notifyMs": 4.169,
               "kind": "update",
               "probeFiles": 2
             },
             {
               "artifact": 19857,
-              "notifyMs": 3.955,
+              "notifyMs": 7.203,
               "kind": "update",
               "probeFiles": 2
             },
             {
               "artifact": 19857,
-              "notifyMs": 4.305,
+              "notifyMs": 4.645,
               "kind": "update",
               "probeFiles": 2
             }
           ],
           "artifactMedian": 19857,
           "warmupPasses": 1,
-          "throughput": "154.8k files/s"
+          "throughput": "142.8k files/s"
         },
         {
           "id": "hmr__vite8__vize",
@@ -3055,46 +3056,46 @@
           "files": 1246,
           "status": "unranked",
           "runs": [
-            1.196,
-            1.48,
-            1.211,
-            1.261,
-            1.217
+            1.534,
+            1.594,
+            1.274,
+            1.491,
+            1.292
           ],
-          "medianMs": 1.217,
-          "minMs": 1.196,
-          "maxMs": 1.48,
-          "meanMs": 1.273,
-          "stddevMs": 0.118,
-          "cvPct": 9.7,
+          "medianMs": 1.491,
+          "minMs": 1.274,
+          "maxMs": 1.594,
+          "meanMs": 1.437,
+          "stddevMs": 0.145,
+          "cvPct": 9.8,
           "metaSamples": [
             {
               "artifact": 0,
-              "notifyMs": 1.195,
+              "notifyMs": 1.534,
               "kind": "full-reload",
               "probeFiles": 2
             },
             {
               "artifact": 0,
-              "notifyMs": 1.48,
+              "notifyMs": 1.593,
               "kind": "full-reload",
               "probeFiles": 2
             },
             {
               "artifact": 0,
-              "notifyMs": 1.211,
+              "notifyMs": 1.274,
               "kind": "full-reload",
               "probeFiles": 2
             },
             {
               "artifact": 0,
-              "notifyMs": 1.26,
+              "notifyMs": 1.49,
               "kind": "full-reload",
               "probeFiles": 2
             },
             {
               "artifact": 0,
-              "notifyMs": 1.216,
+              "notifyMs": 1.291,
               "kind": "full-reload",
               "probeFiles": 2
             }
@@ -3300,12 +3301,12 @@
           "files": 1246,
           "status": "ok",
           "runs": [
-            41813.637
+            45267.425
           ],
-          "medianMs": 41813.637,
-          "minMs": 41813.637,
-          "maxMs": 41813.637,
-          "meanMs": 41813.637,
+          "medianMs": 45267.425,
+          "minMs": 45267.425,
+          "maxMs": 45267.425,
+          "meanMs": 45267.425,
           "stddevMs": null,
           "cvPct": null,
           "metaSamples": [
@@ -3319,12 +3320,17 @@
               "filesFailed": 0,
               "summaryBlocks": 1,
               "parsed": true,
-              "exit": 1
+              "exit": 1,
+              "rssBytes": 1044152320
             }
           ],
           "artifactMedian": 807,
+          "rssMaxMb": 995.8,
+          "rssRunsMb": [
+            995.78125
+          ],
           "warmupPasses": 1,
-          "throughput": "30 files/s"
+          "throughput": "28 files/s"
         },
         {
           "id": "swap-unplugin-vue",
@@ -3337,12 +3343,12 @@
           "files": 1246,
           "status": "ok",
           "runs": [
-            42380.713
+            45054.084
           ],
-          "medianMs": 42380.713,
-          "minMs": 42380.713,
-          "maxMs": 42380.713,
-          "meanMs": 42380.713,
+          "medianMs": 45054.084,
+          "minMs": 45054.084,
+          "maxMs": 45054.084,
+          "meanMs": 45054.084,
           "stddevMs": null,
           "cvPct": null,
           "metaSamples": [
@@ -3356,12 +3362,17 @@
               "filesFailed": 0,
               "summaryBlocks": 1,
               "parsed": true,
-              "exit": 1
+              "exit": 1,
+              "rssBytes": 1086189568
             }
           ],
           "artifactMedian": 807,
+          "rssMaxMb": 1035.9,
+          "rssRunsMb": [
+            1035.87109375
+          ],
           "warmupPasses": 1,
-          "throughput": "29 files/s"
+          "throughput": "28 files/s"
         },
         {
           "id": "swap-vize",
@@ -3374,12 +3385,12 @@
           "files": 1246,
           "status": "ok",
           "runs": [
-            42477.896
+            46057.624
           ],
-          "medianMs": 42477.896,
-          "minMs": 42477.896,
-          "maxMs": 42477.896,
-          "meanMs": 42477.896,
+          "medianMs": 46057.624,
+          "minMs": 46057.624,
+          "maxMs": 46057.624,
+          "meanMs": 46057.624,
           "stddevMs": null,
           "cvPct": null,
           "metaSamples": [
@@ -3393,12 +3404,17 @@
               "filesFailed": 0,
               "summaryBlocks": 1,
               "parsed": true,
-              "exit": 1
+              "exit": 1,
+              "rssBytes": 1132339200
             }
           ],
           "artifactMedian": 807,
+          "rssMaxMb": 1079.9,
+          "rssRunsMb": [
+            1079.8828125
+          ],
           "warmupPasses": 1,
-          "throughput": "29 files/s"
+          "throughput": "27 files/s"
         },
         {
           "id": "swap-verter",
@@ -3411,12 +3427,12 @@
           "files": 1246,
           "status": "ok",
           "runs": [
-            42244.633
+            45196.294
           ],
-          "medianMs": 42244.633,
-          "minMs": 42244.633,
-          "maxMs": 42244.633,
-          "meanMs": 42244.633,
+          "medianMs": 45196.294,
+          "minMs": 45196.294,
+          "maxMs": 45196.294,
+          "meanMs": 45196.294,
           "stddevMs": null,
           "cvPct": null,
           "metaSamples": [
@@ -3430,12 +3446,17 @@
               "filesFailed": 0,
               "summaryBlocks": 1,
               "parsed": true,
-              "exit": 1
+              "exit": 1,
+              "rssBytes": 1027174400
             }
           ],
           "artifactMedian": 807,
+          "rssMaxMb": 979.6,
+          "rssRunsMb": [
+            979.58984375
+          ],
           "warmupPasses": 1,
-          "throughput": "29 files/s"
+          "throughput": "28 files/s"
         }
       ],
       "methodology": [
@@ -3495,32 +3516,39 @@
               "files": 1246,
               "status": "ok",
               "runs": [
-                31135.24,
-                30875.824
+                30626.674,
+                31618.317
               ],
-              "medianMs": 31005.532,
-              "minMs": 30875.824,
-              "maxMs": 31135.24,
-              "meanMs": 31005.532,
-              "stddevMs": 183.435,
-              "cvPct": 0.6,
+              "medianMs": 31122.495,
+              "minMs": 30626.674,
+              "maxMs": 31618.317,
+              "meanMs": 31122.495,
+              "stddevMs": 701.197,
+              "cvPct": 2.3,
               "metaSamples": [
                 {
                   "artifact": 21,
                   "diagnostics": 21,
                   "diagnosticFiles": 10,
                   "exit": 2,
-                  "checked": true
+                  "checked": true,
+                  "rssBytes": 2275270656
                 },
                 {
                   "artifact": 21,
                   "diagnostics": 21,
                   "diagnosticFiles": 10,
                   "exit": 2,
-                  "checked": true
+                  "checked": true,
+                  "rssBytes": 2087321600
                 }
               ],
               "artifactMedian": 21,
+              "rssMaxMb": 2080.2,
+              "rssRunsMb": [
+                2169.8671875,
+                1990.625
+              ],
               "warmupPasses": 1,
               "throughput": "40 files/s"
             }
@@ -3543,15 +3571,15 @@
               "files": 1246,
               "status": "ok",
               "runs": [
-                12595.476,
-                12532.124
+                12714.15,
+                12569.969
               ],
-              "medianMs": 12563.8,
-              "minMs": 12532.124,
-              "maxMs": 12595.476,
-              "meanMs": 12563.8,
-              "stddevMs": 44.797,
-              "cvPct": 0.4,
+              "medianMs": 12642.059,
+              "minMs": 12569.969,
+              "maxMs": 12714.15,
+              "meanMs": 12642.059,
+              "stddevMs": 101.951,
+              "cvPct": 0.8,
               "metaSamples": [
                 {
                   "artifact": 21,
@@ -3559,6 +3587,7 @@
                   "diagnosticFiles": 10,
                   "exit": 2,
                   "checked": true,
+                  "rssBytes": 2728022016,
                   "tnbActive": true
                 },
                 {
@@ -3567,10 +3596,16 @@
                   "diagnosticFiles": 10,
                   "exit": 2,
                   "checked": true,
+                  "rssBytes": 2564698112,
                   "tnbActive": true
                 }
               ],
               "artifactMedian": 21,
+              "rssMaxMb": 2523.8,
+              "rssRunsMb": [
+                2601.64453125,
+                2445.88671875
+              ],
               "warmupPasses": 1,
               "throughput": "99 files/s"
             },
@@ -3587,34 +3622,41 @@
               "files": 1246,
               "status": "ok",
               "runs": [
-                5220.442,
-                5119.444
+                4986.109,
+                5194.936
               ],
-              "medianMs": 5169.943,
-              "minMs": 5119.444,
-              "maxMs": 5220.442,
-              "meanMs": 5169.943,
-              "stddevMs": 71.416,
-              "cvPct": 1.4,
+              "medianMs": 5090.523,
+              "minMs": 4986.109,
+              "maxMs": 5194.936,
+              "meanMs": 5090.523,
+              "stddevMs": 147.663,
+              "cvPct": 2.9,
               "metaSamples": [
                 {
                   "artifact": 13593,
                   "diagnostics": 13593,
                   "diagnosticFiles": 1235,
                   "exit": 1,
-                  "checked": true
+                  "checked": true,
+                  "rssBytes": 791592960
                 },
                 {
                   "artifact": 13593,
                   "diagnostics": 13593,
                   "diagnosticFiles": 1235,
                   "exit": 1,
-                  "checked": true
+                  "checked": true,
+                  "rssBytes": 825663488
                 }
               ],
               "artifactMedian": 13593,
+              "rssMaxMb": 771.2,
+              "rssRunsMb": [
+                754.921875,
+                787.4140625
+              ],
               "warmupPasses": 1,
-              "throughput": "241 files/s"
+              "throughput": "245 files/s"
             },
             {
               "id": "vize-check",
@@ -3629,34 +3671,41 @@
               "files": 1246,
               "status": "ok",
               "runs": [
-                13302.292,
-                13482.271
+                14533.402,
+                14246.07
               ],
-              "medianMs": 13392.282,
-              "minMs": 13302.292,
-              "maxMs": 13482.271,
-              "meanMs": 13392.282,
-              "stddevMs": 127.264,
-              "cvPct": 1,
+              "medianMs": 14389.736,
+              "minMs": 14246.07,
+              "maxMs": 14533.402,
+              "meanMs": 14389.736,
+              "stddevMs": 203.174,
+              "cvPct": 1.4,
               "metaSamples": [
                 {
-                  "artifact": 30,
-                  "diagnostics": 30,
-                  "diagnosticFiles": 12,
+                  "artifact": 25,
+                  "diagnostics": 25,
+                  "diagnosticFiles": 9,
                   "exit": 1,
-                  "checked": true
+                  "checked": true,
+                  "rssBytes": 2481799168
                 },
                 {
-                  "artifact": 30,
-                  "diagnostics": 30,
-                  "diagnosticFiles": 12,
+                  "artifact": 25,
+                  "diagnostics": 25,
+                  "diagnosticFiles": 9,
                   "exit": 1,
-                  "checked": true
+                  "checked": true,
+                  "rssBytes": 2624774144
                 }
               ],
-              "artifactMedian": 30,
+              "artifactMedian": 25,
+              "rssMaxMb": 2435,
+              "rssRunsMb": [
+                2366.828125,
+                2503.1796875
+              ],
               "warmupPasses": 1,
-              "throughput": "93 files/s"
+              "throughput": "87 files/s"
             },
             {
               "id": "golar-check",
@@ -3687,32 +3736,39 @@
           "files": 1246,
           "status": "ok",
           "runs": [
-            31135.24,
-            30875.824
+            30626.674,
+            31618.317
           ],
-          "medianMs": 31005.532,
-          "minMs": 30875.824,
-          "maxMs": 31135.24,
-          "meanMs": 31005.532,
-          "stddevMs": 183.435,
-          "cvPct": 0.6,
+          "medianMs": 31122.495,
+          "minMs": 30626.674,
+          "maxMs": 31618.317,
+          "meanMs": 31122.495,
+          "stddevMs": 701.197,
+          "cvPct": 2.3,
           "metaSamples": [
             {
               "artifact": 21,
               "diagnostics": 21,
               "diagnosticFiles": 10,
               "exit": 2,
-              "checked": true
+              "checked": true,
+              "rssBytes": 2275270656
             },
             {
               "artifact": 21,
               "diagnostics": 21,
               "diagnosticFiles": 10,
               "exit": 2,
-              "checked": true
+              "checked": true,
+              "rssBytes": 2087321600
             }
           ],
           "artifactMedian": 21,
+          "rssMaxMb": 2080.2,
+          "rssRunsMb": [
+            2169.8671875,
+            1990.625
+          ],
           "warmupPasses": 1,
           "throughput": "40 files/s"
         },
@@ -3729,15 +3785,15 @@
           "files": 1246,
           "status": "ok",
           "runs": [
-            12595.476,
-            12532.124
+            12714.15,
+            12569.969
           ],
-          "medianMs": 12563.8,
-          "minMs": 12532.124,
-          "maxMs": 12595.476,
-          "meanMs": 12563.8,
-          "stddevMs": 44.797,
-          "cvPct": 0.4,
+          "medianMs": 12642.059,
+          "minMs": 12569.969,
+          "maxMs": 12714.15,
+          "meanMs": 12642.059,
+          "stddevMs": 101.951,
+          "cvPct": 0.8,
           "metaSamples": [
             {
               "artifact": 21,
@@ -3745,6 +3801,7 @@
               "diagnosticFiles": 10,
               "exit": 2,
               "checked": true,
+              "rssBytes": 2728022016,
               "tnbActive": true
             },
             {
@@ -3753,10 +3810,16 @@
               "diagnosticFiles": 10,
               "exit": 2,
               "checked": true,
+              "rssBytes": 2564698112,
               "tnbActive": true
             }
           ],
           "artifactMedian": 21,
+          "rssMaxMb": 2523.8,
+          "rssRunsMb": [
+            2601.64453125,
+            2445.88671875
+          ],
           "warmupPasses": 1,
           "throughput": "99 files/s"
         },
@@ -3773,34 +3836,41 @@
           "files": 1246,
           "status": "ok",
           "runs": [
-            5220.442,
-            5119.444
+            4986.109,
+            5194.936
           ],
-          "medianMs": 5169.943,
-          "minMs": 5119.444,
-          "maxMs": 5220.442,
-          "meanMs": 5169.943,
-          "stddevMs": 71.416,
-          "cvPct": 1.4,
+          "medianMs": 5090.523,
+          "minMs": 4986.109,
+          "maxMs": 5194.936,
+          "meanMs": 5090.523,
+          "stddevMs": 147.663,
+          "cvPct": 2.9,
           "metaSamples": [
             {
               "artifact": 13593,
               "diagnostics": 13593,
               "diagnosticFiles": 1235,
               "exit": 1,
-              "checked": true
+              "checked": true,
+              "rssBytes": 791592960
             },
             {
               "artifact": 13593,
               "diagnostics": 13593,
               "diagnosticFiles": 1235,
               "exit": 1,
-              "checked": true
+              "checked": true,
+              "rssBytes": 825663488
             }
           ],
           "artifactMedian": 13593,
+          "rssMaxMb": 771.2,
+          "rssRunsMb": [
+            754.921875,
+            787.4140625
+          ],
           "warmupPasses": 1,
-          "throughput": "241 files/s"
+          "throughput": "245 files/s"
         },
         {
           "id": "vize-check",
@@ -3815,34 +3885,41 @@
           "files": 1246,
           "status": "ok",
           "runs": [
-            13302.292,
-            13482.271
+            14533.402,
+            14246.07
           ],
-          "medianMs": 13392.282,
-          "minMs": 13302.292,
-          "maxMs": 13482.271,
-          "meanMs": 13392.282,
-          "stddevMs": 127.264,
-          "cvPct": 1,
+          "medianMs": 14389.736,
+          "minMs": 14246.07,
+          "maxMs": 14533.402,
+          "meanMs": 14389.736,
+          "stddevMs": 203.174,
+          "cvPct": 1.4,
           "metaSamples": [
             {
-              "artifact": 30,
-              "diagnostics": 30,
-              "diagnosticFiles": 12,
+              "artifact": 25,
+              "diagnostics": 25,
+              "diagnosticFiles": 9,
               "exit": 1,
-              "checked": true
+              "checked": true,
+              "rssBytes": 2481799168
             },
             {
-              "artifact": 30,
-              "diagnostics": 30,
-              "diagnosticFiles": 12,
+              "artifact": 25,
+              "diagnostics": 25,
+              "diagnosticFiles": 9,
               "exit": 1,
-              "checked": true
+              "checked": true,
+              "rssBytes": 2624774144
             }
           ],
-          "artifactMedian": 30,
+          "artifactMedian": 25,
+          "rssMaxMb": 2435,
+          "rssRunsMb": [
+            2366.828125,
+            2503.1796875
+          ],
           "warmupPasses": 1,
-          "throughput": "93 files/s"
+          "throughput": "87 files/s"
         },
         {
           "id": "golar-check",
@@ -3891,18 +3968,18 @@
           "files": 1246,
           "status": "ok",
           "runs": [
-            8756.122,
-            8351.746,
-            7031.068,
-            7613.101,
-            8377.762
+            8417.488,
+            8557.553,
+            8295.682,
+            8661.44,
+            7356.011
           ],
-          "medianMs": 8351.746,
-          "minMs": 7031.068,
-          "maxMs": 8756.122,
-          "meanMs": 8025.96,
-          "stddevMs": 693.416,
-          "cvPct": 8.3,
+          "medianMs": 8417.488,
+          "minMs": 7356.011,
+          "maxMs": 8661.44,
+          "meanMs": 8257.635,
+          "stddevMs": 522.718,
+          "cvPct": 6.2,
           "metaSamples": [
             {
               "artifact": 1246,
@@ -10512,7 +10589,7 @@
           ],
           "artifactMedian": 1246,
           "warmupPasses": 1,
-          "throughput": "149 files/s"
+          "throughput": "148 files/s"
         },
         {
           "id": "verter-component-meta",
@@ -10525,18 +10602,18 @@
           "files": 1246,
           "status": "unranked",
           "runs": [
-            6243.226,
-            6067.839,
-            6769.51,
-            6168.366,
-            6376.785
+            6727.703,
+            6719.75,
+            6619.857,
+            6376.691,
+            6869.233
           ],
-          "medianMs": 6243.226,
-          "minMs": 6067.839,
-          "maxMs": 6769.51,
-          "meanMs": 6325.145,
-          "stddevMs": 272.774,
-          "cvPct": 4.4,
+          "medianMs": 6719.75,
+          "minMs": 6376.691,
+          "maxMs": 6869.233,
+          "meanMs": 6662.647,
+          "stddevMs": 182.875,
+          "cvPct": 2.7,
           "metaSamples": [
             {
               "artifact": 1246,
@@ -11201,7 +11278,7 @@
           ],
           "artifactMedian": 1246,
           "warmupPasses": 1,
-          "throughput": "200 files/s"
+          "throughput": "185 files/s"
         },
         {
           "id": "vize-component-meta",
@@ -11247,26 +11324,26 @@
               "artifactPolarity": "informational",
               "engine": "tsc-js",
               "artifactLabel": "diagnostics published",
-              "notes": "BASELINE · official Vue language server v3 in hybrid (two-process) mode — the only mode v3 has. The measured unit is the pair: @vue/language-server plus typescript-language-server with @vue/typescript-plugin, joined by the tsserver bridge. Both processes' startup and project load of the real project are inside the timings. HOVER asks both halves in parallel and charges the slower; DIAGNOSTICS times the first publication for the document from either half (which may be an empty preliminary — the count it carried and the first NON-EMPTY publication are both published). · operation: didOpen → diagnostics · workspace packages/docs, document packages/docs/src/App.vue | ⚠ FAILED DIAGNOSTIC-CONTENT GATE — published 0 diagnostics for a document vize published 3 for. Answering \"nothing to report\" fast is not the same job as answering. Measured but UNRANKED. (Diagnostic EQUIVALENCE is not asserted; the counts are published so a suspicious row is visible.)",
+              "notes": "BASELINE · official Vue language server v3 in hybrid (two-process) mode — the only mode v3 has. The measured unit is the pair: @vue/language-server plus typescript-language-server with @vue/typescript-plugin, joined by the tsserver bridge. Both processes' startup and project load of the real project are inside the timings. HOVER asks both halves in parallel and charges the slower; DIAGNOSTICS times the first publication for the document from either half (which may be an empty preliminary — the count it carried and the first NON-EMPTY publication are both published). · operation: didOpen → diagnostics · workspace packages/docs, document packages/docs/src/App.vue | ⚠ FAILED DIAGNOSTIC-CONTENT GATE — published 0 diagnostics for a document vize published 1 for. Answering \"nothing to report\" fast is not the same job as answering. Measured but UNRANKED. (Diagnostic EQUIVALENCE is not asserted; the counts are published so a suspicious row is visible.)",
               "files": 1,
               "status": "unranked",
               "runs": [
-                10777.879,
-                11138.732,
-                10953.194,
-                11230.292,
-                11006.537
+                10747.029,
+                10736.264,
+                10761.235,
+                10805.713,
+                10572.334
               ],
-              "medianMs": 11006.537,
-              "minMs": 10777.879,
-              "maxMs": 11230.292,
-              "meanMs": 11021.327,
-              "stddevMs": 174.34,
-              "cvPct": 1.6,
+              "medianMs": 10747.029,
+              "minMs": 10572.334,
+              "maxMs": 10805.713,
+              "meanMs": 10724.515,
+              "stddevMs": 89.086,
+              "cvPct": 0.8,
               "metaSamples": [
                 {
-                  "initializeMs": 578.3908440000014,
-                  "didOpenToDiagnosticsMs": 10777.879013000005,
+                  "initializeMs": 549.9254929999952,
+                  "didOpenToDiagnosticsMs": 10747.029006999997,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -11280,8 +11357,8 @@
                   "artifact": 0
                 },
                 {
-                  "initializeMs": 570.0184330000047,
-                  "didOpenToDiagnosticsMs": 11138.731802999988,
+                  "initializeMs": 556.5323310000094,
+                  "didOpenToDiagnosticsMs": 10736.26408800001,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -11295,8 +11372,8 @@
                   "artifact": 0
                 },
                 {
-                  "initializeMs": 559.545741000009,
-                  "didOpenToDiagnosticsMs": 10953.19441299999,
+                  "initializeMs": 556.7214420000091,
+                  "didOpenToDiagnosticsMs": 10761.234586999984,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -11310,8 +11387,8 @@
                   "artifact": 0
                 },
                 {
-                  "initializeMs": 565.9096310000168,
-                  "didOpenToDiagnosticsMs": 11230.292325000017,
+                  "initializeMs": 543.1250330000184,
+                  "didOpenToDiagnosticsMs": 10805.712523000024,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -11325,8 +11402,8 @@
                   "artifact": 0
                 },
                 {
-                  "initializeMs": 572.0678009999974,
-                  "didOpenToDiagnosticsMs": 11006.537402999995,
+                  "initializeMs": 543.8259260000195,
+                  "didOpenToDiagnosticsMs": 10572.333895000018,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -11358,26 +11435,26 @@
               "artifactPolarity": "informational",
               "engine": "tsgo via typescript-native-bridge",
               "artifactLabel": "diagnostics published",
-              "notes": "Identical to the Volar row except the TypeScript half runs on typescript-native-bridge (tsgo): same @vue/language-server, same @vue/typescript-plugin, same bridge, tsdk pointed at TNB 6.0.3-bridge.13.tsgo.7.0.2 tsdk. Exactly one variable against the baseline — the TypeScript engine — which is why the two are ranked in separate tables. · operation: didOpen → diagnostics · workspace packages/docs, document packages/docs/src/App.vue | ⚠ FAILED DIAGNOSTIC-CONTENT GATE — published 0 diagnostics for a document vize published 3 for. Answering \"nothing to report\" fast is not the same job as answering. Measured but UNRANKED. (Diagnostic EQUIVALENCE is not asserted; the counts are published so a suspicious row is visible.)",
+              "notes": "Identical to the Volar row except the TypeScript half runs on typescript-native-bridge (tsgo): same @vue/language-server, same @vue/typescript-plugin, same bridge, tsdk pointed at TNB 6.0.3-bridge.13.tsgo.7.0.2 tsdk. Exactly one variable against the baseline — the TypeScript engine — which is why the two are ranked in separate tables. · operation: didOpen → diagnostics · workspace packages/docs, document packages/docs/src/App.vue | ⚠ FAILED DIAGNOSTIC-CONTENT GATE — published 0 diagnostics for a document vize published 1 for. Answering \"nothing to report\" fast is not the same job as answering. Measured but UNRANKED. (Diagnostic EQUIVALENCE is not asserted; the counts are published so a suspicious row is visible.)",
               "files": 1,
               "status": "unranked",
               "runs": [
-                6303.509,
-                6380.932,
-                6488.915,
-                6448.459,
-                6495.907
+                6297.703,
+                6258.323,
+                6235.552,
+                6180.158,
+                6232.578
               ],
-              "medianMs": 6448.459,
-              "minMs": 6303.509,
-              "maxMs": 6495.907,
-              "meanMs": 6423.544,
-              "stddevMs": 81.171,
-              "cvPct": 1.3,
+              "medianMs": 6235.552,
+              "minMs": 6180.158,
+              "maxMs": 6297.703,
+              "meanMs": 6240.863,
+              "stddevMs": 42.771,
+              "cvPct": 0.7,
               "metaSamples": [
                 {
-                  "initializeMs": 786.25275900001,
-                  "didOpenToDiagnosticsMs": 6303.50899100001,
+                  "initializeMs": 789.8445670000001,
+                  "didOpenToDiagnosticsMs": 6297.702577999997,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -11391,8 +11468,8 @@
                   "artifact": 0
                 },
                 {
-                  "initializeMs": 544.2368330000027,
-                  "didOpenToDiagnosticsMs": 6380.931978000008,
+                  "initializeMs": 552.8333370000037,
+                  "didOpenToDiagnosticsMs": 6258.322542000009,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -11406,8 +11483,8 @@
                   "artifact": 0
                 },
                 {
-                  "initializeMs": 787.3176190000086,
-                  "didOpenToDiagnosticsMs": 6488.915097999998,
+                  "initializeMs": 748.9169430000184,
+                  "didOpenToDiagnosticsMs": 6235.552135000005,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -11421,8 +11498,8 @@
                   "artifact": 0
                 },
                 {
-                  "initializeMs": 790.1492169999983,
-                  "didOpenToDiagnosticsMs": 6448.459115000005,
+                  "initializeMs": 776.6834590000217,
+                  "didOpenToDiagnosticsMs": 6180.157814000006,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -11436,8 +11513,8 @@
                   "artifact": 0
                 },
                 {
-                  "initializeMs": 787.3344420000212,
-                  "didOpenToDiagnosticsMs": 6495.906527000014,
+                  "initializeMs": 759.3769540000067,
+                  "didOpenToDiagnosticsMs": 6232.5783590000065,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -11463,26 +11540,26 @@
               "artifactPolarity": "informational",
               "engine": "tsgo (stable)",
               "artifactLabel": "diagnostics published",
-              "notes": "verter-lsp stdio, the native server from the published npm package, given the project directory as its workspace root. $/verter/ready is not waited for — its workspace load is inside the measured window like every other server's. · operation: didOpen → diagnostics · workspace packages/docs, document packages/docs/src/App.vue | ⚠ FAILED DIAGNOSTIC-CONTENT GATE — published 0 diagnostics for a document vize published 3 for. Answering \"nothing to report\" fast is not the same job as answering. Measured but UNRANKED. (Diagnostic EQUIVALENCE is not asserted; the counts are published so a suspicious row is visible.)",
+              "notes": "verter-lsp stdio, the native server from the published npm package, given the project directory as its workspace root. $/verter/ready is not waited for — its workspace load is inside the measured window like every other server's. · operation: didOpen → diagnostics · workspace packages/docs, document packages/docs/src/App.vue | ⚠ FAILED DIAGNOSTIC-CONTENT GATE — published 0 diagnostics for a document vize published 1 for. Answering \"nothing to report\" fast is not the same job as answering. Measured but UNRANKED. (Diagnostic EQUIVALENCE is not asserted; the counts are published so a suspicious row is visible.)",
               "files": 1,
               "status": "unranked",
               "runs": [
-                644.349,
-                669.405,
-                967.402,
-                657.43,
-                702.699
+                644.764,
+                627.007,
+                911.839,
+                639.739,
+                643.55
               ],
-              "medianMs": 669.405,
-              "minMs": 644.349,
-              "maxMs": 967.402,
-              "meanMs": 728.257,
-              "stddevMs": 135.429,
-              "cvPct": 20.2,
+              "medianMs": 643.55,
+              "minMs": 627.007,
+              "maxMs": 911.839,
+              "meanMs": 693.38,
+              "stddevMs": 122.325,
+              "cvPct": 19,
               "metaSamples": [
                 {
-                  "initializeMs": 11.6077479999949,
-                  "didOpenToDiagnosticsMs": 644.3492319999932,
+                  "initializeMs": 11.39340600000287,
+                  "didOpenToDiagnosticsMs": 644.7639179999969,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -11496,8 +11573,8 @@
                   "artifact": 0
                 },
                 {
-                  "initializeMs": 10.329928000006475,
-                  "didOpenToDiagnosticsMs": 669.4054979999928,
+                  "initializeMs": 11.149740000008023,
+                  "didOpenToDiagnosticsMs": 627.0074069999973,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -11511,8 +11588,8 @@
                   "artifact": 0
                 },
                 {
-                  "initializeMs": 14.178791999991518,
-                  "didOpenToDiagnosticsMs": 967.402459999983,
+                  "initializeMs": 20.056852999987314,
+                  "didOpenToDiagnosticsMs": 911.8386259999825,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -11526,8 +11603,8 @@
                   "artifact": 0
                 },
                 {
-                  "initializeMs": 10.305156000016723,
-                  "didOpenToDiagnosticsMs": 657.4304639999755,
+                  "initializeMs": 10.575623999990057,
+                  "didOpenToDiagnosticsMs": 639.739493000001,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -11541,8 +11618,8 @@
                   "artifact": 0
                 },
                 {
-                  "initializeMs": 12.684720999968704,
-                  "didOpenToDiagnosticsMs": 702.6993310000398,
+                  "initializeMs": 10.18129300000146,
+                  "didOpenToDiagnosticsMs": 643.5496360000107,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -11558,7 +11635,7 @@
               ],
               "artifactMedian": 0,
               "warmupPasses": 1,
-              "throughput": "1 files/s"
+              "throughput": "2 files/s"
             },
             {
               "id": "vize-lsp-diagnostics",
@@ -11572,25 +11649,25 @@
               "files": 1,
               "status": "ok",
               "runs": [
-                894.651,
-                928.328,
-                873.527,
-                900.076,
-                936.386
+                773.245,
+                777.356,
+                797.239,
+                798.758,
+                792.161
               ],
-              "medianMs": 900.076,
-              "minMs": 873.527,
-              "maxMs": 936.386,
-              "meanMs": 906.594,
-              "stddevMs": 25.683,
-              "cvPct": 2.9,
+              "medianMs": 792.161,
+              "minMs": 773.245,
+              "maxMs": 798.758,
+              "meanMs": 787.752,
+              "stddevMs": 11.716,
+              "cvPct": 1.5,
               "metaSamples": [
                 {
-                  "initializeMs": 39.223150999998325,
-                  "didOpenToDiagnosticsMs": 894.6509490000026,
-                  "diagnosticsCount": 3,
-                  "firstNonEmptyDiagnosticsMs": 894.6515599999984,
-                  "firstNonEmptyDiagnosticsCount": 3,
+                  "initializeMs": 42.233030000003055,
+                  "didOpenToDiagnosticsMs": 773.2448160000058,
+                  "diagnosticsCount": 1,
+                  "firstNonEmptyDiagnosticsMs": 773.2453059999971,
+                  "firstNonEmptyDiagnosticsCount": 1,
                   "hoverMs": null,
                   "hoverAnswered": false,
                   "hoverBytes": 0,
@@ -11598,14 +11675,14 @@
                   "hoverPosition": null,
                   "backendFallback": null,
                   "bridgeFailures": null,
-                  "artifact": 3
+                  "artifact": 1
                 },
                 {
-                  "initializeMs": 35.68959100000211,
-                  "didOpenToDiagnosticsMs": 928.3277099999978,
-                  "diagnosticsCount": 3,
-                  "firstNonEmptyDiagnosticsMs": 928.3282709999912,
-                  "firstNonEmptyDiagnosticsCount": 3,
+                  "initializeMs": 40.736504999993485,
+                  "didOpenToDiagnosticsMs": 777.3560160000052,
+                  "diagnosticsCount": 1,
+                  "firstNonEmptyDiagnosticsMs": 777.356627000001,
+                  "firstNonEmptyDiagnosticsCount": 1,
                   "hoverMs": null,
                   "hoverAnswered": false,
                   "hoverBytes": 0,
@@ -11613,14 +11690,14 @@
                   "hoverPosition": null,
                   "backendFallback": null,
                   "bridgeFailures": null,
-                  "artifact": 3
+                  "artifact": 1
                 },
                 {
-                  "initializeMs": 37.5224959999905,
-                  "didOpenToDiagnosticsMs": 873.5265619999846,
-                  "diagnosticsCount": 3,
-                  "firstNonEmptyDiagnosticsMs": 873.527202999976,
-                  "firstNonEmptyDiagnosticsCount": 3,
+                  "initializeMs": 38.0880130000005,
+                  "didOpenToDiagnosticsMs": 797.2391399999906,
+                  "diagnosticsCount": 1,
+                  "firstNonEmptyDiagnosticsMs": 797.2395299999916,
+                  "firstNonEmptyDiagnosticsCount": 1,
                   "hoverMs": null,
                   "hoverAnswered": false,
                   "hoverBytes": 0,
@@ -11628,14 +11705,14 @@
                   "hoverPosition": null,
                   "backendFallback": null,
                   "bridgeFailures": null,
-                  "artifact": 3
+                  "artifact": 1
                 },
                 {
-                  "initializeMs": 41.165437000017846,
-                  "didOpenToDiagnosticsMs": 900.0759090000065,
-                  "diagnosticsCount": 3,
-                  "firstNonEmptyDiagnosticsMs": 900.0762000000104,
-                  "firstNonEmptyDiagnosticsCount": 3,
+                  "initializeMs": 42.60400799999479,
+                  "didOpenToDiagnosticsMs": 798.7577309999906,
+                  "diagnosticsCount": 1,
+                  "firstNonEmptyDiagnosticsMs": 798.7582619999885,
+                  "firstNonEmptyDiagnosticsCount": 1,
                   "hoverMs": null,
                   "hoverAnswered": false,
                   "hoverBytes": 0,
@@ -11643,14 +11720,14 @@
                   "hoverPosition": null,
                   "backendFallback": null,
                   "bridgeFailures": null,
-                  "artifact": 3
+                  "artifact": 1
                 },
                 {
-                  "initializeMs": 37.92557500000112,
-                  "didOpenToDiagnosticsMs": 936.3857710000011,
-                  "diagnosticsCount": 3,
-                  "firstNonEmptyDiagnosticsMs": 936.3860410000198,
-                  "firstNonEmptyDiagnosticsCount": 3,
+                  "initializeMs": 40.272177000006195,
+                  "didOpenToDiagnosticsMs": 792.1606979999924,
+                  "diagnosticsCount": 1,
+                  "firstNonEmptyDiagnosticsMs": 792.1609290000051,
+                  "firstNonEmptyDiagnosticsCount": 1,
                   "hoverMs": null,
                   "hoverAnswered": false,
                   "hoverBytes": 0,
@@ -11658,10 +11735,10 @@
                   "hoverPosition": null,
                   "backendFallback": null,
                   "bridgeFailures": null,
-                  "artifact": 3
+                  "artifact": 1
                 }
               ],
-              "artifactMedian": 3,
+              "artifactMedian": 1,
               "warmupPasses": 1,
               "throughput": "1 files/s"
             }
@@ -11683,26 +11760,26 @@
               "files": 1,
               "status": "ok",
               "runs": [
-                12.011,
-                13.47,
-                13.294,
-                8.055,
-                9.819
+                7.974,
+                6.855,
+                7.7,
+                15.321,
+                7.533
               ],
-              "medianMs": 12.011,
-              "minMs": 8.055,
-              "maxMs": 13.47,
-              "meanMs": 11.33,
-              "stddevMs": 2.34,
-              "cvPct": 19.5,
+              "medianMs": 7.7,
+              "minMs": 6.855,
+              "maxMs": 15.321,
+              "meanMs": 9.077,
+              "stddevMs": 3.515,
+              "cvPct": 45.6,
               "metaSamples": [
                 {
-                  "initializeMs": 547.8977949999971,
-                  "didOpenToDiagnosticsMs": 10794.303367999993,
+                  "initializeMs": 550.3974190000008,
+                  "didOpenToDiagnosticsMs": 10702.140174999993,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 12.011068000007072,
+                  "hoverMs": 7.974127000008593,
                   "hoverAnswered": true,
                   "hoverBytes": 5035,
                   "hoverSample": "```typescript\nconst user: Store<\"user\", Pick<{\n    load: () => void;\n    save: () => void;\n    reset: () => void;\n    version: globalThis.Ref<7, 7>;\n    ecosystem: globalThis.Ref<{\n        bin: {\n    ",
@@ -11716,12 +11793,12 @@
                   "artifact": 5035
                 },
                 {
-                  "initializeMs": 562.623529000004,
-                  "didOpenToDiagnosticsMs": 11093.025194000002,
+                  "initializeMs": 549.0474430000031,
+                  "didOpenToDiagnosticsMs": 10687.065789,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 13.469612999993842,
+                  "hoverMs": 6.8546300000016345,
                   "hoverAnswered": true,
                   "hoverBytes": 5035,
                   "hoverSample": "```typescript\nconst user: Store<\"user\", Pick<{\n    load: () => void;\n    save: () => void;\n    reset: () => void;\n    version: globalThis.Ref<7, 7>;\n    ecosystem: globalThis.Ref<{\n        bin: {\n    ",
@@ -11735,12 +11812,12 @@
                   "artifact": 5035
                 },
                 {
-                  "initializeMs": 551.8840999999957,
-                  "didOpenToDiagnosticsMs": 11158.768806000007,
+                  "initializeMs": 541.1514899999893,
+                  "didOpenToDiagnosticsMs": 10726.799744000018,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 13.293791999982204,
+                  "hoverMs": 7.6995870000100695,
                   "hoverAnswered": true,
                   "hoverBytes": 5035,
                   "hoverSample": "```typescript\nconst user: Store<\"user\", Pick<{\n    load: () => void;\n    save: () => void;\n    reset: () => void;\n    version: globalThis.Ref<7, 7>;\n    ecosystem: globalThis.Ref<{\n        bin: {\n    ",
@@ -11754,12 +11831,12 @@
                   "artifact": 5035
                 },
                 {
-                  "initializeMs": 548.9520309999934,
-                  "didOpenToDiagnosticsMs": 10878.621497000015,
+                  "initializeMs": 566.7203440000012,
+                  "didOpenToDiagnosticsMs": 11015.865624999977,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 8.055126000021119,
+                  "hoverMs": 15.321016000001691,
                   "hoverAnswered": true,
                   "hoverBytes": 5035,
                   "hoverSample": "```typescript\nconst user: Store<\"user\", Pick<{\n    load: () => void;\n    save: () => void;\n    reset: () => void;\n    version: globalThis.Ref<7, 7>;\n    ecosystem: globalThis.Ref<{\n        bin: {\n    ",
@@ -11773,12 +11850,12 @@
                   "artifact": 5035
                 },
                 {
-                  "initializeMs": 550.9996859999956,
-                  "didOpenToDiagnosticsMs": 11023.593277999986,
+                  "initializeMs": 549.0657449999999,
+                  "didOpenToDiagnosticsMs": 10652.655110000022,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 9.818685000005644,
+                  "hoverMs": 7.532579999999143,
                   "hoverAnswered": true,
                   "hoverBytes": 5035,
                   "hoverSample": "```typescript\nconst user: Store<\"user\", Pick<{\n    load: () => void;\n    save: () => void;\n    reset: () => void;\n    version: globalThis.Ref<7, 7>;\n    ecosystem: globalThis.Ref<{\n        bin: {\n    ",
@@ -11794,7 +11871,7 @@
               ],
               "artifactMedian": 5035,
               "warmupPasses": 1,
-              "throughput": "83 files/s"
+              "throughput": "130 files/s"
             }
           ]
         },
@@ -11814,26 +11891,26 @@
               "files": 1,
               "status": "ok",
               "runs": [
-                32.662,
-                38.18,
-                73.252,
-                50.9,
-                87.69
+                33.966,
+                46.344,
+                52.111,
+                54.025,
+                29.822
               ],
-              "medianMs": 50.9,
-              "minMs": 32.662,
-              "maxMs": 87.69,
-              "meanMs": 56.537,
-              "stddevMs": 23.392,
-              "cvPct": 46,
+              "medianMs": 46.344,
+              "minMs": 29.822,
+              "maxMs": 54.025,
+              "meanMs": 43.254,
+              "stddevMs": 10.848,
+              "cvPct": 23.4,
               "metaSamples": [
                 {
-                  "initializeMs": 602.4913410000008,
-                  "didOpenToDiagnosticsMs": 6404.521335999991,
+                  "initializeMs": 586.3862439999939,
+                  "didOpenToDiagnosticsMs": 6190.4361770000105,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 32.66185899999982,
+                  "hoverMs": 33.965615000008256,
                   "hoverAnswered": true,
                   "hoverBytes": 3244,
                   "hoverSample": "```typescript\nconst user: Store<\"user\", Pick<{ load: () => void; save: () => void; reset: () => void; version: globalThis.Ref<7, 7>; ecosystem: globalThis.Ref<{ bin: { [x: string]: unknown; wordWrap: ",
@@ -11847,12 +11924,12 @@
                   "artifact": 3244
                 },
                 {
-                  "initializeMs": 598.9958469999983,
-                  "didOpenToDiagnosticsMs": 6641.651608,
+                  "initializeMs": 581.0291750000033,
+                  "didOpenToDiagnosticsMs": 6208.52393000001,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 38.179787999994005,
+                  "hoverMs": 46.34407700000156,
                   "hoverAnswered": true,
                   "hoverBytes": 3244,
                   "hoverSample": "```typescript\nconst user: Store<\"user\", Pick<{ load: () => void; save: () => void; reset: () => void; version: globalThis.Ref<7, 7>; ecosystem: globalThis.Ref<{ bin: { [x: string]: unknown; wordWrap: ",
@@ -11866,12 +11943,12 @@
                   "artifact": 3244
                 },
                 {
-                  "initializeMs": 586.9944860000105,
-                  "didOpenToDiagnosticsMs": 6517.274726000003,
+                  "initializeMs": 589.4355290000094,
+                  "didOpenToDiagnosticsMs": 6280.185438000015,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 73.2519420000026,
+                  "hoverMs": 52.110685000021476,
                   "hoverAnswered": true,
                   "hoverBytes": 3244,
                   "hoverSample": "```typescript\nconst user: Store<\"user\", Pick<{ load: () => void; save: () => void; reset: () => void; version: globalThis.Ref<7, 7>; ecosystem: globalThis.Ref<{ bin: { [x: string]: unknown; wordWrap: ",
@@ -11885,12 +11962,12 @@
                   "artifact": 3244
                 },
                 {
-                  "initializeMs": 584.1544140000187,
-                  "didOpenToDiagnosticsMs": 6425.516493999981,
+                  "initializeMs": 605.9364980000246,
+                  "didOpenToDiagnosticsMs": 6324.230769000016,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 50.900167999992846,
+                  "hoverMs": 54.02542000001995,
                   "hoverAnswered": true,
                   "hoverBytes": 3244,
                   "hoverSample": "```typescript\nconst user: Store<\"user\", Pick<{ load: () => void; save: () => void; reset: () => void; version: globalThis.Ref<7, 7>; ecosystem: globalThis.Ref<{ bin: { [x: string]: unknown; wordWrap: ",
@@ -11904,12 +11981,12 @@
                   "artifact": 3244
                 },
                 {
-                  "initializeMs": 597.0184480000171,
-                  "didOpenToDiagnosticsMs": 6505.268477000005,
+                  "initializeMs": 585.5550780000049,
+                  "didOpenToDiagnosticsMs": 6157.028090000007,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 87.6900500000047,
+                  "hoverMs": 29.82189200000721,
                   "hoverAnswered": true,
                   "hoverBytes": 3244,
                   "hoverSample": "```typescript\nconst user: Store<\"user\", Pick<{ load: () => void; save: () => void; reset: () => void; version: globalThis.Ref<7, 7>; ecosystem: globalThis.Ref<{ bin: { [x: string]: unknown; wordWrap: ",
@@ -11925,7 +12002,7 @@
               ],
               "artifactMedian": 3244,
               "warmupPasses": 1,
-              "throughput": "20 files/s"
+              "throughput": "22 files/s"
             },
             {
               "id": "verter-lsp-hover",
@@ -11939,26 +12016,26 @@
               "files": 1,
               "status": "ok",
               "runs": [
-                1.497,
-                1.484,
-                1.521,
-                1.631,
-                1.699
+                1.374,
+                1.53,
+                1.43,
+                7.783,
+                1.51
               ],
-              "medianMs": 1.521,
-              "minMs": 1.484,
-              "maxMs": 1.699,
-              "meanMs": 1.566,
-              "stddevMs": 0.094,
-              "cvPct": 6.2,
+              "medianMs": 1.51,
+              "minMs": 1.374,
+              "maxMs": 7.783,
+              "meanMs": 2.725,
+              "stddevMs": 2.828,
+              "cvPct": 187.3,
               "metaSamples": [
                 {
-                  "initializeMs": 16.792056000005687,
-                  "didOpenToDiagnosticsMs": 681.3440649999975,
+                  "initializeMs": 16.906955999991624,
+                  "didOpenToDiagnosticsMs": 628.4891720000014,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 1.497479999990901,
+                  "hoverMs": 1.3743170000088867,
                   "hoverAnswered": true,
                   "hoverBytes": 5027,
                   "hoverSample": "```typescript\nconst user: Store<\"user\", Pick<{\n```\n\nload: () => void;\n    save: () => void;\n    reset: () => void;\n    version: globalThis.Ref<7, 7>;\n    ecosystem: globalThis.Ref<{\n        bin: {\n   ",
@@ -11972,12 +12049,12 @@
                   "artifact": 5027
                 },
                 {
-                  "initializeMs": 23.214592999996967,
-                  "didOpenToDiagnosticsMs": 664.0228129999887,
+                  "initializeMs": 33.75988199999847,
+                  "didOpenToDiagnosticsMs": 652.1816390000022,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 1.4839009999996051,
+                  "hoverMs": 1.5298420000035549,
                   "hoverAnswered": true,
                   "hoverBytes": 5027,
                   "hoverSample": "```typescript\nconst user: Store<\"user\", Pick<{\n```\n\nload: () => void;\n    save: () => void;\n    reset: () => void;\n    version: globalThis.Ref<7, 7>;\n    ecosystem: globalThis.Ref<{\n        bin: {\n   ",
@@ -11991,12 +12068,12 @@
                   "artifact": 5027
                 },
                 {
-                  "initializeMs": 10.612125999992713,
-                  "didOpenToDiagnosticsMs": 680.5731589999923,
+                  "initializeMs": 12.084004999982426,
+                  "didOpenToDiagnosticsMs": 697.4466320000065,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 1.5209599999943748,
+                  "hoverMs": 1.4304019999981392,
                   "hoverAnswered": true,
                   "hoverBytes": 5027,
                   "hoverSample": "```typescript\nconst user: Store<\"user\", Pick<{\n```\n\nload: () => void;\n    save: () => void;\n    reset: () => void;\n    version: globalThis.Ref<7, 7>;\n    ecosystem: globalThis.Ref<{\n        bin: {\n   ",
@@ -12010,12 +12087,12 @@
                   "artifact": 5027
                 },
                 {
-                  "initializeMs": 26.11393500000122,
-                  "didOpenToDiagnosticsMs": 680.2050229999877,
+                  "initializeMs": 23.49174200001289,
+                  "didOpenToDiagnosticsMs": 620.4642969999986,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 1.631137000018498,
+                  "hoverMs": 7.782979000010528,
                   "hoverAnswered": true,
                   "hoverBytes": 5027,
                   "hoverSample": "```typescript\nconst user: Store<\"user\", Pick<{\n```\n\nload: () => void;\n    save: () => void;\n    reset: () => void;\n    version: globalThis.Ref<7, 7>;\n    ecosystem: globalThis.Ref<{\n        bin: {\n   ",
@@ -12029,12 +12106,12 @@
                   "artifact": 5027
                 },
                 {
-                  "initializeMs": 14.471428999997443,
-                  "didOpenToDiagnosticsMs": 662.3238439999986,
+                  "initializeMs": 16.47691300002043,
+                  "didOpenToDiagnosticsMs": 699.7857479999948,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 1.6992250000184868,
+                  "hoverMs": 1.5104730000020936,
                   "hoverAnswered": true,
                   "hoverBytes": 5027,
                   "hoverSample": "```typescript\nconst user: Store<\"user\", Pick<{\n```\n\nload: () => void;\n    save: () => void;\n    reset: () => void;\n    version: globalThis.Ref<7, 7>;\n    ecosystem: globalThis.Ref<{\n        bin: {\n   ",
@@ -12050,7 +12127,7 @@
               ],
               "artifactMedian": 5027,
               "warmupPasses": 1,
-              "throughput": "657 files/s"
+              "throughput": "662 files/s"
             },
             {
               "id": "vize-lsp-hover",
@@ -12064,29 +12141,29 @@
               "files": 1,
               "status": "ok",
               "runs": [
-                4.71,
-                5.033,
-                4.767,
-                5.138,
-                5.088
+                4.986,
+                5.066,
+                5.314,
+                6.209,
+                5.022
               ],
-              "medianMs": 5.033,
-              "minMs": 4.71,
-              "maxMs": 5.138,
-              "meanMs": 4.947,
-              "stddevMs": 0.195,
-              "cvPct": 3.9,
+              "medianMs": 5.066,
+              "minMs": 4.986,
+              "maxMs": 6.209,
+              "meanMs": 5.319,
+              "stddevMs": 0.514,
+              "cvPct": 10.1,
               "metaSamples": [
                 {
-                  "initializeMs": 36.55181600000651,
-                  "didOpenToDiagnosticsMs": 1146.9325189999945,
-                  "diagnosticsCount": 3,
-                  "firstNonEmptyDiagnosticsMs": 1146.9333409999963,
-                  "firstNonEmptyDiagnosticsCount": 3,
-                  "hoverMs": 4.709707000001799,
+                  "initializeMs": 39.68612300000677,
+                  "didOpenToDiagnosticsMs": 1057.668583000006,
+                  "diagnosticsCount": 1,
+                  "firstNonEmptyDiagnosticsMs": 1057.669213999994,
+                  "firstNonEmptyDiagnosticsCount": 1,
+                  "hoverMs": 4.985902999993414,
                   "hoverAnswered": true,
-                  "hoverBytes": 261,
-                  "hoverSample": "```typescript\nconst user: any\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Recommended order: <script> -> <template> -> <style>\n\n[📖 View rule documentatio",
+                  "hoverBytes": 33,
+                  "hoverSample": "```typescript\nconst user: any\n```",
                   "hoverPosition": {
                     "line": 19,
                     "character": 8,
@@ -12094,18 +12171,18 @@
                   },
                   "backendFallback": null,
                   "bridgeFailures": null,
-                  "artifact": 261
+                  "artifact": 33
                 },
                 {
-                  "initializeMs": 38.124299999995856,
-                  "didOpenToDiagnosticsMs": 1150.1188249999977,
-                  "diagnosticsCount": 3,
-                  "firstNonEmptyDiagnosticsMs": 1150.1195759999973,
-                  "firstNonEmptyDiagnosticsCount": 3,
-                  "hoverMs": 5.033451999988756,
+                  "initializeMs": 40.19518200001039,
+                  "didOpenToDiagnosticsMs": 1017.826252999992,
+                  "diagnosticsCount": 1,
+                  "firstNonEmptyDiagnosticsMs": 1017.8267339999875,
+                  "firstNonEmptyDiagnosticsCount": 1,
+                  "hoverMs": 5.066143000003649,
                   "hoverAnswered": true,
-                  "hoverBytes": 261,
-                  "hoverSample": "```typescript\nconst user: any\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Recommended order: <script> -> <template> -> <style>\n\n[📖 View rule documentatio",
+                  "hoverBytes": 33,
+                  "hoverSample": "```typescript\nconst user: any\n```",
                   "hoverPosition": {
                     "line": 19,
                     "character": 8,
@@ -12113,18 +12190,18 @@
                   },
                   "backendFallback": null,
                   "bridgeFailures": null,
-                  "artifact": 261
+                  "artifact": 33
                 },
                 {
-                  "initializeMs": 36.47490299999481,
-                  "didOpenToDiagnosticsMs": 1122.039255999989,
-                  "diagnosticsCount": 3,
-                  "firstNonEmptyDiagnosticsMs": 1122.0399869999965,
-                  "firstNonEmptyDiagnosticsCount": 3,
-                  "hoverMs": 4.766782000020612,
+                  "initializeMs": 39.55134800000815,
+                  "didOpenToDiagnosticsMs": 1027.0681570000015,
+                  "diagnosticsCount": 1,
+                  "firstNonEmptyDiagnosticsMs": 1027.0687780000153,
+                  "firstNonEmptyDiagnosticsCount": 1,
+                  "hoverMs": 5.314066999999341,
                   "hoverAnswered": true,
-                  "hoverBytes": 261,
-                  "hoverSample": "```typescript\nconst user: any\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Recommended order: <script> -> <template> -> <style>\n\n[📖 View rule documentatio",
+                  "hoverBytes": 33,
+                  "hoverSample": "```typescript\nconst user: any\n```",
                   "hoverPosition": {
                     "line": 19,
                     "character": 8,
@@ -12132,18 +12209,18 @@
                   },
                   "backendFallback": null,
                   "bridgeFailures": null,
-                  "artifact": 261
+                  "artifact": 33
                 },
                 {
-                  "initializeMs": 39.48243099998217,
-                  "didOpenToDiagnosticsMs": 1166.275867999997,
-                  "diagnosticsCount": 3,
-                  "firstNonEmptyDiagnosticsMs": 1166.276238999999,
-                  "firstNonEmptyDiagnosticsCount": 3,
-                  "hoverMs": 5.138448999990942,
+                  "initializeMs": 38.98257600000943,
+                  "didOpenToDiagnosticsMs": 1036.5625500000024,
+                  "diagnosticsCount": 1,
+                  "firstNonEmptyDiagnosticsMs": 1036.5628409999772,
+                  "firstNonEmptyDiagnosticsCount": 1,
+                  "hoverMs": 6.209376999991946,
                   "hoverAnswered": true,
-                  "hoverBytes": 261,
-                  "hoverSample": "```typescript\nconst user: any\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Recommended order: <script> -> <template> -> <style>\n\n[📖 View rule documentatio",
+                  "hoverBytes": 33,
+                  "hoverSample": "```typescript\nconst user: any\n```",
                   "hoverPosition": {
                     "line": 19,
                     "character": 8,
@@ -12151,18 +12228,18 @@
                   },
                   "backendFallback": null,
                   "bridgeFailures": null,
-                  "artifact": 261
+                  "artifact": 33
                 },
                 {
-                  "initializeMs": 35.584826000005705,
-                  "didOpenToDiagnosticsMs": 1123.8264979999803,
-                  "diagnosticsCount": 3,
-                  "firstNonEmptyDiagnosticsMs": 1123.8268790000002,
-                  "firstNonEmptyDiagnosticsCount": 3,
-                  "hoverMs": 5.088485000014771,
+                  "initializeMs": 38.09299299999839,
+                  "didOpenToDiagnosticsMs": 1026.987089000002,
+                  "diagnosticsCount": 1,
+                  "firstNonEmptyDiagnosticsMs": 1026.9874100000015,
+                  "firstNonEmptyDiagnosticsCount": 1,
+                  "hoverMs": 5.021944000007352,
                   "hoverAnswered": true,
-                  "hoverBytes": 261,
-                  "hoverSample": "```typescript\nconst user: any\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Recommended order: <script> -> <template> -> <style>\n\n[📖 View rule documentatio",
+                  "hoverBytes": 33,
+                  "hoverSample": "```typescript\nconst user: any\n```",
                   "hoverPosition": {
                     "line": 19,
                     "character": 8,
@@ -12170,12 +12247,12 @@
                   },
                   "backendFallback": null,
                   "bridgeFailures": null,
-                  "artifact": 261
+                  "artifact": 33
                 }
               ],
-              "artifactMedian": 261,
+              "artifactMedian": 33,
               "warmupPasses": 1,
-              "throughput": "199 files/s"
+              "throughput": "197 files/s"
             }
           ]
         }
@@ -12190,26 +12267,26 @@
           "artifactPolarity": "informational",
           "engine": "tsc-js",
           "artifactLabel": "diagnostics published",
-          "notes": "BASELINE · official Vue language server v3 in hybrid (two-process) mode — the only mode v3 has. The measured unit is the pair: @vue/language-server plus typescript-language-server with @vue/typescript-plugin, joined by the tsserver bridge. Both processes' startup and project load of the real project are inside the timings. HOVER asks both halves in parallel and charges the slower; DIAGNOSTICS times the first publication for the document from either half (which may be an empty preliminary — the count it carried and the first NON-EMPTY publication are both published). · operation: didOpen → diagnostics · workspace packages/docs, document packages/docs/src/App.vue | ⚠ FAILED DIAGNOSTIC-CONTENT GATE — published 0 diagnostics for a document vize published 3 for. Answering \"nothing to report\" fast is not the same job as answering. Measured but UNRANKED. (Diagnostic EQUIVALENCE is not asserted; the counts are published so a suspicious row is visible.)",
+          "notes": "BASELINE · official Vue language server v3 in hybrid (two-process) mode — the only mode v3 has. The measured unit is the pair: @vue/language-server plus typescript-language-server with @vue/typescript-plugin, joined by the tsserver bridge. Both processes' startup and project load of the real project are inside the timings. HOVER asks both halves in parallel and charges the slower; DIAGNOSTICS times the first publication for the document from either half (which may be an empty preliminary — the count it carried and the first NON-EMPTY publication are both published). · operation: didOpen → diagnostics · workspace packages/docs, document packages/docs/src/App.vue | ⚠ FAILED DIAGNOSTIC-CONTENT GATE — published 0 diagnostics for a document vize published 1 for. Answering \"nothing to report\" fast is not the same job as answering. Measured but UNRANKED. (Diagnostic EQUIVALENCE is not asserted; the counts are published so a suspicious row is visible.)",
           "files": 1,
           "status": "unranked",
           "runs": [
-            10777.879,
-            11138.732,
-            10953.194,
-            11230.292,
-            11006.537
+            10747.029,
+            10736.264,
+            10761.235,
+            10805.713,
+            10572.334
           ],
-          "medianMs": 11006.537,
-          "minMs": 10777.879,
-          "maxMs": 11230.292,
-          "meanMs": 11021.327,
-          "stddevMs": 174.34,
-          "cvPct": 1.6,
+          "medianMs": 10747.029,
+          "minMs": 10572.334,
+          "maxMs": 10805.713,
+          "meanMs": 10724.515,
+          "stddevMs": 89.086,
+          "cvPct": 0.8,
           "metaSamples": [
             {
-              "initializeMs": 578.3908440000014,
-              "didOpenToDiagnosticsMs": 10777.879013000005,
+              "initializeMs": 549.9254929999952,
+              "didOpenToDiagnosticsMs": 10747.029006999997,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -12223,8 +12300,8 @@
               "artifact": 0
             },
             {
-              "initializeMs": 570.0184330000047,
-              "didOpenToDiagnosticsMs": 11138.731802999988,
+              "initializeMs": 556.5323310000094,
+              "didOpenToDiagnosticsMs": 10736.26408800001,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -12238,8 +12315,8 @@
               "artifact": 0
             },
             {
-              "initializeMs": 559.545741000009,
-              "didOpenToDiagnosticsMs": 10953.19441299999,
+              "initializeMs": 556.7214420000091,
+              "didOpenToDiagnosticsMs": 10761.234586999984,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -12253,8 +12330,8 @@
               "artifact": 0
             },
             {
-              "initializeMs": 565.9096310000168,
-              "didOpenToDiagnosticsMs": 11230.292325000017,
+              "initializeMs": 543.1250330000184,
+              "didOpenToDiagnosticsMs": 10805.712523000024,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -12268,8 +12345,8 @@
               "artifact": 0
             },
             {
-              "initializeMs": 572.0678009999974,
-              "didOpenToDiagnosticsMs": 11006.537402999995,
+              "initializeMs": 543.8259260000195,
+              "didOpenToDiagnosticsMs": 10572.333895000018,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -12295,26 +12372,26 @@
           "artifactPolarity": "informational",
           "engine": "tsgo via typescript-native-bridge",
           "artifactLabel": "diagnostics published",
-          "notes": "Identical to the Volar row except the TypeScript half runs on typescript-native-bridge (tsgo): same @vue/language-server, same @vue/typescript-plugin, same bridge, tsdk pointed at TNB 6.0.3-bridge.13.tsgo.7.0.2 tsdk. Exactly one variable against the baseline — the TypeScript engine — which is why the two are ranked in separate tables. · operation: didOpen → diagnostics · workspace packages/docs, document packages/docs/src/App.vue | ⚠ FAILED DIAGNOSTIC-CONTENT GATE — published 0 diagnostics for a document vize published 3 for. Answering \"nothing to report\" fast is not the same job as answering. Measured but UNRANKED. (Diagnostic EQUIVALENCE is not asserted; the counts are published so a suspicious row is visible.)",
+          "notes": "Identical to the Volar row except the TypeScript half runs on typescript-native-bridge (tsgo): same @vue/language-server, same @vue/typescript-plugin, same bridge, tsdk pointed at TNB 6.0.3-bridge.13.tsgo.7.0.2 tsdk. Exactly one variable against the baseline — the TypeScript engine — which is why the two are ranked in separate tables. · operation: didOpen → diagnostics · workspace packages/docs, document packages/docs/src/App.vue | ⚠ FAILED DIAGNOSTIC-CONTENT GATE — published 0 diagnostics for a document vize published 1 for. Answering \"nothing to report\" fast is not the same job as answering. Measured but UNRANKED. (Diagnostic EQUIVALENCE is not asserted; the counts are published so a suspicious row is visible.)",
           "files": 1,
           "status": "unranked",
           "runs": [
-            6303.509,
-            6380.932,
-            6488.915,
-            6448.459,
-            6495.907
+            6297.703,
+            6258.323,
+            6235.552,
+            6180.158,
+            6232.578
           ],
-          "medianMs": 6448.459,
-          "minMs": 6303.509,
-          "maxMs": 6495.907,
-          "meanMs": 6423.544,
-          "stddevMs": 81.171,
-          "cvPct": 1.3,
+          "medianMs": 6235.552,
+          "minMs": 6180.158,
+          "maxMs": 6297.703,
+          "meanMs": 6240.863,
+          "stddevMs": 42.771,
+          "cvPct": 0.7,
           "metaSamples": [
             {
-              "initializeMs": 786.25275900001,
-              "didOpenToDiagnosticsMs": 6303.50899100001,
+              "initializeMs": 789.8445670000001,
+              "didOpenToDiagnosticsMs": 6297.702577999997,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -12328,8 +12405,8 @@
               "artifact": 0
             },
             {
-              "initializeMs": 544.2368330000027,
-              "didOpenToDiagnosticsMs": 6380.931978000008,
+              "initializeMs": 552.8333370000037,
+              "didOpenToDiagnosticsMs": 6258.322542000009,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -12343,8 +12420,8 @@
               "artifact": 0
             },
             {
-              "initializeMs": 787.3176190000086,
-              "didOpenToDiagnosticsMs": 6488.915097999998,
+              "initializeMs": 748.9169430000184,
+              "didOpenToDiagnosticsMs": 6235.552135000005,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -12358,8 +12435,8 @@
               "artifact": 0
             },
             {
-              "initializeMs": 790.1492169999983,
-              "didOpenToDiagnosticsMs": 6448.459115000005,
+              "initializeMs": 776.6834590000217,
+              "didOpenToDiagnosticsMs": 6180.157814000006,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -12373,8 +12450,8 @@
               "artifact": 0
             },
             {
-              "initializeMs": 787.3344420000212,
-              "didOpenToDiagnosticsMs": 6495.906527000014,
+              "initializeMs": 759.3769540000067,
+              "didOpenToDiagnosticsMs": 6232.5783590000065,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -12400,26 +12477,26 @@
           "artifactPolarity": "informational",
           "engine": "tsgo (stable)",
           "artifactLabel": "diagnostics published",
-          "notes": "verter-lsp stdio, the native server from the published npm package, given the project directory as its workspace root. $/verter/ready is not waited for — its workspace load is inside the measured window like every other server's. · operation: didOpen → diagnostics · workspace packages/docs, document packages/docs/src/App.vue | ⚠ FAILED DIAGNOSTIC-CONTENT GATE — published 0 diagnostics for a document vize published 3 for. Answering \"nothing to report\" fast is not the same job as answering. Measured but UNRANKED. (Diagnostic EQUIVALENCE is not asserted; the counts are published so a suspicious row is visible.)",
+          "notes": "verter-lsp stdio, the native server from the published npm package, given the project directory as its workspace root. $/verter/ready is not waited for — its workspace load is inside the measured window like every other server's. · operation: didOpen → diagnostics · workspace packages/docs, document packages/docs/src/App.vue | ⚠ FAILED DIAGNOSTIC-CONTENT GATE — published 0 diagnostics for a document vize published 1 for. Answering \"nothing to report\" fast is not the same job as answering. Measured but UNRANKED. (Diagnostic EQUIVALENCE is not asserted; the counts are published so a suspicious row is visible.)",
           "files": 1,
           "status": "unranked",
           "runs": [
-            644.349,
-            669.405,
-            967.402,
-            657.43,
-            702.699
+            644.764,
+            627.007,
+            911.839,
+            639.739,
+            643.55
           ],
-          "medianMs": 669.405,
-          "minMs": 644.349,
-          "maxMs": 967.402,
-          "meanMs": 728.257,
-          "stddevMs": 135.429,
-          "cvPct": 20.2,
+          "medianMs": 643.55,
+          "minMs": 627.007,
+          "maxMs": 911.839,
+          "meanMs": 693.38,
+          "stddevMs": 122.325,
+          "cvPct": 19,
           "metaSamples": [
             {
-              "initializeMs": 11.6077479999949,
-              "didOpenToDiagnosticsMs": 644.3492319999932,
+              "initializeMs": 11.39340600000287,
+              "didOpenToDiagnosticsMs": 644.7639179999969,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -12433,8 +12510,8 @@
               "artifact": 0
             },
             {
-              "initializeMs": 10.329928000006475,
-              "didOpenToDiagnosticsMs": 669.4054979999928,
+              "initializeMs": 11.149740000008023,
+              "didOpenToDiagnosticsMs": 627.0074069999973,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -12448,8 +12525,8 @@
               "artifact": 0
             },
             {
-              "initializeMs": 14.178791999991518,
-              "didOpenToDiagnosticsMs": 967.402459999983,
+              "initializeMs": 20.056852999987314,
+              "didOpenToDiagnosticsMs": 911.8386259999825,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -12463,8 +12540,8 @@
               "artifact": 0
             },
             {
-              "initializeMs": 10.305156000016723,
-              "didOpenToDiagnosticsMs": 657.4304639999755,
+              "initializeMs": 10.575623999990057,
+              "didOpenToDiagnosticsMs": 639.739493000001,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -12478,8 +12555,8 @@
               "artifact": 0
             },
             {
-              "initializeMs": 12.684720999968704,
-              "didOpenToDiagnosticsMs": 702.6993310000398,
+              "initializeMs": 10.18129300000146,
+              "didOpenToDiagnosticsMs": 643.5496360000107,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -12495,7 +12572,7 @@
           ],
           "artifactMedian": 0,
           "warmupPasses": 1,
-          "throughput": "1 files/s"
+          "throughput": "2 files/s"
         },
         {
           "id": "vize-lsp-diagnostics",
@@ -12509,25 +12586,25 @@
           "files": 1,
           "status": "ok",
           "runs": [
-            894.651,
-            928.328,
-            873.527,
-            900.076,
-            936.386
+            773.245,
+            777.356,
+            797.239,
+            798.758,
+            792.161
           ],
-          "medianMs": 900.076,
-          "minMs": 873.527,
-          "maxMs": 936.386,
-          "meanMs": 906.594,
-          "stddevMs": 25.683,
-          "cvPct": 2.9,
+          "medianMs": 792.161,
+          "minMs": 773.245,
+          "maxMs": 798.758,
+          "meanMs": 787.752,
+          "stddevMs": 11.716,
+          "cvPct": 1.5,
           "metaSamples": [
             {
-              "initializeMs": 39.223150999998325,
-              "didOpenToDiagnosticsMs": 894.6509490000026,
-              "diagnosticsCount": 3,
-              "firstNonEmptyDiagnosticsMs": 894.6515599999984,
-              "firstNonEmptyDiagnosticsCount": 3,
+              "initializeMs": 42.233030000003055,
+              "didOpenToDiagnosticsMs": 773.2448160000058,
+              "diagnosticsCount": 1,
+              "firstNonEmptyDiagnosticsMs": 773.2453059999971,
+              "firstNonEmptyDiagnosticsCount": 1,
               "hoverMs": null,
               "hoverAnswered": false,
               "hoverBytes": 0,
@@ -12535,14 +12612,14 @@
               "hoverPosition": null,
               "backendFallback": null,
               "bridgeFailures": null,
-              "artifact": 3
+              "artifact": 1
             },
             {
-              "initializeMs": 35.68959100000211,
-              "didOpenToDiagnosticsMs": 928.3277099999978,
-              "diagnosticsCount": 3,
-              "firstNonEmptyDiagnosticsMs": 928.3282709999912,
-              "firstNonEmptyDiagnosticsCount": 3,
+              "initializeMs": 40.736504999993485,
+              "didOpenToDiagnosticsMs": 777.3560160000052,
+              "diagnosticsCount": 1,
+              "firstNonEmptyDiagnosticsMs": 777.356627000001,
+              "firstNonEmptyDiagnosticsCount": 1,
               "hoverMs": null,
               "hoverAnswered": false,
               "hoverBytes": 0,
@@ -12550,14 +12627,14 @@
               "hoverPosition": null,
               "backendFallback": null,
               "bridgeFailures": null,
-              "artifact": 3
+              "artifact": 1
             },
             {
-              "initializeMs": 37.5224959999905,
-              "didOpenToDiagnosticsMs": 873.5265619999846,
-              "diagnosticsCount": 3,
-              "firstNonEmptyDiagnosticsMs": 873.527202999976,
-              "firstNonEmptyDiagnosticsCount": 3,
+              "initializeMs": 38.0880130000005,
+              "didOpenToDiagnosticsMs": 797.2391399999906,
+              "diagnosticsCount": 1,
+              "firstNonEmptyDiagnosticsMs": 797.2395299999916,
+              "firstNonEmptyDiagnosticsCount": 1,
               "hoverMs": null,
               "hoverAnswered": false,
               "hoverBytes": 0,
@@ -12565,14 +12642,14 @@
               "hoverPosition": null,
               "backendFallback": null,
               "bridgeFailures": null,
-              "artifact": 3
+              "artifact": 1
             },
             {
-              "initializeMs": 41.165437000017846,
-              "didOpenToDiagnosticsMs": 900.0759090000065,
-              "diagnosticsCount": 3,
-              "firstNonEmptyDiagnosticsMs": 900.0762000000104,
-              "firstNonEmptyDiagnosticsCount": 3,
+              "initializeMs": 42.60400799999479,
+              "didOpenToDiagnosticsMs": 798.7577309999906,
+              "diagnosticsCount": 1,
+              "firstNonEmptyDiagnosticsMs": 798.7582619999885,
+              "firstNonEmptyDiagnosticsCount": 1,
               "hoverMs": null,
               "hoverAnswered": false,
               "hoverBytes": 0,
@@ -12580,14 +12657,14 @@
               "hoverPosition": null,
               "backendFallback": null,
               "bridgeFailures": null,
-              "artifact": 3
+              "artifact": 1
             },
             {
-              "initializeMs": 37.92557500000112,
-              "didOpenToDiagnosticsMs": 936.3857710000011,
-              "diagnosticsCount": 3,
-              "firstNonEmptyDiagnosticsMs": 936.3860410000198,
-              "firstNonEmptyDiagnosticsCount": 3,
+              "initializeMs": 40.272177000006195,
+              "didOpenToDiagnosticsMs": 792.1606979999924,
+              "diagnosticsCount": 1,
+              "firstNonEmptyDiagnosticsMs": 792.1609290000051,
+              "firstNonEmptyDiagnosticsCount": 1,
               "hoverMs": null,
               "hoverAnswered": false,
               "hoverBytes": 0,
@@ -12595,10 +12672,10 @@
               "hoverPosition": null,
               "backendFallback": null,
               "bridgeFailures": null,
-              "artifact": 3
+              "artifact": 1
             }
           ],
-          "artifactMedian": 3,
+          "artifactMedian": 1,
           "warmupPasses": 1,
           "throughput": "1 files/s"
         },
@@ -12614,26 +12691,26 @@
           "files": 1,
           "status": "ok",
           "runs": [
-            12.011,
-            13.47,
-            13.294,
-            8.055,
-            9.819
+            7.974,
+            6.855,
+            7.7,
+            15.321,
+            7.533
           ],
-          "medianMs": 12.011,
-          "minMs": 8.055,
-          "maxMs": 13.47,
-          "meanMs": 11.33,
-          "stddevMs": 2.34,
-          "cvPct": 19.5,
+          "medianMs": 7.7,
+          "minMs": 6.855,
+          "maxMs": 15.321,
+          "meanMs": 9.077,
+          "stddevMs": 3.515,
+          "cvPct": 45.6,
           "metaSamples": [
             {
-              "initializeMs": 547.8977949999971,
-              "didOpenToDiagnosticsMs": 10794.303367999993,
+              "initializeMs": 550.3974190000008,
+              "didOpenToDiagnosticsMs": 10702.140174999993,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 12.011068000007072,
+              "hoverMs": 7.974127000008593,
               "hoverAnswered": true,
               "hoverBytes": 5035,
               "hoverSample": "```typescript\nconst user: Store<\"user\", Pick<{\n    load: () => void;\n    save: () => void;\n    reset: () => void;\n    version: globalThis.Ref<7, 7>;\n    ecosystem: globalThis.Ref<{\n        bin: {\n    ",
@@ -12647,12 +12724,12 @@
               "artifact": 5035
             },
             {
-              "initializeMs": 562.623529000004,
-              "didOpenToDiagnosticsMs": 11093.025194000002,
+              "initializeMs": 549.0474430000031,
+              "didOpenToDiagnosticsMs": 10687.065789,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 13.469612999993842,
+              "hoverMs": 6.8546300000016345,
               "hoverAnswered": true,
               "hoverBytes": 5035,
               "hoverSample": "```typescript\nconst user: Store<\"user\", Pick<{\n    load: () => void;\n    save: () => void;\n    reset: () => void;\n    version: globalThis.Ref<7, 7>;\n    ecosystem: globalThis.Ref<{\n        bin: {\n    ",
@@ -12666,12 +12743,12 @@
               "artifact": 5035
             },
             {
-              "initializeMs": 551.8840999999957,
-              "didOpenToDiagnosticsMs": 11158.768806000007,
+              "initializeMs": 541.1514899999893,
+              "didOpenToDiagnosticsMs": 10726.799744000018,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 13.293791999982204,
+              "hoverMs": 7.6995870000100695,
               "hoverAnswered": true,
               "hoverBytes": 5035,
               "hoverSample": "```typescript\nconst user: Store<\"user\", Pick<{\n    load: () => void;\n    save: () => void;\n    reset: () => void;\n    version: globalThis.Ref<7, 7>;\n    ecosystem: globalThis.Ref<{\n        bin: {\n    ",
@@ -12685,12 +12762,12 @@
               "artifact": 5035
             },
             {
-              "initializeMs": 548.9520309999934,
-              "didOpenToDiagnosticsMs": 10878.621497000015,
+              "initializeMs": 566.7203440000012,
+              "didOpenToDiagnosticsMs": 11015.865624999977,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 8.055126000021119,
+              "hoverMs": 15.321016000001691,
               "hoverAnswered": true,
               "hoverBytes": 5035,
               "hoverSample": "```typescript\nconst user: Store<\"user\", Pick<{\n    load: () => void;\n    save: () => void;\n    reset: () => void;\n    version: globalThis.Ref<7, 7>;\n    ecosystem: globalThis.Ref<{\n        bin: {\n    ",
@@ -12704,12 +12781,12 @@
               "artifact": 5035
             },
             {
-              "initializeMs": 550.9996859999956,
-              "didOpenToDiagnosticsMs": 11023.593277999986,
+              "initializeMs": 549.0657449999999,
+              "didOpenToDiagnosticsMs": 10652.655110000022,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 9.818685000005644,
+              "hoverMs": 7.532579999999143,
               "hoverAnswered": true,
               "hoverBytes": 5035,
               "hoverSample": "```typescript\nconst user: Store<\"user\", Pick<{\n    load: () => void;\n    save: () => void;\n    reset: () => void;\n    version: globalThis.Ref<7, 7>;\n    ecosystem: globalThis.Ref<{\n        bin: {\n    ",
@@ -12725,7 +12802,7 @@
           ],
           "artifactMedian": 5035,
           "warmupPasses": 1,
-          "throughput": "83 files/s"
+          "throughput": "130 files/s"
         },
         {
           "id": "volar-tnb-hover",
@@ -12739,26 +12816,26 @@
           "files": 1,
           "status": "ok",
           "runs": [
-            32.662,
-            38.18,
-            73.252,
-            50.9,
-            87.69
+            33.966,
+            46.344,
+            52.111,
+            54.025,
+            29.822
           ],
-          "medianMs": 50.9,
-          "minMs": 32.662,
-          "maxMs": 87.69,
-          "meanMs": 56.537,
-          "stddevMs": 23.392,
-          "cvPct": 46,
+          "medianMs": 46.344,
+          "minMs": 29.822,
+          "maxMs": 54.025,
+          "meanMs": 43.254,
+          "stddevMs": 10.848,
+          "cvPct": 23.4,
           "metaSamples": [
             {
-              "initializeMs": 602.4913410000008,
-              "didOpenToDiagnosticsMs": 6404.521335999991,
+              "initializeMs": 586.3862439999939,
+              "didOpenToDiagnosticsMs": 6190.4361770000105,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 32.66185899999982,
+              "hoverMs": 33.965615000008256,
               "hoverAnswered": true,
               "hoverBytes": 3244,
               "hoverSample": "```typescript\nconst user: Store<\"user\", Pick<{ load: () => void; save: () => void; reset: () => void; version: globalThis.Ref<7, 7>; ecosystem: globalThis.Ref<{ bin: { [x: string]: unknown; wordWrap: ",
@@ -12772,12 +12849,12 @@
               "artifact": 3244
             },
             {
-              "initializeMs": 598.9958469999983,
-              "didOpenToDiagnosticsMs": 6641.651608,
+              "initializeMs": 581.0291750000033,
+              "didOpenToDiagnosticsMs": 6208.52393000001,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 38.179787999994005,
+              "hoverMs": 46.34407700000156,
               "hoverAnswered": true,
               "hoverBytes": 3244,
               "hoverSample": "```typescript\nconst user: Store<\"user\", Pick<{ load: () => void; save: () => void; reset: () => void; version: globalThis.Ref<7, 7>; ecosystem: globalThis.Ref<{ bin: { [x: string]: unknown; wordWrap: ",
@@ -12791,12 +12868,12 @@
               "artifact": 3244
             },
             {
-              "initializeMs": 586.9944860000105,
-              "didOpenToDiagnosticsMs": 6517.274726000003,
+              "initializeMs": 589.4355290000094,
+              "didOpenToDiagnosticsMs": 6280.185438000015,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 73.2519420000026,
+              "hoverMs": 52.110685000021476,
               "hoverAnswered": true,
               "hoverBytes": 3244,
               "hoverSample": "```typescript\nconst user: Store<\"user\", Pick<{ load: () => void; save: () => void; reset: () => void; version: globalThis.Ref<7, 7>; ecosystem: globalThis.Ref<{ bin: { [x: string]: unknown; wordWrap: ",
@@ -12810,12 +12887,12 @@
               "artifact": 3244
             },
             {
-              "initializeMs": 584.1544140000187,
-              "didOpenToDiagnosticsMs": 6425.516493999981,
+              "initializeMs": 605.9364980000246,
+              "didOpenToDiagnosticsMs": 6324.230769000016,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 50.900167999992846,
+              "hoverMs": 54.02542000001995,
               "hoverAnswered": true,
               "hoverBytes": 3244,
               "hoverSample": "```typescript\nconst user: Store<\"user\", Pick<{ load: () => void; save: () => void; reset: () => void; version: globalThis.Ref<7, 7>; ecosystem: globalThis.Ref<{ bin: { [x: string]: unknown; wordWrap: ",
@@ -12829,12 +12906,12 @@
               "artifact": 3244
             },
             {
-              "initializeMs": 597.0184480000171,
-              "didOpenToDiagnosticsMs": 6505.268477000005,
+              "initializeMs": 585.5550780000049,
+              "didOpenToDiagnosticsMs": 6157.028090000007,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 87.6900500000047,
+              "hoverMs": 29.82189200000721,
               "hoverAnswered": true,
               "hoverBytes": 3244,
               "hoverSample": "```typescript\nconst user: Store<\"user\", Pick<{ load: () => void; save: () => void; reset: () => void; version: globalThis.Ref<7, 7>; ecosystem: globalThis.Ref<{ bin: { [x: string]: unknown; wordWrap: ",
@@ -12850,7 +12927,7 @@
           ],
           "artifactMedian": 3244,
           "warmupPasses": 1,
-          "throughput": "20 files/s"
+          "throughput": "22 files/s"
         },
         {
           "id": "verter-lsp-hover",
@@ -12864,26 +12941,26 @@
           "files": 1,
           "status": "ok",
           "runs": [
-            1.497,
-            1.484,
-            1.521,
-            1.631,
-            1.699
+            1.374,
+            1.53,
+            1.43,
+            7.783,
+            1.51
           ],
-          "medianMs": 1.521,
-          "minMs": 1.484,
-          "maxMs": 1.699,
-          "meanMs": 1.566,
-          "stddevMs": 0.094,
-          "cvPct": 6.2,
+          "medianMs": 1.51,
+          "minMs": 1.374,
+          "maxMs": 7.783,
+          "meanMs": 2.725,
+          "stddevMs": 2.828,
+          "cvPct": 187.3,
           "metaSamples": [
             {
-              "initializeMs": 16.792056000005687,
-              "didOpenToDiagnosticsMs": 681.3440649999975,
+              "initializeMs": 16.906955999991624,
+              "didOpenToDiagnosticsMs": 628.4891720000014,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 1.497479999990901,
+              "hoverMs": 1.3743170000088867,
               "hoverAnswered": true,
               "hoverBytes": 5027,
               "hoverSample": "```typescript\nconst user: Store<\"user\", Pick<{\n```\n\nload: () => void;\n    save: () => void;\n    reset: () => void;\n    version: globalThis.Ref<7, 7>;\n    ecosystem: globalThis.Ref<{\n        bin: {\n   ",
@@ -12897,12 +12974,12 @@
               "artifact": 5027
             },
             {
-              "initializeMs": 23.214592999996967,
-              "didOpenToDiagnosticsMs": 664.0228129999887,
+              "initializeMs": 33.75988199999847,
+              "didOpenToDiagnosticsMs": 652.1816390000022,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 1.4839009999996051,
+              "hoverMs": 1.5298420000035549,
               "hoverAnswered": true,
               "hoverBytes": 5027,
               "hoverSample": "```typescript\nconst user: Store<\"user\", Pick<{\n```\n\nload: () => void;\n    save: () => void;\n    reset: () => void;\n    version: globalThis.Ref<7, 7>;\n    ecosystem: globalThis.Ref<{\n        bin: {\n   ",
@@ -12916,12 +12993,12 @@
               "artifact": 5027
             },
             {
-              "initializeMs": 10.612125999992713,
-              "didOpenToDiagnosticsMs": 680.5731589999923,
+              "initializeMs": 12.084004999982426,
+              "didOpenToDiagnosticsMs": 697.4466320000065,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 1.5209599999943748,
+              "hoverMs": 1.4304019999981392,
               "hoverAnswered": true,
               "hoverBytes": 5027,
               "hoverSample": "```typescript\nconst user: Store<\"user\", Pick<{\n```\n\nload: () => void;\n    save: () => void;\n    reset: () => void;\n    version: globalThis.Ref<7, 7>;\n    ecosystem: globalThis.Ref<{\n        bin: {\n   ",
@@ -12935,12 +13012,12 @@
               "artifact": 5027
             },
             {
-              "initializeMs": 26.11393500000122,
-              "didOpenToDiagnosticsMs": 680.2050229999877,
+              "initializeMs": 23.49174200001289,
+              "didOpenToDiagnosticsMs": 620.4642969999986,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 1.631137000018498,
+              "hoverMs": 7.782979000010528,
               "hoverAnswered": true,
               "hoverBytes": 5027,
               "hoverSample": "```typescript\nconst user: Store<\"user\", Pick<{\n```\n\nload: () => void;\n    save: () => void;\n    reset: () => void;\n    version: globalThis.Ref<7, 7>;\n    ecosystem: globalThis.Ref<{\n        bin: {\n   ",
@@ -12954,12 +13031,12 @@
               "artifact": 5027
             },
             {
-              "initializeMs": 14.471428999997443,
-              "didOpenToDiagnosticsMs": 662.3238439999986,
+              "initializeMs": 16.47691300002043,
+              "didOpenToDiagnosticsMs": 699.7857479999948,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 1.6992250000184868,
+              "hoverMs": 1.5104730000020936,
               "hoverAnswered": true,
               "hoverBytes": 5027,
               "hoverSample": "```typescript\nconst user: Store<\"user\", Pick<{\n```\n\nload: () => void;\n    save: () => void;\n    reset: () => void;\n    version: globalThis.Ref<7, 7>;\n    ecosystem: globalThis.Ref<{\n        bin: {\n   ",
@@ -12975,7 +13052,7 @@
           ],
           "artifactMedian": 5027,
           "warmupPasses": 1,
-          "throughput": "657 files/s"
+          "throughput": "662 files/s"
         },
         {
           "id": "vize-lsp-hover",
@@ -12989,29 +13066,29 @@
           "files": 1,
           "status": "ok",
           "runs": [
-            4.71,
-            5.033,
-            4.767,
-            5.138,
-            5.088
+            4.986,
+            5.066,
+            5.314,
+            6.209,
+            5.022
           ],
-          "medianMs": 5.033,
-          "minMs": 4.71,
-          "maxMs": 5.138,
-          "meanMs": 4.947,
-          "stddevMs": 0.195,
-          "cvPct": 3.9,
+          "medianMs": 5.066,
+          "minMs": 4.986,
+          "maxMs": 6.209,
+          "meanMs": 5.319,
+          "stddevMs": 0.514,
+          "cvPct": 10.1,
           "metaSamples": [
             {
-              "initializeMs": 36.55181600000651,
-              "didOpenToDiagnosticsMs": 1146.9325189999945,
-              "diagnosticsCount": 3,
-              "firstNonEmptyDiagnosticsMs": 1146.9333409999963,
-              "firstNonEmptyDiagnosticsCount": 3,
-              "hoverMs": 4.709707000001799,
+              "initializeMs": 39.68612300000677,
+              "didOpenToDiagnosticsMs": 1057.668583000006,
+              "diagnosticsCount": 1,
+              "firstNonEmptyDiagnosticsMs": 1057.669213999994,
+              "firstNonEmptyDiagnosticsCount": 1,
+              "hoverMs": 4.985902999993414,
               "hoverAnswered": true,
-              "hoverBytes": 261,
-              "hoverSample": "```typescript\nconst user: any\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Recommended order: <script> -> <template> -> <style>\n\n[📖 View rule documentatio",
+              "hoverBytes": 33,
+              "hoverSample": "```typescript\nconst user: any\n```",
               "hoverPosition": {
                 "line": 19,
                 "character": 8,
@@ -13019,18 +13096,18 @@
               },
               "backendFallback": null,
               "bridgeFailures": null,
-              "artifact": 261
+              "artifact": 33
             },
             {
-              "initializeMs": 38.124299999995856,
-              "didOpenToDiagnosticsMs": 1150.1188249999977,
-              "diagnosticsCount": 3,
-              "firstNonEmptyDiagnosticsMs": 1150.1195759999973,
-              "firstNonEmptyDiagnosticsCount": 3,
-              "hoverMs": 5.033451999988756,
+              "initializeMs": 40.19518200001039,
+              "didOpenToDiagnosticsMs": 1017.826252999992,
+              "diagnosticsCount": 1,
+              "firstNonEmptyDiagnosticsMs": 1017.8267339999875,
+              "firstNonEmptyDiagnosticsCount": 1,
+              "hoverMs": 5.066143000003649,
               "hoverAnswered": true,
-              "hoverBytes": 261,
-              "hoverSample": "```typescript\nconst user: any\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Recommended order: <script> -> <template> -> <style>\n\n[📖 View rule documentatio",
+              "hoverBytes": 33,
+              "hoverSample": "```typescript\nconst user: any\n```",
               "hoverPosition": {
                 "line": 19,
                 "character": 8,
@@ -13038,18 +13115,18 @@
               },
               "backendFallback": null,
               "bridgeFailures": null,
-              "artifact": 261
+              "artifact": 33
             },
             {
-              "initializeMs": 36.47490299999481,
-              "didOpenToDiagnosticsMs": 1122.039255999989,
-              "diagnosticsCount": 3,
-              "firstNonEmptyDiagnosticsMs": 1122.0399869999965,
-              "firstNonEmptyDiagnosticsCount": 3,
-              "hoverMs": 4.766782000020612,
+              "initializeMs": 39.55134800000815,
+              "didOpenToDiagnosticsMs": 1027.0681570000015,
+              "diagnosticsCount": 1,
+              "firstNonEmptyDiagnosticsMs": 1027.0687780000153,
+              "firstNonEmptyDiagnosticsCount": 1,
+              "hoverMs": 5.314066999999341,
               "hoverAnswered": true,
-              "hoverBytes": 261,
-              "hoverSample": "```typescript\nconst user: any\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Recommended order: <script> -> <template> -> <style>\n\n[📖 View rule documentatio",
+              "hoverBytes": 33,
+              "hoverSample": "```typescript\nconst user: any\n```",
               "hoverPosition": {
                 "line": 19,
                 "character": 8,
@@ -13057,18 +13134,18 @@
               },
               "backendFallback": null,
               "bridgeFailures": null,
-              "artifact": 261
+              "artifact": 33
             },
             {
-              "initializeMs": 39.48243099998217,
-              "didOpenToDiagnosticsMs": 1166.275867999997,
-              "diagnosticsCount": 3,
-              "firstNonEmptyDiagnosticsMs": 1166.276238999999,
-              "firstNonEmptyDiagnosticsCount": 3,
-              "hoverMs": 5.138448999990942,
+              "initializeMs": 38.98257600000943,
+              "didOpenToDiagnosticsMs": 1036.5625500000024,
+              "diagnosticsCount": 1,
+              "firstNonEmptyDiagnosticsMs": 1036.5628409999772,
+              "firstNonEmptyDiagnosticsCount": 1,
+              "hoverMs": 6.209376999991946,
               "hoverAnswered": true,
-              "hoverBytes": 261,
-              "hoverSample": "```typescript\nconst user: any\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Recommended order: <script> -> <template> -> <style>\n\n[📖 View rule documentatio",
+              "hoverBytes": 33,
+              "hoverSample": "```typescript\nconst user: any\n```",
               "hoverPosition": {
                 "line": 19,
                 "character": 8,
@@ -13076,18 +13153,18 @@
               },
               "backendFallback": null,
               "bridgeFailures": null,
-              "artifact": 261
+              "artifact": 33
             },
             {
-              "initializeMs": 35.584826000005705,
-              "didOpenToDiagnosticsMs": 1123.8264979999803,
-              "diagnosticsCount": 3,
-              "firstNonEmptyDiagnosticsMs": 1123.8268790000002,
-              "firstNonEmptyDiagnosticsCount": 3,
-              "hoverMs": 5.088485000014771,
+              "initializeMs": 38.09299299999839,
+              "didOpenToDiagnosticsMs": 1026.987089000002,
+              "diagnosticsCount": 1,
+              "firstNonEmptyDiagnosticsMs": 1026.9874100000015,
+              "firstNonEmptyDiagnosticsCount": 1,
+              "hoverMs": 5.021944000007352,
               "hoverAnswered": true,
-              "hoverBytes": 261,
-              "hoverSample": "```typescript\nconst user: any\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Recommended order: <script> -> <template> -> <style>\n\n[📖 View rule documentatio",
+              "hoverBytes": 33,
+              "hoverSample": "```typescript\nconst user: any\n```",
               "hoverPosition": {
                 "line": 19,
                 "character": 8,
@@ -13095,12 +13172,12 @@
               },
               "backendFallback": null,
               "bridgeFailures": null,
-              "artifact": 261
+              "artifact": 33
             }
           ],
-          "artifactMedian": 261,
+          "artifactMedian": 33,
           "warmupPasses": 1,
-          "throughput": "199 files/s"
+          "throughput": "197 files/s"
         }
       ],
       "methodology": [

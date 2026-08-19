@@ -23,31 +23,31 @@
   <line class="grid" x1="248" y1="36" x2="248" y2="188" />
   <text class="muted" x="248" y="208" text-anchor="middle" font-size="11">0.0 ms</text>
   <line class="grid" x1="348.5" y1="36" x2="348.5" y2="188" />
-  <text class="muted" x="348.5" y="208" text-anchor="middle" font-size="11">7.09 s</text>
+  <text class="muted" x="348.5" y="208" text-anchor="middle" font-size="11">10.5 s</text>
   <line class="grid" x1="449" y1="36" x2="449" y2="188" />
-  <text class="muted" x="449" y="208" text-anchor="middle" font-size="11">14.2 s</text>
+  <text class="muted" x="449" y="208" text-anchor="middle" font-size="11">21.0 s</text>
   <line class="grid" x1="549.5" y1="36" x2="549.5" y2="188" />
-  <text class="muted" x="549.5" y="208" text-anchor="middle" font-size="11">21.3 s</text>
+  <text class="muted" x="549.5" y="208" text-anchor="middle" font-size="11">31.5 s</text>
   <line class="grid" x1="650" y1="36" x2="650" y2="188" />
-  <text class="muted" x="650" y="208" text-anchor="middle" font-size="11">28.4 s</text>
+  <text class="muted" x="650" y="208" text-anchor="middle" font-size="11">41.9 s</text>
   <text class="muted" x="16" y="60" font-size="11">1</text>
       <text class="label" x="236" y="60" text-anchor="end" font-size="13">vben-admin-monorepo — project's own…</text>
       <rect class="track" x="248" y="49" width="402" height="22" rx="5"/>
-      <rect x="248" y="49" width="92.7" height="22" rx="5" fill="#64748b"/>
-      <text class="label" x="348.67113147691225" y="60" font-size="12" font-weight="600">6.54 s</text>
+      <rect x="248" y="49" width="103.2" height="22" rx="5" fill="#64748b"/>
+      <text class="onbar" x="343.23175965665234" y="60" text-anchor="end" font-size="12" font-weight="600">10.8 s</text>
   <text class="muted" x="16" y="96" font-size="11">2</text>
       <text class="label" x="236" y="96" text-anchor="end" font-size="13">vben-admin-monorepo — unplugin-vue</text>
       <rect class="track" x="248" y="85" width="402" height="22" rx="5"/>
-      <rect x="248" y="85" width="93.1" height="22" rx="5" fill="#42b883"/>
-      <text class="label" x="349.09622841029255" y="96" font-size="12" font-weight="600">6.57 s</text>
+      <rect x="248" y="85" width="106.6" height="22" rx="5" fill="#42b883"/>
+      <text class="onbar" x="346.5865522174535" y="96" text-anchor="end" font-size="12" font-weight="600">11.1 s</text>
   <text class="muted" x="16" y="132" font-size="11">3</text>
       <text class="label" x="236" y="132" text-anchor="end" font-size="13">vben-admin-monorepo — @verter/unplu…</text>
       <rect class="track" x="248" y="121" width="402" height="22" rx="5"/>
-      <rect x="248" y="121" width="95.8" height="22" rx="5" fill="#e11d48"/>
-      <text class="label" x="351.788508988368" y="132" font-size="12" font-weight="600">6.76 s</text>
+      <rect x="248" y="121" width="107.5" height="22" rx="5" fill="#e11d48"/>
+      <text class="onbar" x="347.5450643776824" y="132" text-anchor="end" font-size="12" font-weight="600">11.2 s</text>
   <text class="muted" x="16" y="168" font-size="11">4</text>
       <text class="label" x="236" y="168" text-anchor="end" font-size="13">vben-admin-monorepo — @vizejs/vite-…</text>
       <rect class="track" x="248" y="157" width="402" height="22" rx="5"/>
       <rect x="248" y="157" width="402.0" height="22" rx="5" fill="#2563eb"/>
-      <text class="onbar" x="642" y="168" text-anchor="end" font-size="12" font-weight="600">28.4 s</text>
+      <text class="onbar" x="642" y="168" text-anchor="end" font-size="12" font-weight="600">41.9 s</text>
 </svg>

@@ -11,7 +11,7 @@ This page is the **landing view**: a bar chart and a 3-column ranking (median ·
 - **[Reference results](#reference-results)** — [how to read](docs/results/notes-benchmark.md) · [bench](docs/results/bench-Linux-200-bench.md)
 - **[Typecheck confirmation](#typecheck-confirmation)** — [full matrix](docs/typecheck.md)
 - **[IDE operation results](#ide-operation-results)** — [how to read](docs/results/notes-ide.md) · [ide ops](docs/results/ide-Linux.md)
-- **[Real-world project results](#real-world-project-results)** — [how to read](docs/results/notes-real-world.md) · [element-plus](docs/results/real-world-Linux-element-plus.md) · [hoppscotch](docs/results/real-world-Linux-hoppscotch.md) · [naive-ui](docs/results/real-world-Linux-naive-ui.md) · [nuxt-ui](docs/results/real-world-Linux-nuxt-ui.md) · [primevue](docs/results/real-world-Linux-primevue.md) · [quasar](docs/results/real-world-Linux-quasar.md) · [vue-vben-admin](docs/results/real-world-Linux-vue-vben-admin.md) · [vuetify](docs/results/real-world-Linux-vuetify.md)
+- **[Real-world project results](#real-world-project-results)** — [how to read](docs/results/notes-real-world.md) · [element-plus](docs/results/real-world-Linux-element-plus.md) · [hoppscotch](docs/results/real-world-Linux-hoppscotch.md) · [naive-ui](docs/results/real-world-Linux-naive-ui.md) · [nuxt-ui](docs/results/real-world-Linux-nuxt-ui.md) · [quasar](docs/results/real-world-Linux-quasar.md) · [vue-vben-admin](docs/results/real-world-Linux-vue-vben-admin.md) · [vuetify](docs/results/real-world-Linux-vuetify.md)
 - **[Memory](#memory)** — [MEMORY.md](MEMORY.md)
 
 <!-- RESULTS_INDEX_END -->
@@ -571,7 +571,7 @@ Pinned third-party Vue checkouts, **one job per project**. Ranked within a corpu
 
 <!-- source: real-world-Linux-element-plus.md -->
 
-> 📄 **[Full details →](docs/results/real-world-Linux-element-plus.md)** — methodology, per-row notes and raw runs (41 collapsed block(s) moved out of this page).
+> 📄 **[Full details →](docs/results/real-world-Linux-element-plus.md)** — methodology, per-row notes and raw runs (46 collapsed block(s) moved out of this page).
 
 ## Project test suite — element-plus:components
 
@@ -581,13 +581,73 @@ Files: **162** · Bytes: **765,295**
 
 | Tool | **Median** | vs fastest |
 | --- | ---: | ---: |
-| element-plus — project's own toolchain (baseline) | **142.00 s** | 1.00x |
-| element-plus — unplugin-vue | **142.83 s** | 1.01x |
+| element-plus — project's own toolchain (baseline) | **160.55 s** | 1.00x |
+| element-plus — unplugin-vue | **162.66 s** | 1.01x |
 
 **Not ranked**
 
 - **[element-plus — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize)**: FAILED TEST-COUNT GATE — passed 2047 tests where the project's own toolchain passed 2533; failed 434 test(s) where the project's own toolchain failed 0 — a failing test is not a faster test.
 - **[element-plus — @verter/unplugin](https://github.com/pikax/verter)**: FAILED TEST-COUNT GATE — passed 527 tests where the project's own toolchain passed 2533; failed 30 test(s) where the project's own toolchain failed 0 — a failing test is not a faster test.
+
+### Peak RSS
+
+![Peak RSS](docs/results/charts/real-world-linux-element-plus-md-project-test-suite-element-plus-components-peak-rss.svg)
+
+| Tool | **Peak RSS** |
+| --- | ---: |
+| [element-plus — @verter/unplugin](https://github.com/pikax/verter) ⚠ | 1365.2 MB |
+| element-plus — project's own toolchain (baseline) | 1629.9 MB |
+| element-plus — unplugin-vue | 1785.9 MB |
+| [element-plus — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) ⚠ | 5421.2 MB |
+
+**Not ranked**
+
+- **[element-plus — @verter/unplugin](https://github.com/pikax/verter)**: unranked
+- **[element-plus — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize)**: unranked
+
+## Project typecheck (own tsconfig) — element-plus:components
+
+Files: **162** · Bytes: **765,295**
+
+### JavaScript TypeScript engine — ranked alone
+
+![JavaScript TypeScript engine — ranked alone](docs/results/charts/real-world-linux-element-plus-md-project-typecheck-own-tsconfig-element-plus-components-javascript-typesc.svg)
+
+| Tool | **Median** | vs fastest |
+| --- | ---: | ---: |
+| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | **29.62 s** | 1.00x |
+
+### Peak RSS
+
+![Peak RSS](docs/results/charts/real-world-linux-element-plus-md-project-typecheck-own-tsconfig-element-plus-components-peak-rss.svg)
+
+| Tool | **Peak RSS** |
+| --- | ---: |
+| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | 1916.7 MB |
+
+### Native tsgo engines — ranked together
+
+![Native tsgo engines — ranked together](docs/results/charts/real-world-linux-element-plus-md-project-typecheck-own-tsconfig-element-plus-components-native-tsgo-engin.svg)
+
+| Tool | **Median** | vs fastest |
+| --- | ---: | ---: |
+| [verter-tsc](https://github.com/pikax/verter) | **4.79 s** | 1.00x |
+| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **13.34 s** | 2.79x |
+| [Vize](https://github.com/ubugeeei-prod/vize) | **61.13 s** | 12.77x |
+
+**Not ranked**
+
+- **[Golar typecheck](https://github.com/auvred/golar)**: skipped
+
+### Peak RSS
+
+![Peak RSS](docs/results/charts/real-world-linux-element-plus-md-project-typecheck-own-tsconfig-element-plus-components-peak-rss.svg)
+
+| Tool | **Peak RSS** |
+| --- | ---: |
+| [verter-tsc](https://github.com/pikax/verter) | 649.7 MB |
+| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | 2552.4 MB |
+| [Vize](https://github.com/ubugeeei-prod/vize) | 5188.7 MB |
 
 
 # hoppscotch
@@ -604,10 +664,21 @@ Files: **293** · Bytes: **1,978,501**
 
 | Tool | **Median** | vs fastest |
 | --- | ---: | ---: |
-| [@hoppscotch/common — @verter/unplugin](https://github.com/pikax/verter) | **24.71 s** | 1.00x |
-| @hoppscotch/common — project's own toolchain (baseline) | **24.89 s** | 1.01x |
-| [@hoppscotch/common — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) | **24.99 s** | 1.01x |
-| @hoppscotch/common — unplugin-vue | **25.10 s** | 1.02x |
+| @hoppscotch/common — project's own toolchain (baseline) | **20.20 s** | 1.00x |
+| @hoppscotch/common — unplugin-vue | **20.28 s** | 1.00x |
+| [@hoppscotch/common — @verter/unplugin](https://github.com/pikax/verter) | **20.29 s** | 1.00x |
+| [@hoppscotch/common — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) | **20.40 s** | 1.01x |
+
+### Peak RSS
+
+![Peak RSS](docs/results/charts/real-world-linux-hoppscotch-md-project-test-suite-hoppscotch-common-peak-rss.svg)
+
+| Tool | **Peak RSS** |
+| --- | ---: |
+| @hoppscotch/common — project's own toolchain (baseline) | 701.5 MB |
+| [@hoppscotch/common — @verter/unplugin](https://github.com/pikax/verter) | 709.3 MB |
+| @hoppscotch/common — unplugin-vue | 710.9 MB |
+| [@hoppscotch/common — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) | 756.0 MB |
 
 ## Project build (own config) — hoppscotch:common
 
@@ -617,27 +688,69 @@ Files: **293** · Bytes: **1,978,501**
 
 | Tool | **Median** | vs fastest |
 | --- | ---: | ---: |
-| [hoppscotch-agent — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) | **1.68 s** | 1.00x |
-| hoppscotch-agent — unplugin-vue | **1.70 s** | 1.01x |
-| hoppscotch-agent — project's own toolchain (baseline) | **1.73 s** | 1.03x |
-| [hoppscotch-agent — @verter/unplugin](https://github.com/pikax/verter) | **1.82 s** | 1.08x |
+| hoppscotch-agent — project's own toolchain (baseline) | **1.16 s** | 1.00x |
+| hoppscotch-agent — unplugin-vue | **1.20 s** | 1.03x |
+| [hoppscotch-agent — @verter/unplugin](https://github.com/pikax/verter) | **1.23 s** | 1.05x |
+| [hoppscotch-agent — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) | **1.26 s** | 1.08x |
+
+### Peak RSS
+
+![Peak RSS](docs/results/charts/real-world-linux-hoppscotch-md-project-build-own-config-hoppscotch-common-peak-rss.svg)
+
+| Tool | **Peak RSS** |
+| --- | ---: |
+| hoppscotch-agent — unplugin-vue | 431.0 MB |
+| hoppscotch-agent — project's own toolchain (baseline) | 439.2 MB |
+| [hoppscotch-agent — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) | 446.0 MB |
+| [hoppscotch-agent — @verter/unplugin](https://github.com/pikax/verter) | 459.9 MB |
 
 ## Project typecheck (own tsconfig) — hoppscotch:common
 
 Files: **293** · Bytes: **1,978,501**
 
-![Project typecheck (own tsconfig) — hoppscotch:common](docs/results/charts/real-world-linux-hoppscotch-md-project-typecheck-own-tsconfig-hoppscotch-common.svg)
+### JavaScript TypeScript engine — ranked alone
+
+![JavaScript TypeScript engine — ranked alone](docs/results/charts/real-world-linux-hoppscotch-md-project-typecheck-own-tsconfig-hoppscotch-common-javascript-typescript-e.svg)
 
 | Tool | **Median** | vs fastest |
 | --- | ---: | ---: |
-| [verter-tsc](https://github.com/pikax/verter) | **1.65 s** | 1.00x |
-| [Vize](https://github.com/ubugeeei-prod/vize) | **2.72 s** | 1.65x |
-| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | **6.55 s** | 3.97x |
+| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | **5.26 s** | 1.00x |
+
+### Peak RSS
+
+![Peak RSS](docs/results/charts/real-world-linux-hoppscotch-md-project-typecheck-own-tsconfig-hoppscotch-common-peak-rss.svg)
+
+| Tool | **Peak RSS** |
+| --- | ---: |
+| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | 628.3 MB |
+
+### Native tsgo engines — ranked together
+
+![Native tsgo engines — ranked together](docs/results/charts/real-world-linux-hoppscotch-md-project-typecheck-own-tsconfig-hoppscotch-common-native-tsgo-engines-ran.svg)
+
+| Tool | **Median** | vs fastest |
+| --- | ---: | ---: |
+| [verter-tsc](https://github.com/pikax/verter) | **1.28 s** | 1.00x |
+| [Vize](https://github.com/ubugeeei-prod/vize) | **2.23 s** | 1.75x |
 
 **Not ranked**
 
 - **[vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge)**: FAILED PROGRAM-CONSTRUCTION GATE — at least one measured run exited 2 reporting 1 diagnostic(s) across 1 file(s).
 - **[Golar typecheck](https://github.com/auvred/golar)**: skipped
+
+### Peak RSS
+
+![Peak RSS](docs/results/charts/real-world-linux-hoppscotch-md-project-typecheck-own-tsconfig-hoppscotch-common-peak-rss.svg)
+
+| Tool | **Peak RSS** |
+| --- | ---: |
+| [verter-tsc](https://github.com/pikax/verter) | 352.4 MB |
+| [Vize](https://github.com/ubugeeei-prod/vize) | 431.6 MB |
+| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) ⚠ | 465.6 MB |
+
+**Not ranked**
+
+- **[vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge)**: unranked
 
 
 # naive-ui
@@ -652,17 +765,68 @@ Files: **1,682** · Bytes: **1,751,750**
 
 **Not ranked** — NO LOCKFILE: naive-ui ships no lockfile at the pinned ref, so its install cannot be frozen and the dependency set is whatever resolved when fetch ran.
 
+### Peak RSS
+
+![Peak RSS](docs/results/charts/real-world-linux-naive-ui-md-project-test-suite-naive-ui-demos-peak-rss.svg)
+
+| Tool | **Peak RSS** |
+| --- | ---: |
+| [naive-ui — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) ⚠ | 1537.3 MB |
+| [naive-ui — @verter/unplugin](https://github.com/pikax/verter) ⚠ | 1540.5 MB |
+| naive-ui — project's own toolchain (baseline) ⚠ | 1583.2 MB |
+| naive-ui — unplugin-vue ⚠ | 1661.0 MB |
+
+**Not ranked**
+
+- **[naive-ui — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize)**: unranked
+- **[naive-ui — @verter/unplugin](https://github.com/pikax/verter)**: unranked
+- **naive-ui — project's own toolchain (baseline)**: unranked
+- **naive-ui — unplugin-vue**: unranked
+
 ## Project typecheck (own tsconfig) — naive-ui:demos
 
 Files: **1,682** · Bytes: **1,751,750**
 
+### JavaScript TypeScript engine — ranked alone
+
+**Not ranked** — NO LOCKFILE: naive-ui ships no lockfile at the pinned ref, so its install cannot be frozen and the dependency set is whatever resolved when fetch ran.
+
+### Peak RSS
+
+![Peak RSS](docs/results/charts/real-world-linux-naive-ui-md-project-typecheck-own-tsconfig-naive-ui-demos-peak-rss.svg)
+
+| Tool | **Peak RSS** |
+| --- | ---: |
+| [vue-tsc (JS)](https://github.com/vuejs/language-tools) ⚠ | 2487.2 MB |
+
 **Not ranked**
 
-- **[vue-tsc (JS)](https://github.com/vuejs/language-tools)**: UNRANKED — NO LOCKFILE: naive-ui ships no lockfile at the pinned ref, so its install cannot be frozen and the dependency set is whatever resolved when fetch ran.
+- **[vue-tsc (JS)](https://github.com/vuejs/language-tools)**: unranked
+
+### Native tsgo engines — ranked together
+
+**Not ranked**
+
 - **[vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge)**: UNRANKED — NO LOCKFILE: naive-ui ships no lockfile at the pinned ref, so its install cannot be frozen and the dependency set is whatever resolved when fetch ran.
 - **[verter-tsc](https://github.com/pikax/verter)**: UNRANKED — NO LOCKFILE: naive-ui ships no lockfile at the pinned ref, so its install cannot be frozen and the dependency set is whatever resolved when fetch ran.
 - **[Vize](https://github.com/ubugeeei-prod/vize)**: UNRANKED — NO LOCKFILE: naive-ui ships no lockfile at the pinned ref, so its install cannot be frozen and the dependency set is whatever resolved when fetch ran.
 - **[Golar typecheck](https://github.com/auvred/golar)**: skipped
+
+### Peak RSS
+
+![Peak RSS](docs/results/charts/real-world-linux-naive-ui-md-project-typecheck-own-tsconfig-naive-ui-demos-peak-rss.svg)
+
+| Tool | **Peak RSS** |
+| --- | ---: |
+| [verter-tsc](https://github.com/pikax/verter) ⚠ | 1363.1 MB |
+| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) ⚠ | 2923.9 MB |
+| [Vize](https://github.com/ubugeeei-prod/vize) ⚠ | 3167.7 MB |
+
+**Not ranked**
+
+- **[verter-tsc](https://github.com/pikax/verter)**: unranked
+- **[vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge)**: unranked
+- **[Vize](https://github.com/ubugeeei-prod/vize)**: unranked
 
 
 # nuxt-ui
@@ -686,58 +850,49 @@ Files: **187** · Bytes: **1,014,900**
 
 Files: **187** · Bytes: **1,014,900**
 
-![Project typecheck (own tsconfig) — nuxt-ui:runtime](docs/results/charts/real-world-linux-nuxt-ui-md-project-typecheck-own-tsconfig-nuxt-ui-runtime.svg)
+### JavaScript TypeScript engine — ranked alone
+
+![JavaScript TypeScript engine — ranked alone](docs/results/charts/real-world-linux-nuxt-ui-md-project-typecheck-own-tsconfig-nuxt-ui-runtime-javascript-typescript-eng.svg)
 
 | Tool | **Median** | vs fastest |
 | --- | ---: | ---: |
-| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **15.45 s** | 1.00x |
-| [Vize](https://github.com/ubugeeei-prod/vize) | **35.28 s** | 2.28x |
-| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | **48.55 s** | 3.14x |
+| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | **43.09 s** | 1.00x |
+
+### Peak RSS
+
+![Peak RSS](docs/results/charts/real-world-linux-nuxt-ui-md-project-typecheck-own-tsconfig-nuxt-ui-runtime-peak-rss.svg)
+
+| Tool | **Peak RSS** |
+| --- | ---: |
+| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | 3377.2 MB |
+
+### Native tsgo engines — ranked together
+
+![Native tsgo engines — ranked together](docs/results/charts/real-world-linux-nuxt-ui-md-project-typecheck-own-tsconfig-nuxt-ui-runtime-native-tsgo-engines-ranke.svg)
+
+| Tool | **Median** | vs fastest |
+| --- | ---: | ---: |
+| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **12.33 s** | 1.00x |
+| [Vize](https://github.com/ubugeeei-prod/vize) | **30.09 s** | 2.44x |
 
 **Not ranked**
 
 - **[verter-tsc](https://github.com/pikax/verter)**: FAILED PROGRAM-CONSTRUCTION GATE — at least one measured run exited 2 reporting 0 diagnostic(s) across 0 file(s).
 - **[Golar typecheck](https://github.com/auvred/golar)**: skipped
 
+### Peak RSS
 
-# primevue
+![Peak RSS](docs/results/charts/real-world-linux-nuxt-ui-md-project-typecheck-own-tsconfig-nuxt-ui-runtime-peak-rss.svg)
 
-<!-- source: real-world-Linux-primevue.md -->
-
-> 📄 **[Full details →](docs/results/real-world-Linux-primevue.md)** — methodology, per-row notes and raw runs (45 collapsed block(s) moved out of this page).
-
-## Project test suite — primevue:components
-
-Files: **279** · Bytes: **1,721,906**
-
-![Project test suite — primevue:components](docs/results/charts/real-world-linux-primevue-md-project-test-suite-primevue-components.svg)
-
-| Tool | **Median** | vs fastest |
-| --- | ---: | ---: |
-| primevue — unplugin-vue | **38.13 s** | 1.00x |
-| primevue — project's own toolchain (baseline) | **38.51 s** | 1.01x |
+| Tool | **Peak RSS** |
+| --- | ---: |
+| [verter-tsc](https://github.com/pikax/verter) ⚠ | 925.5 MB |
+| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | 4145.5 MB |
+| [Vize](https://github.com/ubugeeei-prod/vize) | 4468.5 MB |
 
 **Not ranked**
 
-- **[primevue — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize)**: FAILED TEST-COUNT GATE — passed 6 tests where the project's own toolchain passed 403. Measured but UNRANKED: a suite that passes fewer tests finishes sooner, and that is not a speed result.
-- **[primevue — @verter/unplugin](https://github.com/pikax/verter)**: FAILED TEST-COUNT GATE — passed 252 tests where the project's own toolchain passed 403; failed 23 test(s) where the project's own toolchain failed 5 — a failing test is not a faster test.
-
-## Project typecheck (own tsconfig) — primevue:components
-
-Files: **279** · Bytes: **1,721,906**
-
-![Project typecheck (own tsconfig) — primevue:components](docs/results/charts/real-world-linux-primevue-md-project-typecheck-own-tsconfig-primevue-components.svg)
-
-| Tool | **Median** | vs fastest |
-| --- | ---: | ---: |
-| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **17.24 s** | 1.00x |
-| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | **31.69 s** | 1.84x |
-
-**Not ranked**
-
-- **[verter-tsc](https://github.com/pikax/verter)**: FAILED PROGRAM-CONSTRUCTION GATE — at least one measured run exited 2 reporting 0 diagnostic(s) across 0 file(s).
-- **[Vize](https://github.com/ubugeeei-prod/vize)**: FAILED DIAGNOSTIC-CENSUS GATE — reported 0 diagnostics against the baseline's 1683 (under half).
-- **[Golar typecheck](https://github.com/auvred/golar)**: skipped
+- **[verter-tsc](https://github.com/pikax/verter)**: unranked
 
 
 # quasar
@@ -754,7 +909,7 @@ Files: **252** · Bytes: **1,565,611**
 
 | Tool | **Median** | vs fastest |
 | --- | ---: | ---: |
-| quasar.dev — project's own toolchain (baseline) | **2.98 s** | 1.00x |
+| quasar.dev — project's own toolchain (baseline) | **3.35 s** | 1.00x |
 
 **Not ranked**
 
@@ -762,22 +917,61 @@ Files: **252** · Bytes: **1,565,611**
 - **[quasar.dev — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize)**: a generated config that imports the project's real config and replaces only the Vue plugin · extends vitest.config.
 - **[quasar.dev — @verter/unplugin](https://github.com/pikax/verter)**: a generated config that imports the project's real config and replaces only the Vue plugin · extends vitest.config.
 
+### Peak RSS
+
+![Peak RSS](docs/results/charts/real-world-linux-quasar-md-project-test-suite-quasar-playground-peak-rss.svg)
+
+| Tool | **Peak RSS** |
+| --- | ---: |
+| quasar.dev — project's own toolchain (baseline) | 455.8 MB |
+
 ## Project typecheck (own tsconfig) — quasar:playground
 
 Files: **252** · Bytes: **1,565,611**
 
-![Project typecheck (own tsconfig) — quasar:playground](docs/results/charts/real-world-linux-quasar-md-project-typecheck-own-tsconfig-quasar-playground.svg)
+### JavaScript TypeScript engine — ranked alone
+
+![JavaScript TypeScript engine — ranked alone](docs/results/charts/real-world-linux-quasar-md-project-typecheck-own-tsconfig-quasar-playground-javascript-typescript-e.svg)
 
 | Tool | **Median** | vs fastest |
 | --- | ---: | ---: |
-| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **1.76 s** | 1.00x |
-| [Vize](https://github.com/ubugeeei-prod/vize) | **2.16 s** | 1.23x |
-| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | **8.00 s** | 4.55x |
+| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | **8.55 s** | 1.00x |
+
+### Peak RSS
+
+![Peak RSS](docs/results/charts/real-world-linux-quasar-md-project-typecheck-own-tsconfig-quasar-playground-peak-rss.svg)
+
+| Tool | **Peak RSS** |
+| --- | ---: |
+| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | 505.3 MB |
+
+### Native tsgo engines — ranked together
+
+![Native tsgo engines — ranked together](docs/results/charts/real-world-linux-quasar-md-project-typecheck-own-tsconfig-quasar-playground-native-tsgo-engines-ran.svg)
+
+| Tool | **Median** | vs fastest |
+| --- | ---: | ---: |
+| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **1.90 s** | 1.00x |
+| [Vize](https://github.com/ubugeeei-prod/vize) | **2.36 s** | 1.24x |
 
 **Not ranked**
 
 - **[verter-tsc](https://github.com/pikax/verter)**: FAILED DIAGNOSTIC-CENSUS GATE — the baseline reported 0 diagnostics and exited 0, so a checker that agrees must also exit 0; this row exited 1 while reporting 11 diagnostic(s) against a clean reference — a non-zero exit …
 - **[Golar typecheck](https://github.com/auvred/golar)**: skipped
+
+### Peak RSS
+
+![Peak RSS](docs/results/charts/real-world-linux-quasar-md-project-typecheck-own-tsconfig-quasar-playground-peak-rss.svg)
+
+| Tool | **Peak RSS** |
+| --- | ---: |
+| [verter-tsc](https://github.com/pikax/verter) ⚠ | 136.5 MB |
+| [Vize](https://github.com/ubugeeei-prod/vize) | 390.5 MB |
+| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | 734.6 MB |
+
+**Not ranked**
+
+- **[verter-tsc](https://github.com/pikax/verter)**: unranked
 
 
 # vue-vben-admin
@@ -794,27 +988,70 @@ Files: **330** · Bytes: **933,224**
 
 | Tool | **Median** | vs fastest |
 | --- | ---: | ---: |
-| vben-admin-monorepo — project's own toolchain (baseline) | **6.54 s** | 1.00x |
-| vben-admin-monorepo — unplugin-vue | **6.57 s** | 1.00x |
-| [vben-admin-monorepo — @verter/unplugin](https://github.com/pikax/verter) | **6.76 s** | 1.03x |
-| [vben-admin-monorepo — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) | **28.37 s** | 4.34x |
+| vben-admin-monorepo — project's own toolchain (baseline) | **10.77 s** | 1.00x |
+| vben-admin-monorepo — unplugin-vue | **11.12 s** | 1.03x |
+| [vben-admin-monorepo — @verter/unplugin](https://github.com/pikax/verter) | **11.22 s** | 1.04x |
+| [vben-admin-monorepo — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) | **41.94 s** | 3.90x |
+
+### Peak RSS
+
+![Peak RSS](docs/results/charts/real-world-linux-vue-vben-admin-md-project-test-suite-vue-vben-admin-core-ui-peak-rss.svg)
+
+| Tool | **Peak RSS** |
+| --- | ---: |
+| [vben-admin-monorepo — @verter/unplugin](https://github.com/pikax/verter) | 657.8 MB |
+| vben-admin-monorepo — project's own toolchain (baseline) | 697.8 MB |
+| vben-admin-monorepo — unplugin-vue | 708.7 MB |
+| [vben-admin-monorepo — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) | 6581.0 MB |
 
 ## Project typecheck (own tsconfig) — vue-vben-admin:core-ui
 
 Files: **330** · Bytes: **933,224**
 
-![Project typecheck (own tsconfig) — vue-vben-admin:core-ui](docs/results/charts/real-world-linux-vue-vben-admin-md-project-typecheck-own-tsconfig-vue-vben-admin-core-ui.svg)
+### JavaScript TypeScript engine — ranked alone
+
+![JavaScript TypeScript engine — ranked alone](docs/results/charts/real-world-linux-vue-vben-admin-md-project-typecheck-own-tsconfig-vue-vben-admin-core-ui-javascript-typescr.svg)
 
 | Tool | **Median** | vs fastest |
 | --- | ---: | ---: |
-| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **7.09 s** | 1.00x |
-| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | **14.07 s** | 1.98x |
+| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | **21.14 s** | 1.00x |
+
+### Peak RSS
+
+![Peak RSS](docs/results/charts/real-world-linux-vue-vben-admin-md-project-typecheck-own-tsconfig-vue-vben-admin-core-ui-peak-rss.svg)
+
+| Tool | **Peak RSS** |
+| --- | ---: |
+| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | 1672.6 MB |
+
+### Native tsgo engines — ranked together
+
+![Native tsgo engines — ranked together](docs/results/charts/real-world-linux-vue-vben-admin-md-project-typecheck-own-tsconfig-vue-vben-admin-core-ui-native-tsgo-engine.svg)
+
+| Tool | **Median** | vs fastest |
+| --- | ---: | ---: |
+| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **10.26 s** | 1.00x |
 
 **Not ranked**
 
 - **[verter-tsc](https://github.com/pikax/verter)**: FAILED DIAGNOSTIC-CENSUS GATE — the baseline reported 0 diagnostics and exited 0, so a checker that agrees must also exit 0; this row exited 1 while reporting 156 diagnostic(s) against a clean reference — a non-zero exit…
-- **[Vize](https://github.com/ubugeeei-prod/vize)**: FAILED DIAGNOSTIC-CENSUS GATE — the baseline reported 0 diagnostics and exited 0, so a checker that agrees must also exit 0; this row exited 1 while reporting 20 diagnostic(s) against a clean reference — a non-zero exit …
+- **[Vize](https://github.com/ubugeeei-prod/vize)**: FAILED DIAGNOSTIC-CENSUS GATE — the baseline reported 0 diagnostics and exited 0, so a checker that agrees must also exit 0; this row exited 1 while reporting 21 diagnostic(s) against a clean reference — a non-zero exit …
 - **[Golar typecheck](https://github.com/auvred/golar)**: skipped
+
+### Peak RSS
+
+![Peak RSS](docs/results/charts/real-world-linux-vue-vben-admin-md-project-typecheck-own-tsconfig-vue-vben-admin-core-ui-peak-rss.svg)
+
+| Tool | **Peak RSS** |
+| --- | ---: |
+| [verter-tsc](https://github.com/pikax/verter) ⚠ | 728.4 MB |
+| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | 2696.7 MB |
+| [Vize](https://github.com/ubugeeei-prod/vize) ⚠ | 3022.8 MB |
+
+**Not ranked**
+
+- **[verter-tsc](https://github.com/pikax/verter)**: unranked
+- **[Vize](https://github.com/ubugeeei-prod/vize)**: unranked
 
 
 # vuetify
@@ -831,27 +1068,65 @@ Files: **1,246** · Bytes: **2,032,022**
 
 | Tool | **Median** | vs fastest |
 | --- | ---: | ---: |
-| vuetify — project's own toolchain (baseline) | **41.81 s** | 1.00x |
-| [vuetify — @verter/unplugin](https://github.com/pikax/verter) | **42.24 s** | 1.01x |
-| vuetify — unplugin-vue | **42.38 s** | 1.01x |
-| [vuetify — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) | **42.48 s** | 1.02x |
+| vuetify — unplugin-vue | **45.05 s** | 1.00x |
+| [vuetify — @verter/unplugin](https://github.com/pikax/verter) | **45.20 s** | 1.00x |
+| vuetify — project's own toolchain (baseline) | **45.27 s** | 1.00x |
+| [vuetify — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) | **46.06 s** | 1.02x |
+
+### Peak RSS
+
+![Peak RSS](docs/results/charts/real-world-linux-vuetify-md-project-test-suite-vuetify-docs-peak-rss.svg)
+
+| Tool | **Peak RSS** |
+| --- | ---: |
+| [vuetify — @verter/unplugin](https://github.com/pikax/verter) | 979.6 MB |
+| vuetify — project's own toolchain (baseline) | 995.8 MB |
+| vuetify — unplugin-vue | 1035.9 MB |
+| [vuetify — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) | 1079.9 MB |
 
 ## Project typecheck (own tsconfig) — vuetify:docs
 
 Files: **1,246** · Bytes: **2,032,022**
 
-![Project typecheck (own tsconfig) — vuetify:docs](docs/results/charts/real-world-linux-vuetify-md-project-typecheck-own-tsconfig-vuetify-docs.svg)
+### JavaScript TypeScript engine — ranked alone
+
+![JavaScript TypeScript engine — ranked alone](docs/results/charts/real-world-linux-vuetify-md-project-typecheck-own-tsconfig-vuetify-docs-javascript-typescript-engine.svg)
 
 | Tool | **Median** | vs fastest |
 | --- | ---: | ---: |
-| [verter-tsc](https://github.com/pikax/verter) | **5.17 s** | 1.00x |
-| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **12.56 s** | 2.43x |
-| [Vize](https://github.com/ubugeeei-prod/vize) | **13.39 s** | 2.59x |
-| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | **31.01 s** | 6.00x |
+| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | **31.12 s** | 1.00x |
+
+### Peak RSS
+
+![Peak RSS](docs/results/charts/real-world-linux-vuetify-md-project-typecheck-own-tsconfig-vuetify-docs-peak-rss.svg)
+
+| Tool | **Peak RSS** |
+| --- | ---: |
+| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | 2080.2 MB |
+
+### Native tsgo engines — ranked together
+
+![Native tsgo engines — ranked together](docs/results/charts/real-world-linux-vuetify-md-project-typecheck-own-tsconfig-vuetify-docs-native-tsgo-engines-ranked-t.svg)
+
+| Tool | **Median** | vs fastest |
+| --- | ---: | ---: |
+| [verter-tsc](https://github.com/pikax/verter) | **5.09 s** | 1.00x |
+| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **12.64 s** | 2.48x |
+| [Vize](https://github.com/ubugeeei-prod/vize) | **14.39 s** | 2.83x |
 
 **Not ranked**
 
 - **[Golar typecheck](https://github.com/auvred/golar)**: skipped
+
+### Peak RSS
+
+![Peak RSS](docs/results/charts/real-world-linux-vuetify-md-project-typecheck-own-tsconfig-vuetify-docs-peak-rss.svg)
+
+| Tool | **Peak RSS** |
+| --- | ---: |
+| [verter-tsc](https://github.com/pikax/verter) | 771.2 MB |
+| [Vize](https://github.com/ubugeeei-prod/vize) | 2435.0 MB |
+| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | 2523.8 MB |
 
 
 <!-- REAL_WORLD_RESULTS_END -->

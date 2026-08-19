@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "kind": "real-world",
-  "generatedAt": "2026-08-16T10:12:20.102Z",
+  "generatedAt": "2026-08-19T19:02:13.846Z",
   "fixture": "fixtures/real",
   "fileCount": 695,
   "corpora": [
@@ -50,23 +50,23 @@
     "platform": "linux",
     "arch": "x64",
     "cpuCount": 4,
-    "cpuModel": "AMD EPYC 7763 64-Core Processor",
-    "totalmem": 16766414848,
+    "cpuModel": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
+    "totalmem": 16765374464,
     "node": "v22.23.2"
   },
   "commit": {
-    "sha": "b0f41622696d7d0f66900976f51587b169418e2b",
+    "sha": "94f6696b1c7b6f54928678126b9831febd70b4ff",
     "ref": "main",
     "repository": "pikax/vue-benchmarks",
-    "runUrl": "https://github.com/pikax/vue-benchmarks/actions/runs/31938755068"
+    "runUrl": "https://github.com/pikax/vue-benchmarks/actions/runs/32287855785"
   },
   "versions": {
     "node": "v22.23.2",
     "vue": "3.5.41",
     "@vue/compiler-sfc": "3.5.41",
     "@vue/compiler-sfc-36": "3.6.0-rc.4",
-    "vize": "0.347.7",
-    "@vizejs/native": "0.347.7",
+    "vize": "0.350.2",
+    "@vizejs/native": "0.350.2",
     "@verter/native": "0.0.1-beta.3",
     "@fervid/napi": "0.4.1",
     "verter-tsc": "0.0.1-beta.3",
@@ -81,18 +81,19 @@
     "golar": "0.1.10",
     "@golar/vue": "0.1.10",
     "prettier": "3.9.6",
-    "oxfmt": "0.63.0",
-    "oxlint": "1.78.0",
-    "@biomejs/biome": "2.5.8",
+    "oxfmt": "0.64.0",
+    "oxlint": "1.79.0",
+    "eslint-plugin-vue": "10.10.0",
+    "@biomejs/biome": "2.5.9",
     "typescript": "6.0.3",
-    "cli:vize": "0.347.7",
+    "cli:vize": "0.350.2",
     "cli:vue-tsc": "6.0.3",
     "cli:verter-tsc": "0.0.1-beta.3",
     "cli:golar": "0.1.10",
     "cli:prettier": "3.9.6",
-    "cli:oxfmt": "0.63.0",
-    "cli:oxlint": "1.78.0",
-    "cli:biome": "2.5.8",
+    "cli:oxfmt": "0.64.0",
+    "cli:oxlint": "1.79.0",
+    "cli:biome": "2.5.9",
     "vue-jsx-vapor": "3.2.21",
     "@vue-jsx-vapor/compiler-rs": "3.2.21",
     "@vue/babel-plugin-jsx": "3.0.0",
@@ -183,18 +184,18 @@
               "files": 695,
               "status": "ok",
               "runs": [
-                441.447,
-                392.746,
-                383.044,
-                365.002,
-                368.804
+                425.584,
+                394.339,
+                390.756,
+                351.733,
+                336.898
               ],
-              "medianMs": 383.044,
-              "minMs": 365.002,
-              "maxMs": 441.447,
-              "meanMs": 390.209,
-              "stddevMs": 30.727,
-              "cvPct": 8,
+              "medianMs": 390.756,
+              "minMs": 336.898,
+              "maxMs": 425.584,
+              "meanMs": 379.862,
+              "stddevMs": 35.552,
+              "cvPct": 9.1,
               "metaSamples": [
                 {
                   "artifact": 1951784
@@ -230,18 +231,18 @@
               "files": 695,
               "status": "ok",
               "runs": [
-                472.11,
-                412.762,
-                395.585,
-                378.569,
-                384.592
+                430.067,
+                392.274,
+                394.003,
+                365.335,
+                368.231
               ],
-              "medianMs": 395.585,
-              "minMs": 378.569,
-              "maxMs": 472.11,
-              "meanMs": 408.724,
-              "stddevMs": 37.744,
-              "cvPct": 9.5,
+              "medianMs": 392.274,
+              "minMs": 365.335,
+              "maxMs": 430.067,
+              "meanMs": 389.982,
+              "stddevMs": 26.023,
+              "cvPct": 6.6,
               "metaSamples": [
                 {
                   "artifact": 1951784
@@ -277,18 +278,18 @@
               "files": 695,
               "status": "ok",
               "runs": [
-                153.403,
-                152.985,
-                153.201,
-                154.258,
-                153.834
+                147.007,
+                142.01,
+                141.805,
+                143.679,
+                141.402
               ],
-              "medianMs": 153.403,
-              "minMs": 152.985,
-              "maxMs": 154.258,
-              "meanMs": 153.536,
-              "stddevMs": 0.511,
-              "cvPct": 0.3,
+              "medianMs": 142.01,
+              "minMs": 141.402,
+              "maxMs": 147.007,
+              "meanMs": 143.181,
+              "stddevMs": 2.308,
+              "cvPct": 1.6,
               "metaSamples": [
                 {
                   "artifact": 1783439
@@ -308,7 +309,7 @@
               ],
               "artifactMedian": 1783439,
               "warmupPasses": 1,
-              "throughput": "4.5k files/s"
+              "throughput": "4.9k files/s"
             },
             {
               "id": "vize-batch-vdom-prod-smoff",
@@ -324,18 +325,18 @@
               "files": 695,
               "status": "ok",
               "runs": [
-                55.808,
-                55.683,
-                55.473,
-                56.793,
-                55.061
+                53.271,
+                52.517,
+                55.711,
+                52.409,
+                51.525
               ],
-              "medianMs": 55.683,
-              "minMs": 55.061,
-              "maxMs": 56.793,
-              "meanMs": 55.764,
-              "stddevMs": 0.642,
-              "cvPct": 1.2,
+              "medianMs": 52.517,
+              "minMs": 51.525,
+              "maxMs": 55.711,
+              "meanMs": 53.087,
+              "stddevMs": 1.592,
+              "cvPct": 3,
               "metaSamples": [
                 {
                   "artifact": 1783439
@@ -355,7 +356,7 @@
               ],
               "artifactMedian": 1783439,
               "warmupPasses": 1,
-              "throughput": "12.5k files/s"
+              "throughput": "13.2k files/s"
             },
             {
               "id": "verter-stateless-vdom-prod-smoff",
@@ -371,18 +372,18 @@
               "files": 695,
               "status": "ok",
               "runs": [
-                891.773,
-                855.257,
-                848.589,
-                815.446,
-                924.119
+                864.187,
+                846.05,
+                847.042,
+                854.84,
+                920.786
               ],
-              "medianMs": 855.257,
-              "minMs": 815.446,
-              "maxMs": 924.119,
-              "meanMs": 867.037,
-              "stddevMs": 41.866,
-              "cvPct": 4.9,
+              "medianMs": 854.84,
+              "minMs": 846.05,
+              "maxMs": 920.786,
+              "meanMs": 866.581,
+              "stddevMs": 31.165,
+              "cvPct": 3.6,
               "metaSamples": [
                 {
                   "artifact": 1617120,
@@ -440,18 +441,18 @@
               "files": 695,
               "status": "ok",
               "runs": [
-                68.353,
-                61.92,
-                46.846,
-                69.048,
-                60.475
+                64.074,
+                46.003,
+                49.323,
+                54.615,
+                50.225
               ],
-              "medianMs": 61.92,
-              "minMs": 46.846,
-              "maxMs": 69.048,
-              "meanMs": 61.328,
-              "stddevMs": 8.941,
-              "cvPct": 14.4,
+              "medianMs": 50.225,
+              "minMs": 46.003,
+              "maxMs": 64.074,
+              "meanMs": 52.848,
+              "stddevMs": 6.988,
+              "cvPct": 13.9,
               "metaSamples": [
                 {
                   "artifact": 1617120,
@@ -493,7 +494,7 @@
               "cacheHitsLast": 0,
               "artifactMedian": 1617120,
               "warmupPasses": 1,
-              "throughput": "11.2k files/s"
+              "throughput": "13.8k files/s"
             }
           ]
         }
@@ -513,18 +514,18 @@
           "files": 695,
           "status": "ok",
           "runs": [
-            441.447,
-            392.746,
-            383.044,
-            365.002,
-            368.804
+            425.584,
+            394.339,
+            390.756,
+            351.733,
+            336.898
           ],
-          "medianMs": 383.044,
-          "minMs": 365.002,
-          "maxMs": 441.447,
-          "meanMs": 390.209,
-          "stddevMs": 30.727,
-          "cvPct": 8,
+          "medianMs": 390.756,
+          "minMs": 336.898,
+          "maxMs": 425.584,
+          "meanMs": 379.862,
+          "stddevMs": 35.552,
+          "cvPct": 9.1,
           "metaSamples": [
             {
               "artifact": 1951784
@@ -560,18 +561,18 @@
           "files": 695,
           "status": "ok",
           "runs": [
-            472.11,
-            412.762,
-            395.585,
-            378.569,
-            384.592
+            430.067,
+            392.274,
+            394.003,
+            365.335,
+            368.231
           ],
-          "medianMs": 395.585,
-          "minMs": 378.569,
-          "maxMs": 472.11,
-          "meanMs": 408.724,
-          "stddevMs": 37.744,
-          "cvPct": 9.5,
+          "medianMs": 392.274,
+          "minMs": 365.335,
+          "maxMs": 430.067,
+          "meanMs": 389.982,
+          "stddevMs": 26.023,
+          "cvPct": 6.6,
           "metaSamples": [
             {
               "artifact": 1951784
@@ -607,18 +608,18 @@
           "files": 695,
           "status": "ok",
           "runs": [
-            153.403,
-            152.985,
-            153.201,
-            154.258,
-            153.834
+            147.007,
+            142.01,
+            141.805,
+            143.679,
+            141.402
           ],
-          "medianMs": 153.403,
-          "minMs": 152.985,
-          "maxMs": 154.258,
-          "meanMs": 153.536,
-          "stddevMs": 0.511,
-          "cvPct": 0.3,
+          "medianMs": 142.01,
+          "minMs": 141.402,
+          "maxMs": 147.007,
+          "meanMs": 143.181,
+          "stddevMs": 2.308,
+          "cvPct": 1.6,
           "metaSamples": [
             {
               "artifact": 1783439
@@ -638,7 +639,7 @@
           ],
           "artifactMedian": 1783439,
           "warmupPasses": 1,
-          "throughput": "4.5k files/s"
+          "throughput": "4.9k files/s"
         },
         {
           "id": "vize-batch-vdom-prod-smoff",
@@ -654,18 +655,18 @@
           "files": 695,
           "status": "ok",
           "runs": [
-            55.808,
-            55.683,
-            55.473,
-            56.793,
-            55.061
+            53.271,
+            52.517,
+            55.711,
+            52.409,
+            51.525
           ],
-          "medianMs": 55.683,
-          "minMs": 55.061,
-          "maxMs": 56.793,
-          "meanMs": 55.764,
-          "stddevMs": 0.642,
-          "cvPct": 1.2,
+          "medianMs": 52.517,
+          "minMs": 51.525,
+          "maxMs": 55.711,
+          "meanMs": 53.087,
+          "stddevMs": 1.592,
+          "cvPct": 3,
           "metaSamples": [
             {
               "artifact": 1783439
@@ -685,7 +686,7 @@
           ],
           "artifactMedian": 1783439,
           "warmupPasses": 1,
-          "throughput": "12.5k files/s"
+          "throughput": "13.2k files/s"
         },
         {
           "id": "verter-stateless-vdom-prod-smoff",
@@ -701,18 +702,18 @@
           "files": 695,
           "status": "ok",
           "runs": [
-            891.773,
-            855.257,
-            848.589,
-            815.446,
-            924.119
+            864.187,
+            846.05,
+            847.042,
+            854.84,
+            920.786
           ],
-          "medianMs": 855.257,
-          "minMs": 815.446,
-          "maxMs": 924.119,
-          "meanMs": 867.037,
-          "stddevMs": 41.866,
-          "cvPct": 4.9,
+          "medianMs": 854.84,
+          "minMs": 846.05,
+          "maxMs": 920.786,
+          "meanMs": 866.581,
+          "stddevMs": 31.165,
+          "cvPct": 3.6,
           "metaSamples": [
             {
               "artifact": 1617120,
@@ -770,18 +771,18 @@
           "files": 695,
           "status": "ok",
           "runs": [
-            68.353,
-            61.92,
-            46.846,
-            69.048,
-            60.475
+            64.074,
+            46.003,
+            49.323,
+            54.615,
+            50.225
           ],
-          "medianMs": 61.92,
-          "minMs": 46.846,
-          "maxMs": 69.048,
-          "meanMs": 61.328,
-          "stddevMs": 8.941,
-          "cvPct": 14.4,
+          "medianMs": 50.225,
+          "minMs": 46.003,
+          "maxMs": 64.074,
+          "meanMs": 52.848,
+          "stddevMs": 6.988,
+          "cvPct": 13.9,
           "metaSamples": [
             {
               "artifact": 1617120,
@@ -823,7 +824,7 @@
           "cacheHitsLast": 0,
           "artifactMedian": 1617120,
           "warmupPasses": 1,
-          "throughput": "11.2k files/s"
+          "throughput": "13.8k files/s"
         }
       ],
       "provenance": "ant-design-vue:demos @ 4.2.6 (4a37016f, released 2024-11-11, github-release; pinned 2026-07-29) · 695 SFCs · docs-demo · MIT · NO LOCKFILE (dependency set not frozen)"
@@ -857,20 +858,20 @@
           "files": 695,
           "status": "ok",
           "runs": [
-            6672.15,
-            6279.809,
-            6219.826,
-            6469.167,
-            6620.97
+            5931.104,
+            5966.317,
+            5953.369,
+            5929.891,
+            5881.472
           ],
-          "medianMs": 6469.167,
-          "minMs": 6219.826,
-          "maxMs": 6672.15,
-          "meanMs": 6452.384,
-          "stddevMs": 200.54,
-          "cvPct": 3.1,
+          "medianMs": 5931.104,
+          "minMs": 5881.472,
+          "maxMs": 5966.317,
+          "meanMs": 5932.431,
+          "stddevMs": 32.372,
+          "cvPct": 0.5,
           "warmupPasses": 1,
-          "throughput": "107 files/s"
+          "throughput": "117 files/s"
         },
         {
           "id": "oxfmt",
@@ -882,20 +883,20 @@
           "files": 695,
           "status": "ok",
           "runs": [
-            4347.482,
-            4284.017,
-            4394.526,
-            4380.446,
-            4390.537
+            3986.894,
+            4034.395,
+            4051.477,
+            4024.014,
+            4009.88
           ],
-          "medianMs": 4380.446,
-          "minMs": 4284.017,
-          "maxMs": 4394.526,
-          "meanMs": 4359.402,
-          "stddevMs": 46.019,
-          "cvPct": 1.1,
+          "medianMs": 4024.014,
+          "minMs": 3986.894,
+          "maxMs": 4051.477,
+          "meanMs": 4021.332,
+          "stddevMs": 24.514,
+          "cvPct": 0.6,
           "warmupPasses": 1,
-          "throughput": "159 files/s"
+          "throughput": "173 files/s"
         },
         {
           "id": "vize-fmt",
@@ -907,20 +908,20 @@
           "files": 695,
           "status": "ok",
           "runs": [
-            237.497,
-            245.121,
-            241.263,
-            235.917,
-            263.842
+            194.518,
+            192.508,
+            198.654,
+            197.548,
+            173.459
           ],
-          "medianMs": 241.263,
-          "minMs": 235.917,
-          "maxMs": 263.842,
-          "meanMs": 244.728,
-          "stddevMs": 11.263,
-          "cvPct": 4.7,
+          "medianMs": 194.518,
+          "minMs": 173.459,
+          "maxMs": 198.654,
+          "meanMs": 191.337,
+          "stddevMs": 10.286,
+          "cvPct": 5.3,
           "warmupPasses": 1,
-          "throughput": "2.9k files/s"
+          "throughput": "3.6k files/s"
         },
         {
           "id": "biome-fmt",
@@ -932,18 +933,18 @@
           "files": 695,
           "status": "unranked",
           "runs": [
-            165.572,
-            165.799,
-            164.571,
-            163.182,
-            165.091
+            145.373,
+            147.689,
+            146.595,
+            145.769,
+            144.708
           ],
-          "medianMs": 165.091,
-          "minMs": 163.182,
-          "maxMs": 165.799,
-          "meanMs": 164.843,
-          "stddevMs": 1.042,
-          "cvPct": 0.6,
+          "medianMs": 145.769,
+          "minMs": 144.708,
+          "maxMs": 147.689,
+          "meanMs": 146.027,
+          "stddevMs": 1.153,
+          "cvPct": 0.8,
           "warmupPasses": 1,
           "throughput": "n/a"
         }
@@ -981,20 +982,20 @@
           "files": 695,
           "status": "ok",
           "runs": [
-            4228.294,
-            4312.26,
-            3745.454,
-            3629.125,
-            3628.34
+            3942.112,
+            4089.823,
+            3691.78,
+            3455.906,
+            3502.474
           ],
-          "medianMs": 3745.454,
-          "minMs": 3628.34,
-          "maxMs": 4312.26,
-          "meanMs": 3908.695,
-          "stddevMs": 334.819,
-          "cvPct": 8.9,
+          "medianMs": 3691.78,
+          "minMs": 3455.906,
+          "maxMs": 4089.823,
+          "meanMs": 3736.419,
+          "stddevMs": 275.052,
+          "cvPct": 7.5,
           "warmupPasses": 1,
-          "throughput": "186 files/s"
+          "throughput": "188 files/s"
         },
         {
           "id": "eslint-plugin-vue-workers",
@@ -1006,20 +1007,20 @@
           "files": 695,
           "status": "ok",
           "runs": [
-            5131.262,
-            5458.789,
-            5253.613,
-            5234.366,
-            5138.096
+            4826.849,
+            4864.79,
+            4833.242,
+            4852.261,
+            4824.15
           ],
-          "medianMs": 5234.366,
-          "minMs": 5131.262,
-          "maxMs": 5458.789,
-          "meanMs": 5243.225,
-          "stddevMs": 132.516,
-          "cvPct": 2.5,
+          "medianMs": 4833.242,
+          "minMs": 4824.15,
+          "maxMs": 4864.79,
+          "meanMs": 4840.258,
+          "stddevMs": 17.567,
+          "cvPct": 0.4,
           "warmupPasses": 1,
-          "throughput": "133 files/s"
+          "throughput": "144 files/s"
         },
         {
           "id": "eslint-plugin-vue-cli",
@@ -1031,20 +1032,20 @@
           "files": 695,
           "status": "ok",
           "runs": [
-            5454.679,
-            5467.001,
-            5736.222,
-            5595.597,
-            5588.311
+            5122.245,
+            5085.681,
+            5118.857,
+            5108.833,
+            5163.589
           ],
-          "medianMs": 5588.311,
-          "minMs": 5454.679,
-          "maxMs": 5736.222,
-          "meanMs": 5568.362,
-          "stddevMs": 114.58,
-          "cvPct": 2.1,
+          "medianMs": 5118.857,
+          "minMs": 5085.681,
+          "maxMs": 5163.589,
+          "meanMs": 5119.841,
+          "stddevMs": 28.323,
+          "cvPct": 0.6,
           "warmupPasses": 1,
-          "throughput": "124 files/s"
+          "throughput": "136 files/s"
         },
         {
           "id": "vize-lint-1t",
@@ -1056,20 +1057,20 @@
           "files": 695,
           "status": "ok",
           "runs": [
-            143.503,
-            146.724,
-            147.051,
-            161.291,
-            148.562
+            121.996,
+            120.968,
+            125.976,
+            125.535,
+            124.213
           ],
-          "medianMs": 147.051,
-          "minMs": 143.503,
-          "maxMs": 161.291,
-          "meanMs": 149.426,
-          "stddevMs": 6.884,
-          "cvPct": 4.7,
+          "medianMs": 124.213,
+          "minMs": 120.968,
+          "maxMs": 125.976,
+          "meanMs": 123.738,
+          "stddevMs": 2.189,
+          "cvPct": 1.8,
           "warmupPasses": 1,
-          "throughput": "4.7k files/s"
+          "throughput": "5.6k files/s"
         },
         {
           "id": "vize-lint-max",
@@ -1081,20 +1082,20 @@
           "files": 695,
           "status": "ok",
           "runs": [
-            90.552,
-            95.949,
-            93.486,
-            96.123,
-            95.855
+            81.7,
+            85.288,
+            84.342,
+            83.882,
+            82.606
           ],
-          "medianMs": 95.855,
-          "minMs": 90.552,
-          "maxMs": 96.123,
-          "meanMs": 94.393,
-          "stddevMs": 2.405,
-          "cvPct": 2.5,
+          "medianMs": 83.882,
+          "minMs": 81.7,
+          "maxMs": 85.288,
+          "meanMs": 83.564,
+          "stddevMs": 1.42,
+          "cvPct": 1.7,
           "warmupPasses": 1,
-          "throughput": "7.3k files/s"
+          "throughput": "8.3k files/s"
         },
         {
           "id": "biome-lint-1t",
@@ -1106,18 +1107,18 @@
           "files": 695,
           "status": "unranked",
           "runs": [
-            810.426,
-            818.923,
-            817.27,
-            832.601,
-            816.2
+            709.609,
+            717.994,
+            729.015,
+            726.517,
+            737.029
           ],
-          "medianMs": 817.27,
-          "minMs": 810.426,
-          "maxMs": 832.601,
-          "meanMs": 819.084,
-          "stddevMs": 8.205,
-          "cvPct": 1,
+          "medianMs": 726.517,
+          "minMs": 709.609,
+          "maxMs": 737.029,
+          "meanMs": 724.033,
+          "stddevMs": 10.54,
+          "cvPct": 1.5,
           "warmupPasses": 1,
           "throughput": "n/a"
         },
@@ -1131,18 +1132,18 @@
           "files": 695,
           "status": "unranked",
           "runs": [
-            348.235,
-            337.045,
-            337.666,
-            342.941,
-            338.67
+            319.942,
+            320.942,
+            322.552,
+            337.816,
+            325.765
           ],
-          "medianMs": 338.67,
-          "minMs": 337.045,
-          "maxMs": 348.235,
-          "meanMs": 340.911,
-          "stddevMs": 4.697,
-          "cvPct": 1.4,
+          "medianMs": 322.552,
+          "minMs": 319.942,
+          "maxMs": 337.816,
+          "meanMs": 325.403,
+          "stddevMs": 7.281,
+          "cvPct": 2.3,
           "warmupPasses": 1,
           "throughput": "n/a"
         },
@@ -1156,18 +1157,18 @@
           "files": 695,
           "status": "unranked",
           "runs": [
-            92.241,
-            90.987,
-            97.418,
-            100.715,
-            92.552
+            80.325,
+            73.219,
+            83.37,
+            80.97,
+            89.301
           ],
-          "medianMs": 92.552,
-          "minMs": 90.987,
-          "maxMs": 100.715,
-          "meanMs": 94.783,
-          "stddevMs": 4.123,
-          "cvPct": 4.5,
+          "medianMs": 80.97,
+          "minMs": 73.219,
+          "maxMs": 89.301,
+          "meanMs": 81.437,
+          "stddevMs": 5.8,
+          "cvPct": 7.2,
           "warmupPasses": 1,
           "throughput": "n/a"
         },
@@ -1181,18 +1182,18 @@
           "files": 695,
           "status": "unranked",
           "runs": [
-            74.293,
-            73.52,
-            75.566,
-            73.984,
-            76.372
+            66.728,
+            66.001,
+            67.87,
+            72.356,
+            68.693
           ],
-          "medianMs": 74.293,
-          "minMs": 73.52,
-          "maxMs": 76.372,
-          "meanMs": 74.747,
-          "stddevMs": 1.184,
-          "cvPct": 1.6,
+          "medianMs": 67.87,
+          "minMs": 66.001,
+          "maxMs": 72.356,
+          "meanMs": 68.33,
+          "stddevMs": 2.477,
+          "cvPct": 3.6,
           "warmupPasses": 1,
           "throughput": "n/a"
         },
@@ -1206,20 +1207,20 @@
           "files": 695,
           "status": "ok",
           "runs": [
-            519.68,
-            525.313,
-            513.86,
-            526.652,
-            523.716
+            531.629,
+            493.843,
+            483.129,
+            514.387,
+            487.445
           ],
-          "medianMs": 523.716,
-          "minMs": 513.86,
-          "maxMs": 526.652,
-          "meanMs": 521.844,
-          "stddevMs": 5.174,
-          "cvPct": 1,
+          "medianMs": 493.843,
+          "minMs": 483.129,
+          "maxMs": 531.629,
+          "meanMs": 502.087,
+          "stddevMs": 20.407,
+          "cvPct": 4.1,
           "warmupPasses": 1,
-          "throughput": "1.3k files/s"
+          "throughput": "1.4k files/s"
         }
       ],
       "provenance": "ant-design-vue:demos @ 4.2.6 (4a37016f, released 2024-11-11, github-release; pinned 2026-07-29) · 695 SFCs · docs-demo · MIT · NO LOCKFILE (dependency set not frozen)"
@@ -1243,10 +1244,10 @@
               "invocation": "in-process API",
               "engine": "rolldown",
               "artifactLabel": "output bytes",
-              "notes": "❌ BUILD FAILED on this corpus after the Vue transform ran — the Vue transform compiled 695/695 corpus SFCs before the failure (1966 transforms total) — Build failed with 6 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/ant-design-vue/bundle/ant-design-vue-demos/components/config-provider/demo/direction.vue?vue&type=style&index=0&scoped=a7fe519a&lang.less",
+              "notes": "❌ BUILD FAILED on this corpus after the Vue transform ran — the Vue transform compiled 695/695 corpus SFCs before the failure (1966 transforms total) — Build failed with 6 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/ant-design-vue/bundle/ant-design-vue-demos/components/modal/demo/fullscreen.vue?vue&type=style&index=0&lang.less",
               "files": 695,
               "status": "error",
-              "error": "Build failed with 6 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/ant-design-vue/bundle/ant-design-vue-demos/components/config-provider/demo/direction.vue?vue&type=style&index=0&scoped=a7fe519a&lang.less",
+              "error": "Build failed with 6 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/ant-design-vue/bundle/ant-design-vue-demos/components/modal/demo/fullscreen.vue?vue&type=style&index=0&lang.less",
               "throughput": "n/a"
             },
             {
@@ -1273,10 +1274,10 @@
               "invocation": "in-process API",
               "engine": "rolldown",
               "artifactLabel": "output bytes",
-              "notes": "❌ BUILD FAILED on this corpus after the Vue transform ran — the Vue transform compiled 695/695 corpus SFCs before the failure (791 transforms total) — Build failed with 6 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/ant-design-vue/bundle/ant-design-vue-demos/components/modal/demo/fullscreen.vue?vue=&type=style&index=0&lang=less.less",
+              "notes": "❌ BUILD FAILED on this corpus after the Vue transform ran — the Vue transform compiled 695/695 corpus SFCs before the failure (791 transforms total) — Build failed with 6 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/ant-design-vue/bundle/ant-design-vue-demos/components/grid/demo/flex-align.vue?vue=&type=style&index=0&scoped=data-v-7690fd9d&lang=less.less.less.less",
               "files": 695,
               "status": "error",
-              "error": "Build failed with 6 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/ant-design-vue/bundle/ant-design-vue-demos/components/modal/demo/fullscreen.vue?vue=&type=style&index=0&lang=less.less",
+              "error": "Build failed with 6 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/ant-design-vue/bundle/ant-design-vue-demos/components/grid/demo/flex-align.vue?vue=&type=style&index=0&scoped=data-v-7690fd9d&lang=less.less.less.less",
               "throughput": "n/a"
             },
             {
@@ -1341,15 +1342,15 @@
               "files": 695,
               "status": "ok",
               "runs": [
-                2443.237,
-                2267.161
+                2024.914,
+                1973.981
               ],
-              "medianMs": 2355.199,
-              "minMs": 2267.161,
-              "maxMs": 2443.237,
-              "meanMs": 2355.199,
-              "stddevMs": 124.505,
-              "cvPct": 5.3,
+              "medianMs": 1999.447,
+              "minMs": 1973.981,
+              "maxMs": 2024.914,
+              "meanMs": 1999.447,
+              "stddevMs": 36.015,
+              "cvPct": 1.8,
               "metaSamples": [
                 {
                   "artifact": 6303083,
@@ -1366,7 +1367,7 @@
               ],
               "artifactMedian": 6303083,
               "warmupPasses": 0,
-              "throughput": "295 files/s"
+              "throughput": "348 files/s"
             },
             {
               "id": "rspack__unplugin-vue",
@@ -1381,15 +1382,15 @@
               "files": 695,
               "status": "ok",
               "runs": [
-                1974.943,
-                1957.449
+                1804.597,
+                1794.19
               ],
-              "medianMs": 1966.196,
-              "minMs": 1957.449,
-              "maxMs": 1974.943,
-              "meanMs": 1966.196,
-              "stddevMs": 12.37,
-              "cvPct": 0.6,
+              "medianMs": 1799.394,
+              "minMs": 1794.19,
+              "maxMs": 1804.597,
+              "meanMs": 1799.394,
+              "stddevMs": 7.359,
+              "cvPct": 0.4,
               "metaSamples": [
                 {
                   "artifact": 4691498,
@@ -1406,7 +1407,7 @@
               ],
               "artifactMedian": 4691498,
               "warmupPasses": 0,
-              "throughput": "353 files/s"
+              "throughput": "386 files/s"
             },
             {
               "id": "rspack__vize",
@@ -1436,15 +1437,15 @@
               "files": 695,
               "status": "ok",
               "runs": [
-                1550.216,
-                1483.769
+                1405.587,
+                1395.034
               ],
-              "medianMs": 1516.992,
-              "minMs": 1483.769,
-              "maxMs": 1550.216,
-              "meanMs": 1516.992,
-              "stddevMs": 46.985,
-              "cvPct": 3.1,
+              "medianMs": 1400.311,
+              "minMs": 1395.034,
+              "maxMs": 1405.587,
+              "meanMs": 1400.311,
+              "stddevMs": 7.462,
+              "cvPct": 0.5,
               "metaSamples": [
                 {
                   "artifact": 4419919,
@@ -1461,7 +1462,7 @@
               ],
               "artifactMedian": 4419919,
               "warmupPasses": 0,
-              "throughput": "458 files/s"
+              "throughput": "496 files/s"
             }
           ]
         },
@@ -1482,15 +1483,15 @@
               "files": 695,
               "status": "ok",
               "runs": [
-                2739.544,
-                2588.164
+                2654.428,
+                2902.19
               ],
-              "medianMs": 2663.854,
-              "minMs": 2588.164,
-              "maxMs": 2739.544,
-              "meanMs": 2663.854,
-              "stddevMs": 107.042,
-              "cvPct": 4,
+              "medianMs": 2778.309,
+              "minMs": 2654.428,
+              "maxMs": 2902.19,
+              "meanMs": 2778.309,
+              "stddevMs": 175.194,
+              "cvPct": 6.3,
               "metaSamples": [
                 {
                   "artifact": 9745465,
@@ -1507,7 +1508,7 @@
               ],
               "artifactMedian": 9745465,
               "warmupPasses": 0,
-              "throughput": "261 files/s"
+              "throughput": "250 files/s"
             },
             {
               "id": "webpack__unplugin-vue",
@@ -1522,15 +1523,15 @@
               "files": 695,
               "status": "ok",
               "runs": [
-                3220.846,
-                3633.532
+                3443.261,
+                3111.604
               ],
-              "medianMs": 3427.189,
-              "minMs": 3220.846,
-              "maxMs": 3633.532,
-              "meanMs": 3427.189,
-              "stddevMs": 291.813,
-              "cvPct": 8.5,
+              "medianMs": 3277.432,
+              "minMs": 3111.604,
+              "maxMs": 3443.261,
+              "meanMs": 3277.432,
+              "stddevMs": 234.517,
+              "cvPct": 7.2,
               "metaSamples": [
                 {
                   "artifact": 7283567,
@@ -1547,7 +1548,7 @@
               ],
               "artifactMedian": 7283567,
               "warmupPasses": 0,
-              "throughput": "203 files/s"
+              "throughput": "212 files/s"
             },
             {
               "id": "webpack__verter",
@@ -1562,15 +1563,15 @@
               "files": 695,
               "status": "ok",
               "runs": [
-                2586.336,
-                2335.609
+                2175.947,
+                2113.433
               ],
-              "medianMs": 2460.972,
-              "minMs": 2335.609,
-              "maxMs": 2586.336,
-              "meanMs": 2460.972,
-              "stddevMs": 177.291,
-              "cvPct": 7.2,
+              "medianMs": 2144.69,
+              "minMs": 2113.433,
+              "maxMs": 2175.947,
+              "meanMs": 2144.69,
+              "stddevMs": 44.204,
+              "cvPct": 2.1,
               "metaSamples": [
                 {
                   "artifact": 5512482,
@@ -1587,7 +1588,7 @@
               ],
               "artifactMedian": 5512482,
               "warmupPasses": 0,
-              "throughput": "282 files/s"
+              "throughput": "324 files/s"
             },
             {
               "id": "webpack__vize",
@@ -1614,10 +1615,10 @@
           "invocation": "in-process API",
           "engine": "rolldown",
           "artifactLabel": "output bytes",
-          "notes": "❌ BUILD FAILED on this corpus after the Vue transform ran — the Vue transform compiled 695/695 corpus SFCs before the failure (1966 transforms total) — Build failed with 6 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/ant-design-vue/bundle/ant-design-vue-demos/components/config-provider/demo/direction.vue?vue&type=style&index=0&scoped=a7fe519a&lang.less",
+          "notes": "❌ BUILD FAILED on this corpus after the Vue transform ran — the Vue transform compiled 695/695 corpus SFCs before the failure (1966 transforms total) — Build failed with 6 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/ant-design-vue/bundle/ant-design-vue-demos/components/modal/demo/fullscreen.vue?vue&type=style&index=0&lang.less",
           "files": 695,
           "status": "error",
-          "error": "Build failed with 6 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/ant-design-vue/bundle/ant-design-vue-demos/components/config-provider/demo/direction.vue?vue&type=style&index=0&scoped=a7fe519a&lang.less",
+          "error": "Build failed with 6 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/ant-design-vue/bundle/ant-design-vue-demos/components/modal/demo/fullscreen.vue?vue&type=style&index=0&lang.less",
           "throughput": "n/a"
         },
         {
@@ -1644,10 +1645,10 @@
           "invocation": "in-process API",
           "engine": "rolldown",
           "artifactLabel": "output bytes",
-          "notes": "❌ BUILD FAILED on this corpus after the Vue transform ran — the Vue transform compiled 695/695 corpus SFCs before the failure (791 transforms total) — Build failed with 6 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/ant-design-vue/bundle/ant-design-vue-demos/components/modal/demo/fullscreen.vue?vue=&type=style&index=0&lang=less.less",
+          "notes": "❌ BUILD FAILED on this corpus after the Vue transform ran — the Vue transform compiled 695/695 corpus SFCs before the failure (791 transforms total) — Build failed with 6 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/ant-design-vue/bundle/ant-design-vue-demos/components/grid/demo/flex-align.vue?vue=&type=style&index=0&scoped=data-v-7690fd9d&lang=less.less.less.less",
           "files": 695,
           "status": "error",
-          "error": "Build failed with 6 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/ant-design-vue/bundle/ant-design-vue-demos/components/modal/demo/fullscreen.vue?vue=&type=style&index=0&lang=less.less",
+          "error": "Build failed with 6 errors:  [plugin vite:css] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/ant-design-vue/bundle/ant-design-vue-demos/components/grid/demo/flex-align.vue?vue=&type=style&index=0&scoped=data-v-7690fd9d&lang=less.less.less.less",
           "throughput": "n/a"
         },
         {
@@ -1678,15 +1679,15 @@
           "files": 695,
           "status": "ok",
           "runs": [
-            2443.237,
-            2267.161
+            2024.914,
+            1973.981
           ],
-          "medianMs": 2355.199,
-          "minMs": 2267.161,
-          "maxMs": 2443.237,
-          "meanMs": 2355.199,
-          "stddevMs": 124.505,
-          "cvPct": 5.3,
+          "medianMs": 1999.447,
+          "minMs": 1973.981,
+          "maxMs": 2024.914,
+          "meanMs": 1999.447,
+          "stddevMs": 36.015,
+          "cvPct": 1.8,
           "metaSamples": [
             {
               "artifact": 6303083,
@@ -1703,7 +1704,7 @@
           ],
           "artifactMedian": 6303083,
           "warmupPasses": 0,
-          "throughput": "295 files/s"
+          "throughput": "348 files/s"
         },
         {
           "id": "rspack__unplugin-vue",
@@ -1718,15 +1719,15 @@
           "files": 695,
           "status": "ok",
           "runs": [
-            1974.943,
-            1957.449
+            1804.597,
+            1794.19
           ],
-          "medianMs": 1966.196,
-          "minMs": 1957.449,
-          "maxMs": 1974.943,
-          "meanMs": 1966.196,
-          "stddevMs": 12.37,
-          "cvPct": 0.6,
+          "medianMs": 1799.394,
+          "minMs": 1794.19,
+          "maxMs": 1804.597,
+          "meanMs": 1799.394,
+          "stddevMs": 7.359,
+          "cvPct": 0.4,
           "metaSamples": [
             {
               "artifact": 4691498,
@@ -1743,7 +1744,7 @@
           ],
           "artifactMedian": 4691498,
           "warmupPasses": 0,
-          "throughput": "353 files/s"
+          "throughput": "386 files/s"
         },
         {
           "id": "rspack__vize",
@@ -1773,15 +1774,15 @@
           "files": 695,
           "status": "ok",
           "runs": [
-            1550.216,
-            1483.769
+            1405.587,
+            1395.034
           ],
-          "medianMs": 1516.992,
-          "minMs": 1483.769,
-          "maxMs": 1550.216,
-          "meanMs": 1516.992,
-          "stddevMs": 46.985,
-          "cvPct": 3.1,
+          "medianMs": 1400.311,
+          "minMs": 1395.034,
+          "maxMs": 1405.587,
+          "meanMs": 1400.311,
+          "stddevMs": 7.462,
+          "cvPct": 0.5,
           "metaSamples": [
             {
               "artifact": 4419919,
@@ -1798,7 +1799,7 @@
           ],
           "artifactMedian": 4419919,
           "warmupPasses": 0,
-          "throughput": "458 files/s"
+          "throughput": "496 files/s"
         },
         {
           "id": "webpack__vue-loader",
@@ -1813,15 +1814,15 @@
           "files": 695,
           "status": "ok",
           "runs": [
-            2739.544,
-            2588.164
+            2654.428,
+            2902.19
           ],
-          "medianMs": 2663.854,
-          "minMs": 2588.164,
-          "maxMs": 2739.544,
-          "meanMs": 2663.854,
-          "stddevMs": 107.042,
-          "cvPct": 4,
+          "medianMs": 2778.309,
+          "minMs": 2654.428,
+          "maxMs": 2902.19,
+          "meanMs": 2778.309,
+          "stddevMs": 175.194,
+          "cvPct": 6.3,
           "metaSamples": [
             {
               "artifact": 9745465,
@@ -1838,7 +1839,7 @@
           ],
           "artifactMedian": 9745465,
           "warmupPasses": 0,
-          "throughput": "261 files/s"
+          "throughput": "250 files/s"
         },
         {
           "id": "webpack__unplugin-vue",
@@ -1853,15 +1854,15 @@
           "files": 695,
           "status": "ok",
           "runs": [
-            3220.846,
-            3633.532
+            3443.261,
+            3111.604
           ],
-          "medianMs": 3427.189,
-          "minMs": 3220.846,
-          "maxMs": 3633.532,
-          "meanMs": 3427.189,
-          "stddevMs": 291.813,
-          "cvPct": 8.5,
+          "medianMs": 3277.432,
+          "minMs": 3111.604,
+          "maxMs": 3443.261,
+          "meanMs": 3277.432,
+          "stddevMs": 234.517,
+          "cvPct": 7.2,
           "metaSamples": [
             {
               "artifact": 7283567,
@@ -1878,7 +1879,7 @@
           ],
           "artifactMedian": 7283567,
           "warmupPasses": 0,
-          "throughput": "203 files/s"
+          "throughput": "212 files/s"
         },
         {
           "id": "webpack__verter",
@@ -1893,15 +1894,15 @@
           "files": 695,
           "status": "ok",
           "runs": [
-            2586.336,
-            2335.609
+            2175.947,
+            2113.433
           ],
-          "medianMs": 2460.972,
-          "minMs": 2335.609,
-          "maxMs": 2586.336,
-          "meanMs": 2460.972,
-          "stddevMs": 177.291,
-          "cvPct": 7.2,
+          "medianMs": 2144.69,
+          "minMs": 2113.433,
+          "maxMs": 2175.947,
+          "meanMs": 2144.69,
+          "stddevMs": 44.204,
+          "cvPct": 2.1,
           "metaSamples": [
             {
               "artifact": 5512482,
@@ -1918,7 +1919,7 @@
           ],
           "artifactMedian": 5512482,
           "warmupPasses": 0,
-          "throughput": "282 files/s"
+          "throughput": "324 files/s"
         },
         {
           "id": "rolldown__unplugin-vue",
@@ -2002,17 +2003,17 @@
               "files": 695,
               "status": "ok",
               "runs": [
-                115.216,
-                92.291
+                92.916,
+                76.396
               ],
-              "medianMs": 103.754,
-              "minMs": 92.291,
-              "maxMs": 115.216,
-              "meanMs": 103.754,
-              "stddevMs": 16.21,
-              "cvPct": 15.6,
+              "medianMs": 84.656,
+              "minMs": 76.396,
+              "maxMs": 92.916,
+              "meanMs": 84.656,
+              "stddevMs": 11.681,
+              "cvPct": 13.8,
               "warmupPasses": 0,
-              "throughput": "6.7k files/s"
+              "throughput": "8.2k files/s"
             },
             {
               "id": "start__vite8__unplugin-vue",
@@ -2026,17 +2027,17 @@
               "files": 695,
               "status": "ok",
               "runs": [
-                99.25,
-                86.539
+                76.913,
+                67.887
               ],
-              "medianMs": 92.894,
-              "minMs": 86.539,
-              "maxMs": 99.25,
-              "meanMs": 92.894,
-              "stddevMs": 8.988,
-              "cvPct": 9.7,
+              "medianMs": 72.4,
+              "minMs": 67.887,
+              "maxMs": 76.913,
+              "meanMs": 72.4,
+              "stddevMs": 6.382,
+              "cvPct": 8.8,
               "warmupPasses": 0,
-              "throughput": "7.5k files/s"
+              "throughput": "9.6k files/s"
             },
             {
               "id": "start__vite8__vize",
@@ -2050,17 +2051,17 @@
               "files": 695,
               "status": "ok",
               "runs": [
-                158.939,
-                161.246
+                143.232,
+                135.176
               ],
-              "medianMs": 160.093,
-              "minMs": 158.939,
-              "maxMs": 161.246,
-              "meanMs": 160.093,
-              "stddevMs": 1.631,
-              "cvPct": 1,
+              "medianMs": 139.204,
+              "minMs": 135.176,
+              "maxMs": 143.232,
+              "meanMs": 139.204,
+              "stddevMs": 5.696,
+              "cvPct": 4.1,
               "warmupPasses": 0,
-              "throughput": "4.3k files/s"
+              "throughput": "5.0k files/s"
             },
             {
               "id": "start__vite8__verter",
@@ -2074,17 +2075,17 @@
               "files": 695,
               "status": "ok",
               "runs": [
-                94.791,
-                87.966
+                78.346,
+                75.296
               ],
-              "medianMs": 91.379,
-              "minMs": 87.966,
-              "maxMs": 94.791,
-              "meanMs": 91.379,
-              "stddevMs": 4.826,
-              "cvPct": 5.3,
+              "medianMs": 76.821,
+              "minMs": 75.296,
+              "maxMs": 78.346,
+              "meanMs": 76.821,
+              "stddevMs": 2.157,
+              "cvPct": 2.8,
               "warmupPasses": 0,
-              "throughput": "7.6k files/s"
+              "throughput": "9.0k files/s"
             },
             {
               "id": "start__rolldown__plugin-vue",
@@ -2261,53 +2262,53 @@
               "files": 695,
               "status": "ok",
               "runs": [
-                835.651,
-                5.31,
-                6.384,
-                5.037,
-                5.177
+                837.062,
+                6.088,
+                6.316,
+                5.282,
+                5.349
               ],
-              "medianMs": 5.31,
-              "minMs": 5.037,
-              "maxMs": 835.651,
-              "meanMs": 171.512,
-              "stddevMs": 371.265,
-              "cvPct": 6991.8,
+              "medianMs": 6.088,
+              "minMs": 5.282,
+              "maxMs": 837.062,
+              "meanMs": 172.019,
+              "stddevMs": 371.77,
+              "cvPct": 6106.6,
               "metaSamples": [
                 {
                   "artifact": 8890,
-                  "notifyMs": 346.042,
+                  "notifyMs": 339.517,
                   "kind": "update",
                   "probeFiles": 2
                 },
                 {
                   "artifact": 8890,
-                  "notifyMs": 1.194,
+                  "notifyMs": 1.421,
                   "kind": "update",
                   "probeFiles": 2
                 },
                 {
                   "artifact": 8890,
-                  "notifyMs": 1.308,
+                  "notifyMs": 1.273,
                   "kind": "update",
                   "probeFiles": 2
                 },
                 {
                   "artifact": 8890,
-                  "notifyMs": 1.544,
+                  "notifyMs": 1.466,
                   "kind": "update",
                   "probeFiles": 2
                 },
                 {
                   "artifact": 8890,
-                  "notifyMs": 1.103,
+                  "notifyMs": 1.062,
                   "kind": "update",
                   "probeFiles": 2
                 }
               ],
               "artifactMedian": 8890,
               "warmupPasses": 1,
-              "throughput": "130.9k files/s"
+              "throughput": "114.2k files/s"
             },
             {
               "id": "hmr__vite8__unplugin-vue",
@@ -2322,53 +2323,53 @@
               "files": 695,
               "status": "ok",
               "runs": [
-                76.047,
-                5.575,
-                5.561,
-                5.609,
-                5.42
+                80.349,
+                5.735,
+                5.121,
+                4.779,
+                5.023
               ],
-              "medianMs": 5.575,
-              "minMs": 5.42,
-              "maxMs": 76.047,
-              "meanMs": 19.642,
-              "stddevMs": 31.531,
-              "cvPct": 565.6,
+              "medianMs": 5.121,
+              "minMs": 4.779,
+              "maxMs": 80.349,
+              "meanMs": 20.201,
+              "stddevMs": 33.625,
+              "cvPct": 656.6,
               "metaSamples": [
                 {
                   "artifact": 8892,
-                  "notifyMs": 3.336,
+                  "notifyMs": 3.374,
                   "kind": "update",
                   "probeFiles": 2
                 },
                 {
                   "artifact": 8892,
-                  "notifyMs": 1.502,
+                  "notifyMs": 1.426,
                   "kind": "update",
                   "probeFiles": 2
                 },
                 {
                   "artifact": 8892,
-                  "notifyMs": 1.367,
+                  "notifyMs": 1.314,
                   "kind": "update",
                   "probeFiles": 2
                 },
                 {
                   "artifact": 8892,
-                  "notifyMs": 1.285,
+                  "notifyMs": 1.12,
                   "kind": "update",
                   "probeFiles": 2
                 },
                 {
                   "artifact": 8892,
-                  "notifyMs": 1.445,
+                  "notifyMs": 1.339,
                   "kind": "update",
                   "probeFiles": 2
                 }
               ],
               "artifactMedian": 8892,
               "warmupPasses": 1,
-              "throughput": "124.7k files/s"
+              "throughput": "135.7k files/s"
             },
             {
               "id": "hmr__vite8__vize",
@@ -2396,46 +2397,46 @@
               "files": 695,
               "status": "unranked",
               "runs": [
-                0.611,
-                0.614,
-                0.583,
-                0.633,
-                0.562
+                0.599,
+                0.694,
+                0.567,
+                0.556,
+                0.552
               ],
-              "medianMs": 0.611,
-              "minMs": 0.562,
-              "maxMs": 0.633,
-              "meanMs": 0.601,
-              "stddevMs": 0.028,
-              "cvPct": 4.6,
+              "medianMs": 0.567,
+              "minMs": 0.552,
+              "maxMs": 0.694,
+              "meanMs": 0.594,
+              "stddevMs": 0.059,
+              "cvPct": 10.4,
               "metaSamples": [
                 {
                   "artifact": 0,
-                  "notifyMs": 0.611,
+                  "notifyMs": 0.599,
                   "kind": "full-reload",
                   "probeFiles": 2
                 },
                 {
                   "artifact": 0,
-                  "notifyMs": 0.613,
+                  "notifyMs": 0.694,
                   "kind": "full-reload",
                   "probeFiles": 2
                 },
                 {
                   "artifact": 0,
-                  "notifyMs": 0.583,
+                  "notifyMs": 0.567,
                   "kind": "full-reload",
                   "probeFiles": 2
                 },
                 {
                   "artifact": 0,
-                  "notifyMs": 0.633,
+                  "notifyMs": 0.555,
                   "kind": "full-reload",
                   "probeFiles": 2
                 },
                 {
                   "artifact": 0,
-                  "notifyMs": 0.561,
+                  "notifyMs": 0.552,
                   "kind": "full-reload",
                   "probeFiles": 2
                 }
@@ -2617,17 +2618,17 @@
           "files": 695,
           "status": "ok",
           "runs": [
-            115.216,
-            92.291
+            92.916,
+            76.396
           ],
-          "medianMs": 103.754,
-          "minMs": 92.291,
-          "maxMs": 115.216,
-          "meanMs": 103.754,
-          "stddevMs": 16.21,
-          "cvPct": 15.6,
+          "medianMs": 84.656,
+          "minMs": 76.396,
+          "maxMs": 92.916,
+          "meanMs": 84.656,
+          "stddevMs": 11.681,
+          "cvPct": 13.8,
           "warmupPasses": 0,
-          "throughput": "6.7k files/s"
+          "throughput": "8.2k files/s"
         },
         {
           "id": "start__vite8__unplugin-vue",
@@ -2641,17 +2642,17 @@
           "files": 695,
           "status": "ok",
           "runs": [
-            99.25,
-            86.539
+            76.913,
+            67.887
           ],
-          "medianMs": 92.894,
-          "minMs": 86.539,
-          "maxMs": 99.25,
-          "meanMs": 92.894,
-          "stddevMs": 8.988,
-          "cvPct": 9.7,
+          "medianMs": 72.4,
+          "minMs": 67.887,
+          "maxMs": 76.913,
+          "meanMs": 72.4,
+          "stddevMs": 6.382,
+          "cvPct": 8.8,
           "warmupPasses": 0,
-          "throughput": "7.5k files/s"
+          "throughput": "9.6k files/s"
         },
         {
           "id": "start__vite8__vize",
@@ -2665,17 +2666,17 @@
           "files": 695,
           "status": "ok",
           "runs": [
-            158.939,
-            161.246
+            143.232,
+            135.176
           ],
-          "medianMs": 160.093,
-          "minMs": 158.939,
-          "maxMs": 161.246,
-          "meanMs": 160.093,
-          "stddevMs": 1.631,
-          "cvPct": 1,
+          "medianMs": 139.204,
+          "minMs": 135.176,
+          "maxMs": 143.232,
+          "meanMs": 139.204,
+          "stddevMs": 5.696,
+          "cvPct": 4.1,
           "warmupPasses": 0,
-          "throughput": "4.3k files/s"
+          "throughput": "5.0k files/s"
         },
         {
           "id": "start__vite8__verter",
@@ -2689,17 +2690,17 @@
           "files": 695,
           "status": "ok",
           "runs": [
-            94.791,
-            87.966
+            78.346,
+            75.296
           ],
-          "medianMs": 91.379,
-          "minMs": 87.966,
-          "maxMs": 94.791,
-          "meanMs": 91.379,
-          "stddevMs": 4.826,
-          "cvPct": 5.3,
+          "medianMs": 76.821,
+          "minMs": 75.296,
+          "maxMs": 78.346,
+          "meanMs": 76.821,
+          "stddevMs": 2.157,
+          "cvPct": 2.8,
           "warmupPasses": 0,
-          "throughput": "7.6k files/s"
+          "throughput": "9.0k files/s"
         },
         {
           "id": "start__rolldown__plugin-vue",
@@ -2870,53 +2871,53 @@
           "files": 695,
           "status": "ok",
           "runs": [
-            835.651,
-            5.31,
-            6.384,
-            5.037,
-            5.177
+            837.062,
+            6.088,
+            6.316,
+            5.282,
+            5.349
           ],
-          "medianMs": 5.31,
-          "minMs": 5.037,
-          "maxMs": 835.651,
-          "meanMs": 171.512,
-          "stddevMs": 371.265,
-          "cvPct": 6991.8,
+          "medianMs": 6.088,
+          "minMs": 5.282,
+          "maxMs": 837.062,
+          "meanMs": 172.019,
+          "stddevMs": 371.77,
+          "cvPct": 6106.6,
           "metaSamples": [
             {
               "artifact": 8890,
-              "notifyMs": 346.042,
+              "notifyMs": 339.517,
               "kind": "update",
               "probeFiles": 2
             },
             {
               "artifact": 8890,
-              "notifyMs": 1.194,
+              "notifyMs": 1.421,
               "kind": "update",
               "probeFiles": 2
             },
             {
               "artifact": 8890,
-              "notifyMs": 1.308,
+              "notifyMs": 1.273,
               "kind": "update",
               "probeFiles": 2
             },
             {
               "artifact": 8890,
-              "notifyMs": 1.544,
+              "notifyMs": 1.466,
               "kind": "update",
               "probeFiles": 2
             },
             {
               "artifact": 8890,
-              "notifyMs": 1.103,
+              "notifyMs": 1.062,
               "kind": "update",
               "probeFiles": 2
             }
           ],
           "artifactMedian": 8890,
           "warmupPasses": 1,
-          "throughput": "130.9k files/s"
+          "throughput": "114.2k files/s"
         },
         {
           "id": "hmr__vite8__unplugin-vue",
@@ -2931,53 +2932,53 @@
           "files": 695,
           "status": "ok",
           "runs": [
-            76.047,
-            5.575,
-            5.561,
-            5.609,
-            5.42
+            80.349,
+            5.735,
+            5.121,
+            4.779,
+            5.023
           ],
-          "medianMs": 5.575,
-          "minMs": 5.42,
-          "maxMs": 76.047,
-          "meanMs": 19.642,
-          "stddevMs": 31.531,
-          "cvPct": 565.6,
+          "medianMs": 5.121,
+          "minMs": 4.779,
+          "maxMs": 80.349,
+          "meanMs": 20.201,
+          "stddevMs": 33.625,
+          "cvPct": 656.6,
           "metaSamples": [
             {
               "artifact": 8892,
-              "notifyMs": 3.336,
+              "notifyMs": 3.374,
               "kind": "update",
               "probeFiles": 2
             },
             {
               "artifact": 8892,
-              "notifyMs": 1.502,
+              "notifyMs": 1.426,
               "kind": "update",
               "probeFiles": 2
             },
             {
               "artifact": 8892,
-              "notifyMs": 1.367,
+              "notifyMs": 1.314,
               "kind": "update",
               "probeFiles": 2
             },
             {
               "artifact": 8892,
-              "notifyMs": 1.285,
+              "notifyMs": 1.12,
               "kind": "update",
               "probeFiles": 2
             },
             {
               "artifact": 8892,
-              "notifyMs": 1.445,
+              "notifyMs": 1.339,
               "kind": "update",
               "probeFiles": 2
             }
           ],
           "artifactMedian": 8892,
           "warmupPasses": 1,
-          "throughput": "124.7k files/s"
+          "throughput": "135.7k files/s"
         },
         {
           "id": "hmr__vite8__vize",
@@ -3005,46 +3006,46 @@
           "files": 695,
           "status": "unranked",
           "runs": [
-            0.611,
-            0.614,
-            0.583,
-            0.633,
-            0.562
+            0.599,
+            0.694,
+            0.567,
+            0.556,
+            0.552
           ],
-          "medianMs": 0.611,
-          "minMs": 0.562,
-          "maxMs": 0.633,
-          "meanMs": 0.601,
-          "stddevMs": 0.028,
-          "cvPct": 4.6,
+          "medianMs": 0.567,
+          "minMs": 0.552,
+          "maxMs": 0.694,
+          "meanMs": 0.594,
+          "stddevMs": 0.059,
+          "cvPct": 10.4,
           "metaSamples": [
             {
               "artifact": 0,
-              "notifyMs": 0.611,
+              "notifyMs": 0.599,
               "kind": "full-reload",
               "probeFiles": 2
             },
             {
               "artifact": 0,
-              "notifyMs": 0.613,
+              "notifyMs": 0.694,
               "kind": "full-reload",
               "probeFiles": 2
             },
             {
               "artifact": 0,
-              "notifyMs": 0.583,
+              "notifyMs": 0.567,
               "kind": "full-reload",
               "probeFiles": 2
             },
             {
               "artifact": 0,
-              "notifyMs": 0.633,
+              "notifyMs": 0.555,
               "kind": "full-reload",
               "probeFiles": 2
             },
             {
               "artifact": 0,
-              "notifyMs": 0.561,
+              "notifyMs": 0.552,
               "kind": "full-reload",
               "probeFiles": 2
             }
@@ -3289,18 +3290,18 @@
           "files": 695,
           "status": "unranked",
           "runs": [
-            6930.362,
-            5987.189,
-            6666.327,
-            6368.037,
-            5755.337
+            5825.9,
+            6233.944,
+            5422.132,
+            5860.047,
+            6513.632
           ],
-          "medianMs": 6368.037,
-          "minMs": 5755.337,
-          "maxMs": 6930.362,
-          "meanMs": 6341.45,
-          "stddevMs": 480.13,
-          "cvPct": 7.5,
+          "medianMs": 5860.047,
+          "minMs": 5422.132,
+          "maxMs": 6513.632,
+          "meanMs": 5971.131,
+          "stddevMs": 417.795,
+          "cvPct": 7.1,
           "metaSamples": [
             {
               "artifact": 695,
@@ -6880,7 +6881,7 @@
           ],
           "artifactMedian": 695,
           "warmupPasses": 1,
-          "throughput": "109 files/s"
+          "throughput": "119 files/s"
         },
         {
           "id": "verter-component-meta",
@@ -6893,18 +6894,18 @@
           "files": 695,
           "status": "unranked",
           "runs": [
-            2818.46,
-            2669.382,
-            2613.648,
-            2700.996,
-            2662.048
+            2960.269,
+            2669.752,
+            3392.186,
+            2789.741,
+            2693.517
           ],
-          "medianMs": 2669.382,
-          "minMs": 2613.648,
-          "maxMs": 2818.46,
-          "meanMs": 2692.907,
-          "stddevMs": 76.839,
-          "cvPct": 2.9,
+          "medianMs": 2789.741,
+          "minMs": 2669.752,
+          "maxMs": 3392.186,
+          "meanMs": 2901.093,
+          "stddevMs": 297.355,
+          "cvPct": 10.7,
           "metaSamples": [
             {
               "artifact": 695,
@@ -7029,7 +7030,7 @@
           ],
           "artifactMedian": 695,
           "warmupPasses": 1,
-          "throughput": "260 files/s"
+          "throughput": "249 files/s"
         },
         {
           "id": "vize-component-meta",
@@ -7076,26 +7077,26 @@
               "artifactPolarity": "informational",
               "engine": "tsc-js",
               "artifactLabel": "diagnostics published",
-              "notes": "BASELINE · official Vue language server v3 in hybrid (two-process) mode — the only mode v3 has. The measured unit is the pair: @vue/language-server plus typescript-language-server with @vue/typescript-plugin, joined by the tsserver bridge. Both processes' startup and project load of the real project are inside the timings. HOVER asks both halves in parallel and charges the slower; DIAGNOSTICS times the first publication for the document from either half (which may be an empty preliminary — the count it carried and the first NON-EMPTY publication are both published). · operation: didOpen → diagnostics · workspace ., document components/affix/demo/basic.vue | ⚠ FAILED DIAGNOSTIC-CONTENT GATE — published 0 diagnostics for a document vize published 1 for. Answering \"nothing to report\" fast is not the same job as answering. Measured but UNRANKED. (Diagnostic EQUIVALENCE is not asserted; the counts are published so a suspicious row is visible.) | ⚠ UNRANKED — NO LOCKFILE: ant-design-vue ships no lockfile at the pinned ref, so its install cannot be frozen and the dependency set is whatever resolved when fetch ran. Timings that execute the project's own installed dependencies are therefore not reproducible, and rows on project-test, project-build, project-typecheck, project-component-meta, project-lsp are UNRANKED for this corpus. This is a property of the corpus, not of any tool, and it applies to every row equally.",
+              "notes": "BASELINE · official Vue language server v3 in hybrid (two-process) mode — the only mode v3 has. The measured unit is the pair: @vue/language-server plus typescript-language-server with @vue/typescript-plugin, joined by the tsserver bridge. Both processes' startup and project load of the real project are inside the timings. HOVER asks both halves in parallel and charges the slower; DIAGNOSTICS times the first publication for the document from either half (which may be an empty preliminary — the count it carried and the first NON-EMPTY publication are both published). · operation: didOpen → diagnostics · workspace ., document components/affix/demo/basic.vue | ⓘ DIAGNOSTIC-CONTENT GATE NOT RUN — every server published an EMPTY diagnostic list for this document. That is a legitimate answer, but not one any row can be measured against. Ranked, but unverified rather than verified-equal. | ⚠ UNRANKED — NO LOCKFILE: ant-design-vue ships no lockfile at the pinned ref, so its install cannot be frozen and the dependency set is whatever resolved when fetch ran. Timings that execute the project's own installed dependencies are therefore not reproducible, and rows on project-test, project-build, project-typecheck, project-component-meta, project-lsp are UNRANKED for this corpus. This is a property of the corpus, not of any tool, and it applies to every row equally.",
               "files": 1,
               "status": "unranked",
               "runs": [
-                8738.3,
-                8911.455,
-                8744.351,
-                8845.506,
-                8685.658
+                7931.892,
+                8113.543,
+                8048.85,
+                8107.906,
+                7960.731
               ],
-              "medianMs": 8744.351,
-              "minMs": 8685.658,
-              "maxMs": 8911.455,
-              "meanMs": 8785.054,
-              "stddevMs": 91.315,
+              "medianMs": 8048.85,
+              "minMs": 7931.892,
+              "maxMs": 8113.543,
+              "meanMs": 8032.584,
+              "stddevMs": 83.358,
               "cvPct": 1,
               "metaSamples": [
                 {
-                  "initializeMs": 561.3691769999932,
-                  "didOpenToDiagnosticsMs": 8738.299994999994,
+                  "initializeMs": 492.64138999999705,
+                  "didOpenToDiagnosticsMs": 7931.891626000004,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -7109,8 +7110,8 @@
                   "artifact": 0
                 },
                 {
-                  "initializeMs": 571.5325569999986,
-                  "didOpenToDiagnosticsMs": 8911.455134000003,
+                  "initializeMs": 505.26792299999215,
+                  "didOpenToDiagnosticsMs": 8113.542606000003,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -7124,8 +7125,8 @@
                   "artifact": 0
                 },
                 {
-                  "initializeMs": 561.1155560000043,
-                  "didOpenToDiagnosticsMs": 8744.351171999995,
+                  "initializeMs": 509.2256299999717,
+                  "didOpenToDiagnosticsMs": 8048.849993999989,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -7139,8 +7140,8 @@
                   "artifact": 0
                 },
                 {
-                  "initializeMs": 561.2080539999879,
-                  "didOpenToDiagnosticsMs": 8845.506327999989,
+                  "initializeMs": 516.9188639999775,
+                  "didOpenToDiagnosticsMs": 8107.905977999995,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -7154,8 +7155,8 @@
                   "artifact": 0
                 },
                 {
-                  "initializeMs": 576.1387949999771,
-                  "didOpenToDiagnosticsMs": 8685.657787000004,
+                  "initializeMs": 498.8531550000189,
+                  "didOpenToDiagnosticsMs": 7960.730786,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -7187,26 +7188,26 @@
               "artifactPolarity": "informational",
               "engine": "tsgo via typescript-native-bridge",
               "artifactLabel": "diagnostics published",
-              "notes": "Identical to the Volar row except the TypeScript half runs on typescript-native-bridge (tsgo): same @vue/language-server, same @vue/typescript-plugin, same bridge, tsdk pointed at TNB 6.0.3-bridge.13.tsgo.7.0.2 tsdk. Exactly one variable against the baseline — the TypeScript engine — which is why the two are ranked in separate tables. · operation: didOpen → diagnostics · workspace ., document components/affix/demo/basic.vue | ⚠ FAILED DIAGNOSTIC-CONTENT GATE — published 0 diagnostics for a document vize published 1 for. Answering \"nothing to report\" fast is not the same job as answering. Measured but UNRANKED. (Diagnostic EQUIVALENCE is not asserted; the counts are published so a suspicious row is visible.) | ⚠ UNRANKED — NO LOCKFILE: ant-design-vue ships no lockfile at the pinned ref, so its install cannot be frozen and the dependency set is whatever resolved when fetch ran. Timings that execute the project's own installed dependencies are therefore not reproducible, and rows on project-test, project-build, project-typecheck, project-component-meta, project-lsp are UNRANKED for this corpus. This is a property of the corpus, not of any tool, and it applies to every row equally.",
+              "notes": "Identical to the Volar row except the TypeScript half runs on typescript-native-bridge (tsgo): same @vue/language-server, same @vue/typescript-plugin, same bridge, tsdk pointed at TNB 6.0.3-bridge.13.tsgo.7.0.2 tsdk. Exactly one variable against the baseline — the TypeScript engine — which is why the two are ranked in separate tables. · operation: didOpen → diagnostics · workspace ., document components/affix/demo/basic.vue | ⓘ DIAGNOSTIC-CONTENT GATE NOT RUN — every server published an EMPTY diagnostic list for this document. That is a legitimate answer, but not one any row can be measured against. Ranked, but unverified rather than verified-equal. | ⚠ UNRANKED — NO LOCKFILE: ant-design-vue ships no lockfile at the pinned ref, so its install cannot be frozen and the dependency set is whatever resolved when fetch ran. Timings that execute the project's own installed dependencies are therefore not reproducible, and rows on project-test, project-build, project-typecheck, project-component-meta, project-lsp are UNRANKED for this corpus. This is a property of the corpus, not of any tool, and it applies to every row equally.",
               "files": 1,
               "status": "unranked",
               "runs": [
-                6144.707,
-                6128.526,
-                6195.642,
-                6105.087,
-                6089.807
+                5461.606,
+                5451.834,
+                5534.268,
+                5459.071,
+                5527.56
               ],
-              "medianMs": 6128.526,
-              "minMs": 6089.807,
-              "maxMs": 6195.642,
-              "meanMs": 6132.754,
-              "stddevMs": 41.005,
+              "medianMs": 5461.606,
+              "minMs": 5451.834,
+              "maxMs": 5534.268,
+              "meanMs": 5486.868,
+              "stddevMs": 40.438,
               "cvPct": 0.7,
               "metaSamples": [
                 {
-                  "initializeMs": 852.1156990000018,
-                  "didOpenToDiagnosticsMs": 6144.706691000007,
+                  "initializeMs": 743.536079999998,
+                  "didOpenToDiagnosticsMs": 5461.605576999995,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -7220,8 +7221,8 @@
                   "artifact": 0
                 },
                 {
-                  "initializeMs": 570.3976879999973,
-                  "didOpenToDiagnosticsMs": 6128.5262800000055,
+                  "initializeMs": 498.056230999995,
+                  "didOpenToDiagnosticsMs": 5451.834105999995,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -7235,8 +7236,8 @@
                   "artifact": 0
                 },
                 {
-                  "initializeMs": 848.9808360000025,
-                  "didOpenToDiagnosticsMs": 6195.641839999997,
+                  "initializeMs": 789.6722640000226,
+                  "didOpenToDiagnosticsMs": 5534.268377,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -7250,8 +7251,8 @@
                   "artifact": 0
                 },
                 {
-                  "initializeMs": 819.0131840000104,
-                  "didOpenToDiagnosticsMs": 6105.087433999986,
+                  "initializeMs": 781.2128880000091,
+                  "didOpenToDiagnosticsMs": 5459.070865000016,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -7265,8 +7266,8 @@
                   "artifact": 0
                 },
                 {
-                  "initializeMs": 589.3563489999797,
-                  "didOpenToDiagnosticsMs": 6089.8065689999785,
+                  "initializeMs": 525.2736870000081,
+                  "didOpenToDiagnosticsMs": 5527.560411999992,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -7292,26 +7293,26 @@
               "artifactPolarity": "informational",
               "engine": "tsgo (stable)",
               "artifactLabel": "diagnostics published",
-              "notes": "verter-lsp stdio, the native server from the published npm package, given the project directory as its workspace root. $/verter/ready is not waited for — its workspace load is inside the measured window like every other server's. · operation: didOpen → diagnostics · workspace ., document components/affix/demo/basic.vue | ⚠ FAILED DIAGNOSTIC-CONTENT GATE — published 0 diagnostics for a document vize published 1 for. Answering \"nothing to report\" fast is not the same job as answering. Measured but UNRANKED. (Diagnostic EQUIVALENCE is not asserted; the counts are published so a suspicious row is visible.) | ⚠ UNRANKED — NO LOCKFILE: ant-design-vue ships no lockfile at the pinned ref, so its install cannot be frozen and the dependency set is whatever resolved when fetch ran. Timings that execute the project's own installed dependencies are therefore not reproducible, and rows on project-test, project-build, project-typecheck, project-component-meta, project-lsp are UNRANKED for this corpus. This is a property of the corpus, not of any tool, and it applies to every row equally.",
+              "notes": "verter-lsp stdio, the native server from the published npm package, given the project directory as its workspace root. $/verter/ready is not waited for — its workspace load is inside the measured window like every other server's. · operation: didOpen → diagnostics · workspace ., document components/affix/demo/basic.vue | ⓘ DIAGNOSTIC-CONTENT GATE NOT RUN — every server published an EMPTY diagnostic list for this document. That is a legitimate answer, but not one any row can be measured against. Ranked, but unverified rather than verified-equal. | ⚠ UNRANKED — NO LOCKFILE: ant-design-vue ships no lockfile at the pinned ref, so its install cannot be frozen and the dependency set is whatever resolved when fetch ran. Timings that execute the project's own installed dependencies are therefore not reproducible, and rows on project-test, project-build, project-typecheck, project-component-meta, project-lsp are UNRANKED for this corpus. This is a property of the corpus, not of any tool, and it applies to every row equally.",
               "files": 1,
               "status": "unranked",
               "runs": [
-                1287.299,
-                1266.69,
-                1834.75,
-                1327.063,
-                1369.237
+                1262.621,
+                1237.202,
+                1639.765,
+                1261.066,
+                1305.871
               ],
-              "medianMs": 1327.063,
-              "minMs": 1266.69,
-              "maxMs": 1834.75,
-              "meanMs": 1417.008,
-              "stddevMs": 236.802,
-              "cvPct": 17.8,
+              "medianMs": 1262.621,
+              "minMs": 1237.202,
+              "maxMs": 1639.765,
+              "meanMs": 1341.305,
+              "stddevMs": 168.672,
+              "cvPct": 13.4,
               "metaSamples": [
                 {
-                  "initializeMs": 15.331943000004685,
-                  "didOpenToDiagnosticsMs": 1287.2985359999948,
+                  "initializeMs": 9.607398000000103,
+                  "didOpenToDiagnosticsMs": 1262.6209109999982,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -7325,8 +7326,8 @@
                   "artifact": 0
                 },
                 {
-                  "initializeMs": 14.856515999999829,
-                  "didOpenToDiagnosticsMs": 1266.6898619999993,
+                  "initializeMs": 9.790196999994805,
+                  "didOpenToDiagnosticsMs": 1237.2022819999984,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -7340,8 +7341,8 @@
                   "artifact": 0
                 },
                 {
-                  "initializeMs": 19.277582999988226,
-                  "didOpenToDiagnosticsMs": 1834.7496309999988,
+                  "initializeMs": 14.556723000001512,
+                  "didOpenToDiagnosticsMs": 1639.7646549999918,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -7355,8 +7356,8 @@
                   "artifact": 0
                 },
                 {
-                  "initializeMs": 15.09175900000264,
-                  "didOpenToDiagnosticsMs": 1327.0626900000207,
+                  "initializeMs": 9.076400999998441,
+                  "didOpenToDiagnosticsMs": 1261.0661360000086,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -7370,8 +7371,8 @@
                   "artifact": 0
                 },
                 {
-                  "initializeMs": 14.836608999990858,
-                  "didOpenToDiagnosticsMs": 1369.23694599999,
+                  "initializeMs": 13.666785999987042,
+                  "didOpenToDiagnosticsMs": 1305.871061999991,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
@@ -7397,29 +7398,29 @@
               "artifactPolarity": "informational",
               "engine": "tsgo (nightly/Corsa when available)",
               "artifactLabel": "diagnostics published",
-              "notes": "vize lsp --stdio, launched from the npm package's NODE entry, because no version-matched native server was found; that costs ~35ms of Node bootstrap per spawn. Same workspace, file and position as every other row. · operation: didOpen → diagnostics · workspace ., document components/affix/demo/basic.vue | ⚠ UNRANKED — NO LOCKFILE: ant-design-vue ships no lockfile at the pinned ref, so its install cannot be frozen and the dependency set is whatever resolved when fetch ran. Timings that execute the project's own installed dependencies are therefore not reproducible, and rows on project-test, project-build, project-typecheck, project-component-meta, project-lsp are UNRANKED for this corpus. This is a property of the corpus, not of any tool, and it applies to every row equally.",
+              "notes": "vize lsp --stdio, launched from the npm package's NODE entry, because no version-matched native server was found; that costs ~35ms of Node bootstrap per spawn. Same workspace, file and position as every other row. · operation: didOpen → diagnostics · workspace ., document components/affix/demo/basic.vue | ⓘ DIAGNOSTIC-CONTENT GATE NOT RUN — every server published an EMPTY diagnostic list for this document. That is a legitimate answer, but not one any row can be measured against. Ranked, but unverified rather than verified-equal. | ⚠ UNRANKED — NO LOCKFILE: ant-design-vue ships no lockfile at the pinned ref, so its install cannot be frozen and the dependency set is whatever resolved when fetch ran. Timings that execute the project's own installed dependencies are therefore not reproducible, and rows on project-test, project-build, project-typecheck, project-component-meta, project-lsp are UNRANKED for this corpus. This is a property of the corpus, not of any tool, and it applies to every row equally.",
               "files": 1,
               "status": "unranked",
               "runs": [
-                1382.221,
-                1351.246,
-                1348.805,
-                1399.517,
-                1345.193
+                1261.76,
+                1242.595,
+                1252.948,
+                1295.986,
+                1277.953
               ],
-              "medianMs": 1351.246,
-              "minMs": 1345.193,
-              "maxMs": 1399.517,
-              "meanMs": 1365.396,
-              "stddevMs": 24.14,
-              "cvPct": 1.8,
+              "medianMs": 1261.76,
+              "minMs": 1242.595,
+              "maxMs": 1295.986,
+              "meanMs": 1266.248,
+              "stddevMs": 21.082,
+              "cvPct": 1.7,
               "metaSamples": [
                 {
-                  "initializeMs": 37.5269399999961,
-                  "didOpenToDiagnosticsMs": 1382.2207500000077,
-                  "diagnosticsCount": 1,
-                  "firstNonEmptyDiagnosticsMs": 1382.2214220000023,
-                  "firstNonEmptyDiagnosticsCount": 1,
+                  "initializeMs": 35.05125099999714,
+                  "didOpenToDiagnosticsMs": 1261.759997999994,
+                  "diagnosticsCount": 0,
+                  "firstNonEmptyDiagnosticsMs": null,
+                  "firstNonEmptyDiagnosticsCount": null,
                   "hoverMs": null,
                   "hoverAnswered": false,
                   "hoverBytes": 0,
@@ -7427,14 +7428,14 @@
                   "hoverPosition": null,
                   "backendFallback": null,
                   "bridgeFailures": null,
-                  "artifact": 1
+                  "artifact": 0
                 },
                 {
-                  "initializeMs": 36.85352899999998,
-                  "didOpenToDiagnosticsMs": 1351.2460710000014,
-                  "diagnosticsCount": 1,
-                  "firstNonEmptyDiagnosticsMs": 1351.246622000006,
-                  "firstNonEmptyDiagnosticsCount": 1,
+                  "initializeMs": 36.42686199999298,
+                  "didOpenToDiagnosticsMs": 1242.5949399999954,
+                  "diagnosticsCount": 0,
+                  "firstNonEmptyDiagnosticsMs": null,
+                  "firstNonEmptyDiagnosticsCount": null,
                   "hoverMs": null,
                   "hoverAnswered": false,
                   "hoverBytes": 0,
@@ -7442,14 +7443,14 @@
                   "hoverPosition": null,
                   "backendFallback": null,
                   "bridgeFailures": null,
-                  "artifact": 1
+                  "artifact": 0
                 },
                 {
-                  "initializeMs": 40.05961199999729,
-                  "didOpenToDiagnosticsMs": 1348.8053320000035,
-                  "diagnosticsCount": 1,
-                  "firstNonEmptyDiagnosticsMs": 1348.8058730000048,
-                  "firstNonEmptyDiagnosticsCount": 1,
+                  "initializeMs": 39.314125000004424,
+                  "didOpenToDiagnosticsMs": 1252.9481570000062,
+                  "diagnosticsCount": 0,
+                  "firstNonEmptyDiagnosticsMs": null,
+                  "firstNonEmptyDiagnosticsCount": null,
                   "hoverMs": null,
                   "hoverAnswered": false,
                   "hoverBytes": 0,
@@ -7457,14 +7458,14 @@
                   "hoverPosition": null,
                   "backendFallback": null,
                   "bridgeFailures": null,
-                  "artifact": 1
+                  "artifact": 0
                 },
                 {
-                  "initializeMs": 42.09096699999645,
-                  "didOpenToDiagnosticsMs": 1399.5172080000048,
-                  "diagnosticsCount": 1,
-                  "firstNonEmptyDiagnosticsMs": 1399.5175390000222,
-                  "firstNonEmptyDiagnosticsCount": 1,
+                  "initializeMs": 38.46478599999682,
+                  "didOpenToDiagnosticsMs": 1295.9863069999847,
+                  "diagnosticsCount": 0,
+                  "firstNonEmptyDiagnosticsMs": null,
+                  "firstNonEmptyDiagnosticsCount": null,
                   "hoverMs": null,
                   "hoverAnswered": false,
                   "hoverBytes": 0,
@@ -7472,14 +7473,14 @@
                   "hoverPosition": null,
                   "backendFallback": null,
                   "bridgeFailures": null,
-                  "artifact": 1
+                  "artifact": 0
                 },
                 {
-                  "initializeMs": 36.99382500001229,
-                  "didOpenToDiagnosticsMs": 1345.1934100000071,
-                  "diagnosticsCount": 1,
-                  "firstNonEmptyDiagnosticsMs": 1345.1937200000102,
-                  "firstNonEmptyDiagnosticsCount": 1,
+                  "initializeMs": 35.1990480000095,
+                  "didOpenToDiagnosticsMs": 1277.9533459999948,
+                  "diagnosticsCount": 0,
+                  "firstNonEmptyDiagnosticsMs": null,
+                  "firstNonEmptyDiagnosticsCount": null,
                   "hoverMs": null,
                   "hoverAnswered": false,
                   "hoverBytes": 0,
@@ -7487,10 +7488,10 @@
                   "hoverPosition": null,
                   "backendFallback": null,
                   "bridgeFailures": null,
-                  "artifact": 1
+                  "artifact": 0
                 }
               ],
-              "artifactMedian": 1,
+              "artifactMedian": 0,
               "warmupPasses": 1,
               "throughput": "1 files/s"
             }
@@ -7512,26 +7513,26 @@
               "files": 1,
               "status": "unranked",
               "runs": [
-                2.435,
-                2.387,
-                2.198,
-                2.28,
-                2.459
+                2.099,
+                2.249,
+                2.211,
+                2.608,
+                2.217
               ],
-              "medianMs": 2.387,
-              "minMs": 2.198,
-              "maxMs": 2.459,
-              "meanMs": 2.352,
-              "stddevMs": 0.11,
-              "cvPct": 4.6,
+              "medianMs": 2.217,
+              "minMs": 2.099,
+              "maxMs": 2.608,
+              "meanMs": 2.277,
+              "stddevMs": 0.194,
+              "cvPct": 8.7,
               "metaSamples": [
                 {
-                  "initializeMs": 571.6191399999952,
-                  "didOpenToDiagnosticsMs": 8908.296833,
+                  "initializeMs": 494.8923429999995,
+                  "didOpenToDiagnosticsMs": 8015.088437000006,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 2.4348880000034114,
+                  "hoverMs": 2.099245000004885,
                   "hoverAnswered": true,
                   "hoverBytes": 48,
                   "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
@@ -7545,12 +7546,12 @@
                   "artifact": 48
                 },
                 {
-                  "initializeMs": 567.9749550000124,
-                  "didOpenToDiagnosticsMs": 8791.57286500001,
+                  "initializeMs": 503.95286699999997,
+                  "didOpenToDiagnosticsMs": 8118.464414000002,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 2.3866679999919143,
+                  "hoverMs": 2.249249000000418,
                   "hoverAnswered": true,
                   "hoverBytes": 48,
                   "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
@@ -7564,12 +7565,12 @@
                   "artifact": 48
                 },
                 {
-                  "initializeMs": 567.3941630000045,
-                  "didOpenToDiagnosticsMs": 8925.086257000017,
+                  "initializeMs": 518.3132940000069,
+                  "didOpenToDiagnosticsMs": 8085.121706999998,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 2.1977330000081565,
+                  "hoverMs": 2.2114999999903375,
                   "hoverAnswered": true,
                   "hoverBytes": 48,
                   "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
@@ -7583,12 +7584,12 @@
                   "artifact": 48
                 },
                 {
-                  "initializeMs": 571.8134429999918,
-                  "didOpenToDiagnosticsMs": 8780.745377999992,
+                  "initializeMs": 505.0379069999908,
+                  "didOpenToDiagnosticsMs": 8077.563691999996,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 2.28042799999821,
+                  "hoverMs": 2.6084939999855123,
                   "hoverAnswered": true,
                   "hoverBytes": 48,
                   "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
@@ -7602,12 +7603,12 @@
                   "artifact": 48
                 },
                 {
-                  "initializeMs": 580.0979119999975,
-                  "didOpenToDiagnosticsMs": 8836.29157099998,
+                  "initializeMs": 498.3497700000007,
+                  "didOpenToDiagnosticsMs": 8017.949743000005,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 2.4585640000004787,
+                  "hoverMs": 2.216872000019066,
                   "hoverAnswered": true,
                   "hoverBytes": 48,
                   "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
@@ -7623,7 +7624,7 @@
               ],
               "artifactMedian": 48,
               "warmupPasses": 1,
-              "throughput": "419 files/s"
+              "throughput": "451 files/s"
             }
           ]
         },
@@ -7643,26 +7644,26 @@
               "files": 1,
               "status": "unranked",
               "runs": [
-                27.749,
-                48.257,
-                51.222,
-                45.455,
-                39.865
+                28.036,
+                41.765,
+                36.95,
+                35.676,
+                39.568
               ],
-              "medianMs": 45.455,
-              "minMs": 27.749,
-              "maxMs": 51.222,
-              "meanMs": 42.51,
-              "stddevMs": 9.253,
-              "cvPct": 20.4,
+              "medianMs": 36.95,
+              "minMs": 28.036,
+              "maxMs": 41.765,
+              "meanMs": 36.399,
+              "stddevMs": 5.235,
+              "cvPct": 14.2,
               "metaSamples": [
                 {
-                  "initializeMs": 612.604434000008,
-                  "didOpenToDiagnosticsMs": 6194.556072000007,
+                  "initializeMs": 522.613852999988,
+                  "didOpenToDiagnosticsMs": 5459.755210000003,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 27.749030999999377,
+                  "hoverMs": 28.036459999988438,
                   "hoverAnswered": true,
                   "hoverBytes": 48,
                   "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
@@ -7676,12 +7677,12 @@
                   "artifact": 48
                 },
                 {
-                  "initializeMs": 590.3933490000054,
-                  "didOpenToDiagnosticsMs": 6166.953341,
+                  "initializeMs": 524.9585700000025,
+                  "didOpenToDiagnosticsMs": 5504.2080029999925,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 48.256640999999945,
+                  "hoverMs": 41.76471899999888,
                   "hoverAnswered": true,
                   "hoverBytes": 48,
                   "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
@@ -7695,12 +7696,12 @@
                   "artifact": 48
                 },
                 {
-                  "initializeMs": 577.1264289999963,
-                  "didOpenToDiagnosticsMs": 6078.809444000013,
+                  "initializeMs": 519.8113540000049,
+                  "didOpenToDiagnosticsMs": 5500.071415000013,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 51.22237799997674,
+                  "hoverMs": 36.950431999983266,
                   "hoverAnswered": true,
                   "hoverBytes": 48,
                   "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
@@ -7714,12 +7715,12 @@
                   "artifact": 48
                 },
                 {
-                  "initializeMs": 572.3891609999991,
-                  "didOpenToDiagnosticsMs": 6178.451085999986,
+                  "initializeMs": 544.101582000003,
+                  "didOpenToDiagnosticsMs": 5680.768267000007,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 45.45525500000804,
+                  "hoverMs": 35.675706000009086,
                   "hoverAnswered": true,
                   "hoverBytes": 48,
                   "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
@@ -7733,12 +7734,12 @@
                   "artifact": 48
                 },
                 {
-                  "initializeMs": 599.4545809999981,
-                  "didOpenToDiagnosticsMs": 6082.158997999999,
+                  "initializeMs": 532.2432620000036,
+                  "didOpenToDiagnosticsMs": 5455.802207000001,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 39.86534099999699,
+                  "hoverMs": 39.568458000023384,
                   "hoverAnswered": true,
                   "hoverBytes": 48,
                   "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
@@ -7754,7 +7755,7 @@
               ],
               "artifactMedian": 48,
               "warmupPasses": 1,
-              "throughput": "22 files/s"
+              "throughput": "27 files/s"
             },
             {
               "id": "verter-lsp-hover",
@@ -7768,26 +7769,26 @@
               "files": 1,
               "status": "unranked",
               "runs": [
-                1.181,
-                0.921,
-                0.971,
-                0.895,
-                0.881
+                1.097,
+                0.88,
+                1.026,
+                1.027,
+                0.719
               ],
-              "medianMs": 0.921,
-              "minMs": 0.881,
-              "maxMs": 1.181,
-              "meanMs": 0.97,
-              "stddevMs": 0.123,
-              "cvPct": 13.3,
+              "medianMs": 1.026,
+              "minMs": 0.719,
+              "maxMs": 1.097,
+              "meanMs": 0.95,
+              "stddevMs": 0.151,
+              "cvPct": 14.7,
               "metaSamples": [
                 {
-                  "initializeMs": 19.99593299999833,
-                  "didOpenToDiagnosticsMs": 1410.884910000008,
+                  "initializeMs": 10.251734999998007,
+                  "didOpenToDiagnosticsMs": 1205.3100290000002,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 1.180739999996149,
+                  "hoverMs": 1.0967349999991711,
                   "hoverAnswered": true,
                   "hoverBytes": 48,
                   "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
@@ -7801,12 +7802,12 @@
                   "artifact": 48
                 },
                 {
-                  "initializeMs": 15.203252000006614,
-                  "didOpenToDiagnosticsMs": 1222.199106,
+                  "initializeMs": 19.258335999998963,
+                  "didOpenToDiagnosticsMs": 1204.392691000001,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 0.9208519999956479,
+                  "hoverMs": 0.8800809999956982,
                   "hoverAnswered": true,
                   "hoverBytes": 48,
                   "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
@@ -7820,12 +7821,12 @@
                   "artifact": 48
                 },
                 {
-                  "initializeMs": 20.463378000014927,
-                  "didOpenToDiagnosticsMs": 1171.111298999982,
+                  "initializeMs": 13.75101700000232,
+                  "didOpenToDiagnosticsMs": 1173.0909860000247,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 0.9706260000239126,
+                  "hoverMs": 1.0258670000184793,
                   "hoverAnswered": true,
                   "hoverBytes": 48,
                   "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
@@ -7839,12 +7840,12 @@
                   "artifact": 48
                 },
                 {
-                  "initializeMs": 18.963133999990532,
-                  "didOpenToDiagnosticsMs": 1186.2518700000073,
+                  "initializeMs": 11.880414999992354,
+                  "didOpenToDiagnosticsMs": 1322.271876999992,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 0.8948530000052415,
+                  "hoverMs": 1.0272560000012163,
                   "hoverAnswered": true,
                   "hoverBytes": 48,
                   "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
@@ -7858,12 +7859,12 @@
                   "artifact": 48
                 },
                 {
-                  "initializeMs": 16.01054300001124,
-                  "didOpenToDiagnosticsMs": 1238.0853650000063,
+                  "initializeMs": 11.444896000000881,
+                  "didOpenToDiagnosticsMs": 1156.8173010000028,
                   "diagnosticsCount": 0,
                   "firstNonEmptyDiagnosticsMs": null,
                   "firstNonEmptyDiagnosticsCount": null,
-                  "hoverMs": 0.8807009999873117,
+                  "hoverMs": 0.7187029999913648,
                   "hoverAnswered": true,
                   "hoverBytes": 48,
                   "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
@@ -7879,7 +7880,7 @@
               ],
               "artifactMedian": 48,
               "warmupPasses": 1,
-              "throughput": "1.1k files/s"
+              "throughput": "975 files/s"
             },
             {
               "id": "vize-lsp-hover",
@@ -7893,29 +7894,29 @@
               "files": 1,
               "status": "unranked",
               "runs": [
-                2.132,
-                2.078,
-                2.146,
-                2.1,
-                2.223
+                1.98,
+                2.239,
+                2.056,
+                2.344,
+                2.163
               ],
-              "medianMs": 2.132,
-              "minMs": 2.078,
-              "maxMs": 2.223,
-              "meanMs": 2.136,
-              "stddevMs": 0.056,
-              "cvPct": 2.6,
+              "medianMs": 2.163,
+              "minMs": 1.98,
+              "maxMs": 2.344,
+              "meanMs": 2.156,
+              "stddevMs": 0.144,
+              "cvPct": 6.7,
               "metaSamples": [
                 {
-                  "initializeMs": 38.43135900000925,
-                  "didOpenToDiagnosticsMs": 1608.7648940000072,
-                  "diagnosticsCount": 1,
-                  "firstNonEmptyDiagnosticsMs": 1608.765744999997,
-                  "firstNonEmptyDiagnosticsCount": 1,
-                  "hoverMs": 2.13192899999558,
+                  "initializeMs": 35.68594500000472,
+                  "didOpenToDiagnosticsMs": 1461.1368360000051,
+                  "diagnosticsCount": 0,
+                  "firstNonEmptyDiagnosticsMs": null,
+                  "firstNonEmptyDiagnosticsCount": null,
+                  "hoverMs": 1.9798100000043632,
                   "hoverAnswered": true,
-                  "hoverBytes": 276,
-                  "hoverSample": "```typescript\nconst top: Ref<number, number>\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Recommended order: <script> -> <template> -> <style>\n\n[📖 View ru",
+                  "hoverBytes": 48,
+                  "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
                   "hoverPosition": {
                     "line": 30,
                     "character": 6,
@@ -7923,18 +7924,18 @@
                   },
                   "backendFallback": null,
                   "bridgeFailures": null,
-                  "artifact": 276
+                  "artifact": 48
                 },
                 {
-                  "initializeMs": 36.8763900000049,
-                  "didOpenToDiagnosticsMs": 1792.644564000002,
-                  "diagnosticsCount": 1,
-                  "firstNonEmptyDiagnosticsMs": 1792.6452560000034,
-                  "firstNonEmptyDiagnosticsCount": 1,
-                  "hoverMs": 2.077978000001167,
+                  "initializeMs": 35.65638900001068,
+                  "didOpenToDiagnosticsMs": 1538.6144360000035,
+                  "diagnosticsCount": 0,
+                  "firstNonEmptyDiagnosticsMs": null,
+                  "firstNonEmptyDiagnosticsCount": null,
+                  "hoverMs": 2.2393000000010943,
                   "hoverAnswered": true,
-                  "hoverBytes": 276,
-                  "hoverSample": "```typescript\nconst top: Ref<number, number>\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Recommended order: <script> -> <template> -> <style>\n\n[📖 View ru",
+                  "hoverBytes": 48,
+                  "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
                   "hoverPosition": {
                     "line": 30,
                     "character": 6,
@@ -7942,18 +7943,18 @@
                   },
                   "backendFallback": null,
                   "bridgeFailures": null,
-                  "artifact": 276
+                  "artifact": 48
                 },
                 {
-                  "initializeMs": 37.09388199998648,
-                  "didOpenToDiagnosticsMs": 1545.5992209999822,
-                  "diagnosticsCount": 1,
-                  "firstNonEmptyDiagnosticsMs": 1545.600001999992,
-                  "firstNonEmptyDiagnosticsCount": 1,
-                  "hoverMs": 2.145924999989802,
+                  "initializeMs": 36.18466800000169,
+                  "didOpenToDiagnosticsMs": 1473.9100040000048,
+                  "diagnosticsCount": 0,
+                  "firstNonEmptyDiagnosticsMs": null,
+                  "firstNonEmptyDiagnosticsCount": null,
+                  "hoverMs": 2.055766000004951,
                   "hoverAnswered": true,
-                  "hoverBytes": 276,
-                  "hoverSample": "```typescript\nconst top: Ref<number, number>\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Recommended order: <script> -> <template> -> <style>\n\n[📖 View ru",
+                  "hoverBytes": 48,
+                  "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
                   "hoverPosition": {
                     "line": 30,
                     "character": 6,
@@ -7961,18 +7962,18 @@
                   },
                   "backendFallback": null,
                   "bridgeFailures": null,
-                  "artifact": 276
+                  "artifact": 48
                 },
                 {
-                  "initializeMs": 37.375671999994665,
-                  "didOpenToDiagnosticsMs": 1628.8837610000046,
-                  "diagnosticsCount": 1,
-                  "firstNonEmptyDiagnosticsMs": 1628.8841919999977,
-                  "firstNonEmptyDiagnosticsCount": 1,
-                  "hoverMs": 2.1003599999821745,
+                  "initializeMs": 37.18123200000264,
+                  "didOpenToDiagnosticsMs": 1515.373029999988,
+                  "diagnosticsCount": 0,
+                  "firstNonEmptyDiagnosticsMs": null,
+                  "firstNonEmptyDiagnosticsCount": null,
+                  "hoverMs": 2.343786999990698,
                   "hoverAnswered": true,
-                  "hoverBytes": 276,
-                  "hoverSample": "```typescript\nconst top: Ref<number, number>\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Recommended order: <script> -> <template> -> <style>\n\n[📖 View ru",
+                  "hoverBytes": 48,
+                  "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
                   "hoverPosition": {
                     "line": 30,
                     "character": 6,
@@ -7980,18 +7981,18 @@
                   },
                   "backendFallback": null,
                   "bridgeFailures": null,
-                  "artifact": 276
+                  "artifact": 48
                 },
                 {
-                  "initializeMs": 37.66197299998021,
-                  "didOpenToDiagnosticsMs": 1619.9733720000077,
-                  "diagnosticsCount": 1,
-                  "firstNonEmptyDiagnosticsMs": 1619.973793000012,
-                  "firstNonEmptyDiagnosticsCount": 1,
-                  "hoverMs": 2.2229029999871273,
+                  "initializeMs": 35.51366899997811,
+                  "didOpenToDiagnosticsMs": 1467.0844090000028,
+                  "diagnosticsCount": 0,
+                  "firstNonEmptyDiagnosticsMs": null,
+                  "firstNonEmptyDiagnosticsCount": null,
+                  "hoverMs": 2.162653000006685,
                   "hoverAnswered": true,
-                  "hoverBytes": 276,
-                  "hoverSample": "```typescript\nconst top: Ref<number, number>\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Recommended order: <script> -> <template> -> <style>\n\n[📖 View ru",
+                  "hoverBytes": 48,
+                  "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
                   "hoverPosition": {
                     "line": 30,
                     "character": 6,
@@ -7999,12 +8000,12 @@
                   },
                   "backendFallback": null,
                   "bridgeFailures": null,
-                  "artifact": 276
+                  "artifact": 48
                 }
               ],
-              "artifactMedian": 276,
+              "artifactMedian": 48,
               "warmupPasses": 1,
-              "throughput": "469 files/s"
+              "throughput": "462 files/s"
             }
           ]
         }
@@ -8019,26 +8020,26 @@
           "artifactPolarity": "informational",
           "engine": "tsc-js",
           "artifactLabel": "diagnostics published",
-          "notes": "BASELINE · official Vue language server v3 in hybrid (two-process) mode — the only mode v3 has. The measured unit is the pair: @vue/language-server plus typescript-language-server with @vue/typescript-plugin, joined by the tsserver bridge. Both processes' startup and project load of the real project are inside the timings. HOVER asks both halves in parallel and charges the slower; DIAGNOSTICS times the first publication for the document from either half (which may be an empty preliminary — the count it carried and the first NON-EMPTY publication are both published). · operation: didOpen → diagnostics · workspace ., document components/affix/demo/basic.vue | ⚠ FAILED DIAGNOSTIC-CONTENT GATE — published 0 diagnostics for a document vize published 1 for. Answering \"nothing to report\" fast is not the same job as answering. Measured but UNRANKED. (Diagnostic EQUIVALENCE is not asserted; the counts are published so a suspicious row is visible.) | ⚠ UNRANKED — NO LOCKFILE: ant-design-vue ships no lockfile at the pinned ref, so its install cannot be frozen and the dependency set is whatever resolved when fetch ran. Timings that execute the project's own installed dependencies are therefore not reproducible, and rows on project-test, project-build, project-typecheck, project-component-meta, project-lsp are UNRANKED for this corpus. This is a property of the corpus, not of any tool, and it applies to every row equally.",
+          "notes": "BASELINE · official Vue language server v3 in hybrid (two-process) mode — the only mode v3 has. The measured unit is the pair: @vue/language-server plus typescript-language-server with @vue/typescript-plugin, joined by the tsserver bridge. Both processes' startup and project load of the real project are inside the timings. HOVER asks both halves in parallel and charges the slower; DIAGNOSTICS times the first publication for the document from either half (which may be an empty preliminary — the count it carried and the first NON-EMPTY publication are both published). · operation: didOpen → diagnostics · workspace ., document components/affix/demo/basic.vue | ⓘ DIAGNOSTIC-CONTENT GATE NOT RUN — every server published an EMPTY diagnostic list for this document. That is a legitimate answer, but not one any row can be measured against. Ranked, but unverified rather than verified-equal. | ⚠ UNRANKED — NO LOCKFILE: ant-design-vue ships no lockfile at the pinned ref, so its install cannot be frozen and the dependency set is whatever resolved when fetch ran. Timings that execute the project's own installed dependencies are therefore not reproducible, and rows on project-test, project-build, project-typecheck, project-component-meta, project-lsp are UNRANKED for this corpus. This is a property of the corpus, not of any tool, and it applies to every row equally.",
           "files": 1,
           "status": "unranked",
           "runs": [
-            8738.3,
-            8911.455,
-            8744.351,
-            8845.506,
-            8685.658
+            7931.892,
+            8113.543,
+            8048.85,
+            8107.906,
+            7960.731
           ],
-          "medianMs": 8744.351,
-          "minMs": 8685.658,
-          "maxMs": 8911.455,
-          "meanMs": 8785.054,
-          "stddevMs": 91.315,
+          "medianMs": 8048.85,
+          "minMs": 7931.892,
+          "maxMs": 8113.543,
+          "meanMs": 8032.584,
+          "stddevMs": 83.358,
           "cvPct": 1,
           "metaSamples": [
             {
-              "initializeMs": 561.3691769999932,
-              "didOpenToDiagnosticsMs": 8738.299994999994,
+              "initializeMs": 492.64138999999705,
+              "didOpenToDiagnosticsMs": 7931.891626000004,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -8052,8 +8053,8 @@
               "artifact": 0
             },
             {
-              "initializeMs": 571.5325569999986,
-              "didOpenToDiagnosticsMs": 8911.455134000003,
+              "initializeMs": 505.26792299999215,
+              "didOpenToDiagnosticsMs": 8113.542606000003,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -8067,8 +8068,8 @@
               "artifact": 0
             },
             {
-              "initializeMs": 561.1155560000043,
-              "didOpenToDiagnosticsMs": 8744.351171999995,
+              "initializeMs": 509.2256299999717,
+              "didOpenToDiagnosticsMs": 8048.849993999989,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -8082,8 +8083,8 @@
               "artifact": 0
             },
             {
-              "initializeMs": 561.2080539999879,
-              "didOpenToDiagnosticsMs": 8845.506327999989,
+              "initializeMs": 516.9188639999775,
+              "didOpenToDiagnosticsMs": 8107.905977999995,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -8097,8 +8098,8 @@
               "artifact": 0
             },
             {
-              "initializeMs": 576.1387949999771,
-              "didOpenToDiagnosticsMs": 8685.657787000004,
+              "initializeMs": 498.8531550000189,
+              "didOpenToDiagnosticsMs": 7960.730786,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -8124,26 +8125,26 @@
           "artifactPolarity": "informational",
           "engine": "tsgo via typescript-native-bridge",
           "artifactLabel": "diagnostics published",
-          "notes": "Identical to the Volar row except the TypeScript half runs on typescript-native-bridge (tsgo): same @vue/language-server, same @vue/typescript-plugin, same bridge, tsdk pointed at TNB 6.0.3-bridge.13.tsgo.7.0.2 tsdk. Exactly one variable against the baseline — the TypeScript engine — which is why the two are ranked in separate tables. · operation: didOpen → diagnostics · workspace ., document components/affix/demo/basic.vue | ⚠ FAILED DIAGNOSTIC-CONTENT GATE — published 0 diagnostics for a document vize published 1 for. Answering \"nothing to report\" fast is not the same job as answering. Measured but UNRANKED. (Diagnostic EQUIVALENCE is not asserted; the counts are published so a suspicious row is visible.) | ⚠ UNRANKED — NO LOCKFILE: ant-design-vue ships no lockfile at the pinned ref, so its install cannot be frozen and the dependency set is whatever resolved when fetch ran. Timings that execute the project's own installed dependencies are therefore not reproducible, and rows on project-test, project-build, project-typecheck, project-component-meta, project-lsp are UNRANKED for this corpus. This is a property of the corpus, not of any tool, and it applies to every row equally.",
+          "notes": "Identical to the Volar row except the TypeScript half runs on typescript-native-bridge (tsgo): same @vue/language-server, same @vue/typescript-plugin, same bridge, tsdk pointed at TNB 6.0.3-bridge.13.tsgo.7.0.2 tsdk. Exactly one variable against the baseline — the TypeScript engine — which is why the two are ranked in separate tables. · operation: didOpen → diagnostics · workspace ., document components/affix/demo/basic.vue | ⓘ DIAGNOSTIC-CONTENT GATE NOT RUN — every server published an EMPTY diagnostic list for this document. That is a legitimate answer, but not one any row can be measured against. Ranked, but unverified rather than verified-equal. | ⚠ UNRANKED — NO LOCKFILE: ant-design-vue ships no lockfile at the pinned ref, so its install cannot be frozen and the dependency set is whatever resolved when fetch ran. Timings that execute the project's own installed dependencies are therefore not reproducible, and rows on project-test, project-build, project-typecheck, project-component-meta, project-lsp are UNRANKED for this corpus. This is a property of the corpus, not of any tool, and it applies to every row equally.",
           "files": 1,
           "status": "unranked",
           "runs": [
-            6144.707,
-            6128.526,
-            6195.642,
-            6105.087,
-            6089.807
+            5461.606,
+            5451.834,
+            5534.268,
+            5459.071,
+            5527.56
           ],
-          "medianMs": 6128.526,
-          "minMs": 6089.807,
-          "maxMs": 6195.642,
-          "meanMs": 6132.754,
-          "stddevMs": 41.005,
+          "medianMs": 5461.606,
+          "minMs": 5451.834,
+          "maxMs": 5534.268,
+          "meanMs": 5486.868,
+          "stddevMs": 40.438,
           "cvPct": 0.7,
           "metaSamples": [
             {
-              "initializeMs": 852.1156990000018,
-              "didOpenToDiagnosticsMs": 6144.706691000007,
+              "initializeMs": 743.536079999998,
+              "didOpenToDiagnosticsMs": 5461.605576999995,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -8157,8 +8158,8 @@
               "artifact": 0
             },
             {
-              "initializeMs": 570.3976879999973,
-              "didOpenToDiagnosticsMs": 6128.5262800000055,
+              "initializeMs": 498.056230999995,
+              "didOpenToDiagnosticsMs": 5451.834105999995,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -8172,8 +8173,8 @@
               "artifact": 0
             },
             {
-              "initializeMs": 848.9808360000025,
-              "didOpenToDiagnosticsMs": 6195.641839999997,
+              "initializeMs": 789.6722640000226,
+              "didOpenToDiagnosticsMs": 5534.268377,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -8187,8 +8188,8 @@
               "artifact": 0
             },
             {
-              "initializeMs": 819.0131840000104,
-              "didOpenToDiagnosticsMs": 6105.087433999986,
+              "initializeMs": 781.2128880000091,
+              "didOpenToDiagnosticsMs": 5459.070865000016,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -8202,8 +8203,8 @@
               "artifact": 0
             },
             {
-              "initializeMs": 589.3563489999797,
-              "didOpenToDiagnosticsMs": 6089.8065689999785,
+              "initializeMs": 525.2736870000081,
+              "didOpenToDiagnosticsMs": 5527.560411999992,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -8229,26 +8230,26 @@
           "artifactPolarity": "informational",
           "engine": "tsgo (stable)",
           "artifactLabel": "diagnostics published",
-          "notes": "verter-lsp stdio, the native server from the published npm package, given the project directory as its workspace root. $/verter/ready is not waited for — its workspace load is inside the measured window like every other server's. · operation: didOpen → diagnostics · workspace ., document components/affix/demo/basic.vue | ⚠ FAILED DIAGNOSTIC-CONTENT GATE — published 0 diagnostics for a document vize published 1 for. Answering \"nothing to report\" fast is not the same job as answering. Measured but UNRANKED. (Diagnostic EQUIVALENCE is not asserted; the counts are published so a suspicious row is visible.) | ⚠ UNRANKED — NO LOCKFILE: ant-design-vue ships no lockfile at the pinned ref, so its install cannot be frozen and the dependency set is whatever resolved when fetch ran. Timings that execute the project's own installed dependencies are therefore not reproducible, and rows on project-test, project-build, project-typecheck, project-component-meta, project-lsp are UNRANKED for this corpus. This is a property of the corpus, not of any tool, and it applies to every row equally.",
+          "notes": "verter-lsp stdio, the native server from the published npm package, given the project directory as its workspace root. $/verter/ready is not waited for — its workspace load is inside the measured window like every other server's. · operation: didOpen → diagnostics · workspace ., document components/affix/demo/basic.vue | ⓘ DIAGNOSTIC-CONTENT GATE NOT RUN — every server published an EMPTY diagnostic list for this document. That is a legitimate answer, but not one any row can be measured against. Ranked, but unverified rather than verified-equal. | ⚠ UNRANKED — NO LOCKFILE: ant-design-vue ships no lockfile at the pinned ref, so its install cannot be frozen and the dependency set is whatever resolved when fetch ran. Timings that execute the project's own installed dependencies are therefore not reproducible, and rows on project-test, project-build, project-typecheck, project-component-meta, project-lsp are UNRANKED for this corpus. This is a property of the corpus, not of any tool, and it applies to every row equally.",
           "files": 1,
           "status": "unranked",
           "runs": [
-            1287.299,
-            1266.69,
-            1834.75,
-            1327.063,
-            1369.237
+            1262.621,
+            1237.202,
+            1639.765,
+            1261.066,
+            1305.871
           ],
-          "medianMs": 1327.063,
-          "minMs": 1266.69,
-          "maxMs": 1834.75,
-          "meanMs": 1417.008,
-          "stddevMs": 236.802,
-          "cvPct": 17.8,
+          "medianMs": 1262.621,
+          "minMs": 1237.202,
+          "maxMs": 1639.765,
+          "meanMs": 1341.305,
+          "stddevMs": 168.672,
+          "cvPct": 13.4,
           "metaSamples": [
             {
-              "initializeMs": 15.331943000004685,
-              "didOpenToDiagnosticsMs": 1287.2985359999948,
+              "initializeMs": 9.607398000000103,
+              "didOpenToDiagnosticsMs": 1262.6209109999982,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -8262,8 +8263,8 @@
               "artifact": 0
             },
             {
-              "initializeMs": 14.856515999999829,
-              "didOpenToDiagnosticsMs": 1266.6898619999993,
+              "initializeMs": 9.790196999994805,
+              "didOpenToDiagnosticsMs": 1237.2022819999984,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -8277,8 +8278,8 @@
               "artifact": 0
             },
             {
-              "initializeMs": 19.277582999988226,
-              "didOpenToDiagnosticsMs": 1834.7496309999988,
+              "initializeMs": 14.556723000001512,
+              "didOpenToDiagnosticsMs": 1639.7646549999918,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -8292,8 +8293,8 @@
               "artifact": 0
             },
             {
-              "initializeMs": 15.09175900000264,
-              "didOpenToDiagnosticsMs": 1327.0626900000207,
+              "initializeMs": 9.076400999998441,
+              "didOpenToDiagnosticsMs": 1261.0661360000086,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -8307,8 +8308,8 @@
               "artifact": 0
             },
             {
-              "initializeMs": 14.836608999990858,
-              "didOpenToDiagnosticsMs": 1369.23694599999,
+              "initializeMs": 13.666785999987042,
+              "didOpenToDiagnosticsMs": 1305.871061999991,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
@@ -8334,29 +8335,29 @@
           "artifactPolarity": "informational",
           "engine": "tsgo (nightly/Corsa when available)",
           "artifactLabel": "diagnostics published",
-          "notes": "vize lsp --stdio, launched from the npm package's NODE entry, because no version-matched native server was found; that costs ~35ms of Node bootstrap per spawn. Same workspace, file and position as every other row. · operation: didOpen → diagnostics · workspace ., document components/affix/demo/basic.vue | ⚠ UNRANKED — NO LOCKFILE: ant-design-vue ships no lockfile at the pinned ref, so its install cannot be frozen and the dependency set is whatever resolved when fetch ran. Timings that execute the project's own installed dependencies are therefore not reproducible, and rows on project-test, project-build, project-typecheck, project-component-meta, project-lsp are UNRANKED for this corpus. This is a property of the corpus, not of any tool, and it applies to every row equally.",
+          "notes": "vize lsp --stdio, launched from the npm package's NODE entry, because no version-matched native server was found; that costs ~35ms of Node bootstrap per spawn. Same workspace, file and position as every other row. · operation: didOpen → diagnostics · workspace ., document components/affix/demo/basic.vue | ⓘ DIAGNOSTIC-CONTENT GATE NOT RUN — every server published an EMPTY diagnostic list for this document. That is a legitimate answer, but not one any row can be measured against. Ranked, but unverified rather than verified-equal. | ⚠ UNRANKED — NO LOCKFILE: ant-design-vue ships no lockfile at the pinned ref, so its install cannot be frozen and the dependency set is whatever resolved when fetch ran. Timings that execute the project's own installed dependencies are therefore not reproducible, and rows on project-test, project-build, project-typecheck, project-component-meta, project-lsp are UNRANKED for this corpus. This is a property of the corpus, not of any tool, and it applies to every row equally.",
           "files": 1,
           "status": "unranked",
           "runs": [
-            1382.221,
-            1351.246,
-            1348.805,
-            1399.517,
-            1345.193
+            1261.76,
+            1242.595,
+            1252.948,
+            1295.986,
+            1277.953
           ],
-          "medianMs": 1351.246,
-          "minMs": 1345.193,
-          "maxMs": 1399.517,
-          "meanMs": 1365.396,
-          "stddevMs": 24.14,
-          "cvPct": 1.8,
+          "medianMs": 1261.76,
+          "minMs": 1242.595,
+          "maxMs": 1295.986,
+          "meanMs": 1266.248,
+          "stddevMs": 21.082,
+          "cvPct": 1.7,
           "metaSamples": [
             {
-              "initializeMs": 37.5269399999961,
-              "didOpenToDiagnosticsMs": 1382.2207500000077,
-              "diagnosticsCount": 1,
-              "firstNonEmptyDiagnosticsMs": 1382.2214220000023,
-              "firstNonEmptyDiagnosticsCount": 1,
+              "initializeMs": 35.05125099999714,
+              "didOpenToDiagnosticsMs": 1261.759997999994,
+              "diagnosticsCount": 0,
+              "firstNonEmptyDiagnosticsMs": null,
+              "firstNonEmptyDiagnosticsCount": null,
               "hoverMs": null,
               "hoverAnswered": false,
               "hoverBytes": 0,
@@ -8364,14 +8365,14 @@
               "hoverPosition": null,
               "backendFallback": null,
               "bridgeFailures": null,
-              "artifact": 1
+              "artifact": 0
             },
             {
-              "initializeMs": 36.85352899999998,
-              "didOpenToDiagnosticsMs": 1351.2460710000014,
-              "diagnosticsCount": 1,
-              "firstNonEmptyDiagnosticsMs": 1351.246622000006,
-              "firstNonEmptyDiagnosticsCount": 1,
+              "initializeMs": 36.42686199999298,
+              "didOpenToDiagnosticsMs": 1242.5949399999954,
+              "diagnosticsCount": 0,
+              "firstNonEmptyDiagnosticsMs": null,
+              "firstNonEmptyDiagnosticsCount": null,
               "hoverMs": null,
               "hoverAnswered": false,
               "hoverBytes": 0,
@@ -8379,14 +8380,14 @@
               "hoverPosition": null,
               "backendFallback": null,
               "bridgeFailures": null,
-              "artifact": 1
+              "artifact": 0
             },
             {
-              "initializeMs": 40.05961199999729,
-              "didOpenToDiagnosticsMs": 1348.8053320000035,
-              "diagnosticsCount": 1,
-              "firstNonEmptyDiagnosticsMs": 1348.8058730000048,
-              "firstNonEmptyDiagnosticsCount": 1,
+              "initializeMs": 39.314125000004424,
+              "didOpenToDiagnosticsMs": 1252.9481570000062,
+              "diagnosticsCount": 0,
+              "firstNonEmptyDiagnosticsMs": null,
+              "firstNonEmptyDiagnosticsCount": null,
               "hoverMs": null,
               "hoverAnswered": false,
               "hoverBytes": 0,
@@ -8394,14 +8395,14 @@
               "hoverPosition": null,
               "backendFallback": null,
               "bridgeFailures": null,
-              "artifact": 1
+              "artifact": 0
             },
             {
-              "initializeMs": 42.09096699999645,
-              "didOpenToDiagnosticsMs": 1399.5172080000048,
-              "diagnosticsCount": 1,
-              "firstNonEmptyDiagnosticsMs": 1399.5175390000222,
-              "firstNonEmptyDiagnosticsCount": 1,
+              "initializeMs": 38.46478599999682,
+              "didOpenToDiagnosticsMs": 1295.9863069999847,
+              "diagnosticsCount": 0,
+              "firstNonEmptyDiagnosticsMs": null,
+              "firstNonEmptyDiagnosticsCount": null,
               "hoverMs": null,
               "hoverAnswered": false,
               "hoverBytes": 0,
@@ -8409,14 +8410,14 @@
               "hoverPosition": null,
               "backendFallback": null,
               "bridgeFailures": null,
-              "artifact": 1
+              "artifact": 0
             },
             {
-              "initializeMs": 36.99382500001229,
-              "didOpenToDiagnosticsMs": 1345.1934100000071,
-              "diagnosticsCount": 1,
-              "firstNonEmptyDiagnosticsMs": 1345.1937200000102,
-              "firstNonEmptyDiagnosticsCount": 1,
+              "initializeMs": 35.1990480000095,
+              "didOpenToDiagnosticsMs": 1277.9533459999948,
+              "diagnosticsCount": 0,
+              "firstNonEmptyDiagnosticsMs": null,
+              "firstNonEmptyDiagnosticsCount": null,
               "hoverMs": null,
               "hoverAnswered": false,
               "hoverBytes": 0,
@@ -8424,10 +8425,10 @@
               "hoverPosition": null,
               "backendFallback": null,
               "bridgeFailures": null,
-              "artifact": 1
+              "artifact": 0
             }
           ],
-          "artifactMedian": 1,
+          "artifactMedian": 0,
           "warmupPasses": 1,
           "throughput": "1 files/s"
         },
@@ -8443,26 +8444,26 @@
           "files": 1,
           "status": "unranked",
           "runs": [
-            2.435,
-            2.387,
-            2.198,
-            2.28,
-            2.459
+            2.099,
+            2.249,
+            2.211,
+            2.608,
+            2.217
           ],
-          "medianMs": 2.387,
-          "minMs": 2.198,
-          "maxMs": 2.459,
-          "meanMs": 2.352,
-          "stddevMs": 0.11,
-          "cvPct": 4.6,
+          "medianMs": 2.217,
+          "minMs": 2.099,
+          "maxMs": 2.608,
+          "meanMs": 2.277,
+          "stddevMs": 0.194,
+          "cvPct": 8.7,
           "metaSamples": [
             {
-              "initializeMs": 571.6191399999952,
-              "didOpenToDiagnosticsMs": 8908.296833,
+              "initializeMs": 494.8923429999995,
+              "didOpenToDiagnosticsMs": 8015.088437000006,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 2.4348880000034114,
+              "hoverMs": 2.099245000004885,
               "hoverAnswered": true,
               "hoverBytes": 48,
               "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
@@ -8476,12 +8477,12 @@
               "artifact": 48
             },
             {
-              "initializeMs": 567.9749550000124,
-              "didOpenToDiagnosticsMs": 8791.57286500001,
+              "initializeMs": 503.95286699999997,
+              "didOpenToDiagnosticsMs": 8118.464414000002,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 2.3866679999919143,
+              "hoverMs": 2.249249000000418,
               "hoverAnswered": true,
               "hoverBytes": 48,
               "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
@@ -8495,12 +8496,12 @@
               "artifact": 48
             },
             {
-              "initializeMs": 567.3941630000045,
-              "didOpenToDiagnosticsMs": 8925.086257000017,
+              "initializeMs": 518.3132940000069,
+              "didOpenToDiagnosticsMs": 8085.121706999998,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 2.1977330000081565,
+              "hoverMs": 2.2114999999903375,
               "hoverAnswered": true,
               "hoverBytes": 48,
               "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
@@ -8514,12 +8515,12 @@
               "artifact": 48
             },
             {
-              "initializeMs": 571.8134429999918,
-              "didOpenToDiagnosticsMs": 8780.745377999992,
+              "initializeMs": 505.0379069999908,
+              "didOpenToDiagnosticsMs": 8077.563691999996,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 2.28042799999821,
+              "hoverMs": 2.6084939999855123,
               "hoverAnswered": true,
               "hoverBytes": 48,
               "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
@@ -8533,12 +8534,12 @@
               "artifact": 48
             },
             {
-              "initializeMs": 580.0979119999975,
-              "didOpenToDiagnosticsMs": 8836.29157099998,
+              "initializeMs": 498.3497700000007,
+              "didOpenToDiagnosticsMs": 8017.949743000005,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 2.4585640000004787,
+              "hoverMs": 2.216872000019066,
               "hoverAnswered": true,
               "hoverBytes": 48,
               "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
@@ -8554,7 +8555,7 @@
           ],
           "artifactMedian": 48,
           "warmupPasses": 1,
-          "throughput": "419 files/s"
+          "throughput": "451 files/s"
         },
         {
           "id": "volar-tnb-hover",
@@ -8568,26 +8569,26 @@
           "files": 1,
           "status": "unranked",
           "runs": [
-            27.749,
-            48.257,
-            51.222,
-            45.455,
-            39.865
+            28.036,
+            41.765,
+            36.95,
+            35.676,
+            39.568
           ],
-          "medianMs": 45.455,
-          "minMs": 27.749,
-          "maxMs": 51.222,
-          "meanMs": 42.51,
-          "stddevMs": 9.253,
-          "cvPct": 20.4,
+          "medianMs": 36.95,
+          "minMs": 28.036,
+          "maxMs": 41.765,
+          "meanMs": 36.399,
+          "stddevMs": 5.235,
+          "cvPct": 14.2,
           "metaSamples": [
             {
-              "initializeMs": 612.604434000008,
-              "didOpenToDiagnosticsMs": 6194.556072000007,
+              "initializeMs": 522.613852999988,
+              "didOpenToDiagnosticsMs": 5459.755210000003,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 27.749030999999377,
+              "hoverMs": 28.036459999988438,
               "hoverAnswered": true,
               "hoverBytes": 48,
               "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
@@ -8601,12 +8602,12 @@
               "artifact": 48
             },
             {
-              "initializeMs": 590.3933490000054,
-              "didOpenToDiagnosticsMs": 6166.953341,
+              "initializeMs": 524.9585700000025,
+              "didOpenToDiagnosticsMs": 5504.2080029999925,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 48.256640999999945,
+              "hoverMs": 41.76471899999888,
               "hoverAnswered": true,
               "hoverBytes": 48,
               "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
@@ -8620,12 +8621,12 @@
               "artifact": 48
             },
             {
-              "initializeMs": 577.1264289999963,
-              "didOpenToDiagnosticsMs": 6078.809444000013,
+              "initializeMs": 519.8113540000049,
+              "didOpenToDiagnosticsMs": 5500.071415000013,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 51.22237799997674,
+              "hoverMs": 36.950431999983266,
               "hoverAnswered": true,
               "hoverBytes": 48,
               "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
@@ -8639,12 +8640,12 @@
               "artifact": 48
             },
             {
-              "initializeMs": 572.3891609999991,
-              "didOpenToDiagnosticsMs": 6178.451085999986,
+              "initializeMs": 544.101582000003,
+              "didOpenToDiagnosticsMs": 5680.768267000007,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 45.45525500000804,
+              "hoverMs": 35.675706000009086,
               "hoverAnswered": true,
               "hoverBytes": 48,
               "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
@@ -8658,12 +8659,12 @@
               "artifact": 48
             },
             {
-              "initializeMs": 599.4545809999981,
-              "didOpenToDiagnosticsMs": 6082.158997999999,
+              "initializeMs": 532.2432620000036,
+              "didOpenToDiagnosticsMs": 5455.802207000001,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 39.86534099999699,
+              "hoverMs": 39.568458000023384,
               "hoverAnswered": true,
               "hoverBytes": 48,
               "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
@@ -8679,7 +8680,7 @@
           ],
           "artifactMedian": 48,
           "warmupPasses": 1,
-          "throughput": "22 files/s"
+          "throughput": "27 files/s"
         },
         {
           "id": "verter-lsp-hover",
@@ -8693,26 +8694,26 @@
           "files": 1,
           "status": "unranked",
           "runs": [
-            1.181,
-            0.921,
-            0.971,
-            0.895,
-            0.881
+            1.097,
+            0.88,
+            1.026,
+            1.027,
+            0.719
           ],
-          "medianMs": 0.921,
-          "minMs": 0.881,
-          "maxMs": 1.181,
-          "meanMs": 0.97,
-          "stddevMs": 0.123,
-          "cvPct": 13.3,
+          "medianMs": 1.026,
+          "minMs": 0.719,
+          "maxMs": 1.097,
+          "meanMs": 0.95,
+          "stddevMs": 0.151,
+          "cvPct": 14.7,
           "metaSamples": [
             {
-              "initializeMs": 19.99593299999833,
-              "didOpenToDiagnosticsMs": 1410.884910000008,
+              "initializeMs": 10.251734999998007,
+              "didOpenToDiagnosticsMs": 1205.3100290000002,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 1.180739999996149,
+              "hoverMs": 1.0967349999991711,
               "hoverAnswered": true,
               "hoverBytes": 48,
               "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
@@ -8726,12 +8727,12 @@
               "artifact": 48
             },
             {
-              "initializeMs": 15.203252000006614,
-              "didOpenToDiagnosticsMs": 1222.199106,
+              "initializeMs": 19.258335999998963,
+              "didOpenToDiagnosticsMs": 1204.392691000001,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 0.9208519999956479,
+              "hoverMs": 0.8800809999956982,
               "hoverAnswered": true,
               "hoverBytes": 48,
               "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
@@ -8745,12 +8746,12 @@
               "artifact": 48
             },
             {
-              "initializeMs": 20.463378000014927,
-              "didOpenToDiagnosticsMs": 1171.111298999982,
+              "initializeMs": 13.75101700000232,
+              "didOpenToDiagnosticsMs": 1173.0909860000247,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 0.9706260000239126,
+              "hoverMs": 1.0258670000184793,
               "hoverAnswered": true,
               "hoverBytes": 48,
               "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
@@ -8764,12 +8765,12 @@
               "artifact": 48
             },
             {
-              "initializeMs": 18.963133999990532,
-              "didOpenToDiagnosticsMs": 1186.2518700000073,
+              "initializeMs": 11.880414999992354,
+              "didOpenToDiagnosticsMs": 1322.271876999992,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 0.8948530000052415,
+              "hoverMs": 1.0272560000012163,
               "hoverAnswered": true,
               "hoverBytes": 48,
               "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
@@ -8783,12 +8784,12 @@
               "artifact": 48
             },
             {
-              "initializeMs": 16.01054300001124,
-              "didOpenToDiagnosticsMs": 1238.0853650000063,
+              "initializeMs": 11.444896000000881,
+              "didOpenToDiagnosticsMs": 1156.8173010000028,
               "diagnosticsCount": 0,
               "firstNonEmptyDiagnosticsMs": null,
               "firstNonEmptyDiagnosticsCount": null,
-              "hoverMs": 0.8807009999873117,
+              "hoverMs": 0.7187029999913648,
               "hoverAnswered": true,
               "hoverBytes": 48,
               "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
@@ -8804,7 +8805,7 @@
           ],
           "artifactMedian": 48,
           "warmupPasses": 1,
-          "throughput": "1.1k files/s"
+          "throughput": "975 files/s"
         },
         {
           "id": "vize-lsp-hover",
@@ -8818,29 +8819,29 @@
           "files": 1,
           "status": "unranked",
           "runs": [
-            2.132,
-            2.078,
-            2.146,
-            2.1,
-            2.223
+            1.98,
+            2.239,
+            2.056,
+            2.344,
+            2.163
           ],
-          "medianMs": 2.132,
-          "minMs": 2.078,
-          "maxMs": 2.223,
-          "meanMs": 2.136,
-          "stddevMs": 0.056,
-          "cvPct": 2.6,
+          "medianMs": 2.163,
+          "minMs": 1.98,
+          "maxMs": 2.344,
+          "meanMs": 2.156,
+          "stddevMs": 0.144,
+          "cvPct": 6.7,
           "metaSamples": [
             {
-              "initializeMs": 38.43135900000925,
-              "didOpenToDiagnosticsMs": 1608.7648940000072,
-              "diagnosticsCount": 1,
-              "firstNonEmptyDiagnosticsMs": 1608.765744999997,
-              "firstNonEmptyDiagnosticsCount": 1,
-              "hoverMs": 2.13192899999558,
+              "initializeMs": 35.68594500000472,
+              "didOpenToDiagnosticsMs": 1461.1368360000051,
+              "diagnosticsCount": 0,
+              "firstNonEmptyDiagnosticsMs": null,
+              "firstNonEmptyDiagnosticsCount": null,
+              "hoverMs": 1.9798100000043632,
               "hoverAnswered": true,
-              "hoverBytes": 276,
-              "hoverSample": "```typescript\nconst top: Ref<number, number>\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Recommended order: <script> -> <template> -> <style>\n\n[📖 View ru",
+              "hoverBytes": 48,
+              "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
               "hoverPosition": {
                 "line": 30,
                 "character": 6,
@@ -8848,18 +8849,18 @@
               },
               "backendFallback": null,
               "bridgeFailures": null,
-              "artifact": 276
+              "artifact": 48
             },
             {
-              "initializeMs": 36.8763900000049,
-              "didOpenToDiagnosticsMs": 1792.644564000002,
-              "diagnosticsCount": 1,
-              "firstNonEmptyDiagnosticsMs": 1792.6452560000034,
-              "firstNonEmptyDiagnosticsCount": 1,
-              "hoverMs": 2.077978000001167,
+              "initializeMs": 35.65638900001068,
+              "didOpenToDiagnosticsMs": 1538.6144360000035,
+              "diagnosticsCount": 0,
+              "firstNonEmptyDiagnosticsMs": null,
+              "firstNonEmptyDiagnosticsCount": null,
+              "hoverMs": 2.2393000000010943,
               "hoverAnswered": true,
-              "hoverBytes": 276,
-              "hoverSample": "```typescript\nconst top: Ref<number, number>\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Recommended order: <script> -> <template> -> <style>\n\n[📖 View ru",
+              "hoverBytes": 48,
+              "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
               "hoverPosition": {
                 "line": 30,
                 "character": 6,
@@ -8867,18 +8868,18 @@
               },
               "backendFallback": null,
               "bridgeFailures": null,
-              "artifact": 276
+              "artifact": 48
             },
             {
-              "initializeMs": 37.09388199998648,
-              "didOpenToDiagnosticsMs": 1545.5992209999822,
-              "diagnosticsCount": 1,
-              "firstNonEmptyDiagnosticsMs": 1545.600001999992,
-              "firstNonEmptyDiagnosticsCount": 1,
-              "hoverMs": 2.145924999989802,
+              "initializeMs": 36.18466800000169,
+              "didOpenToDiagnosticsMs": 1473.9100040000048,
+              "diagnosticsCount": 0,
+              "firstNonEmptyDiagnosticsMs": null,
+              "firstNonEmptyDiagnosticsCount": null,
+              "hoverMs": 2.055766000004951,
               "hoverAnswered": true,
-              "hoverBytes": 276,
-              "hoverSample": "```typescript\nconst top: Ref<number, number>\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Recommended order: <script> -> <template> -> <style>\n\n[📖 View ru",
+              "hoverBytes": 48,
+              "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
               "hoverPosition": {
                 "line": 30,
                 "character": 6,
@@ -8886,18 +8887,18 @@
               },
               "backendFallback": null,
               "bridgeFailures": null,
-              "artifact": 276
+              "artifact": 48
             },
             {
-              "initializeMs": 37.375671999994665,
-              "didOpenToDiagnosticsMs": 1628.8837610000046,
-              "diagnosticsCount": 1,
-              "firstNonEmptyDiagnosticsMs": 1628.8841919999977,
-              "firstNonEmptyDiagnosticsCount": 1,
-              "hoverMs": 2.1003599999821745,
+              "initializeMs": 37.18123200000264,
+              "didOpenToDiagnosticsMs": 1515.373029999988,
+              "diagnosticsCount": 0,
+              "firstNonEmptyDiagnosticsMs": null,
+              "firstNonEmptyDiagnosticsCount": null,
+              "hoverMs": 2.343786999990698,
               "hoverAnswered": true,
-              "hoverBytes": 276,
-              "hoverSample": "```typescript\nconst top: Ref<number, number>\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Recommended order: <script> -> <template> -> <style>\n\n[📖 View ru",
+              "hoverBytes": 48,
+              "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
               "hoverPosition": {
                 "line": 30,
                 "character": 6,
@@ -8905,18 +8906,18 @@
               },
               "backendFallback": null,
               "bridgeFailures": null,
-              "artifact": 276
+              "artifact": 48
             },
             {
-              "initializeMs": 37.66197299998021,
-              "didOpenToDiagnosticsMs": 1619.9733720000077,
-              "diagnosticsCount": 1,
-              "firstNonEmptyDiagnosticsMs": 1619.973793000012,
-              "firstNonEmptyDiagnosticsCount": 1,
-              "hoverMs": 2.2229029999871273,
+              "initializeMs": 35.51366899997811,
+              "didOpenToDiagnosticsMs": 1467.0844090000028,
+              "diagnosticsCount": 0,
+              "firstNonEmptyDiagnosticsMs": null,
+              "firstNonEmptyDiagnosticsCount": null,
+              "hoverMs": 2.162653000006685,
               "hoverAnswered": true,
-              "hoverBytes": 276,
-              "hoverSample": "```typescript\nconst top: Ref<number, number>\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Recommended order: <script> -> <template> -> <style>\n\n[📖 View ru",
+              "hoverBytes": 48,
+              "hoverSample": "```typescript\nconst top: Ref<number, number>\n```",
               "hoverPosition": {
                 "line": 30,
                 "character": 6,
@@ -8924,12 +8925,12 @@
               },
               "backendFallback": null,
               "bridgeFailures": null,
-              "artifact": 276
+              "artifact": 48
             }
           ],
-          "artifactMedian": 276,
+          "artifactMedian": 48,
           "warmupPasses": 1,
-          "throughput": "469 files/s"
+          "throughput": "462 files/s"
         }
       ],
       "methodology": [

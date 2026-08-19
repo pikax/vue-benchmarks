@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="216" viewBox="0 0 760 216" role="img" aria-label="Peak RSS">
+  <title>Peak RSS (lower is better)</title>
+  <style><![CDATA[
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+    .label { fill: #111827; }
+    .struck { text-decoration: line-through; opacity: 0.62; }
+    .muted { fill: #6b7280; }
+    .onbar { fill: #ffffff; }
+    .track { fill: #111827; fill-opacity: 0.06; }
+    .grid { stroke: #111827; stroke-opacity: 0.08; }
+    @media (prefers-color-scheme: dark) {
+      .label { fill: #f9fafb; }
+      .muted { fill: #9ca3af; }
+      .track { fill: #f9fafb; fill-opacity: 0.08; }
+      .grid { stroke: #f9fafb; stroke-opacity: 0.12; }
+    }
+  ]]></style>
+  
+  <text class="label" x="16" y="22" font-size="15" font-weight="600">Peak RSS</text>
+  <text class="muted" x="744" y="22" text-anchor="end" font-size="11">lower is better</text>
+  
+  <line class="grid" x1="248" y1="36" x2="248" y2="188" />
+  <text class="muted" x="248" y="208" text-anchor="middle" font-size="11">0.0 MB</text>
+  <line class="grid" x1="348.5" y1="36" x2="348.5" y2="188" />
+  <text class="muted" x="348.5" y="208" text-anchor="middle" font-size="11">1645.3 MB</text>
+  <line class="grid" x1="449" y1="36" x2="449" y2="188" />
+  <text class="muted" x="449" y="208" text-anchor="middle" font-size="11">3290.5 MB</text>
+  <line class="grid" x1="549.5" y1="36" x2="549.5" y2="188" />
+  <text class="muted" x="549.5" y="208" text-anchor="middle" font-size="11">4935.8 MB</text>
+  <line class="grid" x1="650" y1="36" x2="650" y2="188" />
+  <text class="muted" x="650" y="208" text-anchor="middle" font-size="11">6581.0 MB</text>
+  <text class="muted" x="16" y="60" font-size="11">1</text>
+      <text class="label" x="236" y="60" text-anchor="end" font-size="13">vben-admin-monorepo — @verter/unplu…</text>
+      <rect class="track" x="248" y="49" width="402" height="22" rx="5"/>
+      <rect x="248" y="49" width="40.2" height="22" rx="5" fill="#e11d48"/>
+      <text class="label" x="296.1816745175505" y="60" font-size="12" font-weight="600">657.8 MB</text>
+  <text class="muted" x="16" y="96" font-size="11">2</text>
+      <text class="label" x="236" y="96" text-anchor="end" font-size="13">vben-admin-monorepo — project's own…</text>
+      <rect class="track" x="248" y="85" width="402" height="22" rx="5"/>
+      <rect x="248" y="85" width="42.6" height="22" rx="5" fill="#64748b"/>
+      <text class="label" x="298.6250721774806" y="96" font-size="12" font-weight="600">697.8 MB</text>
+  <text class="muted" x="16" y="132" font-size="11">3</text>
+      <text class="label" x="236" y="132" text-anchor="end" font-size="13">vben-admin-monorepo — unplugin-vue</text>
+      <rect class="track" x="248" y="121" width="402" height="22" rx="5"/>
+      <rect x="248" y="121" width="43.3" height="22" rx="5" fill="#42b883"/>
+      <text class="label" x="299.29089803981157" y="132" font-size="12" font-weight="600">708.7 MB</text>
+  <text class="muted" x="16" y="168" font-size="11">4</text>
+      <text class="label" x="236" y="168" text-anchor="end" font-size="13">vben-admin-monorepo — @vizejs/vite-…</text>
+      <rect class="track" x="248" y="157" width="402" height="22" rx="5"/>
+      <rect x="248" y="157" width="402.0" height="22" rx="5" fill="#2563eb"/>
+      <text class="onbar" x="642" y="168" text-anchor="end" font-size="12" font-weight="600">6581.0 MB</text>
+</svg>
