@@ -256,6 +256,18 @@ describe("collapseAllFailedTables", () => {
     assert.ok(collapsed.includes("The only cell in this group was skipped"));
     assert.ok(collapsed.includes("reason not stated in the summary"));
   });
+
+  test("project typecheck/test all-error tables stay as tables", () => {
+    const doc = [
+      "## Project test suite — nuxt-ui:runtime",
+      "",
+      table(["| @nuxt/ui — baseline ❌ | error | – |", "| @nuxt/ui — unplugin-vue ❌ | error | – |"]),
+    ].join("\n");
+    const { collapsed, removed } = collapseAllFailedTables(doc, "r.md");
+    assert.equal(removed, 0);
+    assert.ok(collapsed.includes(HEADER));
+    assert.ok(collapsed.includes("error"));
+  });
 });
 
 /**

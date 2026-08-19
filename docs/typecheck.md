@@ -4,14 +4,15 @@ This is the **correctness** suite for Vue typecheckers, not a throughput benchma
 A tool is compatible only if it reports the planted error (or stays clean) on every plant.
 vue-tsc (Volar) is the usual reference, but it is **not assumed perfect** — a plant it fails is a real gap and is listed as such.
 
-Generated from `pnpm confirm:typecheck` at 2026-08-19T09:07:35.594Z on **Windows**.
+Generated from `pnpm confirm:typecheck` at 2026-08-19T12:36:13.372Z on **Windows**.
 - **Runner:** Windows · win32/x64 · 32 CPUs · AMD Ryzen 9 7950X 16-Core Processor · 127.2 GB · Node v26.5.0
 
 On a **Benchmark** dispatch, Linux CI re-runs this and commits the file. Do not hand-edit the results.
 
 ## How plants are judged
 
-- Each case is a tiny project under `tests/confirm/fixtures/typecheck/cases/<id>/`.
+- Each case is a tiny project under `tests/confirm/fixtures/typecheck/cases/<id>/`. The per-plant matrix is still one spawn per case.
+- **All plants (one tsconfig)** — extra check: every plant is copied under `cases/<id>/` and typechecked in **one** process with the shared `tsconfig.json` (no per-case overlay, no fallthroughAttributes retry). Wall is the median of the Benchmark job's `--runs` (default 5) after `--warmups` (default 1). Peak RSS is the max of those measured runs. Pass rate is the per-plant score of the last measured dump, as a percentage of scored plants (skips excluded).
 - Every tool runs on the **same shared tsconfig** (`strictTemplates: true`). Extra TypeScript flags that only one tool needs are **not** added globally.
 - `expectErrors: false` — the fixture is clean. Any diagnostic is a fail. A diagnostic that names the tool's own virtual code (`__VLS_`, `___VERTER___`, …) is called out as a codegen leak.
 - `expectErrors: true` — at least one error, matching `mustMatch` when set. Dirty plants mark the bad line with a harness pin (`<!-- @plant-error -->` in template, `// @plant-error` in script). That is **not** TypeScript: HTML comments are ignored by every checker, so the pin always survives. The harness requires a diagnostic **on the next line** that mentions `expectMention` (e.g. the invalid prop name). A hit on the wrong line, or an error that does not name the plant, is a fail. `// @ts-expect-error` is only used in `.ts` where unused-directive is itself the plant.
@@ -59,6 +60,43 @@ Static resolution (`v-if="true"`, `alwaysOn: true`) is the hard edge. A tool tha
 - plants: **142**
 - pass: **407** · fail: **143** · skip: **6** · warn: **12**
 - wall clock + peak RSS per plant × tool: [Time and memory](#time-and-memory)
+- one-spawn combined run: [All plants (one tsconfig)](#all-plants-one-tsconfig)
+
+## All plants (one tsconfig)
+
+One spawn per tool over **every** plant, nested at `cases/<id>/` so filenames do not collide. Same shared `strictTemplates` tsconfig as the per-plant matrix — no case-local `vueCompilerOptions`, no fallthroughAttributes retry, no verter extra flags. A plant that only passes with those extras fails here; that is the point of the combined check.
+
+Wall is the **median** of the same measured-run count as the Benchmark job (`--runs`, default 5), after discarded warmups (`--warmups`, default 1, minimum 1). Peak RSS is the max of those measured runs. Pass rate is scored plants that met their pin (skips excluded), as a **percentage**.
+
+![All plants wall](results/charts/typecheck-all-wall.svg)
+
+| Tool | **Wall** | vs fastest |
+| --- | ---: | ---: |
+| golar | **814 ms** | 1.00x |
+| vize | **1.20 s** | 1.48x |
+| vue-tsc | **2.02 s** | 2.48x |
+| verter-tsc | **2.69 s** | 3.30x |
+
+![All plants peak RSS](results/charts/typecheck-all-rss.svg)
+
+| Tool | **Peak RSS** |
+| --- | ---: |
+| verter-tsc | **68.8 MB** |
+| vize | **91.2 MB** |
+| golar | **343.7 MB** |
+| vue-tsc | **351.6 MB** |
+
+![All plants pass rate](results/charts/typecheck-all-pass.svg)
+
+| Tool | **Pass rate** | pass / scored | skipped |
+| --- | ---: | ---: | ---: |
+| vue-tsc | **84%** | 119 / 142 | 0 |
+| golar | **82%** | 117 / 142 | 0 |
+| verter-tsc | **76%** | 108 / 142 | 0 |
+| vize | **52%** | 71 / 136 | 6 |
+
+**vize** scored 136 of 142 (6 skipped). Skips are capability gaps, not fails — Vize does not claim `strict-component-attrs` (undeclared component attrs under `strictTemplates`).
+
 
 ## Template narrowing
 

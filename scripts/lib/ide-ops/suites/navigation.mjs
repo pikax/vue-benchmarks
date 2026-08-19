@@ -49,7 +49,7 @@
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { budgetOf } from "../budget.mjs";
-import { mergeHover, timed } from "../context.mjs";
+import { mergeHover, shouldMeasure, timed, timedColdWarm } from "../context.mjs";
 import { positionAfter, positionOf, scaffold } from "../workspace.mjs";
 
 /**
@@ -873,6 +873,9 @@ async function probe(ctx, method, params, merge, gate, timeoutMs = budgetOf(ctx)
 export const SUITE = {
   id: "navigation",
   label: "Navigation & refactor (cross-file)",
+  // Imported-fn definition is the second request of a shared session unless
+  // isolated — the runner re-spawns so its cold is the first request after open.
+  isolatedColdOps: [{ id: "def-imported-symbol", after: "def-component-tag" }],
 
   buildWorkspace(dir) {
     scaffold(dir);
@@ -945,62 +948,56 @@ export const SUITE = {
     openDoc(typesUri, ws.typesSource, { languageId: "typescript" });
     await new Promise((r) => setTimeout(r, 50));
 
-    // Untimed warm-up. Without it the first timed operation is charged the
-    // whole TypeScript project load (~600ms for Volar) and the row would say
-    // "definition is slow" when it means "the project had not loaded yet".
-    // Identical for every server; its cost appears in no measurement.
-    try {
-      await askAll(
-        ctx,
-        "textDocument/hover",
-        { textDocument: { uri: parentUri }, position: ws.importedSymbolProbe },
-        // This warm-up exists to absorb the TypeScript project load, so it is
-        // cold work and gets the cold budget — not a private constant larger
-        // than either. Its cost appears in no measurement.
-        budgetOf(ctx).coldMs,
-        mergeHover,
-      );
-    } catch {
-      // A server that cannot hover still gets measured on everything below.
-    }
+    // No discarded hover: each timedColdWarm records first request as cold,
+    // second as warm. The imported-fn probe is isolated into its own session
+    // by the runner so it is not measured against a server the tag definition
+    // already warmed.
 
     const ops = [];
 
     /* 1 — the Vue-specific one: a component TAG must resolve into its SFC. */
-    ops.push(
-      await timed("def-component-tag", "Definition: <ChildCard/> tag", () =>
-        probe(
-          ctx,
-          "textDocument/definition",
-          { textDocument: { uri: parentUri }, position: ws.componentTagProbe },
-          mergeLocations,
-          (res) =>
-            gateDefinition(res, {
-              targetPath: ws.childFile,
-              currentPath: ws.parentFile,
-              what: "tag definition",
-            }),
+    if (shouldMeasure(ctx, "def-component-tag")) {
+      ops.push(
+        await timedColdWarm("def-component-tag", "Definition: <ChildCard/> tag", () =>
+          probe(
+            ctx,
+            "textDocument/definition",
+            { textDocument: { uri: parentUri }, position: ws.componentTagProbe },
+            mergeLocations,
+            (res) =>
+              gateDefinition(res, {
+                targetPath: ws.childFile,
+                currentPath: ws.parentFile,
+                what: "tag definition",
+              }),
+          ),
         ),
-      ),
-    );
+      );
+    }
 
     /* 2 — imported symbol used in <script setup>, must leave the .vue file. */
-    ops.push(
-      await timed("def-imported-symbol", "Definition: imported fn (script)", () =>
-        probe(
-          ctx,
-          "textDocument/definition",
-          { textDocument: { uri: parentUri }, position: ws.importedSymbolProbe },
-          mergeLocations,
-          (res) =>
-            gateDefinition(res, {
-              targetPath: ws.helpersFile,
-              currentPath: ws.parentFile,
-              what: "definition",
-            }),
+    if (shouldMeasure(ctx, "def-imported-symbol")) {
+      ops.push(
+        await timedColdWarm("def-imported-symbol", "Definition: imported fn (script)", () =>
+          probe(
+            ctx,
+            "textDocument/definition",
+            { textDocument: { uri: parentUri }, position: ws.importedSymbolProbe },
+            mergeLocations,
+            (res) =>
+              gateDefinition(res, {
+                targetPath: ws.helpersFile,
+                currentPath: ws.parentFile,
+                what: "definition",
+              }),
+          ),
         ),
-      ),
-    );
+      );
+    }
+
+    // Isolated-cold session: this op was the first request after didOpen. The
+    // rest of the suite belongs to the full session.
+    if (ctx.only) return ops;
 
     /* 3 — type of a binding, declared in a third module. */
     ops.push(

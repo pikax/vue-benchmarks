@@ -1,0 +1,2604 @@
+{
+  "results": [
+    {
+      "suite": "background",
+      "server": "volar",
+      "label": "Volar (@vue/language-server)",
+      "ops": [
+        {
+          "id": "semantic-tokens-full",
+          "label": "Semantic tokens (full)",
+          "medianMs": 808.3832979999997,
+          "minMs": 787.4562800000003,
+          "stddevMs": 56.54932351251505,
+          "cvPct": 6.813132226678022,
+          "runs": [
+            894.1747779999996,
+            808.3832979999997,
+            787.4562800000003
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "48 tokens, resultId=\"1786871515413\", data[0..9]=[3,13,7,8,0,3,17,5,7,3]",
+          "artifact": 48
+        },
+        {
+          "id": "semantic-tokens-delta",
+          "label": "Semantic tokens (delta after edit)",
+          "medianMs": 1.058512999999948,
+          "minMs": 0.9003689999990456,
+          "stddevMs": 0.09799559798500215,
+          "cvPct": 9.67512479349276,
+          "runs": [
+            1.0797019999999975,
+            1.058512999999948,
+            0.9003689999990456
+          ],
+          "valid": false,
+          "reason": "not implemented (JSON-RPC -32601: Unhandled method textDocument/semanticTokens/full/delta); the full request DID return resultId \"1786871515413\", which invites a delta",
+          "sample": "{\"code\":-32601,\"message\":\"Unhandled method textDocument/semanticTokens/full/delta\"}"
+        },
+        {
+          "id": "document-symbol",
+          "label": "Document symbols (outline)",
+          "medianMs": 17.459123999999974,
+          "minMs": 16.649880999999368,
+          "stddevMs": 3.5112821725411822,
+          "cvPct": 18.41429866410934,
+          "runs": [
+            23.095707000000402,
+            17.459123999999974,
+            16.649880999999368
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "25 symbols: template, section.panel, header, h1, ul, li, footer, button, script setup, addEntry, id, label, weight, entries, Entry, formatEntry, heading, nextLabel, threshold, visibleEntries, computed",
+          "artifact": 25
+        },
+        {
+          "id": "document-highlight",
+          "label": "Document highlight (caret move)",
+          "medianMs": 18.622314999999617,
+          "minMs": 18.27399499999956,
+          "stddevMs": 0.45800684376316797,
+          "cvPct": 2.450188110273413,
+          "runs": [
+            19.181855000000724,
+            18.622314999999617,
+            18.27399499999956
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "5 range(s), 4/4 occurrences of `entries` covered",
+          "artifact": 5
+        },
+        {
+          "id": "inlay-hint",
+          "label": "Inlay hints (document range)",
+          "medianMs": 74.01700400000027,
+          "minMs": 71.86513899999954,
+          "stddevMs": 1.5199526558966716,
+          "cvPct": 2.0662502832811014,
+          "runs": [
+            71.86513899999954,
+            74.01700400000027,
+            74.80060799999956
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "14 hint(s); e.g. \": Ref<{ id: number; label: string; weight: number }[], Entry[] | { id: number; label: string; weight: number }[]>\" at 29:13",
+          "artifact": 14
+        },
+        {
+          "id": "folding-range",
+          "label": "Folding ranges",
+          "medianMs": 123.50988400000006,
+          "minMs": 119.84415699999954,
+          "stddevMs": 3.1357113215187775,
+          "cvPct": 2.5463372686355408,
+          "runs": [
+            123.50988400000006,
+            126.08382100000017,
+            119.84415699999954
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "13 range(s), folds: template+script",
+          "artifact": 13
+        }
+      ],
+      "backendFallback": null
+    },
+    {
+      "suite": "background",
+      "server": "volar-tnb",
+      "label": "Volar (TNB / tsgo tsdk)",
+      "ops": [
+        {
+          "id": "semantic-tokens-full",
+          "label": "Semantic tokens (full)",
+          "medianMs": 359.5715970000001,
+          "minMs": 335.55307299999913,
+          "stddevMs": 17.270842501063825,
+          "cvPct": 4.8687503031783,
+          "runs": [
+            359.5715970000001,
+            335.55307299999913,
+            369.060680999999
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "48 tokens, resultId=\"1786871524534\", data[0..9]=[3,13,7,8,0,3,17,5,7,3]",
+          "artifact": 48
+        },
+        {
+          "id": "semantic-tokens-delta",
+          "label": "Semantic tokens (delta after edit)",
+          "medianMs": 1.0377750000006927,
+          "minMs": 0.991148000000976,
+          "stddevMs": 0.03548055710181936,
+          "cvPct": 3.4450376024109497,
+          "runs": [
+            1.0377750000006927,
+            0.991148000000976,
+            1.0607869999985269
+          ],
+          "valid": false,
+          "reason": "not implemented (JSON-RPC -32601: Unhandled method textDocument/semanticTokens/full/delta); the full request DID return resultId \"1786871524534\", which invites a delta",
+          "sample": "{\"code\":-32601,\"message\":\"Unhandled method textDocument/semanticTokens/full/delta\"}"
+        },
+        {
+          "id": "document-symbol",
+          "label": "Document symbols (outline)",
+          "medianMs": 17.03852199999892,
+          "minMs": 16.781784999999218,
+          "stddevMs": 0.2175255285912583,
+          "cvPct": 1.2786937750338643,
+          "runs": [
+            17.03852199999892,
+            16.781784999999218,
+            17.214318999998795
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "25 symbols: template, section.panel, header, h1, ul, li, footer, button, script setup, addEntry, id, label, weight, entries, Entry, formatEntry, heading, nextLabel, threshold, visibleEntries, computed",
+          "artifact": 25
+        },
+        {
+          "id": "document-highlight",
+          "label": "Document highlight (caret move)",
+          "medianMs": 30.71643099999892,
+          "minMs": 29.962407999999414,
+          "stddevMs": 0.7203328422602924,
+          "cvPct": 2.3468355385739135,
+          "runs": [
+            30.71643099999892,
+            29.962407999999414,
+            31.402539999999135
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "5 range(s), 4/4 occurrences of `entries` covered",
+          "artifact": 5
+        },
+        {
+          "id": "inlay-hint",
+          "label": "Inlay hints (document range)",
+          "medianMs": 176.49821599999996,
+          "minMs": 174.80431800000042,
+          "stddevMs": 6.804158032479391,
+          "cvPct": 3.7895807517469495,
+          "runs": [
+            174.80431800000042,
+            176.49821599999996,
+            187.34475799999927
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "14 hint(s); e.g. \": Ref<{ id: number; label: string; weight: number }[], Entry[] | { id: number; label: string; weight: number }[]>\" at 29:13",
+          "artifact": 14
+        },
+        {
+          "id": "folding-range",
+          "label": "Folding ranges",
+          "medianMs": 6.5865669999984675,
+          "minMs": 6.360407000000123,
+          "stddevMs": 1.4367319323990182,
+          "cvPct": 19.680150429868952,
+          "runs": [
+            6.360407000000123,
+            6.5865669999984675,
+            8.954259999998612
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "13 range(s), folds: template+script",
+          "artifact": 13
+        }
+      ],
+      "backendFallback": null
+    },
+    {
+      "suite": "background",
+      "server": "vize",
+      "label": "Vize LSP (Node shim)",
+      "ops": [
+        {
+          "id": "semantic-tokens-full",
+          "label": "Semantic tokens (full)",
+          "medianMs": 0.5748419999981706,
+          "minMs": 0.5503250000001572,
+          "stddevMs": 0.03073998248286027,
+          "cvPct": 5.310443904796525,
+          "runs": [
+            0.6114100000013423,
+            0.5503250000001572,
+            0.5748419999981706
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "15 tokens, resultId=null, data[0..9]=[3,13,7,8,0,3,10,5,15,0]",
+          "artifact": 15
+        },
+        {
+          "id": "semantic-tokens-delta",
+          "label": "Semantic tokens (delta after edit)",
+          "medianMs": 0.3854109999992943,
+          "minMs": 0.357916999997542,
+          "stddevMs": 0.025714032149902914,
+          "cvPct": 6.6926966609345175,
+          "runs": [
+            0.357916999997542,
+            0.4093030000003637,
+            0.3854109999992943
+          ],
+          "valid": false,
+          "reason": "not implemented (JSON-RPC -32601: Method not found); the full request returned no resultId",
+          "sample": "{\"code\":-32601,\"message\":\"Method not found\"}"
+        },
+        {
+          "id": "document-symbol",
+          "label": "Document symbols (outline)",
+          "medianMs": 0.3075730000018666,
+          "minMs": 0.29177400000116904,
+          "stddevMs": 0.03212602507327001,
+          "cvPct": 10.11359131159691,
+          "runs": [
+            0.35360900000159745,
+            0.29177400000116904,
+            0.3075730000018666
+          ],
+          "valid": false,
+          "reason": "outline is missing 7/7 script symbols: heading, nextLabel, threshold, entries, visibleEntries, formatEntry, addEntry",
+          "sample": "2 symbols: template, script setup",
+          "artifact": 2
+        },
+        {
+          "id": "document-highlight",
+          "label": "Document highlight (caret move)",
+          "medianMs": 0.24341400000048452,
+          "minMs": 0.22543099999893457,
+          "stddevMs": 0.014090026342990383,
+          "cvPct": 5.854119415645487,
+          "runs": [
+            0.24341400000048452,
+            0.22543099999893457,
+            0.2532119999996212
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "4 range(s), 4/4 occurrences of `entries` covered",
+          "artifact": 4
+        },
+        {
+          "id": "inlay-hint",
+          "label": "Inlay hints (document range)",
+          "medianMs": 0.44063099999766564,
+          "minMs": 0.42845800000213785,
+          "stddevMs": 0.014302456116950196,
+          "cvPct": 3.235725349239989,
+          "runs": [
+            0.44063099999766564,
+            0.45696200000020326,
+            0.42845800000213785
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "2 hint(s); e.g. \": Ref<Entry[]>\" at 29:13",
+          "artifact": 2
+        },
+        {
+          "id": "folding-range",
+          "label": "Folding ranges",
+          "medianMs": 0.2269930000002205,
+          "minMs": 0.22518999999738298,
+          "stddevMs": 0.013709121647808591,
+          "cvPct": 5.858866065628018,
+          "runs": [
+            0.2497849999999744,
+            0.22518999999738298,
+            0.2269930000002205
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "9 range(s), folds: template+script",
+          "artifact": 9
+        }
+      ],
+      "backendFallback": null
+    },
+    {
+      "suite": "background",
+      "server": "verter",
+      "label": "Verter LSP (npm 0.0.1-beta.3)",
+      "ops": [
+        {
+          "id": "semantic-tokens-full",
+          "label": "Semantic tokens (full)",
+          "medianMs": 33.66855999999825,
+          "minMs": 32.15955000000031,
+          "stddevMs": 57.64395108308651,
+          "cvPct": 87.08603843680662,
+          "runs": [
+            33.66855999999825,
+            32.15955000000031,
+            132.747754
+          ],
+          "valid": false,
+          "reason": "returned null — no tokens at all for this document",
+          "sample": "null"
+        },
+        {
+          "id": "semantic-tokens-delta",
+          "label": "Semantic tokens (delta after edit)",
+          "medianMs": 0.6025730000001204,
+          "minMs": 0.5747009999977308,
+          "stddevMs": 1.5675454132525255,
+          "cvPct": 104.94913132438244,
+          "runs": [
+            0.5747009999977308,
+            0.6025730000001204,
+            3.303598000002239
+          ],
+          "valid": false,
+          "reason": "not implemented (JSON-RPC -32601: Method not found); the full request returned no resultId",
+          "sample": "{\"code\":-32601,\"message\":\"Method not found\"}"
+        },
+        {
+          "id": "document-symbol",
+          "label": "Document symbols (outline)",
+          "medianMs": 0.5373609999987821,
+          "minMs": 0.5147700000015902,
+          "stddevMs": 0.06419742513818867,
+          "cvPct": 11.411827382633897,
+          "runs": [
+            0.5147700000015902,
+            0.635524000001169,
+            0.5373609999987821
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "12 symbols: template, <section>, script setup (ts), heading, nextLabel, threshold, entries, visibleEntries, formatEntry, addEntry, computed, ref",
+          "artifact": 12
+        },
+        {
+          "id": "document-highlight",
+          "label": "Document highlight (caret move)",
+          "medianMs": 0.5274840000020049,
+          "minMs": 0.3512249999985215,
+          "stddevMs": 42.59848849503989,
+          "cvPct": 170.16558722436145,
+          "runs": [
+            0.3512249999985215,
+            0.5274840000020049,
+            74.22194299999683
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "4 range(s), 4/4 occurrences of `entries` covered",
+          "artifact": 4
+        },
+        {
+          "id": "inlay-hint",
+          "label": "Inlay hints (document range)",
+          "medianMs": 0.5703829999984009,
+          "minMs": 0.38356500000008964,
+          "stddevMs": 1.6245868997765718,
+          "cvPct": 114.94355365500893,
+          "runs": [
+            0.38356500000008964,
+            3.2861859999975422,
+            0.5703829999984009
+          ],
+          "valid": false,
+          "reason": "returned null — no inlay hints for a document full of inferable bindings",
+          "sample": "null"
+        },
+        {
+          "id": "folding-range",
+          "label": "Folding ranges",
+          "medianMs": 0.4596369999999297,
+          "minMs": 0.3288330000032147,
+          "stddevMs": 0.09118948959195193,
+          "cvPct": 21.161418409700257,
+          "runs": [
+            0.5043000000005122,
+            0.4596369999999297,
+            0.3288330000032147
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "7 range(s), folds: template+script",
+          "artifact": 7
+        }
+      ],
+      "backendFallback": null
+    },
+    {
+      "suite": "completion",
+      "server": "volar",
+      "label": "Volar (@vue/language-server)",
+      "ops": [
+        {
+          "id": "completion-script-member",
+          "label": "Completion: script member",
+          "medianMs": 4.321267999999691,
+          "minMs": 3.8530620000019553,
+          "stddevMs": 24.40268195582625,
+          "cvPct": 134.26205911241127,
+          "runs": [
+            4.321267999999691,
+            3.8530620000019553,
+            46.35190500000317
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "\"quaver\" kind=5",
+          "artifact": 3
+        },
+        {
+          "id": "completion-component-tag",
+          "label": "Completion: component tag <Ch",
+          "medianMs": 41.66747600000235,
+          "minMs": 39.8321219999998,
+          "stddevMs": 3.4974106545060315,
+          "cvPct": 8.190986956132406,
+          "runs": [
+            39.8321219999998,
+            41.66747600000235,
+            46.59524599999713
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "\"ChildCard\" kind=6",
+          "artifact": 192
+        },
+        {
+          "id": "completion-prop-name",
+          "label": "Completion: prop name <C :",
+          "medianMs": 27.28713599999901,
+          "minMs": 18.90306100000089,
+          "stddevMs": 60.79281073043426,
+          "cvPct": 104.61624268681686,
+          "runs": [
+            18.90306100000089,
+            27.28713599999901,
+            128.14069800000289
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "\":blurb\" kind=5",
+          "artifact": 26
+        },
+        {
+          "id": "completion-event-name",
+          "label": "Completion: event name <C @",
+          "medianMs": 134.83729999999923,
+          "minMs": 14.971087000001717,
+          "stddevMs": 74.66281213845872,
+          "cvPct": 74.20920835240425,
+          "runs": [
+            14.971087000001717,
+            152.02536300000065,
+            134.83729999999923
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "\"@quench\" kind=23",
+          "artifact": 25
+        },
+        {
+          "id": "completion-directive",
+          "label": "Completion: directive v-",
+          "medianMs": 26.451552999998967,
+          "minMs": 23.844656000001123,
+          "stddevMs": 2.6256653063464124,
+          "cvPct": 9.921630564007815,
+          "runs": [
+            26.451552999998967,
+            29.095941999999923,
+            23.844656000001123
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "\"v-if\" kind=14",
+          "artifact": 498
+        },
+        {
+          "id": "completion-slot-name",
+          "label": "Completion: slot name <template #",
+          "medianMs": 15.451836000000185,
+          "minMs": 14.79946899999777,
+          "stddevMs": 1.3967043851612155,
+          "cvPct": 8.778925606866071,
+          "runs": [
+            17.477920000001177,
+            14.79946899999777,
+            15.451836000000185
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "\"epilogue?\" kind=5 insertText=\"epilogue\"",
+          "artifact": 500
+        },
+        {
+          "id": "completion-auto-import",
+          "label": "Completion: auto-import",
+          "medianMs": 38.19211699999869,
+          "minMs": 31.671057999999903,
+          "stddevMs": 4.318078900491679,
+          "cvPct": 11.808972225944727,
+          "runs": [
+            39.83508199999778,
+            38.19211699999869,
+            31.671057999999903
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "\"computed\" kind=6 detail=\"vue\"",
+          "artifact": 1077
+        },
+        {
+          "id": "resolve-auto-import",
+          "label": "Resolve: auto-import edit",
+          "medianMs": 49.686062000000675,
+          "minMs": 48.249361000001954,
+          "stddevMs": 2.816507192932407,
+          "cvPct": 5.572823030206483,
+          "runs": [
+            53.684707999997045,
+            49.686062000000675,
+            48.249361000001954
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "edit \"computed, \" | \"computed\" kind=6 detail=\"Auto import from 'vue'\\nconst computed: {\\n    <T>(getter: ComputedGette\"",
+          "artifact": 241
+        },
+        {
+          "id": "resolve-member",
+          "label": "Resolve: script member detail",
+          "medianMs": 3.1018929999991087,
+          "minMs": 2.750596999998379,
+          "stddevMs": 0.35140050518275917,
+          "cvPct": 11.328327995651605,
+          "runs": [
+            2.750596999998379,
+            3.1018929999991087,
+            3.4533980000051088
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "\"quaver\" kind=5 detail=\"(property) quaver: string\" (+25 chars over the list item)",
+          "artifact": 25
+        }
+      ],
+      "backendFallback": null
+    },
+    {
+      "suite": "completion",
+      "server": "volar-tnb",
+      "label": "Volar (TNB / tsgo tsdk)",
+      "ops": [
+        {
+          "id": "completion-script-member",
+          "label": "Completion: script member",
+          "medianMs": 1.8224980000013602,
+          "minMs": 1.7571650000027148,
+          "stddevMs": 0.17520998603222138,
+          "cvPct": 9.274219986507747,
+          "runs": [
+            1.8224980000013602,
+            2.087982999997621,
+            1.7571650000027148
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "\"quaver\" kind=5",
+          "artifact": 3
+        },
+        {
+          "id": "completion-component-tag",
+          "label": "Completion: component tag <Ch",
+          "medianMs": 37.8315419999999,
+          "minMs": 37.02192600000126,
+          "stddevMs": 0.4891632175417623,
+          "cvPct": 1.3014754948353846,
+          "runs": [
+            37.8315419999999,
+            37.90237399999751,
+            37.02192600000126
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "\"ChildCard\" kind=6",
+          "artifact": 192
+        },
+        {
+          "id": "completion-prop-name",
+          "label": "Completion: prop name <C :",
+          "medianMs": 40.055529999997816,
+          "minMs": 39.54903099999501,
+          "stddevMs": 0.33346570215139143,
+          "cvPct": 0.8351773392041708,
+          "runs": [
+            40.17803599999752,
+            39.54903099999501,
+            40.055529999997816
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "\":blurb\" kind=5",
+          "artifact": 26
+        },
+        {
+          "id": "completion-event-name",
+          "label": "Completion: event name <C @",
+          "medianMs": 7.445248999996693,
+          "minMs": 7.158755000004021,
+          "stddevMs": 0.17805840594557681,
+          "cvPct": 2.4182656330302446,
+          "runs": [
+            7.4851829999970505,
+            7.445248999996693,
+            7.158755000004021
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "\"@quench\" kind=23",
+          "artifact": 25
+        },
+        {
+          "id": "completion-directive",
+          "label": "Completion: directive v-",
+          "medianMs": 16.371359999997367,
+          "minMs": 16.2809999999954,
+          "stddevMs": 1.1339110858519514,
+          "cvPct": 6.677794168427087,
+          "runs": [
+            18.288612000003923,
+            16.371359999997367,
+            16.2809999999954
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "\"v-if\" kind=14",
+          "artifact": 498
+        },
+        {
+          "id": "completion-slot-name",
+          "label": "Completion: slot name <template #",
+          "medianMs": 14.880898999996134,
+          "minMs": 13.745724000000337,
+          "stddevMs": 0.7885816672489087,
+          "cvPct": 5.390395571331286,
+          "runs": [
+            14.880898999996134,
+            15.26152899999579,
+            13.745724000000337
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "\"epilogue?\" kind=5 insertText=\"epilogue\"",
+          "artifact": 500
+        },
+        {
+          "id": "completion-auto-import",
+          "label": "Completion: auto-import",
+          "medianMs": 48.71638200000598,
+          "minMs": 32.23309799999697,
+          "stddevMs": 11.784776157529498,
+          "cvPct": 25.99310698130018,
+          "runs": [
+            55.06476599999587,
+            48.71638200000598,
+            32.23309799999697
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "\"computed\" kind=6 detail=\"vue\"",
+          "artifact": 1073
+        },
+        {
+          "id": "resolve-auto-import",
+          "label": "Resolve: auto-import edit",
+          "medianMs": 162.78540800000337,
+          "minMs": 160.3280550000054,
+          "stddevMs": 3.875634269219534,
+          "cvPct": 2.3678275499688684,
+          "runs": [
+            162.78540800000337,
+            160.3280550000054,
+            167.9232600000032
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "edit \"computed, \" | \"computed\" kind=6 detail=\"Auto import from 'vue'\\nconst computed: {\\n    <T>(getter: ComputedGette\"",
+          "artifact": 241
+        },
+        {
+          "id": "resolve-member",
+          "label": "Resolve: script member detail",
+          "medianMs": 8.152837999994517,
+          "minMs": 7.985705999999482,
+          "stddevMs": 0.7739375158504601,
+          "cvPct": 9.090716890857733,
+          "runs": [
+            9.401934000001347,
+            8.152837999994517,
+            7.985705999999482
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "\"quaver\" kind=5 detail=\"(property) quaver: string\" (+25 chars over the list item)",
+          "artifact": 25
+        }
+      ],
+      "backendFallback": null
+    },
+    {
+      "suite": "completion",
+      "server": "vize",
+      "label": "Vize LSP (Node shim)",
+      "ops": [
+        {
+          "id": "completion-script-member",
+          "label": "Completion: script member",
+          "medianMs": 1.0153620000055525,
+          "minMs": 0.9826109999994515,
+          "stddevMs": 0.026886355221521437,
+          "cvPct": 2.658598674323065,
+          "runs": [
+            0.9826109999994515,
+            1.0153620000055525,
+            1.0359210000024177
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "\"quaver\" kind=5",
+          "artifact": 3
+        },
+        {
+          "id": "completion-component-tag",
+          "label": "Completion: component tag <Ch",
+          "medianMs": 0.5987559999994119,
+          "minMs": 0.5915729999978794,
+          "stddevMs": 0.006199068990331856,
+          "cvPct": 1.0364920605058603,
+          "runs": [
+            0.5987559999994119,
+            0.5915729999978794,
+            0.6039160000000265
+          ],
+          "valid": false,
+          "reason": "no `ChildCard` component tag in 42 items",
+          "sample": "[v-if, v-else-if, v-else, v-for, v-on, v-bind, v-model, v-slot, v-show, v-pre, v-once, v-memo, …+30]",
+          "artifact": 42
+        },
+        {
+          "id": "completion-prop-name",
+          "label": "Completion: prop name <C :",
+          "medianMs": 0.3853690000032657,
+          "minMs": 0.35104400000273017,
+          "stddevMs": 0.4501071401855759,
+          "cvPct": 71.68601041013332,
+          "runs": [
+            0.3853690000032657,
+            0.35104400000273017,
+            1.1472480000011274
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "\"blurb\" kind=10 detail=\"prop: string (optional)\"",
+          "artifact": 4
+        },
+        {
+          "id": "completion-event-name",
+          "label": "Completion: event name <C @",
+          "medianMs": 0.385588999997708,
+          "minMs": 0.35829799999919487,
+          "stddevMs": 0.020782594164718372,
+          "cvPct": 5.454839800023172,
+          "runs": [
+            0.35829799999919487,
+            0.385588999997708,
+            0.39909399999305606
+          ],
+          "valid": false,
+          "reason": "no `quench` declared emit in 12 items",
+          "sample": "[v-on, @, @click, @input, @change, @submit, @keydown, @keyup, @focus, @blur, @mouseenter, @mouseleave]",
+          "artifact": 12
+        },
+        {
+          "id": "completion-directive",
+          "label": "Completion: directive v-",
+          "medianMs": 0.3765720000010333,
+          "minMs": 0.3677959999986342,
+          "stddevMs": 0.009898468838513058,
+          "cvPct": 2.623454529961851,
+          "runs": [
+            0.3677959999986342,
+            0.3765720000010333,
+            0.38755200000014156
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "\"v-if\" kind=14 detail=\"Conditional rendering\"",
+          "artifact": 15
+        },
+        {
+          "id": "completion-slot-name",
+          "label": "Completion: slot name <template #",
+          "medianMs": 0.5982850000000326,
+          "minMs": 0.5451759999996284,
+          "stddevMs": 0.0665014095514546,
+          "cvPct": 10.95699066750225,
+          "runs": [
+            0.5982850000000326,
+            0.5451759999996284,
+            0.6773329999996349
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "\"epilogue\" kind=5 detail=\"slot\"",
+          "artifact": 30
+        },
+        {
+          "id": "completion-auto-import",
+          "label": "Completion: auto-import",
+          "medianMs": 92.70688299999892,
+          "minMs": 90.55190500000026,
+          "stddevMs": 2.1781614810682273,
+          "cvPct": 2.34912336604495,
+          "runs": [
+            94.9081459999943,
+            92.70688299999892,
+            90.55190500000026
+          ],
+          "valid": false,
+          "reason": "`computed` offered but no import edit on any entry, in the list or after resolve — see resolve-auto-import",
+          "sample": "offered: \"getComputedStyle\" kind=3 ; \"computed\" kind=6 ; \"computed\" kind=3 detail=\"function computed<T>(getter: () => T): ComputedRef<T>\"",
+          "artifact": 1103
+        },
+        {
+          "id": "resolve-auto-import",
+          "label": "Resolve: auto-import edit",
+          "medianMs": 0.3160189999980503,
+          "minMs": 0.29486999999789987,
+          "stddevMs": 0.021329754576836925,
+          "cvPct": 6.746947414642622,
+          "runs": [
+            0.3375289999967208,
+            0.29486999999789987,
+            0.3160189999980503
+          ],
+          "valid": false,
+          "reason": "resolve returned no import edit for `computed`",
+          "sample": "\"computed\" kind=6",
+          "artifact": 0
+        },
+        {
+          "id": "resolve-member",
+          "label": "Resolve: script member detail",
+          "medianMs": 0.21313699999882374,
+          "minMs": 0.20630399999936344,
+          "stddevMs": 0.005888275329077625,
+          "cvPct": 2.7710921939941255,
+          "runs": [
+            0.21313699999882374,
+            0.2180270000026212,
+            0.20630399999936344
+          ],
+          "valid": false,
+          "reason": "resolve returned no detail and no documentation",
+          "sample": "\"quaver\" kind=5",
+          "artifact": 0
+        }
+      ],
+      "backendFallback": null
+    },
+    {
+      "suite": "completion",
+      "server": "verter",
+      "label": "Verter LSP (npm 0.0.1-beta.3)",
+      "ops": [
+        {
+          "id": "completion-script-member",
+          "label": "Completion: script member",
+          "medianMs": 0.8019050000002608,
+          "minMs": 0.7661979999975301,
+          "stddevMs": 0.07559899424467119,
+          "cvPct": 9.14728218589794,
+          "runs": [
+            0.9112889999960316,
+            0.7661979999975301,
+            0.8019050000002608
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "\"quaver\" kind=5",
+          "artifact": 3
+        },
+        {
+          "id": "completion-component-tag",
+          "label": "Completion: component tag <Ch",
+          "medianMs": 35.772735999998986,
+          "minMs": 34.8299690000058,
+          "stddevMs": 10.575696299019688,
+          "cvPct": 25.544441113846407,
+          "runs": [
+            53.600790999997116,
+            34.8299690000058,
+            35.772735999998986
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "\"ChildCard\" kind=6 detail=\"from './ChildCard.vue'\"",
+          "artifact": 1193
+        },
+        {
+          "id": "completion-prop-name",
+          "label": "Completion: prop name <C :",
+          "medianMs": 1.8155939999996917,
+          "minMs": 1.490659000002779,
+          "stddevMs": 0.23037305414130296,
+          "cvPct": 13.183580753221024,
+          "runs": [
+            1.9360190000006696,
+            1.8155939999996917,
+            1.490659000002779
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "\"blurb?\" kind=5 insertText=\"blurb\"",
+          "artifact": 16
+        },
+        {
+          "id": "completion-event-name",
+          "label": "Completion: event name <C @",
+          "medianMs": 0.33759899999859044,
+          "minMs": 0.3228320000052918,
+          "stddevMs": 2.2414871122883144,
+          "cvPct": 137.99442307775405,
+          "runs": [
+            4.212564000001294,
+            0.3228320000052918,
+            0.33759899999859044
+          ],
+          "valid": false,
+          "reason": "no `quench` declared emit in 0 items",
+          "sample": "(empty list)",
+          "artifact": 0
+        },
+        {
+          "id": "completion-directive",
+          "label": "Completion: directive v-",
+          "medianMs": 0.3946159999977681,
+          "minMs": 0.3594699999957811,
+          "stddevMs": 0.024884521807234803,
+          "cvPct": 6.426533162570523,
+          "runs": [
+            0.4075600000069244,
+            0.3594699999957811,
+            0.3946159999977681
+          ],
+          "valid": false,
+          "reason": "no `v-if` directive in 3 items",
+          "sample": "[style scoped, style, i18n]",
+          "artifact": 3
+        },
+        {
+          "id": "completion-slot-name",
+          "label": "Completion: slot name <template #",
+          "medianMs": 0.34758700000384124,
+          "minMs": 0.3148159999982454,
+          "stddevMs": 0.036422604944503605,
+          "cvPct": 10.406993772403153,
+          "runs": [
+            0.38754299999709474,
+            0.3148159999982454,
+            0.34758700000384124
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "\"epilogue\" kind=5 detail=\"slot\" insertText=\"epilogue\"",
+          "artifact": 2
+        },
+        {
+          "id": "completion-auto-import",
+          "label": "Completion: auto-import",
+          "medianMs": 0.4020590000000084,
+          "minMs": 0.38975500000378815,
+          "stddevMs": 0.2455508238231051,
+          "cvPct": 45.67271447887355,
+          "runs": [
+            0.8210800000015297,
+            0.38975500000378815,
+            0.4020590000000084
+          ],
+          "valid": false,
+          "reason": "no `computed` in 9 items",
+          "sample": "[headline, visible, probe, chosen, onDismiss, derived, ref, ChildCard, SiblingCard]",
+          "artifact": 9
+        },
+        {
+          "id": "resolve-auto-import",
+          "label": "Resolve: auto-import edit",
+          "medianMs": 0.005219999999098945,
+          "minMs": 0.003356000001076609,
+          "stddevMs": 0.005482071414339279,
+          "cvPct": 74.01203475794703,
+          "runs": [
+            0.013644999999087304,
+            0.003356000001076609,
+            0.005219999999098945
+          ],
+          "valid": false,
+          "reason": "auto-import completion offered no `computed` item to resolve",
+          "sample": "[headline, visible, probe, chosen, onDismiss, derived, ref, ChildCard, SiblingCard]"
+        },
+        {
+          "id": "resolve-member",
+          "label": "Resolve: script member detail",
+          "medianMs": 4.345911999997043,
+          "minMs": 4.17351200000121,
+          "stddevMs": 0.4023165182215479,
+          "cvPct": 8.96707833738734,
+          "runs": [
+            4.940362000001187,
+            4.17351200000121,
+            4.345911999997043
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "\"quaver\" kind=5 detail=\"(property) quaver: string\" (+25 chars over the list item)",
+          "artifact": 25
+        }
+      ],
+      "backendFallback": null
+    },
+    {
+      "suite": "edit-loop",
+      "server": "volar",
+      "label": "Volar (@vue/language-server)",
+      "ops": [
+        {
+          "id": "open-diagnostics",
+          "label": "didOpen -> first diagnostics",
+          "medianMs": 1154.7757839999977,
+          "minMs": 1149.3319400000037,
+          "stddevMs": 8.38866563602982,
+          "cvPct": 0.7252647150492848,
+          "runs": [
+            1165.797317000004,
+            1149.3319400000037,
+            1154.7757839999977
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "push: 1 publish(es) across [server+tsserver] -> []",
+          "artifact": 0,
+          "ranked": false,
+          "rankingNote": "the fixture is a valid file, so the correct payload is empty and no gate can tell an analysed empty report from a server that publishes `[]` on open and analyses afterwards — the fastest number here can be the least work done. Read `Edit plants type error -> reported` and `Edit fixes it -> diagnostic clears`, which demand specific content, as the comparable diagnostics figures."
+        },
+        {
+          "id": "diagnostics-error",
+          "label": "Edit plants type error -> reported",
+          "medianMs": 412.1460770000049,
+          "minMs": 407.3697979999997,
+          "stddevMs": 5.627577005288178,
+          "cvPct": 1.3636000993015593,
+          "runs": [
+            412.1460770000049,
+            407.3697979999997,
+            418.58399199999985
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "typescript:2322@L3 Type 'string' is not assignable to type 'number'.",
+          "artifact": 1
+        },
+        {
+          "id": "diagnostics-cleared",
+          "label": "Edit fixes it -> diagnostic clears",
+          "medianMs": 465.4016869999905,
+          "minMs": 460.73557799999253,
+          "stddevMs": 5.740536199781869,
+          "cvPct": 1.2316187055129735,
+          "runs": [
+            472.15333600000304,
+            460.73557799999253,
+            465.4016869999905
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "after fix (10 publish(es) for this file): []",
+          "artifact": 0
+        },
+        {
+          "id": "hover-after-edit",
+          "label": "Hover after retype -> NEW type",
+          "medianMs": 53.24968600000284,
+          "minMs": 51.92166900000302,
+          "stddevMs": 1.0411287176600064,
+          "cvPct": 1.9625921473142298,
+          "runs": [
+            53.24968600000284,
+            53.97460700001102,
+            51.92166900000302
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\n(property) probeValue: number\n```",
+          "artifact": 47
+        },
+        {
+          "id": "hover-settled",
+          "label": "... same hover, time to correct",
+          "medianMs": 53.24968600000284,
+          "minMs": 51.92166900000302,
+          "stddevMs": 1.0411287176600064,
+          "cvPct": 1.9625921473142298,
+          "runs": [
+            53.24968600000284,
+            53.97460700001102,
+            51.92166900000302
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\n(property) probeValue: number\n```",
+          "artifact": 1
+        },
+        {
+          "id": "steady-first",
+          "label": "Steady state: edits 1-5 (median)",
+          "medianMs": 42.1007210000098,
+          "minMs": 40.35762499998964,
+          "stddevMs": 1.4431036697071498,
+          "cvPct": 3.4447173163783438,
+          "runs": [
+            43.221371999999974,
+            40.35762499998964,
+            42.1007210000098
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\n(property) probeValue: \"steady-4\"\n```"
+        },
+        {
+          "id": "steady-last",
+          "label": "Steady state: edits 6-10 (median)",
+          "medianMs": 33.89599799999996,
+          "minMs": 32.91394600000058,
+          "stddevMs": 1.3794383171155506,
+          "cvPct": 4.039442368769298,
+          "runs": [
+            33.89599799999996,
+            35.63773499999661,
+            32.91394600000058
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\n(property) probeValue: \"steady-9\"\n```",
+          "artifact": -9
+        },
+        {
+          "id": "xfile-diagnostics",
+          "label": "Child prop retype -> Parent diagnostic",
+          "medianMs": 378.1929200000013,
+          "minMs": 376.198894000001,
+          "stddevMs": 1.688538258240333,
+          "cvPct": 0.44672368899912346,
+          "runs": [
+            379.5562839999984,
+            376.198894000001,
+            378.1929200000013
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "before: [] || after: typescript:2322@L7 Type 'string' is not assignable to type 'number'.",
+          "artifact": 1
+        },
+        {
+          "id": "xfile-hover",
+          "label": "Child prop retype -> Parent hover",
+          "medianMs": 106.17418899999757,
+          "minMs": 104.45260499999858,
+          "stddevMs": 5.569321404161185,
+          "cvPct": 5.133478425327345,
+          "runs": [
+            104.45260499999858,
+            114.84382900000492,
+            106.17418899999757
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\n(property) label: number\n```",
+          "artifact": 42
+        },
+        {
+          "id": "xfile-hover-settled",
+          "label": "... Parent hover, time to correct",
+          "medianMs": 106.17418899999757,
+          "minMs": 104.45260499999858,
+          "stddevMs": 5.569321404161185,
+          "cvPct": 5.133478425327345,
+          "runs": [
+            104.45260499999858,
+            114.84382900000492,
+            106.17418899999757
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\n(property) label: number\n```",
+          "artifact": 1
+        }
+      ],
+      "backendFallback": null
+    },
+    {
+      "suite": "edit-loop",
+      "server": "volar-tnb",
+      "label": "Volar (TNB / tsgo tsdk)",
+      "ops": [
+        {
+          "id": "open-diagnostics",
+          "label": "didOpen -> first diagnostics",
+          "medianMs": 498.4711030000035,
+          "minMs": 497.7627419999917,
+          "stddevMs": 9.295374560291085,
+          "cvPct": 1.8462262396259248,
+          "runs": [
+            498.4711030000035,
+            497.7627419999917,
+            514.2052919999987
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "push: 2 publish(es) across [server+tsserver] -> []",
+          "artifact": 0,
+          "ranked": false,
+          "rankingNote": "the fixture is a valid file, so the correct payload is empty and no gate can tell an analysed empty report from a server that publishes `[]` on open and analyses afterwards — the fastest number here can be the least work done. Read `Edit plants type error -> reported` and `Edit fixes it -> diagnostic clears`, which demand specific content, as the comparable diagnostics figures."
+        },
+        {
+          "id": "diagnostics-error",
+          "label": "Edit plants type error -> reported",
+          "medianMs": 461.0533800000121,
+          "minMs": 451.08606000000145,
+          "stddevMs": 9.793482855867282,
+          "cvPct": 2.1246894485356145,
+          "runs": [
+            451.08606000000145,
+            461.0533800000121,
+            470.67199100001017
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "typescript:2322@L3 Type 'string' is not assignable to type 'number'.",
+          "artifact": 1
+        },
+        {
+          "id": "diagnostics-cleared",
+          "label": "Edit fixes it -> diagnostic clears",
+          "medianMs": 382.0680760000105,
+          "minMs": 380.0234130000026,
+          "stddevMs": 1.4282444148808922,
+          "cvPct": 0.3742567328861868,
+          "runs": [
+            382.7732169999945,
+            380.0234130000026,
+            382.0680760000105
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "after fix (9 publish(es) for this file): []",
+          "artifact": 0
+        },
+        {
+          "id": "hover-after-edit",
+          "label": "Hover after retype -> NEW type",
+          "medianMs": 16.150666000001365,
+          "minMs": 15.79399399999238,
+          "stddevMs": 0.7406439303747172,
+          "cvPct": 4.519604929499313,
+          "runs": [
+            17.217420000000857,
+            15.79399399999238,
+            16.150666000001365
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\n(property) probeValue: number\n```",
+          "artifact": 47
+        },
+        {
+          "id": "hover-settled",
+          "label": "... same hover, time to correct",
+          "medianMs": 16.150666000001365,
+          "minMs": 15.79399399999238,
+          "stddevMs": 0.7406439303747172,
+          "cvPct": 4.519604929499313,
+          "runs": [
+            17.217420000000857,
+            15.79399399999238,
+            16.150666000001365
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\n(property) probeValue: number\n```",
+          "artifact": 1
+        },
+        {
+          "id": "steady-first",
+          "label": "Steady state: edits 1-5 (median)",
+          "medianMs": 15.31844600000477,
+          "minMs": 14.881158999996842,
+          "stddevMs": 0.2858657949090869,
+          "cvPct": 1.8799383132994105,
+          "runs": [
+            14.881158999996842,
+            15.31844600000477,
+            15.418774000005214
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\n(property) probeValue: \"steady-4\"\n```"
+        },
+        {
+          "id": "steady-last",
+          "label": "Steady state: edits 6-10 (median)",
+          "medianMs": 14.905124999990221,
+          "minMs": 14.88165100000333,
+          "stddevMs": 0.014362896963737687,
+          "cvPct": 0.0964071373412995,
+          "runs": [
+            14.88165100000333,
+            14.905124999990221,
+            14.907726999997976
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\n(property) probeValue: \"steady-9\"\n```",
+          "artifact": 0
+        },
+        {
+          "id": "xfile-diagnostics",
+          "label": "Child prop retype -> Parent diagnostic",
+          "medianMs": 383.5694430000003,
+          "minMs": 383.1990300000034,
+          "stddevMs": 0.3246987451013504,
+          "cvPct": 0.0846587726293574,
+          "runs": [
+            383.8461709999974,
+            383.1990300000034,
+            383.5694430000003
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "before: [] || after: typescript:2322@L7 Type 'string' is not assignable to type 'number'.",
+          "artifact": 1
+        },
+        {
+          "id": "xfile-hover",
+          "label": "Child prop retype -> Parent hover",
+          "medianMs": 64.22667800000636,
+          "minMs": 63.345052000004216,
+          "stddevMs": 6.052671182328512,
+          "cvPct": 8.997432050664278,
+          "runs": [
+            74.24155899998732,
+            63.345052000004216,
+            64.22667800000636
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\n(property) label: number\n```",
+          "artifact": 42
+        },
+        {
+          "id": "xfile-hover-settled",
+          "label": "... Parent hover, time to correct",
+          "medianMs": 64.22667800000636,
+          "minMs": 63.345052000004216,
+          "stddevMs": 6.052671182328512,
+          "cvPct": 8.997432050664278,
+          "runs": [
+            74.24155899998732,
+            63.345052000004216,
+            64.22667800000636
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\n(property) label: number\n```",
+          "artifact": 1
+        }
+      ],
+      "backendFallback": null
+    },
+    {
+      "suite": "edit-loop",
+      "server": "vize",
+      "label": "Vize LSP (Node shim)",
+      "ops": [
+        {
+          "id": "open-diagnostics",
+          "label": "didOpen -> first diagnostics",
+          "medianMs": 297.54855400000815,
+          "minMs": 296.87187099999574,
+          "stddevMs": 3.824290084964961,
+          "cvPct": 1.2772774296581677,
+          "runs": [
+            303.80810300000303,
+            297.54855400000815,
+            296.87187099999574
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "push: 1 publish(es) across [server] -> []",
+          "artifact": 0,
+          "ranked": false,
+          "rankingNote": "the fixture is a valid file, so the correct payload is empty and no gate can tell an analysed empty report from a server that publishes `[]` on open and analyses afterwards — the fastest number here can be the least work done. Read `Edit plants type error -> reported` and `Edit fixes it -> diagnostic clears`, which demand specific content, as the comparable diagnostics figures."
+        },
+        {
+          "id": "diagnostics-error",
+          "label": "Edit plants type error -> reported",
+          "medianMs": 149.9175879999966,
+          "minMs": 144.92183599999407,
+          "stddevMs": 9.528099999277543,
+          "cvPct": 6.238592396140822,
+          "runs": [
+            149.9175879999966,
+            144.92183599999407,
+            163.34566300000006
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "vize/types:2322@L3 Type 'string' is not assignable to type 'number'.",
+          "artifact": 1
+        },
+        {
+          "id": "diagnostics-cleared",
+          "label": "Edit fixes it -> diagnostic clears",
+          "medianMs": 145.92710300000908,
+          "minMs": 143.08698500000173,
+          "stddevMs": 5.350368684063656,
+          "cvPct": 3.6277303476173715,
+          "runs": [
+            153.44178699998884,
+            143.08698500000173,
+            145.92710300000908
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "after fix (3 publish(es) for this file): []",
+          "artifact": 0
+        },
+        {
+          "id": "hover-after-edit",
+          "label": "Hover after retype -> NEW type",
+          "medianMs": 233.29593199999363,
+          "minMs": 209.7940099999978,
+          "stddevMs": 13.728194153516366,
+          "cvPct": 6.084036423077694,
+          "runs": [
+            209.7940099999978,
+            233.29593199999363,
+            233.83865600000718
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nlet probeValue: number\n```",
+          "artifact": 40
+        },
+        {
+          "id": "hover-settled",
+          "label": "... same hover, time to correct",
+          "medianMs": 233.29593199999363,
+          "minMs": 209.7940099999978,
+          "stddevMs": 13.728194153516366,
+          "cvPct": 6.084036423077694,
+          "runs": [
+            209.7940099999978,
+            233.29593199999363,
+            233.83865600000718
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nlet probeValue: number\n```",
+          "artifact": 1
+        },
+        {
+          "id": "steady-first",
+          "label": "Steady state: edits 1-5 (median)",
+          "medianMs": 175.19467000001168,
+          "minMs": 168.17751799999678,
+          "stddevMs": 5.811922786208677,
+          "cvPct": 3.333266389017517,
+          "runs": [
+            179.71136800000386,
+            168.17751799999678,
+            175.19467000001168
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nlet probeValue: \"steady-4\"\n```"
+        },
+        {
+          "id": "steady-last",
+          "label": "Steady state: edits 6-10 (median)",
+          "medianMs": 171.16006900000502,
+          "minMs": 168.72451800000272,
+          "stddevMs": 5.761069770569099,
+          "cvPct": 3.3263816100457464,
+          "runs": [
+            179.69528499999433,
+            168.72451800000272,
+            171.16006900000502
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nlet probeValue: \"steady-9\"\n```",
+          "artifact": 0
+        },
+        {
+          "id": "xfile-diagnostics",
+          "label": "Child prop retype -> Parent diagnostic",
+          "medianMs": 304.53444799999124,
+          "minMs": 297.68290200000047,
+          "stddevMs": 27.963838078276556,
+          "cvPct": 8.817728437545174,
+          "runs": [
+            304.53444799999124,
+            349.17863399999624,
+            297.68290200000047
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "before: [] || after: vize/types:2322@L7 Type 'string' is not assignable to type 'number'.",
+          "artifact": 1
+        },
+        {
+          "id": "xfile-hover",
+          "label": "Child prop retype -> Parent hover",
+          "medianMs": 338.8254639999941,
+          "minMs": 333.15651299999445,
+          "stddevMs": 8.14509357010494,
+          "cvPct": 2.39280331354564,
+          "runs": [
+            333.15651299999445,
+            349.2169060000015,
+            338.8254639999941
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\n(property) label: number\n```",
+          "artifact": 42
+        },
+        {
+          "id": "xfile-hover-settled",
+          "label": "... Parent hover, time to correct",
+          "medianMs": 338.8254639999941,
+          "minMs": 333.15651299999445,
+          "stddevMs": 8.14509357010494,
+          "cvPct": 2.39280331354564,
+          "runs": [
+            333.15651299999445,
+            349.2169060000015,
+            338.8254639999941
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\n(property) label: number\n```",
+          "artifact": 1
+        }
+      ],
+      "backendFallback": null
+    },
+    {
+      "suite": "edit-loop",
+      "server": "verter",
+      "label": "Verter LSP (npm 0.0.1-beta.3)",
+      "ops": [
+        {
+          "id": "open-diagnostics",
+          "label": "didOpen -> first diagnostics",
+          "medianMs": 314.0994739999878,
+          "minMs": 313.9871270000003,
+          "stddevMs": 0.9978623202251065,
+          "cvPct": 0.3171658089750433,
+          "runs": [
+            315.7689079999982,
+            314.0994739999878,
+            313.9871270000003
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "push: 1 publish(es) across [server] -> []",
+          "artifact": 0,
+          "ranked": false,
+          "rankingNote": "the fixture is a valid file, so the correct payload is empty and no gate can tell an analysed empty report from a server that publishes `[]` on open and analyses afterwards — the fastest number here can be the least work done. Read `Edit plants type error -> reported` and `Edit fixes it -> diagnostic clears`, which demand specific content, as the comparable diagnostics figures."
+        },
+        {
+          "id": "diagnostics-error",
+          "label": "Edit plants type error -> reported",
+          "medianMs": 506.17777900001965,
+          "minMs": 495.1508310000063,
+          "stddevMs": 6.685191447098831,
+          "cvPct": 1.329468111865248,
+          "runs": [
+            506.17777900001965,
+            495.1508310000063,
+            507.21259999999893
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "ts:2322@L3 Type 'string' is not assignable to type 'number'.",
+          "artifact": 1
+        },
+        {
+          "id": "diagnostics-cleared",
+          "label": "Edit fixes it -> diagnostic clears",
+          "medianMs": 661.5231119999953,
+          "minMs": 657.0542420000129,
+          "stddevMs": 16.630944862583092,
+          "cvPct": 2.4866713224013037,
+          "runs": [
+            661.5231119999953,
+            687.8331490000128,
+            657.0542420000129
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "after fix (6 publish(es) for this file): []",
+          "artifact": 0
+        },
+        {
+          "id": "hover-after-edit",
+          "label": "Hover after retype -> NEW type",
+          "medianMs": 86.58952899998985,
+          "minMs": 82.85869500000263,
+          "stddevMs": 5.047392541435276,
+          "cvPct": 5.772941440698821,
+          "runs": [
+            82.85869500000263,
+            86.58952899998985,
+            92.84748399999808
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nlet probeValue: number\n```",
+          "artifact": 40
+        },
+        {
+          "id": "hover-settled",
+          "label": "... same hover, time to correct",
+          "medianMs": 86.58952899998985,
+          "minMs": 82.85869500000263,
+          "stddevMs": 5.047392541435276,
+          "cvPct": 5.772941440698821,
+          "runs": [
+            82.85869500000263,
+            86.58952899998985,
+            92.84748399999808
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nlet probeValue: number\n```",
+          "artifact": 1
+        },
+        {
+          "id": "steady-first",
+          "label": "Steady state: edits 1-5 (median)",
+          "medianMs": 56.24745300001814,
+          "minMs": 50.46217899999465,
+          "stddevMs": 3.422371998337538,
+          "cvPct": 6.289876733906731,
+          "runs": [
+            56.522755999991205,
+            50.46217899999465,
+            56.24745300001814
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nlet probeValue: \"steady-4\"\n```"
+        },
+        {
+          "id": "steady-last",
+          "label": "Steady state: edits 6-10 (median)",
+          "medianMs": 58.42322799999965,
+          "minMs": 48.05349699998624,
+          "stddevMs": 6.243884162691335,
+          "cvPct": 11.301771909055326,
+          "runs": [
+            48.05349699998624,
+            59.26412199999322,
+            58.42322799999965
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nlet probeValue: \"steady-9\"\n```",
+          "artifact": -8
+        },
+        {
+          "id": "xfile-diagnostics",
+          "label": "Child prop retype -> Parent diagnostic",
+          "medianMs": 4003.9378619999916,
+          "minMs": 4002.250251999998,
+          "stddevMs": 1.0255683548948733,
+          "cvPct": 0.025617238247988495,
+          "runs": [
+            4003.9378619999916,
+            4002.250251999998,
+            4004.1036859999876
+          ],
+          "valid": false,
+          "reason": "Parent.vue never reported the now-invalid `:label` binding (line 7) in 4000ms; 2 publish(es) for Parent.vue since the session began, 0 diagnostic(s) now",
+          "sample": "before: [] || after: []",
+          "artifact": 0
+        },
+        {
+          "id": "xfile-hover",
+          "label": "Child prop retype -> Parent hover",
+          "medianMs": 4.691418000002159,
+          "minMs": 4.47607400000561,
+          "stddevMs": 6.004909361647154,
+          "cvPct": 74.59399214666014,
+          "runs": [
+            14.982881999982055,
+            4.47607400000561,
+            4.691418000002159
+          ],
+          "valid": false,
+          "reason": "STALE: still reports `label: string` after the edit changed it to `number` (the same position answered `string` before the edit, so the feature works here — this is the edit loop; caught up after 460ms)",
+          "sample": "```typescript\n(property) label: string\n```",
+          "artifact": 42
+        },
+        {
+          "id": "xfile-hover-settled",
+          "label": "... Parent hover, time to correct",
+          "medianMs": 499.5521369999915,
+          "minMs": 460.20089700000244,
+          "stddevMs": 25.753520670390326,
+          "cvPct": 5.261509876454461,
+          "runs": [
+            460.20089700000244,
+            508.6574379999947,
+            499.5521369999915
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\n(property) label: number\n```",
+          "artifact": 3
+        }
+      ],
+      "backendFallback": null
+    },
+    {
+      "suite": "navigation",
+      "server": "volar",
+      "label": "Volar (@vue/language-server)",
+      "ops": [
+        {
+          "id": "def-component-tag",
+          "label": "Definition: <ChildCard/> tag",
+          "medianMs": 215.24993099999847,
+          "minMs": 206.94236499999533,
+          "stddevMs": 6.978760526210441,
+          "cvPct": 3.256022685549534,
+          "runs": [
+            220.80941499999608,
+            206.94236499999533,
+            215.24993099999847
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "childcard.vue@0:0",
+          "artifact": 1
+        },
+        {
+          "id": "def-imported-symbol",
+          "label": "Definition: imported fn (script)",
+          "medianMs": 6.82266800000798,
+          "minMs": 6.568515999999363,
+          "stddevMs": 2.4672653377493927,
+          "cvPct": 30.391861807564773,
+          "runs": [
+            6.82266800000798,
+            6.568515999999363,
+            10.963349000026938
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "helpers.ts@8:16",
+          "artifact": 1
+        },
+        {
+          "id": "type-definition",
+          "label": "Type definition: typed binding",
+          "medianMs": 21.70735300000524,
+          "minMs": 20.469535999989603,
+          "stddevMs": 2.9040063114886157,
+          "cvPct": 12.778032050446244,
+          "runs": [
+            21.70735300000524,
+            26.0027720000071,
+            20.469535999989603
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "types.ts@1:17",
+          "artifact": 1
+        },
+        {
+          "id": "references-prop",
+          "label": "References: prop -> parent template",
+          "medianMs": 123.06954799999949,
+          "minMs": 122.83293299999787,
+          "stddevMs": 1.7444367899255628,
+          "cvPct": 1.4073024035027504,
+          "runs": [
+            125.96573699999135,
+            122.83293299999787,
+            123.06954799999949
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "childcard.vue@11:2 childcard.vue@15:38 childcard.vue@2:11 parent.vue@2:16",
+          "artifact": 4
+        },
+        {
+          "id": "prepare-rename",
+          "label": "Prepare rename: prop",
+          "medianMs": 5.680939999991097,
+          "minMs": 5.173962999979267,
+          "stddevMs": 0.41528865754092503,
+          "cvPct": 7.392936260425417,
+          "runs": [
+            5.680939999991097,
+            5.99721000000136,
+            5.173962999979267
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "{\"start\":{\"line\":11,\"character\":2},\"end\":{\"line\":11,\"character\":13}} -> \"captionText\""
+        },
+        {
+          "id": "rename-prop",
+          "label": "Rename prop (cross-file edit)",
+          "medianMs": 3.0709250000072643,
+          "minMs": 2.9682230000034906,
+          "stddevMs": 0.25061440719939204,
+          "cvPct": 7.927834299834712,
+          "runs": [
+            3.0709250000072643,
+            3.4444409999996424,
+            2.9682230000034906
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "parent.vue:1, childcard.vue:3 :: [\"renamedCaption\"]",
+          "artifact": 4
+        },
+        {
+          "id": "code-action",
+          "label": "Code action at diagnostic",
+          "medianMs": 34.785682999994606,
+          "minMs": 33.708659000025364,
+          "stddevMs": 1.790993582654521,
+          "cvPct": 5.0832334907164505,
+          "runs": [
+            34.785682999994606,
+            37.205715999996755,
+            33.708659000025364
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "2/2 actionable, 1 quick fix :: Change spelling to 'fixtureLabel' | Move to a new file",
+          "artifact": 2
+        },
+        {
+          "id": "signature-help",
+          "label": "Signature help after `(`",
+          "medianMs": 17.03448600001866,
+          "minMs": 16.466958000004524,
+          "stddevMs": 0.7072567383783122,
+          "cvPct": 4.130026728243401,
+          "runs": [
+            17.03448600001866,
+            16.466958000004524,
+            17.872804999991786
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "formatCaption(rawText: string, repeat: number): string",
+          "artifact": 1
+        },
+        {
+          "id": "formatting",
+          "label": "Format unformatted SFC",
+          "medianMs": 65.95397600001888,
+          "minMs": 64.96855900000082,
+          "stddevMs": 1.7103981894723141,
+          "cvPct": 2.5756329805537455,
+          "runs": [
+            64.96855900000082,
+            65.95397600001888,
+            68.29818499999237
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "1 edit(s); first change @13: \"   <div    class=\\\"messy\\\"   >\\n  <span>{{m\" -> \"<div class=\\\"messy\\\">\\n    <span>{{ msg }}<\"",
+          "artifact": 1
+        }
+      ],
+      "backendFallback": null
+    },
+    {
+      "suite": "navigation",
+      "server": "volar-tnb",
+      "label": "Volar (TNB / tsgo tsdk)",
+      "ops": [
+        {
+          "id": "def-component-tag",
+          "label": "Definition: <ChildCard/> tag",
+          "medianMs": 28.25466399997822,
+          "minMs": 25.994891999987885,
+          "stddevMs": 3.4226074706197345,
+          "cvPct": 11.806149799478185,
+          "runs": [
+            32.720562000002246,
+            28.25466399997822,
+            25.994891999987885
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "childcard.vue@0:0",
+          "artifact": 1
+        },
+        {
+          "id": "def-imported-symbol",
+          "label": "Definition: imported fn (script)",
+          "medianMs": 5.880253999988781,
+          "minMs": 5.666435999999521,
+          "stddevMs": 0.6669433812691841,
+          "cvPct": 10.83857053611355,
+          "runs": [
+            6.913587000017287,
+            5.666435999999521,
+            5.880253999988781
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "helpers.ts@8:16",
+          "artifact": 1
+        },
+        {
+          "id": "type-definition",
+          "label": "Type definition: typed binding",
+          "medianMs": 67.28421399998479,
+          "minMs": 44.839342999999644,
+          "stddevMs": 18.638569756561306,
+          "cvPct": 28.828398616504387,
+          "runs": [
+            44.839342999999644,
+            67.28421399998479,
+            81.83695399999851
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "types.ts@1:17",
+          "artifact": 1
+        },
+        {
+          "id": "references-prop",
+          "label": "References: prop -> parent template",
+          "medianMs": 78.41796200000681,
+          "minMs": 63.39987600001041,
+          "stddevMs": 19.13523836154353,
+          "cvPct": 23.603215003854306,
+          "runs": [
+            63.39987600001041,
+            101.39358500001254,
+            78.41796200000681
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "childcard.vue@11:2 childcard.vue@15:38 childcard.vue@2:11 parent.vue@2:16",
+          "artifact": 4
+        },
+        {
+          "id": "prepare-rename",
+          "label": "Prepare rename: prop",
+          "medianMs": 4.408018000016455,
+          "minMs": 4.238500999985263,
+          "stddevMs": 5.836785750766286,
+          "cvPct": 75.87361530144602,
+          "runs": [
+            14.431802999984939,
+            4.408018000016455,
+            4.238500999985263
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "{\"start\":{\"line\":11,\"character\":2},\"end\":{\"line\":11,\"character\":13}} -> \"captionText\""
+        },
+        {
+          "id": "rename-prop",
+          "label": "Rename prop (cross-file edit)",
+          "medianMs": 4.03548300001421,
+          "minMs": 3.5541859999939334,
+          "stddevMs": 0.3873089321356937,
+          "cvPct": 9.755781096077223,
+          "runs": [
+            4.320467000012286,
+            4.03548300001421,
+            3.5541859999939334
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "parent.vue:1, childcard.vue:3 :: [\"renamedCaption\"]",
+          "artifact": 4
+        },
+        {
+          "id": "code-action",
+          "label": "Code action at diagnostic",
+          "medianMs": 736.3062560000108,
+          "minMs": 728.7643040000112,
+          "stddevMs": 6.882496417649325,
+          "cvPct": 0.9353005213006983,
+          "runs": [
+            742.5075159999833,
+            736.3062560000108,
+            728.7643040000112
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "2/2 actionable, 1 quick fix :: Change spelling to 'fixtureLabel' | Move to a new file",
+          "artifact": 2
+        },
+        {
+          "id": "signature-help",
+          "label": "Signature help after `(`",
+          "medianMs": 23.012052999984007,
+          "minMs": 22.431618999980856,
+          "stddevMs": 0.44137311566539844,
+          "cvPct": 1.9262302657701595,
+          "runs": [
+            22.431618999980856,
+            23.297816000005696,
+            23.012052999984007
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "formatCaption(rawText: string, repeat: number): string",
+          "artifact": 1
+        },
+        {
+          "id": "formatting",
+          "label": "Format unformatted SFC",
+          "medianMs": 129.7363910000131,
+          "minMs": 127.74759600000107,
+          "stddevMs": 2.0760270740077043,
+          "cvPct": 1.599476686719764,
+          "runs": [
+            129.7363910000131,
+            127.74759600000107,
+            131.898445000028
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "1 edit(s); first change @13: \"   <div    class=\\\"messy\\\"   >\\n  <span>{{m\" -> \"<div class=\\\"messy\\\">\\n    <span>{{ msg }}<\"",
+          "artifact": 1
+        }
+      ],
+      "backendFallback": null
+    },
+    {
+      "suite": "navigation",
+      "server": "vize",
+      "label": "Vize LSP (Node shim)",
+      "ops": [
+        {
+          "id": "def-component-tag",
+          "label": "Definition: <ChildCard/> tag",
+          "medianMs": 0.34967199998209253,
+          "minMs": 0.3172910000139382,
+          "stddevMs": 0.07344525288229495,
+          "cvPct": 19.59365622911006,
+          "runs": [
+            0.34967199998209253,
+            0.4575630000035744,
+            0.3172910000139382
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "childcard.vue@0:0",
+          "artifact": 1
+        },
+        {
+          "id": "def-imported-symbol",
+          "label": "Definition: imported fn (script)",
+          "medianMs": 4.185914000001503,
+          "minMs": 4.094803999993019,
+          "stddevMs": 0.09579102320846615,
+          "cvPct": 2.2867224196382785,
+          "runs": [
+            4.185914000001503,
+            4.286311000003479,
+            4.094803999993019
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "helpers.ts@8:16",
+          "artifact": 1
+        },
+        {
+          "id": "type-definition",
+          "label": "Type definition: typed binding",
+          "medianMs": 0.25309199999901466,
+          "minMs": 0.24759199999971315,
+          "stddevMs": 0.02159206902905077,
+          "cvPct": 8.219079212373652,
+          "runs": [
+            0.2874359999841545,
+            0.24759199999971315,
+            0.25309199999901466
+          ],
+          "valid": false,
+          "reason": "every provider rejected textDocument/typeDefinition: {\"code\":-32601,\"message\":\"Method not found\"}",
+          "sample": "{\"code\":-32601,\"message\":\"Method not found\"}"
+        },
+        {
+          "id": "references-prop",
+          "label": "References: prop -> parent template",
+          "medianMs": 7.234236999996938,
+          "minMs": 6.8797060000069905,
+          "stddevMs": 0.3862985909962813,
+          "cvPct": 5.3244869355912945,
+          "runs": [
+            7.234236999996938,
+            7.651454999984708,
+            6.8797060000069905
+          ],
+          "valid": false,
+          "reason": "references missing Parent.vue — only found childcard.vue",
+          "sample": "childcard.vue@2:11 childcard.vue@11:2",
+          "artifact": 2
+        },
+        {
+          "id": "prepare-rename",
+          "label": "Prepare rename: prop",
+          "medianMs": 1.7006000000110362,
+          "minMs": 1.6803929999878164,
+          "stddevMs": 0.04186361371656217,
+          "cvPct": 2.4425196106160394,
+          "runs": [
+            1.7608630000031553,
+            1.7006000000110362,
+            1.6803929999878164
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "{\"end\":{\"character\":13,\"line\":11},\"start\":{\"character\":2,\"line\":11}} -> \"captionText\""
+        },
+        {
+          "id": "rename-prop",
+          "label": "Rename prop (cross-file edit)",
+          "medianMs": 5.438177999982145,
+          "minMs": 5.369900999998208,
+          "stddevMs": 0.07388319193599198,
+          "cvPct": 1.3576803743455044,
+          "runs": [
+            5.438177999982145,
+            5.369900999998208,
+            5.517528999975184
+          ],
+          "valid": false,
+          "reason": "BROKEN REFACTOR: edited childcard.vue:2 but produced no edit in Parent.vue — the template usage is left behind",
+          "sample": "childcard.vue:2 :: []",
+          "artifact": 2
+        },
+        {
+          "id": "code-action",
+          "label": "Code action at diagnostic",
+          "medianMs": 0.38766300000133924,
+          "minMs": 0.3618750000023283,
+          "stddevMs": 0.0247222702129105,
+          "cvPct": 6.389053001008012,
+          "runs": [
+            0.41130400000838563,
+            0.38766300000133924,
+            0.3618750000023283
+          ],
+          "valid": false,
+          "reason": "codeAction returned nothing at the diagnostic",
+          "sample": "null",
+          "artifact": 0
+        },
+        {
+          "id": "signature-help",
+          "label": "Signature help after `(`",
+          "medianMs": 248.30740399999195,
+          "minMs": 230.33554199998616,
+          "stddevMs": 16.09020495435127,
+          "cvPct": 6.513528293439143,
+          "runs": [
+            248.30740399999195,
+            230.33554199998616,
+            262.4395009999862
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "formatCaption(rawText: string, repeat: number): string",
+          "artifact": 1
+        },
+        {
+          "id": "formatting",
+          "label": "Format unformatted SFC",
+          "medianMs": 0.5210209999931976,
+          "minMs": 0.5206209999741986,
+          "stddevMs": 1.507223120464021,
+          "cvPct": 108.35406624511963,
+          "runs": [
+            3.13140799998655,
+            0.5206209999741986,
+            0.5210209999931976
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "1 edit(s); first change @1: \"template>\\n     <div    class=\\\"messy\\\"   >\" -> \"script setup lang=\\\"ts\\\">\\nimport { ref } f\"",
+          "artifact": 1
+        }
+      ],
+      "backendFallback": null
+    },
+    {
+      "suite": "navigation",
+      "server": "verter",
+      "label": "Verter LSP (npm 0.0.1-beta.3)",
+      "ops": [
+        {
+          "id": "def-component-tag",
+          "label": "Definition: <ChildCard/> tag",
+          "medianMs": 0.7156140000151936,
+          "minMs": 0.5077340000134427,
+          "stddevMs": 1.8451247176814112,
+          "cvPct": 110.13923071309681,
+          "runs": [
+            3.8024490000098012,
+            0.7156140000151936,
+            0.5077340000134427
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "childcard.vue@0:0",
+          "artifact": 1
+        },
+        {
+          "id": "def-imported-symbol",
+          "label": "Definition: imported fn (script)",
+          "medianMs": 0.5346070000086911,
+          "minMs": 0.3633869999903254,
+          "stddevMs": 1.380591055246893,
+          "cvPct": 110.93115131052991,
+          "runs": [
+            0.3633869999903254,
+            0.5346070000086911,
+            2.8356490000151098
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "helpers.ts@8:16",
+          "artifact": 1
+        },
+        {
+          "id": "type-definition",
+          "label": "Type definition: typed binding",
+          "medianMs": 35.588698999985354,
+          "minMs": 30.91575699998066,
+          "stddevMs": 6.3258971248567315,
+          "cvPct": 17.262064969831187,
+          "runs": [
+            35.588698999985354,
+            30.91575699998066,
+            43.434253000013996
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "types.ts@1:17",
+          "artifact": 1
+        },
+        {
+          "id": "references-prop",
+          "label": "References: prop -> parent template",
+          "medianMs": 103.79108699999051,
+          "minMs": 86.91260500001954,
+          "stddevMs": 13.588091430681773,
+          "cvPct": 13.387224823894808,
+          "runs": [
+            103.79108699999051,
+            113.79761300000246,
+            86.91260500001954
+          ],
+          "valid": false,
+          "reason": "references missing Parent.vue — only found childcard.vue",
+          "sample": "childcard.vue@11:2 childcard.vue@15:38 childcard.vue@2:11",
+          "artifact": 3
+        },
+        {
+          "id": "prepare-rename",
+          "label": "Prepare rename: prop",
+          "medianMs": 0.315054999984568,
+          "minMs": 0.2870849999890197,
+          "stddevMs": 0.027992503006450585,
+          "cvPct": 8.884534550422739,
+          "runs": [
+            0.3430699999735225,
+            0.2870849999890197,
+            0.315054999984568
+          ],
+          "valid": false,
+          "reason": "prepareRename returned null — server declines to rename at this position",
+          "sample": "null"
+        },
+        {
+          "id": "rename-prop",
+          "label": "Rename prop (cross-file edit)",
+          "medianMs": 1.293191000004299,
+          "minMs": 1.2732049999758601,
+          "stddevMs": 0.13082641967909897,
+          "cvPct": 9.630140350754743,
+          "runs": [
+            1.2732049999758601,
+            1.5091340000217315,
+            1.293191000004299
+          ],
+          "valid": false,
+          "reason": "BROKEN REFACTOR: edited childcard.vue:3 but produced no edit in Parent.vue — the template usage is left behind",
+          "sample": "childcard.vue:3 :: []",
+          "artifact": 3
+        },
+        {
+          "id": "code-action",
+          "label": "Code action at diagnostic",
+          "medianMs": 0.6592409999866504,
+          "minMs": 0.5422689999977592,
+          "stddevMs": 0.08264365783572944,
+          "cvPct": 13.025696320668912,
+          "runs": [
+            0.5422689999977592,
+            0.7018889999890234,
+            0.6592409999866504
+          ],
+          "valid": false,
+          "reason": "codeAction returned nothing at the diagnostic",
+          "sample": "null",
+          "artifact": 0
+        },
+        {
+          "id": "signature-help",
+          "label": "Signature help after `(`",
+          "medianMs": 5.060414999985369,
+          "minMs": 4.990744000009727,
+          "stddevMs": 3.217269458103012,
+          "cvPct": 46.742513733207616,
+          "runs": [
+            4.990744000009727,
+            5.060414999985369,
+            10.597727000014856
+          ],
+          "valid": false,
+          "reason": "signatureHelp returned no signatures",
+          "sample": "null",
+          "artifact": 0
+        },
+        {
+          "id": "formatting",
+          "label": "Format unformatted SFC",
+          "medianMs": 0.29238500000792556,
+          "minMs": 0.252437999995891,
+          "stddevMs": 0.06619073452641543,
+          "cvPct": 21.431677082847827,
+          "runs": [
+            0.29238500000792556,
+            0.3817130000097677,
+            0.252437999995891
+          ],
+          "valid": false,
+          "reason": "formatting returned null on a deliberately unformatted document",
+          "sample": "null",
+          "artifact": 0
+        }
+      ],
+      "backendFallback": null
+    },
+    {
+      "suite": "smoke",
+      "server": "volar",
+      "label": "Volar (@vue/language-server)",
+      "ops": [
+        {
+          "id": "hover-script",
+          "label": "Hover (script setup)",
+          "medianMs": 184.80324800001108,
+          "minMs": 179.56123099999968,
+          "stddevMs": 3.4296489502155256,
+          "cvPct": 1.8694329314989049,
+          "runs": [
+            184.80324800001108,
+            186.0134820000094,
+            179.56123099999968
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nconst marker: Ref<string, string>\n```\nStable hover target — do not rename.",
+          "artifact": 90
+        },
+        {
+          "id": "hover-template",
+          "label": "Hover (template interpolation)",
+          "medianMs": 36.21825999999419,
+          "minMs": 33.4835819999862,
+          "stddevMs": 2.1106567768940794,
+          "cvPct": 5.8991122890792544,
+          "runs": [
+            36.21825999999419,
+            33.4835819999862,
+            37.63583899999503
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\n(property) marker: string\n```",
+          "artifact": 43
+        }
+      ],
+      "backendFallback": null
+    },
+    {
+      "suite": "smoke",
+      "server": "volar-tnb",
+      "label": "Volar (TNB / tsgo tsdk)",
+      "ops": [
+        {
+          "id": "hover-script",
+          "label": "Hover (script setup)",
+          "medianMs": 14.220131999987643,
+          "minMs": 4.017510000005132,
+          "stddevMs": 7.047459849809097,
+          "cvPct": 59.09248889990298,
+          "runs": [
+            4.017510000005132,
+            17.540812999999616,
+            14.220131999987643
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nconst marker: Ref<string, string>\n```\nStable hover target — do not rename.",
+          "artifact": 90
+        },
+        {
+          "id": "hover-template",
+          "label": "Hover (template interpolation)",
+          "medianMs": 5.265737000008812,
+          "minMs": 5.236602999997558,
+          "stddevMs": 1.58814897502907,
+          "cvPct": 25.747992653382077,
+          "runs": [
+            8.001808999979403,
+            5.265737000008812,
+            5.236602999997558
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\n(property) marker: string\n```",
+          "artifact": 43
+        }
+      ],
+      "backendFallback": null
+    },
+    {
+      "suite": "smoke",
+      "server": "vize",
+      "label": "Vize LSP (Node shim)",
+      "ops": [
+        {
+          "id": "hover-script",
+          "label": "Hover (script setup)",
+          "medianMs": 7.263391999993473,
+          "minMs": 6.907677000010153,
+          "stddevMs": 0.27505270690805717,
+          "cvPct": 3.816641320807277,
+          "runs": [
+            6.907677000010153,
+            7.448938000015914,
+            7.263391999993473
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nconst marker: Ref<string, string>Stable hover target — do not rename.\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Recommended order: <script",
+          "artifact": 317
+        },
+        {
+          "id": "hover-template",
+          "label": "Hover (template interpolation)",
+          "medianMs": 1.7920310000190511,
+          "minMs": 1.7375599999795668,
+          "stddevMs": 0.03366327116061813,
+          "cvPct": 1.8952214673691428,
+          "runs": [
+            1.7920310000190511,
+            1.7990639999916311,
+            1.7375599999795668
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nconst marker: string\n```",
+          "artifact": 38
+        }
+      ],
+      "backendFallback": null
+    },
+    {
+      "suite": "smoke",
+      "server": "verter",
+      "label": "Verter LSP (npm 0.0.1-beta.3)",
+      "ops": [
+        {
+          "id": "hover-script",
+          "label": "Hover (script setup)",
+          "medianMs": 29.213375000021188,
+          "minMs": 0.7006739999924321,
+          "stddevMs": 35.082565842540305,
+          "cvPct": 104.83621642649996,
+          "runs": [
+            70.47844999999506,
+            0.7006739999924321,
+            29.213375000021188
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nconst marker: Ref<string, string>Stable hover target — do not rename.\n```",
+          "artifact": 89
+        },
+        {
+          "id": "hover-template",
+          "label": "Hover (template interpolation)",
+          "medianMs": 1.209035000007134,
+          "minMs": 0.8871539999963716,
+          "stddevMs": 1.0880768486032784,
+          "cvPct": 65.17826605714842,
+          "runs": [
+            2.911969000007957,
+            0.8871539999963716,
+            1.209035000007134
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nlet marker: stringStable hover target — do not rename.\n```",
+          "artifact": 74
+        }
+      ],
+      "backendFallback": null
+    }
+  ]
+}

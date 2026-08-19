@@ -1,13 +1,15 @@
 # Ubuntu/Linux · ide ops
 
-> Full report for `ide-Linux.md` — every collapsed block (methodology, gate notes, raw runs) that the
-> [README](../../README.md) summary tables link here for. Auto-generated; do not edit.
+> Full report for `ide-Linux.md` — every table, collapsed block (methodology, gate notes, raw runs) that the
+> [README](../../README.md) landing page charts link here for. Auto-generated; do not edit.
 
 ## IDE operation results
 
 - **Generated:** 2026-08-16T09:15:20.140Z
 - **Runner:** linux/x64 · Node v22.23.2
 - **Runs / warmups:** 3 / 1
+
+Ranked **per operation**, never pooled. These operations differ by orders of magnitude and answer unrelated questions, so one table each. A row that failed its content gate is shown in brackets and excluded from ranking — latency without a correct answer is not a comparable measurement.
 
 ### IDE · background
 

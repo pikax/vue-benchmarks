@@ -107,6 +107,16 @@ export function fileMatches(diagFile, expectFile) {
   return got === want || got.endsWith(`/${want}`) || got.endsWith(want);
 }
 
+/** Diagnostics whose path sits under `cases/<caseId>/` in a combined project. */
+export function diagsForCase(diags, caseId) {
+  const re = new RegExp(`(?:^|/)cases/${caseId}/`);
+  return (diags || []).filter((d) => re.test(String(d.file || "").replace(/\\/g, "/")));
+}
+
+export function combinedFromDiags(diags) {
+  return (diags || []).map((d) => d.raw || d.message || "").filter(Boolean).join("\n");
+}
+
 function diagHay(d) {
   return `${d.code || ""} ${d.message || ""} ${d.raw || ""}`;
 }

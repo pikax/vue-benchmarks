@@ -1,7 +1,7 @@
 # nuxt-ui
 
-> Full report for `real-world-Linux-nuxt-ui.md` — every collapsed block (methodology, gate notes, raw runs) that the
-> [README](../../README.md) summary tables link here for. Auto-generated; do not edit.
+> Full report for `real-world-Linux-nuxt-ui.md` — every table, collapsed block (methodology, gate notes, raw runs) that the
+> [README](../../README.md) landing page charts link here for. Auto-generated; do not edit.
 
 ## Benchmark Results
 

@@ -24,6 +24,7 @@ import { describe, test } from "node:test";
 import assert from "node:assert/strict";
 
 import { detectBackendFallback, normalizeUri } from "../../scripts/lib/ide-ops/context.mjs";
+import { sumPidTreeRssBytes } from "../../scripts/lib/memory.mjs";
 
 /* ═══════════════════════════════ normalizeUri ═══════════════════════════════ */
 
@@ -290,5 +291,12 @@ describe("detectBackendFallback — Verter's degraded start is detected too", ()
         "the two backend-fallback detectors disagree",
       );
     }
+  });
+});
+
+describe("sumPidTreeRssBytes", () => {
+  test("empty pid list is null, not zero", () => {
+    assert.equal(sumPidTreeRssBytes([]), null);
+    assert.equal(sumPidTreeRssBytes([0, -1]), null);
   });
 });

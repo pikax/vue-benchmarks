@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="288" viewBox="0 0 760 288" role="img" aria-label="VDOM · production · sourcemap off">
+  <title>VDOM · production · sourcemap off (lower is better)</title>
+  <style><![CDATA[
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+    .label { fill: #111827; }
+    .struck { text-decoration: line-through; opacity: 0.62; }
+    .muted { fill: #6b7280; }
+    .onbar { fill: #ffffff; }
+    .track { fill: #111827; fill-opacity: 0.06; }
+    .grid { stroke: #111827; stroke-opacity: 0.08; }
+    @media (prefers-color-scheme: dark) {
+      .label { fill: #f9fafb; }
+      .muted { fill: #9ca3af; }
+      .track { fill: #f9fafb; fill-opacity: 0.08; }
+      .grid { stroke: #f9fafb; stroke-opacity: 0.12; }
+    }
+  ]]></style>
+  <defs><pattern id="hatch-2" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="8" height="8" fill="#2563eb"/><line x1="0" y1="0" x2="0" y2="8" stroke="#fff" stroke-width="3" opacity="0.35"/></pattern><pattern id="hatch-3" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="8" height="8" fill="#e11d48"/><line x1="0" y1="0" x2="0" y2="8" stroke="#fff" stroke-width="3" opacity="0.35"/></pattern><pattern id="hatch-4" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="8" height="8" fill="#2563eb"/><line x1="0" y1="0" x2="0" y2="8" stroke="#fff" stroke-width="3" opacity="0.35"/></pattern><pattern id="hatch-5" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="8" height="8" fill="#e11d48"/><line x1="0" y1="0" x2="0" y2="8" stroke="#fff" stroke-width="3" opacity="0.35"/></pattern></defs>
+  <text class="label" x="16" y="22" font-size="15" font-weight="600">VDOM · production · sourcemap off</text>
+  <text class="muted" x="744" y="22" text-anchor="end" font-size="11">lower is better</text>
+  
+  <line class="grid" x1="248" y1="36" x2="248" y2="260" />
+  <text class="muted" x="248" y="280" text-anchor="middle" font-size="11">0.0 ms</text>
+  <line class="grid" x1="348.5" y1="36" x2="348.5" y2="260" />
+  <text class="muted" x="348.5" y="280" text-anchor="middle" font-size="11">483 ms</text>
+  <line class="grid" x1="449" y1="36" x2="449" y2="260" />
+  <text class="muted" x="449" y="280" text-anchor="middle" font-size="11">965 ms</text>
+  <line class="grid" x1="549.5" y1="36" x2="549.5" y2="260" />
+  <text class="muted" x="549.5" y="280" text-anchor="middle" font-size="11">1.45 s</text>
+  <line class="grid" x1="650" y1="36" x2="650" y2="260" />
+  <text class="muted" x="650" y="280" text-anchor="middle" font-size="11">1.93 s</text>
+  <text class="muted" x="16" y="60" font-size="11">1</text>
+      <text class="label" x="236" y="60" text-anchor="end" font-size="13">@vue/compiler-sfc 3.5 (1T)</text>
+      <rect class="track" x="248" y="49" width="402" height="22" rx="5"/>
+      <rect x="248" y="49" width="75.8" height="22" rx="5" fill="#42b883"/>
+      <text class="label" x="331.7967875647669" y="60" font-size="12" font-weight="600">364 ms</text>
+  <text class="muted" x="16" y="96" font-size="11">2</text>
+      <text class="label" x="236" y="96" text-anchor="end" font-size="13">@vue/compiler-sfc 3.6 (1T)</text>
+      <rect class="track" x="248" y="85" width="402" height="22" rx="5"/>
+      <rect x="248" y="85" width="114.1" height="22" rx="5" fill="#42b883"/>
+      <text class="onbar" x="354.101347150259" y="96" text-anchor="end" font-size="12" font-weight="600">548 ms</text>
+  <text class="muted" x="16" y="132" font-size="11">3</text>
+      <text class="label struck" x="236" y="132" text-anchor="end" font-size="13">Vize native batch (max threads)</text>
+      <rect class="track" x="248" y="121" width="402" height="22" rx="5"/>
+      <rect x="248" y="121" width="8.7" height="22" rx="5" fill="url(#hatch-2)"/>
+      <text class="label" x="264.7481865284974" y="132" font-size="12" font-weight="600">42.0 ms · unranked</text>
+  <text class="muted" x="16" y="168" font-size="11">4</text>
+      <text class="label struck" x="236" y="168" text-anchor="end" font-size="13">Verter compileMany (session cache)</text>
+      <rect class="track" x="248" y="157" width="402" height="22" rx="5"/>
+      <rect x="248" y="157" width="14.3" height="22" rx="5" fill="url(#hatch-3)"/>
+      <text class="label" x="270.28870466321246" y="168" font-size="12" font-weight="600">68.6 ms · unranked</text>
+  <text class="muted" x="16" y="204" font-size="11">5</text>
+      <text class="label struck" x="236" y="204" text-anchor="end" font-size="13">Vize native loop (1T)</text>
+      <rect class="track" x="248" y="193" width="402" height="22" rx="5"/>
+      <rect x="248" y="193" width="25.9" height="22" rx="5" fill="url(#hatch-4)"/>
+      <text class="label" x="281.9321243523316" y="204" font-size="12" font-weight="600">125 ms · unranked</text>
+  <text class="muted" x="16" y="240" font-size="11">6</text>
+      <text class="label struck" x="236" y="240" text-anchor="end" font-size="13">Verter compileMany (stateless)</text>
+      <rect class="track" x="248" y="229" width="402" height="22" rx="5"/>
+      <rect x="248" y="229" width="402.0" height="22" rx="5" fill="url(#hatch-5)"/>
+      <text class="onbar" x="642" y="240" text-anchor="end" font-size="12" font-weight="600">1.93 s · unranked</text>
+</svg>

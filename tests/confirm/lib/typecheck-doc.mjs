@@ -8,6 +8,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import os from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { typecheckAllLanding, writeChart } from "../../../scripts/lib/readme-charts.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const casesRoot = join(here, "../fixtures/typecheck/cases");
@@ -232,6 +233,28 @@ function appendTimeAndMemory(lines, metas, byCase, host) {
   lines.push("");
 }
 
+function appendAllPlants(lines, results, { chartsHref = "results/charts", writeChart: write } = {}) {
+  const rows = (results || []).filter((r) => r.suite === "typecheck-all");
+  if (!rows.length) return;
+  const landing = typecheckAllLanding(rows, {
+    chartsHref,
+    // Tests must not clobber published SVGs — only callers that pass writeChart
+    // (confirm run / README splice) write to docs/results/charts.
+    writeChart: typeof write === "function" ? write : undefined,
+  });
+  lines.push("## All plants (one tsconfig)");
+  lines.push("");
+  lines.push(
+    "One spawn per tool over **every** plant, nested at `cases/<id>/` so filenames do not collide. Same shared `strictTemplates` tsconfig as the per-plant matrix — no case-local `vueCompilerOptions`, no fallthroughAttributes retry, no verter extra flags. A plant that only passes with those extras fails here; that is the point of the combined check.",
+  );
+  lines.push("");
+  lines.push(
+    "Wall is the **median** of the same measured-run count as the Benchmark job (`--runs`, default 5), after discarded warmups (`--warmups`, default 1, minimum 1). Peak RSS is the max of those measured runs. Pass rate is scored plants that met their pin (skips excluded), as a **percentage**.",
+  );
+  lines.push("");
+  if (landing.trim()) lines.push(landing.trim(), "");
+}
+
 function hostLabel(platform, ci) {
   const os =
     platform === "linux" ? "Linux" : platform === "darwin" ? "macOS" : platform === "win32" ? "Windows" : platform;
@@ -269,47 +292,33 @@ export function formatRunnerLine(runner) {
 }
 
 /**
- * Compact README block: per-tool pass/warn/fail/skip + warn list + link.
- * Includes the same runner line as the full doc.
+ * Compact README block: all-plants charts + link. Runner/date live once
+ * in the top “This run” section, not repeated here.
  */
 export function formatTypecheckReadmeSummary({ results, generatedAt, runner }) {
   const typecheckRows = results.filter((r) => r.suite === "typecheck");
   const plants = new Set(typecheckRows.map((r) => r.caseId)).size;
-  const host = hostLabel(runner?.platform ?? process.platform, runner?.ci ?? Boolean(process.env.CI));
   const lines = [];
   lines.push("<!-- TYPECHECK_CONFIRM_START -->");
   lines.push("");
   lines.push("## Typecheck confirmation");
   lines.push("");
   lines.push(
-    `Correctness plants (not throughput). **${plants}** plants. Generated ${generatedAt} on **${host}**.`,
+    `> 📄 **[Full matrix →](docs/typecheck.md)** — plants, documented gaps, per-plant time/memory. **${plants}** plants${generatedAt ? `. Generated ${generatedAt}` : ""}.`,
   );
   lines.push("");
-  const runnerLine = formatRunnerLine(runner);
-  if (runnerLine) lines.push(runnerLine);
-  if (runner?.runUrl) lines.push(`- **CI run:** ${runner.runUrl}`);
-  lines.push("");
-  lines.push("Full matrix, plants, documented gaps, and time/memory: [docs/typecheck.md](docs/typecheck.md).");
-  lines.push("");
-  lines.push("| Tool | pass | warn | fail | skip |");
-  lines.push("| --- | ---: | ---: | ---: | ---: |");
-  const totals = { pass: 0, warn: 0, fail: 0, skip: 0 };
-  for (const t of TOOLS) {
-    const rows = typecheckRows.filter((r) => r.tool === t);
-    const n = (status) => rows.filter((r) => r.status === status).length;
-    const cell = { pass: n("pass"), warn: n("warn"), fail: n("fail"), skip: n("skip") };
-    for (const k of Object.keys(totals)) totals[k] += cell[k];
-    lines.push(`| ${TOOL_LABEL[t]} | ${cell.pass} | ${cell.warn} | ${cell.fail} | ${cell.skip} |`);
-  }
-  lines.push(`| **all** | ${totals.pass} | ${totals.warn} | ${totals.fail} | ${totals.skip} |`);
-  lines.push("");
-  const warns = typecheckRows.filter((r) => r.status === "warn");
-  if (warns.length) {
-    lines.push("Disclosed extra harness behaviour (warn, not a pass):");
+  const allLanding = typecheckAllLanding(results, {
+    chartsHref: "docs/results/charts",
+    writeChart: (file, svg) => writeChart(join(here, "../../../docs/results/charts"), file, svg),
+  });
+  if (allLanding.trim()) {
+    lines.push("### All plants (one tsconfig)");
     lines.push("");
-    for (const r of warns.sort((a, b) => `${a.caseId}/${a.tool}`.localeCompare(`${b.caseId}/${b.tool}`))) {
-      lines.push(`- \`${r.tool}\` / \`${r.caseId}\``);
-    }
+    lines.push(
+      "One spawn per tool over every plant. Pass rate is a **percentage** of scored plants.",
+    );
+    lines.push("");
+    lines.push(allLanding.trim());
     lines.push("");
   }
   lines.push("<!-- TYPECHECK_CONFIRM_END -->");
@@ -331,6 +340,7 @@ export function formatTypecheckDoc({
   platform,
   ci,
   runner,
+  writeChart,
 }) {
   runner = runner ?? {
     platform: platform ?? process.platform,
@@ -375,7 +385,10 @@ export function formatTypecheckDoc({
 
   lines.push("## How plants are judged");
   lines.push("");
-  lines.push("- Each case is a tiny project under `tests/confirm/fixtures/typecheck/cases/<id>/`.");
+  lines.push("- Each case is a tiny project under `tests/confirm/fixtures/typecheck/cases/<id>/`. The per-plant matrix is still one spawn per case.");
+  lines.push(
+    "- **All plants (one tsconfig)** — extra check: every plant is copied under `cases/<id>/` and typechecked in **one** process with the shared `tsconfig.json` (no per-case overlay, no fallthroughAttributes retry). Wall is the median of the Benchmark job's `--runs` (default 5) after `--warmups` (default 1). Peak RSS is the max of those measured runs. Pass rate is the per-plant score of the last measured dump, as a percentage of scored plants (skips excluded).",
+  );
   lines.push(
     "- Every tool runs on the **same shared tsconfig** (`strictTemplates: true`). Extra TypeScript flags that only one tool needs are **not** added globally.",
   );
@@ -450,6 +463,10 @@ export function formatTypecheckDoc({
   lines.push(`- plants: **${metas.length}**`);
   lines.push(`- pass: **${pass}** · fail: **${fail}** · skip: **${skip}** · warn: **${warn}**`);
   lines.push("- wall clock + peak RSS per plant × tool: [Time and memory](#time-and-memory)");
+  lines.push("- one-spawn combined run: [All plants (one tsconfig)](#all-plants-one-tsconfig)");
+  lines.push("");
+
+  appendAllPlants(lines, results, { chartsHref: "results/charts", writeChart });
   lines.push("");
 
   for (const [groupId, groupTitle] of GROUPS) {

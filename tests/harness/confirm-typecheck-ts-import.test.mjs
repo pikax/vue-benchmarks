@@ -244,11 +244,9 @@ describe("typecheck.md generator", () => {
     });
     assert.match(md, /<!-- TYPECHECK_CONFIRM_START -->/);
     assert.match(md, /docs\/typecheck\.md/);
-    assert.match(md, /\*\*Runner:\*\*/);
-    assert.match(md, /4 CPUs · Test CPU · 16\.0 GB/);
-    assert.match(md, /\| vue-tsc \| 1 \| 0 \| 1 \| 0 \|/);
-    assert.match(md, /\| vize \| 0 \| 1 \| 0 \| 0 \|/);
-    assert.match(md, /vize-check.*`a`/);
+    assert.doesNotMatch(md, /\*\*Runner:\*\*/);
+    assert.doesNotMatch(md, /\| Tool \| pass \| warn \| fail \| skip \|/);
+    assert.doesNotMatch(md, /vize-check.*`a`/);
     assert.doesNotMatch(md, /<script setup>/);
   });
 

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="216" viewBox="0 0 760 216" role="img" aria-label="All plants · pass rate (one tsconfig)">
+  <title>All plants · pass rate (one tsconfig) (higher is better)</title>
+  <style><![CDATA[
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+    .label { fill: #111827; }
+    .struck { text-decoration: line-through; opacity: 0.62; }
+    .muted { fill: #6b7280; }
+    .onbar { fill: #ffffff; }
+    .track { fill: #111827; fill-opacity: 0.06; }
+    .grid { stroke: #111827; stroke-opacity: 0.08; }
+    @media (prefers-color-scheme: dark) {
+      .label { fill: #f9fafb; }
+      .muted { fill: #9ca3af; }
+      .track { fill: #f9fafb; fill-opacity: 0.08; }
+      .grid { stroke: #f9fafb; stroke-opacity: 0.12; }
+    }
+  ]]></style>
+  
+  <text class="label" x="16" y="22" font-size="15" font-weight="600">All plants · pass rate (one tsconfig)</text>
+  <text class="muted" x="744" y="22" text-anchor="end" font-size="11">higher is better</text>
+  
+  <line class="grid" x1="248" y1="36" x2="248" y2="188" />
+  <text class="muted" x="248" y="208" text-anchor="middle" font-size="11">0%</text>
+  <line class="grid" x1="348.5" y1="36" x2="348.5" y2="188" />
+  <text class="muted" x="348.5" y="208" text-anchor="middle" font-size="11">25%</text>
+  <line class="grid" x1="449" y1="36" x2="449" y2="188" />
+  <text class="muted" x="449" y="208" text-anchor="middle" font-size="11">50%</text>
+  <line class="grid" x1="549.5" y1="36" x2="549.5" y2="188" />
+  <text class="muted" x="549.5" y="208" text-anchor="middle" font-size="11">75%</text>
+  <line class="grid" x1="650" y1="36" x2="650" y2="188" />
+  <text class="muted" x="650" y="208" text-anchor="middle" font-size="11">100%</text>
+  <text class="muted" x="16" y="60" font-size="11">1</text>
+      <text class="label" x="236" y="60" text-anchor="end" font-size="13">vue-tsc</text>
+      <rect class="track" x="248" y="49" width="402" height="22" rx="5"/>
+      <rect x="248" y="49" width="336.9" height="22" rx="5" fill="#42b883"/>
+      <text class="onbar" x="576.887323943662" y="60" text-anchor="end" font-size="12" font-weight="600">84%</text>
+  <text class="muted" x="16" y="96" font-size="11">2</text>
+      <text class="label" x="236" y="96" text-anchor="end" font-size="13">golar</text>
+      <rect class="track" x="248" y="85" width="402" height="22" rx="5"/>
+      <rect x="248" y="85" width="331.2" height="22" rx="5" fill="#c9842a"/>
+      <text class="onbar" x="571.2253521126761" y="96" text-anchor="end" font-size="12" font-weight="600">82%</text>
+  <text class="muted" x="16" y="132" font-size="11">3</text>
+      <text class="label" x="236" y="132" text-anchor="end" font-size="13">verter-tsc</text>
+      <rect class="track" x="248" y="121" width="402" height="22" rx="5"/>
+      <rect x="248" y="121" width="305.7" height="22" rx="5" fill="#e11d48"/>
+      <text class="onbar" x="545.7464788732394" y="132" text-anchor="end" font-size="12" font-weight="600">76%</text>
+  <text class="muted" x="16" y="168" font-size="11">4</text>
+      <text class="label" x="236" y="168" text-anchor="end" font-size="13">vize</text>
+      <rect class="track" x="248" y="157" width="402" height="22" rx="5"/>
+      <rect x="248" y="157" width="209.9" height="22" rx="5" fill="#2563eb"/>
+      <text class="onbar" x="449.86764705882354" y="168" text-anchor="end" font-size="12" font-weight="600">52%</text>
+</svg>

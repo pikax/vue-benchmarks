@@ -21,6 +21,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { formatReport, printConsole, summarize } from "./lib/harness.mjs";
 import { collectRunner, formatTypecheckDoc } from "./lib/typecheck-doc.mjs";
+import { writeChart } from "../../scripts/lib/readme-charts.mjs";
 import { runCompileSuite } from "./suites/compile.mjs";
 import { runJsxCompileConfirmSuite } from "./suites/jsx-compile.mjs";
 import { runLintSuite } from "./suites/lint.mjs";
@@ -115,6 +116,8 @@ function parseArgs(argv) {
     out: "",
     strict: false,
     help: false,
+    runs: process.env.BENCH_RUNS || "",
+    warmups: process.env.BENCH_WARMUPS || "",
   };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
@@ -122,6 +125,8 @@ function parseArgs(argv) {
     else if (a === "--json") args.json = argv[++i];
     else if (a === "--out") args.out = argv[++i];
     else if (a === "--strict") args.strict = true;
+    else if (a === "--runs") args.runs = argv[++i];
+    else if (a === "--warmups") args.warmups = argv[++i];
     else if (a === "--help" || a === "-h") args.help = true;
   }
   return args;
@@ -133,6 +138,11 @@ function help() {
 Usage:
   node tests/confirm/run.mjs [--surfaces compile,jsx-compile,lint,typecheck,component-meta,format,lsp]
                              [--json path] [--out path.md] [--strict]
+                             [--runs N] [--warmups N]
+
+  --runs / --warmups  apply to the all-plants typecheck (one tsconfig).
+                      Default: BENCH_RUNS / BENCH_WARMUPS, else 5 / 1
+                      (same as the Benchmark workflow). Per-plant cells stay one-shot.
 
 Exit code:
   0  no unexpected failures (skips allowed; known upstream bugs allowed)
@@ -174,7 +184,7 @@ async function main() {
   }
   if (surfaces.includes("typecheck")) {
     console.log("→ typecheck");
-    all.push(...(await runTypecheckSuite()));
+    all.push(...(await runTypecheckSuite({ runs: args.runs, warmups: args.warmups })));
   }
   if (surfaces.includes("component-meta") || surfaces.includes("meta")) {
     console.log("→ component-meta");
@@ -228,6 +238,7 @@ async function main() {
         results: all,
         generatedAt,
         runner,
+        writeChart: (file, svg) => writeChart(join(rootDir, "docs", "results", "charts"), file, svg),
       }),
       "utf8",
     );

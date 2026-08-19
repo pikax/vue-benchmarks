@@ -713,6 +713,38 @@ describe("markdown table integrity", () => {
     assert.ok(md.includes("- **A**:"), "ok row missing from raw runs");
     assert.ok(!md.includes("- **B**:"), "error row must not appear in raw runs");
   });
+
+  test("IDE rows with coldMedianMs rank on cold and emit vs fastest cold", () => {
+    const md = renderSurfaceMarkdown(
+      surface([
+        okRow({ label: "Volar", medianMs: 4.3, coldMedianMs: 46.4 }),
+        okRow({ label: "Vize", medianMs: 1.0, coldMedianMs: 12.0 }),
+      ]),
+    );
+    assert.match(md, /\*\*Cold\*\*/);
+    assert.match(md, /vs fastest cold/);
+    assert.match(md, /\*\*Warm\*\*/);
+    const vize = md.indexOf("**12.0 ms**");
+    const volar = md.indexOf("**46.4 ms**");
+    assert.ok(vize >= 0 && volar >= 0 && vize < volar, "sorted by cold ascending");
+    assert.match(md, /\*\*12\.0 ms\*\* \| 1\.00x/);
+  });
+});
+
+describe("Peak RSS", () => {
+  test("a speed surface with rssMaxMb grows a Peak RSS table", () => {
+    const md = renderSurfaceMarkdown(
+      surface([
+        okRow({ label: "Small", medianMs: 10, rssMaxMb: 32.3 }),
+        okRow({ label: "Large", medianMs: 20, rssMaxMb: 140.7 }),
+      ]),
+    );
+    assert.match(md, /#### Peak RSS/);
+    assert.match(md, /\*\*32\.3 MB\*\*/);
+    const small = md.indexOf("**32.3 MB**");
+    const large = md.indexOf("**140.7 MB**");
+    assert.ok(small >= 0 && large >= 0 && small < large, "RSS table sorted ascending");
+  });
 });
 
 describe("methodology notes", () => {

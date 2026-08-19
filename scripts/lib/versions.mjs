@@ -92,6 +92,7 @@ export function collectVersions() {
     prettier: pkgVersion("prettier"),
     oxfmt: pkgVersion("oxfmt"),
     oxlint: pkgVersion("oxlint"),
+    "eslint-plugin-vue": pkgVersion("eslint-plugin-vue"),
     "@biomejs/biome": pkgVersion("@biomejs/biome"),
     typescript: pkgVersion("typescript"),
     "cli:vize": cliVersion("vize", ["--version"]),

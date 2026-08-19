@@ -1,0 +1,4672 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-16T09:16:08.702Z",
+  "fixture": "fixtures/200",
+  "fileCount": 200,
+  "settings": {
+    "phase": "bench",
+    "runs": 5,
+    "warmups": 1,
+    "fileLimit": 200,
+    "checkFileLimit": 200,
+    "metaFileLimit": 100,
+    "lintFileLimit": 200,
+    "compileTargets": "vdom,vapor",
+    "compileEnvs": "production,development",
+    "compileSourceMaps": "off",
+    "surfaces": [
+      "compile",
+      "jsx-compile",
+      "typecheck",
+      "format",
+      "lint",
+      "component-meta",
+      "lsp"
+    ]
+  },
+  "runner": {
+    "label": "Linux",
+    "platform": "linux",
+    "arch": "x64",
+    "cpuCount": 4,
+    "cpuModel": "AMD EPYC 9V74 80-Core Processor",
+    "totalmem": 16766414848,
+    "node": "v22.23.2"
+  },
+  "commit": {
+    "sha": "52ba717320eacc45bdebc4e739a1c472adfc9473",
+    "ref": "main",
+    "repository": "pikax/vue-benchmarks",
+    "runUrl": "https://github.com/pikax/vue-benchmarks/actions/runs/31938354532"
+  },
+  "versions": {
+    "node": "v22.23.2",
+    "vue": "3.5.41",
+    "@vue/compiler-sfc": "3.5.41",
+    "@vue/compiler-sfc-36": "3.6.0-rc.4",
+    "vize": "0.347.7",
+    "@vizejs/native": "0.347.7",
+    "@verter/native": "0.0.1-beta.3",
+    "@fervid/napi": "0.4.1",
+    "verter-tsc": "0.0.1-beta.3",
+    "@verter/component-meta": "0.0.1-beta.3",
+    "verter-lsp": "0.0.1-beta.3",
+    "verter-mcp": "0.0.1-beta.3",
+    "@vue/language-server": "3.3.10",
+    "@vue/typescript-plugin": "3.3.10",
+    "typescript-language-server": "5.3.0",
+    "vue-tsc": "3.3.10",
+    "vue-component-meta": "3.3.10",
+    "golar": "0.1.10",
+    "@golar/vue": "0.1.10",
+    "prettier": "3.9.6",
+    "oxfmt": "0.63.0",
+    "oxlint": "1.78.0",
+    "@biomejs/biome": "2.5.8",
+    "typescript": "6.0.3",
+    "cli:vize": "0.347.7",
+    "cli:vue-tsc": "6.0.3",
+    "cli:verter-tsc": "0.0.1-beta.3",
+    "cli:golar": "0.1.10",
+    "cli:prettier": "3.9.6",
+    "cli:oxfmt": "0.63.0",
+    "cli:oxlint": "1.78.0",
+    "cli:biome": "2.5.8",
+    "vue-jsx-vapor": "3.2.21",
+    "@vue-jsx-vapor/compiler-rs": "3.2.21",
+    "@vue/babel-plugin-jsx": "3.0.0",
+    "@babel/core": "8.0.1"
+  },
+  "methodology": [
+    "Primary ranking metric is the **median of measured runs**. Every measured run is preceded by at least one discarded warmup pass (enforced — `--warmups 0` is clamped to 1).",
+    "There is **no cold column**. An unwarmed first run costs a JS compiler ~3.2x its steady state and a native compiler nothing, so ranking on it measures V8 warmup rather than the tool.",
+    "Min / stddev / CV% are reported per row. CV% > 10 is flagged ⚠ — treat that row as noisy (thermal drift or a contended runner), not as a result. Above CV 50% a row with at least three samples is TOO NOISY TO RANK: bracketed and excluded exactly like a gate failure, baseline included — an unstable series buys more shots at a lucky median, so ranking it rewards instability. A two-run row is never bracketed by the ceiling (its stddev is |a−b|/√2 and there is no third sample to adjudicate); it keeps the ⚠ flag.",
+    "Status is a marker on the tool NAME, not a column: ⚠ failed a validation gate (time in brackets, unranked) · ❌ error · ⏭ skipped. Per-row detail is in the collapsible **Notes** under each table, and each surface carries a **Tools** legend naming what actually ran.",
+    "Each surface is ONE table. Engine, invocation and threading are row properties, not table splits: a CLI pays process startup on every run (~85ms measured for one native CLI) while an in-process API amortises it, and a thread pool is not a single thread — the row's label and notes say which mode it ran, so compare like with like.",
+    "Rows tagged **(JS)** run the JavaScript TypeScript compiler, untagged typecheck/LSP rows run native tsgo. A cross-engine ratio measures TypeScript's Go rewrite as much as the Vue layer on top of it.",
+    "Surfaces are independent: compile ms is not comparable to jsx-compile/typecheck/lint/format ms.",
+    "jsx-compile uses fixtures/jsx-N (.jsx); SFC compile uses fixtures/N (.vue).",
+    "Compile matrix cells (VDOM/Vapor × production/development × sourcemap on/off) are independent.",
+    "Source map is an explicit, independent dimension applied identically to every compiler — it is never folded into the production/development flag for some tools and not others.",
+    "Primary compile corpus is unique file contents (fixtures/N).",
+    "Content-hash caches skip work on duplicate bodies — unique fixtures required for ranking.",
+    "Tool order is **rotated** on every warmup and measured run, so no tool is pinned to the expensive first slot.",
+    "CI does not drop OS page cache; later tools in a job may share a warmer file cache.",
+    "Typecheck/lint/format tools that fail a work gate are unranked (skipped). Typecheck gates require both a script-level and a template-level diagnostic, and are re-verified against the full timed corpus. Lint gates require the planted vue/no-v-html. The format gate requires the tool to actually rewrite the <template> block, so a script-only formatter is not ranked against whole-SFC formatters.",
+    "Compile measures assert non-empty codegen where applicable.",
+    "Vue official compiler is 1T only (worker_threads variants removed).",
+    "LSP: every server resolves from its installed npm package and is skipped when absent — no local-build or working-copy discovery, so each row names a version.",
+    "verter-tsc needs stable tsgo (typescript@7.0.x via typescript-go); harness sets VERTER_TSGO_BIN.",
+    "Diagnostic/format identity across tools is not required for throughput rows."
+  ],
+  "surfaces": [
+    {
+      "id": "compile",
+      "excluded": [],
+      "label": "SFC compile (unique contents)",
+      "files": 200,
+      "bytes": 285701,
+      "corpus": {
+        "mode": "unique",
+        "files": 200,
+        "uniqueBodies": 200,
+        "uniqueContents": true,
+        "duplicateBodies": 0,
+        "fixtureDir": "/home/runner/work/vue-benchmarks/vue-benchmarks/fixtures/200"
+      },
+      "groupingNote": "Compile results are **grouped by target × environment × source map**, then by comparison class.",
+      "methodology": [
+        "Matrix: target ∈ {vdom, vapor} × env ∈ {production, development} × sourceMap ∈ {off, on}. Cells are independent — do not cross-compare cells.",
+        "Corpus mode=unique: 200/200 unique content SHAs. Vize content-hash caches treat identical bodies as free — primary rankings must use unique fixtures (fixtures/N), not fixtures/N-repeated.",
+        "Same in-memory Vue SFC corpus for every variant (compiler flags differ; sources do not).",
+        "Work measured: parse SFC + compile script (if any) + compile template (if any).",
+        "Imported-type resolution is PROVISIONED for every tool that accepts a provision: @vue/compiler-sfc gets an fs bridge (ts.sys semantics — fileExists is false for directories) AND a registered TypeScript module for non-relative sources, exactly as Vite's plugin-vue provides in real builds; Verter gets a workspace-backed host rooted at the project. Withholding either does not 'treat tools equally' — it uniquely disables the tools that resolve through the host and publishes the gap as their ❌.",
+        "The TypeScript registered for @vue/compiler-sfc is THE HARNESS'S OWN (the declared JS arm), the same version for every corpus — not each project's pinned TS. Uniform resolution behaviour across corpora was chosen over per-project fidelity; the tsconfig consulted is still the project's own.",
+        "⚠ Imported-type resolution DEPTH differs by tool: @vue/compiler-sfc THROWS on an unresolvable prop type, Verter reports an error, Vize resolves what it can and silently emits a smaller runtime props object, and fervid emits NO props object at all while reporting a resolve diagnostic this harness otherwise tolerates. This is GATED for every compiler alike, not just disclosed: a baseline-anchored PROP-RESOLUTION CENSUS samples the corpus's type-only defineProps files, compares each compiler's emitted prop keys (Vize, fervid, Verter) with the prop names the baseline resolves, and unranks on any drop — fervid's missing props count as dropped when its own resolve diagnostic attributes them. Annotates instead when a compiler's emission shape cannot be read. Re-run every benchmark; self-clearing on a fixed release.",
+        "VDOM = classic Virtual DOM render functions. Vapor = direct DOM codegen (Vue 3.6+ / native tool vapor flags).",
+        "Source map is an INDEPENDENT dimension, requested identically from every compiler in a cell (Vue: parse+compileScript+codegen sourceMap; Vize: compileSfc sourceMap; Verter: compileProfile sourceMap; fervid: FervidJsCompilerOptions sourceMap). It is not folded into the prod/dev flag for some tools and not others.",
+        "TypeScript handling is ONE standard for the whole cell: PASSTHROUGH, requested identically from every compiler (Vue and fervid pass annotations through by design; Vize via isTs:true; Verter via forceJs:false, which is also its own Vite path). Two official-integration deviations are disclosed rather than silently mirrored: Vize's own Vite plugin omits isTs and therefore STRIPS types for drop-in users (more work than benchmarked here), and an earlier harness revision set Verter's forceJs:true, charging one challenger transpile work no peer row paid — the flag also selects which Verter codegen path the validity gate judges.",
+        "Verter's analysisLevel is the DROP-IN DEFAULT (full — its official plugin sets none, which means full). 'essential' emits byte-identical output ~6% faster and is available via VERTER_ANALYSIS_LEVEL for study, but a tuned default would be a gift no other tool gets a tuning pass for. Whatever level runs is printed on every Verter row. Verter's devMode follows isProduction here; its official plugin hardcodes devMode:true — a minor deviation, stated.",
+        "Production vs development uses each tool's real semantic knobs only: Vue isProd (hoistStatic + cacheHandlers); Verter isProduction + hmrStrategy; fervid isProduction.",
+        "⚠ Vize exposes no isProduction on compileSfc, so its production and development rows perform identical work. Stated rather than substituted with a different knob.",
+        "⚠ fervid compiles <style> blocks inside compileSync — every other row measures parse + script + template only. fervid's rows do strictly more work per file than the rows they are ranked against; there is no option to disable it.",
+        "⚠ fervid emits non-fatal HTML-strictness diagnostics (NonVoidHtmlElementStartTagWithTrailingSolidus) on self-closing non-void tags such as <div /> and <MyComp />, which Vue's SFC parser accepts — 44 of them on the 200-file corpus. Verified on this corpus: codegen is still complete and correct for those files, so fervid is gated on codegen actually being produced for every file — the same gate every other compiler here gets — rather than on diagnostic silence. Per-run diagnostic totals are captured in the JSON report's meta samples.",
+        "fervid and Vue 3.5 have no Vapor path → skipped for vapor cells (not run as VDOM).",
+        "fervid's compileAsync row fans out over libuv's threadpool (UV_THREADPOOL_SIZE=4), which is a fixed default of 4 rather than core count. Where the Vize/Verter batch rows scale with cores, that row does not — it is reported, not tuned, because the pool width is fixed before the harness starts.",
+        "1T / batch / batch-cached rows share the table; the mode is in the row label. A batch pool amortises across a thread pool and a cached session reuses prior analysis, so read same-mode rows against each other.",
+        "Verter session mode keeps a persistent host across warmups and runs, so it is ranked as `batch-cached`, apart from cache-free batch rows.",
+        "Codegen validity gate: every compiler's output is parsed (TypeScript plugin enabled, since several rows legitimately emit TS) before any timing. A tool that emits unparseable output for part of the corpus is measured but UNRANKED — bytes-per-millisecond is not a result if the bytes do not parse. Applied to every compiler in the table, re-run each benchmark, and self-clearing on a fixed release.",
+        "The gate runs ONCE PER (target × environment) cell, with that cell's flags. It previously ran once on vdom/production and stamped the verdict onto the Vapor and development cells it had never exercised — Vapor is a different codegen backend and development mode emits different code, so a pass on one is not evidence about the other. Source maps are not a gate dimension: a map is emitted beside the code and cannot change whether the code parses.",
+        "The gate builds each tool's compiler handle inside its own try, so a constructor that throws costs that one tool a `GATE NOT RUN` annotation instead of destroying every row for the corpus.",
+        "@vue/compiler-sfc, Vize and Verter are held to ONE error policy in the timed path: a non-empty `errors` array fails the measure. Vue returns parse and template errors in an array instead of throwing, and discarding them — as an earlier revision did — billed a file Vue could not parse as cheap successful work while the same failure in a challenger produced ❌. fervid is the documented exception and is gated on codegen produced for every file, because its diagnostics include non-fatal HTML strictness warnings Vue's parser does not raise.",
+        "Tool order is rotated on every warmup and measured run; no tool is pinned to first position.",
+        "Ranking metric is the median of measured runs, all taken after >= 1 discarded warmup. No cold column."
+      ],
+      "groups": [
+        {
+          "id": "vdom-prod-smoff",
+          "label": "VDOM · production · sourcemap off",
+          "target": "vdom",
+          "env": "production",
+          "sourceMap": false,
+          "variants": [
+            {
+              "id": "vue-3.5-1t-vdom-prod-smoff",
+              "label": "@vue/compiler-sfc 3.5 (1T)",
+              "package": "@vue/compiler-sfc",
+              "target": "vdom",
+              "env": "production",
+              "sourceMap": false,
+              "threading": "1t",
+              "invocation": "in-process",
+              "artifactLabel": "Code bytes",
+              "notes": "Official 3.5 VDOM, isProd=true, sourceMap=false, single-threaded",
+              "files": 200,
+              "status": "ok",
+              "runs": [
+                180.467,
+                176.322,
+                177.86,
+                173.284,
+                195.337
+              ],
+              "medianMs": 177.86,
+              "minMs": 173.284,
+              "maxMs": 195.337,
+              "meanMs": 180.654,
+              "stddevMs": 8.61,
+              "cvPct": 4.8,
+              "metaSamples": [
+                {
+                  "artifact": 670030
+                },
+                {
+                  "artifact": 670030
+                },
+                {
+                  "artifact": 670030
+                },
+                {
+                  "artifact": 670030
+                },
+                {
+                  "artifact": 670030
+                }
+              ],
+              "artifactMedian": 670030,
+              "warmupPasses": 1,
+              "throughput": "1.1k files/s"
+            },
+            {
+              "id": "vue-3.6-1t-vdom-prod-smoff",
+              "label": "@vue/compiler-sfc 3.6 (1T)",
+              "package": "@vue/compiler-sfc-36",
+              "target": "vdom",
+              "env": "production",
+              "sourceMap": false,
+              "threading": "1t",
+              "invocation": "in-process",
+              "artifactLabel": "Code bytes",
+              "notes": "Official 3.6 VDOM, isProd=true, sourceMap=false",
+              "files": 200,
+              "status": "ok",
+              "runs": [
+                183.918,
+                182.16,
+                179.546,
+                180.277,
+                193.956
+              ],
+              "medianMs": 182.16,
+              "minMs": 179.546,
+              "maxMs": 193.956,
+              "meanMs": 183.971,
+              "stddevMs": 5.835,
+              "cvPct": 3.2,
+              "metaSamples": [
+                {
+                  "artifact": 670030
+                },
+                {
+                  "artifact": 670030
+                },
+                {
+                  "artifact": 670030
+                },
+                {
+                  "artifact": 670030
+                },
+                {
+                  "artifact": 670030
+                }
+              ],
+              "artifactMedian": 670030,
+              "warmupPasses": 1,
+              "throughput": "1.1k files/s"
+            },
+            {
+              "id": "vize-1t-vdom-prod-smoff",
+              "label": "Vize native loop (1T)",
+              "package": "@vizejs/native",
+              "target": "vdom",
+              "env": "production",
+              "sourceMap": false,
+              "threading": "1t",
+              "invocation": "in-process",
+              "artifactLabel": "Code bytes",
+              "notes": "compileSfc vapor=false, isTs=true (TS passthrough — the cell's uniform standard; ⓘ Vize's own Vite plugin omits this flag, so a drop-in Vite user gets Vize STRIPPING types on every lang=\"ts\" file — more work than benchmarked here), sourceMap=false. ⚠ Vize has no isProduction flag on compileSfc — this row does identical work in the production and development cells. Content-hash caches reward duplicate bodies — use unique fixtures for ranking.",
+              "files": 200,
+              "status": "ok",
+              "runs": [
+                55.901,
+                56.635,
+                55.89,
+                56.242,
+                54.637
+              ],
+              "medianMs": 55.901,
+              "minMs": 54.637,
+              "maxMs": 56.635,
+              "meanMs": 55.861,
+              "stddevMs": 0.749,
+              "cvPct": 1.3,
+              "metaSamples": [
+                {
+                  "artifact": 609596
+                },
+                {
+                  "artifact": 609596
+                },
+                {
+                  "artifact": 609596
+                },
+                {
+                  "artifact": 609596
+                },
+                {
+                  "artifact": 609596
+                }
+              ],
+              "artifactMedian": 609596,
+              "warmupPasses": 1,
+              "throughput": "3.6k files/s"
+            },
+            {
+              "id": "vize-batch-vdom-prod-smoff",
+              "label": "Vize native batch (max threads)",
+              "package": "@vizejs/native",
+              "target": "vdom",
+              "env": "production",
+              "sourceMap": false,
+              "threading": "batch",
+              "invocation": "in-process",
+              "artifactLabel": "Code bytes",
+              "notes": "compileSfcBatchWithResults vapor=false, sourceMap=false. multi-thread Rayon batch. ⚠ No isProduction flag — identical work in production and development cells. Content-hash caches can skip work on repeated bodies — unique corpus required for ranking.",
+              "files": 200,
+              "status": "ok",
+              "runs": [
+                25.034,
+                22.829,
+                20.216,
+                24.118,
+                19.612
+              ],
+              "medianMs": 22.829,
+              "minMs": 19.612,
+              "maxMs": 25.034,
+              "meanMs": 22.362,
+              "stddevMs": 2.377,
+              "cvPct": 10.4,
+              "metaSamples": [
+                {
+                  "artifact": 609596
+                },
+                {
+                  "artifact": 609596
+                },
+                {
+                  "artifact": 609596
+                },
+                {
+                  "artifact": 609596
+                },
+                {
+                  "artifact": 609596
+                }
+              ],
+              "artifactMedian": 609596,
+              "warmupPasses": 1,
+              "throughput": "8.8k files/s"
+            },
+            {
+              "id": "fervid-1t-vdom-prod-smoff",
+              "label": "fervid compileSync (1T)",
+              "package": "@fervid/napi",
+              "target": "vdom",
+              "env": "production",
+              "sourceMap": false,
+              "threading": "1t",
+              "invocation": "in-process",
+              "artifactLabel": "Code bytes",
+              "notes": "compileSync isProduction=true, sourceMap=false, single-threaded. ⚠ also compiles <style> blocks (scoped styles returned isCompiled=true) — strictly more work per file than the parse+script+template rows it is ranked against. ⚠ emits non-fatal NonVoidHtmlElementStartTagWithTrailingSolidus diagnostics for self-closing non-void tags (<div />, <MyComp />) that Vue's SFC parser accepts; codegen is complete regardless, so the row is gated on codegen produced for every file, not on diagnostic silence. ⚠ FAILED CODEGEN VALIDITY GATE — 22/200 files compiled to output that is not parseable JavaScript/TypeScript (first: Comp00008.vue: Invalid parenthesized assignment pattern. (65:100)). Time is shown in brackets and excluded from ranking: a compiler that emits broken output for part of the corpus is not doing the same work as one that does not. The gate is re-run every benchmark, so a fixed release clears this automatically.",
+              "files": 200,
+              "status": "unranked",
+              "runs": [
+                59.047,
+                57.398,
+                56.401,
+                56.716,
+                58.492
+              ],
+              "medianMs": 57.398,
+              "minMs": 56.401,
+              "maxMs": 59.047,
+              "meanMs": 57.611,
+              "stddevMs": 1.135,
+              "cvPct": 2,
+              "metaSamples": [
+                {
+                  "artifact": 775738,
+                  "mapBytes": 0,
+                  "diagnostics": 44
+                },
+                {
+                  "artifact": 775738,
+                  "mapBytes": 0,
+                  "diagnostics": 44
+                },
+                {
+                  "artifact": 775738,
+                  "mapBytes": 0,
+                  "diagnostics": 44
+                },
+                {
+                  "artifact": 775738,
+                  "mapBytes": 0,
+                  "diagnostics": 44
+                },
+                {
+                  "artifact": 775738,
+                  "mapBytes": 0,
+                  "diagnostics": 44
+                }
+              ],
+              "artifactMedian": 775738,
+              "warmupPasses": 1,
+              "throughput": "n/a"
+            },
+            {
+              "id": "fervid-async-vdom-prod-smoff",
+              "label": "fervid compileAsync (4-thread libuv pool)",
+              "package": "@fervid/napi",
+              "target": "vdom",
+              "env": "production",
+              "sourceMap": false,
+              "threading": "batch",
+              "invocation": "in-process",
+              "artifactLabel": "Code bytes",
+              "notes": "compileAsync isProduction=true, sourceMap=false, fanned out with Promise.all over libuv's threadpool (UV_THREADPOOL_SIZE=4, default 4 — NOT sized to core count like a Rayon pool, so on a runner with more than 4 cores this row is thread-capped below the batch rows beside it). ⚠ also compiles <style> blocks (scoped styles returned isCompiled=true) — strictly more work per file than the parse+script+template rows it is ranked against. ⚠ emits non-fatal NonVoidHtmlElementStartTagWithTrailingSolidus diagnostics for self-closing non-void tags (<div />, <MyComp />) that Vue's SFC parser accepts; codegen is complete regardless, so the row is gated on codegen produced for every file, not on diagnostic silence. ⚠ FAILED CODEGEN VALIDITY GATE — 22/200 files compiled to output that is not parseable JavaScript/TypeScript (first: Comp00008.vue: Invalid parenthesized assignment pattern. (65:100)). Time is shown in brackets and excluded from ranking: a compiler that emits broken output for part of the corpus is not doing the same work as one that does not. The gate is re-run every benchmark, so a fixed release clears this automatically.",
+              "files": 200,
+              "status": "unranked",
+              "runs": [
+                26.056,
+                26.199,
+                25.434,
+                30.369,
+                28.652
+              ],
+              "medianMs": 26.199,
+              "minMs": 25.434,
+              "maxMs": 30.369,
+              "meanMs": 27.342,
+              "stddevMs": 2.09,
+              "cvPct": 8,
+              "metaSamples": [
+                {
+                  "artifact": 775738,
+                  "mapBytes": 0,
+                  "diagnostics": 44
+                },
+                {
+                  "artifact": 775738,
+                  "mapBytes": 0,
+                  "diagnostics": 44
+                },
+                {
+                  "artifact": 775738,
+                  "mapBytes": 0,
+                  "diagnostics": 44
+                },
+                {
+                  "artifact": 775738,
+                  "mapBytes": 0,
+                  "diagnostics": 44
+                },
+                {
+                  "artifact": 775738,
+                  "mapBytes": 0,
+                  "diagnostics": 44
+                }
+              ],
+              "artifactMedian": 775738,
+              "warmupPasses": 1,
+              "throughput": "n/a"
+            },
+            {
+              "id": "verter-stateless-vdom-prod-smoff",
+              "label": "Verter compileMany (stateless)",
+              "package": "@verter/native",
+              "target": "vdom",
+              "env": "production",
+              "sourceMap": false,
+              "threading": "batch",
+              "invocation": "in-process",
+              "artifactLabel": "Code bytes",
+              "notes": "runtime-render forceVapor=false, isProduction=true, forceJs=false (TS passthrough — the cell's uniform standard, and Verter's own Vite path), sourceMap=false, hmr=none, mode=stateless, analysis=full (the drop-in default — Verter's official plugin sets none, which means full), multi-thread host pool, workspace-backed host (project root as workspace — documented compileMany usage, same provision the fs bridge gives @vue/compiler-sfc)",
+              "files": 200,
+              "status": "ok",
+              "runs": [
+                130.216,
+                124.355,
+                124.324,
+                118.804,
+                121.53
+              ],
+              "medianMs": 124.324,
+              "minMs": 118.804,
+              "maxMs": 130.216,
+              "meanMs": 123.846,
+              "stddevMs": 4.238,
+              "cvPct": 3.4,
+              "metaSamples": [
+                {
+                  "artifact": 548989,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                },
+                {
+                  "artifact": 548989,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                },
+                {
+                  "artifact": 548989,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                },
+                {
+                  "artifact": 548989,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                },
+                {
+                  "artifact": 548989,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                }
+              ],
+              "cacheHitsMedian": 0,
+              "cacheHitsLast": 0,
+              "artifactMedian": 548989,
+              "warmupPasses": 1,
+              "throughput": "1.6k files/s"
+            },
+            {
+              "id": "verter-session-vdom-prod-smoff",
+              "label": "Verter compileMany (session cache)",
+              "package": "@verter/native",
+              "target": "vdom",
+              "env": "production",
+              "sourceMap": false,
+              "threading": "batch-cached",
+              "invocation": "in-process",
+              "artifactLabel": "Code bytes",
+              "notes": "runtime-render forceVapor=false, isProduction=true, sourceMap=false, mode=session, analysis=full — persistent workspace-backed host, cacheHits reported; not comparable to the cache-free batch rows",
+              "files": 200,
+              "status": "ok",
+              "runs": [
+                26.756,
+                28.994,
+                20.702,
+                22.727,
+                24.635
+              ],
+              "medianMs": 24.635,
+              "minMs": 20.702,
+              "maxMs": 28.994,
+              "meanMs": 24.763,
+              "stddevMs": 3.261,
+              "cvPct": 13.2,
+              "metaSamples": [
+                {
+                  "artifact": 548989,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                },
+                {
+                  "artifact": 548989,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                },
+                {
+                  "artifact": 548989,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                },
+                {
+                  "artifact": 548989,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                },
+                {
+                  "artifact": 548989,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                }
+              ],
+              "cacheHitsMedian": 0,
+              "cacheHitsLast": 0,
+              "artifactMedian": 548989,
+              "warmupPasses": 1,
+              "throughput": "8.1k files/s"
+            }
+          ]
+        },
+        {
+          "id": "vdom-dev-smoff",
+          "label": "VDOM · development · sourcemap off",
+          "target": "vdom",
+          "env": "development",
+          "sourceMap": false,
+          "variants": [
+            {
+              "id": "vue-3.5-1t-vdom-dev-smoff",
+              "label": "@vue/compiler-sfc 3.5 (1T)",
+              "package": "@vue/compiler-sfc",
+              "target": "vdom",
+              "env": "development",
+              "sourceMap": false,
+              "threading": "1t",
+              "invocation": "in-process",
+              "artifactLabel": "Code bytes",
+              "notes": "Official 3.5 VDOM, isProd=false, sourceMap=false, single-threaded",
+              "files": 200,
+              "status": "ok",
+              "runs": [
+                168.684,
+                171.889,
+                170.634,
+                158.895,
+                151.657
+              ],
+              "medianMs": 168.684,
+              "minMs": 151.657,
+              "maxMs": 171.889,
+              "meanMs": 164.352,
+              "stddevMs": 8.746,
+              "cvPct": 5.2,
+              "metaSamples": [
+                {
+                  "artifact": 656372
+                },
+                {
+                  "artifact": 656372
+                },
+                {
+                  "artifact": 656372
+                },
+                {
+                  "artifact": 656372
+                },
+                {
+                  "artifact": 656372
+                }
+              ],
+              "artifactMedian": 656372,
+              "warmupPasses": 1,
+              "throughput": "1.2k files/s"
+            },
+            {
+              "id": "vue-3.6-1t-vdom-dev-smoff",
+              "label": "@vue/compiler-sfc 3.6 (1T)",
+              "package": "@vue/compiler-sfc-36",
+              "target": "vdom",
+              "env": "development",
+              "sourceMap": false,
+              "threading": "1t",
+              "invocation": "in-process",
+              "artifactLabel": "Code bytes",
+              "notes": "Official 3.6 VDOM, isProd=false, sourceMap=false",
+              "files": 200,
+              "status": "ok",
+              "runs": [
+                175.723,
+                167.07,
+                171.771,
+                163.678,
+                152.777
+              ],
+              "medianMs": 167.07,
+              "minMs": 152.777,
+              "maxMs": 175.723,
+              "meanMs": 166.204,
+              "stddevMs": 8.789,
+              "cvPct": 5.3,
+              "metaSamples": [
+                {
+                  "artifact": 656372
+                },
+                {
+                  "artifact": 656372
+                },
+                {
+                  "artifact": 656372
+                },
+                {
+                  "artifact": 656372
+                },
+                {
+                  "artifact": 656372
+                }
+              ],
+              "artifactMedian": 656372,
+              "warmupPasses": 1,
+              "throughput": "1.2k files/s"
+            },
+            {
+              "id": "vize-1t-vdom-dev-smoff",
+              "label": "Vize native loop (1T)",
+              "package": "@vizejs/native",
+              "target": "vdom",
+              "env": "development",
+              "sourceMap": false,
+              "threading": "1t",
+              "invocation": "in-process",
+              "artifactLabel": "Code bytes",
+              "notes": "compileSfc vapor=false, isTs=true (TS passthrough — the cell's uniform standard; ⓘ Vize's own Vite plugin omits this flag, so a drop-in Vite user gets Vize STRIPPING types on every lang=\"ts\" file — more work than benchmarked here), sourceMap=false. ⚠ Vize has no isProduction flag on compileSfc — this row does identical work in the production and development cells. Content-hash caches reward duplicate bodies — use unique fixtures for ranking.",
+              "files": 200,
+              "status": "ok",
+              "runs": [
+                54.023,
+                57.931,
+                55.184,
+                55.925,
+                54.615
+              ],
+              "medianMs": 55.184,
+              "minMs": 54.023,
+              "maxMs": 57.931,
+              "meanMs": 55.536,
+              "stddevMs": 1.512,
+              "cvPct": 2.7,
+              "metaSamples": [
+                {
+                  "artifact": 609596
+                },
+                {
+                  "artifact": 609596
+                },
+                {
+                  "artifact": 609596
+                },
+                {
+                  "artifact": 609596
+                },
+                {
+                  "artifact": 609596
+                }
+              ],
+              "artifactMedian": 609596,
+              "warmupPasses": 1,
+              "throughput": "3.6k files/s"
+            },
+            {
+              "id": "vize-batch-vdom-dev-smoff",
+              "label": "Vize native batch (max threads)",
+              "package": "@vizejs/native",
+              "target": "vdom",
+              "env": "development",
+              "sourceMap": false,
+              "threading": "batch",
+              "invocation": "in-process",
+              "artifactLabel": "Code bytes",
+              "notes": "compileSfcBatchWithResults vapor=false, sourceMap=false. multi-thread Rayon batch. ⚠ No isProduction flag — identical work in production and development cells. Content-hash caches can skip work on repeated bodies — unique corpus required for ranking.",
+              "files": 200,
+              "status": "ok",
+              "runs": [
+                24.515,
+                24.252,
+                21.892,
+                24.269,
+                18.634
+              ],
+              "medianMs": 24.252,
+              "minMs": 18.634,
+              "maxMs": 24.515,
+              "meanMs": 22.712,
+              "stddevMs": 2.517,
+              "cvPct": 10.4,
+              "metaSamples": [
+                {
+                  "artifact": 609596
+                },
+                {
+                  "artifact": 609596
+                },
+                {
+                  "artifact": 609596
+                },
+                {
+                  "artifact": 609596
+                },
+                {
+                  "artifact": 609596
+                }
+              ],
+              "artifactMedian": 609596,
+              "warmupPasses": 1,
+              "throughput": "8.2k files/s"
+            },
+            {
+              "id": "fervid-1t-vdom-dev-smoff",
+              "label": "fervid compileSync (1T)",
+              "package": "@fervid/napi",
+              "target": "vdom",
+              "env": "development",
+              "sourceMap": false,
+              "threading": "1t",
+              "invocation": "in-process",
+              "artifactLabel": "Code bytes",
+              "notes": "compileSync isProduction=false, sourceMap=false, single-threaded. ⚠ also compiles <style> blocks (scoped styles returned isCompiled=true) — strictly more work per file than the parse+script+template rows it is ranked against. ⚠ emits non-fatal NonVoidHtmlElementStartTagWithTrailingSolidus diagnostics for self-closing non-void tags (<div />, <MyComp />) that Vue's SFC parser accepts; codegen is complete regardless, so the row is gated on codegen produced for every file, not on diagnostic silence. ⚠ FAILED CODEGEN VALIDITY GATE — 22/200 files compiled to output that is not parseable JavaScript/TypeScript (first: Comp00008.vue: Invalid parenthesized assignment pattern. (41:97)). Time is shown in brackets and excluded from ranking: a compiler that emits broken output for part of the corpus is not doing the same work as one that does not. The gate is re-run every benchmark, so a fixed release clears this automatically.",
+              "files": 200,
+              "status": "unranked",
+              "runs": [
+                56.916,
+                57.383,
+                56.966,
+                57.057,
+                57.069
+              ],
+              "medianMs": 57.057,
+              "minMs": 56.916,
+              "maxMs": 57.383,
+              "meanMs": 57.078,
+              "stddevMs": 0.182,
+              "cvPct": 0.3,
+              "metaSamples": [
+                {
+                  "artifact": 787866,
+                  "mapBytes": 0,
+                  "diagnostics": 44
+                },
+                {
+                  "artifact": 787866,
+                  "mapBytes": 0,
+                  "diagnostics": 44
+                },
+                {
+                  "artifact": 787866,
+                  "mapBytes": 0,
+                  "diagnostics": 44
+                },
+                {
+                  "artifact": 787866,
+                  "mapBytes": 0,
+                  "diagnostics": 44
+                },
+                {
+                  "artifact": 787866,
+                  "mapBytes": 0,
+                  "diagnostics": 44
+                }
+              ],
+              "artifactMedian": 787866,
+              "warmupPasses": 1,
+              "throughput": "n/a"
+            },
+            {
+              "id": "fervid-async-vdom-dev-smoff",
+              "label": "fervid compileAsync (4-thread libuv pool)",
+              "package": "@fervid/napi",
+              "target": "vdom",
+              "env": "development",
+              "sourceMap": false,
+              "threading": "batch",
+              "invocation": "in-process",
+              "artifactLabel": "Code bytes",
+              "notes": "compileAsync isProduction=false, sourceMap=false, fanned out with Promise.all over libuv's threadpool (UV_THREADPOOL_SIZE=4, default 4 — NOT sized to core count like a Rayon pool, so on a runner with more than 4 cores this row is thread-capped below the batch rows beside it). ⚠ also compiles <style> blocks (scoped styles returned isCompiled=true) — strictly more work per file than the parse+script+template rows it is ranked against. ⚠ emits non-fatal NonVoidHtmlElementStartTagWithTrailingSolidus diagnostics for self-closing non-void tags (<div />, <MyComp />) that Vue's SFC parser accepts; codegen is complete regardless, so the row is gated on codegen produced for every file, not on diagnostic silence. ⚠ FAILED CODEGEN VALIDITY GATE — 22/200 files compiled to output that is not parseable JavaScript/TypeScript (first: Comp00008.vue: Invalid parenthesized assignment pattern. (41:97)). Time is shown in brackets and excluded from ranking: a compiler that emits broken output for part of the corpus is not doing the same work as one that does not. The gate is re-run every benchmark, so a fixed release clears this automatically.",
+              "files": 200,
+              "status": "unranked",
+              "runs": [
+                31.086,
+                30.481,
+                38.274,
+                72.641,
+                25.037
+              ],
+              "medianMs": 31.086,
+              "minMs": 25.037,
+              "maxMs": 72.641,
+              "meanMs": 39.504,
+              "stddevMs": 19.112,
+              "cvPct": 61.5,
+              "metaSamples": [
+                {
+                  "artifact": 787866,
+                  "mapBytes": 0,
+                  "diagnostics": 44
+                },
+                {
+                  "artifact": 787866,
+                  "mapBytes": 0,
+                  "diagnostics": 44
+                },
+                {
+                  "artifact": 787866,
+                  "mapBytes": 0,
+                  "diagnostics": 44
+                },
+                {
+                  "artifact": 787866,
+                  "mapBytes": 0,
+                  "diagnostics": 44
+                },
+                {
+                  "artifact": 787866,
+                  "mapBytes": 0,
+                  "diagnostics": 44
+                }
+              ],
+              "artifactMedian": 787866,
+              "warmupPasses": 1,
+              "throughput": "n/a"
+            },
+            {
+              "id": "verter-stateless-vdom-dev-smoff",
+              "label": "Verter compileMany (stateless)",
+              "package": "@verter/native",
+              "target": "vdom",
+              "env": "development",
+              "sourceMap": false,
+              "threading": "batch",
+              "invocation": "in-process",
+              "artifactLabel": "Code bytes",
+              "notes": "runtime-render forceVapor=false, isProduction=false, forceJs=false (TS passthrough — the cell's uniform standard, and Verter's own Vite path), sourceMap=false, hmr=vite, mode=stateless, analysis=full (the drop-in default — Verter's official plugin sets none, which means full), multi-thread host pool, workspace-backed host (project root as workspace — documented compileMany usage, same provision the fs bridge gives @vue/compiler-sfc)",
+              "files": 200,
+              "status": "ok",
+              "runs": [
+                122.643,
+                136.453,
+                126.002,
+                132.193,
+                117.201
+              ],
+              "medianMs": 126.002,
+              "minMs": 117.201,
+              "maxMs": 136.453,
+              "meanMs": 126.898,
+              "stddevMs": 7.62,
+              "cvPct": 6,
+              "metaSamples": [
+                {
+                  "artifact": 671880,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                },
+                {
+                  "artifact": 671880,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                },
+                {
+                  "artifact": 671880,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                },
+                {
+                  "artifact": 671880,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                },
+                {
+                  "artifact": 671880,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                }
+              ],
+              "cacheHitsMedian": 0,
+              "cacheHitsLast": 0,
+              "artifactMedian": 671880,
+              "warmupPasses": 1,
+              "throughput": "1.6k files/s"
+            },
+            {
+              "id": "verter-session-vdom-dev-smoff",
+              "label": "Verter compileMany (session cache)",
+              "package": "@verter/native",
+              "target": "vdom",
+              "env": "development",
+              "sourceMap": false,
+              "threading": "batch-cached",
+              "invocation": "in-process",
+              "artifactLabel": "Code bytes",
+              "notes": "runtime-render forceVapor=false, isProduction=false, sourceMap=false, mode=session, analysis=full — persistent workspace-backed host, cacheHits reported; not comparable to the cache-free batch rows",
+              "files": 200,
+              "status": "ok",
+              "runs": [
+                25.89,
+                28.812,
+                24.751,
+                34.558,
+                17.838
+              ],
+              "medianMs": 25.89,
+              "minMs": 17.838,
+              "maxMs": 34.558,
+              "meanMs": 26.37,
+              "stddevMs": 6.096,
+              "cvPct": 23.5,
+              "metaSamples": [
+                {
+                  "artifact": 671880,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                },
+                {
+                  "artifact": 671880,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                },
+                {
+                  "artifact": 671880,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                },
+                {
+                  "artifact": 671880,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                },
+                {
+                  "artifact": 671880,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                }
+              ],
+              "cacheHitsMedian": 0,
+              "cacheHitsLast": 0,
+              "artifactMedian": 671880,
+              "warmupPasses": 1,
+              "throughput": "7.7k files/s"
+            }
+          ]
+        },
+        {
+          "id": "vapor-prod-smoff",
+          "label": "VAPOR · production · sourcemap off",
+          "target": "vapor",
+          "env": "production",
+          "sourceMap": false,
+          "variants": [
+            {
+              "id": "vue-3.5-vapor-unsupported-vapor-prod-smoff",
+              "label": "@vue/compiler-sfc 3.5 (vapor)",
+              "package": "@vue/compiler-sfc",
+              "target": "vapor",
+              "env": "production",
+              "threading": "n/a",
+              "notes": "Vue 3.5 has no Vapor codegen path (Vapor ships with 3.6+). Not substituted with VDOM.",
+              "files": 200,
+              "status": "skipped",
+              "throughput": "n/a"
+            },
+            {
+              "id": "vue-3.6-1t-vapor-prod-smoff",
+              "label": "@vue/compiler-sfc 3.6 (1T)",
+              "package": "@vue/compiler-sfc-36",
+              "target": "vapor",
+              "env": "production",
+              "sourceMap": false,
+              "threading": "1t",
+              "invocation": "in-process",
+              "artifactLabel": "Code bytes",
+              "notes": "Official 3.6 Vapor (compileScript vapor + compileTemplate vapor=true), isProd=true, sourceMap=false",
+              "files": 200,
+              "status": "ok",
+              "runs": [
+                307.879,
+                312.301,
+                300.331,
+                282.661,
+                297.517
+              ],
+              "medianMs": 300.331,
+              "minMs": 282.661,
+              "maxMs": 312.301,
+              "meanMs": 300.138,
+              "stddevMs": 11.404,
+              "cvPct": 3.8,
+              "metaSamples": [
+                {
+                  "artifact": 681563
+                },
+                {
+                  "artifact": 681563
+                },
+                {
+                  "artifact": 681563
+                },
+                {
+                  "artifact": 681563
+                },
+                {
+                  "artifact": 681563
+                }
+              ],
+              "artifactMedian": 681563,
+              "warmupPasses": 1,
+              "throughput": "666 files/s"
+            },
+            {
+              "id": "vize-1t-vapor-prod-smoff",
+              "label": "Vize native loop (1T)",
+              "package": "@vizejs/native",
+              "target": "vapor",
+              "env": "production",
+              "sourceMap": false,
+              "threading": "1t",
+              "invocation": "in-process",
+              "artifactLabel": "Code bytes",
+              "notes": "compileSfc vapor=true, isTs=true (TS passthrough — the cell's uniform standard; ⓘ Vize's own Vite plugin omits this flag, so a drop-in Vite user gets Vize STRIPPING types on every lang=\"ts\" file — more work than benchmarked here), sourceMap=false. ⚠ Vize has no isProduction flag on compileSfc — this row does identical work in the production and development cells. Content-hash caches reward duplicate bodies — use unique fixtures for ranking.",
+              "files": 200,
+              "status": "ok",
+              "runs": [
+                60.14,
+                56.808,
+                56.776,
+                58.64,
+                57.167
+              ],
+              "medianMs": 57.167,
+              "minMs": 56.776,
+              "maxMs": 60.14,
+              "meanMs": 57.906,
+              "stddevMs": 1.463,
+              "cvPct": 2.6,
+              "metaSamples": [
+                {
+                  "artifact": 754214
+                },
+                {
+                  "artifact": 754214
+                },
+                {
+                  "artifact": 754214
+                },
+                {
+                  "artifact": 754214
+                },
+                {
+                  "artifact": 754214
+                }
+              ],
+              "artifactMedian": 754214,
+              "warmupPasses": 1,
+              "throughput": "3.5k files/s"
+            },
+            {
+              "id": "vize-batch-vapor-prod-smoff",
+              "label": "Vize native batch (max threads)",
+              "package": "@vizejs/native",
+              "target": "vapor",
+              "env": "production",
+              "sourceMap": false,
+              "threading": "batch",
+              "invocation": "in-process",
+              "artifactLabel": "Code bytes",
+              "notes": "compileSfcBatchWithResults vapor=true, sourceMap=false. multi-thread Rayon batch. ⚠ No isProduction flag — identical work in production and development cells. Content-hash caches can skip work on repeated bodies — unique corpus required for ranking.",
+              "files": 200,
+              "status": "ok",
+              "runs": [
+                20.118,
+                19.559,
+                20.214,
+                20.973,
+                19.607
+              ],
+              "medianMs": 20.118,
+              "minMs": 19.559,
+              "maxMs": 20.973,
+              "meanMs": 20.094,
+              "stddevMs": 0.572,
+              "cvPct": 2.8,
+              "metaSamples": [
+                {
+                  "artifact": 754214
+                },
+                {
+                  "artifact": 754214
+                },
+                {
+                  "artifact": 754214
+                },
+                {
+                  "artifact": 754214
+                },
+                {
+                  "artifact": 754214
+                }
+              ],
+              "artifactMedian": 754214,
+              "warmupPasses": 1,
+              "throughput": "9.9k files/s"
+            },
+            {
+              "id": "fervid-vapor-unsupported-vapor-prod-smoff",
+              "label": "fervid (vapor)",
+              "package": "@fervid/napi",
+              "target": "vapor",
+              "env": "production",
+              "threading": "n/a",
+              "notes": "fervid has no Vapor codegen path (VDOM only). Not substituted with VDOM, same treatment as @vue/compiler-sfc 3.5.",
+              "files": 200,
+              "status": "skipped",
+              "throughput": "n/a"
+            },
+            {
+              "id": "verter-stateless-vapor-prod-smoff",
+              "label": "Verter compileMany (stateless)",
+              "package": "@verter/native",
+              "target": "vapor",
+              "env": "production",
+              "sourceMap": false,
+              "threading": "batch",
+              "invocation": "in-process",
+              "artifactLabel": "Code bytes",
+              "notes": "runtime-render forceVapor=true, isProduction=true, forceJs=false (TS passthrough — the cell's uniform standard, and Verter's own Vite path), sourceMap=false, hmr=none, mode=stateless, analysis=full (the drop-in default — Verter's official plugin sets none, which means full), multi-thread host pool, workspace-backed host (project root as workspace — documented compileMany usage, same provision the fs bridge gives @vue/compiler-sfc)",
+              "files": 200,
+              "status": "ok",
+              "runs": [
+                117.095,
+                126.963,
+                117.119,
+                120.476,
+                125.096
+              ],
+              "medianMs": 120.476,
+              "minMs": 117.095,
+              "maxMs": 126.963,
+              "meanMs": 121.35,
+              "stddevMs": 4.536,
+              "cvPct": 3.8,
+              "metaSamples": [
+                {
+                  "artifact": 585310,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                },
+                {
+                  "artifact": 585310,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                },
+                {
+                  "artifact": 585310,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                },
+                {
+                  "artifact": 585310,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                },
+                {
+                  "artifact": 585310,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                }
+              ],
+              "cacheHitsMedian": 0,
+              "cacheHitsLast": 0,
+              "artifactMedian": 585310,
+              "warmupPasses": 1,
+              "throughput": "1.7k files/s"
+            },
+            {
+              "id": "verter-session-vapor-prod-smoff",
+              "label": "Verter compileMany (session cache)",
+              "package": "@verter/native",
+              "target": "vapor",
+              "env": "production",
+              "sourceMap": false,
+              "threading": "batch-cached",
+              "invocation": "in-process",
+              "artifactLabel": "Code bytes",
+              "notes": "runtime-render forceVapor=true, isProduction=true, sourceMap=false, mode=session, analysis=full — persistent workspace-backed host, cacheHits reported; not comparable to the cache-free batch rows",
+              "files": 200,
+              "status": "ok",
+              "runs": [
+                19.136,
+                24.65,
+                18.269,
+                28.011,
+                18.161
+              ],
+              "medianMs": 19.136,
+              "minMs": 18.161,
+              "maxMs": 28.011,
+              "meanMs": 21.645,
+              "stddevMs": 4.455,
+              "cvPct": 23.3,
+              "metaSamples": [
+                {
+                  "artifact": 585310,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                },
+                {
+                  "artifact": 585310,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                },
+                {
+                  "artifact": 585310,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                },
+                {
+                  "artifact": 585310,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                },
+                {
+                  "artifact": 585310,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                }
+              ],
+              "cacheHitsMedian": 0,
+              "cacheHitsLast": 0,
+              "artifactMedian": 585310,
+              "warmupPasses": 1,
+              "throughput": "10.5k files/s"
+            }
+          ]
+        },
+        {
+          "id": "vapor-dev-smoff",
+          "label": "VAPOR · development · sourcemap off",
+          "target": "vapor",
+          "env": "development",
+          "sourceMap": false,
+          "variants": [
+            {
+              "id": "vue-3.5-vapor-unsupported-vapor-dev-smoff",
+              "label": "@vue/compiler-sfc 3.5 (vapor)",
+              "package": "@vue/compiler-sfc",
+              "target": "vapor",
+              "env": "development",
+              "threading": "n/a",
+              "notes": "Vue 3.5 has no Vapor codegen path (Vapor ships with 3.6+). Not substituted with VDOM.",
+              "files": 200,
+              "status": "skipped",
+              "throughput": "n/a"
+            },
+            {
+              "id": "vue-3.6-1t-vapor-dev-smoff",
+              "label": "@vue/compiler-sfc 3.6 (1T)",
+              "package": "@vue/compiler-sfc-36",
+              "target": "vapor",
+              "env": "development",
+              "sourceMap": false,
+              "threading": "1t",
+              "invocation": "in-process",
+              "artifactLabel": "Code bytes",
+              "notes": "Official 3.6 Vapor (compileScript vapor + compileTemplate vapor=true), isProd=false, sourceMap=false",
+              "files": 200,
+              "status": "ok",
+              "runs": [
+                290.816,
+                279.958,
+                373.122,
+                273.945,
+                274.254
+              ],
+              "medianMs": 279.958,
+              "minMs": 273.945,
+              "maxMs": 373.122,
+              "meanMs": 298.419,
+              "stddevMs": 42.315,
+              "cvPct": 15.1,
+              "metaSamples": [
+                {
+                  "artifact": 683301
+                },
+                {
+                  "artifact": 683301
+                },
+                {
+                  "artifact": 683301
+                },
+                {
+                  "artifact": 683301
+                },
+                {
+                  "artifact": 683301
+                }
+              ],
+              "artifactMedian": 683301,
+              "warmupPasses": 1,
+              "throughput": "714 files/s"
+            },
+            {
+              "id": "vize-1t-vapor-dev-smoff",
+              "label": "Vize native loop (1T)",
+              "package": "@vizejs/native",
+              "target": "vapor",
+              "env": "development",
+              "sourceMap": false,
+              "threading": "1t",
+              "invocation": "in-process",
+              "artifactLabel": "Code bytes",
+              "notes": "compileSfc vapor=true, isTs=true (TS passthrough — the cell's uniform standard; ⓘ Vize's own Vite plugin omits this flag, so a drop-in Vite user gets Vize STRIPPING types on every lang=\"ts\" file — more work than benchmarked here), sourceMap=false. ⚠ Vize has no isProduction flag on compileSfc — this row does identical work in the production and development cells. Content-hash caches reward duplicate bodies — use unique fixtures for ranking.",
+              "files": 200,
+              "status": "ok",
+              "runs": [
+                56.964,
+                56.632,
+                57.102,
+                56.793,
+                59.224
+              ],
+              "medianMs": 56.964,
+              "minMs": 56.632,
+              "maxMs": 59.224,
+              "meanMs": 57.343,
+              "stddevMs": 1.066,
+              "cvPct": 1.9,
+              "metaSamples": [
+                {
+                  "artifact": 754214
+                },
+                {
+                  "artifact": 754214
+                },
+                {
+                  "artifact": 754214
+                },
+                {
+                  "artifact": 754214
+                },
+                {
+                  "artifact": 754214
+                }
+              ],
+              "artifactMedian": 754214,
+              "warmupPasses": 1,
+              "throughput": "3.5k files/s"
+            },
+            {
+              "id": "vize-batch-vapor-dev-smoff",
+              "label": "Vize native batch (max threads)",
+              "package": "@vizejs/native",
+              "target": "vapor",
+              "env": "development",
+              "sourceMap": false,
+              "threading": "batch",
+              "invocation": "in-process",
+              "artifactLabel": "Code bytes",
+              "notes": "compileSfcBatchWithResults vapor=true, sourceMap=false. multi-thread Rayon batch. ⚠ No isProduction flag — identical work in production and development cells. Content-hash caches can skip work on repeated bodies — unique corpus required for ranking.",
+              "files": 200,
+              "status": "ok",
+              "runs": [
+                20.7,
+                20.175,
+                19.699,
+                20.142,
+                20.736
+              ],
+              "medianMs": 20.175,
+              "minMs": 19.699,
+              "maxMs": 20.736,
+              "meanMs": 20.29,
+              "stddevMs": 0.433,
+              "cvPct": 2.1,
+              "metaSamples": [
+                {
+                  "artifact": 754214
+                },
+                {
+                  "artifact": 754214
+                },
+                {
+                  "artifact": 754214
+                },
+                {
+                  "artifact": 754214
+                },
+                {
+                  "artifact": 754214
+                }
+              ],
+              "artifactMedian": 754214,
+              "warmupPasses": 1,
+              "throughput": "9.9k files/s"
+            },
+            {
+              "id": "fervid-vapor-unsupported-vapor-dev-smoff",
+              "label": "fervid (vapor)",
+              "package": "@fervid/napi",
+              "target": "vapor",
+              "env": "development",
+              "threading": "n/a",
+              "notes": "fervid has no Vapor codegen path (VDOM only). Not substituted with VDOM, same treatment as @vue/compiler-sfc 3.5.",
+              "files": 200,
+              "status": "skipped",
+              "throughput": "n/a"
+            },
+            {
+              "id": "verter-stateless-vapor-dev-smoff",
+              "label": "Verter compileMany (stateless)",
+              "package": "@verter/native",
+              "target": "vapor",
+              "env": "development",
+              "sourceMap": false,
+              "threading": "batch",
+              "invocation": "in-process",
+              "artifactLabel": "Code bytes",
+              "notes": "runtime-render forceVapor=true, isProduction=false, forceJs=false (TS passthrough — the cell's uniform standard, and Verter's own Vite path), sourceMap=false, hmr=vite, mode=stateless, analysis=full (the drop-in default — Verter's official plugin sets none, which means full), multi-thread host pool, workspace-backed host (project root as workspace — documented compileMany usage, same provision the fs bridge gives @vue/compiler-sfc)",
+              "files": 200,
+              "status": "ok",
+              "runs": [
+                119.49,
+                120.238,
+                125.424,
+                119.168,
+                121.795
+              ],
+              "medianMs": 120.238,
+              "minMs": 119.168,
+              "maxMs": 125.424,
+              "meanMs": 121.223,
+              "stddevMs": 2.558,
+              "cvPct": 2.1,
+              "metaSamples": [
+                {
+                  "artifact": 621048,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                },
+                {
+                  "artifact": 621048,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                },
+                {
+                  "artifact": 621048,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                },
+                {
+                  "artifact": 621048,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                },
+                {
+                  "artifact": 621048,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                }
+              ],
+              "cacheHitsMedian": 0,
+              "cacheHitsLast": 0,
+              "artifactMedian": 621048,
+              "warmupPasses": 1,
+              "throughput": "1.7k files/s"
+            },
+            {
+              "id": "verter-session-vapor-dev-smoff",
+              "label": "Verter compileMany (session cache)",
+              "package": "@verter/native",
+              "target": "vapor",
+              "env": "development",
+              "sourceMap": false,
+              "threading": "batch-cached",
+              "invocation": "in-process",
+              "artifactLabel": "Code bytes",
+              "notes": "runtime-render forceVapor=true, isProduction=false, sourceMap=false, mode=session, analysis=full — persistent workspace-backed host, cacheHits reported; not comparable to the cache-free batch rows",
+              "files": 200,
+              "status": "ok",
+              "runs": [
+                18.789,
+                19.519,
+                23.324,
+                17.465,
+                26.184
+              ],
+              "medianMs": 19.519,
+              "minMs": 17.465,
+              "maxMs": 26.184,
+              "meanMs": 21.056,
+              "stddevMs": 3.6,
+              "cvPct": 18.4,
+              "metaSamples": [
+                {
+                  "artifact": 621048,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                },
+                {
+                  "artifact": 621048,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                },
+                {
+                  "artifact": 621048,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                },
+                {
+                  "artifact": 621048,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                },
+                {
+                  "artifact": 621048,
+                  "cacheHits": 0,
+                  "actualModes": [
+                    "stateless"
+                  ]
+                }
+              ],
+              "cacheHitsMedian": 0,
+              "cacheHitsLast": 0,
+              "artifactMedian": 621048,
+              "warmupPasses": 1,
+              "throughput": "10.2k files/s"
+            }
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "id": "vue-3.5-1t-vdom-prod-smoff",
+          "label": "@vue/compiler-sfc 3.5 (1T)",
+          "package": "@vue/compiler-sfc",
+          "target": "vdom",
+          "env": "production",
+          "sourceMap": false,
+          "threading": "1t",
+          "invocation": "in-process",
+          "artifactLabel": "Code bytes",
+          "notes": "Official 3.5 VDOM, isProd=true, sourceMap=false, single-threaded",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            180.467,
+            176.322,
+            177.86,
+            173.284,
+            195.337
+          ],
+          "medianMs": 177.86,
+          "minMs": 173.284,
+          "maxMs": 195.337,
+          "meanMs": 180.654,
+          "stddevMs": 8.61,
+          "cvPct": 4.8,
+          "metaSamples": [
+            {
+              "artifact": 670030
+            },
+            {
+              "artifact": 670030
+            },
+            {
+              "artifact": 670030
+            },
+            {
+              "artifact": 670030
+            },
+            {
+              "artifact": 670030
+            }
+          ],
+          "artifactMedian": 670030,
+          "warmupPasses": 1,
+          "throughput": "1.1k files/s"
+        },
+        {
+          "id": "vue-3.6-1t-vdom-prod-smoff",
+          "label": "@vue/compiler-sfc 3.6 (1T)",
+          "package": "@vue/compiler-sfc-36",
+          "target": "vdom",
+          "env": "production",
+          "sourceMap": false,
+          "threading": "1t",
+          "invocation": "in-process",
+          "artifactLabel": "Code bytes",
+          "notes": "Official 3.6 VDOM, isProd=true, sourceMap=false",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            183.918,
+            182.16,
+            179.546,
+            180.277,
+            193.956
+          ],
+          "medianMs": 182.16,
+          "minMs": 179.546,
+          "maxMs": 193.956,
+          "meanMs": 183.971,
+          "stddevMs": 5.835,
+          "cvPct": 3.2,
+          "metaSamples": [
+            {
+              "artifact": 670030
+            },
+            {
+              "artifact": 670030
+            },
+            {
+              "artifact": 670030
+            },
+            {
+              "artifact": 670030
+            },
+            {
+              "artifact": 670030
+            }
+          ],
+          "artifactMedian": 670030,
+          "warmupPasses": 1,
+          "throughput": "1.1k files/s"
+        },
+        {
+          "id": "vize-1t-vdom-prod-smoff",
+          "label": "Vize native loop (1T)",
+          "package": "@vizejs/native",
+          "target": "vdom",
+          "env": "production",
+          "sourceMap": false,
+          "threading": "1t",
+          "invocation": "in-process",
+          "artifactLabel": "Code bytes",
+          "notes": "compileSfc vapor=false, isTs=true (TS passthrough — the cell's uniform standard; ⓘ Vize's own Vite plugin omits this flag, so a drop-in Vite user gets Vize STRIPPING types on every lang=\"ts\" file — more work than benchmarked here), sourceMap=false. ⚠ Vize has no isProduction flag on compileSfc — this row does identical work in the production and development cells. Content-hash caches reward duplicate bodies — use unique fixtures for ranking.",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            55.901,
+            56.635,
+            55.89,
+            56.242,
+            54.637
+          ],
+          "medianMs": 55.901,
+          "minMs": 54.637,
+          "maxMs": 56.635,
+          "meanMs": 55.861,
+          "stddevMs": 0.749,
+          "cvPct": 1.3,
+          "metaSamples": [
+            {
+              "artifact": 609596
+            },
+            {
+              "artifact": 609596
+            },
+            {
+              "artifact": 609596
+            },
+            {
+              "artifact": 609596
+            },
+            {
+              "artifact": 609596
+            }
+          ],
+          "artifactMedian": 609596,
+          "warmupPasses": 1,
+          "throughput": "3.6k files/s"
+        },
+        {
+          "id": "vize-batch-vdom-prod-smoff",
+          "label": "Vize native batch (max threads)",
+          "package": "@vizejs/native",
+          "target": "vdom",
+          "env": "production",
+          "sourceMap": false,
+          "threading": "batch",
+          "invocation": "in-process",
+          "artifactLabel": "Code bytes",
+          "notes": "compileSfcBatchWithResults vapor=false, sourceMap=false. multi-thread Rayon batch. ⚠ No isProduction flag — identical work in production and development cells. Content-hash caches can skip work on repeated bodies — unique corpus required for ranking.",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            25.034,
+            22.829,
+            20.216,
+            24.118,
+            19.612
+          ],
+          "medianMs": 22.829,
+          "minMs": 19.612,
+          "maxMs": 25.034,
+          "meanMs": 22.362,
+          "stddevMs": 2.377,
+          "cvPct": 10.4,
+          "metaSamples": [
+            {
+              "artifact": 609596
+            },
+            {
+              "artifact": 609596
+            },
+            {
+              "artifact": 609596
+            },
+            {
+              "artifact": 609596
+            },
+            {
+              "artifact": 609596
+            }
+          ],
+          "artifactMedian": 609596,
+          "warmupPasses": 1,
+          "throughput": "8.8k files/s"
+        },
+        {
+          "id": "fervid-1t-vdom-prod-smoff",
+          "label": "fervid compileSync (1T)",
+          "package": "@fervid/napi",
+          "target": "vdom",
+          "env": "production",
+          "sourceMap": false,
+          "threading": "1t",
+          "invocation": "in-process",
+          "artifactLabel": "Code bytes",
+          "notes": "compileSync isProduction=true, sourceMap=false, single-threaded. ⚠ also compiles <style> blocks (scoped styles returned isCompiled=true) — strictly more work per file than the parse+script+template rows it is ranked against. ⚠ emits non-fatal NonVoidHtmlElementStartTagWithTrailingSolidus diagnostics for self-closing non-void tags (<div />, <MyComp />) that Vue's SFC parser accepts; codegen is complete regardless, so the row is gated on codegen produced for every file, not on diagnostic silence. ⚠ FAILED CODEGEN VALIDITY GATE — 22/200 files compiled to output that is not parseable JavaScript/TypeScript (first: Comp00008.vue: Invalid parenthesized assignment pattern. (65:100)). Time is shown in brackets and excluded from ranking: a compiler that emits broken output for part of the corpus is not doing the same work as one that does not. The gate is re-run every benchmark, so a fixed release clears this automatically.",
+          "files": 200,
+          "status": "unranked",
+          "runs": [
+            59.047,
+            57.398,
+            56.401,
+            56.716,
+            58.492
+          ],
+          "medianMs": 57.398,
+          "minMs": 56.401,
+          "maxMs": 59.047,
+          "meanMs": 57.611,
+          "stddevMs": 1.135,
+          "cvPct": 2,
+          "metaSamples": [
+            {
+              "artifact": 775738,
+              "mapBytes": 0,
+              "diagnostics": 44
+            },
+            {
+              "artifact": 775738,
+              "mapBytes": 0,
+              "diagnostics": 44
+            },
+            {
+              "artifact": 775738,
+              "mapBytes": 0,
+              "diagnostics": 44
+            },
+            {
+              "artifact": 775738,
+              "mapBytes": 0,
+              "diagnostics": 44
+            },
+            {
+              "artifact": 775738,
+              "mapBytes": 0,
+              "diagnostics": 44
+            }
+          ],
+          "artifactMedian": 775738,
+          "warmupPasses": 1,
+          "throughput": "n/a"
+        },
+        {
+          "id": "fervid-async-vdom-prod-smoff",
+          "label": "fervid compileAsync (4-thread libuv pool)",
+          "package": "@fervid/napi",
+          "target": "vdom",
+          "env": "production",
+          "sourceMap": false,
+          "threading": "batch",
+          "invocation": "in-process",
+          "artifactLabel": "Code bytes",
+          "notes": "compileAsync isProduction=true, sourceMap=false, fanned out with Promise.all over libuv's threadpool (UV_THREADPOOL_SIZE=4, default 4 — NOT sized to core count like a Rayon pool, so on a runner with more than 4 cores this row is thread-capped below the batch rows beside it). ⚠ also compiles <style> blocks (scoped styles returned isCompiled=true) — strictly more work per file than the parse+script+template rows it is ranked against. ⚠ emits non-fatal NonVoidHtmlElementStartTagWithTrailingSolidus diagnostics for self-closing non-void tags (<div />, <MyComp />) that Vue's SFC parser accepts; codegen is complete regardless, so the row is gated on codegen produced for every file, not on diagnostic silence. ⚠ FAILED CODEGEN VALIDITY GATE — 22/200 files compiled to output that is not parseable JavaScript/TypeScript (first: Comp00008.vue: Invalid parenthesized assignment pattern. (65:100)). Time is shown in brackets and excluded from ranking: a compiler that emits broken output for part of the corpus is not doing the same work as one that does not. The gate is re-run every benchmark, so a fixed release clears this automatically.",
+          "files": 200,
+          "status": "unranked",
+          "runs": [
+            26.056,
+            26.199,
+            25.434,
+            30.369,
+            28.652
+          ],
+          "medianMs": 26.199,
+          "minMs": 25.434,
+          "maxMs": 30.369,
+          "meanMs": 27.342,
+          "stddevMs": 2.09,
+          "cvPct": 8,
+          "metaSamples": [
+            {
+              "artifact": 775738,
+              "mapBytes": 0,
+              "diagnostics": 44
+            },
+            {
+              "artifact": 775738,
+              "mapBytes": 0,
+              "diagnostics": 44
+            },
+            {
+              "artifact": 775738,
+              "mapBytes": 0,
+              "diagnostics": 44
+            },
+            {
+              "artifact": 775738,
+              "mapBytes": 0,
+              "diagnostics": 44
+            },
+            {
+              "artifact": 775738,
+              "mapBytes": 0,
+              "diagnostics": 44
+            }
+          ],
+          "artifactMedian": 775738,
+          "warmupPasses": 1,
+          "throughput": "n/a"
+        },
+        {
+          "id": "verter-stateless-vdom-prod-smoff",
+          "label": "Verter compileMany (stateless)",
+          "package": "@verter/native",
+          "target": "vdom",
+          "env": "production",
+          "sourceMap": false,
+          "threading": "batch",
+          "invocation": "in-process",
+          "artifactLabel": "Code bytes",
+          "notes": "runtime-render forceVapor=false, isProduction=true, forceJs=false (TS passthrough — the cell's uniform standard, and Verter's own Vite path), sourceMap=false, hmr=none, mode=stateless, analysis=full (the drop-in default — Verter's official plugin sets none, which means full), multi-thread host pool, workspace-backed host (project root as workspace — documented compileMany usage, same provision the fs bridge gives @vue/compiler-sfc)",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            130.216,
+            124.355,
+            124.324,
+            118.804,
+            121.53
+          ],
+          "medianMs": 124.324,
+          "minMs": 118.804,
+          "maxMs": 130.216,
+          "meanMs": 123.846,
+          "stddevMs": 4.238,
+          "cvPct": 3.4,
+          "metaSamples": [
+            {
+              "artifact": 548989,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            },
+            {
+              "artifact": 548989,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            },
+            {
+              "artifact": 548989,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            },
+            {
+              "artifact": 548989,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            },
+            {
+              "artifact": 548989,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            }
+          ],
+          "cacheHitsMedian": 0,
+          "cacheHitsLast": 0,
+          "artifactMedian": 548989,
+          "warmupPasses": 1,
+          "throughput": "1.6k files/s"
+        },
+        {
+          "id": "verter-session-vdom-prod-smoff",
+          "label": "Verter compileMany (session cache)",
+          "package": "@verter/native",
+          "target": "vdom",
+          "env": "production",
+          "sourceMap": false,
+          "threading": "batch-cached",
+          "invocation": "in-process",
+          "artifactLabel": "Code bytes",
+          "notes": "runtime-render forceVapor=false, isProduction=true, sourceMap=false, mode=session, analysis=full — persistent workspace-backed host, cacheHits reported; not comparable to the cache-free batch rows",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            26.756,
+            28.994,
+            20.702,
+            22.727,
+            24.635
+          ],
+          "medianMs": 24.635,
+          "minMs": 20.702,
+          "maxMs": 28.994,
+          "meanMs": 24.763,
+          "stddevMs": 3.261,
+          "cvPct": 13.2,
+          "metaSamples": [
+            {
+              "artifact": 548989,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            },
+            {
+              "artifact": 548989,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            },
+            {
+              "artifact": 548989,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            },
+            {
+              "artifact": 548989,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            },
+            {
+              "artifact": 548989,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            }
+          ],
+          "cacheHitsMedian": 0,
+          "cacheHitsLast": 0,
+          "artifactMedian": 548989,
+          "warmupPasses": 1,
+          "throughput": "8.1k files/s"
+        },
+        {
+          "id": "vue-3.5-1t-vdom-dev-smoff",
+          "label": "@vue/compiler-sfc 3.5 (1T)",
+          "package": "@vue/compiler-sfc",
+          "target": "vdom",
+          "env": "development",
+          "sourceMap": false,
+          "threading": "1t",
+          "invocation": "in-process",
+          "artifactLabel": "Code bytes",
+          "notes": "Official 3.5 VDOM, isProd=false, sourceMap=false, single-threaded",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            168.684,
+            171.889,
+            170.634,
+            158.895,
+            151.657
+          ],
+          "medianMs": 168.684,
+          "minMs": 151.657,
+          "maxMs": 171.889,
+          "meanMs": 164.352,
+          "stddevMs": 8.746,
+          "cvPct": 5.2,
+          "metaSamples": [
+            {
+              "artifact": 656372
+            },
+            {
+              "artifact": 656372
+            },
+            {
+              "artifact": 656372
+            },
+            {
+              "artifact": 656372
+            },
+            {
+              "artifact": 656372
+            }
+          ],
+          "artifactMedian": 656372,
+          "warmupPasses": 1,
+          "throughput": "1.2k files/s"
+        },
+        {
+          "id": "vue-3.6-1t-vdom-dev-smoff",
+          "label": "@vue/compiler-sfc 3.6 (1T)",
+          "package": "@vue/compiler-sfc-36",
+          "target": "vdom",
+          "env": "development",
+          "sourceMap": false,
+          "threading": "1t",
+          "invocation": "in-process",
+          "artifactLabel": "Code bytes",
+          "notes": "Official 3.6 VDOM, isProd=false, sourceMap=false",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            175.723,
+            167.07,
+            171.771,
+            163.678,
+            152.777
+          ],
+          "medianMs": 167.07,
+          "minMs": 152.777,
+          "maxMs": 175.723,
+          "meanMs": 166.204,
+          "stddevMs": 8.789,
+          "cvPct": 5.3,
+          "metaSamples": [
+            {
+              "artifact": 656372
+            },
+            {
+              "artifact": 656372
+            },
+            {
+              "artifact": 656372
+            },
+            {
+              "artifact": 656372
+            },
+            {
+              "artifact": 656372
+            }
+          ],
+          "artifactMedian": 656372,
+          "warmupPasses": 1,
+          "throughput": "1.2k files/s"
+        },
+        {
+          "id": "vize-1t-vdom-dev-smoff",
+          "label": "Vize native loop (1T)",
+          "package": "@vizejs/native",
+          "target": "vdom",
+          "env": "development",
+          "sourceMap": false,
+          "threading": "1t",
+          "invocation": "in-process",
+          "artifactLabel": "Code bytes",
+          "notes": "compileSfc vapor=false, isTs=true (TS passthrough — the cell's uniform standard; ⓘ Vize's own Vite plugin omits this flag, so a drop-in Vite user gets Vize STRIPPING types on every lang=\"ts\" file — more work than benchmarked here), sourceMap=false. ⚠ Vize has no isProduction flag on compileSfc — this row does identical work in the production and development cells. Content-hash caches reward duplicate bodies — use unique fixtures for ranking.",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            54.023,
+            57.931,
+            55.184,
+            55.925,
+            54.615
+          ],
+          "medianMs": 55.184,
+          "minMs": 54.023,
+          "maxMs": 57.931,
+          "meanMs": 55.536,
+          "stddevMs": 1.512,
+          "cvPct": 2.7,
+          "metaSamples": [
+            {
+              "artifact": 609596
+            },
+            {
+              "artifact": 609596
+            },
+            {
+              "artifact": 609596
+            },
+            {
+              "artifact": 609596
+            },
+            {
+              "artifact": 609596
+            }
+          ],
+          "artifactMedian": 609596,
+          "warmupPasses": 1,
+          "throughput": "3.6k files/s"
+        },
+        {
+          "id": "vize-batch-vdom-dev-smoff",
+          "label": "Vize native batch (max threads)",
+          "package": "@vizejs/native",
+          "target": "vdom",
+          "env": "development",
+          "sourceMap": false,
+          "threading": "batch",
+          "invocation": "in-process",
+          "artifactLabel": "Code bytes",
+          "notes": "compileSfcBatchWithResults vapor=false, sourceMap=false. multi-thread Rayon batch. ⚠ No isProduction flag — identical work in production and development cells. Content-hash caches can skip work on repeated bodies — unique corpus required for ranking.",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            24.515,
+            24.252,
+            21.892,
+            24.269,
+            18.634
+          ],
+          "medianMs": 24.252,
+          "minMs": 18.634,
+          "maxMs": 24.515,
+          "meanMs": 22.712,
+          "stddevMs": 2.517,
+          "cvPct": 10.4,
+          "metaSamples": [
+            {
+              "artifact": 609596
+            },
+            {
+              "artifact": 609596
+            },
+            {
+              "artifact": 609596
+            },
+            {
+              "artifact": 609596
+            },
+            {
+              "artifact": 609596
+            }
+          ],
+          "artifactMedian": 609596,
+          "warmupPasses": 1,
+          "throughput": "8.2k files/s"
+        },
+        {
+          "id": "fervid-1t-vdom-dev-smoff",
+          "label": "fervid compileSync (1T)",
+          "package": "@fervid/napi",
+          "target": "vdom",
+          "env": "development",
+          "sourceMap": false,
+          "threading": "1t",
+          "invocation": "in-process",
+          "artifactLabel": "Code bytes",
+          "notes": "compileSync isProduction=false, sourceMap=false, single-threaded. ⚠ also compiles <style> blocks (scoped styles returned isCompiled=true) — strictly more work per file than the parse+script+template rows it is ranked against. ⚠ emits non-fatal NonVoidHtmlElementStartTagWithTrailingSolidus diagnostics for self-closing non-void tags (<div />, <MyComp />) that Vue's SFC parser accepts; codegen is complete regardless, so the row is gated on codegen produced for every file, not on diagnostic silence. ⚠ FAILED CODEGEN VALIDITY GATE — 22/200 files compiled to output that is not parseable JavaScript/TypeScript (first: Comp00008.vue: Invalid parenthesized assignment pattern. (41:97)). Time is shown in brackets and excluded from ranking: a compiler that emits broken output for part of the corpus is not doing the same work as one that does not. The gate is re-run every benchmark, so a fixed release clears this automatically.",
+          "files": 200,
+          "status": "unranked",
+          "runs": [
+            56.916,
+            57.383,
+            56.966,
+            57.057,
+            57.069
+          ],
+          "medianMs": 57.057,
+          "minMs": 56.916,
+          "maxMs": 57.383,
+          "meanMs": 57.078,
+          "stddevMs": 0.182,
+          "cvPct": 0.3,
+          "metaSamples": [
+            {
+              "artifact": 787866,
+              "mapBytes": 0,
+              "diagnostics": 44
+            },
+            {
+              "artifact": 787866,
+              "mapBytes": 0,
+              "diagnostics": 44
+            },
+            {
+              "artifact": 787866,
+              "mapBytes": 0,
+              "diagnostics": 44
+            },
+            {
+              "artifact": 787866,
+              "mapBytes": 0,
+              "diagnostics": 44
+            },
+            {
+              "artifact": 787866,
+              "mapBytes": 0,
+              "diagnostics": 44
+            }
+          ],
+          "artifactMedian": 787866,
+          "warmupPasses": 1,
+          "throughput": "n/a"
+        },
+        {
+          "id": "fervid-async-vdom-dev-smoff",
+          "label": "fervid compileAsync (4-thread libuv pool)",
+          "package": "@fervid/napi",
+          "target": "vdom",
+          "env": "development",
+          "sourceMap": false,
+          "threading": "batch",
+          "invocation": "in-process",
+          "artifactLabel": "Code bytes",
+          "notes": "compileAsync isProduction=false, sourceMap=false, fanned out with Promise.all over libuv's threadpool (UV_THREADPOOL_SIZE=4, default 4 — NOT sized to core count like a Rayon pool, so on a runner with more than 4 cores this row is thread-capped below the batch rows beside it). ⚠ also compiles <style> blocks (scoped styles returned isCompiled=true) — strictly more work per file than the parse+script+template rows it is ranked against. ⚠ emits non-fatal NonVoidHtmlElementStartTagWithTrailingSolidus diagnostics for self-closing non-void tags (<div />, <MyComp />) that Vue's SFC parser accepts; codegen is complete regardless, so the row is gated on codegen produced for every file, not on diagnostic silence. ⚠ FAILED CODEGEN VALIDITY GATE — 22/200 files compiled to output that is not parseable JavaScript/TypeScript (first: Comp00008.vue: Invalid parenthesized assignment pattern. (41:97)). Time is shown in brackets and excluded from ranking: a compiler that emits broken output for part of the corpus is not doing the same work as one that does not. The gate is re-run every benchmark, so a fixed release clears this automatically.",
+          "files": 200,
+          "status": "unranked",
+          "runs": [
+            31.086,
+            30.481,
+            38.274,
+            72.641,
+            25.037
+          ],
+          "medianMs": 31.086,
+          "minMs": 25.037,
+          "maxMs": 72.641,
+          "meanMs": 39.504,
+          "stddevMs": 19.112,
+          "cvPct": 61.5,
+          "metaSamples": [
+            {
+              "artifact": 787866,
+              "mapBytes": 0,
+              "diagnostics": 44
+            },
+            {
+              "artifact": 787866,
+              "mapBytes": 0,
+              "diagnostics": 44
+            },
+            {
+              "artifact": 787866,
+              "mapBytes": 0,
+              "diagnostics": 44
+            },
+            {
+              "artifact": 787866,
+              "mapBytes": 0,
+              "diagnostics": 44
+            },
+            {
+              "artifact": 787866,
+              "mapBytes": 0,
+              "diagnostics": 44
+            }
+          ],
+          "artifactMedian": 787866,
+          "warmupPasses": 1,
+          "throughput": "n/a"
+        },
+        {
+          "id": "verter-stateless-vdom-dev-smoff",
+          "label": "Verter compileMany (stateless)",
+          "package": "@verter/native",
+          "target": "vdom",
+          "env": "development",
+          "sourceMap": false,
+          "threading": "batch",
+          "invocation": "in-process",
+          "artifactLabel": "Code bytes",
+          "notes": "runtime-render forceVapor=false, isProduction=false, forceJs=false (TS passthrough — the cell's uniform standard, and Verter's own Vite path), sourceMap=false, hmr=vite, mode=stateless, analysis=full (the drop-in default — Verter's official plugin sets none, which means full), multi-thread host pool, workspace-backed host (project root as workspace — documented compileMany usage, same provision the fs bridge gives @vue/compiler-sfc)",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            122.643,
+            136.453,
+            126.002,
+            132.193,
+            117.201
+          ],
+          "medianMs": 126.002,
+          "minMs": 117.201,
+          "maxMs": 136.453,
+          "meanMs": 126.898,
+          "stddevMs": 7.62,
+          "cvPct": 6,
+          "metaSamples": [
+            {
+              "artifact": 671880,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            },
+            {
+              "artifact": 671880,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            },
+            {
+              "artifact": 671880,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            },
+            {
+              "artifact": 671880,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            },
+            {
+              "artifact": 671880,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            }
+          ],
+          "cacheHitsMedian": 0,
+          "cacheHitsLast": 0,
+          "artifactMedian": 671880,
+          "warmupPasses": 1,
+          "throughput": "1.6k files/s"
+        },
+        {
+          "id": "verter-session-vdom-dev-smoff",
+          "label": "Verter compileMany (session cache)",
+          "package": "@verter/native",
+          "target": "vdom",
+          "env": "development",
+          "sourceMap": false,
+          "threading": "batch-cached",
+          "invocation": "in-process",
+          "artifactLabel": "Code bytes",
+          "notes": "runtime-render forceVapor=false, isProduction=false, sourceMap=false, mode=session, analysis=full — persistent workspace-backed host, cacheHits reported; not comparable to the cache-free batch rows",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            25.89,
+            28.812,
+            24.751,
+            34.558,
+            17.838
+          ],
+          "medianMs": 25.89,
+          "minMs": 17.838,
+          "maxMs": 34.558,
+          "meanMs": 26.37,
+          "stddevMs": 6.096,
+          "cvPct": 23.5,
+          "metaSamples": [
+            {
+              "artifact": 671880,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            },
+            {
+              "artifact": 671880,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            },
+            {
+              "artifact": 671880,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            },
+            {
+              "artifact": 671880,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            },
+            {
+              "artifact": 671880,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            }
+          ],
+          "cacheHitsMedian": 0,
+          "cacheHitsLast": 0,
+          "artifactMedian": 671880,
+          "warmupPasses": 1,
+          "throughput": "7.7k files/s"
+        },
+        {
+          "id": "vue-3.5-vapor-unsupported-vapor-prod-smoff",
+          "label": "@vue/compiler-sfc 3.5 (vapor)",
+          "package": "@vue/compiler-sfc",
+          "target": "vapor",
+          "env": "production",
+          "threading": "n/a",
+          "notes": "Vue 3.5 has no Vapor codegen path (Vapor ships with 3.6+). Not substituted with VDOM.",
+          "files": 200,
+          "status": "skipped",
+          "throughput": "n/a"
+        },
+        {
+          "id": "vue-3.6-1t-vapor-prod-smoff",
+          "label": "@vue/compiler-sfc 3.6 (1T)",
+          "package": "@vue/compiler-sfc-36",
+          "target": "vapor",
+          "env": "production",
+          "sourceMap": false,
+          "threading": "1t",
+          "invocation": "in-process",
+          "artifactLabel": "Code bytes",
+          "notes": "Official 3.6 Vapor (compileScript vapor + compileTemplate vapor=true), isProd=true, sourceMap=false",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            307.879,
+            312.301,
+            300.331,
+            282.661,
+            297.517
+          ],
+          "medianMs": 300.331,
+          "minMs": 282.661,
+          "maxMs": 312.301,
+          "meanMs": 300.138,
+          "stddevMs": 11.404,
+          "cvPct": 3.8,
+          "metaSamples": [
+            {
+              "artifact": 681563
+            },
+            {
+              "artifact": 681563
+            },
+            {
+              "artifact": 681563
+            },
+            {
+              "artifact": 681563
+            },
+            {
+              "artifact": 681563
+            }
+          ],
+          "artifactMedian": 681563,
+          "warmupPasses": 1,
+          "throughput": "666 files/s"
+        },
+        {
+          "id": "vize-1t-vapor-prod-smoff",
+          "label": "Vize native loop (1T)",
+          "package": "@vizejs/native",
+          "target": "vapor",
+          "env": "production",
+          "sourceMap": false,
+          "threading": "1t",
+          "invocation": "in-process",
+          "artifactLabel": "Code bytes",
+          "notes": "compileSfc vapor=true, isTs=true (TS passthrough — the cell's uniform standard; ⓘ Vize's own Vite plugin omits this flag, so a drop-in Vite user gets Vize STRIPPING types on every lang=\"ts\" file — more work than benchmarked here), sourceMap=false. ⚠ Vize has no isProduction flag on compileSfc — this row does identical work in the production and development cells. Content-hash caches reward duplicate bodies — use unique fixtures for ranking.",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            60.14,
+            56.808,
+            56.776,
+            58.64,
+            57.167
+          ],
+          "medianMs": 57.167,
+          "minMs": 56.776,
+          "maxMs": 60.14,
+          "meanMs": 57.906,
+          "stddevMs": 1.463,
+          "cvPct": 2.6,
+          "metaSamples": [
+            {
+              "artifact": 754214
+            },
+            {
+              "artifact": 754214
+            },
+            {
+              "artifact": 754214
+            },
+            {
+              "artifact": 754214
+            },
+            {
+              "artifact": 754214
+            }
+          ],
+          "artifactMedian": 754214,
+          "warmupPasses": 1,
+          "throughput": "3.5k files/s"
+        },
+        {
+          "id": "vize-batch-vapor-prod-smoff",
+          "label": "Vize native batch (max threads)",
+          "package": "@vizejs/native",
+          "target": "vapor",
+          "env": "production",
+          "sourceMap": false,
+          "threading": "batch",
+          "invocation": "in-process",
+          "artifactLabel": "Code bytes",
+          "notes": "compileSfcBatchWithResults vapor=true, sourceMap=false. multi-thread Rayon batch. ⚠ No isProduction flag — identical work in production and development cells. Content-hash caches can skip work on repeated bodies — unique corpus required for ranking.",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            20.118,
+            19.559,
+            20.214,
+            20.973,
+            19.607
+          ],
+          "medianMs": 20.118,
+          "minMs": 19.559,
+          "maxMs": 20.973,
+          "meanMs": 20.094,
+          "stddevMs": 0.572,
+          "cvPct": 2.8,
+          "metaSamples": [
+            {
+              "artifact": 754214
+            },
+            {
+              "artifact": 754214
+            },
+            {
+              "artifact": 754214
+            },
+            {
+              "artifact": 754214
+            },
+            {
+              "artifact": 754214
+            }
+          ],
+          "artifactMedian": 754214,
+          "warmupPasses": 1,
+          "throughput": "9.9k files/s"
+        },
+        {
+          "id": "fervid-vapor-unsupported-vapor-prod-smoff",
+          "label": "fervid (vapor)",
+          "package": "@fervid/napi",
+          "target": "vapor",
+          "env": "production",
+          "threading": "n/a",
+          "notes": "fervid has no Vapor codegen path (VDOM only). Not substituted with VDOM, same treatment as @vue/compiler-sfc 3.5.",
+          "files": 200,
+          "status": "skipped",
+          "throughput": "n/a"
+        },
+        {
+          "id": "verter-stateless-vapor-prod-smoff",
+          "label": "Verter compileMany (stateless)",
+          "package": "@verter/native",
+          "target": "vapor",
+          "env": "production",
+          "sourceMap": false,
+          "threading": "batch",
+          "invocation": "in-process",
+          "artifactLabel": "Code bytes",
+          "notes": "runtime-render forceVapor=true, isProduction=true, forceJs=false (TS passthrough — the cell's uniform standard, and Verter's own Vite path), sourceMap=false, hmr=none, mode=stateless, analysis=full (the drop-in default — Verter's official plugin sets none, which means full), multi-thread host pool, workspace-backed host (project root as workspace — documented compileMany usage, same provision the fs bridge gives @vue/compiler-sfc)",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            117.095,
+            126.963,
+            117.119,
+            120.476,
+            125.096
+          ],
+          "medianMs": 120.476,
+          "minMs": 117.095,
+          "maxMs": 126.963,
+          "meanMs": 121.35,
+          "stddevMs": 4.536,
+          "cvPct": 3.8,
+          "metaSamples": [
+            {
+              "artifact": 585310,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            },
+            {
+              "artifact": 585310,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            },
+            {
+              "artifact": 585310,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            },
+            {
+              "artifact": 585310,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            },
+            {
+              "artifact": 585310,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            }
+          ],
+          "cacheHitsMedian": 0,
+          "cacheHitsLast": 0,
+          "artifactMedian": 585310,
+          "warmupPasses": 1,
+          "throughput": "1.7k files/s"
+        },
+        {
+          "id": "verter-session-vapor-prod-smoff",
+          "label": "Verter compileMany (session cache)",
+          "package": "@verter/native",
+          "target": "vapor",
+          "env": "production",
+          "sourceMap": false,
+          "threading": "batch-cached",
+          "invocation": "in-process",
+          "artifactLabel": "Code bytes",
+          "notes": "runtime-render forceVapor=true, isProduction=true, sourceMap=false, mode=session, analysis=full — persistent workspace-backed host, cacheHits reported; not comparable to the cache-free batch rows",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            19.136,
+            24.65,
+            18.269,
+            28.011,
+            18.161
+          ],
+          "medianMs": 19.136,
+          "minMs": 18.161,
+          "maxMs": 28.011,
+          "meanMs": 21.645,
+          "stddevMs": 4.455,
+          "cvPct": 23.3,
+          "metaSamples": [
+            {
+              "artifact": 585310,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            },
+            {
+              "artifact": 585310,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            },
+            {
+              "artifact": 585310,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            },
+            {
+              "artifact": 585310,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            },
+            {
+              "artifact": 585310,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            }
+          ],
+          "cacheHitsMedian": 0,
+          "cacheHitsLast": 0,
+          "artifactMedian": 585310,
+          "warmupPasses": 1,
+          "throughput": "10.5k files/s"
+        },
+        {
+          "id": "vue-3.5-vapor-unsupported-vapor-dev-smoff",
+          "label": "@vue/compiler-sfc 3.5 (vapor)",
+          "package": "@vue/compiler-sfc",
+          "target": "vapor",
+          "env": "development",
+          "threading": "n/a",
+          "notes": "Vue 3.5 has no Vapor codegen path (Vapor ships with 3.6+). Not substituted with VDOM.",
+          "files": 200,
+          "status": "skipped",
+          "throughput": "n/a"
+        },
+        {
+          "id": "vue-3.6-1t-vapor-dev-smoff",
+          "label": "@vue/compiler-sfc 3.6 (1T)",
+          "package": "@vue/compiler-sfc-36",
+          "target": "vapor",
+          "env": "development",
+          "sourceMap": false,
+          "threading": "1t",
+          "invocation": "in-process",
+          "artifactLabel": "Code bytes",
+          "notes": "Official 3.6 Vapor (compileScript vapor + compileTemplate vapor=true), isProd=false, sourceMap=false",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            290.816,
+            279.958,
+            373.122,
+            273.945,
+            274.254
+          ],
+          "medianMs": 279.958,
+          "minMs": 273.945,
+          "maxMs": 373.122,
+          "meanMs": 298.419,
+          "stddevMs": 42.315,
+          "cvPct": 15.1,
+          "metaSamples": [
+            {
+              "artifact": 683301
+            },
+            {
+              "artifact": 683301
+            },
+            {
+              "artifact": 683301
+            },
+            {
+              "artifact": 683301
+            },
+            {
+              "artifact": 683301
+            }
+          ],
+          "artifactMedian": 683301,
+          "warmupPasses": 1,
+          "throughput": "714 files/s"
+        },
+        {
+          "id": "vize-1t-vapor-dev-smoff",
+          "label": "Vize native loop (1T)",
+          "package": "@vizejs/native",
+          "target": "vapor",
+          "env": "development",
+          "sourceMap": false,
+          "threading": "1t",
+          "invocation": "in-process",
+          "artifactLabel": "Code bytes",
+          "notes": "compileSfc vapor=true, isTs=true (TS passthrough — the cell's uniform standard; ⓘ Vize's own Vite plugin omits this flag, so a drop-in Vite user gets Vize STRIPPING types on every lang=\"ts\" file — more work than benchmarked here), sourceMap=false. ⚠ Vize has no isProduction flag on compileSfc — this row does identical work in the production and development cells. Content-hash caches reward duplicate bodies — use unique fixtures for ranking.",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            56.964,
+            56.632,
+            57.102,
+            56.793,
+            59.224
+          ],
+          "medianMs": 56.964,
+          "minMs": 56.632,
+          "maxMs": 59.224,
+          "meanMs": 57.343,
+          "stddevMs": 1.066,
+          "cvPct": 1.9,
+          "metaSamples": [
+            {
+              "artifact": 754214
+            },
+            {
+              "artifact": 754214
+            },
+            {
+              "artifact": 754214
+            },
+            {
+              "artifact": 754214
+            },
+            {
+              "artifact": 754214
+            }
+          ],
+          "artifactMedian": 754214,
+          "warmupPasses": 1,
+          "throughput": "3.5k files/s"
+        },
+        {
+          "id": "vize-batch-vapor-dev-smoff",
+          "label": "Vize native batch (max threads)",
+          "package": "@vizejs/native",
+          "target": "vapor",
+          "env": "development",
+          "sourceMap": false,
+          "threading": "batch",
+          "invocation": "in-process",
+          "artifactLabel": "Code bytes",
+          "notes": "compileSfcBatchWithResults vapor=true, sourceMap=false. multi-thread Rayon batch. ⚠ No isProduction flag — identical work in production and development cells. Content-hash caches can skip work on repeated bodies — unique corpus required for ranking.",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            20.7,
+            20.175,
+            19.699,
+            20.142,
+            20.736
+          ],
+          "medianMs": 20.175,
+          "minMs": 19.699,
+          "maxMs": 20.736,
+          "meanMs": 20.29,
+          "stddevMs": 0.433,
+          "cvPct": 2.1,
+          "metaSamples": [
+            {
+              "artifact": 754214
+            },
+            {
+              "artifact": 754214
+            },
+            {
+              "artifact": 754214
+            },
+            {
+              "artifact": 754214
+            },
+            {
+              "artifact": 754214
+            }
+          ],
+          "artifactMedian": 754214,
+          "warmupPasses": 1,
+          "throughput": "9.9k files/s"
+        },
+        {
+          "id": "fervid-vapor-unsupported-vapor-dev-smoff",
+          "label": "fervid (vapor)",
+          "package": "@fervid/napi",
+          "target": "vapor",
+          "env": "development",
+          "threading": "n/a",
+          "notes": "fervid has no Vapor codegen path (VDOM only). Not substituted with VDOM, same treatment as @vue/compiler-sfc 3.5.",
+          "files": 200,
+          "status": "skipped",
+          "throughput": "n/a"
+        },
+        {
+          "id": "verter-stateless-vapor-dev-smoff",
+          "label": "Verter compileMany (stateless)",
+          "package": "@verter/native",
+          "target": "vapor",
+          "env": "development",
+          "sourceMap": false,
+          "threading": "batch",
+          "invocation": "in-process",
+          "artifactLabel": "Code bytes",
+          "notes": "runtime-render forceVapor=true, isProduction=false, forceJs=false (TS passthrough — the cell's uniform standard, and Verter's own Vite path), sourceMap=false, hmr=vite, mode=stateless, analysis=full (the drop-in default — Verter's official plugin sets none, which means full), multi-thread host pool, workspace-backed host (project root as workspace — documented compileMany usage, same provision the fs bridge gives @vue/compiler-sfc)",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            119.49,
+            120.238,
+            125.424,
+            119.168,
+            121.795
+          ],
+          "medianMs": 120.238,
+          "minMs": 119.168,
+          "maxMs": 125.424,
+          "meanMs": 121.223,
+          "stddevMs": 2.558,
+          "cvPct": 2.1,
+          "metaSamples": [
+            {
+              "artifact": 621048,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            },
+            {
+              "artifact": 621048,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            },
+            {
+              "artifact": 621048,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            },
+            {
+              "artifact": 621048,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            },
+            {
+              "artifact": 621048,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            }
+          ],
+          "cacheHitsMedian": 0,
+          "cacheHitsLast": 0,
+          "artifactMedian": 621048,
+          "warmupPasses": 1,
+          "throughput": "1.7k files/s"
+        },
+        {
+          "id": "verter-session-vapor-dev-smoff",
+          "label": "Verter compileMany (session cache)",
+          "package": "@verter/native",
+          "target": "vapor",
+          "env": "development",
+          "sourceMap": false,
+          "threading": "batch-cached",
+          "invocation": "in-process",
+          "artifactLabel": "Code bytes",
+          "notes": "runtime-render forceVapor=true, isProduction=false, sourceMap=false, mode=session, analysis=full — persistent workspace-backed host, cacheHits reported; not comparable to the cache-free batch rows",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            18.789,
+            19.519,
+            23.324,
+            17.465,
+            26.184
+          ],
+          "medianMs": 19.519,
+          "minMs": 17.465,
+          "maxMs": 26.184,
+          "meanMs": 21.056,
+          "stddevMs": 3.6,
+          "cvPct": 18.4,
+          "metaSamples": [
+            {
+              "artifact": 621048,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            },
+            {
+              "artifact": 621048,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            },
+            {
+              "artifact": 621048,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            },
+            {
+              "artifact": 621048,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            },
+            {
+              "artifact": 621048,
+              "cacheHits": 0,
+              "actualModes": [
+                "stateless"
+              ]
+            }
+          ],
+          "cacheHitsMedian": 0,
+          "cacheHitsLast": 0,
+          "artifactMedian": 621048,
+          "warmupPasses": 1,
+          "throughput": "10.2k files/s"
+        }
+      ]
+    },
+    {
+      "id": "jsx-compile",
+      "label": "JSX compile",
+      "files": 200,
+      "bytes": 38804,
+      "fixtureDir": "/home/runner/work/vue-benchmarks/vue-benchmarks/fixtures/jsx-200",
+      "methodology": [
+        "Surface is JSX/TSX transform throughput — independent of SFC (.vue) compile.",
+        "Corpus: fixtures/jsx-N unique .jsx files (generate.mjs --with-jsx).",
+        "vue-jsx-vapor: https://github.com/vuejs/vue-jsx-vapor — Vapor Mode of Vue JSX (Oxc/Rust compiler-rs).",
+        "compiler-rs vapor vs interop:true (VDOM) are different codegen targets.",
+        "@vue/babel-plugin-jsx is the classic Babel VDOM JSX path (comparison baseline).",
+        "Do not compare JSX ms to SFC compile ms; different language and pipeline.",
+        "Tool order is ROTATED on every warmup and measured run (not merely alternated), so no tool keeps a fixed position in the sequence."
+      ],
+      "variants": [
+        {
+          "id": "vue-jsx-vapor-rs-vapor",
+          "label": "@vue-jsx-vapor/compiler-rs (vapor)",
+          "package": "@vue-jsx-vapor/compiler-rs",
+          "target": "vapor",
+          "threading": "1t",
+          "notes": "Rust/Oxc transform; default vapor mode (see vuejs/vue-jsx-vapor). Same unique .jsx corpus as other JSX rows.",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            3.234,
+            3.142,
+            3.058,
+            3.108,
+            2.793
+          ],
+          "medianMs": 3.108,
+          "minMs": 2.793,
+          "maxMs": 3.234,
+          "meanMs": 3.067,
+          "stddevMs": 0.166,
+          "cvPct": 5.3,
+          "warmupPasses": 1,
+          "throughput": "64.4k files/s"
+        },
+        {
+          "id": "vue-jsx-vapor-rs-vdom",
+          "label": "@vue-jsx-vapor/compiler-rs (interop VDOM)",
+          "package": "@vue-jsx-vapor/compiler-rs",
+          "target": "vdom",
+          "threading": "1t",
+          "notes": "Rust/Oxc transform with interop: true (VDOM createElementBlock path).",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            2.531,
+            2.77,
+            2.492,
+            2.517,
+            2.586
+          ],
+          "medianMs": 2.531,
+          "minMs": 2.492,
+          "maxMs": 2.77,
+          "meanMs": 2.579,
+          "stddevMs": 0.112,
+          "cvPct": 4.4,
+          "warmupPasses": 1,
+          "throughput": "79.0k files/s"
+        },
+        {
+          "id": "vue-jsx-vapor-api",
+          "label": "vue-jsx-vapor/api",
+          "package": "vue-jsx-vapor",
+          "target": "vapor",
+          "threading": "1t",
+          "notes": "transformVueJsxVapor() public API (vapor default).",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            3.472,
+            3.525,
+            3.347,
+            3.393,
+            3.335
+          ],
+          "medianMs": 3.393,
+          "minMs": 3.335,
+          "maxMs": 3.525,
+          "meanMs": 3.414,
+          "stddevMs": 0.082,
+          "cvPct": 2.4,
+          "warmupPasses": 1,
+          "throughput": "58.9k files/s"
+        },
+        {
+          "id": "vue-babel-plugin-jsx",
+          "label": "@vue/babel-plugin-jsx (Babel VDOM)",
+          "package": "@vue/babel-plugin-jsx",
+          "target": "vdom",
+          "threading": "1t",
+          "notes": "Official Babel Vue JSX plugin (createVNode). Reference VDOM JSX path; not Vapor.",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            134.212,
+            127.382,
+            115.381,
+            117.041,
+            115.327
+          ],
+          "medianMs": 117.041,
+          "minMs": 115.327,
+          "maxMs": 134.212,
+          "meanMs": 121.869,
+          "stddevMs": 8.529,
+          "cvPct": 7.3,
+          "warmupPasses": 1,
+          "throughput": "1.7k files/s"
+        }
+      ]
+    },
+    {
+      "id": "typecheck",
+      "label": "Typecheck",
+      "files": 200,
+      "bytes": 285701,
+      "methodology": [
+        "Same on-disk fixture directory and tsconfig for every tool.",
+        "Default check file limit is smaller than compile corpus (typecheck cost scales steeply).",
+        "Each measurement is a full CLI process invocation — every tool here is a CLI, so process startup is paid by all of them equally.",
+        "Warm runs still benefit from OS page cache of source files and node_modules.",
+        "Tool order is rotated on every warmup and measured run; ranking metric is the median of warmed runs.",
+        "Work gate has three parts, all required to be ranked: (1) a script-only planted error, (2) a template-only planted error with strictTemplates — proving the tool actually typechecks templates and does not just run tsc over extracted script blocks, and (3) the same planted bug re-detected in the FULL timed corpus under the timed tsconfig, proving the tool does not degrade at scale.",
+        "Per-tool gate results are shown in Notes as script/template/corpus ✓✗.",
+        "verter-tsc requires stable tsgo (typescript@7.0.x / typescript-go); set via VERTER_TSGO_BIN.",
+        "Two engines are measured in ONE table: rows tagged (JS) run the JavaScript TypeScript compiler, untagged rows run native tsgo. `vue-tsc (JS)` and `vue-tsc (N)` are the SAME vue-tsc and the same Vue layer differing only in engine, so the pair isolates how much of any speed gap is TypeScript's Go rewrite rather than the Vue tooling on top of it — and a cross-engine ratio should be read as exactly that.",
+        "The TNB row lives in envs/tnb as a standalone install, never a root `typescript` override, so the engine swap cannot leak into component-meta, lint or LSP surfaces; it must also print its activation banner or it is unranked.",
+        "Diagnostic equivalence is NOT asserted — this is a throughput benchmark, not a correctness suite.",
+        "golar default mode includes linting; golar typecheck is pure typecheck.",
+        "Allow non-zero exit codes: generated fixtures may surface tool-specific diagnostics."
+      ],
+      "variants": [
+        {
+          "id": "vue-tsc",
+          "label": "vue-tsc",
+          "package": "vue-tsc",
+          "artifactPolarity": "informational",
+          "engine": "tsc-js",
+          "artifactLabel": "Diagnostics",
+          "notes": "Official Vue Language Tools CLI: vue-tsc --noEmit -p tsconfig.json | engine: TypeScript 6.0.3 (JS) | gate: script=✓ tmpl-prop=✓ tmpl-event=✓ corpus=✓",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            4783.097,
+            4849.347,
+            4838.144,
+            4898.062,
+            4879.559
+          ],
+          "medianMs": 4849.347,
+          "minMs": 4783.097,
+          "maxMs": 4898.062,
+          "meanMs": 4849.642,
+          "stddevMs": 44.159,
+          "cvPct": 0.9,
+          "metaSamples": [
+            {
+              "artifact": 0
+            },
+            {
+              "artifact": 0
+            },
+            {
+              "artifact": 0
+            },
+            {
+              "artifact": 0
+            },
+            {
+              "artifact": 0
+            }
+          ],
+          "artifactMedian": 0,
+          "warmupPasses": 1,
+          "throughput": "41 files/s"
+        },
+        {
+          "id": "vue-tsc-tnb",
+          "label": "vue-tsc (TNB / tsgo)",
+          "package": "typescript-native-bridge",
+          "artifactPolarity": "informational",
+          "engine": "tsgo",
+          "artifactLabel": "Diagnostics",
+          "notes": "vue-tsc 3.3.10 with typescript aliased to typescript-native-bridge 6.0.3-bridge.13.tsgo.7.0.2 (TS API 6.0.3 on tsgo 7.0.2, in-process NAPI/FFI) | engine: tsgo 7.0.2 via TNB 6.0.3-bridge.13.tsgo.7.0.2 | gate: script=✓ tmpl-prop=✓ tmpl-event=✓ corpus=✓",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            2280.261,
+            2259.763,
+            2251.555,
+            2273.554,
+            2288.794
+          ],
+          "medianMs": 2273.554,
+          "minMs": 2251.555,
+          "maxMs": 2288.794,
+          "meanMs": 2270.785,
+          "stddevMs": 15.108,
+          "cvPct": 0.7,
+          "metaSamples": [
+            {
+              "artifact": 0
+            },
+            {
+              "artifact": 0
+            },
+            {
+              "artifact": 0
+            },
+            {
+              "artifact": 0
+            },
+            {
+              "artifact": 0
+            }
+          ],
+          "artifactMedian": 0,
+          "warmupPasses": 1,
+          "throughput": "88 files/s"
+        },
+        {
+          "id": "golar-typecheck",
+          "label": "Golar typecheck",
+          "package": "golar",
+          "artifactPolarity": "informational",
+          "engine": "tsgo",
+          "artifactLabel": "Diagnostics",
+          "notes": "golar typecheck (typescript-go + @golar/vue plugin) | engine: typescript-go 7.0.2 | gate: script=✓ tmpl-prop=✓ tmpl-event=✓ corpus=✓",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            1586.941,
+            1579.349,
+            1549.786,
+            1598.649,
+            1584.841
+          ],
+          "medianMs": 1584.841,
+          "minMs": 1549.786,
+          "maxMs": 1598.649,
+          "meanMs": 1579.913,
+          "stddevMs": 18.253,
+          "cvPct": 1.2,
+          "metaSamples": [
+            {
+              "artifact": 0
+            },
+            {
+              "artifact": 0
+            },
+            {
+              "artifact": 0
+            },
+            {
+              "artifact": 0
+            },
+            {
+              "artifact": 0
+            }
+          ],
+          "artifactMedian": 0,
+          "warmupPasses": 1,
+          "throughput": "126 files/s"
+        },
+        {
+          "id": "golar-default",
+          "label": "Golar default (lint+typecheck)",
+          "package": "golar",
+          "artifactPolarity": "informational",
+          "engine": "tsgo",
+          "artifactLabel": "Diagnostics",
+          "notes": "golar default mode runs lint then typecheck — not a pure typecheck | engine: typescript-go 7.0.2 | gate: script=✓ tmpl-prop=✓ tmpl-event=✓ corpus=✓",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            1533.97,
+            1548.072,
+            1565.14,
+            1595.9,
+            1579.256
+          ],
+          "medianMs": 1565.14,
+          "minMs": 1533.97,
+          "maxMs": 1595.9,
+          "meanMs": 1564.468,
+          "stddevMs": 24.526,
+          "cvPct": 1.6,
+          "metaSamples": [
+            {
+              "artifact": 0
+            },
+            {
+              "artifact": 0
+            },
+            {
+              "artifact": 0
+            },
+            {
+              "artifact": 0
+            },
+            {
+              "artifact": 0
+            }
+          ],
+          "artifactMedian": 0,
+          "warmupPasses": 1,
+          "throughput": "128 files/s"
+        },
+        {
+          "id": "vize-check",
+          "label": "Vize check",
+          "package": "vize",
+          "artifactPolarity": "informational",
+          "engine": "tsgo",
+          "artifactLabel": "Diagnostics",
+          "notes": "vize check . --tsconfig tsconfig.json (native + Corsa when available) | engine: tsgo 7.0.0-dev.20260603.1 (nightly) | gate: script=✓ tmpl-prop=✓ tmpl-event=✓ corpus=✓",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            1635.933,
+            1675.909,
+            1648.986,
+            1634.65,
+            1616.473
+          ],
+          "medianMs": 1635.933,
+          "minMs": 1616.473,
+          "maxMs": 1675.909,
+          "meanMs": 1642.39,
+          "stddevMs": 22.025,
+          "cvPct": 1.3,
+          "metaSamples": [
+            {
+              "artifact": 0
+            },
+            {
+              "artifact": 0
+            },
+            {
+              "artifact": 0
+            },
+            {
+              "artifact": 0
+            },
+            {
+              "artifact": 0
+            }
+          ],
+          "artifactMedian": 0,
+          "warmupPasses": 1,
+          "throughput": "122 files/s"
+        },
+        {
+          "id": "verter-tsc",
+          "label": "verter-tsc",
+          "package": "verter-tsc",
+          "artifactPolarity": "informational",
+          "engine": "tsgo",
+          "artifactLabel": "Diagnostics",
+          "notes": "verter-tsc --noEmit -p tsconfig.json · tsgo 7.0.2 (typescript-go@7.0.2 → @typescript/typescript-linux-x64) | engine: tsgo 7.0.2 (typescript-go@7.0.2 → @typescript/typescript-linux-x64) | gate: script=✓ tmpl-prop=✓ tmpl-event=✓ corpus=✓",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            1117.66,
+            1074.373,
+            1083.809,
+            1094.057,
+            1092.209
+          ],
+          "medianMs": 1092.209,
+          "minMs": 1074.373,
+          "maxMs": 1117.66,
+          "meanMs": 1092.422,
+          "stddevMs": 16.122,
+          "cvPct": 1.5,
+          "metaSamples": [
+            {
+              "artifact": 420
+            },
+            {
+              "artifact": 420
+            },
+            {
+              "artifact": 420
+            },
+            {
+              "artifact": 420
+            },
+            {
+              "artifact": 420
+            }
+          ],
+          "artifactMedian": 420,
+          "warmupPasses": 1,
+          "throughput": "183 files/s"
+        }
+      ]
+    },
+    {
+      "id": "format",
+      "label": "Format",
+      "files": 200,
+      "bytes": 285701,
+      "methodology": [
+        "Each invocation receives a fresh copy of the same Vue SFC corpus (formatters rewrite files).",
+        ".prettierrc.json and biome.json are copied into every work copy so each tool's config actually resolves (config left in the fixture root is not on the work dir's lookup path). Both configs set the same indent, width, quote, semicolon and trailing-comma choices.",
+        "All four formatters are CLI invocations and share the same non-zero-exit policy — no tool is failed for a diagnostic another tool is forgiven for.",
+        "Output style is NOT normalized across tools — this measures format throughput, not style identity. Spot-checked: on a messy SFC, oxfmt and Prettier produce byte-identical output and Vize reformats template + script + style, so no tool is winning by no-op.",
+        "Oxfmt's .vue path is NOT its Rust core: oxfmt (verified through 0.63) bundles Prettier and routes SFCs through it in worker threads — which is also why its output is byte-identical to Prettier's. Its row measures that pipeline, disclosed in its label notes; Vize is currently the only ranked formatter compiling SFCs natively.",
+        "Every work copy and gate plant carries an empty .git dir as a repo-boundary marker: walk tools that honour ancestor .gitignore rules (oxfmt 0.63+) otherwise inherit THIS repo's exclusion of the work/ dir the copies live in, see zero files, and get unranked for walking reasons rather than formatting ones. A real project root has the boundary; the marker changes no tool's invocation.",
+        "The template-rewrite gate probe lives in a NESTED directory, so a tool invoked non-recursively fails the gate rather than being ranked on an empty match (this exact fault put Prettier at 1.00x on every nested corpus while formatting zero files).",
+        "Template-rewrite work gate: each formatter is run against a messy SFC and must actually change the <template> block, or it is measured but unranked.",
+        "FILE-COVERAGE GATE, untimed, per tool with its exact timed invocation: every corpus file is planted with a mess (trailing spaces, stacked blank lines) that any formatter under the shared configs must undo, and files rewritten are counted by byte comparison — the same method for every tool. A ranked tool that rewrites fewer than every corpus file is measured but UNRANKED: tools walking different file sets are not doing the same job, however similar the clock looks. A walk-invoked tool that also rewrites a config file is disclosed, not gated (one extra tiny file is noise; skipping corpus files is not).",
+        "Prettier, Oxfmt, and Vize format the whole SFC. On the pinned Biome, `biome format --write .` reports .vue files as formatted but applies NO fixes to any block of them (probed: 0 of 50 planted files rewritten, 'No fixes applied') — its bracketed time is a walk-and-parse, which both gates say on the row. Rule/option parity is not guaranteed for any tool.",
+        "Tool order is rotated on every warmup and measured run; ranking metric is the median of warmed runs."
+      ],
+      "variants": [
+        {
+          "id": "prettier",
+          "label": "Prettier",
+          "package": "prettier",
+          "threading": "1t",
+          "invocation": "cli",
+          "notes": "prettier --write **/*.vue (fresh copy each run) · single-threaded by design | ⓘ file coverage verified: rewrote 200/200 planted corpus files.",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            3687.402,
+            3636.946,
+            3660.803,
+            3688.237,
+            3590.832
+          ],
+          "medianMs": 3660.803,
+          "minMs": 3590.832,
+          "maxMs": 3688.237,
+          "meanMs": 3652.844,
+          "stddevMs": 40.646,
+          "cvPct": 1.1,
+          "warmupPasses": 1,
+          "throughput": "55 files/s"
+        },
+        {
+          "id": "oxfmt",
+          "label": "Oxfmt",
+          "package": "oxfmt",
+          "threading": "max",
+          "invocation": "cli",
+          "notes": "oxfmt --write (fresh copy each run) · .vue files route through oxfmt's BUNDLED PRETTIER fallback in worker threads, not the Rust core (its dist ships Prettier and exposes Prettier's Vue options) — read this row as Prettier-with-workers until oxfmt formats SFCs natively | ⓘ file coverage verified: rewrote 200/200 planted corpus files.",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            3259.861,
+            3181.094,
+            3154.664,
+            3145.496,
+            3144.899
+          ],
+          "medianMs": 3154.664,
+          "minMs": 3144.899,
+          "maxMs": 3259.861,
+          "meanMs": 3177.203,
+          "stddevMs": 48.488,
+          "cvPct": 1.5,
+          "warmupPasses": 1,
+          "throughput": "63 files/s"
+        },
+        {
+          "id": "vize-fmt",
+          "label": "Vize fmt",
+          "package": "vize",
+          "threading": "unknown",
+          "invocation": "cli",
+          "notes": "vize fmt --write (fresh copy each run) · does not report thread usage — not assumed single-threaded | ⓘ file coverage verified: rewrote 200/200 planted corpus files.",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            126.341,
+            120.567,
+            124.219,
+            125.914,
+            127.394
+          ],
+          "medianMs": 125.914,
+          "minMs": 120.567,
+          "maxMs": 127.394,
+          "meanMs": 124.887,
+          "stddevMs": 2.672,
+          "cvPct": 2.1,
+          "warmupPasses": 1,
+          "throughput": "1.6k files/s"
+        },
+        {
+          "id": "biome-fmt",
+          "label": "Biome format",
+          "package": "@biomejs/biome",
+          "threading": "max",
+          "invocation": "cli",
+          "notes": "biome format --write . (fresh copy each run) · multi-threaded (Rayon; honours RAYON_NUM_THREADS) · formats the <script> block ONLY — template and style are returned byte-identical | ⚠ FAILED VALIDATION — time shown in brackets, excluded from ranking | ⓘ file-coverage census: rewrote 0 of 200 planted corpus files.",
+          "files": 200,
+          "status": "unranked",
+          "runs": [
+            120.388,
+            119.105,
+            119.189,
+            118.071,
+            123.013
+          ],
+          "medianMs": 119.189,
+          "minMs": 118.071,
+          "maxMs": 123.013,
+          "meanMs": 119.953,
+          "stddevMs": 1.897,
+          "cvPct": 1.6,
+          "warmupPasses": 1,
+          "throughput": "n/a"
+        }
+      ]
+    },
+    {
+      "id": "lint",
+      "label": "Lint",
+      "files": 200,
+      "bytes": 285701,
+      "methodology": [
+        "Every tool lints an identical isolated copy of the corpus (work/lint/…). That tools see the SAME FILES is enforced, not assumed: an untimed FILE-COVERAGE census plants a guaranteed-reportable issue in every corpus file (`debugger` in script, `v-html` in template) and runs each directory-walk tool once — a ranked tool that fails to name every corpus file is measured but UNRANKED. Explicit-list invocations (the eslint API rows, VerterHost) are handed exactly the corpus by construction and say so. Census-only output changes (vize without --quiet, biome --max-diagnostics=none) alter what is printed, never what is linted; a walk tool that also lints a config file beside the corpus is disclosed, not gated.",
+        "Every work copy and gate plant carries an empty .git dir as a repo-boundary marker: walk tools that honour ancestor .gitignore rules (oxlint; oxfmt 0.63+ on the format surface) otherwise inherit THIS repo's exclusion of the work/ dir the copies live in and walk zero files. A real project root has the boundary; the marker changes no tool's invocation.",
+        "In-process and CLI rows share the table; the row label says which mode ran. A CLI pays process startup on every run (~85ms measured for a native CLI); an in-process API pays it once — read same-mode rows against each other. eslint runs in BOTH modes and is the reference point between them.",
+        "No single invocation mode covers every tool — vize lint is CLI-only, VerterHost.lint is in-process-only — which is why the mode is on the row instead of one mode being dropped.",
+        "eslint-plugin-vue uses flat recommended config generated with fixtures.",
+        "Vize, Biome and Oxlint each get separate 1T and max-threads rows — a thread-count gap is not a linter gap.",
+        "Planted-bug work gate: each tool must report vue/no-v-html (or equivalent) or is unranked. Biome and Oxlint both fail it — each lints the <script> block only and has no template rules, so nothing in <template> is examined.",
+        "Oxlint runs with its vue plugin ON (.oxlintrc.json travels with the corpus and with the gate plant): 31 extra rules over its stock 111, all of them <script> rules for SFC option/macro shape. Template syntax is still never parsed, which is why the plant is missed with the plugin's full rule set active.",
+        "Oxlint ships no standalone executable — it is a NAPI addon loaded into a Node process — so its per-run startup is Node's, while vize and biome launch a native binary. All three pay startup every run; it is not the same constant.",
+        "Biome's script-only view also produces false positives on this corpus: variables declared in <script setup> and used only in <template> are reported as unused. Oxlint avoids that by disabling no-unused-vars for .vue entirely — it reports neither the false positive nor a genuinely unused declaration. Neither tool's diagnostics are comparable to the Vue-aware linters'.",
+        "Allow non-zero exit (style diagnostics do not abort timing).",
+        "Rule sets are NOT identical across tools — throughput only, not diagnostic equivalence.",
+        "Tool order is rotated on every warmup and measured run; ranking metric is the median of warmed runs."
+      ],
+      "variants": [
+        {
+          "id": "eslint-plugin-vue-1t",
+          "label": "eslint-plugin-vue (1T)",
+          "package": "eslint-plugin-vue",
+          "threading": "1t",
+          "invocation": "in-process",
+          "notes": "ESLint flat config + eslint-plugin-vue recommended, single-threaded lintFiles | ⓘ file coverage by construction: this invocation is handed the 200 corpus files as an explicit list, not a directory walk.",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            1843.028,
+            1748.532,
+            1613.976,
+            1637.838,
+            1663.101
+          ],
+          "medianMs": 1663.101,
+          "minMs": 1613.976,
+          "maxMs": 1843.028,
+          "meanMs": 1701.295,
+          "stddevMs": 94.114,
+          "cvPct": 5.7,
+          "warmupPasses": 1,
+          "throughput": "120 files/s"
+        },
+        {
+          "id": "eslint-plugin-vue-workers",
+          "label": "eslint-plugin-vue (4 workers)",
+          "package": "eslint-plugin-vue",
+          "threading": "workers",
+          "invocation": "in-process",
+          "notes": "ESLint worker_threads fan-out (one ESLint instance per worker) | ⓘ file coverage by construction: this invocation is handed the 200 corpus files as an explicit list, not a directory walk.",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            3362.682,
+            3465.361,
+            3411.99,
+            3497.635,
+            3443.975
+          ],
+          "medianMs": 3443.975,
+          "minMs": 3362.682,
+          "maxMs": 3497.635,
+          "meanMs": 3436.329,
+          "stddevMs": 51.662,
+          "cvPct": 1.5,
+          "warmupPasses": 1,
+          "throughput": "58 files/s"
+        },
+        {
+          "id": "eslint-plugin-vue-cli",
+          "label": "eslint-plugin-vue (CLI)",
+          "package": "eslint-plugin-vue",
+          "threading": "1t",
+          "invocation": "cli",
+          "notes": "eslint CLI over the same corpus — pays Node startup + config load per run, like the native CLIs | ⓘ file coverage verified: named 200/200 planted corpus files.",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            3064.26,
+            3063.122,
+            3088.658,
+            3063.907,
+            3087.979
+          ],
+          "medianMs": 3064.26,
+          "minMs": 3063.122,
+          "maxMs": 3088.658,
+          "meanMs": 3073.585,
+          "stddevMs": 13.458,
+          "cvPct": 0.4,
+          "warmupPasses": 1,
+          "throughput": "65 files/s"
+        },
+        {
+          "id": "vize-lint-1t",
+          "label": "Vize lint (1T)",
+          "package": "vize",
+          "threading": "1t",
+          "invocation": "cli",
+          "notes": "vize lint . with RAYON_NUM_THREADS=1 | ⓘ file coverage verified: named 200/200 planted corpus files.",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            98.549,
+            102.372,
+            101.801,
+            120.737,
+            101.667
+          ],
+          "medianMs": 101.801,
+          "minMs": 98.549,
+          "maxMs": 120.737,
+          "meanMs": 105.025,
+          "stddevMs": 8.909,
+          "cvPct": 8.8,
+          "warmupPasses": 1,
+          "throughput": "2.0k files/s"
+        },
+        {
+          "id": "vize-lint-max",
+          "label": "Vize lint (max threads)",
+          "package": "vize",
+          "threading": "max",
+          "invocation": "cli",
+          "notes": "vize lint . using default Rayon pool (all cores) | ⓘ file coverage verified: named 200/200 planted corpus files.",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            81.152,
+            81.567,
+            84.585,
+            84.994,
+            82.758
+          ],
+          "medianMs": 82.758,
+          "minMs": 81.152,
+          "maxMs": 84.994,
+          "meanMs": 83.011,
+          "stddevMs": 1.733,
+          "cvPct": 2.1,
+          "warmupPasses": 1,
+          "throughput": "2.4k files/s"
+        },
+        {
+          "id": "biome-lint-1t",
+          "label": "Biome lint (1T)",
+          "package": "@biomejs/biome",
+          "threading": "1t",
+          "invocation": "cli",
+          "notes": "biome lint . with RAYON_NUM_THREADS=1 · script block only, no template rules | ⚠ FAILED VALIDATION — time shown in brackets, excluded from ranking | ⓘ file coverage verified: named 200/200 planted corpus files.",
+          "files": 200,
+          "status": "unranked",
+          "runs": [
+            367.822,
+            361.078,
+            373.238,
+            364.7,
+            364.897
+          ],
+          "medianMs": 364.897,
+          "minMs": 361.078,
+          "maxMs": 373.238,
+          "meanMs": 366.347,
+          "stddevMs": 4.534,
+          "cvPct": 1.2,
+          "warmupPasses": 1,
+          "throughput": "n/a"
+        },
+        {
+          "id": "biome-lint-max",
+          "label": "Biome lint (max threads)",
+          "package": "@biomejs/biome",
+          "threading": "max",
+          "invocation": "cli",
+          "notes": "biome lint . using the default Rayon pool (all cores) · script block only | ⚠ FAILED VALIDATION — time shown in brackets, excluded from ranking | ⓘ file coverage verified: named 200/200 planted corpus files.",
+          "files": 200,
+          "status": "unranked",
+          "runs": [
+            180.74,
+            186.898,
+            188.005,
+            184.059,
+            189.642
+          ],
+          "medianMs": 186.898,
+          "minMs": 180.74,
+          "maxMs": 189.642,
+          "meanMs": 185.869,
+          "stddevMs": 3.516,
+          "cvPct": 1.9,
+          "warmupPasses": 1,
+          "throughput": "n/a"
+        },
+        {
+          "id": "oxlint-1t",
+          "label": "Oxlint (1T)",
+          "package": "oxlint",
+          "threading": "1t",
+          "invocation": "cli",
+          "notes": "oxlint . --threads=1, vue plugin enabled via .oxlintrc.json · script block only, no template rules | ⚠ FAILED VALIDATION — time shown in brackets, excluded from ranking | ⓘ file coverage verified: named 200/200 planted corpus files.",
+          "files": 200,
+          "status": "unranked",
+          "runs": [
+            81.865,
+            79.518,
+            80.966,
+            83.129,
+            77.729
+          ],
+          "medianMs": 80.966,
+          "minMs": 77.729,
+          "maxMs": 83.129,
+          "meanMs": 80.641,
+          "stddevMs": 2.094,
+          "cvPct": 2.6,
+          "warmupPasses": 1,
+          "throughput": "n/a"
+        },
+        {
+          "id": "oxlint-max",
+          "label": "Oxlint (max threads)",
+          "package": "oxlint",
+          "threading": "max",
+          "invocation": "cli",
+          "notes": "oxlint . on the default thread pool (all cores), vue plugin enabled · script block only | ⚠ FAILED VALIDATION — time shown in brackets, excluded from ranking | ⓘ file coverage verified: named 200/200 planted corpus files.",
+          "files": 200,
+          "status": "unranked",
+          "runs": [
+            73.843,
+            79.916,
+            72.93,
+            81.89,
+            79.187
+          ],
+          "medianMs": 79.187,
+          "minMs": 72.93,
+          "maxMs": 81.89,
+          "meanMs": 77.553,
+          "stddevMs": 3.943,
+          "cvPct": 5,
+          "warmupPasses": 1,
+          "throughput": "n/a"
+        },
+        {
+          "id": "verter-lint-host",
+          "label": "Verter host lint",
+          "package": "@verter/native",
+          "threading": "host",
+          "invocation": "in-process",
+          "notes": "VerterHost.upsert + lint(canonicalId) for each file (if API available) | ⓘ file coverage by construction: this invocation is handed the 200 corpus files as an explicit list, not a directory walk.",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            147.014,
+            149.587,
+            152.785,
+            150.303,
+            149.677
+          ],
+          "medianMs": 149.677,
+          "minMs": 147.014,
+          "maxMs": 152.785,
+          "meanMs": 149.873,
+          "stddevMs": 2.059,
+          "cvPct": 1.4,
+          "warmupPasses": 1,
+          "throughput": "1.3k files/s"
+        }
+      ]
+    },
+    {
+      "id": "component-meta",
+      "label": "Component-meta",
+      "files": 100,
+      "bytes": 142771,
+      "methodology": [
+        "Extract component public API metadata (props/events/slots where supported).",
+        "Same subset of .vue files for every available tool.",
+        "Schema depth and TypeScript program options may differ by tool — timings are throughput, not equivalence.",
+        "Every tool is driven through its own published entry point. No payload is hand-decoded, and no row is measured through an API it does not ship.",
+        "Each row reports the meta members it materialised. The counts are NOT equivalent between tools and no threshold is applied to them: on this corpus most generated SFCs declare no macros, and the tools differ on whether a component with no declared API still has implicit members. Read the member counts alongside the times rather than treating the ratio as like-for-like.",
+        "Tool order is ROTATED on every warmup and measured run (not merely alternated), so no tool keeps a fixed position in the sequence.",
+        "Tools without a real component-meta API are reported as skipped (no substitute workload)."
+      ],
+      "variants": [
+        {
+          "id": "vue-component-meta",
+          "label": "vue-component-meta",
+          "package": "vue-component-meta",
+          "artifactPolarity": "informational",
+          "artifactLabel": "Meta members",
+          "notes": "createChecker(tsconfig) + getComponentMeta for each .vue file",
+          "files": 100,
+          "status": "ok",
+          "runs": [
+            1459.771,
+            954.899,
+            902.747,
+            922.909,
+            889.281
+          ],
+          "medianMs": 922.909,
+          "minMs": 889.281,
+          "maxMs": 1459.771,
+          "meanMs": 1025.921,
+          "stddevMs": 243.785,
+          "cvPct": 26.4,
+          "metaSamples": [
+            {
+              "artifact": 1343
+            },
+            {
+              "artifact": 1343
+            },
+            {
+              "artifact": 1343
+            },
+            {
+              "artifact": 1343
+            },
+            {
+              "artifact": 1343
+            }
+          ],
+          "artifactMedian": 1343,
+          "warmupPasses": 1,
+          "throughput": "108 files/s"
+        },
+        {
+          "id": "verter-component-meta",
+          "label": "@verter/component-meta",
+          "package": "@verter/component-meta",
+          "artifactPolarity": "informational",
+          "artifactLabel": "Meta members",
+          "notes": "openComponentMetaSession(root, tsconfig) + getComponentMeta for each .vue file",
+          "files": 100,
+          "status": "ok",
+          "runs": [
+            459.82,
+            461.114,
+            464.536,
+            481.412,
+            500.288
+          ],
+          "medianMs": 464.536,
+          "minMs": 459.82,
+          "maxMs": 500.288,
+          "meanMs": 473.434,
+          "stddevMs": 17.328,
+          "cvPct": 3.7,
+          "metaSamples": [
+            {
+              "artifact": 88
+            },
+            {
+              "artifact": 88
+            },
+            {
+              "artifact": 88
+            },
+            {
+              "artifact": 88
+            },
+            {
+              "artifact": 88
+            }
+          ],
+          "artifactMedian": 88,
+          "warmupPasses": 1,
+          "throughput": "215 files/s"
+        },
+        {
+          "id": "vize-component-meta",
+          "label": "Vize component-meta",
+          "package": "vize",
+          "notes": "No dedicated public component-meta API found on vize/@vizejs/native (declaration emit is a different surface and is not substituted).",
+          "files": 100,
+          "status": "skipped",
+          "throughput": "n/a"
+        }
+      ]
+    },
+    {
+      "id": "lsp",
+      "label": "LSP (editor language server)",
+      "files": 1,
+      "bytes": 745,
+      "corpus": {
+        "workspace": "/home/runner/work/vue-benchmarks/vue-benchmarks/fixtures/lsp-workspace",
+        "file": "LspTarget.vue",
+        "probe": {
+          "line": 14,
+          "character": 12
+        },
+        "bulkFiles": 20
+      },
+      "methodology": [
+        "Apples-to-apples: identical workspace, LspTarget.vue, UTF-16 hover position on `const benchMarker`.",
+        "Hover content is gated in TWO places, both required to be ranked: the `<script setup>` position (must return a TypeScript type) and the `{{ benchMarker }}` TEMPLATE position (must return the auto-unwrapped `string`). The template probe is the Vue-specific one — a server can satisfy the script probe by proxying to a TypeScript server, but resolving a ref's unwrapped type inside an interpolation requires actually modelling the template, which is the job a Vue language server exists to do. A payload naming the symbol with no type, or returning the `Ref<...>` script type, fails.",
+        "The template probe runs OUTSIDE every timed window, so it gates ranking without changing what the latency column measures.",
+        "Each measured run starts a fresh language-server process (tool process cold).",
+        "Volar is measured as the two-process product it is in v3: @vue/language-server has no in-process TypeScript language service, so the harness also starts typescript-language-server with @vue/typescript-plugin, syncs the same .vue buffer to both, and asks both for every feature in parallel — Volar is charged the slower half plus both processes' startup and project load. This is the same wiring VS Code and Neovim implement; without it the Vue server returns null for a <script setup> hover by design.",
+        "Primary ranking column uses didOpen→hover latency (first semantic response after open), taken as the median over warmed runs — each run still starts a fresh server process, so per-process project load is measured every time.",
+        "Hover retry budget is identical for every server (6 attempts, 60s each, same backoff). Retry sleeps fall inside the timed open→hover window, so an asymmetric budget would silently subsidise whichever server got the larger one.",
+        "A fixed 50ms yield after didOpen is inside the timed window for every server alike — it is an additive constant, so it compresses ratios slightly but cannot reorder them.",
+        "Phase breakdown in Notes: initialize, ready (n/a if no server signal), open→hover, hover cold, hover warm median(5), completion, definition.",
+        "workspaceReady is OBSERVED, never waited for. A vendor ready notification (e.g. $/verter/ready) is recorded from session start as a diagnostic and never enters a ranked column — the harness does not pause on it. It previously did, which moved one server's workspace load OUT of the ranked open→hover window while every other server's stayed inside it. Missing signal = n/a, not 0.",
+        "Readiness is established identically for every server and INSIDE the ranked window, via the shared didOpen→hover retry loop — the same content-gated approach the ide-ops suites use. Whoever needs project-load time pays for it in the metric.",
+        "Rows share one table across TypeScript engines, tagged by the same resolver the typecheck surface uses: Volar (JS) runs the JavaScript TypeScript compiler, while Volar (N), Vize and Verter all run native tsgo. A cross-engine ratio measures TypeScript's Go rewrite as much as the Vue layer under test — the (JS) tag is there so you compare like with like.",
+        "Process host (native executable vs Node) is NOT a comparison-class axis here — there is no native Volar and no Node-hosted Verter, so splitting on it would leave every table with one row. It is printed on the row instead.",
+        "Vize is launched from the standalone native server the VS Code extension downloads (version-matched, discovered under VS Code globalStorage, or pinned with VIZE_LSP_BIN) — that is the process the shipped product runs. Where no native server exists, e.g. CI, the npm package's Node entry is used and the row says so, because the Node bootstrap it adds (~35ms/spawn, inside initialize) is not part of the product.",
+        "Completion/definition are best-effort extras; null/n/a does not mean the tool is slower — capability may differ.",
+        "typescript-native-bridge (TNB) is a drop-in typescript package for CLI/tsserver — NOT a Vue LSP in its own right. It appears here only as Volar's TypeScript engine: the `Volar (TNB / tsgo tsdk)` row is the same Volar binary with TNB supplying the tsserver half, so the pair isolates the TS engine from the Vue layer.",
+        "Verter resolves from the installed `verter-lsp` package only; skipped when it is absent.",
+        "VS Code extension host overhead is NOT measured — only the language server stdio protocol.",
+        "Server order is rotated on every warmup and measured run; no server is pinned to first position."
+      ],
+      "variants": [
+        {
+          "id": "volar-language-server",
+          "label": "Volar (@vue/language-server)",
+          "package": "@vue/language-server",
+          "threading": "lsp",
+          "engine": "tsc-js",
+          "artifactLabel": "Hover bytes",
+          "notes": "Official Vue language server v3, hybrid (two-process) mode — the only mode v3 has. Measured unit is the pair: @vue/language-server plus typescript-language-server with @vue/typescript-plugin, joined by the tsserver/request↔tsserver/response bridge (the VS Code/Neovim client contract). The .vue buffer is synced to both and both are asked for each feature, in parallel, with the slower one charged — a script-block hover is answered by the TypeScript half, since v3 ships no semantic TS provider in the Vue server. Startup and project load of BOTH processes are inside the timings. If hybrid wiring fails, row is error — not ranked as slow. Primary metric: didOpen→hover. | engine: TypeScript 6.0.3 (JS) | init=554ms · ready=n/a · open→hover=1097ms · hoverCold=8ms · hoverWarm=2ms · completion=18ms · definition=4ms | hover verified: returns a TypeScript type for `benchMarker` in <script setup> AND the auto-unwrapped `string` inside {{ }} (template is really typechecked)",
+          "files": 1,
+          "status": "ok",
+          "runs": [
+            1127.986,
+            1117.759,
+            1141.887,
+            1134.196,
+            1096.631
+          ],
+          "medianMs": 1127.986,
+          "minMs": 1096.631,
+          "maxMs": 1141.887,
+          "meanMs": 1123.692,
+          "stddevMs": 17.517,
+          "cvPct": 1.6,
+          "metaSamples": [
+            {
+              "initializeMs": 655.909244999988,
+              "workspaceReadyMs": null,
+              "didOpenToHoverMs": 1127.9860510000144,
+              "hoverColdMs": 40.10648200000287,
+              "hoverWarmMedianMs": 2.7885390000010375,
+              "completionMs": 19.17955999998958,
+              "definitionMs": 6.111573000001954,
+              "artifact": 114,
+              "hoverValid": true,
+              "hoverReason": "",
+              "hoverSample": "```typescript\nconst benchMarker: Ref<string, string>\n```\nStable hover target for LSP benchmarks — do not rename.",
+              "templateHoverValid": true,
+              "templateHoverReason": "",
+              "templateHoverSample": "```typescript\n(property) benchMarker: string\n```",
+              "backendFallback": null,
+              "resource": {
+                "serverRssMaxMb": null,
+                "serverRssAvgMb": null,
+                "serverCpuMs": null
+              }
+            },
+            {
+              "initializeMs": 607.4555540000147,
+              "workspaceReadyMs": null,
+              "didOpenToHoverMs": 1117.7589549999975,
+              "hoverColdMs": 42.016145000001416,
+              "hoverWarmMedianMs": 2.4218870000040624,
+              "completionMs": 27.061541000002762,
+              "definitionMs": 5.301031999988481,
+              "artifact": 114,
+              "hoverValid": true,
+              "hoverReason": "",
+              "hoverSample": "```typescript\nconst benchMarker: Ref<string, string>\n```\nStable hover target for LSP benchmarks — do not rename.",
+              "templateHoverValid": true,
+              "templateHoverReason": "",
+              "templateHoverSample": "```typescript\n(property) benchMarker: string\n```",
+              "backendFallback": null,
+              "resource": {
+                "serverRssMaxMb": null,
+                "serverRssAvgMb": null,
+                "serverCpuMs": null
+              }
+            },
+            {
+              "initializeMs": 609.0191610000038,
+              "workspaceReadyMs": null,
+              "didOpenToHoverMs": 1141.886582999985,
+              "hoverColdMs": 39.590509000001475,
+              "hoverWarmMedianMs": 2.1324819999863394,
+              "completionMs": 16.92041099999915,
+              "definitionMs": 10.02890699999989,
+              "artifact": 114,
+              "hoverValid": true,
+              "hoverReason": "",
+              "hoverSample": "```typescript\nconst benchMarker: Ref<string, string>\n```\nStable hover target for LSP benchmarks — do not rename.",
+              "templateHoverValid": true,
+              "templateHoverReason": "",
+              "templateHoverSample": "```typescript\n(property) benchMarker: string\n```",
+              "backendFallback": null,
+              "resource": {
+                "serverRssMaxMb": null,
+                "serverRssAvgMb": null,
+                "serverCpuMs": null
+              }
+            },
+            {
+              "initializeMs": 612.3892909999704,
+              "workspaceReadyMs": null,
+              "didOpenToHoverMs": 1134.1960850000032,
+              "hoverColdMs": 40.63056999997934,
+              "hoverWarmMedianMs": 2.701498000009451,
+              "completionMs": 23.838017000001855,
+              "definitionMs": 4.655902000027709,
+              "artifact": 114,
+              "hoverValid": true,
+              "hoverReason": "",
+              "hoverSample": "```typescript\nconst benchMarker: Ref<string, string>\n```\nStable hover target for LSP benchmarks — do not rename.",
+              "templateHoverValid": true,
+              "templateHoverReason": "",
+              "templateHoverSample": "```typescript\n(property) benchMarker: string\n```",
+              "backendFallback": null,
+              "resource": {
+                "serverRssMaxMb": null,
+                "serverRssAvgMb": null,
+                "serverCpuMs": null
+              }
+            },
+            {
+              "initializeMs": 554.1624550000415,
+              "workspaceReadyMs": null,
+              "didOpenToHoverMs": 1096.6308149999822,
+              "hoverColdMs": 7.576483999961056,
+              "hoverWarmMedianMs": 1.8285439999890514,
+              "completionMs": 18.02192999998806,
+              "definitionMs": 4.320817000058014,
+              "artifact": 114,
+              "hoverValid": true,
+              "hoverReason": "",
+              "hoverSample": "```typescript\nconst benchMarker: Ref<string, string>\n```\nStable hover target for LSP benchmarks — do not rename.",
+              "templateHoverValid": true,
+              "templateHoverReason": "",
+              "templateHoverSample": "```typescript\n(property) benchMarker: string\n```",
+              "backendFallback": null,
+              "resource": {
+                "serverRssMaxMb": null,
+                "serverRssAvgMb": null,
+                "serverCpuMs": null
+              }
+            }
+          ],
+          "artifactMedian": 114,
+          "warmupPasses": 1,
+          "throughput": "1 files/s",
+          "phaseBreakdown": "init=554ms · ready=n/a · open→hover=1097ms · hoverCold=8ms · hoverWarm=2ms · completion=18ms · definition=4ms",
+          "primaryMetric": "didOpen→hover (ms)"
+        },
+        {
+          "id": "volar-language-server-tnb",
+          "label": "Volar (TNB / tsgo tsdk)",
+          "package": "@vue/language-server",
+          "threading": "lsp",
+          "engine": "tsgo",
+          "artifactLabel": "Hover bytes",
+          "notes": "Identical to the Volar row above except the TypeScript half runs on typescript-native-bridge (tsgo) instead of the JavaScript TypeScript: same @vue/language-server, same @vue/typescript-plugin, same bridge, tsdk pointed at TNB 6.0.3-bridge.13.tsgo.7.0.2 tsdk. Isolates how much of Volar's latency is TypeScript's engine rather than the Vue layer. | engine: tsgo 7.0.2 via TNB 6.0.3-bridge.13.tsgo.7.0.2 | init=549ms · ready=n/a · open→hover=415ms · hoverCold=17ms · hoverWarm=2ms · completion=6ms · definition=4ms | hover verified: returns a TypeScript type for `benchMarker` in <script setup> AND the auto-unwrapped `string` inside {{ }} (template is really typechecked)",
+          "files": 1,
+          "status": "ok",
+          "runs": [
+            412.099,
+            414.542,
+            415.727,
+            411.215,
+            415.123
+          ],
+          "medianMs": 414.542,
+          "minMs": 411.215,
+          "maxMs": 415.727,
+          "meanMs": 413.741,
+          "stddevMs": 1.973,
+          "cvPct": 0.5,
+          "metaSamples": [
+            {
+              "initializeMs": 553.3684439999925,
+              "workspaceReadyMs": null,
+              "didOpenToHoverMs": 412.09863200000837,
+              "hoverColdMs": 15.883957999991253,
+              "hoverWarmMedianMs": 1.799189999990631,
+              "completionMs": 6.014537000010023,
+              "definitionMs": 3.6520590000145603,
+              "artifact": 114,
+              "hoverValid": true,
+              "hoverReason": "",
+              "hoverSample": "```typescript\nconst benchMarker: Ref<string, string>\n```\nStable hover target for LSP benchmarks — do not rename.",
+              "templateHoverValid": true,
+              "templateHoverReason": "",
+              "templateHoverSample": "```typescript\n(property) benchMarker: string\n```",
+              "backendFallback": null,
+              "resource": {
+                "serverRssMaxMb": null,
+                "serverRssAvgMb": null,
+                "serverCpuMs": null
+              }
+            },
+            {
+              "initializeMs": 598.8932299999869,
+              "workspaceReadyMs": null,
+              "didOpenToHoverMs": 414.5415000000212,
+              "hoverColdMs": 8.16399800000363,
+              "hoverWarmMedianMs": 2.845028999989154,
+              "completionMs": 5.113805000000866,
+              "definitionMs": 4.542784999997821,
+              "artifact": 114,
+              "hoverValid": true,
+              "hoverReason": "",
+              "hoverSample": "```typescript\nconst benchMarker: Ref<string, string>\n```\nStable hover target for LSP benchmarks — do not rename.",
+              "templateHoverValid": true,
+              "templateHoverReason": "",
+              "templateHoverSample": "```typescript\n(property) benchMarker: string\n```",
+              "backendFallback": null,
+              "resource": {
+                "serverRssMaxMb": null,
+                "serverRssAvgMb": null,
+                "serverCpuMs": null
+              }
+            },
+            {
+              "initializeMs": 552.9072130000277,
+              "workspaceReadyMs": null,
+              "didOpenToHoverMs": 415.7268800000311,
+              "hoverColdMs": 24.595988999994006,
+              "hoverWarmMedianMs": 1.7739310000324622,
+              "completionMs": 5.353851999971084,
+              "definitionMs": 4.161196000000928,
+              "artifact": 114,
+              "hoverValid": true,
+              "hoverReason": "",
+              "hoverSample": "```typescript\nconst benchMarker: Ref<string, string>\n```\nStable hover target for LSP benchmarks — do not rename.",
+              "templateHoverValid": true,
+              "templateHoverReason": "",
+              "templateHoverSample": "```typescript\n(property) benchMarker: string\n```",
+              "backendFallback": null,
+              "resource": {
+                "serverRssMaxMb": null,
+                "serverRssAvgMb": null,
+                "serverCpuMs": null
+              }
+            },
+            {
+              "initializeMs": 567.0412080000388,
+              "workspaceReadyMs": null,
+              "didOpenToHoverMs": 411.21549200004665,
+              "hoverColdMs": 7.771978999953717,
+              "hoverWarmMedianMs": 2.89022699999623,
+              "completionMs": 5.040831000020262,
+              "definitionMs": 3.81713799998397,
+              "artifact": 114,
+              "hoverValid": true,
+              "hoverReason": "",
+              "hoverSample": "```typescript\nconst benchMarker: Ref<string, string>\n```\nStable hover target for LSP benchmarks — do not rename.",
+              "templateHoverValid": true,
+              "templateHoverReason": "",
+              "templateHoverSample": "```typescript\n(property) benchMarker: string\n```",
+              "backendFallback": null,
+              "resource": {
+                "serverRssMaxMb": null,
+                "serverRssAvgMb": null,
+                "serverCpuMs": null
+              }
+            },
+            {
+              "initializeMs": 548.5163950000424,
+              "workspaceReadyMs": null,
+              "didOpenToHoverMs": 415.12294299999485,
+              "hoverColdMs": 17.284499000001233,
+              "hoverWarmMedianMs": 1.7227890000212938,
+              "completionMs": 6.017983000027016,
+              "definitionMs": 4.138732999970671,
+              "artifact": 114,
+              "hoverValid": true,
+              "hoverReason": "",
+              "hoverSample": "```typescript\nconst benchMarker: Ref<string, string>\n```\nStable hover target for LSP benchmarks — do not rename.",
+              "templateHoverValid": true,
+              "templateHoverReason": "",
+              "templateHoverSample": "```typescript\n(property) benchMarker: string\n```",
+              "backendFallback": null,
+              "resource": {
+                "serverRssMaxMb": null,
+                "serverRssAvgMb": null,
+                "serverCpuMs": null
+              }
+            }
+          ],
+          "artifactMedian": 114,
+          "warmupPasses": 1,
+          "throughput": "2 files/s",
+          "phaseBreakdown": "init=549ms · ready=n/a · open→hover=415ms · hoverCold=17ms · hoverWarm=2ms · completion=6ms · definition=4ms",
+          "primaryMetric": "didOpen→hover (ms)"
+        },
+        {
+          "id": "vize-lsp",
+          "label": "Vize LSP (Node shim)",
+          "package": "vize",
+          "threading": "lsp",
+          "engine": "tsgo",
+          "artifactLabel": "Hover bytes",
+          "notes": "vize lsp --stdio, launched from the npm package's NODE entry (bin/vize → NAPI addon under Node) because no version-matched native server was found; this costs ~35ms of Node bootstrap per spawn, inside initialize (/opt/hostedtoolcache/node/22.23.2/x64/bin/node). Set VIZE_LSP_BIN to pin a specific binary. Same workspace/file/position as Volar. Ready signal: none standardized → workspaceReady = n/a. | engine: tsgo 7.0.0-dev.20260603.1 (nightly) | init=41ms · ready=n/a · open→hover=437ms · hoverCold=12ms · hoverWarm=3ms · completion=7ms · definition=3ms | hover verified: returns a TypeScript type for `benchMarker` in <script setup> AND the auto-unwrapped `string` inside {{ }} (template is really typechecked)",
+          "files": 1,
+          "status": "ok",
+          "runs": [
+            425.816,
+            437.051,
+            424.857,
+            430.041,
+            436.693
+          ],
+          "medianMs": 430.041,
+          "minMs": 424.857,
+          "maxMs": 437.051,
+          "meanMs": 430.892,
+          "stddevMs": 5.799,
+          "cvPct": 1.3,
+          "metaSamples": [
+            {
+              "initializeMs": 39.7615929999738,
+              "workspaceReadyMs": null,
+              "didOpenToHoverMs": 425.815591999999,
+              "hoverColdMs": 11.765274999983376,
+              "hoverWarmMedianMs": 3.141219999990426,
+              "completionMs": 7.282756000000518,
+              "definitionMs": 3.140367999993032,
+              "artifact": 341,
+              "hoverValid": true,
+              "hoverReason": "",
+              "hoverSample": "```typescript\nconst benchMarker: Ref<string, string>Stable hover target for LSP benchmarks — do not rename.\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Re",
+              "templateHoverValid": true,
+              "templateHoverReason": "",
+              "templateHoverSample": "```typescript\nconst benchMarker: string\n```",
+              "backendFallback": null,
+              "resource": {
+                "serverRssMaxMb": null,
+                "serverRssAvgMb": null,
+                "serverCpuMs": null
+              }
+            },
+            {
+              "initializeMs": 37.50376199997845,
+              "workspaceReadyMs": null,
+              "didOpenToHoverMs": 437.0509959999763,
+              "hoverColdMs": 12.007941000018036,
+              "hoverWarmMedianMs": 3.0380849999783095,
+              "completionMs": 7.1327499999897555,
+              "definitionMs": 3.0311340000189375,
+              "artifact": 341,
+              "hoverValid": true,
+              "hoverReason": "",
+              "hoverSample": "```typescript\nconst benchMarker: Ref<string, string>Stable hover target for LSP benchmarks — do not rename.\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Re",
+              "templateHoverValid": true,
+              "templateHoverReason": "",
+              "templateHoverSample": "```typescript\nconst benchMarker: string\n```",
+              "backendFallback": null,
+              "resource": {
+                "serverRssMaxMb": null,
+                "serverRssAvgMb": null,
+                "serverCpuMs": null
+              }
+            },
+            {
+              "initializeMs": 40.96750199998496,
+              "workspaceReadyMs": null,
+              "didOpenToHoverMs": 424.85721499999636,
+              "hoverColdMs": 11.95063599999412,
+              "hoverWarmMedianMs": 2.9231220000074245,
+              "completionMs": 15.201111000002129,
+              "definitionMs": 3.238817999983439,
+              "artifact": 341,
+              "hoverValid": true,
+              "hoverReason": "",
+              "hoverSample": "```typescript\nconst benchMarker: Ref<string, string>Stable hover target for LSP benchmarks — do not rename.\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Re",
+              "templateHoverValid": true,
+              "templateHoverReason": "",
+              "templateHoverSample": "```typescript\nconst benchMarker: string\n```",
+              "backendFallback": null,
+              "resource": {
+                "serverRssMaxMb": null,
+                "serverRssAvgMb": null,
+                "serverCpuMs": null
+              }
+            },
+            {
+              "initializeMs": 39.59625800000504,
+              "workspaceReadyMs": null,
+              "didOpenToHoverMs": 430.0414510000264,
+              "hoverColdMs": 12.073130999982823,
+              "hoverWarmMedianMs": 2.9191850000061095,
+              "completionMs": 7.362397000018973,
+              "definitionMs": 3.03934700001264,
+              "artifact": 341,
+              "hoverValid": true,
+              "hoverReason": "",
+              "hoverSample": "```typescript\nconst benchMarker: Ref<string, string>Stable hover target for LSP benchmarks — do not rename.\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Re",
+              "templateHoverValid": true,
+              "templateHoverReason": "",
+              "templateHoverSample": "```typescript\nconst benchMarker: string\n```",
+              "backendFallback": null,
+              "resource": {
+                "serverRssMaxMb": null,
+                "serverRssAvgMb": null,
+                "serverCpuMs": null
+              }
+            },
+            {
+              "initializeMs": 41.335369000036735,
+              "workspaceReadyMs": null,
+              "didOpenToHoverMs": 436.6926649999805,
+              "hoverColdMs": 12.024429000040982,
+              "hoverWarmMedianMs": 3.0039840000099503,
+              "completionMs": 7.296739000012167,
+              "definitionMs": 2.9885899999644607,
+              "artifact": 341,
+              "hoverValid": true,
+              "hoverReason": "",
+              "hoverSample": "```typescript\nconst benchMarker: Ref<string, string>Stable hover target for LSP benchmarks — do not rename.\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Re",
+              "templateHoverValid": true,
+              "templateHoverReason": "",
+              "templateHoverSample": "```typescript\nconst benchMarker: string\n```",
+              "backendFallback": null,
+              "resource": {
+                "serverRssMaxMb": null,
+                "serverRssAvgMb": null,
+                "serverCpuMs": null
+              }
+            }
+          ],
+          "artifactMedian": 341,
+          "warmupPasses": 1,
+          "throughput": "2 files/s",
+          "phaseBreakdown": "init=41ms · ready=n/a · open→hover=437ms · hoverCold=12ms · hoverWarm=3ms · completion=7ms · definition=3ms",
+          "primaryMetric": "didOpen→hover (ms)"
+        },
+        {
+          "id": "verter-lsp",
+          "label": "Verter LSP (npm 0.0.1-beta.3)",
+          "package": "verter-lsp",
+          "threading": "lsp",
+          "engine": "tsgo",
+          "artifactLabel": "Hover bytes",
+          "notes": "verter-lsp stdio, the native server from the published npm package. $/verter/ready is OBSERVED, never waited for — its workspace load is inside the timed open→hover window like every other server's. | engine: tsgo 7.0.2 (typescript-go@7.0.2 → @typescript/typescript-linux-x64) | init=5ms · ready=36ms · open→hover=291ms · hoverCold=1ms · hoverWarm=1ms · completion=1ms · definition=1ms | hover verified: returns a TypeScript type for `benchMarker` in <script setup> AND the auto-unwrapped `string` inside {{ }} (template is really typechecked)",
+          "files": 1,
+          "status": "ok",
+          "runs": [
+            283.564,
+            278.262,
+            281.9,
+            273.229,
+            290.814
+          ],
+          "medianMs": 281.9,
+          "minMs": 273.229,
+          "maxMs": 290.814,
+          "meanMs": 281.554,
+          "stddevMs": 6.52,
+          "cvPct": 2.3,
+          "metaSamples": [
+            {
+              "initializeMs": 4.95008300000336,
+              "workspaceReadyMs": 36.0245120000036,
+              "didOpenToHoverMs": 283.56402999997954,
+              "hoverColdMs": 0.8071749999944586,
+              "hoverWarmMedianMs": 0.5926420000032522,
+              "completionMs": 0.8247919999994338,
+              "definitionMs": 0.7072050000133459,
+              "artifact": 113,
+              "hoverValid": true,
+              "hoverReason": "",
+              "hoverSample": "```typescript\nconst benchMarker: Ref<string, string>Stable hover target for LSP benchmarks — do not rename.\n```",
+              "templateHoverValid": true,
+              "templateHoverReason": "",
+              "templateHoverSample": "```typescript\nlet benchMarker: stringStable hover target for LSP benchmarks — do not rename.\n```",
+              "backendFallback": null,
+              "resource": {
+                "serverRssMaxMb": null,
+                "serverRssAvgMb": null,
+                "serverCpuMs": null
+              }
+            },
+            {
+              "initializeMs": 5.092237000004388,
+              "workspaceReadyMs": 36.50092200000654,
+              "didOpenToHoverMs": 278.2615700000024,
+              "hoverColdMs": 0.8575760000094306,
+              "hoverWarmMedianMs": 0.5748759999987669,
+              "completionMs": 0.7945269999909215,
+              "definitionMs": 0.6351269999868236,
+              "artifact": 113,
+              "hoverValid": true,
+              "hoverReason": "",
+              "hoverSample": "```typescript\nconst benchMarker: Ref<string, string>Stable hover target for LSP benchmarks — do not rename.\n```",
+              "templateHoverValid": true,
+              "templateHoverReason": "",
+              "templateHoverSample": "```typescript\nlet benchMarker: stringStable hover target for LSP benchmarks — do not rename.\n```",
+              "backendFallback": null,
+              "resource": {
+                "serverRssMaxMb": null,
+                "serverRssAvgMb": null,
+                "serverCpuMs": null
+              }
+            },
+            {
+              "initializeMs": 5.034805999981472,
+              "workspaceReadyMs": 34.9213410000084,
+              "didOpenToHoverMs": 281.8995069999946,
+              "hoverColdMs": 0.7484370000020135,
+              "hoverWarmMedianMs": 0.5985470000014175,
+              "completionMs": 0.8838610000093468,
+              "definitionMs": 0.6988729999866337,
+              "artifact": 113,
+              "hoverValid": true,
+              "hoverReason": "",
+              "hoverSample": "```typescript\nconst benchMarker: Ref<string, string>Stable hover target for LSP benchmarks — do not rename.\n```",
+              "templateHoverValid": true,
+              "templateHoverReason": "",
+              "templateHoverSample": "```typescript\nlet benchMarker: stringStable hover target for LSP benchmarks — do not rename.\n```",
+              "backendFallback": null,
+              "resource": {
+                "serverRssMaxMb": null,
+                "serverRssAvgMb": null,
+                "serverCpuMs": null
+              }
+            },
+            {
+              "initializeMs": 5.044847000041045,
+              "workspaceReadyMs": 37.505613999965135,
+              "didOpenToHoverMs": 273.2285499999998,
+              "hoverColdMs": 0.684049999981653,
+              "hoverWarmMedianMs": 0.6091279999818653,
+              "completionMs": 0.7220059999963269,
+              "definitionMs": 0.7827939999988303,
+              "artifact": 113,
+              "hoverValid": true,
+              "hoverReason": "",
+              "hoverSample": "```typescript\nconst benchMarker: Ref<string, string>Stable hover target for LSP benchmarks — do not rename.\n```",
+              "templateHoverValid": true,
+              "templateHoverReason": "",
+              "templateHoverSample": "```typescript\nlet benchMarker: stringStable hover target for LSP benchmarks — do not rename.\n```",
+              "backendFallback": null,
+              "resource": {
+                "serverRssMaxMb": null,
+                "serverRssAvgMb": null,
+                "serverCpuMs": null
+              }
+            },
+            {
+              "initializeMs": 5.111372999963351,
+              "workspaceReadyMs": 36.331738999986555,
+              "didOpenToHoverMs": 290.81361700000707,
+              "hoverColdMs": 0.6905400000396185,
+              "hoverWarmMedianMs": 0.5369390000123531,
+              "completionMs": 0.7491980000049807,
+              "definitionMs": 0.6138039999641478,
+              "artifact": 113,
+              "hoverValid": true,
+              "hoverReason": "",
+              "hoverSample": "```typescript\nconst benchMarker: Ref<string, string>Stable hover target for LSP benchmarks — do not rename.\n```",
+              "templateHoverValid": true,
+              "templateHoverReason": "",
+              "templateHoverSample": "```typescript\nlet benchMarker: stringStable hover target for LSP benchmarks — do not rename.\n```",
+              "backendFallback": null,
+              "resource": {
+                "serverRssMaxMb": null,
+                "serverRssAvgMb": null,
+                "serverCpuMs": null
+              }
+            }
+          ],
+          "artifactMedian": 113,
+          "warmupPasses": 1,
+          "throughput": "4 files/s",
+          "phaseBreakdown": "init=5ms · ready=36ms · open→hover=291ms · hoverCold=1ms · hoverWarm=1ms · completion=1ms · definition=1ms",
+          "primaryMetric": "didOpen→hover (ms)"
+        }
+      ]
+    }
+  ]
+}

@@ -277,6 +277,11 @@ export async function measureVariants(
       if (artifacts.length) {
         series.artifactMedian = Number(median(artifacts).toFixed(0));
       }
+      const rss = metas.map((m) => m.rssBytes).filter((x) => Number.isFinite(x) && x > 0);
+      if (rss.length) {
+        series.rssMaxMb = Number((median(rss) / (1024 * 1024)).toFixed(1));
+        series.rssRunsMb = rss.map((b) => b / (1024 * 1024));
+      }
     }
     results.push({
       ...baseRow(v),

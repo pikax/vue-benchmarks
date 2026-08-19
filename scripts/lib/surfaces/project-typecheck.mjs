@@ -53,8 +53,8 @@
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { spawnSync } from "node:child_process";
 import { measureVariants, pathWithNodeBins, resolveBin } from "../timing.mjs";
+import { measureCli } from "../measure-cli.mjs";
 import { resolveTnbVueTsc, tnbActive } from "../tnb.mjs";
 import { stripAnsi } from "../real-world/ansi.mjs";
 import { discoverTypecheckTargets } from "../real-world/test-targets.mjs";
@@ -185,16 +185,14 @@ export function actuallyChecked({ status, output }) {
   return distinctDiagnosticFiles(output) >= 2;
 }
 
-function runChecker({ bin, args, cwd, timeoutMs, env = {}, shell = false }) {
-  const started = performance.now();
-  const result = spawnSync(bin, args, {
+async function runChecker({ bin, args, cwd, timeoutMs, env = {}, shell = false }) {
+  const result = await measureCli({
+    bin,
+    args,
     cwd,
-    encoding: "utf8",
-    maxBuffer: 128 * 1024 * 1024,
-    timeout: timeoutMs,
+    timeoutMs,
     shell,
     env: {
-      ...process.env,
       CI: "1",
       NO_COLOR: "1",
       FORCE_COLOR: "0",
@@ -202,17 +200,18 @@ function runChecker({ bin, args, cwd, timeoutMs, env = {}, shell = false }) {
       ...env,
     },
   });
-  const ms = performance.now() - started;
-  const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}`;
+  const output = result.combined ?? `${result.stdout ?? ""}\n${result.stderr ?? ""}`;
   const census = diagnosticCensus(output);
+  const timedOut = Boolean(result.error && /timeout/i.test(result.error.message));
   return {
-    ms,
+    ms: result.ms,
     output,
     status: result.status,
-    timedOut: result.error?.code === "ETIMEDOUT",
-    spawnError: result.error && result.error.code !== "ETIMEDOUT" ? result.error.message : null,
+    timedOut,
+    spawnError: result.error && !timedOut ? result.error.message : null,
     diagnostics: census.count,
     diagnosticFiles: census.files,
+    rssBytes: result.rssBytes,
   };
 }
 
@@ -230,6 +229,7 @@ function checkerMeta(r) {
     diagnosticFiles: r.diagnosticFiles,
     exit: r.status,
     checked: actuallyChecked(r),
+    rssBytes: r.rssBytes,
   };
 }
 
@@ -430,7 +430,7 @@ export async function runProjectTypecheckSurface(resolved, options) {
   const rejectedTargets = [];
   if (vueTsc) {
     for (const candidate of candidates) {
-      let probe = runChecker({
+      let probe = await runChecker({
         bin: vueTsc,
         args: ["--noEmit", "-p", candidate.tsconfig],
         cwd: candidate.dir,
@@ -454,7 +454,7 @@ export async function runProjectTypecheckSurface(resolved, options) {
       let retried = false;
       if (!probe.timedOut && !probe.spawnError && /error TS510[17]\b/.test(stripAnsi(probe.output))) {
         retried = true;
-        probe = runChecker({
+        probe = await runChecker({
           bin: vueTsc,
           args: tscRowArgs(candidate.tsconfig, { ignoreDeprecations: true }),
           cwd: candidate.dir,
@@ -532,8 +532,8 @@ export async function runProjectTypecheckSurface(resolved, options) {
       // renderer's generic low-artifact warning would scold the quietest checker.
       artifactPolarity: "informational",
       notes: `BASELINE · vue-tsc --noEmit -p ${target.tsconfig} · the official Vue Language Tools CLI on the stock JavaScript TypeScript compiler`,
-      measure: () => {
-        const r = runChecker({
+      measure: async () => {
+        const r = await runChecker({
           bin: vueTsc,
           args: tscArgs,
           cwd: target.dir,
@@ -582,8 +582,8 @@ export async function runProjectTypecheckSurface(resolved, options) {
       artifactLabel: "diagnostics",
       artifactPolarity: "informational",
       notes: `Same vue-tsc ${tnb.vueTscVersion ?? "?"} with typescript aliased to typescript-native-bridge ${tnb.tnbVersion ?? "?"} (TS API ${tnb.tsApiVersion ?? "?"} on tsgo ${tnb.tsgoVersion ?? "?"}, in-process NAPI/FFI) — exactly one variable against the (JS) row: the TypeScript engine.`,
-      measure: () => {
-        const r = runChecker({
+      measure: async () => {
+        const r = await runChecker({
           bin: process.execPath,
           args: [tnb.entry, ...tscArgs],
           cwd: target.dir,
@@ -625,8 +625,8 @@ export async function runProjectTypecheckSurface(resolved, options) {
           ? " · ⚠ runs WITHOUT the --ignoreDeprecations flag the vue-tsc rows carry on this target — verter-tsc's CLI rejects flags it does not know — so it may abort on the deprecated tsconfig options themselves. If it does, the failure on this row is a real verter-tsc limitation on this tsconfig, not a harness artifact."
           : ""
       }`,
-      measure: () => {
-        const r = runChecker({
+      measure: async () => {
+        const r = await runChecker({
           bin: verterTsc,
           args: verterTscArgs,
           cwd: target.dir,
@@ -673,8 +673,8 @@ export async function runProjectTypecheckSurface(resolved, options) {
       artifactLabel: "diagnostics",
       artifactPolarity: "informational",
       notes: `vize check --tsconfig ${target.tsconfig} (no path pattern, so the file set comes from the tsconfig's include/exclude/files — the closest analogue of the -p invocation the other rows use) · ⚠ NOT ASSERTED EQUAL: Vize builds its own virtual project from that tsconfig rather than a TypeScript program, so which files end up checked may still differ; the diagnostic census below is what would expose a materially smaller set.`,
-      measure: () => {
-        const r = runChecker({
+      measure: async () => {
+        const r = await runChecker({
           bin: vize,
           args: vizeArgs,
           cwd: target.dir,

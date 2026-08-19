@@ -53,7 +53,7 @@
 import { existsSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { measureVariants, pathWithNodeBins } from "../timing.mjs";
-import { spawnSync } from "node:child_process";
+import { measureCli } from "../measure-cli.mjs";
 import { discoverTestTargets, parseVitestSummary } from "../real-world/test-targets.mjs";
 import {
   CHALLENGERS,
@@ -70,7 +70,7 @@ import {
 // cannot drift apart on what a "swap" means.
 export { SWAP_MECHANISMS };
 
-function runVitest(target, { configFile, cwd, timeoutMs, env = {} }) {
+async function runVitest(target, { configFile, cwd, timeoutMs, env = {} }) {
   // Invoke vitest directly rather than through the project's npm script: the
   // script may wrap it in cross-env, npm-run-all or a pre-step, and `--config`
   // has to reach vitest itself. The script body is still reported so a reader can
@@ -78,15 +78,13 @@ function runVitest(target, { configFile, cwd, timeoutMs, env = {} }) {
   const args = ["run", "--reporter", "default"];
   if (configFile) args.push("--config", configFile);
 
-  const started = performance.now();
-  const result = spawnSync("vitest", args, {
+  const result = await measureCli({
+    bin: "vitest",
+    args,
     cwd,
-    encoding: "utf8",
-    maxBuffer: 128 * 1024 * 1024,
-    timeout: timeoutMs,
+    timeoutMs,
     shell: process.platform === "win32",
     env: {
-      ...process.env,
       CI: "1",
       NO_COLOR: "1",
       FORCE_COLOR: "0",
@@ -97,9 +95,14 @@ function runVitest(target, { configFile, cwd, timeoutMs, env = {} }) {
       ...env,
     },
   });
-  const ms = performance.now() - started;
-  const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}`;
-  return { ms, output, status: result.status, timedOut: result.error?.code === "ETIMEDOUT" };
+  const output = result.combined ?? `${result.stdout ?? ""}\n${result.stderr ?? ""}`;
+  return {
+    ms: result.ms,
+    output,
+    status: result.status,
+    timedOut: Boolean(result.error && /timeout/i.test(result.error.message)),
+    rssBytes: result.rssBytes,
+  };
 }
 
 /**
@@ -144,8 +147,8 @@ export function applyAliasVerificationGate(results) {
  * rather than printing `0 passed`), so it coerces to 0 here; the raw census
  * fields ride along untouched so the gate can still tell "zero" from "absent".
  */
-function testMeta(census, status) {
-  return { artifact: census.testsPassed ?? 0, ...census, exit: status };
+function testMeta(census, status, rssBytes) {
+  return { artifact: census.testsPassed ?? 0, ...census, exit: status, rssBytes };
 }
 
 function firstFailure(output) {
@@ -328,8 +331,8 @@ export async function runProjectTestSurface(resolved, options) {
       invocation: "vitest CLI",
       artifactLabel: "tests passed",
       notes: `${SWAP_MECHANISMS.none} · package ${target.relDir} · script "${target.script}": ${target.scriptBody}${target.config ? ` · config ${target.config}` : " · no config file found"}`,
-      measure: () => {
-        const r = runVitest(target, { configFile: null, cwd: target.dir, timeoutMs });
+      measure: async () => {
+        const r = await runVitest(target, { configFile: null, cwd: target.dir, timeoutMs });
         const census = parseVitestSummary(r.output);
         if (!census.parsed) {
           throw new Error(
@@ -338,7 +341,7 @@ export async function runProjectTestSurface(resolved, options) {
         }
         return {
           ms: r.ms,
-          meta: testMeta(census, r.status),
+          meta: testMeta(census, r.status, r.rssBytes),
         };
       },
     },
@@ -373,12 +376,12 @@ export async function runProjectTestSurface(resolved, options) {
         ...base,
         id: `alias-${challenger.id}`,
         notes: `${SWAP_MECHANISMS.alias} · ${resolved.notes} · ${challenger.notes}`,
-        measure: () => {
+        measure: async () => {
           // Built per run so the marker is cleared each time: a marker left over
           // from the previous iteration would report a redirect THIS run did not
           // make, which is precisely the evidence the gate relies on.
           const swap = aliasSwapEnv({ challengerSpec: challenger.spec, markerPath });
-          const r = runVitest(target, {
+          const r = await runVitest(target, {
             configFile: null,
             cwd: target.dir,
             timeoutMs,
@@ -394,7 +397,7 @@ export async function runProjectTestSurface(resolved, options) {
           return {
             ms: r.ms,
             meta: {
-              ...testMeta(census, r.status),
+              ...testMeta(census, r.status, r.rssBytes),
               aliasFired: redirect.fired,
               aliasRedirects: redirect.count,
             },
@@ -424,8 +427,8 @@ export async function runProjectTestSurface(resolved, options) {
     variants.push({
       ...base,
       notes: `${SWAP_MECHANISMS.override} · extends ${target.config} · resolved with ConfigEnv {command:'serve', mode:'test'}, matching how vitest resolves it for the baseline · ${challenger.notes} · ${SWAP_MECHANISMS.optionsDropped}`,
-      measure: () => {
-        const r = runVitest(target, { configFile: configName, cwd: target.dir, timeoutMs });
+      measure: async () => {
+        const r = await runVitest(target, { configFile: configName, cwd: target.dir, timeoutMs });
         const census = parseVitestSummary(r.output);
         if (!census.parsed) {
           throw new Error(
@@ -434,7 +437,7 @@ export async function runProjectTestSurface(resolved, options) {
         }
         return {
           ms: r.ms,
-          meta: testMeta(census, r.status),
+          meta: testMeta(census, r.status, r.rssBytes),
         };
       },
     });

@@ -16,7 +16,14 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createSuite } from "../lib/harness.mjs";
 import { resolveSpawnable, runCliMeasured, rootDir } from "../lib/run-cli.mjs";
-import { isToolBootstrapFailure, scoreDiagnostics } from "../lib/diagnostics.mjs";
+import { effectiveWarmups, median } from "../../../scripts/lib/timing.mjs";
+import {
+  combinedFromDiags,
+  diagsForCase,
+  isToolBootstrapFailure,
+  parseDiagnostics,
+  scoreDiagnostics,
+} from "../lib/diagnostics.mjs";
 import { findExpectErrorPins, stripExpectErrorDirectives } from "../lib/plant-pins.mjs";
 import {
   VERTER_TS_IMPORT_EXTRA_COMPILER_OPTIONS,
@@ -32,6 +39,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const casesRoot = join(__dirname, "../fixtures/typecheck/cases");
 const sharedRoot = join(__dirname, "../fixtures/typecheck/_shared");
 const workRoot = join(rootDir, "work", "confirm-typecheck");
+const allPlantsRoot = join(rootDir, "work", "confirm-typecheck-all");
 
 function listCases() {
   return readdirSync(casesRoot, { withFileTypes: true })
@@ -236,7 +244,7 @@ function toolSupports(toolId, requires) {
   return requires.every((r) => caps.includes(r));
 }
 
-function toolRunners(cwd) {
+function toolRunners(cwd, { timeout = 120_000 } = {}) {
   const vueTsc = resolveSpawnable("vue-tsc");
   const vize = resolveSpawnable("vize");
   const verterTsc = resolveSpawnable("verter-tsc");
@@ -246,22 +254,22 @@ function toolRunners(cwd) {
     {
       id: "vue-tsc",
       available: Boolean(vueTsc),
-      run: () => runCliMeasured(vueTsc, ["--noEmit", "-p", "tsconfig.json"], { cwd }),
-      runProject: (rel) => runCliMeasured(vueTsc, ["--noEmit", "-p", rel], { cwd }),
+      run: () => runCliMeasured(vueTsc, ["--noEmit", "-p", "tsconfig.json"], { cwd, timeout }),
+      runProject: (rel) => runCliMeasured(vueTsc, ["--noEmit", "-p", rel], { cwd, timeout }),
       unavailable: "vue-tsc binary not found",
     },
     {
       id: "vize-check",
       available: Boolean(vize),
-      run: () => runCliMeasured(vize, ["check", ".", "--tsconfig", "tsconfig.json"], { cwd }),
-      runProject: (rel) => runCliMeasured(vize, ["check", ".", "--tsconfig", rel], { cwd }),
+      run: () => runCliMeasured(vize, ["check", ".", "--tsconfig", "tsconfig.json"], { cwd, timeout }),
+      runProject: (rel) => runCliMeasured(vize, ["check", ".", "--tsconfig", rel], { cwd, timeout }),
       unavailable: "vize binary not found",
     },
     {
       id: "verter-tsc",
       available: Boolean(verterTsc),
-      run: () => runCliMeasured(verterTsc, ["--noEmit", "-p", "tsconfig.json"], { cwd }),
-      runProject: (rel) => runCliMeasured(verterTsc, ["--noEmit", "-p", rel], { cwd }),
+      run: () => runCliMeasured(verterTsc, ["--noEmit", "-p", "tsconfig.json"], { cwd, timeout }),
+      runProject: (rel) => runCliMeasured(verterTsc, ["--noEmit", "-p", rel], { cwd, timeout }),
       unavailable: "verter-tsc binary not found",
       /**
        * verter-tsc requires tsgo for its typecheck surface; detect and skip.
@@ -281,7 +289,7 @@ function toolRunners(cwd) {
     {
       id: "golar-typecheck",
       available: Boolean(golar),
-      run: () => runCliMeasured(golar, ["typecheck"], { cwd }),
+      run: () => runCliMeasured(golar, ["typecheck"], { cwd, timeout }),
       // golar reads tsconfig.json only — swap, run, restore. Never leave the
       // extra option in the shared file for the next tool.
       async runProject(rel) {
@@ -290,7 +298,7 @@ function toolRunners(cwd) {
         const backup = readFileSync(main, "utf8");
         writeFileSync(main, readFileSync(extra, "utf8"));
         try {
-          return await runCliMeasured(golar, ["typecheck"], { cwd });
+          return await runCliMeasured(golar, ["typecheck"], { cwd, timeout });
         } finally {
           writeFileSync(main, backup);
         }
@@ -306,7 +314,7 @@ function toolRunners(cwd) {
   ];
 }
 
-export async function runTypecheckSuite() {
+export async function runTypecheckSuite(opts = {}) {
   const suite = createSuite("typecheck");
   mkdirSync(workRoot, { recursive: true });
 
@@ -493,5 +501,190 @@ export async function runTypecheckSuite() {
     }
   }
 
+  const allSuite = createSuite("typecheck-all");
+  await runTypecheckAllPlants(allSuite, opts);
+  return [...suite.results, ...allSuite.results];
+}
+
+function copyCaseSources(src, dest) {
+  cpSync(src, dest, {
+    recursive: true,
+    filter: (from) => {
+      const base = from.replace(/\\/g, "/").split("/").pop();
+      return base !== "meta.json" && base !== "tsconfig.json" && base !== "golar.config.ts";
+    },
+  });
+}
+
+/**
+ * One project, one tsconfig, every plant under `cases/<id>/`.
+ * Shared compiler options only — no per-case overlay, no fallthrough retry.
+ */
+export function prepareAllPlants() {
+  rmSync(allPlantsRoot, { recursive: true, force: true });
+  mkdirSync(join(allPlantsRoot, "cases"), { recursive: true });
+  cpSync(join(sharedRoot, "env.d.ts"), join(allPlantsRoot, "env.d.ts"));
+
+  const cases = [];
+  for (const caseId of listCases()) {
+    const src = join(casesRoot, caseId);
+    const dest = join(allPlantsRoot, "cases", caseId);
+    mkdirSync(dest, { recursive: true });
+    copyCaseSources(src, dest);
+    const meta = JSON.parse(readFileSync(join(src, "meta.json"), "utf8"));
+    const pins = findExpectErrorPins(src);
+    if (pins.length && meta.expectErrors) stripExpectErrorDirectives(dest);
+    cases.push({ caseId, meta: { ...meta, _pins: meta.expectErrors ? pins : [] } });
+  }
+
+  const base = JSON.parse(readFileSync(join(sharedRoot, "tsconfig.base.json"), "utf8"));
+  base.compilerOptions = {
+    ...base.compilerOptions,
+    paths: {
+      vue: [join(rootDir, "node_modules/vue").replace(/\\/g, "/")],
+      "vue/*": [join(rootDir, "node_modules/vue/*").replace(/\\/g, "/")],
+    },
+  };
+  base.include = ["**/*.vue", "**/*.ts", "**/*.d.ts"];
+  base.exclude = ["golar.config.ts", "node_modules"];
+  writeFileSync(join(allPlantsRoot, "tsconfig.json"), JSON.stringify(base, null, 2));
+  writeFileSync(
+    join(allPlantsRoot, "package.json"),
+    JSON.stringify(
+      {
+        name: "confirm-typecheck-all",
+        private: true,
+        type: "module",
+        dependencies: {
+          vue: "file:" + join(rootDir, "node_modules/vue").replace(/\\/g, "/"),
+        },
+      },
+      null,
+      2,
+    ),
+  );
+  writeFileSync(
+    join(allPlantsRoot, "golar.config.ts"),
+    `import { defineConfig } from "golar/unstable";\nimport "@golar/vue";\nexport default defineConfig({});\n`,
+  );
+  return { dest: allPlantsRoot, cases };
+}
+
+/** Score each plant from one combined diagnostic dump. */
+export function scoreCombinedRun(cases, toolId, result) {
+  const diags = parseDiagnostics(result.combined);
+  let pass = 0;
+  let fail = 0;
+  let skip = 0;
+  for (const { caseId, meta } of cases) {
+    if (!toolSupports(toolId, meta.requires)) {
+      skip++;
+      continue;
+    }
+    const subset = diagsForCase(diags, caseId);
+    const score = scoreOne(meta, { ...result, combined: combinedFromDiags(subset) });
+    if (score.ok) pass++;
+    else fail++;
+  }
+  const scored = pass + fail;
+  const passPct = scored ? (100 * pass) / scored : 0;
+  return { pass, fail, skip, scored, passPct };
+}
+
+/**
+ * Same defaults as `.github/workflows/benchmark.yml` (`BENCH_RUNS` / `BENCH_WARMUPS`).
+ * Warmups clamp to ≥1, matching `effectiveWarmups` on the throughput surfaces.
+ */
+export function allPlantsRunCounts(env = process.env, args = {}) {
+  const runsRaw = Number.parseInt(String(args.runs ?? env.BENCH_RUNS ?? "5"), 10);
+  const warmRaw = Number.parseInt(String(args.warmups ?? env.BENCH_WARMUPS ?? "1"), 10);
+  return {
+    runs: Number.isFinite(runsRaw) && runsRaw > 0 ? runsRaw : 5,
+    warmups: effectiveWarmups(Number.isFinite(warmRaw) ? warmRaw : 1),
+  };
+}
+
+function runLooksBroken(result) {
+  if (!result) return "no result";
+  if (result.error) return result.error.message || "process failed to start";
+  if (result.status === null && !String(result.combined || "").trim()) return "process failed to start";
+  if (isToolBootstrapFailure(result.combined)) return "tool bootstrap/runtime failure";
+  return null;
+}
+
+/**
+ * Extra check: one project, one tsconfig, every plant. Warmups are discarded;
+ * wall is the median of measured runs; peak RSS is the max of those runs.
+ * Pass rate is per-plant scoring of the last measured dump.
+ */
+export async function runTypecheckAllPlants(suite = createSuite("typecheck-all"), opts = {}) {
+  const { runs, warmups } = allPlantsRunCounts(process.env, opts);
+  const { dest, cases } = prepareAllPlants();
+  const runners = toolRunners(dest, { timeout: 300_000 });
+  for (const tool of runners) {
+    if (!tool.available) {
+      suite.skip("all-plants", tool.id, tool.unavailable);
+      continue;
+    }
+
+    let skipReason = null;
+    for (let i = 0; i < warmups; i++) {
+      const warm = await tool.run();
+      if (tool.after) {
+        const special = tool.after(warm);
+        if (special?.skip) {
+          skipReason = special.skip;
+          break;
+        }
+      }
+      skipReason = runLooksBroken(warm);
+      if (skipReason) break;
+    }
+    if (skipReason) {
+      suite.skip("all-plants", tool.id, skipReason);
+      continue;
+    }
+
+    const measuredMs = [];
+    const measuredRss = [];
+    let last = null;
+    for (let i = 0; i < runs; i++) {
+      const result = await tool.run();
+      if (tool.after) {
+        const special = tool.after(result);
+        if (special?.skip) {
+          skipReason = special.skip;
+          break;
+        }
+      }
+      skipReason = runLooksBroken(result);
+      if (skipReason) break;
+      last = result;
+      if (Number.isFinite(result.ms)) measuredMs.push(result.ms);
+      if (Number.isFinite(result.rssBytes) && result.rssBytes > 0) measuredRss.push(result.rssBytes);
+    }
+    if (skipReason || !last) {
+      suite.skip("all-plants", tool.id, skipReason || "no measured run");
+      continue;
+    }
+
+    const tally = scoreCombinedRun(cases, tool.id, last);
+    const ms = measuredMs.length ? median(measuredMs) : last.ms;
+    const rssMb = measuredRss.length
+      ? Number((Math.max(...measuredRss) / (1024 * 1024)).toFixed(1))
+      : resourcesFrom(last).rssMb;
+    const measured = {
+      ms: Number.isFinite(ms) ? Number(ms.toFixed(1)) : undefined,
+      rssMb,
+      runs: measuredMs.map((n) => Number(n.toFixed(1))),
+      warmups,
+      runCount: runs,
+      ...tally,
+    };
+    const msg = `${tally.passPct.toFixed(0)}% (${tally.pass}/${tally.scored}) · median ${
+      Number.isFinite(measured.ms) ? `${(measured.ms / 1000).toFixed(2)}s` : "–"
+    } of ${runs} after ${warmups} warmup(s)`;
+    suite.pass("all-plants", tool.id, msg, measured);
+  }
   return suite.results;
 }

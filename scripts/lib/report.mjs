@@ -15,10 +15,22 @@ function primaryMs(v) {
   return Number.POSITIVE_INFINITY;
 }
 
+function rankingMs(v) {
+  if (v.status !== "ok") return Number.POSITIVE_INFINITY;
+  if (Number.isFinite(v.coldMedianMs)) return v.coldMedianMs;
+  return primaryMs(v);
+}
+
 function fastestPrimary(variants) {
   const ok = okVariants(variants);
   if (ok.length === 0) return Number.NaN;
   return Math.min(...ok.map((v) => primaryMs(v)));
+}
+
+function fastestCold(variants) {
+  const ok = okVariants(variants).filter((v) => Number.isFinite(v.coldMedianMs));
+  if (ok.length === 0) return Number.NaN;
+  return Math.min(...ok.map((v) => v.coldMedianMs));
 }
 
 /**
@@ -242,13 +254,22 @@ function renderVariantTable(rawVariants, { title } = {}) {
   }
   const artifactLabel =
     variants.find((v) => v.artifactLabel)?.artifactLabel ?? "Artifact";
-  lines.push(
-    `| Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | ${artifactLabel} | Throughput |`,
-  );
-  lines.push("| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |");
+  const showCold = variants.some((v) => Number.isFinite(v.coldMedianMs));
+  if (showCold) {
+    lines.push(
+      `| Tool | **Cold** | vs fastest cold | **Warm** | Min | Stddev | CV% | vs fastest | ${artifactLabel} | Throughput |`,
+    );
+    lines.push("| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |");
+  } else {
+    lines.push(
+      `| Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | ${artifactLabel} | Throughput |`,
+    );
+    lines.push("| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |");
+  }
 
   const base = fastestPrimary(variants);
-  const sorted = [...variants].sort((a, b) => primaryMs(a) - primaryMs(b));
+  const coldBase = fastestCold(variants);
+  const sorted = [...variants].sort((a, b) => rankingMs(a) - rankingMs(b));
 
   // Reference artifact volume for this class: the largest any tool produced.
   // A tool well below it was measured doing materially less work, so its
@@ -289,9 +310,16 @@ function renderVariantTable(rawVariants, { title } = {}) {
         }
       }
       if (Number.isFinite(v.medianMs)) {
-        lines.push(
-          `| ${name} | **${formatMs(v.medianMs)}** | ${formatMs(v.minMs)} | ${formatMs(v.stddevMs)} | ${cv} | ${timesSlower(base, v.medianMs)} | ${artifact} | ${v.throughput} |`,
-        );
+        if (showCold) {
+          const cold = Number.isFinite(v.coldMedianMs) ? formatMs(v.coldMedianMs) : "–";
+          lines.push(
+            `| ${name} | **${cold}** | ${timesSlower(coldBase, v.coldMedianMs)} | **${formatMs(v.medianMs)}** | ${formatMs(v.minMs)} | ${formatMs(v.stddevMs)} | ${cv} | ${timesSlower(base, v.medianMs)} | ${artifact} | ${v.throughput} |`,
+          );
+        } else {
+          lines.push(
+            `| ${name} | **${formatMs(v.medianMs)}** | ${formatMs(v.minMs)} | ${formatMs(v.stddevMs)} | ${cv} | ${timesSlower(base, v.medianMs)} | ${artifact} | ${v.throughput} |`,
+          );
+        }
       } else {
         // An ok row with no duration is a ratio or informational row — its
         // value sits in the artifact column (or the notes), never in a
@@ -308,13 +336,24 @@ function renderVariantTable(rawVariants, { title } = {}) {
       const artifact = Number.isFinite(v.artifactMedian)
         ? `(${v.artifactMedian.toLocaleString()})`
         : "–";
-      lines.push(
-        `| ${name} | ${bracketed} | ${Number.isFinite(v.minMs) ? `(${formatMs(v.minMs)})` : "–"} | – | – | not ranked | ${artifact} | – |`,
-      );
+      if (showCold) {
+        const cold = Number.isFinite(v.coldMedianMs) ? `(${formatMs(v.coldMedianMs)})` : "–";
+        lines.push(
+          `| ${name} | ${cold} | not ranked | ${bracketed} | ${Number.isFinite(v.minMs) ? `(${formatMs(v.minMs)})` : "–"} | – | – | not ranked | ${artifact} | – |`,
+        );
+      } else {
+        lines.push(
+          `| ${name} | ${bracketed} | ${Number.isFinite(v.minMs) ? `(${formatMs(v.minMs)})` : "–"} | – | – | not ranked | ${artifact} | – |`,
+        );
+      }
     } else if (v.status === "skipped") {
-      lines.push(`| ${name} | skipped | – | – | – | – | – | – |`);
+      lines.push(showCold
+        ? `| ${name} | skipped | – | – | – | – | – | – | – | – |`
+        : `| ${name} | skipped | – | – | – | – | – | – |`);
     } else {
-      lines.push(`| ${name} | error | – | – | – | – | – | – |`);
+      lines.push(showCold
+        ? `| ${name} | error | – | – | – | – | – | – | – | – |`
+        : `| ${name} | error | – | – | – | – | – | – |`);
       noteText = v.error || v.notes || "";
     }
     if (noteText) noteRows.push(`- **${displayName(v)}**: ${noteText.replace(/\r?\n/g, " ")}`);
@@ -335,6 +374,38 @@ function renderVariantTable(rawVariants, { title } = {}) {
  * Split variants by comparison class (invocation × threading) and render
  * separate ranked tables. Classes are never mixed in one ranking.
  */
+function formatMb(mb) {
+  if (!Number.isFinite(mb)) return "–";
+  return `${mb.toFixed(1)} MB`;
+}
+
+/**
+ * Whole-process peak RSS table. Used as its own group (IDE) or appended after
+ * a speed table (real-world CLIs).
+ */
+function renderPeakRssBlock(variants, { heading = true } = {}) {
+  const rows = variants.filter((v) => Number.isFinite(v.rssMaxMb) && v.rssMaxMb > 0);
+  if (!rows.length) return [];
+  const sorted = [...rows].sort((a, b) => a.rssMaxMb - b.rssMaxMb);
+  const lines = [];
+  if (heading) {
+    lines.push("#### Peak RSS", "");
+    lines.push(
+      "> Whole process tree of the timed run (not Vue-attributed). Volar includes both halves.",
+      "",
+    );
+  }
+  lines.push("| Tool | **Peak RSS** |");
+  lines.push("| --- | ---: |");
+  for (const v of sorted) {
+    const name = displayName(v);
+    const cell = v.status === "ok" ? `**${formatMb(v.rssMaxMb)}**` : `(${formatMb(v.rssMaxMb)})`;
+    lines.push(`| ${name} | ${cell} |`);
+  }
+  lines.push("");
+  return lines;
+}
+
 function renderByThreadingClass(variants) {
   const lines = [];
   const byClass = new Map();
@@ -419,7 +490,7 @@ function renderToolLegend(surface) {
  * paragraph landed above every suite in the same document.
  */
 export const IDE_RANKING_RULES =
-  "Ranked **per operation**, never pooled. These operations differ by orders of magnitude and answer unrelated questions, so one table each. A row that failed its content gate is shown in brackets and excluded from ranking — latency without a correct answer is not a comparable measurement.";
+  "Ranked **per operation**, never pooled. These operations differ by orders of magnitude and answer unrelated questions, so one table each. Each request-style operation publishes **Cold** (first request after initialize+didOpen in a **fresh session dedicated to that operation** — later ops do not reuse a warmed server) and **Warm** (the same request immediately after). Ranking uses Cold; vs-fastest-cold sits next to it. A row that failed its content gate on the cold request is shown in brackets and excluded from ranking — latency without a correct answer is not a comparable measurement.";
 
 export const RANKING_RULES =
   "Ranked on the **median of measured runs** (each after ≥1 discarded warmup; no cold column — it would measure JIT warmup). One table per surface: engine, invocation and threading are row properties, not table splits — rows tagged **(JS)** run the JavaScript TypeScript compiler (a cross-engine ratio measures TypeScript's rewrite as much as the tool), and a row's label/notes say whether it is a CLI (pays process startup every run), an in-process API, single-threaded or a thread pool. Name markers: ⚠ failed validation (time bracketed, unranked) · ❌ error · ⏭ skipped. A row above CV 50% with at least three samples is bracketed as TOO NOISY TO RANK, baseline included (a two-run spread has no third sample to adjudicate, so it is flagged, not bracketed). Per-row detail is under **Notes** below each table.";
@@ -486,9 +557,14 @@ export function renderSurfaceMarkdown(surface) {
         );
         lines.push("");
       }
-      const { lines: tableLines, sorted } = renderByThreadingClass(group.variants);
-      lines.push(...tableLines);
-      lines.push(...renderRawRuns(sorted));
+      if (group.metric === "rss") {
+        lines.push(...renderPeakRssBlock(group.variants, { heading: false }));
+      } else {
+        const { lines: tableLines, sorted } = renderByThreadingClass(group.variants);
+        lines.push(...tableLines);
+        lines.push(...renderRawRuns(sorted));
+        lines.push(...renderPeakRssBlock(group.variants, { heading: true }));
+      }
       lines.push("");
     }
 
@@ -506,6 +582,7 @@ export function renderSurfaceMarkdown(surface) {
   // Flat surfaces
   const { lines: tableLines, sorted } = renderByThreadingClass(surface.variants);
   lines.push(...tableLines);
+  lines.push(...renderPeakRssBlock(surface.variants, { heading: true }));
   lines.push("<details><summary>Methodology</summary>");
   lines.push("");
   for (const note of surface.methodology ?? []) {

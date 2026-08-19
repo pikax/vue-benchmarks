@@ -95,6 +95,26 @@ export function pidRssBytes(pid) {
 }
 
 /**
+ * Sum RSS of several process trees (e.g. Volar Vue half + TypeScript half).
+ *
+ * Each pid is sampled as a tree so Node wrappers and workers count; the
+ * trees are then added. That is an upper bound if the processes peak at
+ * different times, and the right number when they are the two halves of one
+ * product.
+ */
+export function sumPidTreeRssBytes(pids) {
+  let tree = 0;
+  let hwm = 0;
+  for (const pid of pids ?? []) {
+    if (!Number.isFinite(pid) || pid <= 0) continue;
+    tree += pidTreeRssBytes(pid) || 0;
+    hwm += pidPeakRssBytes(pid) || 0;
+  }
+  const n = Math.max(tree, hwm);
+  return n > 0 ? n : null;
+}
+
+/**
  * RSS for a process and its direct children (helps Windows .cmd → node wrappers).
  */
 export function pidTreeRssBytes(pid) {

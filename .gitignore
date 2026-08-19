@@ -15,9 +15,14 @@ node_modules/
 # wiping /work/ — those fallback dirs are ephemeral too and must not be tracked.
 /work-*/
 
-# Local and CI report outputs (README markers hold published summaries)
+# Local report outputs (win32, logs, ci-tmp). Latest Linux CI snapshot IS committed.
 /results/*
 !/results/.gitkeep
+!/results/README.md
+!/results/benchmarks/
+!/results/benchmarks/**
+!/results/real_world/
+!/results/real_world/**
 
 # VS Code test runner download cache
 .vscode-test/

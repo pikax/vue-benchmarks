@@ -1,7 +1,7 @@
 # Ubuntu/Linux · bench
 
-> Full report for `bench-Linux-200-bench.md` — every collapsed block (methodology, gate notes, raw runs) that the
-> [README](../../README.md) summary tables link here for. Auto-generated; do not edit.
+> Full report for `bench-Linux-200-bench.md` — every table, collapsed block (methodology, gate notes, raw runs) that the
+> [README](../../README.md) landing page charts link here for. Auto-generated; do not edit.
 
 ## Benchmark Results
 

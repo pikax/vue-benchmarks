@@ -986,8 +986,9 @@ tests/harness/              # self-tests of the benchmark machinery (tracked)
 tests/confirm/              # correctness plants + known-failures.json (tracked)
 fixtures/                   # generated corpora (gitignored)
 work/                       # ephemeral copies (gitignored)
-results/                    # local + CI reports (gitignored; published copies live
-                            #   in the README / MEMORY.md marker sections)
+results/                    # local + CI reports — see results/README.md.
+                            #   benchmarks/ + real_world/ are the latest Linux
+                            #   snapshot (committed); everything else is gitignored
 .github/workflows/
   test.yml                  # harness + confirm on PR / main push (publishes nothing)
   pr.yml                    # PR smoke: tiny throughput pass only (no confirm)

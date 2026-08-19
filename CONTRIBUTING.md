@@ -29,9 +29,11 @@ CI is **Linux only**, so platform-specific breakage (Windows file locks, `.cmd` 
 Do **not** commit:
 
 - `fixtures/**` (generated)
-- `results/**` (local reports)
+- `results/*` except `results/README.md`, `results/benchmarks/`, and `results/real_world/` (the last two hold the latest Linux CI snapshot only)
 - `work/**` (ephemeral)
 - `node_modules/`
+
+Published landing charts (`docs/results/charts/*.svg`), full reports (`docs/results/*.md`), and the latest CI JSON/MD under `results/benchmarks/` + `results/real_world/` are committed by the Benchmark publish jobs. A new publish **clears** those folders first so only the latest run remains. Refresh locally with `pnpm pull:ci-results`.
 
 ## Project layout
 

@@ -30,6 +30,20 @@ import {
   formatTypecheckDoc,
   formatTypecheckReadmeSummary,
 } from "../tests/confirm/lib/typecheck-doc.mjs";
+import {
+  artifactKind,
+  compactHighlightBody,
+  highlightHasRanking,
+  memorySnippetsFromBody,
+  writeChart as writeChartFile,
+} from "./lib/readme-charts.mjs";
+import { collectVersions } from "./lib/versions.mjs";
+import {
+  formatToolTable,
+  resolvePublishDates,
+  tnbVersion,
+  versionsFromTableRows,
+} from "./lib/tool-catalog.mjs";
 
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -41,14 +55,11 @@ const rootDir = join(dirname(fileURLToPath(import.meta.url)), "..");
 const DETAILS_DIR = "docs/results";
 
 /**
- * Split a report into the slim body README carries and nothing else.
+ * Split a report into the landing-page body README carries and nothing else.
  *
- * The 2026-07-30 real-world publish put README at 1,034 KB — past GitHub's
- * ~512 KB render cutoff, so the page that exists to be read stopped rendering
- * at all. 683 KB of it was 403 `<details>` blocks (methodology, gate notes,
- * raw runs). README keeps the tables; every collapsed block moves to the
- * artifact's own file under docs/results/, linked in place, where it renders
- * fine and deep-reads happen anyway.
+ * README is a chart + compact ranking table per highlight surface. Full tables,
+ * methodology, gate notes and raw runs live under docs/results/. Charts are
+ * committed next to those reports as SVG (no third-party image host).
  */
 export function splitDetails(markdown) {
   let removed = 0;
@@ -103,8 +114,8 @@ function writeDetailFile(leaf, heading, content) {
   const body = [
     `# ${heading}`,
     "",
-    `> Full report for \`${leaf}\` — every collapsed block (methodology, gate notes, raw runs) that the`,
-    `> [README](../../README.md) summary tables link here for. Auto-generated; do not edit.`,
+    `> Full report for \`${leaf}\` — every table, collapsed block (methodology, gate notes, raw runs) that the`,
+    `> [README](../../README.md) landing page charts link here for. Auto-generated; do not edit.`,
     "",
     content,
     "",
@@ -365,6 +376,20 @@ export function collapseAllFailedTables(markdown, href) {
       i = j - 1;
       continue;
     }
+    let heading = "";
+    for (let h = i - 1; h >= 0; h--) {
+      const m = /^(#{1,6}) (.+)$/.exec(lines[h]);
+      if (m) {
+        heading = m[2];
+        break;
+      }
+    }
+    // Project typecheck/test stay as tables on the README landing view.
+    if (/project (typecheck|test)/i.test(heading)) {
+      out.push(...lines.slice(i, j));
+      i = j - 1;
+      continue;
+    }
     removed++;
     const statuses = new Set(names.map((n) => (/❌/u.test(n) ? "failed" : "skipped")));
     const one = names.length === 1;
@@ -586,12 +611,22 @@ export function slimAndLink(leaf, heading, content) {
 function walk(dir, prefix, acc = []) {
   if (!existsSync(dir)) return acc;
   for (const entry of readdirSync(dir)) {
+    if (entry === "ci-tmp" || entry === "node_modules") continue;
     const full = join(dir, entry);
     const st = statSync(full);
     if (st.isDirectory()) walk(full, prefix, acc);
     else if (entry.endsWith(".md") && entry.startsWith(prefix)) acc.push(full);
   }
   return acc;
+}
+
+/** Prefer the committed snapshot folders so root leftovers are not published twice. */
+function walkPublished(root, prefix) {
+  const snap = prefix.startsWith("real-world")
+    ? join(root, "real_world")
+    : join(root, "benchmarks");
+  if (existsSync(snap)) return walk(snap, prefix);
+  return walk(root, prefix);
 }
 
 function osTitle(platform) {
@@ -718,6 +753,7 @@ function renderBench(files, { start, end }) {
       },
       undefined,
       { leaf: "notes-benchmark.md", title: "Reference results — how to read", rules: [] },
+      { sectionId: "benchmark" },
     ),
   );
   chunks.push(end);
@@ -754,7 +790,8 @@ function promoteHeadings(markdown) {
  * the artifact's own levels (surfaces at ###) under a #### block heading.
  */
 function renderArtifactBlocks(files, makeHeading, preprocess = (c) => c, notes = null, opts = {}) {
-  const { blockHeading = "#### ", promoteBody = false } = opts;
+  const { blockHeading = "#### ", promoteBody = false, sectionId = "" } = opts;
+  const chartsDir = join(rootDir, DETAILS_DIR, "charts");
   const prepared = files.map((file) => {
     const content = preprocess(readFileSync(file, "utf8").trim());
     const leaf = leafOf(file);
@@ -764,7 +801,7 @@ function renderArtifactBlocks(files, makeHeading, preprocess = (c) => c, notes =
     // per-surface tools legends (deduplicated into the section notes file).
     const { slim, link } = slimAndLink(leaf, heading, content);
     const { body, tools } = extractToolLegends(stripReportMeta(slim));
-    return { leaf, heading, slim: body, link, tools };
+    return { leaf, heading, slim: body, link, tools, full: content };
   });
   const seenTools = new Set();
   const allTools = [];
@@ -776,8 +813,10 @@ function renderArtifactBlocks(files, makeHeading, preprocess = (c) => c, notes =
     }
   }
   const { contents, hoisted } = hoistRepeatedLines(prepared.map((p) => p.slim));
-  const chunks = [...sectionNotes(notes, hoisted, allTools)];
-  prepared.forEach((p, i) => {
+  const topLinks = [];
+  const bodyChunks = [];
+  for (let i = 0; i < prepared.length; i++) {
+    const p = prepared[i];
     // Orphans are cleaned AFTER hoisting — that is where they appear: a
     // heading like "Methodology notes" whose bullets all moved to the
     // standing-notes list owns nothing. Surface headings with zero-row
@@ -785,9 +824,34 @@ function renderArtifactBlocks(files, makeHeading, preprocess = (c) => c, notes =
     // clear the hoist threshold.
     let body = dropOrphanHeadings(contents[i]);
     if (promoteBody) body = promoteHeadings(body);
-    chunks.push(`${blockHeading}${p.heading}`, "", `<!-- source: ${p.leaf} -->`, "", p.link, "", body, "");
-  });
-  return chunks;
+    const href = `${DETAILS_DIR}/${p.leaf}`;
+    const kind = artifactKind(sectionId, p.leaf);
+    body = compactHighlightBody(body, {
+      kind,
+      leaf: p.leaf,
+      href,
+      chartsHref: `${DETAILS_DIR}/charts`,
+      writeChart: (file, svg) => writeChartFile(chartsDir, file, svg),
+      notesSource: p.full,
+      toolTable: (id) => formatToolTable(id, toolVersions, toolDates),
+      memorySnippets: sectionId === "benchmark" ? memorySnippets : undefined,
+    });
+    if (sectionId === "benchmark" && Object.keys(memorySnippets).length) memoryEmbedded = true;
+    if (kind === "real-world" && !highlightHasRanking(body)) continue;
+    if (kind === "cache-demo" || kind === "ide-scale") {
+      const label = kind === "cache-demo" ? "Cache-demo (not ranking)" : "IDE scale";
+      topLinks.push(`> ${label}: [full report](${href}).`);
+      continue;
+    }
+    // Full-details sits under the section/project title, not after the tables.
+    if (sectionId === "real-world") {
+      bodyChunks.push(`${blockHeading}${p.heading}`, "", `<!-- source: ${p.leaf} -->`, "", p.link, "", body, "");
+    } else {
+      topLinks.push(p.link);
+      bodyChunks.push(`${blockHeading}${p.heading}`, "", `<!-- source: ${p.leaf} -->`, "", body, "");
+    }
+  }
+  return [...topLinks, "", ...sectionNotes(notes, hoisted, allTools), ...bodyChunks];
 }
 
 function renderIde(files, { start, end }) {
@@ -797,6 +861,8 @@ function renderIde(files, { start, end }) {
     `> Auto-updated ${today()} from the **Benchmark** workflow (\`ide\` job — per-operation editor benchmarks).`,
     `> Ranked **per operation**, never pooled: \`didOpen→diagnostics\` and \`foldingRange\` answer unrelated questions.`,
     `> Same-VM rule holds within the job; these numbers are not comparable to the timing tables above.`,
+    `> **⚠ unranked** is a noise or work gate, not “the official tool is unofficial”. A series with CV > 50% is too noisy to rank.`,
+    `> Each stacked bar is **warm** (solid, cached request) then **cold** (pale remainder = first-request extra). Ranking uses **Cold**; vs-fastest-cold sits next to it.`,
     "",
   ];
 
@@ -812,6 +878,7 @@ function renderIde(files, { start, end }) {
         title: "IDE operation results — how to read",
         rules: [RANKING_RULES, IDE_RANKING_RULES],
       },
+      { sectionId: "ide" },
     ),
   );
   chunks.push(end);
@@ -835,6 +902,8 @@ function renderRealWorld(files, { start, end }) {
     "> Corpora are pinned checkouts of third-party open-source Vue projects. Sources are unmodified; every table names its ref and resolved commit SHA.",
     "> **Rank within a corpus, never across it.** The corpora differ in size and in kind — library source, application source, and documentation demos are not the same code.",
     "> The generated `fixtures/N` corpus remains the primary ranking corpus; these tables exist to catch what a designed corpus cannot.",
+    "> Landing view is the project's **own** typecheck / test / build (plugin swaps included). Harness SFC compile of extracted files stays in the full report. Unranked tools are listed under the table with the gate that dropped them.",
+    "> **⚠ unranked** is a gate, not a ranking of the official toolchain. A project that ships **no lockfile** at the pinned ref (Naive UI, Ant Design Vue) cannot be installed frozen, so every typecheck / test / build / lsp row on that corpus is unranked equally — including vue-tsc.",
     "",
   ];
 
@@ -857,7 +926,7 @@ function renderRealWorld(files, { start, end }) {
       },
       // The UI library owns the block (h1); surfaces sit under it (h2), and
       // their subgroups — bundler, TypeScript engine — at h3.
-      { blockHeading: "# ", promoteBody: true },
+      { blockHeading: "# ", promoteBody: true, sectionId: "real-world" },
     ),
   );
   chunks.push(end);
@@ -893,6 +962,82 @@ export const SECTIONS = [
 
 const INDEX_START = "<!-- RESULTS_INDEX_START -->";
 const INDEX_END = "<!-- RESULTS_INDEX_END -->";
+const RUN_META_START = "<!-- RUN_META_START -->";
+const RUN_META_END = "<!-- RUN_META_END -->";
+
+/** Filled in `main()` from the published bench artifact + npm registry. */
+let toolVersions = {};
+/** Peak-RSS snippets keyed by memory surface (`compile` / `typecheck` / `lsp`). */
+let memorySnippets = {};
+let memorySourceLeaf = "";
+let memoryCompactBody = "";
+let memoryEmbedded = false;
+let toolDates = {};
+
+/** Pull Generated / Runner / versions from a bench artifact for the README. */
+export function extractRunMeta(markdown) {
+  const generated = /- \*\*Generated:\*\* ([^\n]+)/.exec(markdown)?.[1]?.trim() ?? "";
+  const runner = /- \*\*Runner:\*\* ([^\n]+)/.exec(markdown)?.[1]?.trim() ?? "";
+  const runs = /- \*\*Runs \/ warmups:\*\* ([^\n]+)/.exec(markdown)?.[1]?.trim() ?? "";
+  const ci = /- \*\*CI run:\*\* ([^\n]+)/.exec(markdown)?.[1]?.trim() ?? "";
+  const fixture = /- \*\*Fixture:\*\* ([^\n]+)/.exec(markdown)?.[1]?.trim() ?? "";
+  const table = [];
+  const start = markdown.indexOf("### Tool versions");
+  if (start >= 0) {
+    const chunk = markdown.slice(start);
+    const rows = [...chunk.matchAll(/^\| ([^|]+) \| ([^|]+) \|\s*$/gm)];
+    const seen = new Set();
+    for (const [, pkg, ver] of rows) {
+      const name = pkg.trim();
+      const version = ver.trim();
+      if (name === "Package" || name.startsWith("---")) continue;
+      if (name.startsWith("cli:")) continue;
+      if (seen.has(name)) continue;
+      seen.add(name);
+      table.push(`| ${name} | ${version} |`);
+    }
+  }
+  return { generated, runner, runs, ci, fixture, table };
+}
+
+export function formatRunMeta(meta) {
+  if (!meta?.generated && !meta?.table?.length) return "";
+  const lines = [
+    RUN_META_START,
+    "",
+    "## This run",
+    "",
+  ];
+  if (meta.generated) {
+    const day = meta.generated.slice(0, 10);
+    lines.push(`- **Date:** ${day} (\`${meta.generated}\`)`);
+  }
+  if (meta.runner) lines.push(`- **Runner:** ${meta.runner}`);
+  if (meta.fixture) lines.push(`- **Fixture:** ${meta.fixture}`);
+  if (meta.runs) lines.push(`- **Runs / warmups:** ${meta.runs}`);
+  if (meta.ci) lines.push(`- **CI run:** ${meta.ci}`);
+  lines.push("");
+  lines.push(RUN_META_END);
+  return lines.join("\n");
+}
+
+function spliceRunMeta(readme, dir) {
+  const found = walkPublished(dir, "bench-");
+  const { publish } = filterPublishable(found);
+  const file = publish.sort((a, b) => phaseRank(a) - phaseRank(b) || a.localeCompare(b))[0];
+  if (!file) {
+    console.log("[run-meta] no Linux bench artifact — existing This run section LEFT UNTOUCHED");
+    return readme;
+  }
+  const rendered = formatRunMeta(extractRunMeta(readFileSync(file, "utf8")));
+  if (!rendered) return readme;
+  if (readme.includes(RUN_META_START) && readme.includes(RUN_META_END)) {
+    return readme.replace(new RegExp(`${RUN_META_START}[\\s\\S]*?${RUN_META_END}`), () => rendered);
+  }
+  const hook = "## Quick start";
+  if (readme.includes(hook)) return readme.replace(hook, `${rendered}\n\n${hook}`);
+  return `${readme.trimEnd()}\n\n${rendered}\n`;
+}
 
 /**
  * The index at the top of README: one line per results section, linking the
@@ -924,25 +1069,37 @@ export function buildResultsIndex(readme) {
     if (notesMatch) entries.unshift(`[how to read](${DETAILS_DIR}/${notesMatch[1]})`);
     rows.push(`- **[${title}](#${slug})**${entries.length ? ` — ${entries.join(" · ")}` : ""}`);
   }
-  if (readme.includes("<!-- TYPECHECK_CONFIRM_START -->")) {
-    rows.push(
-      "- **[Typecheck confirmation](#typecheck-confirmation)** — [full matrix](docs/typecheck.md)",
-    );
-  }
-  return rows.join("\n");
+  const typecheckRow = readme.includes("<!-- TYPECHECK_CONFIRM_START -->")
+    ? "- **[Typecheck confirmation](#typecheck-confirmation)** — [full matrix](docs/typecheck.md)"
+    : "";
+  const memoryRow = readme.includes(MEMORY_SUMMARY_START)
+    ? "- **[Memory](#memory)** — [MEMORY.md](MEMORY.md)"
+    : "";
+  // Reference (bench) → typecheck → IDE → real-world → memory
+  const ordered = [];
+  if (rows[0]) ordered.push(rows[0]);
+  if (typecheckRow) ordered.push(typecheckRow);
+  ordered.push(...rows.slice(1));
+  if (memoryRow) ordered.push(memoryRow);
+  return ordered.join("\n");
 }
 
 const TYPECHECK_CONFIRM_START = "<!-- TYPECHECK_CONFIRM_START -->";
 const TYPECHECK_CONFIRM_END = "<!-- TYPECHECK_CONFIRM_END -->";
 
 function findConfirmJson(dir) {
+  const pinned = join(dir, "benchmarks", "confirm.json");
+  if (existsSync(pinned)) return pinned;
   const hits = [];
   function visit(p) {
     if (!existsSync(p)) return;
     const st = statSync(p);
     if (st.isFile() && /confirm\.json$/i.test(p)) hits.push(p);
     else if (st.isDirectory()) {
-      for (const name of readdirSync(p)) visit(join(p, name));
+      for (const name of readdirSync(p)) {
+        if (name === "ci-tmp" || name === "node_modules") continue;
+        visit(join(p, name));
+      }
     }
   }
   visit(dir);
@@ -962,12 +1119,26 @@ export function spliceTypecheckConfirm(readme, dir) {
     return readme;
   }
   const data = JSON.parse(readFileSync(jsonPath, "utf8"));
+  const allowed = publishablePlatforms();
+  const platform = String(data.runner?.platform || data.platform || "").toLowerCase();
+  if (allowed && platform && !platform.includes("linux") && platform !== "ubuntu") {
+    console.log(
+      `[typecheck-confirm] SKIPPED ${leafOf(jsonPath)} — ${platform} artifact, and README publishes Linux only. ` +
+        `Set PUBLISH_ANY_PLATFORM=1 to override.`,
+    );
+    return readme;
+  }
   const results = data.results || [];
   const generatedAt = data.generatedAt || new Date().toISOString();
   const runner = data.runner;
   writeFileSync(
     join(rootDir, "docs", "typecheck.md"),
-    formatTypecheckDoc({ results, generatedAt, runner }),
+    formatTypecheckDoc({
+      results,
+      generatedAt,
+      runner,
+      writeChart: (file, svg) => writeChartFile(join(rootDir, DETAILS_DIR, "charts"), file, svg),
+    }),
     "utf8",
   );
   const summary = formatTypecheckReadmeSummary({ results, generatedAt, runner });
@@ -988,12 +1159,81 @@ export function spliceTypecheckConfirm(readme, dir) {
   return readme;
 }
 
+const MEMORY_SUMMARY_START = "<!-- MEMORY_SUMMARY_START -->";
+const MEMORY_SUMMARY_END = "<!-- MEMORY_SUMMARY_END -->";
+
+function loadMemorySnippets(dir) {
+  memorySnippets = {};
+  memorySourceLeaf = "";
+  memoryCompactBody = "";
+  memoryEmbedded = false;
+  const found = walkPublished(dir, "memory-").filter((f) => f.endsWith(".md") && !/test/i.test(f));
+  const { publish: files, rejected } = filterPublishable(found);
+  for (const { file, platform } of rejected) {
+    console.log(
+      `[memory] SKIPPED ${file} — ${platform} artifact, and README publishes Linux only. ` +
+        `Set PUBLISH_ANY_PLATFORM=1 to override.`,
+    );
+  }
+  if (files.length === 0) return;
+  const file = files.sort()[0];
+  memorySourceLeaf = leafOf(file);
+  const chartsDir = join(rootDir, DETAILS_DIR, "charts");
+  const body = compactHighlightBody(readFileSync(file, "utf8"), {
+    kind: "memory",
+    leaf: memorySourceLeaf,
+    href: "MEMORY.md",
+    chartsHref: `${DETAILS_DIR}/charts`,
+    metric: "rss",
+    writeChart: (name, svg) => writeChartFile(chartsDir, name, svg),
+  });
+  memoryCompactBody = body.trim();
+  memorySnippets = memorySnippetsFromBody(body);
+}
+
+/**
+ * Compact peak-RSS charts on the README, linking MEMORY.md for the full probe.
+ * When RSS is already nested under compile / typecheck / LSP, this section is
+ * a pointer. Absence of a Linux memory artifact leaves the section untouched.
+ */
+export function spliceMemorySummary(readme, dir) {
+  if (!memorySourceLeaf) loadMemorySnippets(dir);
+  if (!memorySourceLeaf) {
+    console.log("[memory] no memory-*.md artifacts — existing section LEFT UNTOUCHED");
+    return readme;
+  }
+  const leaf = memorySourceLeaf;
+  const body = memoryEmbedded ? "" : memoryCompactBody;
+  const rendered = [
+    MEMORY_SUMMARY_START,
+    "",
+    `> Auto-updated ${today()} from the **Benchmark** workflow (\`memory\` job). Peak RSS; isolated from timing.`,
+    memoryEmbedded
+      ? `> Peak RSS for compile / typecheck / format / lint / component-meta / LSP sits next to those timing tables. Full probe (every surface, min/max/avg, CPU): [MEMORY.md](MEMORY.md) · source \`${leaf}\`.`
+      : `> Full probe (every surface, min/max/avg, CPU): [MEMORY.md](MEMORY.md) · source \`${leaf}\`.`,
+    "",
+    ...(body ? [body, ""] : []),
+    MEMORY_SUMMARY_END,
+  ].join("\n");
+  if (readme.includes(MEMORY_SUMMARY_START) && readme.includes(MEMORY_SUMMARY_END)) {
+    return readme.replace(
+      new RegExp(`${MEMORY_SUMMARY_START}[\\s\\S]*?${MEMORY_SUMMARY_END}`),
+      () => rendered,
+    );
+  }
+  const hook = "## Contributing";
+  if (readme.includes(hook)) {
+    return readme.replace(hook, `## Memory\n\n${rendered}\n\n${hook}`);
+  }
+  return `${readme.trimEnd()}\n\n## Memory\n\n${rendered}\n`;
+}
+
 export function spliceIndex(readme) {
   if (!readme.includes(INDEX_START) || !readme.includes(INDEX_END)) return readme;
   const block = [
     INDEX_START,
     "",
-    `**Results index** — summary tables below; every entry links its FULL report (methodology, per-row notes, raw runs, environment) in [\`${DETAILS_DIR}/\`](${DETAILS_DIR}/):`,
+    `**Results index** — charts below; every entry links its FULL report (tables, methodology, per-row notes, raw runs, environment) in [\`${DETAILS_DIR}/\`](${DETAILS_DIR}/):`,
     "",
     buildResultsIndex(readme),
     "",
@@ -1002,12 +1242,32 @@ export function spliceIndex(readme) {
   return readme.replace(new RegExp(`${INDEX_START}[\\s\\S]*?${INDEX_END}`), () => block);
 }
 
-function main() {
+async function loadToolMeta(dir) {
+  const found = walkPublished(dir, "bench-");
+  const { publish } = filterPublishable(found);
+  const file = publish.sort((a, b) => phaseRank(a) - phaseRank(b) || a.localeCompare(b))[0];
+  if (file) {
+    toolVersions = versionsFromTableRows(extractRunMeta(readFileSync(file, "utf8")).table);
+  }
+  const collected = collectVersions();
+  for (const [name, version] of Object.entries(collected)) {
+    if (name === "node" || name.startsWith("cli:")) continue;
+    if (!toolVersions[name]) toolVersions[name] = version;
+  }
+  const tnb = tnbVersion();
+  if (tnb) toolVersions["typescript-native-bridge"] = tnb;
+  const entries = Object.entries(toolVersions).map(([name, version]) => ({ name, version }));
+  toolDates = await resolvePublishDates(entries);
+}
+
+async function main() {
   const args = process.argv.slice(2);
   let dir = join(rootDir, "results");
   for (let i = 0; i < args.length; i++) {
     if (args[i] === "--dir") dir = args[++i];
   }
+  await loadToolMeta(dir);
+  loadMemorySnippets(dir);
 
   const readmePath = join(rootDir, "README.md");
   if (!existsSync(readmePath)) {
@@ -1019,7 +1279,7 @@ function main() {
   const before = readme;
 
   for (const section of SECTIONS) {
-    const found = walk(dir, section.prefix);
+    const found = walkPublished(dir, section.prefix);
     const { publish: files, rejected } = filterPublishable(found);
     const hasMarkers = readme.includes(section.start) && readme.includes(section.end);
 
@@ -1063,6 +1323,8 @@ function main() {
   }
 
   readme = spliceTypecheckConfirm(readme, dir);
+  readme = spliceRunMeta(readme, dir);
+  readme = spliceMemorySummary(readme, dir);
   readme = spliceIndex(readme);
 
   if (readme === before) {
@@ -1076,5 +1338,8 @@ function main() {
 // Importable without side effects (the migration script and the tests need the
 // helpers); main runs only when this file IS the entry point.
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  main();
+  main().catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });
 }

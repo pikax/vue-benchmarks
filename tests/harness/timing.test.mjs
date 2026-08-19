@@ -213,6 +213,18 @@ describe("measureVariants — result row shape", () => {
     assert.equal(row.cvPct, null, "CV% of one sample must be null, not 0");
   });
 
+  test("rssBytes in meta becomes rssMaxMb (median, in MB)", async () => {
+    const variants = [
+      {
+        id: "a",
+        label: "A",
+        measure: () => ({ ms: 10, meta: { rssBytes: 32 * 1024 * 1024 } }),
+      },
+    ];
+    const [row] = await measureVariants(variants, { runs: 1, warmups: 1 });
+    assert.equal(row.rssMaxMb, 32);
+  });
+
   test("null dispersion renders as n/a, not as 0.0 ms / 0.0%", async () => {
     const { variants } = recordingVariants(["a"], { value: () => 12 });
     const [row] = await measureVariants(variants, { runs: 1, warmups: 1 });

@@ -400,14 +400,15 @@ jobs:
 
   # ---------------------------------------------------------------------------
   # CONFIRM — typecheck correctness plants. Isolated from SPEED/MEMORY.
-  # Writes docs/typecheck.md (matrix + one-shot wall/RSS) for the publish job.
+  # Writes docs/typecheck.md (matrix + one-shot wall/RSS + all-plants) for publish.
   # ---------------------------------------------------------------------------
   confirm:
     name: Confirm typecheck (Linux)
     needs: build
     runs-on: ubuntu-latest
-    # One measured CLI spawn per plant×tool (~500) plus fallthrough retries.
-    timeout-minutes: 40
+    # Per-plant cells (~500) plus fallthrough retries, then all-plants with the
+    # same --runs/--warmups as the bench job (5 + 1 by default).
+    timeout-minutes: 60
     defaults:
       run:
         shell: bash
@@ -419,10 +420,13 @@ jobs:
           fixtures-artifact: fixtures-bench-linux
           node-modules-cache-key: ${{ env.NM_CACHE_PREFIX }}-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', 'envs/tnb/pnpm-lock.yaml', '.node-version') }}-${{ github.sha }}
 
-      - name: Typecheck confirmation (correctness + one-shot time/RSS)
+      - name: Typecheck confirmation (correctness + all-plants)
         env:
           RUNNER_OS: ${{ runner.os }}
-        run: node tests/confirm/run.mjs --surfaces typecheck
+        run: |
+          node tests/confirm/run.mjs --surfaces typecheck \
+            --runs "${{ env.BENCH_RUNS }}" \
+            --warmups "${{ env.BENCH_WARMUPS }}"
 
       - name: Upload typecheck confirmation
         if: always()
@@ -476,7 +480,7 @@ jobs:
       - name: Download all benchmark result artifacts
         uses: actions/download-artifact@v8
         with:
-          path: ./results
+          path: ./results-dl
           pattern: results-*
           merge-multiple: true
 
@@ -485,6 +489,9 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version-file: .node-version
+
+      - name: Snapshot latest artifacts (clears previous results/benchmarks)
+        run: node scripts/publish-ci-results.mjs --from ./results-dl --scope bench
 
       - name: Update README results section
         run: node scripts/update-readme.mjs --dir ./results
@@ -506,6 +513,9 @@ jobs:
       #
       # The action no-ops when nothing changed, so an idempotent re-run does not
       # create an empty commit.
+      - name: Stage snapshot including deletions
+        run: git add -A results/benchmarks
+
       - name: Commit results (single commit, skip ci)
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
@@ -525,4 +535,4 @@ jobs:
           # docs/results carries the full per-artifact reports the README's
           # summary tables link to — same commit, or the links 404.
           # docs/typecheck.md is the full confirm matrix (Benchmark only).
-          file_pattern: README.md MEMORY.md docs/results/*.md docs/typecheck.md
+          file_pattern: README.md MEMORY.md docs/results/*.md docs/results/charts/*.svg docs/typecheck.md results/benchmarks/*

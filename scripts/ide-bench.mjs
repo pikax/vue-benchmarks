@@ -24,6 +24,8 @@ import { pathToFileUri } from "./lib/lsp-client.mjs";
 import {
   createSession,
   detectBackendFallback,
+  isolatedColdIds,
+  mergeIsolatedOps,
   removeWorkspace,
   resolveServers,
 } from "./lib/ide-ops/context.mjs";
@@ -108,7 +110,7 @@ async function cleanupWorkspace(wsDir) {
   return !existsSync(wsDir);
 }
 
-async function runSuiteOnServer({ suite, server, workRoot, verbose, keepWork }) {
+async function runSuiteOnServer({ suite, server, workRoot, verbose, keepWork, only, skipOpIds }) {
   // Unique per run: a fresh server process per run is the point, and a previous
   // run's server may still hold handles into its workspace.
   const wsDir = join(workRoot, `${suite.id}-${server.id}-${++wsSeq}`);
@@ -125,8 +127,22 @@ async function runSuiteOnServer({ suite, server, workRoot, verbose, keepWork }) 
   let ctx = null;
   try {
     ctx = await createSession({ server, workspaceDir: wsDir, budget });
-    const ops = await suite.measure({ ...ctx, ws, pathToFileUri, verbose });
-    return { ok: true, ops, initializeMs: ctx.initializeMs, stderr: ctx.stderrTail() };
+    const ops = await suite.measure({
+      ...ctx,
+      ws,
+      pathToFileUri,
+      verbose,
+      only,
+      skipOpIds,
+    });
+    const peakRssBytes = ctx.snapshotRss?.() ?? ctx.peakRssBytes;
+    return {
+      ok: true,
+      ops,
+      initializeMs: ctx.initializeMs,
+      peakRssBytes,
+      stderr: ctx.stderrTail(),
+    };
   } catch (e) {
     return { ok: false, error: e.message, ops: [], stderr: ctx?.stderrTail?.() ?? "" };
   } finally {
@@ -138,6 +154,48 @@ async function runSuiteOnServer({ suite, server, workRoot, verbose, keepWork }) 
       console.warn(`    ⚠ could not remove workspace ${wsDir} (still held); left in place`);
     }
   }
+}
+
+/**
+ * A later timedColdWarm in one session is not cold — the first op already
+ * filled caches. Suites list those ops on `isolatedColdOps`; each is measured
+ * in its own spawn so Cold is the first request after didOpen.
+ */
+async function runSuiteSessions({ suite, server, workRoot, verbose, keepWork, warmup }) {
+  const spec = suite.isolatedColdOps ?? [];
+  const ids = isolatedColdIds(spec);
+  const base = { suite, server, workRoot, verbose, keepWork };
+  if (warmup) {
+    await runSuiteOnServer(base);
+    for (const id of ids) await runSuiteOnServer({ ...base, only: id });
+    return null;
+  }
+  const full = await runSuiteOnServer({ ...base, skipOpIds: ids.length ? ids : undefined });
+  if (!full.ok || !ids.length) return full;
+  const extras = [];
+  for (const id of ids) {
+    const extra = await runSuiteOnServer({ ...base, only: id });
+    if (!extra.ok) return extra;
+    extras.push(extra);
+  }
+  return {
+    ok: true,
+    ops: mergeIsolatedOps(
+      full.ops,
+      extras.map((e) => e.ops),
+      spec,
+      suite.pairOps,
+    ),
+    initializeMs: full.initializeMs,
+    initializeSamples: [full.initializeMs, ...extras.map((e) => e.initializeMs)].filter(
+      Number.isFinite,
+    ),
+    peakRssBytes: Math.max(
+      0,
+      ...[full, ...extras].map((s) => s.peakRssBytes).filter(Number.isFinite),
+    ) || null,
+    stderr: [full.stderr, ...extras.map((e) => e.stderr)].filter(Boolean).join("\n"),
+  };
 }
 
 async function main() {
@@ -177,19 +235,23 @@ async function main() {
     for (const server of servers) {
       // Warmups are discarded, as everywhere else in this repo: an unwarmed
       // first run measures JIT warmup for JS servers and nothing for native.
+      // Isolated-cold ops get their own discarded spawn too — they are a
+      // separate process, and skipping that warmup would put V8 JIT into their
+      // published cold number.
       for (let w = 0; w < Math.max(1, args.warmups); w++) {
-        await runSuiteOnServer({
+        await runSuiteSessions({
           suite,
           server,
           workRoot,
           verbose: false,
           keepWork: args.keepWork,
+          warmup: true,
         });
       }
       const runs = [];
       for (let r = 0; r < Math.max(1, args.runs); r++) {
         runs.push(
-          await runSuiteOnServer({
+          await runSuiteSessions({
             suite,
             server,
             workRoot,
@@ -217,6 +279,7 @@ async function main() {
       const ops = [...byOp.values()].map((o) => {
         const anyInvalid = o.samples.find((s) => s.valid === false);
         const runs = o.samples.map((s) => s.ms).filter(Number.isFinite);
+        const coldRuns = o.samples.map((s) => s.coldMs).filter(Number.isFinite);
         const mean = runs.length ? runs.reduce((a, b) => a + b, 0) / runs.length : null;
         const stddev =
           runs.length > 1
@@ -226,12 +289,14 @@ async function main() {
           id: o.id,
           label: o.label,
           medianMs: median(runs),
+          coldMedianMs: coldRuns.length ? median(coldRuns) : null,
           minMs: runs.length ? Math.min(...runs) : null,
           stddevMs: runs.length > 1 ? stddev : null,
           // Noise guard, same as every other surface: a contended or throttled
           // box shows up here rather than silently widening every comparison.
           cvPct: runs.length > 1 && mean ? (stddev / mean) * 100 : null,
           runs,
+          coldRuns: coldRuns.length ? coldRuns : undefined,
           valid: anyInvalid ? false : o.samples.some((s) => s.valid === true) ? true : null,
           reason: anyInvalid?.reason ?? "",
           sample: anyInvalid?.sample ?? o.samples[0]?.sample ?? "",
@@ -253,7 +318,8 @@ async function main() {
         // Same marker the report uses, so a suite author sees at the console
         // which of their operations will not carry a ranking.
         const rank = op.ranked === false ? "  (not ranked)" : "";
-        console.log(`    ${mark} ${op.label.padEnd(34)} ${fmt(op.medianMs).padStart(10)}${art}${rank}`);
+        const cold = Number.isFinite(op.coldMedianMs) ? `  cold ${fmt(op.coldMedianMs)}` : "";
+        console.log(`    ${mark} ${op.label.padEnd(34)} ${fmt(op.medianMs).padStart(10)}${cold}${art}${rank}`);
         if (op.valid === false) {
           console.log(`        reason: ${op.reason}`);
           if (op.sample) console.log(`        sample: ${JSON.stringify(op.sample.slice(0, 120))}`);
@@ -267,12 +333,20 @@ async function main() {
         .filter(Boolean)
         .pop();
       if (fallback) console.log(`      ⚠ BACKEND FALLBACK — ${fallback}`);
+      const initializeRuns = runs
+        .flatMap((r) => r.initializeSamples ?? [r.initializeMs])
+        .filter(Number.isFinite);
+      const rssRuns = runs.map((r) => r.peakRssBytes).filter(Number.isFinite);
       results.push({
         suite: suite.id,
         server: server.id,
         label: server.label,
         ops,
         backendFallback: fallback ?? null,
+        initializeMs: median(initializeRuns),
+        initializeRuns,
+        peakRssMb: rssRuns.length ? median(rssRuns) / (1024 * 1024) : null,
+        rssRuns: rssRuns.length ? rssRuns.map((b) => b / (1024 * 1024)) : undefined,
       });
     }
   }

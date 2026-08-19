@@ -89,7 +89,7 @@
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { budgetOf } from "../budget.mjs";
-import { mergeCompletions, timed } from "../context.mjs";
+import { mergeCompletions, timed, timedColdWarm } from "../context.mjs";
 import { positionAfter, scaffold } from "../workspace.mjs";
 
 /**
@@ -565,60 +565,12 @@ export const SUITE = {
       }
     };
 
-    // Warm-ups, untimed and identical for every server, so that no measured
-    // context pays for project load, first-template compile or one-time
-    // attribute-machinery setup. See the `probes` comment for the measurements
-    // that made each of these necessary.
-    //
-    // A server that cannot warm up will fail its gates below with a real
-    // reason; swallowing the error here keeps the failure attributed to the
-    // context that actually failed. But a warm-up that TIMED OUT ends the loop:
-    // the remaining three would each pay the same budget to learn the same
-    // thing, and the gates below will report it anyway.
-    for (const position of [
-      ws.probes.warmScript,
-      ws.probes.warmTemplate,
-      ws.probes.warmAttribute,
-      ws.probes.warmComponentAttribute,
-    ]) {
-      if ((await probe(position)).timedOut) break;
-    }
-
-    // Readiness, on a budget identical for every server.
-    //
-    // Seen once in a four-server run: Volar/TNB returned its template lists
-    // WITHOUT the component-specific entries, so prop, event and slot all
-    // failed in one run of three while the other two passed with the same item
-    // counts. Under contention the Vue half will answer before it has finished
-    // resolving the child component, and a gate that fires at that moment
-    // reports "this server cannot complete props" — the single most damaging
-    // thing this harness can get wrong.
-    //
-    // So poll until both pipelines demonstrably answer: the script half knows
-    // `visible.value`, the component half knows SiblingCard's `ballast`.
-    // Neither probe is a measured context and neither computes a measured
-    // answer, so this cannot flatter anyone — a server that never satisfies it
-    // proceeds after the budget and reports its real result. It can only stop
-    // a ready server from being measured before it is ready.
-    let readiness = { script: false, component: false, attempts: 0, timedOut: false };
-    for (let attempt = 1; attempt <= READY_ATTEMPTS; attempt++) {
-      const [script, component] = await Promise.all([
-        probe(ws.probes.warmScript),
-        probe(ws.probes.warmComponentAttribute),
-      ]);
-      readiness = {
-        script: Boolean(findExpected(script.items, ["value"])),
-        component: Boolean(findExpected(component.items, ["ballast"])),
-        attempts: attempt,
-        timedOut: script.timedOut || component.timedOut,
-      };
-      if (readiness.script && readiness.component) break;
-      // Silence is not a slow answer — stop polling. See probe(). Recorded on
-      // `readiness` rather than swallowed, so `--verbose` shows the loop ended
-      // because the server stopped talking, not because it ran out of attempts.
-      if (readiness.timedOut) break;
-      await new Promise((r) => setTimeout(r, READY_INTERVAL_MS));
-    }
+    // No readiness completions: those were the first requests of the session
+    // and stole the cold number (Volar script-member "cold" was 3 ms after a
+    // warmed pipeline). The first measured context is the first completion
+    // after didOpen — that is the number a user sees on Ctrl+Space in a
+    // freshly opened file. A first answer that fails the content gate is
+    // unranked rather than retried until it looks warm.
 
     const ops = [];
     /** id -> every label returned, printed under --verbose. */
@@ -626,8 +578,9 @@ export const SUITE = {
 
     for (const cx of LIST_CONTEXTS) {
       ops.push(
-        await timed(cx.id, cx.label, async () => {
-          const items = itemsOf(await complete(ws.probes[cx.probe]));
+        await timedColdWarm(cx.id, cx.label, async (phase) => {
+          const timeout = phase === "cold" ? budget.coldMs : REQUEST_TIMEOUT_MS;
+          const items = itemsOf(await complete(ws.probes[cx.probe], timeout));
           census[cx.id] = items.map((i) => i.label);
           return gateList({ items, expect: cx.expect, what: cx.what });
         }),
@@ -756,7 +709,6 @@ export const SUITE = {
     );
 
     if (verbose) {
-      console.log(`\n    --- ${ctx.server.id}: readiness ${JSON.stringify(readiness)} ---`);
       console.log(`    --- ${ctx.server.id}: labels returned per context ---`);
       for (const [id, labels] of Object.entries(census)) {
         console.log(`    ${id} (${labels.length}): ${JSON.stringify(labels.slice(0, 60))}`);

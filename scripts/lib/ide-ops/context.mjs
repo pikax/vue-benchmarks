@@ -14,6 +14,8 @@
  *     label: "Edit loop",
  *     buildWorkspace(dir) -> ws,     // write files; return { file, fileRel, source, ... }
  *     async measure(ctx) -> Op[],    // ctx is what createSession() returns, plus { ws }
+ *     isolatedColdOps?: [{ id, after }], // timedColdWarm ops that are not first in the session
+ *     pairOps?(ops),                 // optional post-merge gate (smoke's paired hovers)
  *   }
  *
  *   Op = {
@@ -47,6 +49,7 @@ import {
 import { resolveTnbTsdk } from "../tnb.mjs";
 import { withTsgoEnv } from "../tsgo.mjs";
 import { budgetFor } from "./budget.mjs";
+import { sumPidTreeRssBytes } from "../memory.mjs";
 
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../../..");
 
@@ -445,7 +448,24 @@ export async function createSession({
       }, timeoutMs);
     });
 
+  // Whole-process RSS of every half of the product. Volar's TypeScript half is
+  // a sibling (not a child of the Vue server), so both pids are summed.
+  //
+  // Linux VmHWM and Windows PeakWorkingSet64 are exact high-water marks — one
+  // read at close is enough, and polling would put PowerShell /proc cost into
+  // the timed requests. Darwin has no per-pid peak from outside, so it polls.
+  const rssSamples = [];
+  const sampleRss = () => {
+    const n = sumPidTreeRssBytes([client.pid, hybrid?.pid]);
+    if (Number.isFinite(n) && n > 0) rssSamples.push(n);
+  };
+  const rssTimer =
+    process.platform === "darwin" ? setInterval(sampleRss, 250) : null;
+  if (rssTimer && typeof rssTimer.unref === "function") rssTimer.unref();
+
   const close = async () => {
+    sampleRss();
+    if (rssTimer) clearInterval(rssTimer);
     try {
       await client.shutdown();
     } catch {}
@@ -463,6 +483,13 @@ export async function createSession({
     hybrid,
     budget,
     initializeMs,
+    snapshotRss() {
+      sampleRss();
+      return rssSamples.length ? Math.max(...rssSamples) : null;
+    },
+    get peakRssBytes() {
+      return rssSamples.length ? Math.max(...rssSamples) : null;
+    },
     ask,
     notify,
     openDoc,
@@ -499,4 +526,75 @@ export async function timed(id, label, fn) {
       sample: "",
     };
   }
+}
+
+/**
+ * First request of this operation in a FRESH session (cold — project load +
+ * empty caches) then the same request again (warm). Ranking uses cold. If the
+ * first request fails its content gate the row is unranked: a fast empty list
+ * is not a cold measurement.
+ *
+ * A second timedColdWarm in the SAME session is not cold — caches are already
+ * filled. Suites declare those ops on `isolatedColdOps`; the runner re-spawns
+ * with `ctx.only` so the op is the first request after didOpen. See
+ * `shouldMeasure`.
+ *
+ * `fn` may take `"cold" | "warm"` so the caller can give the first request the
+ * cold budget.
+ */
+export async function timedColdWarm(id, label, fn) {
+  const cold = await timed(id, label, () => fn("cold"));
+  const warm = await timed(id, label, () => fn("warm"));
+  const coldFailed = cold.valid === false;
+  return {
+    ...warm,
+    ms: warm.ms,
+    coldMs: cold.ms,
+    warmMs: warm.ms,
+    coldValid: cold.valid,
+    valid: coldFailed ? false : warm.valid,
+    reason: coldFailed ? `cold: ${cold.reason}` : warm.reason,
+    sample: coldFailed ? cold.sample : warm.sample,
+    artifact: coldFailed ? cold.artifact : warm.artifact,
+  };
+}
+
+/**
+ * True when this operation should be timed in this session.
+ *
+ * `ctx.only` — isolated-cold session: time only this id (it is the first
+ * request after didOpen). `ctx.skipOpIds` — the matching full-suite session:
+ * drop those ids so they are not published with a fake-cold number.
+ */
+export function shouldMeasure(ctx, id) {
+  if (ctx?.only) return ctx.only === id;
+  if (Array.isArray(ctx?.skipOpIds) && ctx.skipOpIds.includes(id)) return false;
+  return true;
+}
+
+export function isolatedColdIds(spec) {
+  return (spec ?? []).map((x) => (typeof x === "string" ? x : x.id));
+}
+
+/**
+ * Splice isolated-session ops back into the full-suite list at their narrative
+ * position (`after`), then run an optional pairing hook (smoke's two hovers).
+ */
+export function mergeIsolatedOps(fullOps, extraOpsLists, spec, pairOps) {
+  const byId = new Map();
+  for (const list of extraOpsLists ?? []) {
+    for (const op of list ?? []) byId.set(op.id, op);
+  }
+  const ops = [...(fullOps ?? [])];
+  for (const item of spec ?? []) {
+    const id = typeof item === "string" ? item : item.id;
+    const after = typeof item === "string" ? undefined : item.after;
+    const op = byId.get(id);
+    if (!op) continue;
+    const i = after ? ops.findIndex((o) => o.id === after) : -1;
+    if (i < 0) ops.push(op);
+    else ops.splice(i + 1, 0, op);
+  }
+  pairOps?.(ops);
+  return ops;
 }

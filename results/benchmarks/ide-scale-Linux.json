@@ -1,0 +1,1074 @@
+{
+  "results": [
+    {
+      "suite": "scale",
+      "server": "volar",
+      "label": "Volar (@vue/language-server)",
+      "ops": [
+        {
+          "id": "usable@20",
+          "label": "Time-to-usable @20 files",
+          "medianMs": 1574.2587210000056,
+          "minMs": 1554.0805550000005,
+          "stddevMs": 17.526546457157025,
+          "cvPct": 1.1146055167473377,
+          "runs": [
+            1554.0805550000005,
+            1588.9924240000037,
+            1574.2587210000056
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nconst scaleProbeTally: Ref<number, number>\n```\nStable probe — do not rename. Its type requires ./shared to resolve.",
+          "artifact": 21
+        },
+        {
+          "id": "completion@20",
+          "label": "Completion @20 files",
+          "medianMs": 180.3773739999997,
+          "minMs": 172.12528700000257,
+          "stddevMs": 5.47489152937565,
+          "cvPct": 3.0701071364740904,
+          "runs": [
+            180.3773739999997,
+            172.12528700000257,
+            182.48435600000084
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "276 items; matched scaleProbeTally, scaleProbeLabel, scaleProbeUpper, sharedLabel",
+          "artifact": 276
+        },
+        {
+          "id": "references@20",
+          "label": "References @20 files",
+          "medianMs": 254.2938140000042,
+          "minMs": 251.03861799999868,
+          "stddevMs": 7.097110192018118,
+          "cvPct": 2.7652386448518356,
+          "runs": [
+            251.03861799999868,
+            264.63115200000175,
+            254.2938140000042
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "63 refs / 22 files / 20 generated components",
+          "artifact": 22
+        },
+        {
+          "id": "hover-warm@20",
+          "label": "Hover warm @20 files",
+          "medianMs": 1.670494999998482,
+          "minMs": 1.5733520000067074,
+          "stddevMs": 0.3646020534367825,
+          "cvPct": 19.917619679574834,
+          "runs": [
+            2.247803999998723,
+            1.670494999998482,
+            1.5733520000067074
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nconst scaleProbeTally: Ref<number, number>\n```\nStable probe — do not rename. Its type requires ./shared to resolve.",
+          "artifact": 131
+        },
+        {
+          "id": "usable@100",
+          "label": "Time-to-usable @100 files",
+          "medianMs": 1754.6567000000068,
+          "minMs": 1743.3916559999998,
+          "stddevMs": 16.131683270797406,
+          "cvPct": 0.9177453106733168,
+          "runs": [
+            1743.3916559999998,
+            1775.2065710000024,
+            1754.6567000000068
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nconst scaleProbeTally: Ref<number, number>\n```\nStable probe — do not rename. Its type requires ./shared to resolve.",
+          "artifact": 101
+        },
+        {
+          "id": "completion@100",
+          "label": "Completion @100 files",
+          "medianMs": 182.23676100000012,
+          "minMs": 162.33264000000054,
+          "stddevMs": 13.279177579462402,
+          "cvPct": 7.487108509052029,
+          "runs": [
+            182.23676100000012,
+            162.33264000000054,
+            187.5122790000023
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "356 items; matched scaleProbeTally, scaleProbeLabel, scaleProbeUpper, sharedLabel",
+          "artifact": 356
+        },
+        {
+          "id": "references@100",
+          "label": "References @100 files",
+          "medianMs": 948.4034240000001,
+          "minMs": 927.2770000000019,
+          "stddevMs": 31.526780729904118,
+          "cvPct": 3.301267790717928,
+          "runs": [
+            948.4034240000001,
+            927.2770000000019,
+            989.28989
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "303 refs / 102 files / 100 generated components",
+          "artifact": 102
+        },
+        {
+          "id": "hover-warm@100",
+          "label": "Hover warm @100 files",
+          "medianMs": 1.90920300000289,
+          "minMs": 1.640717999998742,
+          "stddevMs": 1.4373908193552165,
+          "cvPct": 55.25851748123628,
+          "runs": [
+            1.640717999998742,
+            4.2537130000055186,
+            1.90920300000289
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nconst scaleProbeTally: Ref<number, number>\n```\nStable probe — do not rename. Its type requires ./shared to resolve.",
+          "artifact": 131
+        },
+        {
+          "id": "usable@500",
+          "label": "Time-to-usable @500 files",
+          "medianMs": 2650.171256999998,
+          "minMs": 2648.056261000005,
+          "stddevMs": 18.67846454150447,
+          "cvPct": 0.7022294683409344,
+          "runs": [
+            2650.171256999998,
+            2681.413916999998,
+            2648.056261000005
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nconst scaleProbeTally: Ref<number, number>\n```\nStable probe — do not rename. Its type requires ./shared to resolve.",
+          "artifact": 501
+        },
+        {
+          "id": "completion@500",
+          "label": "Completion @500 files",
+          "medianMs": 242.44434699999692,
+          "minMs": 199.68086799999946,
+          "stddevMs": 25.0779015534146,
+          "cvPct": 10.968849303610224,
+          "runs": [
+            199.68086799999946,
+            242.44434699999692,
+            243.75990000000456
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "756 items; matched scaleProbeTally, scaleProbeLabel, scaleProbeUpper, sharedLabel",
+          "artifact": 756
+        },
+        {
+          "id": "references@500",
+          "label": "References @500 files",
+          "medianMs": 13714.932455000002,
+          "minMs": 13070.956259999995,
+          "stddevMs": 697.9875905332466,
+          "cvPct": 5.076093579386644,
+          "runs": [
+            13070.956259999995,
+            14465.572450000007,
+            13714.932455000002
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "1503 refs / 502 files / 500 generated components",
+          "artifact": 502
+        },
+        {
+          "id": "hover-warm@500",
+          "label": "Hover warm @500 files",
+          "medianMs": 1.3510280000045896,
+          "minMs": 1.2740429999976186,
+          "stddevMs": 0.6715385325188203,
+          "cvPct": 39.511307735613585,
+          "runs": [
+            2.473762000001443,
+            1.3510280000045896,
+            1.2740429999976186
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nconst scaleProbeTally: Ref<number, number>\n```\nStable probe — do not rename. Its type requires ./shared to resolve.",
+          "artifact": 131
+        },
+        {
+          "id": "scale-usable",
+          "label": "Scale × time-to-usable 20→500",
+          "medianMs": null,
+          "minMs": null,
+          "stddevMs": null,
+          "cvPct": null,
+          "runs": [],
+          "valid": true,
+          "reason": "",
+          "sample": "1554.1 ms → 2650.2 ms",
+          "artifact": 1.71,
+          "artifactLabel": "Scale factor 20→500 (×, lower is better)"
+        },
+        {
+          "id": "scale-completion",
+          "label": "Scale × completion 20→500",
+          "medianMs": null,
+          "minMs": null,
+          "stddevMs": null,
+          "cvPct": null,
+          "runs": [],
+          "valid": true,
+          "reason": "",
+          "sample": "180.4 ms → 199.7 ms",
+          "artifact": 1.11,
+          "artifactLabel": "Scale factor 20→500 (×, lower is better)"
+        },
+        {
+          "id": "scale-references",
+          "label": "Scale × references 20→500",
+          "medianMs": null,
+          "minMs": null,
+          "stddevMs": null,
+          "cvPct": null,
+          "runs": [],
+          "valid": true,
+          "reason": "",
+          "sample": "251.0 ms → 13071.0 ms",
+          "artifact": 52.07,
+          "artifactLabel": "Scale factor 20→500 (×, lower is better)"
+        },
+        {
+          "id": "scale-hover-warm",
+          "label": "Scale × hover warm 20→500",
+          "medianMs": null,
+          "minMs": null,
+          "stddevMs": null,
+          "cvPct": null,
+          "runs": [],
+          "valid": true,
+          "reason": "",
+          "sample": "2.2 ms → 2.5 ms",
+          "artifact": 1.1,
+          "artifactLabel": "Scale factor 20→500 (×, lower is better)"
+        }
+      ],
+      "backendFallback": null
+    },
+    {
+      "suite": "scale",
+      "server": "volar-tnb",
+      "label": "Volar (TNB / tsgo tsdk)",
+      "ops": [
+        {
+          "id": "usable@20",
+          "label": "Time-to-usable @20 files",
+          "medianMs": 993.3698659999936,
+          "minMs": 976.50179200001,
+          "stddevMs": 16.97636087759454,
+          "cvPct": 1.7088427112977649,
+          "runs": [
+            993.3698659999936,
+            976.50179200001,
+            1010.4542840000067
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nconst scaleProbeTally: Ref<number, number>\n```\nStable probe — do not rename. Its type requires ./shared to resolve.",
+          "artifact": 21
+        },
+        {
+          "id": "completion@20",
+          "label": "Completion @20 files",
+          "medianMs": 145.958295000004,
+          "minMs": 127.03676099999575,
+          "stddevMs": 11.15918532256043,
+          "cvPct": 7.975733637839704,
+          "runs": [
+            146.74759699999413,
+            145.958295000004,
+            127.03676099999575
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "276 items; matched scaleProbeTally, scaleProbeLabel, scaleProbeUpper, sharedLabel",
+          "artifact": 276
+        },
+        {
+          "id": "references@20",
+          "label": "References @20 files",
+          "medianMs": 137.60676399999647,
+          "minMs": 136.61548699997365,
+          "stddevMs": 3.247219897008063,
+          "cvPct": 2.336735606267187,
+          "runs": [
+            137.60676399999647,
+            142.6695730000065,
+            136.61548699997365
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "63 refs / 22 files / 20 generated components",
+          "artifact": 22
+        },
+        {
+          "id": "hover-warm@20",
+          "label": "Hover warm @20 files",
+          "medianMs": 1.4185679999936838,
+          "minMs": 1.3500420000054874,
+          "stddevMs": 0.09923936824554791,
+          "cvPct": 6.900835090196288,
+          "runs": [
+            1.4185679999936838,
+            1.5456229999981588,
+            1.3500420000054874
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nconst scaleProbeTally: Ref<number, number>\n```\nStable probe — do not rename. Its type requires ./shared to resolve.",
+          "artifact": 131
+        },
+        {
+          "id": "usable@100",
+          "label": "Time-to-usable @100 files",
+          "medianMs": 1149.8659909999988,
+          "minMs": 1122.9107119999971,
+          "stddevMs": 15.998283049104979,
+          "cvPct": 1.401679950060848,
+          "runs": [
+            1122.9107119999971,
+            1149.8659909999988,
+            1151.3180159999756
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nconst scaleProbeTally: Ref<number, number>\n```\nStable probe — do not rename. Its type requires ./shared to resolve.",
+          "artifact": 101
+        },
+        {
+          "id": "completion@100",
+          "label": "Completion @100 files",
+          "medianMs": 135.7143109999888,
+          "minMs": 129.9730750000017,
+          "stddevMs": 8.151599050431729,
+          "cvPct": 5.939297315990124,
+          "runs": [
+            135.7143109999888,
+            129.9730750000017,
+            146.05824399998528
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "356 items; matched scaleProbeTally, scaleProbeLabel, scaleProbeUpper, sharedLabel",
+          "artifact": 356
+        },
+        {
+          "id": "references@100",
+          "label": "References @100 files",
+          "medianMs": 565.3204510000069,
+          "minMs": 563.757906999992,
+          "stddevMs": 7.318981844585511,
+          "cvPct": 1.2868751033405372,
+          "runs": [
+            565.3204510000069,
+            563.757906999992,
+            577.143596000009
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "303 refs / 102 files / 100 generated components",
+          "artifact": 102
+        },
+        {
+          "id": "hover-warm@100",
+          "label": "Hover warm @100 files",
+          "medianMs": 1.56944800002384,
+          "minMs": 1.5341540000081295,
+          "stddevMs": 0.08109744266977309,
+          "cvPct": 5.076520114295503,
+          "runs": [
+            1.6888999999937369,
+            1.5341540000081295,
+            1.56944800002384
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nconst scaleProbeTally: Ref<number, number>\n```\nStable probe — do not rename. Its type requires ./shared to resolve.",
+          "artifact": 131
+        },
+        {
+          "id": "usable@500",
+          "label": "Time-to-usable @500 files",
+          "medianMs": 1793.486213999975,
+          "minMs": 1757.880812000003,
+          "stddevMs": 21.816123822474978,
+          "cvPct": 1.223587601830984,
+          "runs": [
+            1757.880812000003,
+            1797.5243300000002,
+            1793.486213999975
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nconst scaleProbeTally: Ref<number, number>\n```\nStable probe — do not rename. Its type requires ./shared to resolve.",
+          "artifact": 501
+        },
+        {
+          "id": "completion@500",
+          "label": "Completion @500 files",
+          "medianMs": 193.1874749999988,
+          "minMs": 192.24126599999727,
+          "stddevMs": 3.156460002941565,
+          "cvPct": 1.6227237312061462,
+          "runs": [
+            198.1197600000014,
+            193.1874749999988,
+            192.24126599999727
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "756 items; matched scaleProbeTally, scaleProbeLabel, scaleProbeUpper, sharedLabel",
+          "artifact": 756
+        },
+        {
+          "id": "references@500",
+          "label": "References @500 files",
+          "medianMs": 9274.379186999999,
+          "minMs": 9131.967134000006,
+          "stddevMs": 104.12182490686672,
+          "cvPct": 1.1260025234243252,
+          "runs": [
+            9274.379186999999,
+            9334.752674999996,
+            9131.967134000006
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "1503 refs / 502 files / 500 generated components",
+          "artifact": 502
+        },
+        {
+          "id": "hover-warm@500",
+          "label": "Hover warm @500 files",
+          "medianMs": 3.411272999990615,
+          "minMs": 3.146063000021968,
+          "stddevMs": 0.17150868556315402,
+          "cvPct": 5.132736177339594,
+          "runs": [
+            3.411272999990615,
+            3.146063000021968,
+            3.467065000004368
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nconst scaleProbeTally: Ref<number, number>\n```\nStable probe — do not rename. Its type requires ./shared to resolve.",
+          "artifact": 131
+        },
+        {
+          "id": "scale-usable",
+          "label": "Scale × time-to-usable 20→500",
+          "medianMs": null,
+          "minMs": null,
+          "stddevMs": null,
+          "cvPct": null,
+          "runs": [],
+          "valid": true,
+          "reason": "",
+          "sample": "993.4 ms → 1757.9 ms",
+          "artifact": 1.77,
+          "artifactLabel": "Scale factor 20→500 (×, lower is better)"
+        },
+        {
+          "id": "scale-completion",
+          "label": "Scale × completion 20→500",
+          "medianMs": null,
+          "minMs": null,
+          "stddevMs": null,
+          "cvPct": null,
+          "runs": [],
+          "valid": true,
+          "reason": "",
+          "sample": "146.7 ms → 198.1 ms",
+          "artifact": 1.35,
+          "artifactLabel": "Scale factor 20→500 (×, lower is better)"
+        },
+        {
+          "id": "scale-references",
+          "label": "Scale × references 20→500",
+          "medianMs": null,
+          "minMs": null,
+          "stddevMs": null,
+          "cvPct": null,
+          "runs": [],
+          "valid": true,
+          "reason": "",
+          "sample": "137.6 ms → 9274.4 ms",
+          "artifact": 67.4,
+          "artifactLabel": "Scale factor 20→500 (×, lower is better)"
+        },
+        {
+          "id": "scale-hover-warm",
+          "label": "Scale × hover warm 20→500",
+          "medianMs": null,
+          "minMs": null,
+          "stddevMs": null,
+          "cvPct": null,
+          "runs": [],
+          "valid": true,
+          "reason": "",
+          "sample": "1.4 ms → 3.4 ms",
+          "artifact": 2.4,
+          "artifactLabel": "Scale factor 20→500 (×, lower is better)"
+        }
+      ],
+      "backendFallback": null
+    },
+    {
+      "suite": "scale",
+      "server": "vize",
+      "label": "Vize LSP (Node shim)",
+      "ops": [
+        {
+          "id": "usable@20",
+          "label": "Time-to-usable @20 files",
+          "medianMs": 390.45582000000286,
+          "minMs": 388.3341950000031,
+          "stddevMs": 14.937833693358606,
+          "cvPct": 3.7532472227245326,
+          "runs": [
+            415.202770999982,
+            390.45582000000286,
+            388.3341950000031
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nconst scaleProbeTally: Ref<number, number>Stable probe — do not rename. Its type requires ./shared to resolve.\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <templa",
+          "artifact": 21
+        },
+        {
+          "id": "completion@20",
+          "label": "Completion @20 files",
+          "medianMs": 0.49859400000423193,
+          "minMs": 0.49358000000938773,
+          "stddevMs": 0.08676982324446426,
+          "cvPct": 15.887175843171661,
+          "runs": [
+            0.49859400000423193,
+            0.49358000000938773,
+            0.6463140000123531
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "7 items; matched scaleProbeTally, scaleProbeLabel, scaleProbeUpper, sharedLabel",
+          "artifact": 7
+        },
+        {
+          "id": "references@20",
+          "label": "References @20 files",
+          "medianMs": 7.269142000004649,
+          "minMs": 7.082775000017136,
+          "stddevMs": 0.2706198921227962,
+          "cvPct": 3.6956570043621775,
+          "runs": [
+            7.269142000004649,
+            7.616022000001976,
+            7.082775000017136
+          ],
+          "valid": false,
+          "reason": "3 references across 2 files but none in any generated component — the corpus was not searched",
+          "sample": "3 refs / 2 files / 0 generated components",
+          "artifact": 2
+        },
+        {
+          "id": "hover-warm@20",
+          "label": "Hover warm @20 files",
+          "medianMs": 2.1519529999932274,
+          "minMs": 2.1381470000196714,
+          "stddevMs": 4.987129844582688,
+          "cvPct": 99.25884896527005,
+          "runs": [
+            2.1519529999932274,
+            2.1381470000196714,
+            10.783003999997163
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nconst scaleProbeTally: Ref<number, number>Stable probe — do not rename. Its type requires ./shared to resolve.\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <templa",
+          "artifact": 358
+        },
+        {
+          "id": "usable@100",
+          "label": "Time-to-usable @100 files",
+          "medianMs": 403.87320400000317,
+          "minMs": 403.2456250000105,
+          "stddevMs": 5.8683415879035286,
+          "cvPct": 1.442056147562815,
+          "runs": [
+            403.2456250000105,
+            413.70913900001324,
+            403.87320400000317
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nconst scaleProbeTally: Ref<number, number>Stable probe — do not rename. Its type requires ./shared to resolve.\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <templa",
+          "artifact": 101
+        },
+        {
+          "id": "completion@100",
+          "label": "Completion @100 files",
+          "medianMs": 0.48093299998436123,
+          "minMs": 0.46504000001004897,
+          "stddevMs": 0.220367520861997,
+          "cvPct": 36.71978059230678,
+          "runs": [
+            0.8544260000053328,
+            0.46504000001004897,
+            0.48093299998436123
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "7 items; matched scaleProbeTally, scaleProbeLabel, scaleProbeUpper, sharedLabel",
+          "artifact": 7
+        },
+        {
+          "id": "references@100",
+          "label": "References @100 files",
+          "medianMs": 7.079663999989862,
+          "minMs": 6.948477999976603,
+          "stddevMs": 0.10786330495860079,
+          "cvPct": 1.5270500855788813,
+          "runs": [
+            7.079663999989862,
+            7.1623819999804255,
+            6.948477999976603
+          ],
+          "valid": false,
+          "reason": "3 references across 2 files but none in any generated component — the corpus was not searched",
+          "sample": "3 refs / 2 files / 0 generated components",
+          "artifact": 2
+        },
+        {
+          "id": "hover-warm@100",
+          "label": "Hover warm @100 files",
+          "medianMs": 2.165677000011783,
+          "minMs": 2.0600220000196714,
+          "stddevMs": 1.4280767363715436,
+          "cvPct": 48.62720329148878,
+          "runs": [
+            4.584658000007039,
+            2.0600220000196714,
+            2.165677000011783
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nconst scaleProbeTally: Ref<number, number>Stable probe — do not rename. Its type requires ./shared to resolve.\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <templa",
+          "artifact": 358
+        },
+        {
+          "id": "usable@500",
+          "label": "Time-to-usable @500 files",
+          "medianMs": 392.95388499999535,
+          "minMs": 388.4293620000244,
+          "stddevMs": 9.496493956940643,
+          "cvPct": 2.3980041171492643,
+          "runs": [
+            392.95388499999535,
+            406.6665009999997,
+            388.4293620000244
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nconst scaleProbeTally: Ref<number, number>Stable probe — do not rename. Its type requires ./shared to resolve.\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <templa",
+          "artifact": 501
+        },
+        {
+          "id": "completion@500",
+          "label": "Completion @500 files",
+          "medianMs": 0.4920339999953285,
+          "minMs": 0.48743799998192117,
+          "stddevMs": 0.09370441810834372,
+          "cvPct": 17.230778218854905,
+          "runs": [
+            0.4920339999953285,
+            0.48743799998192117,
+            0.6519879999978002
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "7 items; matched scaleProbeTally, scaleProbeLabel, scaleProbeUpper, sharedLabel",
+          "artifact": 7
+        },
+        {
+          "id": "references@500",
+          "label": "References @500 files",
+          "medianMs": 7.305456000001868,
+          "minMs": 6.6829410000063945,
+          "stddevMs": 0.6471245513951915,
+          "cvPct": 8.838374664787528,
+          "runs": [
+            7.976881999988109,
+            6.6829410000063945,
+            7.305456000001868
+          ],
+          "valid": false,
+          "reason": "3 references across 2 files but none in any generated component — the corpus was not searched",
+          "sample": "3 refs / 2 files / 0 generated components",
+          "artifact": 2
+        },
+        {
+          "id": "hover-warm@500",
+          "label": "Hover warm @500 files",
+          "medianMs": 2.0632299999997485,
+          "minMs": 1.893448000017088,
+          "stddevMs": 0.4955085219084219,
+          "cvPct": 21.923299793268136,
+          "runs": [
+            2.823895999987144,
+            1.893448000017088,
+            2.0632299999997485
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nconst scaleProbeTally: Ref<number, number>Stable probe — do not rename. Its type requires ./shared to resolve.\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <templa",
+          "artifact": 358
+        },
+        {
+          "id": "scale-usable",
+          "label": "Scale × time-to-usable 20→500",
+          "medianMs": null,
+          "minMs": null,
+          "stddevMs": null,
+          "cvPct": null,
+          "runs": [],
+          "valid": true,
+          "reason": "",
+          "sample": "415.2 ms → 393.0 ms",
+          "artifact": 0.95,
+          "artifactLabel": "Scale factor 20→500 (×, lower is better)"
+        },
+        {
+          "id": "scale-completion",
+          "label": "Scale × completion 20→500",
+          "medianMs": null,
+          "minMs": null,
+          "stddevMs": null,
+          "cvPct": null,
+          "runs": [],
+          "valid": true,
+          "reason": "",
+          "sample": "0.5 ms → 0.5 ms",
+          "artifact": 0.99,
+          "artifactLabel": "Scale factor 20→500 (×, lower is better)"
+        },
+        {
+          "id": "scale-references",
+          "label": "Scale × references 20→500",
+          "medianMs": null,
+          "minMs": null,
+          "stddevMs": null,
+          "cvPct": null,
+          "runs": [],
+          "valid": false,
+          "reason": "no scale factor: the gate failed at 20 and 500 files (see references@20)",
+          "sample": "",
+          "artifactLabel": "Scale factor 20→500 (×, lower is better)"
+        },
+        {
+          "id": "scale-hover-warm",
+          "label": "Scale × hover warm 20→500",
+          "medianMs": null,
+          "minMs": null,
+          "stddevMs": null,
+          "cvPct": null,
+          "runs": [],
+          "valid": true,
+          "reason": "",
+          "sample": "2.2 ms → 2.8 ms",
+          "artifact": 1.31,
+          "artifactLabel": "Scale factor 20→500 (×, lower is better)"
+        }
+      ],
+      "backendFallback": null
+    },
+    {
+      "suite": "scale",
+      "server": "verter",
+      "label": "Verter LSP (npm 0.0.1-beta.3)",
+      "ops": [
+        {
+          "id": "usable@20",
+          "label": "Time-to-usable @20 files",
+          "medianMs": 317.4181300000055,
+          "minMs": 187.29952300002333,
+          "stddevMs": 195.75073059051377,
+          "cvPct": 54.53411849376185,
+          "runs": [
+            187.29952300002333,
+            572.1351649999851,
+            317.4181300000055
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nconst scaleProbeTally: Ref<number, number>Stable probe — do not rename. Its type requires ./shared to resolve.\n```",
+          "artifact": 21
+        },
+        {
+          "id": "completion@20",
+          "label": "Completion @20 files",
+          "medianMs": 136.5502549999801,
+          "minMs": 111.96605700001237,
+          "stddevMs": 15.49251272724632,
+          "cvPct": 11.944653465126633,
+          "runs": [
+            140.59115199997905,
+            136.5502549999801,
+            111.96605700001237
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "7 items; matched scaleProbeTally, scaleProbeLabel, scaleProbeUpper, sharedLabel",
+          "artifact": 7
+        },
+        {
+          "id": "references@20",
+          "label": "References @20 files",
+          "medianMs": 35.13094600001932,
+          "minMs": 0.5862570000172127,
+          "stddevMs": 100.51873943671477,
+          "cvPct": 133.97151877559367,
+          "runs": [
+            35.13094600001932,
+            189.37259300000733,
+            0.5862570000172127
+          ],
+          "valid": false,
+          "reason": "server answered textDocument/references with null — the provider declined this request (which is not proof the capability is absent)",
+          "sample": "0 refs / 0 files / 0 generated components",
+          "artifact": 0
+        },
+        {
+          "id": "hover-warm@20",
+          "label": "Hover warm @20 files",
+          "medianMs": 0.6042600000218954,
+          "minMs": 0.5875079999968875,
+          "stddevMs": 0.04512922552730461,
+          "cvPct": 7.261495370298703,
+          "runs": [
+            0.5875079999968875,
+            0.6042600000218954,
+            0.6726919999928214
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nconst scaleProbeTally: Ref<number, number>Stable probe — do not rename. Its type requires ./shared to resolve.\n```",
+          "artifact": 130
+        },
+        {
+          "id": "usable@100",
+          "label": "Time-to-usable @100 files",
+          "medianMs": 287.6804859999975,
+          "minMs": 265.9436080000014,
+          "stddevMs": 23.98250061265686,
+          "cvPct": 8.29399791833487,
+          "runs": [
+            265.9436080000014,
+            313.840578000003,
+            287.6804859999975
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nconst scaleProbeTally: Ref<number, number>Stable probe — do not rename. Its type requires ./shared to resolve.\n```",
+          "artifact": 101
+        },
+        {
+          "id": "completion@100",
+          "label": "Completion @100 files",
+          "medianMs": 116.9894450000138,
+          "minMs": 116.7571079999907,
+          "stddevMs": 14.14989638731168,
+          "cvPct": 11.316074382221649,
+          "runs": [
+            141.38079000002472,
+            116.7571079999907,
+            116.9894450000138
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "7 items; matched scaleProbeTally, scaleProbeLabel, scaleProbeUpper, sharedLabel",
+          "artifact": 7
+        },
+        {
+          "id": "references@100",
+          "label": "References @100 files",
+          "medianMs": 32.93828699999722,
+          "minMs": 27.356746000004932,
+          "stddevMs": 63.89361142078356,
+          "cvPct": 95.36174171650855,
+          "runs": [
+            32.93828699999722,
+            140.70888199997717,
+            27.356746000004932
+          ],
+          "valid": false,
+          "reason": "server answered textDocument/references with null — the provider declined this request (which is not proof the capability is absent)",
+          "sample": "0 refs / 0 files / 0 generated components",
+          "artifact": 0
+        },
+        {
+          "id": "hover-warm@100",
+          "label": "Hover warm @100 files",
+          "medianMs": 0.7002849999989849,
+          "minMs": 0.5724289999925531,
+          "stddevMs": 0.1523469295605799,
+          "cvPct": 21.271681154581763,
+          "runs": [
+            0.7002849999989849,
+            0.5724289999925531,
+            0.87587399999029
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nconst scaleProbeTally: Ref<number, number>Stable probe — do not rename. Its type requires ./shared to resolve.\n```",
+          "artifact": 130
+        },
+        {
+          "id": "usable@500",
+          "label": "Time-to-usable @500 files",
+          "medianMs": 259.4448679999914,
+          "minMs": 209.50482699999702,
+          "stddevMs": 122.39839119291005,
+          "cvPct": 40.30831462068465,
+          "runs": [
+            259.4448679999914,
+            442.016632999992,
+            209.50482699999702
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nconst scaleProbeTally: Ref<number, number>Stable probe — do not rename. Its type requires ./shared to resolve.\n```",
+          "artifact": 501
+        },
+        {
+          "id": "completion@500",
+          "label": "Completion @500 files",
+          "medianMs": 146.41074699998717,
+          "minMs": 140.4310509999923,
+          "stddevMs": 46.69878245135546,
+          "cvPct": 27.41711215235549,
+          "runs": [
+            146.41074699998717,
+            224.1396160000004,
+            140.4310509999923
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "7 items; matched scaleProbeTally, scaleProbeLabel, scaleProbeUpper, sharedLabel",
+          "artifact": 7
+        },
+        {
+          "id": "references@500",
+          "label": "References @500 files",
+          "medianMs": 29.83742299998994,
+          "minMs": 26.568739999987883,
+          "stddevMs": 20.587668812338226,
+          "cvPct": 51.4025218076537,
+          "runs": [
+            26.568739999987883,
+            29.83742299998994,
+            63.74943300001905
+          ],
+          "valid": false,
+          "reason": "server answered textDocument/references with null — the provider declined this request (which is not proof the capability is absent)",
+          "sample": "0 refs / 0 files / 0 generated components",
+          "artifact": 0
+        },
+        {
+          "id": "hover-warm@500",
+          "label": "Hover warm @500 files",
+          "medianMs": 1.2853780000004917,
+          "minMs": 0.7496810000156984,
+          "stddevMs": 0.31681285492515016,
+          "cvPct": 28.408222650423916,
+          "runs": [
+            1.2853780000004917,
+            1.3105869999853894,
+            0.7496810000156984
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "```typescript\nconst scaleProbeTally: Ref<number, number>Stable probe — do not rename. Its type requires ./shared to resolve.\n```",
+          "artifact": 130
+        },
+        {
+          "id": "scale-usable",
+          "label": "Scale × time-to-usable 20→500",
+          "medianMs": null,
+          "minMs": null,
+          "stddevMs": null,
+          "cvPct": null,
+          "runs": [],
+          "valid": true,
+          "reason": "",
+          "sample": "187.3 ms → 259.4 ms",
+          "artifact": 1.39,
+          "artifactLabel": "Scale factor 20→500 (×, lower is better)"
+        },
+        {
+          "id": "scale-completion",
+          "label": "Scale × completion 20→500",
+          "medianMs": null,
+          "minMs": null,
+          "stddevMs": null,
+          "cvPct": null,
+          "runs": [],
+          "valid": true,
+          "reason": "",
+          "sample": "140.6 ms → 146.4 ms",
+          "artifact": 1.04,
+          "artifactLabel": "Scale factor 20→500 (×, lower is better)"
+        },
+        {
+          "id": "scale-references",
+          "label": "Scale × references 20→500",
+          "medianMs": null,
+          "minMs": null,
+          "stddevMs": null,
+          "cvPct": null,
+          "runs": [],
+          "valid": false,
+          "reason": "no scale factor: the gate failed at 20 and 500 files (see references@20)",
+          "sample": "",
+          "artifactLabel": "Scale factor 20→500 (×, lower is better)"
+        },
+        {
+          "id": "scale-hover-warm",
+          "label": "Scale × hover warm 20→500",
+          "medianMs": null,
+          "minMs": null,
+          "stddevMs": null,
+          "cvPct": null,
+          "runs": [],
+          "valid": true,
+          "reason": "",
+          "sample": "0.6 ms → 1.3 ms",
+          "artifact": 2.19,
+          "artifactLabel": "Scale factor 20→500 (×, lower is better)"
+        }
+      ],
+      "backendFallback": null
+    }
+  ]
+}

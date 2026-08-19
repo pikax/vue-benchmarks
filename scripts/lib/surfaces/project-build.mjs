@@ -39,8 +39,8 @@
 
 import { existsSync, mkdirSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { spawnSync } from "node:child_process";
 import { measureVariants, pathWithNodeBins } from "../timing.mjs";
+import { measureCli } from "../measure-cli.mjs";
 import { discoverBuildTargets } from "../real-world/test-targets.mjs";
 import {
   CHALLENGERS,
@@ -73,7 +73,7 @@ function outputCensus(dir) {
   return { bytes, files };
 }
 
-function runViteBuild({ cwd, configFile, outDir, timeoutMs, env = {} }) {
+async function runViteBuild({ cwd, configFile, outDir, timeoutMs, env = {} }) {
   rmSync(outDir, { recursive: true, force: true });
   mkdirSync(outDir, { recursive: true });
 
@@ -83,15 +83,13 @@ function runViteBuild({ cwd, configFile, outDir, timeoutMs, env = {} }) {
   const args = ["build", "--outDir", outDir, "--emptyOutDir"];
   if (configFile) args.push("--config", configFile);
 
-  const started = performance.now();
-  const result = spawnSync("vite", args, {
+  const result = await measureCli({
+    bin: "vite",
+    args,
     cwd,
-    encoding: "utf8",
-    maxBuffer: 128 * 1024 * 1024,
-    timeout: timeoutMs,
+    timeoutMs,
     shell: process.platform === "win32",
     env: {
-      ...process.env,
       CI: "1",
       NODE_ENV: "production",
       NO_COLOR: "1",
@@ -103,13 +101,13 @@ function runViteBuild({ cwd, configFile, outDir, timeoutMs, env = {} }) {
       ...env,
     },
   });
-  const ms = performance.now() - started;
-  const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}`;
+  const output = result.combined ?? `${result.stdout ?? ""}\n${result.stderr ?? ""}`;
   return {
-    ms,
+    ms: result.ms,
     output,
     status: result.status,
-    timedOut: result.error?.code === "ETIMEDOUT",
+    timedOut: Boolean(result.error && /timeout/i.test(result.error.message)),
+    rssBytes: result.rssBytes,
     ...outputCensus(outDir),
   };
 }
@@ -166,12 +164,12 @@ function firstFailure(output) {
  * of any tool, so candidates are tried in order and the first that genuinely
  * builds is the one measured. What was rejected, and why, is reported.
  */
-function selectBuildableTarget(targets, { outRoot, timeoutMs }) {
+async function selectBuildableTarget(targets, { outRoot, timeoutMs }) {
   const rejected = [];
   for (const target of targets) {
     const outDir = join(outRoot, `preflight-${target.packageName.replace(/[^a-z0-9]+/gi, "-")}`);
     try {
-      const r = runViteBuild({ cwd: target.dir, configFile: null, outDir, timeoutMs });
+      const r = await runViteBuild({ cwd: target.dir, configFile: null, outDir, timeoutMs });
       if (r.status === 0 && r.files > 0) return { target, rejected };
       rejected.push({
         target,
@@ -232,7 +230,7 @@ export async function runProjectBuildSurface(resolved, options) {
 
   // Pre-flight before building the variant list, so a target that cannot build at
   // all never produces challenger rows. See selectBuildableTarget.
-  const { target, rejected } = selectBuildableTarget(candidates, { outRoot, timeoutMs });
+  const { target, rejected } = await selectBuildableTarget(candidates, { outRoot, timeoutMs });
   const rejectedNotes = rejected.map(
     (r) =>
       `Candidate ${r.target.packageName} (${r.target.relDir}, ${r.target.sfcs} SFCs) was REJECTED before measurement: ${r.reason}. No challenger rows are emitted for a target whose own build fails — that would report a broken target as three tool failures.`,
@@ -259,16 +257,16 @@ export async function runProjectBuildSurface(resolved, options) {
       invocation: "vite build CLI",
       artifactLabel: "output bytes",
       notes: `${SWAP_MECHANISMS.none} · package ${target.relDir} · script "${target.script}": ${target.scriptBody} · config ${target.config ?? "none found"}`,
-      measure: ({ phase, iteration }) => {
+      measure: async ({ phase, iteration }) => {
         const outDir = join(outRoot, `baseline-${phase}-${iteration}`);
         try {
-          const r = runViteBuild({ cwd: target.dir, configFile: null, outDir, timeoutMs });
+          const r = await runViteBuild({ cwd: target.dir, configFile: null, outDir, timeoutMs });
           if (r.status !== 0 || r.files === 0) {
             throw new Error(
               `vite build exited ${r.status}${r.timedOut ? " (timed out)" : ""} with ${r.files} output files: ${firstFailure(r.output)}`,
             );
           }
-          return { ms: r.ms, meta: { artifact: r.bytes, outputFiles: r.files, exit: r.status } };
+          return { ms: r.ms, meta: { artifact: r.bytes, outputFiles: r.files, exit: r.status, rssBytes: r.rssBytes } };
         } finally {
           rmSync(outDir, { recursive: true, force: true });
         }
@@ -305,14 +303,14 @@ export async function runProjectBuildSurface(resolved, options) {
         ...row,
         id: `alias-${challenger.id}`,
         notes: `${SWAP_MECHANISMS.alias} · ${resolved.notes} · ${challenger.notes}`,
-        measure: ({ phase, iteration }) => {
+        measure: async ({ phase, iteration }) => {
           const outDir = join(outRoot, `alias-${challenger.id}-${phase}-${iteration}`);
           try {
             // Built per run so the marker is cleared each time: a marker left
             // over from the previous iteration would report a redirect THIS run
             // did not make, and the gate reads it as evidence.
             const swap = aliasSwapEnv({ challengerSpec: challenger.spec, markerPath });
-            const r = runViteBuild({
+            const r = await runViteBuild({
               cwd: target.dir,
               configFile: null,
               outDir,
@@ -333,6 +331,7 @@ export async function runProjectBuildSurface(resolved, options) {
                 artifact: r.bytes,
                 outputFiles: r.files,
                 exit: r.status,
+                rssBytes: r.rssBytes,
                 aliasFired: redirect.fired,
                 aliasRedirects: redirect.count,
               },
@@ -364,16 +363,16 @@ export async function runProjectBuildSurface(resolved, options) {
     variants.push({
       ...row,
       notes: `${SWAP_MECHANISMS.override} · extends ${target.config} · resolved with ConfigEnv {command:'build', mode:'production'}, matching how vite build resolves it for the baseline · ${challenger.notes} · ${SWAP_MECHANISMS.optionsDropped}`,
-      measure: ({ phase, iteration }) => {
+      measure: async ({ phase, iteration }) => {
         const outDir = join(outRoot, `${challenger.id}-${phase}-${iteration}`);
         try {
-          const r = runViteBuild({ cwd: target.dir, configFile: configName, outDir, timeoutMs });
+          const r = await runViteBuild({ cwd: target.dir, configFile: configName, outDir, timeoutMs });
           if (r.status !== 0 || r.files === 0) {
             throw new Error(
               `vite build exited ${r.status}${r.timedOut ? " (timed out)" : ""} with ${r.files} output files: ${firstFailure(r.output)}`,
             );
           }
-          return { ms: r.ms, meta: { artifact: r.bytes, outputFiles: r.files, exit: r.status } };
+          return { ms: r.ms, meta: { artifact: r.bytes, outputFiles: r.files, exit: r.status, rssBytes: r.rssBytes } };
         } finally {
           rmSync(outDir, { recursive: true, force: true });
         }

@@ -25,6 +25,80 @@
 
 import { resolveToolEngine } from "./tsgo.mjs";
 
+function median(nums) {
+  const s = [...nums].filter(Number.isFinite).sort((a, b) => a - b);
+  if (!s.length) return null;
+  const mid = Math.floor(s.length / 2);
+  return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
+}
+
+/** One table: LSP initialize, pooled across suites in this job. */
+export function buildInitializeSurface(results) {
+  const byServer = new Map();
+  for (const r of results ?? []) {
+    const samples = (
+      r.initializeRuns ?? (Number.isFinite(r.initializeMs) ? [r.initializeMs] : [])
+    ).filter(Number.isFinite);
+    if (!byServer.has(r.server)) {
+      byServer.set(r.server, {
+        label: r.label ?? r.server,
+        samples: [],
+        error: r.error ?? null,
+        backendFallback: r.backendFallback ?? null,
+      });
+    }
+    const b = byServer.get(r.server);
+    b.samples.push(...samples);
+    if (r.backendFallback) b.backendFallback = r.backendFallback;
+    if (r.error && !b.samples.length) b.error = r.error;
+  }
+  const variants = [...byServer.entries()].map(([server, b]) => {
+    const engine = engineForServer(server);
+    const medianMs = median(b.samples);
+    const mean = b.samples.length
+      ? b.samples.reduce((a, n) => a + n, 0) / b.samples.length
+      : null;
+    const stddev =
+      b.samples.length > 1
+        ? Math.sqrt(b.samples.reduce((a, n) => a + (n - mean) ** 2, 0) / (b.samples.length - 1))
+        : 0;
+    return {
+      id: `${server}-initialize`,
+      label: b.label,
+      status: Number.isFinite(medianMs) ? "ok" : b.error ? "error" : "skipped",
+      medianMs,
+      minMs: b.samples.length ? Math.min(...b.samples) : undefined,
+      stddevMs: b.samples.length > 1 ? stddev : undefined,
+      cvPct: b.samples.length > 1 && mean ? (stddev / mean) * 100 : undefined,
+      runs: b.samples.length ? b.samples : undefined,
+      threading: "lsp",
+      invocation: "lsp",
+      engine: engine.engine,
+      throughput: "n/a",
+      artifactPolarity: "informational",
+      notes: [
+        "LSP initialize handshake after spawn (not first-request latency)",
+        b.backendFallback && `⚠ BACKEND FALLBACK — ${b.backendFallback}`,
+        `engine: ${engine.label}`,
+      ]
+        .filter(Boolean)
+        .join(" | "),
+      error: b.error,
+    };
+  });
+  if (!variants.some((v) => v.status === "ok")) return null;
+  return {
+    id: "ide-initialize",
+    label: "IDE · initialize",
+    files: 1,
+    bytes: 0,
+    groups: [{ label: "LSP initialize", variants }],
+    methodology: [
+      "Time from process spawn through the LSP initialize/initialized handshake, pooled across the suites in this job (small purpose-built workspaces). This is server startup, not the first editor request — Cold on the operation tables is that first request.",
+    ],
+  };
+}
+
 /**
  * A ratio-style operation reports a FACTOR, not a duration.
  *
@@ -203,6 +277,8 @@ export function buildIdeSurfaces(results) {
   }
 
   const surfaces = [];
+  const init = buildInitializeSurface(results);
+  if (init) surfaces.push(init);
   for (const [suiteId, rows] of bySuite) {
     // Operation order is taken from the first server that produced any, so the
     // report follows the suite's own narrative order rather than alphabetical.
@@ -238,6 +314,7 @@ export function buildIdeSurfaces(results) {
         const timing = ranked
           ? {
               medianMs: op.medianMs,
+              coldMedianMs: op.coldMedianMs,
               minMs: op.minMs,
               stddevMs: op.stddevMs,
               cvPct: op.cvPct,
@@ -309,6 +386,33 @@ export function buildIdeSurfaces(results) {
       )}. Volar on the stock JavaScript tsdk and Volar on the tsgo tsdk are the same Vue layer differing only in engine, so a cross-engine ratio measures TypeScript's Go rewrite as much as the server. Same axis, same resolver as the typecheck surface.`,
     ];
 
+    const rssGroup = {
+      label: "Peak RSS (process tree)",
+      metric: "rss",
+      variants: rows.map((row) => {
+        const engine = engineForServer(row.server);
+        const mb = row.peakRssMb;
+        return {
+          id: `${row.server}-rss`,
+          label: row.label ?? row.server,
+          status: Number.isFinite(mb) ? "ok" : row.error ? "error" : "skipped",
+          rssMaxMb: Number.isFinite(mb) ? mb : undefined,
+          threading: "lsp",
+          invocation: "lsp",
+          engine: engine.engine,
+          notes: [
+            "Whole language-server process tree during the timed session (Volar = Vue half + TypeScript half).",
+            row.backendFallback && `⚠ BACKEND FALLBACK — ${row.backendFallback}`,
+            `engine: ${engine.label}`,
+          ]
+            .filter(Boolean)
+            .join(" | "),
+          error: row.error,
+        };
+      }),
+    };
+    if (rssGroup.variants.some((v) => Number.isFinite(v.rssMaxMb))) groups.push(rssGroup);
+
     surfaces.push({
       id: `ide-${suiteId}`,
       label: `IDE · ${rows[0]?.suiteLabel ?? suiteId}`,
@@ -320,6 +424,7 @@ export function buildIdeSurfaces(results) {
       // (report.mjs: IDE_RANKING_RULES) rather than above all eight of them.
       methodology: [
         "Every operation carries a content gate; the timing is only ranked when the answer was verified correct.",
+        "Peak RSS is the whole language-server process tree during the timed session (Volar = Vue half + TypeScript half). It is sampled alongside the run, not from a separate memory job.",
         ...rankingNotes,
         ...ratioNote,
         ...engineNote,
