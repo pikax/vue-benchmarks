@@ -23,31 +23,31 @@
   <line class="grid" x1="248" y1="36" x2="248" y2="188" />
   <text class="muted" x="248" y="208" text-anchor="middle" font-size="11">0.0 MB</text>
   <line class="grid" x1="348.5" y1="36" x2="348.5" y2="188" />
-  <text class="muted" x="348.5" y="208" text-anchor="middle" font-size="11">174.3 MB</text>
+  <text class="muted" x="348.5" y="208" text-anchor="middle" font-size="11">171.3 MB</text>
   <line class="grid" x1="449" y1="36" x2="449" y2="188" />
-  <text class="muted" x="449" y="208" text-anchor="middle" font-size="11">348.7 MB</text>
+  <text class="muted" x="449" y="208" text-anchor="middle" font-size="11">342.7 MB</text>
   <line class="grid" x1="549.5" y1="36" x2="549.5" y2="188" />
-  <text class="muted" x="549.5" y="208" text-anchor="middle" font-size="11">523.0 MB</text>
+  <text class="muted" x="549.5" y="208" text-anchor="middle" font-size="11">514.0 MB</text>
   <line class="grid" x1="650" y1="36" x2="650" y2="188" />
-  <text class="muted" x="650" y="208" text-anchor="middle" font-size="11">697.3 MB</text>
+  <text class="muted" x="650" y="208" text-anchor="middle" font-size="11">685.3 MB</text>
   <text class="muted" x="16" y="60" font-size="11">1</text>
       <text class="label" x="236" y="60" text-anchor="end" font-size="13">Vize fmt</text>
       <rect class="track" x="248" y="49" width="402" height="22" rx="5"/>
-      <rect x="248" y="49" width="39.1" height="22" rx="5" fill="#2563eb"/>
-      <text class="label" x="295.10927551196005" y="60" font-size="12" font-weight="600">67.8 MB</text>
+      <rect x="248" y="49" width="39.9" height="22" rx="5" fill="#2563eb"/>
+      <text class="label" x="295.85802460128696" y="60" font-size="12" font-weight="600">68.0 MB</text>
   <text class="muted" x="16" y="96" font-size="11">2</text>
       <text class="label" x="236" y="96" text-anchor="end" font-size="13">Biome format</text>
       <rect class="track" x="248" y="85" width="402" height="22" rx="5"/>
-      <rect x="248" y="85" width="54.8" height="22" rx="5" fill="#0ea5e9"/>
-      <text class="label" x="310.81870590259854" y="96" font-size="12" font-weight="600">95.1 MB</text>
+      <rect x="248" y="85" width="56.2" height="22" rx="5" fill="#0ea5e9"/>
+      <text class="label" x="312.2235711263187" y="96" font-size="12" font-weight="600">95.8 MB</text>
   <text class="muted" x="16" y="132" font-size="11">3</text>
       <text class="label" x="236" y="132" text-anchor="end" font-size="13">Prettier</text>
       <rect class="track" x="248" y="121" width="402" height="22" rx="5"/>
-      <rect x="248" y="121" width="108.9" height="22" rx="5" fill="#f7b93e"/>
-      <text class="onbar" x="348.8706763035622" y="132" text-anchor="end" font-size="12" font-weight="600">188.8 MB</text>
+      <rect x="248" y="121" width="109.2" height="22" rx="5" fill="#f7b93e"/>
+      <text class="onbar" x="349.2385566077656" y="132" text-anchor="end" font-size="12" font-weight="600">186.2 MB</text>
   <text class="muted" x="16" y="168" font-size="11">4</text>
       <text class="label" x="236" y="168" text-anchor="end" font-size="13">Oxfmt</text>
       <rect class="track" x="248" y="157" width="402" height="22" rx="5"/>
       <rect x="248" y="157" width="402.0" height="22" rx="5" fill="#ca8a04"/>
-      <text class="onbar" x="642" y="168" text-anchor="end" font-size="12" font-weight="600">697.3 MB</text>
+      <text class="onbar" x="642" y="168" text-anchor="end" font-size="12" font-weight="600">685.3 MB</text>
 </svg>

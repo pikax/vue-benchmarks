@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="760" height="216" viewBox="0 0 760 216" role="img" aria-label="Hover (template interpolation)">
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="224" viewBox="0 0 760 224" role="img" aria-label="Hover (template interpolation)">
   <title>Hover (template interpolation) (lower is better)</title>
   <style><![CDATA[
     text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
@@ -16,38 +16,45 @@
       .grid { stroke: #f9fafb; stroke-opacity: 0.12; }
     }
   ]]></style>
-  <defs><pattern id="hatch-3" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="8" height="8" fill="#e11d48"/><line x1="0" y1="0" x2="0" y2="8" stroke="#fff" stroke-width="3" opacity="0.35"/></pattern></defs>
+  <defs><pattern id="hatch-3" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="8" height="8" fill="#42b883"/><line x1="0" y1="0" x2="0" y2="8" stroke="#fff" stroke-width="3" opacity="0.35"/></pattern></defs>
   <text class="label" x="16" y="22" font-size="15" font-weight="600">Hover (template interpolation)</text>
   <text class="muted" x="744" y="22" text-anchor="end" font-size="11">lower is better</text>
-  
-  <line class="grid" x1="248" y1="36" x2="248" y2="188" />
-  <text class="muted" x="248" y="208" text-anchor="middle" font-size="11">0.0 ms</text>
-  <line class="grid" x1="348.5" y1="36" x2="348.5" y2="188" />
-  <text class="muted" x="348.5" y="208" text-anchor="middle" font-size="11">9.1 ms</text>
-  <line class="grid" x1="449" y1="36" x2="449" y2="188" />
-  <text class="muted" x="449" y="208" text-anchor="middle" font-size="11">18.1 ms</text>
-  <line class="grid" x1="549.5" y1="36" x2="549.5" y2="188" />
-  <text class="muted" x="549.5" y="208" text-anchor="middle" font-size="11">27.2 ms</text>
-  <line class="grid" x1="650" y1="36" x2="650" y2="188" />
-  <text class="muted" x="650" y="208" text-anchor="middle" font-size="11">36.2 ms</text>
-  <text class="muted" x="16" y="60" font-size="11">1</text>
-      <text class="label" x="236" y="60" text-anchor="end" font-size="13">Vize</text>
-      <rect class="track" x="248" y="49" width="402" height="22" rx="5"/>
-      <rect x="248" y="49" width="20.0" height="22" rx="5" fill="#2563eb"/>
-      <text class="label" x="275.9889502762431" y="60" font-size="12" font-weight="600">1.8 ms</text>
-  <text class="muted" x="16" y="96" font-size="11">2</text>
-      <text class="label" x="236" y="96" text-anchor="end" font-size="13">Volar (N)</text>
-      <rect class="track" x="248" y="85" width="402" height="22" rx="5"/>
-      <rect x="248" y="85" width="58.9" height="22" rx="5" fill="#42b883"/>
-      <text class="label" x="314.8563535911602" y="96" font-size="12" font-weight="600">5.3 ms</text>
-  <text class="muted" x="16" y="132" font-size="11">3</text>
-      <text class="label" x="236" y="132" text-anchor="end" font-size="13">Volar (JS)</text>
-      <rect class="track" x="248" y="121" width="402" height="22" rx="5"/>
-      <rect x="248" y="121" width="402.0" height="22" rx="5" fill="#42b883"/>
-      <text class="onbar" x="642" y="132" text-anchor="end" font-size="12" font-weight="600">36.2 ms</text>
-  <text class="muted" x="16" y="168" font-size="11">4</text>
-      <text class="label struck" x="236" y="168" text-anchor="end" font-size="13">Verter</text>
-      <rect class="track" x="248" y="157" width="402" height="22" rx="5"/>
-      <rect x="248" y="157" width="13.3" height="22" rx="5" fill="url(#hatch-3)"/>
-      <text class="label" x="269.3259668508287" y="168" font-size="12" font-weight="600">1.2 ms · unranked</text>
+  <rect x="16" y="28" width="10" height="10" rx="2" fill="#111827"/>
+  <text class="muted" x="30" y="37" font-size="11">warm</text>
+  <rect x="74" y="28" width="10" height="10" rx="2" fill="#111827" fill-opacity="0.38"/>
+  <text class="muted" x="88" y="37" font-size="11">cold</text>
+  <line class="grid" x1="248" y1="44" x2="248" y2="196" />
+  <text class="muted" x="248" y="216" text-anchor="middle" font-size="11">0.0 ms</text>
+  <line class="grid" x1="348.5" y1="44" x2="348.5" y2="196" />
+  <text class="muted" x="348.5" y="216" text-anchor="middle" font-size="11">288 ms</text>
+  <line class="grid" x1="449" y1="44" x2="449" y2="196" />
+  <text class="muted" x="449" y="216" text-anchor="middle" font-size="11">575 ms</text>
+  <line class="grid" x1="549.5" y1="44" x2="549.5" y2="196" />
+  <text class="muted" x="549.5" y="216" text-anchor="middle" font-size="11">863 ms</text>
+  <line class="grid" x1="650" y1="44" x2="650" y2="196" />
+  <text class="muted" x="650" y="216" text-anchor="middle" font-size="11">1.15 s</text>
+  <text class="muted" x="16" y="68" font-size="11">1</text>
+      <text class="label" x="236" y="68" text-anchor="end" font-size="13">Vize</text>
+      <rect class="track" x="248" y="57" width="402" height="22" rx="5"/>
+      <rect class="cold" x="248" y="57" width="78.1" height="22" rx="5" fill="#2563eb" fill-opacity="0.38"/>
+      <rect class="warm" x="248" y="57" width="7.5" height="22" rx="5" fill="#2563eb"/>
+      <text class="label" x="334.12782608695653" y="68" font-size="12" font-weight="600">21.4 ms / 224 ms</text>
+  <text class="muted" x="16" y="104" font-size="11">2</text>
+      <text class="label" x="236" y="104" text-anchor="end" font-size="13">Verter</text>
+      <rect class="track" x="248" y="93" width="402" height="22" rx="5"/>
+      <rect class="cold" x="248" y="93" width="85.2" height="22" rx="5" fill="#e11d48" fill-opacity="0.38"/>
+      <rect class="warm" x="248" y="93" width="4.0" height="22" rx="5" fill="#e11d48"/>
+      <text class="label" x="341.224" y="104" font-size="12" font-weight="600">1.5 ms / 244 ms</text>
+  <text class="muted" x="16" y="140" font-size="11">3</text>
+      <text class="label" x="236" y="140" text-anchor="end" font-size="13">Volar (N)</text>
+      <rect class="track" x="248" y="129" width="402" height="22" rx="5"/>
+      <rect class="cold" x="248" y="129" width="169.7" height="22" rx="5" fill="#42b883" fill-opacity="0.38"/>
+      <rect class="warm" x="248" y="129" width="8.6" height="22" rx="5" fill="#42b883"/>
+      <text class="onbar" x="409.74886956521743" y="140" text-anchor="end" font-size="12" font-weight="600">24.5 ms / 486 ms</text>
+  <text class="muted" x="16" y="176" font-size="11">4</text>
+      <text class="label struck" x="236" y="176" text-anchor="end" font-size="13">Volar (JS)</text>
+      <rect class="track" x="248" y="165" width="402" height="22" rx="5"/>
+      <rect class="cold" x="248" y="165" width="402.0" height="22" rx="5" fill="url(#hatch-3)" fill-opacity="0.38"/>
+      <rect class="warm" x="248" y="165" width="52.7" height="22" rx="5" fill="url(#hatch-3)"/>
+      <text class="onbar" x="642" y="176" text-anchor="end" font-size="12" font-weight="600">151 ms / 1.15 s · unranked</text>
 </svg>

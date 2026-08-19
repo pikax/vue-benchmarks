@@ -23,41 +23,41 @@
   <line class="grid" x1="248" y1="36" x2="248" y2="260" />
   <text class="muted" x="248" y="280" text-anchor="middle" font-size="11">0.0 ms</text>
   <line class="grid" x1="348.5" y1="36" x2="348.5" y2="260" />
-  <text class="muted" x="348.5" y="280" text-anchor="middle" font-size="11">1.21 s</text>
+  <text class="muted" x="348.5" y="280" text-anchor="middle" font-size="11">1.29 s</text>
   <line class="grid" x1="449" y1="36" x2="449" y2="260" />
-  <text class="muted" x="449" y="280" text-anchor="middle" font-size="11">2.42 s</text>
+  <text class="muted" x="449" y="280" text-anchor="middle" font-size="11">2.59 s</text>
   <line class="grid" x1="549.5" y1="36" x2="549.5" y2="260" />
-  <text class="muted" x="549.5" y="280" text-anchor="middle" font-size="11">3.64 s</text>
+  <text class="muted" x="549.5" y="280" text-anchor="middle" font-size="11">3.88 s</text>
   <line class="grid" x1="650" y1="36" x2="650" y2="260" />
-  <text class="muted" x="650" y="280" text-anchor="middle" font-size="11">4.85 s</text>
+  <text class="muted" x="650" y="280" text-anchor="middle" font-size="11">5.18 s</text>
   <text class="muted" x="16" y="60" font-size="11">1</text>
       <text class="label" x="236" y="60" text-anchor="end" font-size="13">verter-tsc</text>
       <rect class="track" x="248" y="49" width="402" height="22" rx="5"/>
-      <rect x="248" y="49" width="90.3" height="22" rx="5" fill="#e11d48"/>
-      <text class="label" x="346.34639175257735" y="60" font-size="12" font-weight="600">1.09 s</text>
+      <rect x="248" y="49" width="96.2" height="22" rx="5" fill="#e11d48"/>
+      <text class="onbar" x="336.2316602316602" y="60" text-anchor="end" font-size="12" font-weight="600">1.24 s</text>
   <text class="muted" x="16" y="96" font-size="11">2</text>
-      <text class="label" x="236" y="96" text-anchor="end" font-size="13">Golar (lint+check)</text>
+      <text class="label" x="236" y="96" text-anchor="end" font-size="13">Vize</text>
       <rect class="track" x="248" y="85" width="402" height="22" rx="5"/>
-      <rect x="248" y="85" width="130.1" height="22" rx="5" fill="#c9842a"/>
-      <text class="onbar" x="370.1319587628866" y="96" text-anchor="end" font-size="12" font-weight="600">1.57 s</text>
+      <rect x="248" y="85" width="124.9" height="22" rx="5" fill="#2563eb"/>
+      <text class="onbar" x="364.94594594594594" y="96" text-anchor="end" font-size="12" font-weight="600">1.61 s</text>
   <text class="muted" x="16" y="132" font-size="11">3</text>
       <text class="label" x="236" y="132" text-anchor="end" font-size="13">Golar typecheck</text>
       <rect class="track" x="248" y="121" width="402" height="22" rx="5"/>
-      <rect x="248" y="121" width="131.0" height="22" rx="5" fill="#c9842a"/>
-      <text class="onbar" x="370.9608247422681" y="132" text-anchor="end" font-size="12" font-weight="600">1.58 s</text>
+      <rect x="248" y="121" width="131.9" height="22" rx="5" fill="#c9842a"/>
+      <text class="onbar" x="371.9305019305019" y="132" text-anchor="end" font-size="12" font-weight="600">1.70 s</text>
   <text class="muted" x="16" y="168" font-size="11">4</text>
-      <text class="label" x="236" y="168" text-anchor="end" font-size="13">Vize</text>
+      <text class="label" x="236" y="168" text-anchor="end" font-size="13">Golar (lint+check)</text>
       <rect class="track" x="248" y="157" width="402" height="22" rx="5"/>
-      <rect x="248" y="157" width="135.9" height="22" rx="5" fill="#2563eb"/>
-      <text class="onbar" x="375.9340206185567" y="168" text-anchor="end" font-size="12" font-weight="600">1.64 s</text>
+      <rect x="248" y="157" width="131.9" height="22" rx="5" fill="#c9842a"/>
+      <text class="onbar" x="371.9305019305019" y="168" text-anchor="end" font-size="12" font-weight="600">1.70 s</text>
   <text class="muted" x="16" y="204" font-size="11">5</text>
       <text class="label" x="236" y="204" text-anchor="end" font-size="13">vue-tsc (N)</text>
       <rect class="track" x="248" y="193" width="402" height="22" rx="5"/>
-      <rect x="248" y="193" width="188.2" height="22" rx="5" fill="#42b883"/>
-      <text class="onbar" x="428.15257731958764" y="204" text-anchor="end" font-size="12" font-weight="600">2.27 s</text>
+      <rect x="248" y="193" width="190.9" height="22" rx="5" fill="#42b883"/>
+      <text class="onbar" x="430.9111969111969" y="204" text-anchor="end" font-size="12" font-weight="600">2.46 s</text>
   <text class="muted" x="16" y="240" font-size="11">6</text>
       <text class="label" x="236" y="240" text-anchor="end" font-size="13">vue-tsc (JS)</text>
       <rect class="track" x="248" y="229" width="402" height="22" rx="5"/>
       <rect x="248" y="229" width="402.0" height="22" rx="5" fill="#42b883"/>
-      <text class="onbar" x="642" y="240" text-anchor="end" font-size="12" font-weight="600">4.85 s</text>
+      <text class="onbar" x="642" y="240" text-anchor="end" font-size="12" font-weight="600">5.18 s</text>
 </svg>

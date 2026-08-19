@@ -1,11 +1,11 @@
 ## Benchmark Results
 
-- **Generated:** 2026-08-16T09:16:12.927Z
+- **Generated:** 2026-08-19T18:37:29.646Z
 - **Fixture:** `fixtures/200-repeated` (200 SFCs)
 - **Runs / warmups:** 2 / 1
-- **Runner:** Linux · linux/x64 · 4 CPUs · AMD EPYC 9V74 80-Core Processor
+- **Runner:** Linux · linux/x64 · 4 CPUs · AMD EPYC 7763 64-Core Processor
 - **Node:** v22.23.2
-- **CI run:** https://github.com/pikax/vue-benchmarks/actions/runs/31938354532
+- **CI run:** https://github.com/pikax/vue-benchmarks/actions/runs/32287835178
 
 ### Tool versions
 
@@ -14,8 +14,8 @@
 | vue | 3.5.41 |
 | @vue/compiler-sfc | 3.5.41 |
 | @vue/compiler-sfc-36 | 3.6.0-rc.4 |
-| vize | 0.347.7 |
-| @vizejs/native | 0.347.7 |
+| vize | 0.350.2 |
+| @vizejs/native | 0.350.2 |
 | @verter/native | 0.0.1-beta.3 |
 | @fervid/napi | 0.4.1 |
 | verter-tsc | 0.0.1-beta.3 |
@@ -30,18 +30,19 @@
 | golar | 0.1.10 |
 | @golar/vue | 0.1.10 |
 | prettier | 3.9.6 |
-| oxfmt | 0.63.0 |
-| oxlint | 1.78.0 |
-| @biomejs/biome | 2.5.8 |
+| oxfmt | 0.64.0 |
+| oxlint | 1.79.0 |
+| eslint-plugin-vue | 10.10.0 |
+| @biomejs/biome | 2.5.9 |
 | typescript | 6.0.3 |
-| cli:vize | 0.347.7 |
+| cli:vize | 0.350.2 |
 | cli:vue-tsc | 6.0.3 |
 | cli:verter-tsc | 0.0.1-beta.3 |
 | cli:golar | 0.1.10 |
 | cli:prettier | 3.9.6 |
-| cli:oxfmt | 0.63.0 |
-| cli:oxlint | 1.78.0 |
-| cli:biome | 2.5.8 |
+| cli:oxfmt | 0.64.0 |
+| cli:oxlint | 1.79.0 |
+| cli:biome | 2.5.9 |
 | vue-jsx-vapor | 3.2.21 |
 | @vue-jsx-vapor/compiler-rs | 3.2.21 |
 | @vue/babel-plugin-jsx | 3.0.0 |
@@ -82,21 +83,21 @@ Target: `vdom` · Environment: `production` · Source map: `off`
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Code bytes | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize native batch (max threads) | **6.8 ms** | 6.7 ms | 0.1 ms | 1.3% | 1.00x | 107,800 | 29.5k files/s |
-| fervid compileAsync (4-thread libuv pool) | **8.3 ms** | 8.0 ms | 0.4 ms | 4.5% | 1.22x | 120,600 | 24.1k files/s |
-| fervid compileSync (1T) | **8.8 ms** | 8.7 ms | 0.1 ms | 0.6% | 1.29x | 120,600 | 22.8k files/s |
-| Verter compileMany (session cache) | **9.9 ms** | 9.0 ms | 1.4 ms | 13.7% ⚠ | 1.47x | 140,600 | 20.1k files/s |
-| Vize native loop (1T) | **16.0 ms** | 15.9 ms | 0.1 ms | 0.4% | 2.35x | 107,800 | 12.5k files/s |
-| @vue/compiler-sfc 3.5 (1T) | **48.4 ms** | 47.4 ms | 1.3 ms | 2.8% | 7.13x | 153,800 | 4.1k files/s |
-| @vue/compiler-sfc 3.6 (1T) | **52.1 ms** | 51.5 ms | 0.8 ms | 1.6% | 7.67x | 153,800 | 3.8k files/s |
-| Verter compileMany (stateless) | **104.1 ms** | 97.8 ms | 8.9 ms | 8.6% | 15.34x | 140,600 | 1.9k files/s |
+| Vize native batch (max threads) | **7.3 ms** | 7.3 ms | 0.1 ms | 1.0% | 1.00x | 107,800 | 27.4k files/s |
+| Verter compileMany (session cache) | **9.5 ms** | 9.4 ms | 0.2 ms | 2.2% | 1.30x | 140,600 | 21.0k files/s |
+| fervid compileAsync (4-thread libuv pool) | **9.7 ms** | 8.5 ms | 1.8 ms | 18.6% ⚠ | 1.33x | 120,600 | 20.5k files/s |
+| fervid compileSync (1T) | **12.1 ms** | 12.0 ms | 0.1 ms | 0.7% | 1.65x | 120,600 | 16.5k files/s |
+| Vize native loop (1T) | **21.0 ms** | 20.7 ms | 0.4 ms | 1.7% | 2.87x | 107,800 | 9.5k files/s |
+| @vue/compiler-sfc 3.5 (1T) | **53.2 ms** | 52.8 ms | 0.6 ms | 1.1% | 7.28x | 153,800 | 3.8k files/s |
+| @vue/compiler-sfc 3.6 (1T) | **54.9 ms** | 54.4 ms | 0.7 ms | 1.3% | 7.51x | 153,800 | 3.6k files/s |
+| Verter compileMany (stateless) | **106.9 ms** | 104.1 ms | 4.0 ms | 3.7% | 14.63x | 140,600 | 1.9k files/s |
 
 <details><summary>Notes</summary>
 
 - **Vize native batch (max threads)**: compileSfcBatchWithResults vapor=false, sourceMap=false. multi-thread Rayon batch. ⚠ No isProduction flag — identical work in production and development cells. Content-hash caches can skip work on repeated bodies — unique corpus required for ranking.
+- **Verter compileMany (session cache)**: runtime-render forceVapor=false, isProduction=true, sourceMap=false, mode=session, analysis=full — persistent workspace-backed host, cacheHits reported; not comparable to the cache-free batch rows cacheHits≈0
 - **fervid compileAsync (4-thread libuv pool)**: compileAsync isProduction=true, sourceMap=false, fanned out with Promise.all over libuv's threadpool (UV_THREADPOOL_SIZE=4, default 4 — NOT sized to core count like a Rayon pool, so on a runner with more than 4 cores this row is thread-capped below the batch rows beside it). ⚠ also compiles <style> blocks (scoped styles returned isCompiled=true) — strictly more work per file than the parse+script+template rows it is ranked against. ⚠ emits non-fatal NonVoidHtmlElementStartTagWithTrailingSolidus diagnostics for self-closing non-void tags (<div />, <MyComp />) that Vue's SFC parser accepts; codegen is complete regardless, so the row is gated on codegen produced for every file, not on diagnostic silence.
 - **fervid compileSync (1T)**: compileSync isProduction=true, sourceMap=false, single-threaded. ⚠ also compiles <style> blocks (scoped styles returned isCompiled=true) — strictly more work per file than the parse+script+template rows it is ranked against. ⚠ emits non-fatal NonVoidHtmlElementStartTagWithTrailingSolidus diagnostics for self-closing non-void tags (<div />, <MyComp />) that Vue's SFC parser accepts; codegen is complete regardless, so the row is gated on codegen produced for every file, not on diagnostic silence.
-- **Verter compileMany (session cache)**: runtime-render forceVapor=false, isProduction=true, sourceMap=false, mode=session, analysis=full — persistent workspace-backed host, cacheHits reported; not comparable to the cache-free batch rows cacheHits≈0
 - **Vize native loop (1T)**: compileSfc vapor=false, isTs=true (TS passthrough — the cell's uniform standard; ⓘ Vize's own Vite plugin omits this flag, so a drop-in Vite user gets Vize STRIPPING types on every lang="ts" file — more work than benchmarked here), sourceMap=false. ⚠ Vize has no isProduction flag on compileSfc — this row does identical work in the production and development cells. Content-hash caches reward duplicate bodies — use unique fixtures for ranking.
 - **@vue/compiler-sfc 3.5 (1T)**: Official 3.5 VDOM, isProd=true, sourceMap=false, single-threaded
 - **@vue/compiler-sfc 3.6 (1T)**: Official 3.6 VDOM, isProd=true, sourceMap=false
@@ -106,14 +107,14 @@ Target: `vdom` · Environment: `production` · Source map: `off`
 
 <details><summary>Raw runs</summary>
 
-- **Vize native batch (max threads)**: 6.7 ms, 6.8 ms
-- **fervid compileAsync (4-thread libuv pool)**: 8.5 ms, 8.0 ms
-- **fervid compileSync (1T)**: 8.7 ms, 8.8 ms
-- **Verter compileMany (session cache)**: 10.9 ms, 9.0 ms
-- **Vize native loop (1T)**: 15.9 ms, 16.0 ms
-- **@vue/compiler-sfc 3.5 (1T)**: 47.4 ms, 49.3 ms
-- **@vue/compiler-sfc 3.6 (1T)**: 52.6 ms, 51.5 ms
-- **Verter compileMany (stateless)**: 110.4 ms, 97.8 ms
+- **Vize native batch (max threads)**: 7.3 ms, 7.4 ms
+- **Verter compileMany (session cache)**: 9.7 ms, 9.4 ms
+- **fervid compileAsync (4-thread libuv pool)**: 11.0 ms, 8.5 ms
+- **fervid compileSync (1T)**: 12.0 ms, 12.2 ms
+- **Vize native loop (1T)**: 20.7 ms, 21.2 ms
+- **@vue/compiler-sfc 3.5 (1T)**: 53.7 ms, 52.8 ms
+- **@vue/compiler-sfc 3.6 (1T)**: 54.4 ms, 55.4 ms
+- **Verter compileMany (stateless)**: 109.8 ms, 104.1 ms
 
 </details>
 

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-08-16T09:16:08.702Z",
+  "generatedAt": "2026-08-19T18:37:25.414Z",
   "fixture": "fixtures/200",
   "fileCount": 200,
   "settings": {
@@ -29,23 +29,23 @@
     "platform": "linux",
     "arch": "x64",
     "cpuCount": 4,
-    "cpuModel": "AMD EPYC 9V74 80-Core Processor",
+    "cpuModel": "AMD EPYC 7763 64-Core Processor",
     "totalmem": 16766414848,
     "node": "v22.23.2"
   },
   "commit": {
-    "sha": "52ba717320eacc45bdebc4e739a1c472adfc9473",
+    "sha": "94f6696b1c7b6f54928678126b9831febd70b4ff",
     "ref": "main",
     "repository": "pikax/vue-benchmarks",
-    "runUrl": "https://github.com/pikax/vue-benchmarks/actions/runs/31938354532"
+    "runUrl": "https://github.com/pikax/vue-benchmarks/actions/runs/32287835178"
   },
   "versions": {
     "node": "v22.23.2",
     "vue": "3.5.41",
     "@vue/compiler-sfc": "3.5.41",
     "@vue/compiler-sfc-36": "3.6.0-rc.4",
-    "vize": "0.347.7",
-    "@vizejs/native": "0.347.7",
+    "vize": "0.350.2",
+    "@vizejs/native": "0.350.2",
     "@verter/native": "0.0.1-beta.3",
     "@fervid/napi": "0.4.1",
     "verter-tsc": "0.0.1-beta.3",
@@ -60,18 +60,19 @@
     "golar": "0.1.10",
     "@golar/vue": "0.1.10",
     "prettier": "3.9.6",
-    "oxfmt": "0.63.0",
-    "oxlint": "1.78.0",
-    "@biomejs/biome": "2.5.8",
+    "oxfmt": "0.64.0",
+    "oxlint": "1.79.0",
+    "eslint-plugin-vue": "10.10.0",
+    "@biomejs/biome": "2.5.9",
     "typescript": "6.0.3",
-    "cli:vize": "0.347.7",
+    "cli:vize": "0.350.2",
     "cli:vue-tsc": "6.0.3",
     "cli:verter-tsc": "0.0.1-beta.3",
     "cli:golar": "0.1.10",
     "cli:prettier": "3.9.6",
-    "cli:oxfmt": "0.63.0",
-    "cli:oxlint": "1.78.0",
-    "cli:biome": "2.5.8",
+    "cli:oxfmt": "0.64.0",
+    "cli:oxlint": "1.79.0",
+    "cli:biome": "2.5.9",
     "vue-jsx-vapor": "3.2.21",
     "@vue-jsx-vapor/compiler-rs": "3.2.21",
     "@vue/babel-plugin-jsx": "3.0.0",
@@ -164,18 +165,18 @@
               "files": 200,
               "status": "ok",
               "runs": [
-                180.467,
-                176.322,
-                177.86,
-                173.284,
-                195.337
+                194.96,
+                179.266,
+                181.769,
+                171.201,
+                181.114
               ],
-              "medianMs": 177.86,
-              "minMs": 173.284,
-              "maxMs": 195.337,
-              "meanMs": 180.654,
-              "stddevMs": 8.61,
-              "cvPct": 4.8,
+              "medianMs": 181.114,
+              "minMs": 171.201,
+              "maxMs": 194.96,
+              "meanMs": 181.662,
+              "stddevMs": 8.549,
+              "cvPct": 4.7,
               "metaSamples": [
                 {
                   "artifact": 670030
@@ -211,18 +212,18 @@
               "files": 200,
               "status": "ok",
               "runs": [
-                183.918,
-                182.16,
-                179.546,
-                180.277,
-                193.956
+                180.866,
+                179.438,
+                174.371,
+                175.608,
+                189.919
               ],
-              "medianMs": 182.16,
-              "minMs": 179.546,
-              "maxMs": 193.956,
-              "meanMs": 183.971,
-              "stddevMs": 5.835,
-              "cvPct": 3.2,
+              "medianMs": 179.438,
+              "minMs": 174.371,
+              "maxMs": 189.919,
+              "meanMs": 180.04,
+              "stddevMs": 6.132,
+              "cvPct": 3.4,
               "metaSamples": [
                 {
                   "artifact": 670030
@@ -258,18 +259,18 @@
               "files": 200,
               "status": "ok",
               "runs": [
-                55.901,
-                56.635,
-                55.89,
-                56.242,
-                54.637
+                58.729,
+                58.185,
+                57.809,
+                57.964,
+                58.169
               ],
-              "medianMs": 55.901,
-              "minMs": 54.637,
-              "maxMs": 56.635,
-              "meanMs": 55.861,
-              "stddevMs": 0.749,
-              "cvPct": 1.3,
+              "medianMs": 58.169,
+              "minMs": 57.809,
+              "maxMs": 58.729,
+              "meanMs": 58.171,
+              "stddevMs": 0.348,
+              "cvPct": 0.6,
               "metaSamples": [
                 {
                   "artifact": 609596
@@ -289,7 +290,7 @@
               ],
               "artifactMedian": 609596,
               "warmupPasses": 1,
-              "throughput": "3.6k files/s"
+              "throughput": "3.4k files/s"
             },
             {
               "id": "vize-batch-vdom-prod-smoff",
@@ -305,18 +306,18 @@
               "files": 200,
               "status": "ok",
               "runs": [
-                25.034,
-                22.829,
-                20.216,
-                24.118,
-                19.612
+                21.723,
+                20.881,
+                21.207,
+                21.516,
+                22.029
               ],
-              "medianMs": 22.829,
-              "minMs": 19.612,
-              "maxMs": 25.034,
-              "meanMs": 22.362,
-              "stddevMs": 2.377,
-              "cvPct": 10.4,
+              "medianMs": 21.516,
+              "minMs": 20.881,
+              "maxMs": 22.029,
+              "meanMs": 21.471,
+              "stddevMs": 0.446,
+              "cvPct": 2.1,
               "metaSamples": [
                 {
                   "artifact": 609596
@@ -336,7 +337,7 @@
               ],
               "artifactMedian": 609596,
               "warmupPasses": 1,
-              "throughput": "8.8k files/s"
+              "throughput": "9.3k files/s"
             },
             {
               "id": "fervid-1t-vdom-prod-smoff",
@@ -352,18 +353,18 @@
               "files": 200,
               "status": "unranked",
               "runs": [
-                59.047,
-                57.398,
-                56.401,
-                56.716,
-                58.492
+                57.844,
+                57.449,
+                56.984,
+                57.744,
+                57.57
               ],
-              "medianMs": 57.398,
-              "minMs": 56.401,
-              "maxMs": 59.047,
-              "meanMs": 57.611,
-              "stddevMs": 1.135,
-              "cvPct": 2,
+              "medianMs": 57.57,
+              "minMs": 56.984,
+              "maxMs": 57.844,
+              "meanMs": 57.518,
+              "stddevMs": 0.335,
+              "cvPct": 0.6,
               "metaSamples": [
                 {
                   "artifact": 775738,
@@ -409,18 +410,18 @@
               "files": 200,
               "status": "unranked",
               "runs": [
-                26.056,
-                26.199,
-                25.434,
-                30.369,
-                28.652
+                27.508,
+                28.228,
+                27.804,
+                27.946,
+                26.907
               ],
-              "medianMs": 26.199,
-              "minMs": 25.434,
-              "maxMs": 30.369,
-              "meanMs": 27.342,
-              "stddevMs": 2.09,
-              "cvPct": 8,
+              "medianMs": 27.804,
+              "minMs": 26.907,
+              "maxMs": 28.228,
+              "meanMs": 27.679,
+              "stddevMs": 0.503,
+              "cvPct": 1.8,
               "metaSamples": [
                 {
                   "artifact": 775738,
@@ -466,18 +467,18 @@
               "files": 200,
               "status": "ok",
               "runs": [
-                130.216,
-                124.355,
-                124.324,
-                118.804,
-                121.53
+                127.135,
+                121.336,
+                125.308,
+                131.225,
+                124.167
               ],
-              "medianMs": 124.324,
-              "minMs": 118.804,
-              "maxMs": 130.216,
-              "meanMs": 123.846,
-              "stddevMs": 4.238,
-              "cvPct": 3.4,
+              "medianMs": 125.308,
+              "minMs": 121.336,
+              "maxMs": 131.225,
+              "meanMs": 125.834,
+              "stddevMs": 3.676,
+              "cvPct": 2.9,
               "metaSamples": [
                 {
                   "artifact": 548989,
@@ -535,18 +536,18 @@
               "files": 200,
               "status": "ok",
               "runs": [
-                26.756,
-                28.994,
-                20.702,
-                22.727,
-                24.635
+                20.21,
+                16.811,
+                22.46,
+                27.585,
+                27.782
               ],
-              "medianMs": 24.635,
-              "minMs": 20.702,
-              "maxMs": 28.994,
-              "meanMs": 24.763,
-              "stddevMs": 3.261,
-              "cvPct": 13.2,
+              "medianMs": 22.46,
+              "minMs": 16.811,
+              "maxMs": 27.782,
+              "meanMs": 22.97,
+              "stddevMs": 4.75,
+              "cvPct": 21.2,
               "metaSamples": [
                 {
                   "artifact": 548989,
@@ -588,7 +589,7 @@
               "cacheHitsLast": 0,
               "artifactMedian": 548989,
               "warmupPasses": 1,
-              "throughput": "8.1k files/s"
+              "throughput": "8.9k files/s"
             }
           ]
         },
@@ -613,18 +614,18 @@
               "files": 200,
               "status": "ok",
               "runs": [
-                168.684,
-                171.889,
-                170.634,
-                158.895,
-                151.657
+                168.025,
+                185.399,
+                167.901,
+                185.721,
+                156.569
               ],
-              "medianMs": 168.684,
-              "minMs": 151.657,
-              "maxMs": 171.889,
-              "meanMs": 164.352,
-              "stddevMs": 8.746,
-              "cvPct": 5.2,
+              "medianMs": 168.025,
+              "minMs": 156.569,
+              "maxMs": 185.721,
+              "meanMs": 172.723,
+              "stddevMs": 12.609,
+              "cvPct": 7.5,
               "metaSamples": [
                 {
                   "artifact": 656372
@@ -660,18 +661,18 @@
               "files": 200,
               "status": "ok",
               "runs": [
-                175.723,
-                167.07,
-                171.771,
-                163.678,
-                152.777
+                167.576,
+                158.659,
+                152.462,
+                174.24,
+                156.326
               ],
-              "medianMs": 167.07,
-              "minMs": 152.777,
-              "maxMs": 175.723,
-              "meanMs": 166.204,
-              "stddevMs": 8.789,
-              "cvPct": 5.3,
+              "medianMs": 158.659,
+              "minMs": 152.462,
+              "maxMs": 174.24,
+              "meanMs": 161.853,
+              "stddevMs": 8.876,
+              "cvPct": 5.6,
               "metaSamples": [
                 {
                   "artifact": 656372
@@ -691,7 +692,7 @@
               ],
               "artifactMedian": 656372,
               "warmupPasses": 1,
-              "throughput": "1.2k files/s"
+              "throughput": "1.3k files/s"
             },
             {
               "id": "vize-1t-vdom-dev-smoff",
@@ -707,18 +708,18 @@
               "files": 200,
               "status": "ok",
               "runs": [
-                54.023,
-                57.931,
-                55.184,
-                55.925,
-                54.615
+                61.248,
+                58.609,
+                58.468,
+                61.034,
+                58.319
               ],
-              "medianMs": 55.184,
-              "minMs": 54.023,
-              "maxMs": 57.931,
-              "meanMs": 55.536,
-              "stddevMs": 1.512,
-              "cvPct": 2.7,
+              "medianMs": 58.609,
+              "minMs": 58.319,
+              "maxMs": 61.248,
+              "meanMs": 59.536,
+              "stddevMs": 1.471,
+              "cvPct": 2.5,
               "metaSamples": [
                 {
                   "artifact": 609596
@@ -738,7 +739,7 @@
               ],
               "artifactMedian": 609596,
               "warmupPasses": 1,
-              "throughput": "3.6k files/s"
+              "throughput": "3.4k files/s"
             },
             {
               "id": "vize-batch-vdom-dev-smoff",
@@ -754,18 +755,18 @@
               "files": 200,
               "status": "ok",
               "runs": [
-                24.515,
-                24.252,
-                21.892,
-                24.269,
-                18.634
+                22.685,
+                27.365,
+                26.853,
+                26.776,
+                26.568
               ],
-              "medianMs": 24.252,
-              "minMs": 18.634,
-              "maxMs": 24.515,
-              "meanMs": 22.712,
-              "stddevMs": 2.517,
-              "cvPct": 10.4,
+              "medianMs": 26.776,
+              "minMs": 22.685,
+              "maxMs": 27.365,
+              "meanMs": 26.049,
+              "stddevMs": 1.903,
+              "cvPct": 7.1,
               "metaSamples": [
                 {
                   "artifact": 609596
@@ -785,7 +786,7 @@
               ],
               "artifactMedian": 609596,
               "warmupPasses": 1,
-              "throughput": "8.2k files/s"
+              "throughput": "7.5k files/s"
             },
             {
               "id": "fervid-1t-vdom-dev-smoff",
@@ -801,18 +802,18 @@
               "files": 200,
               "status": "unranked",
               "runs": [
-                56.916,
-                57.383,
-                56.966,
-                57.057,
-                57.069
+                59.461,
+                59.229,
+                58.385,
+                58.105,
+                58.271
               ],
-              "medianMs": 57.057,
-              "minMs": 56.916,
-              "maxMs": 57.383,
-              "meanMs": 57.078,
-              "stddevMs": 0.182,
-              "cvPct": 0.3,
+              "medianMs": 58.385,
+              "minMs": 58.105,
+              "maxMs": 59.461,
+              "meanMs": 58.69,
+              "stddevMs": 0.612,
+              "cvPct": 1,
               "metaSamples": [
                 {
                   "artifact": 787866,
@@ -858,18 +859,18 @@
               "files": 200,
               "status": "unranked",
               "runs": [
-                31.086,
-                30.481,
-                38.274,
-                72.641,
-                25.037
+                30.174,
+                35.181,
+                30.744,
+                35.224,
+                33.535
               ],
-              "medianMs": 31.086,
-              "minMs": 25.037,
-              "maxMs": 72.641,
-              "meanMs": 39.504,
-              "stddevMs": 19.112,
-              "cvPct": 61.5,
+              "medianMs": 33.535,
+              "minMs": 30.174,
+              "maxMs": 35.224,
+              "meanMs": 32.972,
+              "stddevMs": 2.401,
+              "cvPct": 7.2,
               "metaSamples": [
                 {
                   "artifact": 787866,
@@ -915,18 +916,18 @@
               "files": 200,
               "status": "ok",
               "runs": [
-                122.643,
-                136.453,
-                126.002,
-                132.193,
-                117.201
+                136.938,
+                134.678,
+                124.219,
+                125.813,
+                133.086
               ],
-              "medianMs": 126.002,
-              "minMs": 117.201,
-              "maxMs": 136.453,
-              "meanMs": 126.898,
-              "stddevMs": 7.62,
-              "cvPct": 6,
+              "medianMs": 133.086,
+              "minMs": 124.219,
+              "maxMs": 136.938,
+              "meanMs": 130.947,
+              "stddevMs": 5.613,
+              "cvPct": 4.2,
               "metaSamples": [
                 {
                   "artifact": 671880,
@@ -968,7 +969,7 @@
               "cacheHitsLast": 0,
               "artifactMedian": 671880,
               "warmupPasses": 1,
-              "throughput": "1.6k files/s"
+              "throughput": "1.5k files/s"
             },
             {
               "id": "verter-session-vdom-dev-smoff",
@@ -984,18 +985,18 @@
               "files": 200,
               "status": "ok",
               "runs": [
-                25.89,
-                28.812,
-                24.751,
-                34.558,
-                17.838
+                33.807,
+                37.183,
+                23.781,
+                32.656,
+                26.167
               ],
-              "medianMs": 25.89,
-              "minMs": 17.838,
-              "maxMs": 34.558,
-              "meanMs": 26.37,
-              "stddevMs": 6.096,
-              "cvPct": 23.5,
+              "medianMs": 32.656,
+              "minMs": 23.781,
+              "maxMs": 37.183,
+              "meanMs": 30.719,
+              "stddevMs": 5.566,
+              "cvPct": 17,
               "metaSamples": [
                 {
                   "artifact": 671880,
@@ -1037,7 +1038,7 @@
               "cacheHitsLast": 0,
               "artifactMedian": 671880,
               "warmupPasses": 1,
-              "throughput": "7.7k files/s"
+              "throughput": "6.1k files/s"
             }
           ]
         },
@@ -1074,18 +1075,18 @@
               "files": 200,
               "status": "ok",
               "runs": [
-                307.879,
-                312.301,
-                300.331,
-                282.661,
-                297.517
+                350.588,
+                362.055,
+                334.71,
+                325.622,
+                347.166
               ],
-              "medianMs": 300.331,
-              "minMs": 282.661,
-              "maxMs": 312.301,
-              "meanMs": 300.138,
-              "stddevMs": 11.404,
-              "cvPct": 3.8,
+              "medianMs": 347.166,
+              "minMs": 325.622,
+              "maxMs": 362.055,
+              "meanMs": 344.028,
+              "stddevMs": 14.173,
+              "cvPct": 4.1,
               "metaSamples": [
                 {
                   "artifact": 681563
@@ -1105,7 +1106,7 @@
               ],
               "artifactMedian": 681563,
               "warmupPasses": 1,
-              "throughput": "666 files/s"
+              "throughput": "576 files/s"
             },
             {
               "id": "vize-1t-vapor-prod-smoff",
@@ -1121,18 +1122,18 @@
               "files": 200,
               "status": "ok",
               "runs": [
-                60.14,
-                56.808,
-                56.776,
-                58.64,
-                57.167
+                61.343,
+                60.523,
+                60.732,
+                61.021,
+                60.963
               ],
-              "medianMs": 57.167,
-              "minMs": 56.776,
-              "maxMs": 60.14,
-              "meanMs": 57.906,
-              "stddevMs": 1.463,
-              "cvPct": 2.6,
+              "medianMs": 60.963,
+              "minMs": 60.523,
+              "maxMs": 61.343,
+              "meanMs": 60.916,
+              "stddevMs": 0.31,
+              "cvPct": 0.5,
               "metaSamples": [
                 {
                   "artifact": 754214
@@ -1152,7 +1153,7 @@
               ],
               "artifactMedian": 754214,
               "warmupPasses": 1,
-              "throughput": "3.5k files/s"
+              "throughput": "3.3k files/s"
             },
             {
               "id": "vize-batch-vapor-prod-smoff",
@@ -1168,18 +1169,18 @@
               "files": 200,
               "status": "ok",
               "runs": [
-                20.118,
-                19.559,
-                20.214,
-                20.973,
-                19.607
+                22.277,
+                21.867,
+                23.591,
+                22.164,
+                21.64
               ],
-              "medianMs": 20.118,
-              "minMs": 19.559,
-              "maxMs": 20.973,
-              "meanMs": 20.094,
-              "stddevMs": 0.572,
-              "cvPct": 2.8,
+              "medianMs": 22.164,
+              "minMs": 21.64,
+              "maxMs": 23.591,
+              "meanMs": 22.308,
+              "stddevMs": 0.76,
+              "cvPct": 3.4,
               "metaSamples": [
                 {
                   "artifact": 754214
@@ -1199,7 +1200,7 @@
               ],
               "artifactMedian": 754214,
               "warmupPasses": 1,
-              "throughput": "9.9k files/s"
+              "throughput": "9.0k files/s"
             },
             {
               "id": "fervid-vapor-unsupported-vapor-prod-smoff",
@@ -1227,18 +1228,18 @@
               "files": 200,
               "status": "ok",
               "runs": [
-                117.095,
-                126.963,
-                117.119,
-                120.476,
-                125.096
+                120.516,
+                124.821,
+                129.366,
+                127.661,
+                127.368
               ],
-              "medianMs": 120.476,
-              "minMs": 117.095,
-              "maxMs": 126.963,
-              "meanMs": 121.35,
-              "stddevMs": 4.536,
-              "cvPct": 3.8,
+              "medianMs": 127.368,
+              "minMs": 120.516,
+              "maxMs": 129.366,
+              "meanMs": 125.946,
+              "stddevMs": 3.443,
+              "cvPct": 2.7,
               "metaSamples": [
                 {
                   "artifact": 585310,
@@ -1280,7 +1281,7 @@
               "cacheHitsLast": 0,
               "artifactMedian": 585310,
               "warmupPasses": 1,
-              "throughput": "1.7k files/s"
+              "throughput": "1.6k files/s"
             },
             {
               "id": "verter-session-vapor-prod-smoff",
@@ -1296,18 +1297,18 @@
               "files": 200,
               "status": "ok",
               "runs": [
-                19.136,
-                24.65,
-                18.269,
-                28.011,
-                18.161
+                21.316,
+                22.901,
+                20.761,
+                23.035,
+                18.36
               ],
-              "medianMs": 19.136,
-              "minMs": 18.161,
-              "maxMs": 28.011,
-              "meanMs": 21.645,
-              "stddevMs": 4.455,
-              "cvPct": 23.3,
+              "medianMs": 21.316,
+              "minMs": 18.36,
+              "maxMs": 23.035,
+              "meanMs": 21.275,
+              "stddevMs": 1.904,
+              "cvPct": 8.9,
               "metaSamples": [
                 {
                   "artifact": 585310,
@@ -1349,7 +1350,7 @@
               "cacheHitsLast": 0,
               "artifactMedian": 585310,
               "warmupPasses": 1,
-              "throughput": "10.5k files/s"
+              "throughput": "9.4k files/s"
             }
           ]
         },
@@ -1386,18 +1387,18 @@
               "files": 200,
               "status": "ok",
               "runs": [
-                290.816,
-                279.958,
-                373.122,
-                273.945,
-                274.254
+                307.342,
+                296.621,
+                298.519,
+                308.351,
+                290.782
               ],
-              "medianMs": 279.958,
-              "minMs": 273.945,
-              "maxMs": 373.122,
-              "meanMs": 298.419,
-              "stddevMs": 42.315,
-              "cvPct": 15.1,
+              "medianMs": 298.519,
+              "minMs": 290.782,
+              "maxMs": 308.351,
+              "meanMs": 300.323,
+              "stddevMs": 7.445,
+              "cvPct": 2.5,
               "metaSamples": [
                 {
                   "artifact": 683301
@@ -1417,7 +1418,7 @@
               ],
               "artifactMedian": 683301,
               "warmupPasses": 1,
-              "throughput": "714 files/s"
+              "throughput": "670 files/s"
             },
             {
               "id": "vize-1t-vapor-dev-smoff",
@@ -1433,18 +1434,18 @@
               "files": 200,
               "status": "ok",
               "runs": [
-                56.964,
-                56.632,
-                57.102,
-                56.793,
-                59.224
+                61.642,
+                62.749,
+                60.541,
+                61.029,
+                61.22
               ],
-              "medianMs": 56.964,
-              "minMs": 56.632,
-              "maxMs": 59.224,
-              "meanMs": 57.343,
-              "stddevMs": 1.066,
-              "cvPct": 1.9,
+              "medianMs": 61.22,
+              "minMs": 60.541,
+              "maxMs": 62.749,
+              "meanMs": 61.436,
+              "stddevMs": 0.834,
+              "cvPct": 1.4,
               "metaSamples": [
                 {
                   "artifact": 754214
@@ -1464,7 +1465,7 @@
               ],
               "artifactMedian": 754214,
               "warmupPasses": 1,
-              "throughput": "3.5k files/s"
+              "throughput": "3.3k files/s"
             },
             {
               "id": "vize-batch-vapor-dev-smoff",
@@ -1480,18 +1481,18 @@
               "files": 200,
               "status": "ok",
               "runs": [
-                20.7,
-                20.175,
-                19.699,
-                20.142,
-                20.736
+                22.012,
+                22.289,
+                22.472,
+                22.362,
+                21.826
               ],
-              "medianMs": 20.175,
-              "minMs": 19.699,
-              "maxMs": 20.736,
-              "meanMs": 20.29,
-              "stddevMs": 0.433,
-              "cvPct": 2.1,
+              "medianMs": 22.289,
+              "minMs": 21.826,
+              "maxMs": 22.472,
+              "meanMs": 22.192,
+              "stddevMs": 0.266,
+              "cvPct": 1.2,
               "metaSamples": [
                 {
                   "artifact": 754214
@@ -1511,7 +1512,7 @@
               ],
               "artifactMedian": 754214,
               "warmupPasses": 1,
-              "throughput": "9.9k files/s"
+              "throughput": "9.0k files/s"
             },
             {
               "id": "fervid-vapor-unsupported-vapor-dev-smoff",
@@ -1539,18 +1540,18 @@
               "files": 200,
               "status": "ok",
               "runs": [
-                119.49,
-                120.238,
-                125.424,
-                119.168,
-                121.795
+                124.191,
+                126.54,
+                133.836,
+                128.982,
+                125.355
               ],
-              "medianMs": 120.238,
-              "minMs": 119.168,
-              "maxMs": 125.424,
-              "meanMs": 121.223,
-              "stddevMs": 2.558,
-              "cvPct": 2.1,
+              "medianMs": 126.54,
+              "minMs": 124.191,
+              "maxMs": 133.836,
+              "meanMs": 127.781,
+              "stddevMs": 3.822,
+              "cvPct": 3,
               "metaSamples": [
                 {
                   "artifact": 621048,
@@ -1592,7 +1593,7 @@
               "cacheHitsLast": 0,
               "artifactMedian": 621048,
               "warmupPasses": 1,
-              "throughput": "1.7k files/s"
+              "throughput": "1.6k files/s"
             },
             {
               "id": "verter-session-vapor-dev-smoff",
@@ -1608,18 +1609,18 @@
               "files": 200,
               "status": "ok",
               "runs": [
-                18.789,
-                19.519,
-                23.324,
-                17.465,
-                26.184
+                17.551,
+                24.338,
+                28.625,
+                19.2,
+                21.701
               ],
-              "medianMs": 19.519,
-              "minMs": 17.465,
-              "maxMs": 26.184,
-              "meanMs": 21.056,
-              "stddevMs": 3.6,
-              "cvPct": 18.4,
+              "medianMs": 21.701,
+              "minMs": 17.551,
+              "maxMs": 28.625,
+              "meanMs": 22.283,
+              "stddevMs": 4.378,
+              "cvPct": 20.2,
               "metaSamples": [
                 {
                   "artifact": 621048,
@@ -1661,7 +1662,7 @@
               "cacheHitsLast": 0,
               "artifactMedian": 621048,
               "warmupPasses": 1,
-              "throughput": "10.2k files/s"
+              "throughput": "9.2k files/s"
             }
           ]
         }
@@ -1681,18 +1682,18 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            180.467,
-            176.322,
-            177.86,
-            173.284,
-            195.337
+            194.96,
+            179.266,
+            181.769,
+            171.201,
+            181.114
           ],
-          "medianMs": 177.86,
-          "minMs": 173.284,
-          "maxMs": 195.337,
-          "meanMs": 180.654,
-          "stddevMs": 8.61,
-          "cvPct": 4.8,
+          "medianMs": 181.114,
+          "minMs": 171.201,
+          "maxMs": 194.96,
+          "meanMs": 181.662,
+          "stddevMs": 8.549,
+          "cvPct": 4.7,
           "metaSamples": [
             {
               "artifact": 670030
@@ -1728,18 +1729,18 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            183.918,
-            182.16,
-            179.546,
-            180.277,
-            193.956
+            180.866,
+            179.438,
+            174.371,
+            175.608,
+            189.919
           ],
-          "medianMs": 182.16,
-          "minMs": 179.546,
-          "maxMs": 193.956,
-          "meanMs": 183.971,
-          "stddevMs": 5.835,
-          "cvPct": 3.2,
+          "medianMs": 179.438,
+          "minMs": 174.371,
+          "maxMs": 189.919,
+          "meanMs": 180.04,
+          "stddevMs": 6.132,
+          "cvPct": 3.4,
           "metaSamples": [
             {
               "artifact": 670030
@@ -1775,18 +1776,18 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            55.901,
-            56.635,
-            55.89,
-            56.242,
-            54.637
+            58.729,
+            58.185,
+            57.809,
+            57.964,
+            58.169
           ],
-          "medianMs": 55.901,
-          "minMs": 54.637,
-          "maxMs": 56.635,
-          "meanMs": 55.861,
-          "stddevMs": 0.749,
-          "cvPct": 1.3,
+          "medianMs": 58.169,
+          "minMs": 57.809,
+          "maxMs": 58.729,
+          "meanMs": 58.171,
+          "stddevMs": 0.348,
+          "cvPct": 0.6,
           "metaSamples": [
             {
               "artifact": 609596
@@ -1806,7 +1807,7 @@
           ],
           "artifactMedian": 609596,
           "warmupPasses": 1,
-          "throughput": "3.6k files/s"
+          "throughput": "3.4k files/s"
         },
         {
           "id": "vize-batch-vdom-prod-smoff",
@@ -1822,18 +1823,18 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            25.034,
-            22.829,
-            20.216,
-            24.118,
-            19.612
+            21.723,
+            20.881,
+            21.207,
+            21.516,
+            22.029
           ],
-          "medianMs": 22.829,
-          "minMs": 19.612,
-          "maxMs": 25.034,
-          "meanMs": 22.362,
-          "stddevMs": 2.377,
-          "cvPct": 10.4,
+          "medianMs": 21.516,
+          "minMs": 20.881,
+          "maxMs": 22.029,
+          "meanMs": 21.471,
+          "stddevMs": 0.446,
+          "cvPct": 2.1,
           "metaSamples": [
             {
               "artifact": 609596
@@ -1853,7 +1854,7 @@
           ],
           "artifactMedian": 609596,
           "warmupPasses": 1,
-          "throughput": "8.8k files/s"
+          "throughput": "9.3k files/s"
         },
         {
           "id": "fervid-1t-vdom-prod-smoff",
@@ -1869,18 +1870,18 @@
           "files": 200,
           "status": "unranked",
           "runs": [
-            59.047,
-            57.398,
-            56.401,
-            56.716,
-            58.492
+            57.844,
+            57.449,
+            56.984,
+            57.744,
+            57.57
           ],
-          "medianMs": 57.398,
-          "minMs": 56.401,
-          "maxMs": 59.047,
-          "meanMs": 57.611,
-          "stddevMs": 1.135,
-          "cvPct": 2,
+          "medianMs": 57.57,
+          "minMs": 56.984,
+          "maxMs": 57.844,
+          "meanMs": 57.518,
+          "stddevMs": 0.335,
+          "cvPct": 0.6,
           "metaSamples": [
             {
               "artifact": 775738,
@@ -1926,18 +1927,18 @@
           "files": 200,
           "status": "unranked",
           "runs": [
-            26.056,
-            26.199,
-            25.434,
-            30.369,
-            28.652
+            27.508,
+            28.228,
+            27.804,
+            27.946,
+            26.907
           ],
-          "medianMs": 26.199,
-          "minMs": 25.434,
-          "maxMs": 30.369,
-          "meanMs": 27.342,
-          "stddevMs": 2.09,
-          "cvPct": 8,
+          "medianMs": 27.804,
+          "minMs": 26.907,
+          "maxMs": 28.228,
+          "meanMs": 27.679,
+          "stddevMs": 0.503,
+          "cvPct": 1.8,
           "metaSamples": [
             {
               "artifact": 775738,
@@ -1983,18 +1984,18 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            130.216,
-            124.355,
-            124.324,
-            118.804,
-            121.53
+            127.135,
+            121.336,
+            125.308,
+            131.225,
+            124.167
           ],
-          "medianMs": 124.324,
-          "minMs": 118.804,
-          "maxMs": 130.216,
-          "meanMs": 123.846,
-          "stddevMs": 4.238,
-          "cvPct": 3.4,
+          "medianMs": 125.308,
+          "minMs": 121.336,
+          "maxMs": 131.225,
+          "meanMs": 125.834,
+          "stddevMs": 3.676,
+          "cvPct": 2.9,
           "metaSamples": [
             {
               "artifact": 548989,
@@ -2052,18 +2053,18 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            26.756,
-            28.994,
-            20.702,
-            22.727,
-            24.635
+            20.21,
+            16.811,
+            22.46,
+            27.585,
+            27.782
           ],
-          "medianMs": 24.635,
-          "minMs": 20.702,
-          "maxMs": 28.994,
-          "meanMs": 24.763,
-          "stddevMs": 3.261,
-          "cvPct": 13.2,
+          "medianMs": 22.46,
+          "minMs": 16.811,
+          "maxMs": 27.782,
+          "meanMs": 22.97,
+          "stddevMs": 4.75,
+          "cvPct": 21.2,
           "metaSamples": [
             {
               "artifact": 548989,
@@ -2105,7 +2106,7 @@
           "cacheHitsLast": 0,
           "artifactMedian": 548989,
           "warmupPasses": 1,
-          "throughput": "8.1k files/s"
+          "throughput": "8.9k files/s"
         },
         {
           "id": "vue-3.5-1t-vdom-dev-smoff",
@@ -2121,18 +2122,18 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            168.684,
-            171.889,
-            170.634,
-            158.895,
-            151.657
+            168.025,
+            185.399,
+            167.901,
+            185.721,
+            156.569
           ],
-          "medianMs": 168.684,
-          "minMs": 151.657,
-          "maxMs": 171.889,
-          "meanMs": 164.352,
-          "stddevMs": 8.746,
-          "cvPct": 5.2,
+          "medianMs": 168.025,
+          "minMs": 156.569,
+          "maxMs": 185.721,
+          "meanMs": 172.723,
+          "stddevMs": 12.609,
+          "cvPct": 7.5,
           "metaSamples": [
             {
               "artifact": 656372
@@ -2168,18 +2169,18 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            175.723,
-            167.07,
-            171.771,
-            163.678,
-            152.777
+            167.576,
+            158.659,
+            152.462,
+            174.24,
+            156.326
           ],
-          "medianMs": 167.07,
-          "minMs": 152.777,
-          "maxMs": 175.723,
-          "meanMs": 166.204,
-          "stddevMs": 8.789,
-          "cvPct": 5.3,
+          "medianMs": 158.659,
+          "minMs": 152.462,
+          "maxMs": 174.24,
+          "meanMs": 161.853,
+          "stddevMs": 8.876,
+          "cvPct": 5.6,
           "metaSamples": [
             {
               "artifact": 656372
@@ -2199,7 +2200,7 @@
           ],
           "artifactMedian": 656372,
           "warmupPasses": 1,
-          "throughput": "1.2k files/s"
+          "throughput": "1.3k files/s"
         },
         {
           "id": "vize-1t-vdom-dev-smoff",
@@ -2215,18 +2216,18 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            54.023,
-            57.931,
-            55.184,
-            55.925,
-            54.615
+            61.248,
+            58.609,
+            58.468,
+            61.034,
+            58.319
           ],
-          "medianMs": 55.184,
-          "minMs": 54.023,
-          "maxMs": 57.931,
-          "meanMs": 55.536,
-          "stddevMs": 1.512,
-          "cvPct": 2.7,
+          "medianMs": 58.609,
+          "minMs": 58.319,
+          "maxMs": 61.248,
+          "meanMs": 59.536,
+          "stddevMs": 1.471,
+          "cvPct": 2.5,
           "metaSamples": [
             {
               "artifact": 609596
@@ -2246,7 +2247,7 @@
           ],
           "artifactMedian": 609596,
           "warmupPasses": 1,
-          "throughput": "3.6k files/s"
+          "throughput": "3.4k files/s"
         },
         {
           "id": "vize-batch-vdom-dev-smoff",
@@ -2262,18 +2263,18 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            24.515,
-            24.252,
-            21.892,
-            24.269,
-            18.634
+            22.685,
+            27.365,
+            26.853,
+            26.776,
+            26.568
           ],
-          "medianMs": 24.252,
-          "minMs": 18.634,
-          "maxMs": 24.515,
-          "meanMs": 22.712,
-          "stddevMs": 2.517,
-          "cvPct": 10.4,
+          "medianMs": 26.776,
+          "minMs": 22.685,
+          "maxMs": 27.365,
+          "meanMs": 26.049,
+          "stddevMs": 1.903,
+          "cvPct": 7.1,
           "metaSamples": [
             {
               "artifact": 609596
@@ -2293,7 +2294,7 @@
           ],
           "artifactMedian": 609596,
           "warmupPasses": 1,
-          "throughput": "8.2k files/s"
+          "throughput": "7.5k files/s"
         },
         {
           "id": "fervid-1t-vdom-dev-smoff",
@@ -2309,18 +2310,18 @@
           "files": 200,
           "status": "unranked",
           "runs": [
-            56.916,
-            57.383,
-            56.966,
-            57.057,
-            57.069
+            59.461,
+            59.229,
+            58.385,
+            58.105,
+            58.271
           ],
-          "medianMs": 57.057,
-          "minMs": 56.916,
-          "maxMs": 57.383,
-          "meanMs": 57.078,
-          "stddevMs": 0.182,
-          "cvPct": 0.3,
+          "medianMs": 58.385,
+          "minMs": 58.105,
+          "maxMs": 59.461,
+          "meanMs": 58.69,
+          "stddevMs": 0.612,
+          "cvPct": 1,
           "metaSamples": [
             {
               "artifact": 787866,
@@ -2366,18 +2367,18 @@
           "files": 200,
           "status": "unranked",
           "runs": [
-            31.086,
-            30.481,
-            38.274,
-            72.641,
-            25.037
+            30.174,
+            35.181,
+            30.744,
+            35.224,
+            33.535
           ],
-          "medianMs": 31.086,
-          "minMs": 25.037,
-          "maxMs": 72.641,
-          "meanMs": 39.504,
-          "stddevMs": 19.112,
-          "cvPct": 61.5,
+          "medianMs": 33.535,
+          "minMs": 30.174,
+          "maxMs": 35.224,
+          "meanMs": 32.972,
+          "stddevMs": 2.401,
+          "cvPct": 7.2,
           "metaSamples": [
             {
               "artifact": 787866,
@@ -2423,18 +2424,18 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            122.643,
-            136.453,
-            126.002,
-            132.193,
-            117.201
+            136.938,
+            134.678,
+            124.219,
+            125.813,
+            133.086
           ],
-          "medianMs": 126.002,
-          "minMs": 117.201,
-          "maxMs": 136.453,
-          "meanMs": 126.898,
-          "stddevMs": 7.62,
-          "cvPct": 6,
+          "medianMs": 133.086,
+          "minMs": 124.219,
+          "maxMs": 136.938,
+          "meanMs": 130.947,
+          "stddevMs": 5.613,
+          "cvPct": 4.2,
           "metaSamples": [
             {
               "artifact": 671880,
@@ -2476,7 +2477,7 @@
           "cacheHitsLast": 0,
           "artifactMedian": 671880,
           "warmupPasses": 1,
-          "throughput": "1.6k files/s"
+          "throughput": "1.5k files/s"
         },
         {
           "id": "verter-session-vdom-dev-smoff",
@@ -2492,18 +2493,18 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            25.89,
-            28.812,
-            24.751,
-            34.558,
-            17.838
+            33.807,
+            37.183,
+            23.781,
+            32.656,
+            26.167
           ],
-          "medianMs": 25.89,
-          "minMs": 17.838,
-          "maxMs": 34.558,
-          "meanMs": 26.37,
-          "stddevMs": 6.096,
-          "cvPct": 23.5,
+          "medianMs": 32.656,
+          "minMs": 23.781,
+          "maxMs": 37.183,
+          "meanMs": 30.719,
+          "stddevMs": 5.566,
+          "cvPct": 17,
           "metaSamples": [
             {
               "artifact": 671880,
@@ -2545,7 +2546,7 @@
           "cacheHitsLast": 0,
           "artifactMedian": 671880,
           "warmupPasses": 1,
-          "throughput": "7.7k files/s"
+          "throughput": "6.1k files/s"
         },
         {
           "id": "vue-3.5-vapor-unsupported-vapor-prod-smoff",
@@ -2573,18 +2574,18 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            307.879,
-            312.301,
-            300.331,
-            282.661,
-            297.517
+            350.588,
+            362.055,
+            334.71,
+            325.622,
+            347.166
           ],
-          "medianMs": 300.331,
-          "minMs": 282.661,
-          "maxMs": 312.301,
-          "meanMs": 300.138,
-          "stddevMs": 11.404,
-          "cvPct": 3.8,
+          "medianMs": 347.166,
+          "minMs": 325.622,
+          "maxMs": 362.055,
+          "meanMs": 344.028,
+          "stddevMs": 14.173,
+          "cvPct": 4.1,
           "metaSamples": [
             {
               "artifact": 681563
@@ -2604,7 +2605,7 @@
           ],
           "artifactMedian": 681563,
           "warmupPasses": 1,
-          "throughput": "666 files/s"
+          "throughput": "576 files/s"
         },
         {
           "id": "vize-1t-vapor-prod-smoff",
@@ -2620,18 +2621,18 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            60.14,
-            56.808,
-            56.776,
-            58.64,
-            57.167
+            61.343,
+            60.523,
+            60.732,
+            61.021,
+            60.963
           ],
-          "medianMs": 57.167,
-          "minMs": 56.776,
-          "maxMs": 60.14,
-          "meanMs": 57.906,
-          "stddevMs": 1.463,
-          "cvPct": 2.6,
+          "medianMs": 60.963,
+          "minMs": 60.523,
+          "maxMs": 61.343,
+          "meanMs": 60.916,
+          "stddevMs": 0.31,
+          "cvPct": 0.5,
           "metaSamples": [
             {
               "artifact": 754214
@@ -2651,7 +2652,7 @@
           ],
           "artifactMedian": 754214,
           "warmupPasses": 1,
-          "throughput": "3.5k files/s"
+          "throughput": "3.3k files/s"
         },
         {
           "id": "vize-batch-vapor-prod-smoff",
@@ -2667,18 +2668,18 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            20.118,
-            19.559,
-            20.214,
-            20.973,
-            19.607
+            22.277,
+            21.867,
+            23.591,
+            22.164,
+            21.64
           ],
-          "medianMs": 20.118,
-          "minMs": 19.559,
-          "maxMs": 20.973,
-          "meanMs": 20.094,
-          "stddevMs": 0.572,
-          "cvPct": 2.8,
+          "medianMs": 22.164,
+          "minMs": 21.64,
+          "maxMs": 23.591,
+          "meanMs": 22.308,
+          "stddevMs": 0.76,
+          "cvPct": 3.4,
           "metaSamples": [
             {
               "artifact": 754214
@@ -2698,7 +2699,7 @@
           ],
           "artifactMedian": 754214,
           "warmupPasses": 1,
-          "throughput": "9.9k files/s"
+          "throughput": "9.0k files/s"
         },
         {
           "id": "fervid-vapor-unsupported-vapor-prod-smoff",
@@ -2726,18 +2727,18 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            117.095,
-            126.963,
-            117.119,
-            120.476,
-            125.096
+            120.516,
+            124.821,
+            129.366,
+            127.661,
+            127.368
           ],
-          "medianMs": 120.476,
-          "minMs": 117.095,
-          "maxMs": 126.963,
-          "meanMs": 121.35,
-          "stddevMs": 4.536,
-          "cvPct": 3.8,
+          "medianMs": 127.368,
+          "minMs": 120.516,
+          "maxMs": 129.366,
+          "meanMs": 125.946,
+          "stddevMs": 3.443,
+          "cvPct": 2.7,
           "metaSamples": [
             {
               "artifact": 585310,
@@ -2779,7 +2780,7 @@
           "cacheHitsLast": 0,
           "artifactMedian": 585310,
           "warmupPasses": 1,
-          "throughput": "1.7k files/s"
+          "throughput": "1.6k files/s"
         },
         {
           "id": "verter-session-vapor-prod-smoff",
@@ -2795,18 +2796,18 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            19.136,
-            24.65,
-            18.269,
-            28.011,
-            18.161
+            21.316,
+            22.901,
+            20.761,
+            23.035,
+            18.36
           ],
-          "medianMs": 19.136,
-          "minMs": 18.161,
-          "maxMs": 28.011,
-          "meanMs": 21.645,
-          "stddevMs": 4.455,
-          "cvPct": 23.3,
+          "medianMs": 21.316,
+          "minMs": 18.36,
+          "maxMs": 23.035,
+          "meanMs": 21.275,
+          "stddevMs": 1.904,
+          "cvPct": 8.9,
           "metaSamples": [
             {
               "artifact": 585310,
@@ -2848,7 +2849,7 @@
           "cacheHitsLast": 0,
           "artifactMedian": 585310,
           "warmupPasses": 1,
-          "throughput": "10.5k files/s"
+          "throughput": "9.4k files/s"
         },
         {
           "id": "vue-3.5-vapor-unsupported-vapor-dev-smoff",
@@ -2876,18 +2877,18 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            290.816,
-            279.958,
-            373.122,
-            273.945,
-            274.254
+            307.342,
+            296.621,
+            298.519,
+            308.351,
+            290.782
           ],
-          "medianMs": 279.958,
-          "minMs": 273.945,
-          "maxMs": 373.122,
-          "meanMs": 298.419,
-          "stddevMs": 42.315,
-          "cvPct": 15.1,
+          "medianMs": 298.519,
+          "minMs": 290.782,
+          "maxMs": 308.351,
+          "meanMs": 300.323,
+          "stddevMs": 7.445,
+          "cvPct": 2.5,
           "metaSamples": [
             {
               "artifact": 683301
@@ -2907,7 +2908,7 @@
           ],
           "artifactMedian": 683301,
           "warmupPasses": 1,
-          "throughput": "714 files/s"
+          "throughput": "670 files/s"
         },
         {
           "id": "vize-1t-vapor-dev-smoff",
@@ -2923,18 +2924,18 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            56.964,
-            56.632,
-            57.102,
-            56.793,
-            59.224
+            61.642,
+            62.749,
+            60.541,
+            61.029,
+            61.22
           ],
-          "medianMs": 56.964,
-          "minMs": 56.632,
-          "maxMs": 59.224,
-          "meanMs": 57.343,
-          "stddevMs": 1.066,
-          "cvPct": 1.9,
+          "medianMs": 61.22,
+          "minMs": 60.541,
+          "maxMs": 62.749,
+          "meanMs": 61.436,
+          "stddevMs": 0.834,
+          "cvPct": 1.4,
           "metaSamples": [
             {
               "artifact": 754214
@@ -2954,7 +2955,7 @@
           ],
           "artifactMedian": 754214,
           "warmupPasses": 1,
-          "throughput": "3.5k files/s"
+          "throughput": "3.3k files/s"
         },
         {
           "id": "vize-batch-vapor-dev-smoff",
@@ -2970,18 +2971,18 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            20.7,
-            20.175,
-            19.699,
-            20.142,
-            20.736
+            22.012,
+            22.289,
+            22.472,
+            22.362,
+            21.826
           ],
-          "medianMs": 20.175,
-          "minMs": 19.699,
-          "maxMs": 20.736,
-          "meanMs": 20.29,
-          "stddevMs": 0.433,
-          "cvPct": 2.1,
+          "medianMs": 22.289,
+          "minMs": 21.826,
+          "maxMs": 22.472,
+          "meanMs": 22.192,
+          "stddevMs": 0.266,
+          "cvPct": 1.2,
           "metaSamples": [
             {
               "artifact": 754214
@@ -3001,7 +3002,7 @@
           ],
           "artifactMedian": 754214,
           "warmupPasses": 1,
-          "throughput": "9.9k files/s"
+          "throughput": "9.0k files/s"
         },
         {
           "id": "fervid-vapor-unsupported-vapor-dev-smoff",
@@ -3029,18 +3030,18 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            119.49,
-            120.238,
-            125.424,
-            119.168,
-            121.795
+            124.191,
+            126.54,
+            133.836,
+            128.982,
+            125.355
           ],
-          "medianMs": 120.238,
-          "minMs": 119.168,
-          "maxMs": 125.424,
-          "meanMs": 121.223,
-          "stddevMs": 2.558,
-          "cvPct": 2.1,
+          "medianMs": 126.54,
+          "minMs": 124.191,
+          "maxMs": 133.836,
+          "meanMs": 127.781,
+          "stddevMs": 3.822,
+          "cvPct": 3,
           "metaSamples": [
             {
               "artifact": 621048,
@@ -3082,7 +3083,7 @@
           "cacheHitsLast": 0,
           "artifactMedian": 621048,
           "warmupPasses": 1,
-          "throughput": "1.7k files/s"
+          "throughput": "1.6k files/s"
         },
         {
           "id": "verter-session-vapor-dev-smoff",
@@ -3098,18 +3099,18 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            18.789,
-            19.519,
-            23.324,
-            17.465,
-            26.184
+            17.551,
+            24.338,
+            28.625,
+            19.2,
+            21.701
           ],
-          "medianMs": 19.519,
-          "minMs": 17.465,
-          "maxMs": 26.184,
-          "meanMs": 21.056,
-          "stddevMs": 3.6,
-          "cvPct": 18.4,
+          "medianMs": 21.701,
+          "minMs": 17.551,
+          "maxMs": 28.625,
+          "meanMs": 22.283,
+          "stddevMs": 4.378,
+          "cvPct": 20.2,
           "metaSamples": [
             {
               "artifact": 621048,
@@ -3151,7 +3152,7 @@
           "cacheHitsLast": 0,
           "artifactMedian": 621048,
           "warmupPasses": 1,
-          "throughput": "10.2k files/s"
+          "throughput": "9.2k files/s"
         }
       ]
     },
@@ -3181,20 +3182,20 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            3.234,
-            3.142,
-            3.058,
-            3.108,
-            2.793
+            4.395,
+            4.264,
+            5.723,
+            4.319,
+            4.12
           ],
-          "medianMs": 3.108,
-          "minMs": 2.793,
-          "maxMs": 3.234,
-          "meanMs": 3.067,
-          "stddevMs": 0.166,
-          "cvPct": 5.3,
+          "medianMs": 4.319,
+          "minMs": 4.12,
+          "maxMs": 5.723,
+          "meanMs": 4.564,
+          "stddevMs": 0.656,
+          "cvPct": 15.2,
           "warmupPasses": 1,
-          "throughput": "64.4k files/s"
+          "throughput": "46.3k files/s"
         },
         {
           "id": "vue-jsx-vapor-rs-vdom",
@@ -3206,20 +3207,20 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            2.531,
-            2.77,
-            2.492,
-            2.517,
-            2.586
+            3.464,
+            4.133,
+            3.464,
+            3.76,
+            3.534
           ],
-          "medianMs": 2.531,
-          "minMs": 2.492,
-          "maxMs": 2.77,
-          "meanMs": 2.579,
-          "stddevMs": 0.112,
-          "cvPct": 4.4,
+          "medianMs": 3.534,
+          "minMs": 3.464,
+          "maxMs": 4.133,
+          "meanMs": 3.671,
+          "stddevMs": 0.285,
+          "cvPct": 8.1,
           "warmupPasses": 1,
-          "throughput": "79.0k files/s"
+          "throughput": "56.6k files/s"
         },
         {
           "id": "vue-jsx-vapor-api",
@@ -3231,20 +3232,20 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            3.472,
-            3.525,
-            3.347,
-            3.393,
-            3.335
+            4.976,
+            5.181,
+            4.967,
+            5.009,
+            5.053
           ],
-          "medianMs": 3.393,
-          "minMs": 3.335,
-          "maxMs": 3.525,
-          "meanMs": 3.414,
-          "stddevMs": 0.082,
-          "cvPct": 2.4,
+          "medianMs": 5.009,
+          "minMs": 4.967,
+          "maxMs": 5.181,
+          "meanMs": 5.037,
+          "stddevMs": 0.087,
+          "cvPct": 1.7,
           "warmupPasses": 1,
-          "throughput": "58.9k files/s"
+          "throughput": "39.9k files/s"
         },
         {
           "id": "vue-babel-plugin-jsx",
@@ -3256,18 +3257,18 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            134.212,
-            127.382,
-            115.381,
-            117.041,
-            115.327
+            138.376,
+            138.526,
+            118.915,
+            118.747,
+            111.651
           ],
-          "medianMs": 117.041,
-          "minMs": 115.327,
-          "maxMs": 134.212,
-          "meanMs": 121.869,
-          "stddevMs": 8.529,
-          "cvPct": 7.3,
+          "medianMs": 118.915,
+          "minMs": 111.651,
+          "maxMs": 138.526,
+          "meanMs": 125.243,
+          "stddevMs": 12.409,
+          "cvPct": 10.4,
           "warmupPasses": 1,
           "throughput": "1.7k files/s"
         }
@@ -3305,61 +3306,17 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            4783.097,
-            4849.347,
-            4838.144,
-            4898.062,
-            4879.559
+            5175.805,
+            5191.544,
+            5171.848,
+            5132.107,
+            5230.882
           ],
-          "medianMs": 4849.347,
-          "minMs": 4783.097,
-          "maxMs": 4898.062,
-          "meanMs": 4849.642,
-          "stddevMs": 44.159,
-          "cvPct": 0.9,
-          "metaSamples": [
-            {
-              "artifact": 0
-            },
-            {
-              "artifact": 0
-            },
-            {
-              "artifact": 0
-            },
-            {
-              "artifact": 0
-            },
-            {
-              "artifact": 0
-            }
-          ],
-          "artifactMedian": 0,
-          "warmupPasses": 1,
-          "throughput": "41 files/s"
-        },
-        {
-          "id": "vue-tsc-tnb",
-          "label": "vue-tsc (TNB / tsgo)",
-          "package": "typescript-native-bridge",
-          "artifactPolarity": "informational",
-          "engine": "tsgo",
-          "artifactLabel": "Diagnostics",
-          "notes": "vue-tsc 3.3.10 with typescript aliased to typescript-native-bridge 6.0.3-bridge.13.tsgo.7.0.2 (TS API 6.0.3 on tsgo 7.0.2, in-process NAPI/FFI) | engine: tsgo 7.0.2 via TNB 6.0.3-bridge.13.tsgo.7.0.2 | gate: script=✓ tmpl-prop=✓ tmpl-event=✓ corpus=✓",
-          "files": 200,
-          "status": "ok",
-          "runs": [
-            2280.261,
-            2259.763,
-            2251.555,
-            2273.554,
-            2288.794
-          ],
-          "medianMs": 2273.554,
-          "minMs": 2251.555,
-          "maxMs": 2288.794,
-          "meanMs": 2270.785,
-          "stddevMs": 15.108,
+          "medianMs": 5175.805,
+          "minMs": 5132.107,
+          "maxMs": 5230.882,
+          "meanMs": 5180.437,
+          "stddevMs": 35.704,
           "cvPct": 0.7,
           "metaSamples": [
             {
@@ -3380,7 +3337,51 @@
           ],
           "artifactMedian": 0,
           "warmupPasses": 1,
-          "throughput": "88 files/s"
+          "throughput": "39 files/s"
+        },
+        {
+          "id": "vue-tsc-tnb",
+          "label": "vue-tsc (TNB / tsgo)",
+          "package": "typescript-native-bridge",
+          "artifactPolarity": "informational",
+          "engine": "tsgo",
+          "artifactLabel": "Diagnostics",
+          "notes": "vue-tsc 3.3.10 with typescript aliased to typescript-native-bridge 6.0.3-bridge.13.tsgo.7.0.2 (TS API 6.0.3 on tsgo 7.0.2, in-process NAPI/FFI) | engine: tsgo 7.0.2 via TNB 6.0.3-bridge.13.tsgo.7.0.2 | gate: script=✓ tmpl-prop=✓ tmpl-event=✓ corpus=✓",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            2474.741,
+            2467.776,
+            2438.341,
+            2455.578,
+            2433.464
+          ],
+          "medianMs": 2455.578,
+          "minMs": 2433.464,
+          "maxMs": 2474.741,
+          "meanMs": 2453.98,
+          "stddevMs": 17.954,
+          "cvPct": 0.7,
+          "metaSamples": [
+            {
+              "artifact": 0
+            },
+            {
+              "artifact": 0
+            },
+            {
+              "artifact": 0
+            },
+            {
+              "artifact": 0
+            },
+            {
+              "artifact": 0
+            }
+          ],
+          "artifactMedian": 0,
+          "warmupPasses": 1,
+          "throughput": "81 files/s"
         },
         {
           "id": "golar-typecheck",
@@ -3393,18 +3394,18 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            1586.941,
-            1579.349,
-            1549.786,
-            1598.649,
-            1584.841
+            1708.119,
+            1703.816,
+            1681.226,
+            1696.389,
+            1676.165
           ],
-          "medianMs": 1584.841,
-          "minMs": 1549.786,
-          "maxMs": 1598.649,
-          "meanMs": 1579.913,
-          "stddevMs": 18.253,
-          "cvPct": 1.2,
+          "medianMs": 1696.389,
+          "minMs": 1676.165,
+          "maxMs": 1708.119,
+          "meanMs": 1693.143,
+          "stddevMs": 13.955,
+          "cvPct": 0.8,
           "metaSamples": [
             {
               "artifact": 0
@@ -3424,7 +3425,7 @@
           ],
           "artifactMedian": 0,
           "warmupPasses": 1,
-          "throughput": "126 files/s"
+          "throughput": "118 files/s"
         },
         {
           "id": "golar-default",
@@ -3437,61 +3438,17 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            1533.97,
-            1548.072,
-            1565.14,
-            1595.9,
-            1579.256
+            1741.445,
+            1703.837,
+            1682.849,
+            1689.788,
+            1697.467
           ],
-          "medianMs": 1565.14,
-          "minMs": 1533.97,
-          "maxMs": 1595.9,
-          "meanMs": 1564.468,
-          "stddevMs": 24.526,
-          "cvPct": 1.6,
-          "metaSamples": [
-            {
-              "artifact": 0
-            },
-            {
-              "artifact": 0
-            },
-            {
-              "artifact": 0
-            },
-            {
-              "artifact": 0
-            },
-            {
-              "artifact": 0
-            }
-          ],
-          "artifactMedian": 0,
-          "warmupPasses": 1,
-          "throughput": "128 files/s"
-        },
-        {
-          "id": "vize-check",
-          "label": "Vize check",
-          "package": "vize",
-          "artifactPolarity": "informational",
-          "engine": "tsgo",
-          "artifactLabel": "Diagnostics",
-          "notes": "vize check . --tsconfig tsconfig.json (native + Corsa when available) | engine: tsgo 7.0.0-dev.20260603.1 (nightly) | gate: script=✓ tmpl-prop=✓ tmpl-event=✓ corpus=✓",
-          "files": 200,
-          "status": "ok",
-          "runs": [
-            1635.933,
-            1675.909,
-            1648.986,
-            1634.65,
-            1616.473
-          ],
-          "medianMs": 1635.933,
-          "minMs": 1616.473,
-          "maxMs": 1675.909,
-          "meanMs": 1642.39,
-          "stddevMs": 22.025,
+          "medianMs": 1697.467,
+          "minMs": 1682.849,
+          "maxMs": 1741.445,
+          "meanMs": 1703.077,
+          "stddevMs": 22.858,
           "cvPct": 1.3,
           "metaSamples": [
             {
@@ -3512,7 +3469,51 @@
           ],
           "artifactMedian": 0,
           "warmupPasses": 1,
-          "throughput": "122 files/s"
+          "throughput": "118 files/s"
+        },
+        {
+          "id": "vize-check",
+          "label": "Vize check",
+          "package": "vize",
+          "artifactPolarity": "informational",
+          "engine": "tsgo",
+          "artifactLabel": "Diagnostics",
+          "notes": "vize check . --tsconfig tsconfig.json (native + Corsa when available) | engine: tsgo 7.0.0-dev.20260603.1 (nightly) | gate: script=✓ tmpl-prop=✓ tmpl-event=✓ corpus=✓",
+          "files": 200,
+          "status": "ok",
+          "runs": [
+            1635.837,
+            1587.12,
+            1601.533,
+            1608.964,
+            1613.276
+          ],
+          "medianMs": 1608.964,
+          "minMs": 1587.12,
+          "maxMs": 1635.837,
+          "meanMs": 1609.346,
+          "stddevMs": 17.835,
+          "cvPct": 1.1,
+          "metaSamples": [
+            {
+              "artifact": 0
+            },
+            {
+              "artifact": 0
+            },
+            {
+              "artifact": 0
+            },
+            {
+              "artifact": 0
+            },
+            {
+              "artifact": 0
+            }
+          ],
+          "artifactMedian": 0,
+          "warmupPasses": 1,
+          "throughput": "124 files/s"
         },
         {
           "id": "verter-tsc",
@@ -3525,18 +3526,18 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            1117.66,
-            1074.373,
-            1083.809,
-            1094.057,
-            1092.209
+            1235.787,
+            1238.083,
+            1383.357,
+            1190.116,
+            1207.318
           ],
-          "medianMs": 1092.209,
-          "minMs": 1074.373,
-          "maxMs": 1117.66,
-          "meanMs": 1092.422,
-          "stddevMs": 16.122,
-          "cvPct": 1.5,
+          "medianMs": 1235.787,
+          "minMs": 1190.116,
+          "maxMs": 1383.357,
+          "meanMs": 1250.932,
+          "stddevMs": 76.7,
+          "cvPct": 6.2,
           "metaSamples": [
             {
               "artifact": 420
@@ -3556,7 +3557,7 @@
           ],
           "artifactMedian": 420,
           "warmupPasses": 1,
-          "throughput": "183 files/s"
+          "throughput": "162 files/s"
         }
       ]
     },
@@ -3589,20 +3590,20 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            3687.402,
-            3636.946,
-            3660.803,
-            3688.237,
-            3590.832
+            3744.507,
+            3756.633,
+            3781.302,
+            3776.094,
+            3777.288
           ],
-          "medianMs": 3660.803,
-          "minMs": 3590.832,
-          "maxMs": 3688.237,
-          "meanMs": 3652.844,
-          "stddevMs": 40.646,
-          "cvPct": 1.1,
+          "medianMs": 3776.094,
+          "minMs": 3744.507,
+          "maxMs": 3781.302,
+          "meanMs": 3767.165,
+          "stddevMs": 15.862,
+          "cvPct": 0.4,
           "warmupPasses": 1,
-          "throughput": "55 files/s"
+          "throughput": "53 files/s"
         },
         {
           "id": "oxfmt",
@@ -3614,20 +3615,20 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            3259.861,
-            3181.094,
-            3154.664,
-            3145.496,
-            3144.899
+            3254.047,
+            3251.67,
+            3309.025,
+            3272.794,
+            3309.575
           ],
-          "medianMs": 3154.664,
-          "minMs": 3144.899,
-          "maxMs": 3259.861,
-          "meanMs": 3177.203,
-          "stddevMs": 48.488,
-          "cvPct": 1.5,
+          "medianMs": 3272.794,
+          "minMs": 3251.67,
+          "maxMs": 3309.575,
+          "meanMs": 3279.422,
+          "stddevMs": 28.476,
+          "cvPct": 0.9,
           "warmupPasses": 1,
-          "throughput": "63 files/s"
+          "throughput": "61 files/s"
         },
         {
           "id": "vize-fmt",
@@ -3639,18 +3640,18 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            126.341,
-            120.567,
-            124.219,
-            125.914,
-            127.394
+            124.3,
+            129.721,
+            127.56,
+            126.907,
+            130.584
           ],
-          "medianMs": 125.914,
-          "minMs": 120.567,
-          "maxMs": 127.394,
-          "meanMs": 124.887,
-          "stddevMs": 2.672,
-          "cvPct": 2.1,
+          "medianMs": 127.56,
+          "minMs": 124.3,
+          "maxMs": 130.584,
+          "meanMs": 127.814,
+          "stddevMs": 2.477,
+          "cvPct": 1.9,
           "warmupPasses": 1,
           "throughput": "1.6k files/s"
         },
@@ -3664,18 +3665,18 @@
           "files": 200,
           "status": "unranked",
           "runs": [
-            120.388,
-            119.105,
-            119.189,
-            118.071,
-            123.013
+            114.554,
+            115.241,
+            120.403,
+            119.508,
+            116.305
           ],
-          "medianMs": 119.189,
-          "minMs": 118.071,
-          "maxMs": 123.013,
-          "meanMs": 119.953,
-          "stddevMs": 1.897,
-          "cvPct": 1.6,
+          "medianMs": 116.305,
+          "minMs": 114.554,
+          "maxMs": 120.403,
+          "meanMs": 117.202,
+          "stddevMs": 2.609,
+          "cvPct": 2.2,
           "warmupPasses": 1,
           "throughput": "n/a"
         }
@@ -3712,20 +3713,20 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            1843.028,
-            1748.532,
-            1613.976,
-            1637.838,
-            1663.101
+            2155.448,
+            2431.531,
+            2131.204,
+            2138.604,
+            2048.42
           ],
-          "medianMs": 1663.101,
-          "minMs": 1613.976,
-          "maxMs": 1843.028,
-          "meanMs": 1701.295,
-          "stddevMs": 94.114,
-          "cvPct": 5.7,
+          "medianMs": 2138.604,
+          "minMs": 2048.42,
+          "maxMs": 2431.531,
+          "meanMs": 2181.041,
+          "stddevMs": 146.008,
+          "cvPct": 6.8,
           "warmupPasses": 1,
-          "throughput": "120 files/s"
+          "throughput": "94 files/s"
         },
         {
           "id": "eslint-plugin-vue-workers",
@@ -3737,20 +3738,20 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            3362.682,
-            3465.361,
-            3411.99,
-            3497.635,
-            3443.975
+            3608.138,
+            3812.449,
+            3837.866,
+            3804.766,
+            3723.345
           ],
-          "medianMs": 3443.975,
-          "minMs": 3362.682,
-          "maxMs": 3497.635,
-          "meanMs": 3436.329,
-          "stddevMs": 51.662,
-          "cvPct": 1.5,
+          "medianMs": 3804.766,
+          "minMs": 3608.138,
+          "maxMs": 3837.866,
+          "meanMs": 3757.313,
+          "stddevMs": 93.792,
+          "cvPct": 2.5,
           "warmupPasses": 1,
-          "throughput": "58 files/s"
+          "throughput": "53 files/s"
         },
         {
           "id": "eslint-plugin-vue-cli",
@@ -3762,20 +3763,20 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            3064.26,
-            3063.122,
-            3088.658,
-            3063.907,
-            3087.979
+            3291.134,
+            3232.427,
+            3267.743,
+            3328.056,
+            3317.574
           ],
-          "medianMs": 3064.26,
-          "minMs": 3063.122,
-          "maxMs": 3088.658,
-          "meanMs": 3073.585,
-          "stddevMs": 13.458,
-          "cvPct": 0.4,
+          "medianMs": 3291.134,
+          "minMs": 3232.427,
+          "maxMs": 3328.056,
+          "meanMs": 3287.387,
+          "stddevMs": 38.684,
+          "cvPct": 1.2,
           "warmupPasses": 1,
-          "throughput": "65 files/s"
+          "throughput": "61 files/s"
         },
         {
           "id": "vize-lint-1t",
@@ -3787,20 +3788,20 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            98.549,
-            102.372,
-            101.801,
-            120.737,
-            101.667
+            104.892,
+            104.771,
+            102.719,
+            109.696,
+            119.251
           ],
-          "medianMs": 101.801,
-          "minMs": 98.549,
-          "maxMs": 120.737,
-          "meanMs": 105.025,
-          "stddevMs": 8.909,
-          "cvPct": 8.8,
+          "medianMs": 104.892,
+          "minMs": 102.719,
+          "maxMs": 119.251,
+          "meanMs": 108.266,
+          "stddevMs": 6.654,
+          "cvPct": 6.3,
           "warmupPasses": 1,
-          "throughput": "2.0k files/s"
+          "throughput": "1.9k files/s"
         },
         {
           "id": "vize-lint-max",
@@ -3812,18 +3813,18 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            81.152,
-            81.567,
-            84.585,
-            84.994,
-            82.758
+            84.093,
+            81.759,
+            80.97,
+            82.217,
+            80.862
           ],
-          "medianMs": 82.758,
-          "minMs": 81.152,
-          "maxMs": 84.994,
-          "meanMs": 83.011,
-          "stddevMs": 1.733,
-          "cvPct": 2.1,
+          "medianMs": 81.759,
+          "minMs": 80.862,
+          "maxMs": 84.093,
+          "meanMs": 81.98,
+          "stddevMs": 1.308,
+          "cvPct": 1.6,
           "warmupPasses": 1,
           "throughput": "2.4k files/s"
         },
@@ -3837,18 +3838,18 @@
           "files": 200,
           "status": "unranked",
           "runs": [
-            367.822,
-            361.078,
-            373.238,
-            364.7,
-            364.897
+            352.617,
+            350.403,
+            356.335,
+            363.066,
+            360.788
           ],
-          "medianMs": 364.897,
-          "minMs": 361.078,
-          "maxMs": 373.238,
-          "meanMs": 366.347,
-          "stddevMs": 4.534,
-          "cvPct": 1.2,
+          "medianMs": 356.335,
+          "minMs": 350.403,
+          "maxMs": 363.066,
+          "meanMs": 356.642,
+          "stddevMs": 5.331,
+          "cvPct": 1.5,
           "warmupPasses": 1,
           "throughput": "n/a"
         },
@@ -3862,18 +3863,18 @@
           "files": 200,
           "status": "unranked",
           "runs": [
-            180.74,
-            186.898,
-            188.005,
-            184.059,
-            189.642
+            183.333,
+            178.075,
+            179.426,
+            185.248,
+            179.995
           ],
-          "medianMs": 186.898,
-          "minMs": 180.74,
-          "maxMs": 189.642,
-          "meanMs": 185.869,
-          "stddevMs": 3.516,
-          "cvPct": 1.9,
+          "medianMs": 179.995,
+          "minMs": 178.075,
+          "maxMs": 185.248,
+          "meanMs": 181.215,
+          "stddevMs": 2.971,
+          "cvPct": 1.7,
           "warmupPasses": 1,
           "throughput": "n/a"
         },
@@ -3887,18 +3888,18 @@
           "files": 200,
           "status": "unranked",
           "runs": [
-            81.865,
-            79.518,
-            80.966,
-            83.129,
-            77.729
+            84.891,
+            81.293,
+            78.555,
+            81.19,
+            89.117
           ],
-          "medianMs": 80.966,
-          "minMs": 77.729,
-          "maxMs": 83.129,
-          "meanMs": 80.641,
-          "stddevMs": 2.094,
-          "cvPct": 2.6,
+          "medianMs": 81.293,
+          "minMs": 78.555,
+          "maxMs": 89.117,
+          "meanMs": 83.009,
+          "stddevMs": 4.091,
+          "cvPct": 5,
           "warmupPasses": 1,
           "throughput": "n/a"
         },
@@ -3912,18 +3913,18 @@
           "files": 200,
           "status": "unranked",
           "runs": [
-            73.843,
-            79.916,
-            72.93,
-            81.89,
-            79.187
+            75.279,
+            76.122,
+            78.42,
+            78.366,
+            75.365
           ],
-          "medianMs": 79.187,
-          "minMs": 72.93,
-          "maxMs": 81.89,
-          "meanMs": 77.553,
-          "stddevMs": 3.943,
-          "cvPct": 5,
+          "medianMs": 76.122,
+          "minMs": 75.279,
+          "maxMs": 78.42,
+          "meanMs": 76.71,
+          "stddevMs": 1.571,
+          "cvPct": 2.1,
           "warmupPasses": 1,
           "throughput": "n/a"
         },
@@ -3937,18 +3938,18 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            147.014,
-            149.587,
-            152.785,
-            150.303,
-            149.677
+            158.004,
+            149.278,
+            153.613,
+            156.267,
+            155.316
           ],
-          "medianMs": 149.677,
-          "minMs": 147.014,
-          "maxMs": 152.785,
-          "meanMs": 149.873,
-          "stddevMs": 2.059,
-          "cvPct": 1.4,
+          "medianMs": 155.316,
+          "minMs": 149.278,
+          "maxMs": 158.004,
+          "meanMs": 154.496,
+          "stddevMs": 3.321,
+          "cvPct": 2.1,
           "warmupPasses": 1,
           "throughput": "1.3k files/s"
         }
@@ -3979,18 +3980,18 @@
           "files": 100,
           "status": "ok",
           "runs": [
-            1459.771,
-            954.899,
-            902.747,
-            922.909,
-            889.281
+            1410.827,
+            1323.972,
+            1390.521,
+            1275.371,
+            1065.773
           ],
-          "medianMs": 922.909,
-          "minMs": 889.281,
-          "maxMs": 1459.771,
-          "meanMs": 1025.921,
-          "stddevMs": 243.785,
-          "cvPct": 26.4,
+          "medianMs": 1323.972,
+          "minMs": 1065.773,
+          "maxMs": 1410.827,
+          "meanMs": 1293.293,
+          "stddevMs": 138.108,
+          "cvPct": 10.4,
           "metaSamples": [
             {
               "artifact": 1343
@@ -4010,7 +4011,7 @@
           ],
           "artifactMedian": 1343,
           "warmupPasses": 1,
-          "throughput": "108 files/s"
+          "throughput": "76 files/s"
         },
         {
           "id": "verter-component-meta",
@@ -4022,18 +4023,18 @@
           "files": 100,
           "status": "ok",
           "runs": [
-            459.82,
-            461.114,
-            464.536,
-            481.412,
-            500.288
+            561.716,
+            469.134,
+            432.747,
+            446.058,
+            486.43
           ],
-          "medianMs": 464.536,
-          "minMs": 459.82,
-          "maxMs": 500.288,
-          "meanMs": 473.434,
-          "stddevMs": 17.328,
-          "cvPct": 3.7,
+          "medianMs": 469.134,
+          "minMs": 432.747,
+          "maxMs": 561.716,
+          "meanMs": 479.217,
+          "stddevMs": 50.544,
+          "cvPct": 10.8,
           "metaSamples": [
             {
               "artifact": 88
@@ -4053,7 +4054,7 @@
           ],
           "artifactMedian": 88,
           "warmupPasses": 1,
-          "throughput": "215 files/s"
+          "throughput": "213 files/s"
         },
         {
           "id": "vize-component-meta",
@@ -4109,31 +4110,31 @@
           "threading": "lsp",
           "engine": "tsc-js",
           "artifactLabel": "Hover bytes",
-          "notes": "Official Vue language server v3, hybrid (two-process) mode — the only mode v3 has. Measured unit is the pair: @vue/language-server plus typescript-language-server with @vue/typescript-plugin, joined by the tsserver/request↔tsserver/response bridge (the VS Code/Neovim client contract). The .vue buffer is synced to both and both are asked for each feature, in parallel, with the slower one charged — a script-block hover is answered by the TypeScript half, since v3 ships no semantic TS provider in the Vue server. Startup and project load of BOTH processes are inside the timings. If hybrid wiring fails, row is error — not ranked as slow. Primary metric: didOpen→hover. | engine: TypeScript 6.0.3 (JS) | init=554ms · ready=n/a · open→hover=1097ms · hoverCold=8ms · hoverWarm=2ms · completion=18ms · definition=4ms | hover verified: returns a TypeScript type for `benchMarker` in <script setup> AND the auto-unwrapped `string` inside {{ }} (template is really typechecked)",
+          "notes": "Official Vue language server v3, hybrid (two-process) mode — the only mode v3 has. Measured unit is the pair: @vue/language-server plus typescript-language-server with @vue/typescript-plugin, joined by the tsserver/request↔tsserver/response bridge (the VS Code/Neovim client contract). The .vue buffer is synced to both and both are asked for each feature, in parallel, with the slower one charged — a script-block hover is answered by the TypeScript half, since v3 ships no semantic TS provider in the Vue server. Startup and project load of BOTH processes are inside the timings. If hybrid wiring fails, row is error — not ranked as slow. Primary metric: didOpen→hover. | engine: TypeScript 6.0.3 (JS) | init=570ms · ready=n/a · open→hover=1205ms · hoverCold=9ms · hoverWarm=2ms · completion=18ms · definition=9ms | hover verified: returns a TypeScript type for `benchMarker` in <script setup> AND the auto-unwrapped `string` inside {{ }} (template is really typechecked)",
           "files": 1,
           "status": "ok",
           "runs": [
-            1127.986,
-            1117.759,
-            1141.887,
-            1134.196,
-            1096.631
+            1313.832,
+            1223.807,
+            1190.452,
+            1417.764,
+            1204.568
           ],
-          "medianMs": 1127.986,
-          "minMs": 1096.631,
-          "maxMs": 1141.887,
-          "meanMs": 1123.692,
-          "stddevMs": 17.517,
-          "cvPct": 1.6,
+          "medianMs": 1223.807,
+          "minMs": 1190.452,
+          "maxMs": 1417.764,
+          "meanMs": 1270.085,
+          "stddevMs": 95.523,
+          "cvPct": 7.8,
           "metaSamples": [
             {
-              "initializeMs": 655.909244999988,
+              "initializeMs": 585.4492690000334,
               "workspaceReadyMs": null,
-              "didOpenToHoverMs": 1127.9860510000144,
-              "hoverColdMs": 40.10648200000287,
-              "hoverWarmMedianMs": 2.7885390000010375,
-              "completionMs": 19.17955999998958,
-              "definitionMs": 6.111573000001954,
+              "didOpenToHoverMs": 1313.8318800000125,
+              "hoverColdMs": 59.35729700000957,
+              "hoverWarmMedianMs": 3.731980000040494,
+              "completionMs": 22.271505999960937,
+              "definitionMs": 11.29608899995219,
               "artifact": 114,
               "hoverValid": true,
               "hoverReason": "",
@@ -4149,13 +4150,13 @@
               }
             },
             {
-              "initializeMs": 607.4555540000147,
+              "initializeMs": 641.4668720000191,
               "workspaceReadyMs": null,
-              "didOpenToHoverMs": 1117.7589549999975,
-              "hoverColdMs": 42.016145000001416,
-              "hoverWarmMedianMs": 2.4218870000040624,
-              "completionMs": 27.061541000002762,
-              "definitionMs": 5.301031999988481,
+              "didOpenToHoverMs": 1223.8067760000122,
+              "hoverColdMs": 54.046799000003375,
+              "hoverWarmMedianMs": 1.9446130000287667,
+              "completionMs": 25.165869000018574,
+              "definitionMs": 5.678985000005923,
               "artifact": 114,
               "hoverValid": true,
               "hoverReason": "",
@@ -4171,13 +4172,13 @@
               }
             },
             {
-              "initializeMs": 609.0191610000038,
+              "initializeMs": 649.0318280000356,
               "workspaceReadyMs": null,
-              "didOpenToHoverMs": 1141.886582999985,
-              "hoverColdMs": 39.590509000001475,
-              "hoverWarmMedianMs": 2.1324819999863394,
-              "completionMs": 16.92041099999915,
-              "definitionMs": 10.02890699999989,
+              "didOpenToHoverMs": 1190.4520289999782,
+              "hoverColdMs": 53.50828199996613,
+              "hoverWarmMedianMs": 2.0763479999732226,
+              "completionMs": 20.154670000018086,
+              "definitionMs": 9.152205999998841,
               "artifact": 114,
               "hoverValid": true,
               "hoverReason": "",
@@ -4193,13 +4194,13 @@
               }
             },
             {
-              "initializeMs": 612.3892909999704,
+              "initializeMs": 647.5559379999759,
               "workspaceReadyMs": null,
-              "didOpenToHoverMs": 1134.1960850000032,
-              "hoverColdMs": 40.63056999997934,
-              "hoverWarmMedianMs": 2.701498000009451,
-              "completionMs": 23.838017000001855,
-              "definitionMs": 4.655902000027709,
+              "didOpenToHoverMs": 1417.7636289999937,
+              "hoverColdMs": 44.160652999999,
+              "hoverWarmMedianMs": 2.407383999961894,
+              "completionMs": 22.32585799996741,
+              "definitionMs": 11.75705299997935,
               "artifact": 114,
               "hoverValid": true,
               "hoverReason": "",
@@ -4215,13 +4216,13 @@
               }
             },
             {
-              "initializeMs": 554.1624550000415,
+              "initializeMs": 570.4766769999987,
               "workspaceReadyMs": null,
-              "didOpenToHoverMs": 1096.6308149999822,
-              "hoverColdMs": 7.576483999961056,
-              "hoverWarmMedianMs": 1.8285439999890514,
-              "completionMs": 18.02192999998806,
-              "definitionMs": 4.320817000058014,
+              "didOpenToHoverMs": 1204.5683449999779,
+              "hoverColdMs": 8.744642999954522,
+              "hoverWarmMedianMs": 1.9530080000404269,
+              "completionMs": 18.39184600004228,
+              "definitionMs": 9.10873499995796,
               "artifact": 114,
               "hoverValid": true,
               "hoverReason": "",
@@ -4240,7 +4241,7 @@
           "artifactMedian": 114,
           "warmupPasses": 1,
           "throughput": "1 files/s",
-          "phaseBreakdown": "init=554ms · ready=n/a · open→hover=1097ms · hoverCold=8ms · hoverWarm=2ms · completion=18ms · definition=4ms",
+          "phaseBreakdown": "init=570ms · ready=n/a · open→hover=1205ms · hoverCold=9ms · hoverWarm=2ms · completion=18ms · definition=9ms",
           "primaryMetric": "didOpen→hover (ms)"
         },
         {
@@ -4250,31 +4251,31 @@
           "threading": "lsp",
           "engine": "tsgo",
           "artifactLabel": "Hover bytes",
-          "notes": "Identical to the Volar row above except the TypeScript half runs on typescript-native-bridge (tsgo) instead of the JavaScript TypeScript: same @vue/language-server, same @vue/typescript-plugin, same bridge, tsdk pointed at TNB 6.0.3-bridge.13.tsgo.7.0.2 tsdk. Isolates how much of Volar's latency is TypeScript's engine rather than the Vue layer. | engine: tsgo 7.0.2 via TNB 6.0.3-bridge.13.tsgo.7.0.2 | init=549ms · ready=n/a · open→hover=415ms · hoverCold=17ms · hoverWarm=2ms · completion=6ms · definition=4ms | hover verified: returns a TypeScript type for `benchMarker` in <script setup> AND the auto-unwrapped `string` inside {{ }} (template is really typechecked)",
+          "notes": "Identical to the Volar row above except the TypeScript half runs on typescript-native-bridge (tsgo) instead of the JavaScript TypeScript: same @vue/language-server, same @vue/typescript-plugin, same bridge, tsdk pointed at TNB 6.0.3-bridge.13.tsgo.7.0.2 tsdk. Isolates how much of Volar's latency is TypeScript's engine rather than the Vue layer. | engine: tsgo 7.0.2 via TNB 6.0.3-bridge.13.tsgo.7.0.2 | init=571ms · ready=n/a · open→hover=456ms · hoverCold=20ms · hoverWarm=2ms · completion=5ms · definition=4ms | hover verified: returns a TypeScript type for `benchMarker` in <script setup> AND the auto-unwrapped `string` inside {{ }} (template is really typechecked)",
           "files": 1,
           "status": "ok",
           "runs": [
-            412.099,
-            414.542,
-            415.727,
-            411.215,
-            415.123
+            468.795,
+            459.891,
+            441.51,
+            465.26,
+            456.032
           ],
-          "medianMs": 414.542,
-          "minMs": 411.215,
-          "maxMs": 415.727,
-          "meanMs": 413.741,
-          "stddevMs": 1.973,
-          "cvPct": 0.5,
+          "medianMs": 459.891,
+          "minMs": 441.51,
+          "maxMs": 468.795,
+          "meanMs": 458.298,
+          "stddevMs": 10.585,
+          "cvPct": 2.3,
           "metaSamples": [
             {
-              "initializeMs": 553.3684439999925,
+              "initializeMs": 561.8394609999959,
               "workspaceReadyMs": null,
-              "didOpenToHoverMs": 412.09863200000837,
-              "hoverColdMs": 15.883957999991253,
-              "hoverWarmMedianMs": 1.799189999990631,
-              "completionMs": 6.014537000010023,
-              "definitionMs": 3.6520590000145603,
+              "didOpenToHoverMs": 468.79520499997307,
+              "hoverColdMs": 18.10734099999536,
+              "hoverWarmMedianMs": 1.8489610000397079,
+              "completionMs": 6.388712999993004,
+              "definitionMs": 3.8741480000317097,
               "artifact": 114,
               "hoverValid": true,
               "hoverReason": "",
@@ -4290,13 +4291,13 @@
               }
             },
             {
-              "initializeMs": 598.8932299999869,
+              "initializeMs": 624.0581229999661,
               "workspaceReadyMs": null,
-              "didOpenToHoverMs": 414.5415000000212,
-              "hoverColdMs": 8.16399800000363,
-              "hoverWarmMedianMs": 2.845028999989154,
-              "completionMs": 5.113805000000866,
-              "definitionMs": 4.542784999997821,
+              "didOpenToHoverMs": 459.89116399997147,
+              "hoverColdMs": 20.572113999980502,
+              "hoverWarmMedianMs": 1.8490439999732189,
+              "completionMs": 5.066690999956336,
+              "definitionMs": 4.679143999994267,
               "artifact": 114,
               "hoverValid": true,
               "hoverReason": "",
@@ -4312,13 +4313,13 @@
               }
             },
             {
-              "initializeMs": 552.9072130000277,
+              "initializeMs": 581.3912300000084,
               "workspaceReadyMs": null,
-              "didOpenToHoverMs": 415.7268800000311,
-              "hoverColdMs": 24.595988999994006,
-              "hoverWarmMedianMs": 1.7739310000324622,
-              "completionMs": 5.353851999971084,
-              "definitionMs": 4.161196000000928,
+              "didOpenToHoverMs": 441.50995900004636,
+              "hoverColdMs": 16.781572000007145,
+              "hoverWarmMedianMs": 1.9016919999849051,
+              "completionMs": 6.214806000003591,
+              "definitionMs": 4.089309000002686,
               "artifact": 114,
               "hoverValid": true,
               "hoverReason": "",
@@ -4334,13 +4335,13 @@
               }
             },
             {
-              "initializeMs": 567.0412080000388,
+              "initializeMs": 578.9473880000296,
               "workspaceReadyMs": null,
-              "didOpenToHoverMs": 411.21549200004665,
-              "hoverColdMs": 7.771978999953717,
-              "hoverWarmMedianMs": 2.89022699999623,
-              "completionMs": 5.040831000020262,
-              "definitionMs": 3.81713799998397,
+              "didOpenToHoverMs": 465.25989300000947,
+              "hoverColdMs": 20.897295999980997,
+              "hoverWarmMedianMs": 2.0337730000028387,
+              "completionMs": 5.099465999985114,
+              "definitionMs": 5.0870320000103675,
               "artifact": 114,
               "hoverValid": true,
               "hoverReason": "",
@@ -4356,13 +4357,13 @@
               }
             },
             {
-              "initializeMs": 548.5163950000424,
+              "initializeMs": 570.6912139999913,
               "workspaceReadyMs": null,
-              "didOpenToHoverMs": 415.12294299999485,
-              "hoverColdMs": 17.284499000001233,
-              "hoverWarmMedianMs": 1.7227890000212938,
-              "completionMs": 6.017983000027016,
-              "definitionMs": 4.138732999970671,
+              "didOpenToHoverMs": 456.03166999999667,
+              "hoverColdMs": 20.093905000016093,
+              "hoverWarmMedianMs": 2.0022299999836832,
+              "completionMs": 5.20716099999845,
+              "definitionMs": 3.975884000014048,
               "artifact": 114,
               "hoverValid": true,
               "hoverReason": "",
@@ -4381,7 +4382,7 @@
           "artifactMedian": 114,
           "warmupPasses": 1,
           "throughput": "2 files/s",
-          "phaseBreakdown": "init=549ms · ready=n/a · open→hover=415ms · hoverCold=17ms · hoverWarm=2ms · completion=6ms · definition=4ms",
+          "phaseBreakdown": "init=571ms · ready=n/a · open→hover=456ms · hoverCold=20ms · hoverWarm=2ms · completion=5ms · definition=4ms",
           "primaryMetric": "didOpen→hover (ms)"
         },
         {
@@ -4391,35 +4392,35 @@
           "threading": "lsp",
           "engine": "tsgo",
           "artifactLabel": "Hover bytes",
-          "notes": "vize lsp --stdio, launched from the npm package's NODE entry (bin/vize → NAPI addon under Node) because no version-matched native server was found; this costs ~35ms of Node bootstrap per spawn, inside initialize (/opt/hostedtoolcache/node/22.23.2/x64/bin/node). Set VIZE_LSP_BIN to pin a specific binary. Same workspace/file/position as Volar. Ready signal: none standardized → workspaceReady = n/a. | engine: tsgo 7.0.0-dev.20260603.1 (nightly) | init=41ms · ready=n/a · open→hover=437ms · hoverCold=12ms · hoverWarm=3ms · completion=7ms · definition=3ms | hover verified: returns a TypeScript type for `benchMarker` in <script setup> AND the auto-unwrapped `string` inside {{ }} (template is really typechecked)",
+          "notes": "vize lsp --stdio, launched from the npm package's NODE entry (bin/vize → NAPI addon under Node) because no version-matched native server was found; this costs ~35ms of Node bootstrap per spawn, inside initialize (/opt/hostedtoolcache/node/22.23.2/x64/bin/node). Set VIZE_LSP_BIN to pin a specific binary. Same workspace/file/position as Volar. Ready signal: none standardized → workspaceReady = n/a. | engine: tsgo 7.0.0-dev.20260603.1 (nightly) | init=39ms · ready=n/a · open→hover=344ms · hoverCold=51ms · hoverWarm=5ms · completion=8ms · definition=3ms | hover verified: returns a TypeScript type for `benchMarker` in <script setup> AND the auto-unwrapped `string` inside {{ }} (template is really typechecked)",
           "files": 1,
           "status": "ok",
           "runs": [
-            425.816,
-            437.051,
-            424.857,
-            430.041,
-            436.693
+            365.244,
+            355.672,
+            342.408,
+            357.362,
+            343.792
           ],
-          "medianMs": 430.041,
-          "minMs": 424.857,
-          "maxMs": 437.051,
-          "meanMs": 430.892,
-          "stddevMs": 5.799,
-          "cvPct": 1.3,
+          "medianMs": 355.672,
+          "minMs": 342.408,
+          "maxMs": 365.244,
+          "meanMs": 352.896,
+          "stddevMs": 9.657,
+          "cvPct": 2.7,
           "metaSamples": [
             {
-              "initializeMs": 39.7615929999738,
+              "initializeMs": 37.6222200000193,
               "workspaceReadyMs": null,
-              "didOpenToHoverMs": 425.815591999999,
-              "hoverColdMs": 11.765274999983376,
-              "hoverWarmMedianMs": 3.141219999990426,
-              "completionMs": 7.282756000000518,
-              "definitionMs": 3.140367999993032,
-              "artifact": 341,
+              "didOpenToHoverMs": 365.2440460000071,
+              "hoverColdMs": 51.169353000004776,
+              "hoverWarmMedianMs": 3.5204650000086986,
+              "completionMs": 7.794737999967765,
+              "definitionMs": 3.592579999996815,
+              "artifact": 113,
               "hoverValid": true,
               "hoverReason": "",
-              "hoverSample": "```typescript\nconst benchMarker: Ref<string, string>Stable hover target for LSP benchmarks — do not rename.\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Re",
+              "hoverSample": "```typescript\nconst benchMarker: Ref<string, string>Stable hover target for LSP benchmarks — do not rename.\n```",
               "templateHoverValid": true,
               "templateHoverReason": "",
               "templateHoverSample": "```typescript\nconst benchMarker: string\n```",
@@ -4431,17 +4432,17 @@
               }
             },
             {
-              "initializeMs": 37.50376199997845,
+              "initializeMs": 39.83916099998169,
               "workspaceReadyMs": null,
-              "didOpenToHoverMs": 437.0509959999763,
-              "hoverColdMs": 12.007941000018036,
-              "hoverWarmMedianMs": 3.0380849999783095,
-              "completionMs": 7.1327499999897555,
-              "definitionMs": 3.0311340000189375,
-              "artifact": 341,
+              "didOpenToHoverMs": 355.6718899999978,
+              "hoverColdMs": 51.3215949999867,
+              "hoverWarmMedianMs": 3.0674899999867193,
+              "completionMs": 7.363835999974981,
+              "definitionMs": 3.095071999996435,
+              "artifact": 113,
               "hoverValid": true,
               "hoverReason": "",
-              "hoverSample": "```typescript\nconst benchMarker: Ref<string, string>Stable hover target for LSP benchmarks — do not rename.\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Re",
+              "hoverSample": "```typescript\nconst benchMarker: Ref<string, string>Stable hover target for LSP benchmarks — do not rename.\n```",
               "templateHoverValid": true,
               "templateHoverReason": "",
               "templateHoverSample": "```typescript\nconst benchMarker: string\n```",
@@ -4453,17 +4454,17 @@
               }
             },
             {
-              "initializeMs": 40.96750199998496,
+              "initializeMs": 38.44887100002961,
               "workspaceReadyMs": null,
-              "didOpenToHoverMs": 424.85721499999636,
-              "hoverColdMs": 11.95063599999412,
-              "hoverWarmMedianMs": 2.9231220000074245,
-              "completionMs": 15.201111000002129,
-              "definitionMs": 3.238817999983439,
-              "artifact": 341,
+              "didOpenToHoverMs": 342.40847099997336,
+              "hoverColdMs": 48.52042299997993,
+              "hoverWarmMedianMs": 3.166453999991063,
+              "completionMs": 7.526157999993302,
+              "definitionMs": 3.02877700002864,
+              "artifact": 113,
               "hoverValid": true,
               "hoverReason": "",
-              "hoverSample": "```typescript\nconst benchMarker: Ref<string, string>Stable hover target for LSP benchmarks — do not rename.\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Re",
+              "hoverSample": "```typescript\nconst benchMarker: Ref<string, string>Stable hover target for LSP benchmarks — do not rename.\n```",
               "templateHoverValid": true,
               "templateHoverReason": "",
               "templateHoverSample": "```typescript\nconst benchMarker: string\n```",
@@ -4475,17 +4476,17 @@
               }
             },
             {
-              "initializeMs": 39.59625800000504,
+              "initializeMs": 38.14173999999184,
               "workspaceReadyMs": null,
-              "didOpenToHoverMs": 430.0414510000264,
-              "hoverColdMs": 12.073130999982823,
-              "hoverWarmMedianMs": 2.9191850000061095,
-              "completionMs": 7.362397000018973,
-              "definitionMs": 3.03934700001264,
-              "artifact": 341,
+              "didOpenToHoverMs": 357.3624009999912,
+              "hoverColdMs": 50.630729000025894,
+              "hoverWarmMedianMs": 3.437761999957729,
+              "completionMs": 7.138594999967609,
+              "definitionMs": 3.071410999982618,
+              "artifact": 113,
               "hoverValid": true,
               "hoverReason": "",
-              "hoverSample": "```typescript\nconst benchMarker: Ref<string, string>Stable hover target for LSP benchmarks — do not rename.\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Re",
+              "hoverSample": "```typescript\nconst benchMarker: Ref<string, string>Stable hover target for LSP benchmarks — do not rename.\n```",
               "templateHoverValid": true,
               "templateHoverReason": "",
               "templateHoverSample": "```typescript\nconst benchMarker: string\n```",
@@ -4497,17 +4498,17 @@
               }
             },
             {
-              "initializeMs": 41.335369000036735,
+              "initializeMs": 39.0980860000127,
               "workspaceReadyMs": null,
-              "didOpenToHoverMs": 436.6926649999805,
-              "hoverColdMs": 12.024429000040982,
-              "hoverWarmMedianMs": 3.0039840000099503,
-              "completionMs": 7.296739000012167,
-              "definitionMs": 2.9885899999644607,
-              "artifact": 341,
+              "didOpenToHoverMs": 343.79221699998016,
+              "hoverColdMs": 50.52212699997472,
+              "hoverWarmMedianMs": 5.2715469999820925,
+              "completionMs": 7.766047000011895,
+              "definitionMs": 3.228189999994356,
+              "artifact": 113,
               "hoverValid": true,
               "hoverReason": "",
-              "hoverSample": "```typescript\nconst benchMarker: Ref<string, string>Stable hover target for LSP benchmarks — do not rename.\n```\n\n---\n\n### 🟡 vue/sfc-element-order\n\n<script> should come before <template>\n\n**Help:** Re",
+              "hoverSample": "```typescript\nconst benchMarker: Ref<string, string>Stable hover target for LSP benchmarks — do not rename.\n```",
               "templateHoverValid": true,
               "templateHoverReason": "",
               "templateHoverSample": "```typescript\nconst benchMarker: string\n```",
@@ -4519,10 +4520,10 @@
               }
             }
           ],
-          "artifactMedian": 341,
+          "artifactMedian": 113,
           "warmupPasses": 1,
-          "throughput": "2 files/s",
-          "phaseBreakdown": "init=41ms · ready=n/a · open→hover=437ms · hoverCold=12ms · hoverWarm=3ms · completion=7ms · definition=3ms",
+          "throughput": "3 files/s",
+          "phaseBreakdown": "init=39ms · ready=n/a · open→hover=344ms · hoverCold=51ms · hoverWarm=5ms · completion=8ms · definition=3ms",
           "primaryMetric": "didOpen→hover (ms)"
         },
         {
@@ -4532,31 +4533,31 @@
           "threading": "lsp",
           "engine": "tsgo",
           "artifactLabel": "Hover bytes",
-          "notes": "verter-lsp stdio, the native server from the published npm package. $/verter/ready is OBSERVED, never waited for — its workspace load is inside the timed open→hover window like every other server's. | engine: tsgo 7.0.2 (typescript-go@7.0.2 → @typescript/typescript-linux-x64) | init=5ms · ready=36ms · open→hover=291ms · hoverCold=1ms · hoverWarm=1ms · completion=1ms · definition=1ms | hover verified: returns a TypeScript type for `benchMarker` in <script setup> AND the auto-unwrapped `string` inside {{ }} (template is really typechecked)",
+          "notes": "verter-lsp stdio, the native server from the published npm package. $/verter/ready is OBSERVED, never waited for — its workspace load is inside the timed open→hover window like every other server's. | engine: tsgo 7.0.2 (typescript-go@7.0.2 → @typescript/typescript-linux-x64) | init=5ms · ready=30ms · open→hover=301ms · hoverCold=1ms · hoverWarm=1ms · completion=1ms · definition=1ms | hover verified: returns a TypeScript type for `benchMarker` in <script setup> AND the auto-unwrapped `string` inside {{ }} (template is really typechecked)",
           "files": 1,
           "status": "ok",
           "runs": [
-            283.564,
-            278.262,
-            281.9,
-            273.229,
-            290.814
+            330.982,
+            354.871,
+            303.123,
+            295.982,
+            301.496
           ],
-          "medianMs": 281.9,
-          "minMs": 273.229,
-          "maxMs": 290.814,
-          "meanMs": 281.554,
-          "stddevMs": 6.52,
-          "cvPct": 2.3,
+          "medianMs": 303.123,
+          "minMs": 295.982,
+          "maxMs": 354.871,
+          "meanMs": 317.291,
+          "stddevMs": 25.02,
+          "cvPct": 8.3,
           "metaSamples": [
             {
-              "initializeMs": 4.95008300000336,
-              "workspaceReadyMs": 36.0245120000036,
-              "didOpenToHoverMs": 283.56402999997954,
-              "hoverColdMs": 0.8071749999944586,
-              "hoverWarmMedianMs": 0.5926420000032522,
-              "completionMs": 0.8247919999994338,
-              "definitionMs": 0.7072050000133459,
+              "initializeMs": 5.041746999952011,
+              "workspaceReadyMs": 32.428048000030685,
+              "didOpenToHoverMs": 330.9824720000033,
+              "hoverColdMs": 19.63275800005067,
+              "hoverWarmMedianMs": 0.7697150000021793,
+              "completionMs": 1.2270520000020042,
+              "definitionMs": 0.7628750000149012,
               "artifact": 113,
               "hoverValid": true,
               "hoverReason": "",
@@ -4572,13 +4573,13 @@
               }
             },
             {
-              "initializeMs": 5.092237000004388,
-              "workspaceReadyMs": 36.50092200000654,
-              "didOpenToHoverMs": 278.2615700000024,
-              "hoverColdMs": 0.8575760000094306,
-              "hoverWarmMedianMs": 0.5748759999987669,
-              "completionMs": 0.7945269999909215,
-              "definitionMs": 0.6351269999868236,
+              "initializeMs": 5.615397999994457,
+              "workspaceReadyMs": 360.4581129999715,
+              "didOpenToHoverMs": 354.8708580000093,
+              "hoverColdMs": 0.8387070000171661,
+              "hoverWarmMedianMs": 0.7313079999876209,
+              "completionMs": 1.137144000036642,
+              "definitionMs": 0.7100159999681637,
               "artifact": 113,
               "hoverValid": true,
               "hoverReason": "",
@@ -4594,13 +4595,13 @@
               }
             },
             {
-              "initializeMs": 5.034805999981472,
-              "workspaceReadyMs": 34.9213410000084,
-              "didOpenToHoverMs": 281.8995069999946,
-              "hoverColdMs": 0.7484370000020135,
-              "hoverWarmMedianMs": 0.5985470000014175,
-              "completionMs": 0.8838610000093468,
-              "definitionMs": 0.6988729999866337,
+              "initializeMs": 4.881435999996029,
+              "workspaceReadyMs": 31.80259500001557,
+              "didOpenToHoverMs": 303.1227680000011,
+              "hoverColdMs": 0.754590000025928,
+              "hoverWarmMedianMs": 0.6300059999921359,
+              "completionMs": 0.8580540000111796,
+              "definitionMs": 0.7216679999837652,
               "artifact": 113,
               "hoverValid": true,
               "hoverReason": "",
@@ -4616,13 +4617,13 @@
               }
             },
             {
-              "initializeMs": 5.044847000041045,
-              "workspaceReadyMs": 37.505613999965135,
-              "didOpenToHoverMs": 273.2285499999998,
-              "hoverColdMs": 0.684049999981653,
-              "hoverWarmMedianMs": 0.6091279999818653,
-              "completionMs": 0.7220059999963269,
-              "definitionMs": 0.7827939999988303,
+              "initializeMs": 5.447786000033375,
+              "workspaceReadyMs": 35.35597100004088,
+              "didOpenToHoverMs": 295.9817590000457,
+              "hoverColdMs": 0.7954859999590553,
+              "hoverWarmMedianMs": 0.5796130000380799,
+              "completionMs": 0.8330459999851882,
+              "definitionMs": 0.7395609999657609,
               "artifact": 113,
               "hoverValid": true,
               "hoverReason": "",
@@ -4638,13 +4639,13 @@
               }
             },
             {
-              "initializeMs": 5.111372999963351,
-              "workspaceReadyMs": 36.331738999986555,
-              "didOpenToHoverMs": 290.81361700000707,
-              "hoverColdMs": 0.6905400000396185,
-              "hoverWarmMedianMs": 0.5369390000123531,
-              "completionMs": 0.7491980000049807,
-              "definitionMs": 0.6138039999641478,
+              "initializeMs": 5.157466000004206,
+              "workspaceReadyMs": 29.592291000008117,
+              "didOpenToHoverMs": 301.49609000002965,
+              "hoverColdMs": 0.8594210000010207,
+              "hoverWarmMedianMs": 0.826193000015337,
+              "completionMs": 0.8882289999746718,
+              "definitionMs": 0.781996000034269,
               "artifact": 113,
               "hoverValid": true,
               "hoverReason": "",
@@ -4662,8 +4663,8 @@
           ],
           "artifactMedian": 113,
           "warmupPasses": 1,
-          "throughput": "4 files/s",
-          "phaseBreakdown": "init=5ms · ready=36ms · open→hover=291ms · hoverCold=1ms · hoverWarm=1ms · completion=1ms · definition=1ms",
+          "throughput": "3 files/s",
+          "phaseBreakdown": "init=5ms · ready=30ms · open→hover=301ms · hoverCold=1ms · hoverWarm=1ms · completion=1ms · definition=1ms",
           "primaryMetric": "didOpen→hover (ms)"
         }
       ]

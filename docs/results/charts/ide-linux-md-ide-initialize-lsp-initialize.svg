@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="760" height="216" viewBox="0 0 760 216" role="img" aria-label="All plants · wall (one tsconfig)">
-  <title>All plants · wall (one tsconfig) (lower is better)</title>
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="216" viewBox="0 0 760 216" role="img" aria-label="LSP initialize">
+  <title>LSP initialize (lower is better)</title>
   <style><![CDATA[
     text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
     .label { fill: #111827; }
@@ -17,37 +17,37 @@
     }
   ]]></style>
   
-  <text class="label" x="16" y="22" font-size="15" font-weight="600">All plants · wall (one tsconfig)</text>
+  <text class="label" x="16" y="22" font-size="15" font-weight="600">LSP initialize</text>
   <text class="muted" x="744" y="22" text-anchor="end" font-size="11">lower is better</text>
   
   <line class="grid" x1="248" y1="36" x2="248" y2="188" />
   <text class="muted" x="248" y="208" text-anchor="middle" font-size="11">0.0 ms</text>
   <line class="grid" x1="348.5" y1="36" x2="348.5" y2="188" />
-  <text class="muted" x="348.5" y="208" text-anchor="middle" font-size="11">795 ms</text>
+  <text class="muted" x="348.5" y="208" text-anchor="middle" font-size="11">136 ms</text>
   <line class="grid" x1="449" y1="36" x2="449" y2="188" />
-  <text class="muted" x="449" y="208" text-anchor="middle" font-size="11">1.59 s</text>
+  <text class="muted" x="449" y="208" text-anchor="middle" font-size="11">271 ms</text>
   <line class="grid" x1="549.5" y1="36" x2="549.5" y2="188" />
-  <text class="muted" x="549.5" y="208" text-anchor="middle" font-size="11">2.39 s</text>
+  <text class="muted" x="549.5" y="208" text-anchor="middle" font-size="11">407 ms</text>
   <line class="grid" x1="650" y1="36" x2="650" y2="188" />
-  <text class="muted" x="650" y="208" text-anchor="middle" font-size="11">3.18 s</text>
+  <text class="muted" x="650" y="208" text-anchor="middle" font-size="11">542 ms</text>
   <text class="muted" x="16" y="60" font-size="11">1</text>
-      <text class="label" x="236" y="60" text-anchor="end" font-size="13">vize</text>
+      <text class="label" x="236" y="60" text-anchor="end" font-size="13">Verter</text>
       <rect class="track" x="248" y="49" width="402" height="22" rx="5"/>
-      <rect x="248" y="49" width="76.2" height="22" rx="5" fill="#2563eb"/>
-      <text class="label" x="332.189305586118" y="60" font-size="12" font-weight="600">603 ms</text>
+      <rect x="248" y="49" width="4.0" height="22" rx="5" fill="#e11d48"/>
+      <text class="label" x="260.00221238938053" y="60" font-size="12" font-weight="600">5.4 ms</text>
   <text class="muted" x="16" y="96" font-size="11">2</text>
-      <text class="label" x="236" y="96" text-anchor="end" font-size="13">verter-tsc</text>
+      <text class="label" x="236" y="96" text-anchor="end" font-size="13">Vize</text>
       <rect class="track" x="248" y="85" width="402" height="22" rx="5"/>
-      <rect x="248" y="85" width="95.5" height="22" rx="5" fill="#e11d48"/>
-      <text class="label" x="351.46094118386725" y="96" font-size="12" font-weight="600">755 ms</text>
+      <rect x="248" y="85" width="29.7" height="22" rx="5" fill="#2563eb"/>
+      <text class="label" x="285.72013274336285" y="96" font-size="12" font-weight="600">40.1 ms</text>
   <text class="muted" x="16" y="132" font-size="11">3</text>
-      <text class="label" x="236" y="132" text-anchor="end" font-size="13">golar</text>
+      <text class="label" x="236" y="132" text-anchor="end" font-size="13">Volar (N)</text>
       <rect class="track" x="248" y="121" width="402" height="22" rx="5"/>
-      <rect x="248" y="121" width="115.6" height="22" rx="5" fill="#c9842a"/>
-      <text class="onbar" x="355.5792650341077" y="132" text-anchor="end" font-size="12" font-weight="600">915 ms</text>
+      <rect x="248" y="121" width="401.5" height="22" rx="5" fill="#42b883"/>
+      <text class="onbar" x="641.4811946902655" y="132" text-anchor="end" font-size="12" font-weight="600">542 ms</text>
   <text class="muted" x="16" y="168" font-size="11">4</text>
-      <text class="label" x="236" y="168" text-anchor="end" font-size="13">vue-tsc</text>
+      <text class="label" x="236" y="168" text-anchor="end" font-size="13">Volar (JS)</text>
       <rect class="track" x="248" y="157" width="402" height="22" rx="5"/>
       <rect x="248" y="157" width="402.0" height="22" rx="5" fill="#42b883"/>
-      <text class="onbar" x="642" y="168" text-anchor="end" font-size="12" font-weight="600">3.18 s</text>
+      <text class="onbar" x="642" y="168" text-anchor="end" font-size="12" font-weight="600">542 ms</text>
 </svg>

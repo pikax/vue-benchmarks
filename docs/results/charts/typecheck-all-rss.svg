@@ -26,33 +26,33 @@
   <line class="grid" x1="248" y1="44" x2="248" y2="196" />
   <text class="muted" x="248" y="216" text-anchor="middle" font-size="11">0.0 MB</text>
   <line class="grid" x1="348.5" y1="44" x2="348.5" y2="196" />
-  <text class="muted" x="348.5" y="216" text-anchor="middle" font-size="11">178.8 MB</text>
+  <text class="muted" x="348.5" y="216" text-anchor="middle" font-size="11">98.0 MB</text>
   <line class="grid" x1="449" y1="44" x2="449" y2="196" />
-  <text class="muted" x="449" y="216" text-anchor="middle" font-size="11">357.5 MB</text>
+  <text class="muted" x="449" y="216" text-anchor="middle" font-size="11">196.0 MB</text>
   <line class="grid" x1="549.5" y1="44" x2="549.5" y2="196" />
-  <text class="muted" x="549.5" y="216" text-anchor="middle" font-size="11">536.3 MB</text>
+  <text class="muted" x="549.5" y="216" text-anchor="middle" font-size="11">293.9 MB</text>
   <line class="grid" x1="650" y1="44" x2="650" y2="196" />
-  <text class="muted" x="650" y="216" text-anchor="middle" font-size="11">715.0 MB</text>
+  <text class="muted" x="650" y="216" text-anchor="middle" font-size="11">391.9 MB</text>
   <text class="muted" x="16" y="68" font-size="11">1</text>
-      <text class="label" x="236" y="68" text-anchor="end" font-size="13">golar</text>
+      <text class="label" x="236" y="68" text-anchor="end" font-size="13">verter-tsc</text>
       <rect class="track" x="248" y="57" width="402" height="22" rx="5"/>
-      <rect x="248" y="57" width="181.7" height="22" rx="5" fill="#c9842a"/>
-      <text class="onbar" x="421.65902097902097" y="68" text-anchor="end" font-size="12" font-weight="600">323.1 MB</text>
+      <rect class="tool-rss" x="248" y="57" width="83.7" height="22" rx="5" fill="#e11d48"/>
+      <rect class="engine-rss" x="331.7029854554733" y="57" width="145.6" height="22" rx="5" fill="#e11d48" fill-opacity="0.38"/>
+      <text class="onbar" x="469.26001531002805" y="68" text-anchor="end" font-size="12" font-weight="600">81.6 MB + 141.9 MB = 223.5 MB</text>
   <text class="muted" x="16" y="104" font-size="11">2</text>
       <text class="label" x="236" y="104" text-anchor="end" font-size="13">vue-tsc</text>
       <rect class="track" x="248" y="93" width="402" height="22" rx="5"/>
-      <rect x="248" y="93" width="196.9" height="22" rx="5" fill="#42b883"/>
-      <text class="onbar" x="436.8956643356643" y="104" text-anchor="end" font-size="12" font-weight="600">350.2 MB</text>
+      <rect x="248" y="93" width="348.9" height="22" rx="5" fill="#42b883"/>
+      <text class="onbar" x="588.8650165858637" y="104" text-anchor="end" font-size="12" font-weight="600">340.1 MB</text>
   <text class="muted" x="16" y="140" font-size="11">3</text>
-      <text class="label" x="236" y="140" text-anchor="end" font-size="13">vize</text>
+      <text class="label" x="236" y="140" text-anchor="end" font-size="13">golar</text>
       <rect class="track" x="248" y="129" width="402" height="22" rx="5"/>
-      <rect class="tool-rss" x="248" y="129" width="50.9" height="22" rx="5" fill="#2563eb"/>
-      <rect class="engine-rss" x="298.88251748251747" y="129" width="164.3" height="22" rx="5" fill="#2563eb" fill-opacity="0.38"/>
-      <text class="onbar" x="455.16839160839163" y="140" text-anchor="end" font-size="12" font-weight="600">90.5 MB + 292.2 MB = 382.7 MB</text>
+      <rect x="248" y="129" width="362.6" height="22" rx="5" fill="#c9842a"/>
+      <text class="onbar" x="602.6103597856595" y="140" text-anchor="end" font-size="12" font-weight="600">353.5 MB</text>
   <text class="muted" x="16" y="176" font-size="11">4</text>
-      <text class="label" x="236" y="176" text-anchor="end" font-size="13">verter-tsc</text>
+      <text class="label" x="236" y="176" text-anchor="end" font-size="13">vize</text>
       <rect class="track" x="248" y="165" width="402" height="22" rx="5"/>
-      <rect class="tool-rss" x="248" y="165" width="197.4" height="22" rx="5" fill="#e11d48"/>
-      <rect class="engine-rss" x="445.40167832167833" y="165" width="204.6" height="22" rx="5" fill="#e11d48" fill-opacity="0.38"/>
-      <text class="onbar" x="642" y="176" text-anchor="end" font-size="12" font-weight="600">351.1 MB + 363.9 MB = 715.0 MB</text>
+      <rect class="tool-rss" x="248" y="165" width="74.2" height="22" rx="5" fill="#2563eb"/>
+      <rect class="engine-rss" x="322.16330696606275" y="165" width="327.8" height="22" rx="5" fill="#2563eb" fill-opacity="0.38"/>
+      <text class="onbar" x="642" y="176" text-anchor="end" font-size="12" font-weight="600">72.3 MB + 319.6 MB = 391.9 MB</text>
 </svg>

@@ -25,59 +25,59 @@
   <line class="grid" x1="348.5" y1="36" x2="348.5" y2="404" />
   <text class="muted" x="348.5" y="424" text-anchor="middle" font-size="11">17.9 MB</text>
   <line class="grid" x1="449" y1="36" x2="449" y2="404" />
-  <text class="muted" x="449" y="424" text-anchor="middle" font-size="11">35.8 MB</text>
+  <text class="muted" x="449" y="424" text-anchor="middle" font-size="11">35.9 MB</text>
   <line class="grid" x1="549.5" y1="36" x2="549.5" y2="404" />
-  <text class="muted" x="549.5" y="424" text-anchor="middle" font-size="11">53.6 MB</text>
+  <text class="muted" x="549.5" y="424" text-anchor="middle" font-size="11">53.8 MB</text>
   <line class="grid" x1="650" y1="36" x2="650" y2="404" />
-  <text class="muted" x="650" y="424" text-anchor="middle" font-size="11">71.5 MB</text>
+  <text class="muted" x="650" y="424" text-anchor="middle" font-size="11">71.8 MB</text>
   <text class="muted" x="16" y="60" font-size="11">1</text>
       <text class="label" x="236" y="60" text-anchor="end" font-size="13">Vize native loop (1T) vapor-prod</text>
       <rect class="track" x="248" y="49" width="402" height="22" rx="5"/>
-      <rect x="248" y="49" width="86.2" height="22" rx="5" fill="#2563eb"/>
-      <text class="label" x="342.2231543624161" y="60" font-size="12" font-weight="600">15.3 MB</text>
+      <rect x="248" y="49" width="84.9" height="22" rx="5" fill="#2563eb"/>
+      <text class="label" x="340.93825783972125" y="60" font-size="12" font-weight="600">15.2 MB</text>
   <text class="muted" x="16" y="96" font-size="11">2</text>
       <text class="label" x="236" y="96" text-anchor="end" font-size="13">fervid compileSync (1T) vdom-prod</text>
       <rect class="track" x="248" y="85" width="402" height="22" rx="5"/>
-      <rect x="248" y="85" width="90.3" height="22" rx="5" fill="#78716c"/>
-      <text class="label" x="346.3263422818792" y="96" font-size="12" font-weight="600">16.1 MB</text>
+      <rect x="248" y="85" width="89.3" height="22" rx="5" fill="#78716c"/>
+      <text class="label" x="345.25240418118466" y="96" font-size="12" font-weight="600">15.9 MB</text>
   <text class="muted" x="16" y="132" font-size="11">3</text>
       <text class="label" x="236" y="132" text-anchor="end" font-size="13">Vize native loop (1T) vdom-prod</text>
       <rect class="track" x="248" y="121" width="402" height="22" rx="5"/>
-      <rect x="248" y="121" width="94.7" height="22" rx="5" fill="#2563eb"/>
-      <text class="label" x="350.6543624161074" y="132" font-size="12" font-weight="600">16.8 MB</text>
+      <rect x="248" y="121" width="93.3" height="22" rx="5" fill="#2563eb"/>
+      <text class="label" x="349.28641114982577" y="132" font-size="12" font-weight="600">16.6 MB</text>
   <text class="muted" x="16" y="168" font-size="11">4</text>
       <text class="label" x="236" y="168" text-anchor="end" font-size="13">Vize native batch vapor-prod</text>
       <rect class="track" x="248" y="157" width="402" height="22" rx="5"/>
-      <rect x="248" y="157" width="98.3" height="22" rx="5" fill="#2563eb"/>
-      <text class="onbar" x="338.251677852349" y="168" text-anchor="end" font-size="12" font-weight="600">17.5 MB</text>
+      <rect x="248" y="157" width="97.7" height="22" rx="5" fill="#2563eb"/>
+      <text class="onbar" x="337.65658536585363" y="168" text-anchor="end" font-size="12" font-weight="600">17.4 MB</text>
   <text class="muted" x="16" y="204" font-size="11">5</text>
       <text class="label" x="236" y="204" text-anchor="end" font-size="13">Vize native batch vdom-prod</text>
       <rect class="track" x="248" y="193" width="402" height="22" rx="5"/>
-      <rect x="248" y="193" width="101.7" height="22" rx="5" fill="#2563eb"/>
-      <text class="onbar" x="341.68036912751677" y="204" text-anchor="end" font-size="12" font-weight="600">18.1 MB</text>
+      <rect x="248" y="193" width="101.5" height="22" rx="5" fill="#2563eb"/>
+      <text class="onbar" x="341.46648083623694" y="204" text-anchor="end" font-size="12" font-weight="600">18.1 MB</text>
   <text class="muted" x="16" y="240" font-size="11">6</text>
-      <text class="label" x="236" y="240" text-anchor="end" font-size="13">Verter compileMany (stateless) vdom…</text>
+      <text class="label" x="236" y="240" text-anchor="end" font-size="13">Verter compileMany (stateless) vapo…</text>
       <rect class="track" x="248" y="229" width="402" height="22" rx="5"/>
-      <rect x="248" y="229" width="214.7" height="22" rx="5" fill="#e11d48"/>
-      <text class="onbar" x="454.65855704697987" y="240" text-anchor="end" font-size="12" font-weight="600">38.2 MB</text>
+      <rect x="248" y="229" width="211.3" height="22" rx="5" fill="#e11d48"/>
+      <text class="onbar" x="451.2811149825784" y="240" text-anchor="end" font-size="12" font-weight="600">37.7 MB</text>
   <text class="muted" x="16" y="276" font-size="11">7</text>
-      <text class="label" x="236" y="276" text-anchor="end" font-size="13">Verter compileMany (stateless) vapo…</text>
+      <text class="label" x="236" y="276" text-anchor="end" font-size="13">Verter compileMany (stateless) vdom…</text>
       <rect class="track" x="248" y="265" width="402" height="22" rx="5"/>
-      <rect x="248" y="265" width="214.7" height="22" rx="5" fill="#e11d48"/>
-      <text class="onbar" x="454.65855704697987" y="276" text-anchor="end" font-size="12" font-weight="600">38.2 MB</text>
+      <rect x="248" y="265" width="212.0" height="22" rx="5" fill="#e11d48"/>
+      <text class="onbar" x="452.00947735191636" y="276" text-anchor="end" font-size="12" font-weight="600">37.8 MB</text>
   <text class="muted" x="16" y="312" font-size="11">8</text>
       <text class="label" x="236" y="312" text-anchor="end" font-size="13">@vue/compiler-sfc 3.6 (1T) vdom-prod</text>
       <rect class="track" x="248" y="301" width="402" height="22" rx="5"/>
-      <rect x="248" y="301" width="353.4" height="22" rx="5" fill="#42b883"/>
-      <text class="onbar" x="593.380033557047" y="312" text-anchor="end" font-size="12" font-weight="600">62.9 MB</text>
+      <rect x="248" y="301" width="351.0" height="22" rx="5" fill="#42b883"/>
+      <text class="onbar" x="591.0146341463415" y="312" text-anchor="end" font-size="12" font-weight="600">62.6 MB</text>
   <text class="muted" x="16" y="348" font-size="11">9</text>
       <text class="label" x="236" y="348" text-anchor="end" font-size="13">@vue/compiler-sfc 3.5 (1T) vdom-prod</text>
       <rect class="track" x="248" y="337" width="402" height="22" rx="5"/>
-      <rect x="248" y="337" width="357.1" height="22" rx="5" fill="#42b883"/>
-      <text class="onbar" x="597.0897651006712" y="348" text-anchor="end" font-size="12" font-weight="600">63.5 MB</text>
+      <rect x="248" y="337" width="352.2" height="22" rx="5" fill="#42b883"/>
+      <text class="onbar" x="592.2472473867596" y="348" text-anchor="end" font-size="12" font-weight="600">62.9 MB</text>
   <text class="muted" x="16" y="384" font-size="11">10</text>
       <text class="label" x="236" y="384" text-anchor="end" font-size="13">@vue/compiler-sfc 3.6 vapor (1T) va…</text>
       <rect class="track" x="248" y="373" width="402" height="22" rx="5"/>
       <rect x="248" y="373" width="402.0" height="22" rx="5" fill="#42b883"/>
-      <text class="onbar" x="642" y="384" text-anchor="end" font-size="12" font-weight="600">71.5 MB</text>
+      <text class="onbar" x="642" y="384" text-anchor="end" font-size="12" font-weight="600">71.8 MB</text>
 </svg>

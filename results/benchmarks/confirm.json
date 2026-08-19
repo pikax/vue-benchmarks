@@ -1,0 +1,3560 @@
+{
+  "kind": "confirmation",
+  "generatedAt": "2026-08-19T18:33:13.434Z",
+  "runner": {
+    "label": "Linux",
+    "platform": "linux",
+    "arch": "x64",
+    "cpuCount": 4,
+    "cpuModel": "AMD EPYC 9V74 80-Core Processor",
+    "totalmem": 16766414848,
+    "node": "v22.23.2",
+    "ci": true,
+    "runUrl": "https://github.com/pikax/vue-benchmarks/actions/runs/32287835178"
+  },
+  "summary": {
+    "pass": 4,
+    "fail": 0,
+    "skip": 0,
+    "warn": 0,
+    "total": 4
+  },
+  "results": [
+    {
+      "suite": "typecheck-all",
+      "caseId": "all-plants",
+      "tool": "vue-tsc",
+      "status": "pass",
+      "message": "84% (119/142) · median 3.18s of 5 after 1 warmup(s)",
+      "detail": {
+        "ms": 3181.1,
+        "rssMb": 340.1,
+        "rssToolMb": 340.1,
+        "runs": [
+          3213.2,
+          3172.2,
+          3181.1,
+          3117.1,
+          3183.4
+        ],
+        "warmups": 1,
+        "runCount": 5,
+        "pass": 119,
+        "fail": 23,
+        "skip": 0,
+        "scored": 142,
+        "passPct": 83.80281690140845,
+        "plants": [
+          {
+            "caseId": "async-component-prop-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "async-component-prop-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "async-setup-await",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "attrs-aria-data-unknown",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "attrs-class-style-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "attrs-unknown-fallthrough",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "boolean-prop-attr-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "clean-basic",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "component-ref-expose-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "component-ref-expose-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "computed-unwrap-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "custom-directive-value-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "custom-directive-value-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "define-model-default-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "define-model-get-set-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "define-model-modifiers-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "define-model-modifiers-read-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "define-model-modifiers-unknown-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "define-model-named",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:11 did not mention title"
+          },
+          {
+            "caseId": "define-model-named-modifiers-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "define-model-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "define-model-set-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "define-slots-default-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "define-slots-fn-bad",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:10 did not mention nope"
+          },
+          {
+            "caseId": "define-slots-fn-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "define-slots-named-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "discriminated-union-v-model-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "discriminated-union-v-model-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "dollar-event-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "dollar-event-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "dynamic-component-prop-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "dynamic-component-prop-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "element-prop-type",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:9 did not mention disabled"
+          },
+          {
+            "caseId": "emit-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "emit-unknown-event",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "emit-wrong-arg",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:8 did not mention nope"
+          },
+          {
+            "caseId": "event-emit-payload",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "event-mod-click-ctrl-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "event-mod-click-prevent-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "event-mod-click-prevent-dollar-bad",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:7 did not mention key"
+          },
+          {
+            "caseId": "event-mod-click-prevent-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "event-mod-click-stop-prevent-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "event-mod-component-once-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "event-mod-component-once-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "event-mod-keyup-enter-bad",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:10 did not mention KeyboardEvent"
+          },
+          {
+            "caseId": "event-mod-keyup-enter-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "event-mod-submit-prevent-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "fallthrough-mono-false-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "fallthrough-mono-ok",
+            "skip": false,
+            "ok": false,
+            "message": "expected clean (0 errors), got 1"
+          },
+          {
+            "caseId": "fallthrough-multi-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "fallthrough-multi-false-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "fallthrough-native-type-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "fallthrough-vif-both-mono-false-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "fallthrough-vif-both-mono-ok",
+            "skip": false,
+            "ok": false,
+            "message": "expected clean (0 errors), got 1"
+          },
+          {
+            "caseId": "fallthrough-vif-mono-multi-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "fallthrough-vif-static-multi-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "fallthrough-vif-static-ok",
+            "skip": false,
+            "ok": false,
+            "message": "expected clean (0 errors), got 1"
+          },
+          {
+            "caseId": "fallthrough-vif-static-prop-ok",
+            "skip": false,
+            "ok": false,
+            "message": "expected clean (0 errors), got 1"
+          },
+          {
+            "caseId": "generic-component-bad",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:13 did not mention selected"
+          },
+          {
+            "caseId": "generic-component-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "generic-constraint-template-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "generic-default-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "generic-define-model-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 2 error(s)"
+          },
+          {
+            "caseId": "generic-define-model-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "generic-emit-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "generic-emit-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "generic-fallthrough-mono-ok",
+            "skip": false,
+            "ok": false,
+            "message": "expected clean (0 errors), got 1"
+          },
+          {
+            "caseId": "generic-inherit-false-class-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "generic-inherit-false-unknown",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "generic-multi-root-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "generic-slot-bad",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:13 did not mention id"
+          },
+          {
+            "caseId": "generic-slot-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "generic-two-params-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "generic-two-params-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "global-component-prop-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "global-component-prop-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "inherit-attrs-default-class-style-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "inherit-attrs-default-unknown",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "inherit-attrs-false-class-style-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "inherit-attrs-false-unknown",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:8 did not mention data-x"
+          },
+          {
+            "caseId": "inject-key-type",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "literal-union-prop-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "literal-union-prop-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "missing-required-prop",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "native-input-v-model-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "native-keyup-bad",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:10 did not mention KeyboardEvent"
+          },
+          {
+            "caseId": "native-v-model-lazy-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "native-v-model-number-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "native-v-model-trim-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "optional-chain-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "optional-chain-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "options-api-prop-bad",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:11 did not mention count"
+          },
+          {
+            "caseId": "provide-inject-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "ref-unwrap-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "ref-unwrap-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "required-slot-missing-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "required-slot-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "script-type-error",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:4 did not mention count"
+          },
+          {
+            "caseId": "slot-default-implicit-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "slot-provide-type-bad",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:11 did not mention msg"
+          },
+          {
+            "caseId": "slot-provide-type-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "slot-scope-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "slot-scope-payload",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:13 did not mention id"
+          },
+          {
+            "caseId": "slot-unknown-prop-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "slot-v-bind-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "slot-v-bind-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "static-number-attr-bad",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:8 did not mention count"
+          },
+          {
+            "caseId": "style-binding-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "template-ref-type",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "template-undefined",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "ts-import-vue-bad",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "ts-import-vue-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "unknown-prop-strict",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-bind-object-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-bind-object-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-else-if-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-else-if-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-for-destructure-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-for-item-type",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-for-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-for-tuple-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-for-tuple-type-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-if-discriminant-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-if-discriminant-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-if-else-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-if-else-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-if-event-closure",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-if-in-narrow-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-if-in-narrow-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-if-inline-event-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-if-inline-event-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-if-narrow-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-if-narrow-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-if-not-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-if-optional-prop-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-if-optional-prop-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-if-typeof-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-if-typeof-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-model-type",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:11 did not mention modelValue"
+          },
+          {
+            "caseId": "v-show-no-narrow",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "with-defaults-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "wrong-prop-type",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:8 did not mention count"
+          }
+        ]
+      },
+      "ms": 3181.1,
+      "rssMb": 340.1,
+      "rssToolMb": 340.1
+    },
+    {
+      "suite": "typecheck-all",
+      "caseId": "all-plants",
+      "tool": "vize-check",
+      "status": "pass",
+      "message": "52% (71/136) · median 0.60s of 5 after 1 warmup(s)",
+      "detail": {
+        "ms": 602.9,
+        "rssMb": 392,
+        "rssToolMb": 72.3,
+        "rssEngineMb": 319.6,
+        "runs": [
+          602.9,
+          596.4,
+          599.9,
+          605,
+          606
+        ],
+        "warmups": 1,
+        "runCount": 5,
+        "pass": 71,
+        "fail": 65,
+        "skip": 6,
+        "scored": 136,
+        "passPct": 52.205882352941174,
+        "plants": [
+          {
+            "caseId": "async-component-prop-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "async-component-prop-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "async-setup-await",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "attrs-aria-data-unknown",
+            "skip": true,
+            "ok": false,
+            "message": "tool lacks capability: strict-component-attrs"
+          },
+          {
+            "caseId": "attrs-class-style-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "attrs-unknown-fallthrough",
+            "skip": true,
+            "ok": false,
+            "message": "tool lacks capability: strict-component-attrs"
+          },
+          {
+            "caseId": "boolean-prop-attr-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "clean-basic",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "component-ref-expose-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "component-ref-expose-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "computed-unwrap-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "custom-directive-value-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "custom-directive-value-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "define-model-default-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "define-model-get-set-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "define-model-modifiers-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "define-model-modifiers-read-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "define-model-modifiers-unknown-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "define-model-named",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "define-model-named-modifiers-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "define-model-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "define-model-set-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "define-slots-default-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "define-slots-fn-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "define-slots-fn-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "define-slots-named-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "discriminated-union-v-model-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "discriminated-union-v-model-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "dollar-event-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "dollar-event-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "dynamic-component-prop-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "dynamic-component-prop-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "element-prop-type",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "emit-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "emit-unknown-event",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "emit-wrong-arg",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "event-emit-payload",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "event-mod-click-ctrl-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "event-mod-click-prevent-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "event-mod-click-prevent-dollar-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "event-mod-click-prevent-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "event-mod-click-stop-prevent-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "event-mod-component-once-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "event-mod-component-once-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "event-mod-keyup-enter-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "event-mod-keyup-enter-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "event-mod-submit-prevent-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "fallthrough-mono-false-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "fallthrough-mono-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "fallthrough-multi-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "fallthrough-multi-false-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "fallthrough-native-type-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "fallthrough-vif-both-mono-false-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "fallthrough-vif-both-mono-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "fallthrough-vif-mono-multi-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "fallthrough-vif-static-multi-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "fallthrough-vif-static-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "fallthrough-vif-static-prop-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "generic-component-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "generic-component-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "generic-constraint-template-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "generic-default-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "generic-define-model-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "generic-define-model-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "generic-emit-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "generic-emit-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "generic-fallthrough-mono-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "generic-inherit-false-class-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "generic-inherit-false-unknown",
+            "skip": true,
+            "ok": false,
+            "message": "tool lacks capability: strict-component-attrs"
+          },
+          {
+            "caseId": "generic-multi-root-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "generic-slot-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "generic-slot-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "generic-two-params-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "generic-two-params-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "global-component-prop-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "global-component-prop-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "inherit-attrs-default-class-style-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "inherit-attrs-default-unknown",
+            "skip": true,
+            "ok": false,
+            "message": "tool lacks capability: strict-component-attrs"
+          },
+          {
+            "caseId": "inherit-attrs-false-class-style-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "inherit-attrs-false-unknown",
+            "skip": true,
+            "ok": false,
+            "message": "tool lacks capability: strict-component-attrs"
+          },
+          {
+            "caseId": "inject-key-type",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "literal-union-prop-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "literal-union-prop-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "missing-required-prop",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "native-input-v-model-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "native-keyup-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "native-v-model-lazy-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "native-v-model-number-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "native-v-model-trim-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "optional-chain-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "optional-chain-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "options-api-prop-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "provide-inject-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "ref-unwrap-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "ref-unwrap-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "required-slot-missing-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "required-slot-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "script-type-error",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "slot-default-implicit-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "slot-provide-type-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "slot-provide-type-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "slot-scope-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "slot-scope-payload",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "slot-unknown-prop-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "slot-v-bind-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "slot-v-bind-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "static-number-attr-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "style-binding-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "template-ref-type",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "template-undefined",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "ts-import-vue-bad",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "ts-import-vue-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "unknown-prop-strict",
+            "skip": true,
+            "ok": false,
+            "message": "tool lacks capability: strict-component-attrs"
+          },
+          {
+            "caseId": "v-bind-object-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "v-bind-object-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-else-if-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "v-else-if-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-for-destructure-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-for-item-type",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "v-for-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-for-tuple-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-for-tuple-type-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "v-if-discriminant-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "v-if-discriminant-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-if-else-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "v-if-else-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-if-event-closure",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "v-if-in-narrow-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "v-if-in-narrow-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-if-inline-event-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "v-if-inline-event-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-if-narrow-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "v-if-narrow-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-if-not-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-if-optional-prop-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "v-if-optional-prop-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-if-typeof-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "v-if-typeof-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-model-type",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "v-show-no-narrow",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "with-defaults-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "wrong-prop-type",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          }
+        ]
+      },
+      "ms": 602.9,
+      "rssMb": 392,
+      "rssToolMb": 72.3,
+      "rssEngineMb": 319.6
+    },
+    {
+      "suite": "typecheck-all",
+      "caseId": "all-plants",
+      "tool": "verter-tsc",
+      "status": "pass",
+      "message": "70% (100/142) · median 0.76s of 5 after 1 warmup(s)",
+      "detail": {
+        "ms": 755.4,
+        "rssMb": 223.5,
+        "rssToolMb": 81.6,
+        "rssEngineMb": 141.9,
+        "runs": [
+          896.5,
+          686.4,
+          665.6,
+          755.4,
+          773.6
+        ],
+        "warmups": 1,
+        "runCount": 5,
+        "pass": 100,
+        "fail": 42,
+        "skip": 0,
+        "scored": 142,
+        "passPct": 70.4225352112676,
+        "plants": [
+          {
+            "caseId": "async-component-prop-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "async-component-prop-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "async-setup-await",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "attrs-aria-data-unknown",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "attrs-class-style-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "attrs-unknown-fallthrough",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "boolean-prop-attr-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "clean-basic",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "component-ref-expose-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "component-ref-expose-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "computed-unwrap-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "custom-directive-value-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "custom-directive-value-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "define-model-default-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "define-model-get-set-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "define-model-modifiers-ok",
+            "skip": false,
+            "ok": false,
+            "message": "expected clean (0 errors), got 2"
+          },
+          {
+            "caseId": "define-model-modifiers-read-bad",
+            "skip": false,
+            "ok": false,
+            "message": "no diagnostic at App.vue:6 (@plant-error)"
+          },
+          {
+            "caseId": "define-model-modifiers-unknown-bad",
+            "skip": false,
+            "ok": false,
+            "message": "no diagnostic at App.vue:11 (@plant-error)"
+          },
+          {
+            "caseId": "define-model-named",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:11 did not mention title"
+          },
+          {
+            "caseId": "define-model-named-modifiers-ok",
+            "skip": false,
+            "ok": false,
+            "message": "expected clean (0 errors), got 2"
+          },
+          {
+            "caseId": "define-model-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "define-model-set-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "define-slots-default-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "define-slots-fn-bad",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:10 did not mention nope"
+          },
+          {
+            "caseId": "define-slots-fn-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "define-slots-named-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "discriminated-union-v-model-bad",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:8 did not mention 's'"
+          },
+          {
+            "caseId": "discriminated-union-v-model-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "dollar-event-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "dollar-event-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "dynamic-component-prop-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "dynamic-component-prop-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "element-prop-type",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:9 did not mention disabled"
+          },
+          {
+            "caseId": "emit-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "emit-unknown-event",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "emit-wrong-arg",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:8 did not mention nope"
+          },
+          {
+            "caseId": "event-emit-payload",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "event-mod-click-ctrl-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "event-mod-click-prevent-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "event-mod-click-prevent-dollar-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "event-mod-click-prevent-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "event-mod-click-stop-prevent-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "event-mod-component-once-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "event-mod-component-once-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "event-mod-keyup-enter-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "event-mod-keyup-enter-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "event-mod-submit-prevent-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "fallthrough-mono-false-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "fallthrough-mono-ok",
+            "skip": false,
+            "ok": false,
+            "message": "expected clean (0 errors), got 1"
+          },
+          {
+            "caseId": "fallthrough-multi-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "fallthrough-multi-false-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "fallthrough-native-type-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "fallthrough-vif-both-mono-false-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "fallthrough-vif-both-mono-ok",
+            "skip": false,
+            "ok": false,
+            "message": "expected clean (0 errors), got 1"
+          },
+          {
+            "caseId": "fallthrough-vif-mono-multi-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "fallthrough-vif-static-multi-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "fallthrough-vif-static-ok",
+            "skip": false,
+            "ok": false,
+            "message": "expected clean (0 errors), got 1"
+          },
+          {
+            "caseId": "fallthrough-vif-static-prop-ok",
+            "skip": false,
+            "ok": false,
+            "message": "expected clean (0 errors), got 1"
+          },
+          {
+            "caseId": "generic-component-bad",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:13 did not mention selected"
+          },
+          {
+            "caseId": "generic-component-ok",
+            "skip": false,
+            "ok": false,
+            "message": "clean fixture: diagnostic describes the tool's own generated code — /home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/cases/generic-component-ok/Child.vue(1,1): error TS2314: Generic type '___VERTER___Attrs' requires 1 type argument(s)."
+          },
+          {
+            "caseId": "generic-constraint-template-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 3 error(s)"
+          },
+          {
+            "caseId": "generic-default-ok",
+            "skip": false,
+            "ok": false,
+            "message": "clean fixture: diagnostic describes the tool's own generated code — /home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/cases/generic-default-ok/Child.vue(1,1): error TS2315: Type '___VERTER___attributes' is not generic."
+          },
+          {
+            "caseId": "generic-define-model-bad",
+            "skip": false,
+            "ok": false,
+            "message": "no diagnostic at App.vue:11 (@plant-error)"
+          },
+          {
+            "caseId": "generic-define-model-ok",
+            "skip": false,
+            "ok": false,
+            "message": "clean fixture: diagnostic describes the tool's own generated code — /home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/cases/generic-define-model-ok/Child.vue(1,1): error TS2314: Generic type '___VERTER___Attrs' requires 1 type argument(s)."
+          },
+          {
+            "caseId": "generic-emit-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 3 error(s)"
+          },
+          {
+            "caseId": "generic-emit-ok",
+            "skip": false,
+            "ok": false,
+            "message": "clean fixture: diagnostic describes the tool's own generated code — /home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/cases/generic-emit-ok/Child.vue(1,1): error TS2314: Generic type '___VERTER___Attrs' requires 1 type argument(s)."
+          },
+          {
+            "caseId": "generic-fallthrough-mono-ok",
+            "skip": false,
+            "ok": false,
+            "message": "clean fixture: diagnostic describes the tool's own generated code — /home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/cases/generic-fallthrough-mono-ok/Child.vue(1,1): error TS2314: Generic type '___VERTER___Attrs' requires 1 type argument(s)."
+          },
+          {
+            "caseId": "generic-inherit-false-class-ok",
+            "skip": false,
+            "ok": false,
+            "message": "clean fixture: diagnostic describes the tool's own generated code — /home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/cases/generic-inherit-false-class-ok/Child.vue(1,1): error TS2314: Generic type '___VERTER___Attrs' requires 1 type argument("
+          },
+          {
+            "caseId": "generic-inherit-false-unknown",
+            "skip": false,
+            "ok": true,
+            "message": "caught 4 error(s)"
+          },
+          {
+            "caseId": "generic-multi-root-ok",
+            "skip": false,
+            "ok": false,
+            "message": "clean fixture: diagnostic describes the tool's own generated code — /home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/cases/generic-multi-root-ok/Child.vue(1,1): error TS2314: Generic type '___VERTER___Attrs' requires 1 type argument(s)."
+          },
+          {
+            "caseId": "generic-slot-bad",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:13 did not mention id"
+          },
+          {
+            "caseId": "generic-slot-ok",
+            "skip": false,
+            "ok": false,
+            "message": "clean fixture: diagnostic describes the tool's own generated code — /home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/cases/generic-slot-ok/Child.vue(1,1): error TS2314: Generic type '___VERTER___Attrs' requires 1 type argument(s)."
+          },
+          {
+            "caseId": "generic-two-params-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 3 error(s)"
+          },
+          {
+            "caseId": "generic-two-params-ok",
+            "skip": false,
+            "ok": false,
+            "message": "clean fixture: diagnostic describes the tool's own generated code — /home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/cases/generic-two-params-ok/Child.vue(1,1): error TS2314: Generic type '___VERTER___Attrs' requires 2 type argument(s)."
+          },
+          {
+            "caseId": "global-component-prop-bad",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:6 did not mention one of: TS2322 | number | string"
+          },
+          {
+            "caseId": "global-component-prop-ok",
+            "skip": false,
+            "ok": false,
+            "message": "expected clean (0 errors), got 2"
+          },
+          {
+            "caseId": "inherit-attrs-default-class-style-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "inherit-attrs-default-unknown",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "inherit-attrs-false-class-style-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "inherit-attrs-false-unknown",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "inject-key-type",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "literal-union-prop-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "literal-union-prop-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "missing-required-prop",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "native-input-v-model-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "native-keyup-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "native-v-model-lazy-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "native-v-model-number-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "native-v-model-trim-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "optional-chain-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "optional-chain-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "options-api-prop-bad",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:11 did not mention count"
+          },
+          {
+            "caseId": "provide-inject-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "ref-unwrap-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "ref-unwrap-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "required-slot-missing-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "required-slot-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "script-type-error",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:4 did not mention count"
+          },
+          {
+            "caseId": "slot-default-implicit-ok",
+            "skip": false,
+            "ok": false,
+            "message": "expected clean (0 errors), got 1"
+          },
+          {
+            "caseId": "slot-provide-type-bad",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:11 did not mention msg"
+          },
+          {
+            "caseId": "slot-provide-type-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "slot-scope-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "slot-scope-payload",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:13 did not mention id"
+          },
+          {
+            "caseId": "slot-unknown-prop-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "slot-v-bind-bad",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:13 did not mention one of: TS2322 | TS2345 | number | string | not assignable"
+          },
+          {
+            "caseId": "slot-v-bind-ok",
+            "skip": false,
+            "ok": false,
+            "message": "expected clean (0 errors), got 1"
+          },
+          {
+            "caseId": "static-number-attr-bad",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:8 did not mention count"
+          },
+          {
+            "caseId": "style-binding-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "template-ref-type",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "template-undefined",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "ts-import-vue-bad",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "ts-import-vue-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "unknown-prop-strict",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-bind-object-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-bind-object-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-else-if-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-else-if-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-for-destructure-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-for-item-type",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-for-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-for-tuple-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-for-tuple-type-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-if-discriminant-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 2 error(s)"
+          },
+          {
+            "caseId": "v-if-discriminant-ok",
+            "skip": false,
+            "ok": false,
+            "message": "expected clean (0 errors), got 2"
+          },
+          {
+            "caseId": "v-if-else-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-if-else-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-if-event-closure",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-if-in-narrow-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-if-in-narrow-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-if-inline-event-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-if-inline-event-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-if-narrow-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-if-narrow-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-if-not-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-if-optional-prop-bad",
+            "skip": false,
+            "ok": false,
+            "message": "no diagnostic at App.vue:10 (@plant-error)"
+          },
+          {
+            "caseId": "v-if-optional-prop-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-if-typeof-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-if-typeof-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-model-type",
+            "skip": false,
+            "ok": false,
+            "message": "no diagnostic at App.vue:11 (@plant-error)"
+          },
+          {
+            "caseId": "v-show-no-narrow",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "with-defaults-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "wrong-prop-type",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:8 did not mention count"
+          }
+        ]
+      },
+      "ms": 755.4,
+      "rssMb": 223.5,
+      "rssToolMb": 81.6,
+      "rssEngineMb": 141.9
+    },
+    {
+      "suite": "typecheck-all",
+      "caseId": "all-plants",
+      "tool": "golar-typecheck",
+      "status": "pass",
+      "message": "82% (117/142) · median 0.91s of 5 after 1 warmup(s)",
+      "detail": {
+        "ms": 914.6,
+        "rssMb": 353.5,
+        "rssToolMb": 353.5,
+        "runs": [
+          912.2,
+          914.6,
+          908.6,
+          916.5,
+          914.6
+        ],
+        "warmups": 1,
+        "runCount": 5,
+        "pass": 117,
+        "fail": 25,
+        "skip": 0,
+        "scored": 142,
+        "passPct": 82.3943661971831,
+        "plants": [
+          {
+            "caseId": "async-component-prop-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "async-component-prop-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "async-setup-await",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "attrs-aria-data-unknown",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "attrs-class-style-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "attrs-unknown-fallthrough",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "boolean-prop-attr-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "clean-basic",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "component-ref-expose-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "component-ref-expose-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "computed-unwrap-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "custom-directive-value-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "custom-directive-value-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "define-model-default-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "define-model-get-set-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "define-model-modifiers-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "define-model-modifiers-read-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "define-model-modifiers-unknown-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "define-model-named",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:11 did not mention title"
+          },
+          {
+            "caseId": "define-model-named-modifiers-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "define-model-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "define-model-set-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "define-slots-default-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "define-slots-fn-bad",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:10 did not mention nope"
+          },
+          {
+            "caseId": "define-slots-fn-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "define-slots-named-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "discriminated-union-v-model-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "discriminated-union-v-model-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "dollar-event-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "dollar-event-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "dynamic-component-prop-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "dynamic-component-prop-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "element-prop-type",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:9 did not mention disabled"
+          },
+          {
+            "caseId": "emit-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "emit-unknown-event",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "emit-wrong-arg",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:8 did not mention nope"
+          },
+          {
+            "caseId": "event-emit-payload",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "event-mod-click-ctrl-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "event-mod-click-prevent-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "event-mod-click-prevent-dollar-bad",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:7 did not mention key"
+          },
+          {
+            "caseId": "event-mod-click-prevent-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "event-mod-click-stop-prevent-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "event-mod-component-once-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "event-mod-component-once-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "event-mod-keyup-enter-bad",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:10 did not mention KeyboardEvent"
+          },
+          {
+            "caseId": "event-mod-keyup-enter-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "event-mod-submit-prevent-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "fallthrough-mono-false-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "fallthrough-mono-ok",
+            "skip": false,
+            "ok": false,
+            "message": "expected clean (0 errors), got 1"
+          },
+          {
+            "caseId": "fallthrough-multi-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "fallthrough-multi-false-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "fallthrough-native-type-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "fallthrough-vif-both-mono-false-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "fallthrough-vif-both-mono-ok",
+            "skip": false,
+            "ok": false,
+            "message": "expected clean (0 errors), got 1"
+          },
+          {
+            "caseId": "fallthrough-vif-mono-multi-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "fallthrough-vif-static-multi-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "fallthrough-vif-static-ok",
+            "skip": false,
+            "ok": false,
+            "message": "expected clean (0 errors), got 1"
+          },
+          {
+            "caseId": "fallthrough-vif-static-prop-ok",
+            "skip": false,
+            "ok": false,
+            "message": "expected clean (0 errors), got 1"
+          },
+          {
+            "caseId": "generic-component-bad",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:13 did not mention selected"
+          },
+          {
+            "caseId": "generic-component-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "generic-constraint-template-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "generic-default-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "generic-define-model-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "generic-define-model-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "generic-emit-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "generic-emit-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "generic-fallthrough-mono-ok",
+            "skip": false,
+            "ok": false,
+            "message": "expected clean (0 errors), got 1"
+          },
+          {
+            "caseId": "generic-inherit-false-class-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "generic-inherit-false-unknown",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "generic-multi-root-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "generic-slot-bad",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:13 did not mention id"
+          },
+          {
+            "caseId": "generic-slot-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "generic-two-params-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "generic-two-params-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "global-component-prop-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "global-component-prop-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "inherit-attrs-default-class-style-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "inherit-attrs-default-unknown",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "inherit-attrs-false-class-style-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "inherit-attrs-false-unknown",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:8 did not mention data-x"
+          },
+          {
+            "caseId": "inject-key-type",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "literal-union-prop-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "literal-union-prop-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "missing-required-prop",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "native-input-v-model-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "native-keyup-bad",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:10 did not mention KeyboardEvent"
+          },
+          {
+            "caseId": "native-v-model-lazy-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "native-v-model-number-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "native-v-model-trim-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "optional-chain-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "optional-chain-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "options-api-prop-bad",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:11 did not mention count"
+          },
+          {
+            "caseId": "provide-inject-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "ref-unwrap-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "ref-unwrap-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "required-slot-missing-bad",
+            "skip": false,
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
+          },
+          {
+            "caseId": "required-slot-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "script-type-error",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:4 did not mention count"
+          },
+          {
+            "caseId": "slot-default-implicit-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "slot-provide-type-bad",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:11 did not mention msg"
+          },
+          {
+            "caseId": "slot-provide-type-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "slot-scope-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "slot-scope-payload",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:13 did not mention id"
+          },
+          {
+            "caseId": "slot-unknown-prop-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "slot-v-bind-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "slot-v-bind-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "static-number-attr-bad",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:8 did not mention count"
+          },
+          {
+            "caseId": "style-binding-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "template-ref-type",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "template-undefined",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "ts-import-vue-bad",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "ts-import-vue-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "unknown-prop-strict",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-bind-object-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-bind-object-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-else-if-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-else-if-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-for-destructure-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-for-item-type",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-for-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-for-tuple-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-for-tuple-type-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-if-discriminant-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-if-discriminant-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-if-else-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-if-else-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-if-event-closure",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-if-in-narrow-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-if-in-narrow-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-if-inline-event-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-if-inline-event-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-if-narrow-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-if-narrow-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-if-not-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-if-optional-prop-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-if-optional-prop-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-if-typeof-bad",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-if-typeof-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-model-type",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:11 did not mention modelValue"
+          },
+          {
+            "caseId": "v-show-no-narrow",
+            "skip": false,
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "with-defaults-ok",
+            "skip": false,
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "wrong-prop-type",
+            "skip": false,
+            "ok": false,
+            "message": "plant at App.vue:8 did not mention count"
+          }
+        ]
+      },
+      "ms": 914.6,
+      "rssMb": 353.5,
+      "rssToolMb": 353.5
+    }
+  ]
+}

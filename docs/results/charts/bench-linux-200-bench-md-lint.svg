@@ -23,61 +23,61 @@
   <line class="grid" x1="248" y1="36" x2="248" y2="404" />
   <text class="muted" x="248" y="424" text-anchor="middle" font-size="11">0.0 ms</text>
   <line class="grid" x1="348.5" y1="36" x2="348.5" y2="404" />
-  <text class="muted" x="348.5" y="424" text-anchor="middle" font-size="11">860 ms</text>
+  <text class="muted" x="348.5" y="424" text-anchor="middle" font-size="11">950 ms</text>
   <line class="grid" x1="449" y1="36" x2="449" y2="404" />
-  <text class="muted" x="449" y="424" text-anchor="middle" font-size="11">1.72 s</text>
+  <text class="muted" x="449" y="424" text-anchor="middle" font-size="11">1.90 s</text>
   <line class="grid" x1="549.5" y1="36" x2="549.5" y2="404" />
-  <text class="muted" x="549.5" y="424" text-anchor="middle" font-size="11">2.58 s</text>
+  <text class="muted" x="549.5" y="424" text-anchor="middle" font-size="11">2.85 s</text>
   <line class="grid" x1="650" y1="36" x2="650" y2="404" />
-  <text class="muted" x="650" y="424" text-anchor="middle" font-size="11">3.44 s</text>
+  <text class="muted" x="650" y="424" text-anchor="middle" font-size="11">3.80 s</text>
   <text class="muted" x="16" y="60" font-size="11">1</text>
       <text class="label" x="236" y="60" text-anchor="end" font-size="13">Vize lint (max threads)</text>
       <rect class="track" x="248" y="49" width="402" height="22" rx="5"/>
-      <rect x="248" y="49" width="9.7" height="22" rx="5" fill="#2563eb"/>
-      <text class="label" x="265.67604651162793" y="60" font-size="12" font-weight="600">82.8 ms</text>
+      <rect x="248" y="49" width="8.7" height="22" rx="5" fill="#2563eb"/>
+      <text class="label" x="264.65357894736843" y="60" font-size="12" font-weight="600">81.8 ms</text>
   <text class="muted" x="16" y="96" font-size="11">2</text>
       <text class="label" x="236" y="96" text-anchor="end" font-size="13">Vize lint (1T)</text>
       <rect class="track" x="248" y="85" width="402" height="22" rx="5"/>
-      <rect x="248" y="85" width="11.9" height="22" rx="5" fill="#2563eb"/>
-      <text class="label" x="267.8963953488372" y="96" font-size="12" font-weight="600">102 ms</text>
+      <rect x="248" y="85" width="11.1" height="22" rx="5" fill="#2563eb"/>
+      <text class="label" x="267.09731578947367" y="96" font-size="12" font-weight="600">105 ms</text>
   <text class="muted" x="16" y="132" font-size="11">3</text>
       <text class="label" x="236" y="132" text-anchor="end" font-size="13">Verter host lint</text>
       <rect class="track" x="248" y="121" width="402" height="22" rx="5"/>
-      <rect x="248" y="121" width="17.5" height="22" rx="5" fill="#e11d48"/>
-      <text class="label" x="273.49401162790696" y="132" font-size="12" font-weight="600">150 ms</text>
+      <rect x="248" y="121" width="16.4" height="22" rx="5" fill="#e11d48"/>
+      <text class="label" x="272.4291052631579" y="132" font-size="12" font-weight="600">155 ms</text>
   <text class="muted" x="16" y="168" font-size="11">4</text>
       <text class="label" x="236" y="168" text-anchor="end" font-size="13">eslint-plugin-vue (1T)</text>
       <rect class="track" x="248" y="157" width="402" height="22" rx="5"/>
-      <rect x="248" y="157" width="194.0" height="22" rx="5" fill="#4b32c3"/>
-      <text class="onbar" x="433.98837209302326" y="168" text-anchor="end" font-size="12" font-weight="600">1.66 s</text>
+      <rect x="248" y="157" width="226.4" height="22" rx="5" fill="#4b32c3"/>
+      <text class="onbar" x="466.38947368421054" y="168" text-anchor="end" font-size="12" font-weight="600">2.14 s</text>
   <text class="muted" x="16" y="204" font-size="11">5</text>
       <text class="label" x="236" y="204" text-anchor="end" font-size="13">eslint-plugin-vue (CLI)</text>
       <rect class="track" x="248" y="193" width="402" height="22" rx="5"/>
-      <rect x="248" y="193" width="357.6" height="22" rx="5" fill="#4b32c3"/>
-      <text class="onbar" x="597.5930232558139" y="204" text-anchor="end" font-size="12" font-weight="600">3.06 s</text>
+      <rect x="248" y="193" width="348.0" height="22" rx="5" fill="#4b32c3"/>
+      <text class="onbar" x="588.0473684210526" y="204" text-anchor="end" font-size="12" font-weight="600">3.29 s</text>
   <text class="muted" x="16" y="240" font-size="11">6</text>
       <text class="label" x="236" y="240" text-anchor="end" font-size="13">eslint-plugin-vue (4 workers)</text>
       <rect class="track" x="248" y="229" width="402" height="22" rx="5"/>
       <rect x="248" y="229" width="402.0" height="22" rx="5" fill="#4b32c3"/>
-      <text class="onbar" x="642" y="240" text-anchor="end" font-size="12" font-weight="600">3.44 s</text>
+      <text class="onbar" x="642" y="240" text-anchor="end" font-size="12" font-weight="600">3.80 s</text>
   <text class="muted" x="16" y="276" font-size="11">7</text>
       <text class="label struck" x="236" y="276" text-anchor="end" font-size="13">Oxlint (max threads)</text>
       <rect class="track" x="248" y="265" width="402" height="22" rx="5"/>
-      <rect x="248" y="265" width="9.3" height="22" rx="5" fill="url(#hatch-6)"/>
-      <text class="label" x="265.2553488372093" y="276" font-size="12" font-weight="600">79.2 ms · unranked</text>
+      <rect x="248" y="265" width="8.1" height="22" rx="5" fill="url(#hatch-6)"/>
+      <text class="label" x="264.0505789473684" y="276" font-size="12" font-weight="600">76.1 ms · unranked</text>
   <text class="muted" x="16" y="312" font-size="11">8</text>
       <text class="label struck" x="236" y="312" text-anchor="end" font-size="13">Oxlint (1T)</text>
       <rect class="track" x="248" y="301" width="402" height="22" rx="5"/>
-      <rect x="248" y="301" width="9.5" height="22" rx="5" fill="url(#hatch-7)"/>
-      <text class="label" x="265.4656976744186" y="312" font-size="12" font-weight="600">81.0 ms · unranked</text>
+      <rect x="248" y="301" width="8.6" height="22" rx="5" fill="url(#hatch-7)"/>
+      <text class="label" x="264.6006842105263" y="312" font-size="12" font-weight="600">81.3 ms · unranked</text>
   <text class="muted" x="16" y="348" font-size="11">9</text>
       <text class="label struck" x="236" y="348" text-anchor="end" font-size="13">Biome lint (max threads)</text>
       <rect class="track" x="248" y="337" width="402" height="22" rx="5"/>
-      <rect x="248" y="337" width="21.8" height="22" rx="5" fill="url(#hatch-8)"/>
-      <text class="label" x="277.84122093023257" y="348" font-size="12" font-weight="600">187 ms · unranked</text>
+      <rect x="248" y="337" width="19.0" height="22" rx="5" fill="url(#hatch-8)"/>
+      <text class="label" x="275.0421052631579" y="348" font-size="12" font-weight="600">180 ms · unranked</text>
   <text class="muted" x="16" y="384" font-size="11">10</text>
       <text class="label struck" x="236" y="384" text-anchor="end" font-size="13">Biome lint (1T)</text>
       <rect class="track" x="248" y="373" width="402" height="22" rx="5"/>
-      <rect x="248" y="373" width="42.6" height="22" rx="5" fill="url(#hatch-9)"/>
-      <text class="label" x="298.64238372093024" y="384" font-size="12" font-weight="600">365 ms · unranked</text>
+      <rect x="248" y="373" width="37.7" height="22" rx="5" fill="url(#hatch-9)"/>
+      <text class="label" x="293.69278947368423" y="384" font-size="12" font-weight="600">356 ms · unranked</text>
 </svg>

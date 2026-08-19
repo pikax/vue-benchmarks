@@ -23,26 +23,26 @@
   <line class="grid" x1="248" y1="36" x2="248" y2="152" />
   <text class="muted" x="248" y="172" text-anchor="middle" font-size="11">0.0 MB</text>
   <line class="grid" x1="348.5" y1="36" x2="348.5" y2="152" />
-  <text class="muted" x="348.5" y="172" text-anchor="middle" font-size="11">35.2 MB</text>
+  <text class="muted" x="348.5" y="172" text-anchor="middle" font-size="11">69.0 MB</text>
   <line class="grid" x1="449" y1="36" x2="449" y2="152" />
-  <text class="muted" x="449" y="172" text-anchor="middle" font-size="11">70.3 MB</text>
+  <text class="muted" x="449" y="172" text-anchor="middle" font-size="11">138.0 MB</text>
   <line class="grid" x1="549.5" y1="36" x2="549.5" y2="152" />
-  <text class="muted" x="549.5" y="172" text-anchor="middle" font-size="11">105.5 MB</text>
+  <text class="muted" x="549.5" y="172" text-anchor="middle" font-size="11">207.1 MB</text>
   <line class="grid" x1="650" y1="36" x2="650" y2="152" />
-  <text class="muted" x="650" y="172" text-anchor="middle" font-size="11">140.7 MB</text>
+  <text class="muted" x="650" y="172" text-anchor="middle" font-size="11">276.1 MB</text>
   <text class="muted" x="16" y="60" font-size="11">1</text>
-      <text class="label" x="236" y="60" text-anchor="end" font-size="13">LSP verter (server process, npm 0.0…</text>
+      <text class="label" x="236" y="60" text-anchor="end" font-size="13">LSP volar (server process)</text>
       <rect class="track" x="248" y="49" width="402" height="22" rx="5"/>
-      <rect x="248" y="49" width="92.3" height="22" rx="5" fill="#e11d48"/>
-      <text class="label" x="348.33397312859887" y="60" font-size="12" font-weight="600">32.3 MB</text>
+      <rect x="248" y="49" width="204.1" height="22" rx="5" fill="#42b883"/>
+      <text class="onbar" x="444.0940997500815" y="60" text-anchor="end" font-size="12" font-weight="600">140.2 MB</text>
   <text class="muted" x="16" y="96" font-size="11">2</text>
-      <text class="label" x="236" y="96" text-anchor="end" font-size="13">LSP vize (server process, Node shim)</text>
+      <text class="label" x="236" y="96" text-anchor="end" font-size="13">LSP verter (server process, npm 0.0…</text>
       <rect class="track" x="248" y="85" width="402" height="22" rx="5"/>
-      <rect x="248" y="85" width="210.2" height="22" rx="5" fill="#2563eb"/>
-      <text class="onbar" x="450.2162507997441" y="96" text-anchor="end" font-size="12" font-weight="600">73.6 MB</text>
+      <rect x="248" y="85" width="324.8" height="22" rx="5" fill="#e11d48"/>
+      <text class="onbar" x="564.8295121156145" y="96" text-anchor="end" font-size="12" font-weight="600">223.1 MB</text>
   <text class="muted" x="16" y="132" font-size="11">3</text>
-      <text class="label" x="236" y="132" text-anchor="end" font-size="13">LSP volar (server process)</text>
+      <text class="label" x="236" y="132" text-anchor="end" font-size="13">LSP vize (server process, Node shim)</text>
       <rect class="track" x="248" y="121" width="402" height="22" rx="5"/>
-      <rect x="248" y="121" width="402.0" height="22" rx="5" fill="#42b883"/>
-      <text class="onbar" x="642" y="132" text-anchor="end" font-size="12" font-weight="600">140.7 MB</text>
+      <rect x="248" y="121" width="402.0" height="22" rx="5" fill="#2563eb"/>
+      <text class="onbar" x="642" y="132" text-anchor="end" font-size="12" font-weight="600">276.1 MB</text>
 </svg>

@@ -4,8 +4,9 @@ This is the **correctness** suite for Vue typecheckers, not a throughput benchma
 A tool is compatible only if it reports the planted error (or stays clean) on every plant.
 vue-tsc (Volar) is the usual reference, but it is **not assumed perfect** — a plant it fails is a real gap and is listed as such.
 
-Generated from `pnpm confirm:typecheck` at 2026-08-19T18:13:47.784Z on **Windows**.
-- **Runner:** Windows · win32/x64 · 32 CPUs · AMD Ryzen 9 7950X 16-Core Processor · 127.2 GB · Node v26.5.0
+Generated from `pnpm confirm:typecheck` at 2026-08-19T18:33:13.434Z on **Linux CI**.
+- **Runner:** Linux · linux/x64 · 4 CPUs · AMD EPYC 9V74 80-Core Processor · 15.6 GB · Node v22.23.2
+- **CI run:** https://github.com/pikax/vue-benchmarks/actions/runs/32287835178
 
 On a **Benchmark** dispatch, Linux CI re-runs this and commits the file. Do not hand-edit the results.
 
@@ -71,19 +72,19 @@ Wall is the **median** of a **speed** pass (`--runs`, default 5, after `--warmup
 
 | Tool | **Wall** | vs fastest |
 | --- | ---: | ---: |
-| golar | **920 ms** | 1.00x |
-| vize | **1.28 s** | 1.39x |
-| vue-tsc | **2.50 s** | 2.72x |
-| verter-tsc | **2.82 s** | 3.07x |
+| vize | **603 ms** | 1.00x |
+| verter-tsc | **755 ms** | 1.25x |
+| golar | **915 ms** | 1.52x |
+| vue-tsc | **3.18 s** | 5.28x |
 
 ![All plants peak RSS](results/charts/typecheck-all-rss.svg)
 
 | Tool | Tool | tsgo / tsc | **Total** |
 | --- | ---: | ---: | ---: |
-| golar | 323.1 MB | — | **323.1 MB** |
-| vue-tsc | 350.2 MB | — | **350.2 MB** |
-| vize | 90.5 MB | 292.2 MB | **382.7 MB** |
-| verter-tsc | 351.1 MB | 363.9 MB | **715.0 MB** |
+| verter-tsc | 81.6 MB | 141.9 MB | **223.5 MB** |
+| vue-tsc | 340.1 MB | — | **340.1 MB** |
+| golar | 353.5 MB | — | **353.5 MB** |
+| vize | 72.3 MB | 319.6 MB | **392.0 MB** |
 
 Engine is a **child** `tsgo` / native `tsc` / `tsserver`. vue-tsc, golar, and vize host the checker **in-process** — Peak RSS is that process's high-water mark (Tool = Total, engine —).
 
@@ -93,7 +94,7 @@ Engine is a **child** `tsgo` / native `tsc` / `tsserver`. vue-tsc, golar, and vi
 | --- | ---: | ---: | ---: |
 | vue-tsc | **84%** | 119 / 142 | 0 |
 | golar | **82%** | 117 / 142 | 0 |
-| verter-tsc | **76%** | 108 / 142 | 0 |
+| verter-tsc | **70%** | 100 / 142 | 0 |
 | vize | **52%** | 71 / 136 | 6 |
 
 **vize** scored 136 of 142 (6 skipped). Skips are capability gaps, not fails — Vize does not claim `strict-component-attrs` (undeclared component attrs under `strictTemplates`).

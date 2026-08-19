@@ -10,7 +10,7 @@ This page is the **landing view**: a bar chart and a 3-column ranking (median ·
 
 - **[Reference results](#reference-results)** — [how to read](docs/results/notes-benchmark.md) · [bench](docs/results/bench-Linux-200-bench.md)
 - **[Typecheck confirmation](#typecheck-confirmation)** — [full matrix](docs/typecheck.md)
-- **[IDE operation results](#ide-operation-results)** — [how to read](docs/results/notes-ide.md) · [ide ops](docs/results/ide-win32.md)
+- **[IDE operation results](#ide-operation-results)** — [how to read](docs/results/notes-ide.md) · [ide ops](docs/results/ide-Linux.md)
 - **[Real-world project results](#real-world-project-results)** — [how to read](docs/results/notes-real-world.md) · [element-plus](docs/results/real-world-Linux-element-plus.md) · [hoppscotch](docs/results/real-world-Linux-hoppscotch.md) · [naive-ui](docs/results/real-world-Linux-naive-ui.md) · [nuxt-ui](docs/results/real-world-Linux-nuxt-ui.md) · [primevue](docs/results/real-world-Linux-primevue.md) · [quasar](docs/results/real-world-Linux-quasar.md) · [vue-vben-admin](docs/results/real-world-Linux-vue-vben-admin.md) · [vuetify](docs/results/real-world-Linux-vuetify.md)
 - **[Memory](#memory)** — [MEMORY.md](MEMORY.md)
 
@@ -37,11 +37,11 @@ Median of warmed runs. **⚠** failed a work gate (shown, unranked) · **❌** e
 
 ## This run
 
-- **Date:** 2026-08-16 (`2026-08-16T09:16:08.702Z`)
-- **Runner:** Linux · linux/x64 · 4 CPUs · AMD EPYC 9V74 80-Core Processor
+- **Date:** 2026-08-19 (`2026-08-19T18:37:25.414Z`)
+- **Runner:** Linux · linux/x64 · 4 CPUs · AMD EPYC 7763 64-Core Processor
 - **Fixture:** `fixtures/200` (200 SFCs)
 - **Runs / warmups:** 5 / 1
-- **CI run:** https://github.com/pikax/vue-benchmarks/actions/runs/31938354532
+- **CI run:** https://github.com/pikax/vue-benchmarks/actions/runs/32287835178
 
 <!-- RUN_META_END -->
 
@@ -92,9 +92,9 @@ Files: **200** · Bytes: **285,701**
 
 | Tool | Version |
 | --- | --- |
+| [@vizejs/native](https://github.com/ubugeeei-prod/vize) | [0.350.2](https://www.npmjs.com/package/@vizejs/native/v/0.350.2) · 2026-08-19 |
+| [vize](https://github.com/ubugeeei-prod/vize) | [0.350.2](https://www.npmjs.com/package/vize/v/0.350.2) · 2026-08-19 |
 | [@vue/compiler-sfc 3.6](https://github.com/vuejs/core) | [3.6.0-rc.4](https://www.npmjs.com/package/@vue/compiler-sfc/v/3.6.0-rc.4) · 2026-08-14 |
-| [@vizejs/native](https://github.com/ubugeeei-prod/vize) | [0.347.7](https://www.npmjs.com/package/@vizejs/native/v/0.347.7) · 2026-08-11 |
-| [vize](https://github.com/ubugeeei-prod/vize) | [0.347.7](https://www.npmjs.com/package/vize/v/0.347.7) · 2026-08-11 |
 | [@vue/compiler-sfc](https://github.com/vuejs/core) | [3.5.41](https://www.npmjs.com/package/@vue/compiler-sfc/v/3.5.41) · 2026-08-05 |
 | [@verter/native](https://github.com/pikax/verter) | [0.0.1-beta.3](https://www.npmjs.com/package/@verter/native/v/0.0.1-beta.3) · 2026-07-27 |
 | [@fervid/napi](https://github.com/phoenix-ru/fervid) | [0.4.1](https://www.npmjs.com/package/@fervid/napi/v/0.4.1) · 2025-06-15 |
@@ -107,14 +107,14 @@ Target: `vdom` · Environment: `production` · Source map: `off`
 
 | Tool | **Median** | vs fastest |
 | --- | ---: | ---: |
-| [Vize native batch (max threads)](https://github.com/ubugeeei-prod/vize) | **22.8 ms** | 1.00x |
-| [Verter compileMany (session cache)](https://github.com/pikax/verter) | **24.6 ms** | 1.08x |
-| [Vize native loop (1T)](https://github.com/ubugeeei-prod/vize) | **55.9 ms** | 2.45x |
-| [Verter compileMany (stateless)](https://github.com/pikax/verter) | **124.3 ms** | 5.45x |
-| [@vue/compiler-sfc 3.5 (1T)](https://github.com/vuejs/core) | **177.9 ms** | 7.79x |
-| [@vue/compiler-sfc 3.6 (1T)](https://github.com/vuejs/core) | **182.2 ms** | 7.98x |
-| [fervid compileSync (1T)](https://github.com/phoenix-ru/fervid) ⚠ | (57.4 ms) | not ranked |
-| [fervid compileAsync (4-thread libuv pool)](https://github.com/phoenix-ru/fervid) ⚠ | (26.2 ms) | not ranked |
+| [Vize native batch (max threads)](https://github.com/ubugeeei-prod/vize) | **21.5 ms** | 1.00x |
+| [Verter compileMany (session cache)](https://github.com/pikax/verter) | **22.5 ms** | 1.04x |
+| [Vize native loop (1T)](https://github.com/ubugeeei-prod/vize) | **58.2 ms** | 2.70x |
+| [Verter compileMany (stateless)](https://github.com/pikax/verter) | **125.3 ms** | 5.82x |
+| [@vue/compiler-sfc 3.6 (1T)](https://github.com/vuejs/core) | **179.4 ms** | 8.34x |
+| [@vue/compiler-sfc 3.5 (1T)](https://github.com/vuejs/core) | **181.1 ms** | 8.42x |
+| [fervid compileSync (1T)](https://github.com/phoenix-ru/fervid) ⚠ | (57.6 ms) | not ranked |
+| [fervid compileAsync (4-thread libuv pool)](https://github.com/phoenix-ru/fervid) ⚠ | (27.8 ms) | not ranked |
 
 #### VAPOR · production · sourcemap off
 
@@ -124,11 +124,11 @@ Target: `vapor` · Environment: `production` · Source map: `off`
 
 | Tool | **Median** | vs fastest |
 | --- | ---: | ---: |
-| [Verter compileMany (session cache)](https://github.com/pikax/verter) | **19.1 ms** | 1.00x |
-| [Vize native batch (max threads)](https://github.com/ubugeeei-prod/vize) | **20.1 ms** | 1.05x |
-| [Vize native loop (1T)](https://github.com/ubugeeei-prod/vize) | **57.2 ms** | 2.99x |
-| [Verter compileMany (stateless)](https://github.com/pikax/verter) | **120.5 ms** | 6.30x |
-| [@vue/compiler-sfc 3.6 (1T)](https://github.com/vuejs/core) | **300.3 ms** | 15.69x |
+| [Verter compileMany (session cache)](https://github.com/pikax/verter) | **21.3 ms** | 1.00x |
+| [Vize native batch (max threads)](https://github.com/ubugeeei-prod/vize) | **22.2 ms** | 1.04x |
+| [Vize native loop (1T)](https://github.com/ubugeeei-prod/vize) | **61.0 ms** | 2.86x |
+| [Verter compileMany (stateless)](https://github.com/pikax/verter) | **127.4 ms** | 5.98x |
+| [@vue/compiler-sfc 3.6 (1T)](https://github.com/vuejs/core) | **347.2 ms** | 16.29x |
 | [@vue/compiler-sfc 3.5 (vapor)](https://github.com/vuejs/core) ⏭ | skipped | – |
 | [fervid (vapor)](https://github.com/phoenix-ru/fervid) ⏭ | skipped | – |
 
@@ -140,16 +140,16 @@ Target: `vapor` · Environment: `production` · Source map: `off`
 
 | Tool | **Peak RSS** |
 | --- | ---: |
-| [Vize native loop (1T) vapor-prod](https://github.com/ubugeeei-prod/vize) | 15.3 MB |
-| [fervid compileSync (1T) vdom-prod](https://github.com/phoenix-ru/fervid) | 16.1 MB |
-| [Vize native loop (1T) vdom-prod](https://github.com/ubugeeei-prod/vize) | 16.8 MB |
-| [Vize native batch vapor-prod](https://github.com/ubugeeei-prod/vize) | 17.5 MB |
+| [Vize native loop (1T) vapor-prod](https://github.com/ubugeeei-prod/vize) | 15.2 MB |
+| [fervid compileSync (1T) vdom-prod](https://github.com/phoenix-ru/fervid) | 15.9 MB |
+| [Vize native loop (1T) vdom-prod](https://github.com/ubugeeei-prod/vize) | 16.6 MB |
+| [Vize native batch vapor-prod](https://github.com/ubugeeei-prod/vize) | 17.4 MB |
 | [Vize native batch vdom-prod](https://github.com/ubugeeei-prod/vize) | 18.1 MB |
-| [Verter compileMany (stateless) vdom-prod](https://github.com/pikax/verter) | 38.2 MB |
-| [Verter compileMany (stateless) vapor-prod](https://github.com/pikax/verter) | 38.2 MB |
-| [@vue/compiler-sfc 3.6 (1T) vdom-prod](https://github.com/vuejs/core) | 62.9 MB |
-| [@vue/compiler-sfc 3.5 (1T) vdom-prod](https://github.com/vuejs/core) | 63.5 MB |
-| [@vue/compiler-sfc 3.6 vapor (1T) vapor-prod](https://github.com/vuejs/core) | 71.5 MB |
+| [Verter compileMany (stateless) vapor-prod](https://github.com/pikax/verter) | 37.7 MB |
+| [Verter compileMany (stateless) vdom-prod](https://github.com/pikax/verter) | 37.8 MB |
+| [@vue/compiler-sfc 3.6 (1T) vdom-prod](https://github.com/vuejs/core) | 62.6 MB |
+| [@vue/compiler-sfc 3.5 (1T) vdom-prod](https://github.com/vuejs/core) | 62.9 MB |
+| [@vue/compiler-sfc 3.6 vapor (1T) vapor-prod](https://github.com/vuejs/core) | 71.8 MB |
 
 ### Typecheck
 
@@ -157,9 +157,9 @@ Files: **200** · Bytes: **285,701**
 
 | Tool | Version |
 | --- | --- |
+| [vize](https://github.com/ubugeeei-prod/vize) | [0.350.2](https://www.npmjs.com/package/vize/v/0.350.2) · 2026-08-19 |
 | [vue-tsc](https://github.com/vuejs/language-tools) | [3.3.10](https://www.npmjs.com/package/vue-tsc/v/3.3.10) · 2026-08-15 |
 | [typescript-native-bridge (TNB)](https://github.com/johnsoncodehk/typescript-native-bridge) | [6.0.3-bridge.13.tsgo.7.0.2](https://www.npmjs.com/package/typescript-native-bridge/v/6.0.3-bridge.13.tsgo.7.0.2) · 2026-08-13 |
-| [vize](https://github.com/ubugeeei-prod/vize) | [0.347.7](https://www.npmjs.com/package/vize/v/0.347.7) · 2026-08-11 |
 | [verter-tsc](https://github.com/pikax/verter) | [0.0.1-beta.3](https://www.npmjs.com/package/verter-tsc/v/0.0.1-beta.3) · 2026-07-27 |
 | [@golar/vue](https://github.com/auvred/golar) | [0.1.10](https://www.npmjs.com/package/@golar/vue/v/0.1.10) · 2026-07-19 |
 | [golar](https://github.com/auvred/golar) | [0.1.10](https://www.npmjs.com/package/golar/v/0.1.10) · 2026-07-19 |
@@ -169,12 +169,12 @@ Files: **200** · Bytes: **285,701**
 
 | Tool | **Median** | vs fastest |
 | --- | ---: | ---: |
-| [verter-tsc](https://github.com/pikax/verter) | **1.09 s** | 1.00x |
-| [Golar (lint+check)](https://github.com/auvred/golar) | **1.57 s** | 1.43x |
-| [Golar typecheck](https://github.com/auvred/golar) | **1.58 s** | 1.45x |
-| [Vize](https://github.com/ubugeeei-prod/vize) | **1.64 s** | 1.50x |
-| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **2.27 s** | 2.08x |
-| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | **4.85 s** | 4.44x |
+| [verter-tsc](https://github.com/pikax/verter) | **1.24 s** | 1.00x |
+| [Vize](https://github.com/ubugeeei-prod/vize) | **1.61 s** | 1.30x |
+| [Golar typecheck](https://github.com/auvred/golar) | **1.70 s** | 1.37x |
+| [Golar (lint+check)](https://github.com/auvred/golar) | **1.70 s** | 1.37x |
+| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **2.46 s** | 1.99x |
+| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | **5.18 s** | 4.19x |
 
 #### Peak RSS
 
@@ -184,10 +184,10 @@ Files: **200** · Bytes: **285,701**
 
 | Tool | **Peak RSS** |
 | --- | ---: |
-| [verter-tsc](https://github.com/pikax/verter) | 79.5 MB |
-| [Vize check](https://github.com/ubugeeei-prod/vize) | 204.6 MB |
-| [Golar typecheck](https://github.com/auvred/golar) | 373.7 MB |
-| [vue-tsc](https://github.com/vuejs/language-tools) | 354.8 MB |
+| [Vize check](https://github.com/ubugeeei-prod/vize) | 211.5 MB |
+| [verter-tsc](https://github.com/pikax/verter) | 214.8 MB |
+| [Golar typecheck](https://github.com/auvred/golar) | 382.6 MB |
+| [vue-tsc](https://github.com/vuejs/language-tools) | 353.8 MB |
 
 ### Format
 
@@ -195,19 +195,19 @@ Files: **200** · Bytes: **285,701**
 
 | Tool | Version |
 | --- | --- |
-| [@biomejs/biome](https://github.com/biomejs/biome) | [2.5.8](https://www.npmjs.com/package/@biomejs/biome/v/2.5.8) · 2026-08-11 |
-| [vize](https://github.com/ubugeeei-prod/vize) | [0.347.7](https://www.npmjs.com/package/vize/v/0.347.7) · 2026-08-11 |
-| [oxfmt](https://github.com/oxc-project/oxc) | [0.63.0](https://www.npmjs.com/package/oxfmt/v/0.63.0) · 2026-08-10 |
+| [vize](https://github.com/ubugeeei-prod/vize) | [0.350.2](https://www.npmjs.com/package/vize/v/0.350.2) · 2026-08-19 |
+| [oxfmt](https://github.com/oxc-project/oxc) | [0.64.0](https://www.npmjs.com/package/oxfmt/v/0.64.0) · 2026-08-18 |
+| [@biomejs/biome](https://github.com/biomejs/biome) | [2.5.9](https://www.npmjs.com/package/@biomejs/biome/v/2.5.9) · 2026-08-17 |
 | [prettier](https://github.com/prettier/prettier) | [3.9.6](https://www.npmjs.com/package/prettier/v/3.9.6) · 2026-07-21 |
 
 ![Format](docs/results/charts/bench-linux-200-bench-md-format.svg)
 
 | Tool | **Median** | vs fastest |
 | --- | ---: | ---: |
-| [Vize](https://github.com/ubugeeei-prod/vize) | **125.9 ms** | 1.00x |
-| [Oxfmt](https://github.com/oxc-project/oxc) | **3.15 s** | 25.05x |
-| [Prettier](https://github.com/prettier/prettier) | **3.66 s** | 29.07x |
-| [Biome format](https://github.com/biomejs/biome) ⚠ | (119.2 ms) | not ranked |
+| [Vize](https://github.com/ubugeeei-prod/vize) | **127.6 ms** | 1.00x |
+| [Oxfmt](https://github.com/oxc-project/oxc) | **3.27 s** | 25.66x |
+| [Prettier](https://github.com/prettier/prettier) | **3.78 s** | 29.60x |
+| [Biome format](https://github.com/biomejs/biome) ⚠ | (116.3 ms) | not ranked |
 
 #### Peak RSS
 
@@ -217,10 +217,10 @@ Files: **200** · Bytes: **285,701**
 
 | Tool | **Peak RSS** |
 | --- | ---: |
-| [Vize fmt](https://github.com/ubugeeei-prod/vize) | 67.8 MB |
-| [Biome format](https://github.com/biomejs/biome) | 95.1 MB |
-| [Prettier](https://github.com/prettier/prettier) | 188.8 MB |
-| [Oxfmt](https://github.com/oxc-project/oxc) | 697.3 MB |
+| [Vize fmt](https://github.com/ubugeeei-prod/vize) | 68.0 MB |
+| [Biome format](https://github.com/biomejs/biome) | 95.8 MB |
+| [Prettier](https://github.com/prettier/prettier) | 186.2 MB |
+| [Oxfmt](https://github.com/oxc-project/oxc) | 685.3 MB |
 
 ### Lint
 
@@ -228,9 +228,9 @@ Files: **200** · Bytes: **285,701**
 
 | Tool | Version |
 | --- | --- |
-| [@biomejs/biome](https://github.com/biomejs/biome) | [2.5.8](https://www.npmjs.com/package/@biomejs/biome/v/2.5.8) · 2026-08-11 |
-| [vize](https://github.com/ubugeeei-prod/vize) | [0.347.7](https://www.npmjs.com/package/vize/v/0.347.7) · 2026-08-11 |
-| [oxlint](https://github.com/oxc-project/oxc) | [1.78.0](https://www.npmjs.com/package/oxlint/v/1.78.0) · 2026-08-10 |
+| [vize](https://github.com/ubugeeei-prod/vize) | [0.350.2](https://www.npmjs.com/package/vize/v/0.350.2) · 2026-08-19 |
+| [oxlint](https://github.com/oxc-project/oxc) | [1.79.0](https://www.npmjs.com/package/oxlint/v/1.79.0) · 2026-08-18 |
+| [@biomejs/biome](https://github.com/biomejs/biome) | [2.5.9](https://www.npmjs.com/package/@biomejs/biome/v/2.5.9) · 2026-08-17 |
 | [@verter/native](https://github.com/pikax/verter) | [0.0.1-beta.3](https://www.npmjs.com/package/@verter/native/v/0.0.1-beta.3) · 2026-07-27 |
 | [eslint-plugin-vue](https://github.com/vuejs/eslint-plugin-vue) | [10.10.0](https://www.npmjs.com/package/eslint-plugin-vue/v/10.10.0) · 2026-07-20 |
 
@@ -238,16 +238,16 @@ Files: **200** · Bytes: **285,701**
 
 | Tool | **Median** | vs fastest |
 | --- | ---: | ---: |
-| [Vize lint (max threads)](https://github.com/ubugeeei-prod/vize) | **82.8 ms** | 1.00x |
-| [Vize lint (1T)](https://github.com/ubugeeei-prod/vize) | **101.8 ms** | 1.23x |
-| [Verter host lint](https://github.com/pikax/verter) | **149.7 ms** | 1.81x |
-| [eslint-plugin-vue (1T)](https://github.com/vuejs/eslint-plugin-vue) | **1.66 s** | 20.10x |
-| [eslint-plugin-vue (CLI)](https://github.com/vuejs/eslint-plugin-vue) | **3.06 s** | 37.03x |
-| [eslint-plugin-vue (4 workers)](https://github.com/vuejs/eslint-plugin-vue) | **3.44 s** | 41.62x |
-| [Biome lint (1T)](https://github.com/biomejs/biome) ⚠ | (364.9 ms) | not ranked |
-| [Biome lint (max threads)](https://github.com/biomejs/biome) ⚠ | (186.9 ms) | not ranked |
-| [Oxlint (1T)](https://github.com/oxc-project/oxc) ⚠ | (81.0 ms) | not ranked |
-| [Oxlint (max threads)](https://github.com/oxc-project/oxc) ⚠ | (79.2 ms) | not ranked |
+| [Vize lint (max threads)](https://github.com/ubugeeei-prod/vize) | **81.8 ms** | 1.00x |
+| [Vize lint (1T)](https://github.com/ubugeeei-prod/vize) | **104.9 ms** | 1.28x |
+| [Verter host lint](https://github.com/pikax/verter) | **155.3 ms** | 1.90x |
+| [eslint-plugin-vue (1T)](https://github.com/vuejs/eslint-plugin-vue) | **2.14 s** | 26.16x |
+| [eslint-plugin-vue (CLI)](https://github.com/vuejs/eslint-plugin-vue) | **3.29 s** | 40.25x |
+| [eslint-plugin-vue (4 workers)](https://github.com/vuejs/eslint-plugin-vue) | **3.80 s** | 46.54x |
+| [Biome lint (1T)](https://github.com/biomejs/biome) ⚠ | (356.3 ms) | not ranked |
+| [Biome lint (max threads)](https://github.com/biomejs/biome) ⚠ | (180.0 ms) | not ranked |
+| [Oxlint (1T)](https://github.com/oxc-project/oxc) ⚠ | (81.3 ms) | not ranked |
+| [Oxlint (max threads)](https://github.com/oxc-project/oxc) ⚠ | (76.1 ms) | not ranked |
 
 #### Peak RSS
 
@@ -258,10 +258,10 @@ Files: **200** · Bytes: **285,701**
 | Tool | **Peak RSS** |
 | --- | ---: |
 | [Verter host lint](https://github.com/pikax/verter) | 31.6 MB |
-| [Vize lint](https://github.com/ubugeeei-prod/vize) | 68.1 MB |
-| [Oxlint (Node host + NAPI addon)](https://github.com/oxc-project/oxc) | 100.4 MB |
-| [Biome lint](https://github.com/biomejs/biome) | 102.8 MB |
-| [eslint-plugin-vue (1T)](https://github.com/vuejs/eslint-plugin-vue) | 213.7 MB |
+| [Vize lint](https://github.com/ubugeeei-prod/vize) | 68.5 MB |
+| [Oxlint (Node host + NAPI addon)](https://github.com/oxc-project/oxc) | 99.3 MB |
+| [Biome lint](https://github.com/biomejs/biome) | 103.2 MB |
+| [eslint-plugin-vue (1T)](https://github.com/vuejs/eslint-plugin-vue) | 213.3 MB |
 
 ### Component-meta
 
@@ -269,16 +269,16 @@ Files: **100** · Bytes: **142,771**
 
 | Tool | Version |
 | --- | --- |
+| [vize](https://github.com/ubugeeei-prod/vize) | [0.350.2](https://www.npmjs.com/package/vize/v/0.350.2) · 2026-08-19 |
 | [vue-component-meta](https://github.com/vuejs/language-tools) | [3.3.10](https://www.npmjs.com/package/vue-component-meta/v/3.3.10) · 2026-08-15 |
-| [vize](https://github.com/ubugeeei-prod/vize) | [0.347.7](https://www.npmjs.com/package/vize/v/0.347.7) · 2026-08-11 |
 | [@verter/component-meta](https://github.com/pikax/verter) | [0.0.1-beta.3](https://www.npmjs.com/package/@verter/component-meta/v/0.0.1-beta.3) · 2026-07-27 |
 
 ![Component-meta](docs/results/charts/bench-linux-200-bench-md-component-meta.svg)
 
 | Tool | **Median** | vs fastest |
 | --- | ---: | ---: |
-| [@verter/component-meta](https://github.com/pikax/verter) | **464.5 ms** | 1.00x |
-| [vue-component-meta](https://github.com/vuejs/language-tools) | **922.9 ms** | 1.99x |
+| [@verter/component-meta](https://github.com/pikax/verter) | **469.1 ms** | 1.00x |
+| [vue-component-meta](https://github.com/vuejs/language-tools) | **1.32 s** | 2.82x |
 | [Vize component-meta](https://github.com/ubugeeei-prod/vize) ⏭ | skipped | – |
 
 #### Peak RSS
@@ -290,7 +290,7 @@ Files: **100** · Bytes: **142,771**
 | Tool | **Peak RSS** |
 | --- | ---: |
 | [Verter ComponentMetaHost](https://github.com/pikax/verter) | 33.5 MB |
-| [vue-component-meta](https://github.com/vuejs/language-tools) | 248.3 MB |
+| [vue-component-meta](https://github.com/vuejs/language-tools) | 243.8 MB |
 
 ### LSP (editor language server)
 
@@ -298,10 +298,10 @@ Files: **1** · Bytes: **745**
 
 | Tool | Version |
 | --- | --- |
+| [vize](https://github.com/ubugeeei-prod/vize) | [0.350.2](https://www.npmjs.com/package/vize/v/0.350.2) · 2026-08-19 |
 | [@vue/language-server](https://github.com/vuejs/language-tools) | [3.3.10](https://www.npmjs.com/package/@vue/language-server/v/3.3.10) · 2026-08-15 |
 | [@vue/typescript-plugin](https://github.com/vuejs/language-tools) | [3.3.10](https://www.npmjs.com/package/@vue/typescript-plugin/v/3.3.10) · 2026-08-15 |
 | [typescript-native-bridge (TNB)](https://github.com/johnsoncodehk/typescript-native-bridge) | [6.0.3-bridge.13.tsgo.7.0.2](https://www.npmjs.com/package/typescript-native-bridge/v/6.0.3-bridge.13.tsgo.7.0.2) · 2026-08-13 |
-| [vize](https://github.com/ubugeeei-prod/vize) | [0.347.7](https://www.npmjs.com/package/vize/v/0.347.7) · 2026-08-11 |
 | [verter-lsp](https://github.com/pikax/verter) | [0.0.1-beta.3](https://www.npmjs.com/package/verter-lsp/v/0.0.1-beta.3) · 2026-07-27 |
 | [typescript-language-server](https://github.com/typescript-language-server/typescript-language-server) | [5.3.0](https://www.npmjs.com/package/typescript-language-server/v/5.3.0) · 2026-05-21 |
 
@@ -309,10 +309,10 @@ Files: **1** · Bytes: **745**
 
 | Tool | **Median** | vs fastest |
 | --- | ---: | ---: |
-| [Verter](https://github.com/pikax/verter) | **281.9 ms** | 1.00x |
-| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **414.5 ms** | 1.47x |
-| [Vize](https://github.com/ubugeeei-prod/vize) | **430.0 ms** | 1.53x |
-| [Volar (JS)](https://github.com/vuejs/language-tools) | **1.13 s** | 4.00x |
+| [Verter](https://github.com/pikax/verter) | **303.1 ms** | 1.00x |
+| [Vize](https://github.com/ubugeeei-prod/vize) | **355.7 ms** | 1.17x |
+| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **459.9 ms** | 1.52x |
+| [Volar (JS)](https://github.com/vuejs/language-tools) | **1.22 s** | 4.04x |
 
 #### Peak RSS
 
@@ -322,9 +322,9 @@ Files: **1** · Bytes: **745**
 
 | Tool | **Peak RSS** |
 | --- | ---: |
-| [LSP verter (server process, npm 0.0.1-beta.3)](https://github.com/pikax/verter) | 32.3 MB |
-| [LSP vize (server process, Node shim)](https://github.com/ubugeeei-prod/vize) | 73.6 MB |
-| [LSP volar (server process)](https://github.com/vuejs/language-tools) | 140.7 MB |
+| [LSP verter (server process, npm 0.0.1-beta.3)](https://github.com/pikax/verter) | 223.1 MB |
+| [LSP volar (server process)](https://github.com/vuejs/language-tools) | 140.2 MB |
+| [LSP vize (server process, Node shim)](https://github.com/ubugeeei-prod/vize) | 276.1 MB |
 
 
 <!-- BENCHMARK_RESULTS_END -->
@@ -333,7 +333,7 @@ Files: **1** · Bytes: **745**
 
 ## Typecheck confirmation
 
-> 📄 **[Full matrix →](docs/typecheck.md)** — plants, documented gaps, per-plant time/memory. **0** plants. Generated 2026-08-19T18:13:47.784Z.
+> 📄 **[Full matrix →](docs/typecheck.md)** — plants, documented gaps, per-plant time/memory. **0** plants. Generated 2026-08-19T18:33:13.434Z.
 
 ### All plants (one tsconfig)
 
@@ -343,19 +343,19 @@ One spawn per tool over every plant. Pass rate is a **percentage** of scored pla
 
 | Tool | **Wall** | vs fastest |
 | --- | ---: | ---: |
-| golar | **920 ms** | 1.00x |
-| vize | **1.28 s** | 1.39x |
-| vue-tsc | **2.50 s** | 2.72x |
-| verter-tsc | **2.82 s** | 3.07x |
+| vize | **603 ms** | 1.00x |
+| verter-tsc | **755 ms** | 1.25x |
+| golar | **915 ms** | 1.52x |
+| vue-tsc | **3.18 s** | 5.28x |
 
 ![All plants peak RSS](docs/results/charts/typecheck-all-rss.svg)
 
 | Tool | Tool | tsgo / tsc | **Total** |
 | --- | ---: | ---: | ---: |
-| golar | 323.1 MB | — | **323.1 MB** |
-| vue-tsc | 350.2 MB | — | **350.2 MB** |
-| vize | 90.5 MB | 292.2 MB | **382.7 MB** |
-| verter-tsc | 351.1 MB | 363.9 MB | **715.0 MB** |
+| verter-tsc | 81.6 MB | 141.9 MB | **223.5 MB** |
+| vue-tsc | 340.1 MB | — | **340.1 MB** |
+| golar | 353.5 MB | — | **353.5 MB** |
+| vize | 72.3 MB | 319.6 MB | **392.0 MB** |
 
 Engine is a **child** `tsgo` / native `tsc` / `tsserver`. vue-tsc, golar, and vize host the checker **in-process** — Peak RSS is that process's high-water mark (Tool = Total, engine —).
 
@@ -365,7 +365,7 @@ Engine is a **child** `tsgo` / native `tsc` / `tsserver`. vue-tsc, golar, and vi
 | --- | ---: | ---: | ---: |
 | vue-tsc | **84%** | 119 / 142 | 0 |
 | golar | **82%** | 117 / 142 | 0 |
-| verter-tsc | **76%** | 108 / 142 | 0 |
+| verter-tsc | **70%** | 100 / 142 | 0 |
 | vize | **52%** | 71 / 136 | 6 |
 
 **vize** scored 136 of 142 (6 skipped). Skips are capability gaps, not fails — Vize does not claim `strict-component-attrs` (undeclared component attrs under `strictTemplates`).
@@ -391,103 +391,160 @@ Servers here are Volar, **Volar on the TNB/tsgo tsdk**, Vize and Verter. Three c
 > **⚠ unranked** is a noise or work gate, not “the official tool is unofficial”. A series with CV > 50% is too noisy to rank.
 > Each stacked bar is **warm** (solid, cached request) then **cold** (pale remainder = first-request extra). Ranking uses **Cold**; vs-fastest-cold sits next to it.
 
+> 📄 **[Full details →](docs/results/ide-Linux.md)** — methodology, per-row notes and raw runs (82 collapsed block(s) moved out of this page).
 > IDE scale: [full report](docs/results/ide-scale-Linux.md).
-> 📄 **[Full details →](docs/results/ide-win32.md)** — methodology, per-row notes and raw runs (69 collapsed block(s) moved out of this page).
 
 <!-- notes: notes-ide.md -->
 
 > 📖 **[How to read these tables →](docs/results/notes-ide.md)** — ranking rules, standing notes and the tools legend shared by every block in this section.
 
-#### Windows · ide ops
+#### Ubuntu/Linux · ide ops
 
-<!-- source: ide-win32.md -->
+<!-- source: ide-Linux.md -->
 
 ### IDE · initialize
 
 | Tool | Version |
 | --- | --- |
+| [vize](https://github.com/ubugeeei-prod/vize) | [0.350.2](https://www.npmjs.com/package/vize/v/0.350.2) · 2026-08-19 |
 | [@vue/language-server](https://github.com/vuejs/language-tools) | [3.3.10](https://www.npmjs.com/package/@vue/language-server/v/3.3.10) · 2026-08-15 |
 | [@vue/typescript-plugin](https://github.com/vuejs/language-tools) | [3.3.10](https://www.npmjs.com/package/@vue/typescript-plugin/v/3.3.10) · 2026-08-15 |
 | [typescript-native-bridge (TNB)](https://github.com/johnsoncodehk/typescript-native-bridge) | [6.0.3-bridge.13.tsgo.7.0.2](https://www.npmjs.com/package/typescript-native-bridge/v/6.0.3-bridge.13.tsgo.7.0.2) · 2026-08-13 |
-| [vize](https://github.com/ubugeeei-prod/vize) | [0.347.7](https://www.npmjs.com/package/vize/v/0.347.7) · 2026-08-11 |
 | [verter-lsp](https://github.com/pikax/verter) | [0.0.1-beta.3](https://www.npmjs.com/package/verter-lsp/v/0.0.1-beta.3) · 2026-07-27 |
 | [typescript-language-server](https://github.com/typescript-language-server/typescript-language-server) | [5.3.0](https://www.npmjs.com/package/typescript-language-server/v/5.3.0) · 2026-05-21 |
 
 #### LSP initialize
 
-![LSP initialize](docs/results/charts/ide-win32-md-ide-initialize-lsp-initialize.svg)
+![LSP initialize](docs/results/charts/ide-linux-md-ide-initialize-lsp-initialize.svg)
 
 | Tool | **Median** | vs fastest |
 | --- | ---: | ---: |
-| [Verter](https://github.com/pikax/verter) | **31.1 ms** | 1.00x |
-| [Vize](https://github.com/ubugeeei-prod/vize) | **63.7 ms** | 2.05x |
-| [Volar (JS)](https://github.com/vuejs/language-tools) | **569.3 ms** | 18.29x |
-| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **580.4 ms** | 18.64x |
+| [Verter](https://github.com/pikax/verter) | **5.4 ms** | 1.00x |
+| [Vize](https://github.com/ubugeeei-prod/vize) | **40.1 ms** | 7.46x |
+| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **541.7 ms** | 100.61x |
+| [Volar (JS)](https://github.com/vuejs/language-tools) | **542.4 ms** | 100.74x |
 
 ### IDE · completion
 
 #### Completion: script member
 
-![Completion: script member](docs/results/charts/ide-win32-md-ide-completion-completion-script-member.svg)
+![Completion: script member](docs/results/charts/ide-linux-md-ide-completion-completion-script-member.svg)
 
 | Tool | **Cold** | vs fastest cold | **Warm** |
 | --- | ---: | ---: | ---: |
-| [Verter](https://github.com/pikax/verter) | **496.7 ms** | 1.00x | **24.9 ms** |
-| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **671.6 ms** | 1.35x | **17.1 ms** |
-| [Volar (JS)](https://github.com/vuejs/language-tools) | **795.1 ms** | 1.60x | **14.8 ms** |
-| [Vize](https://github.com/ubugeeei-prod/vize) ⚠ | (0.7 ms) | not ranked | (0.2 ms) |
+| [Verter](https://github.com/pikax/verter) | **301.8 ms** | 1.00x | **32.9 ms** |
+| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **442.4 ms** | 1.47x | **20.1 ms** |
+| [Volar (JS)](https://github.com/vuejs/language-tools) | **1.08 s** | 3.59x | **25.2 ms** |
+| [Vize](https://github.com/ubugeeei-prod/vize) ⚠ | (256.0 ms) | not ranked | (47.2 ms) |
+
+#### Peak RSS (process tree)
+
+![Peak RSS (process tree)](docs/results/charts/ide-linux-md-ide-completion-peak-rss-process-tree.svg)
+
+| Tool | **Peak RSS** |
+| --- | ---: |
+| [Verter](https://github.com/pikax/verter) | 304.0 MB |
+| [Vize](https://github.com/ubugeeei-prod/vize) | 330.5 MB |
+| [Volar (JS)](https://github.com/vuejs/language-tools) | 584.6 MB |
+| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | 726.4 MB |
 
 ### IDE · template interpolation
 
 #### Hover (template interpolation)
 
-![Hover (template interpolation)](docs/results/charts/ide-win32-md-ide-template-interpolation-hover-template-interpolation.svg)
+![Hover (template interpolation)](docs/results/charts/ide-linux-md-ide-template-interpolation-hover-template-interpolation.svg)
 
 | Tool | **Cold** | vs fastest cold | **Warm** |
 | --- | ---: | ---: | ---: |
-| [Verter](https://github.com/pikax/verter) | **289.9 ms** | 1.00x | **8.4 ms** |
-| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **638.0 ms** | 2.20x | **13.3 ms** |
-| [Volar (JS)](https://github.com/vuejs/language-tools) | **799.2 ms** | 2.76x | **40.3 ms** |
-| [Vize](https://github.com/ubugeeei-prod/vize) ⚠ | (35.6 ms) | not ranked | (0.3 ms) |
+| [Vize](https://github.com/ubugeeei-prod/vize) | **223.5 ms** | 1.00x | **21.4 ms** |
+| [Verter](https://github.com/pikax/verter) | **243.8 ms** | 1.09x | **1.5 ms** |
+| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **485.6 ms** | 2.17x | **24.5 ms** |
+| [Volar (JS)](https://github.com/vuejs/language-tools) ⚠ | (1.15 s) | not ranked | (150.7 ms) |
+
+#### Peak RSS (process tree)
+
+![Peak RSS (process tree)](docs/results/charts/ide-linux-md-ide-template-interpolation-peak-rss-process-tree.svg)
+
+| Tool | **Peak RSS** |
+| --- | ---: |
+| [Verter](https://github.com/pikax/verter) | 174.1 MB |
+| [Vize](https://github.com/ubugeeei-prod/vize) | 264.1 MB |
+| [Volar (JS)](https://github.com/vuejs/language-tools) | 523.9 MB |
+| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | 613.3 MB |
 
 ### IDE · smoke
 
 #### Hover (script setup)
 
-![Hover (script setup)](docs/results/charts/ide-win32-md-ide-smoke-hover-script-setup.svg)
+![Hover (script setup)](docs/results/charts/ide-linux-md-ide-smoke-hover-script-setup.svg)
 
 | Tool | **Cold** | vs fastest cold | **Warm** |
 | --- | ---: | ---: | ---: |
-| [Verter](https://github.com/pikax/verter) | **276.9 ms** | 1.00x | **0.8 ms** |
-| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **700.1 ms** | 2.53x | **4.7 ms** |
-| [Volar (JS)](https://github.com/vuejs/language-tools) | **819.3 ms** | 2.96x | **5.7 ms** |
-| [Vize](https://github.com/ubugeeei-prod/vize) ⚠ | (34.1 ms) | not ranked | (0.3 ms) |
+| [Vize](https://github.com/ubugeeei-prod/vize) | **232.8 ms** | 1.00x | **25.4 ms** |
+| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **480.8 ms** | 2.07x | **18.6 ms** |
+| [Volar (JS)](https://github.com/vuejs/language-tools) | **1.10 s** | 4.72x | **176.1 ms** |
+| [Verter](https://github.com/pikax/verter) ⚠ | (250.9 ms) | not ranked | (0.9 ms) |
 
 ### IDE · navigation
 
 #### Definition: imported fn (script)
 
-![Definition: imported fn (script)](docs/results/charts/ide-win32-md-ide-navigation-definition-imported-fn-script.svg)
+![Definition: imported fn (script)](docs/results/charts/ide-linux-md-ide-navigation-definition-imported-fn-script.svg)
 
 | Tool | **Cold** | vs fastest cold | **Warm** |
 | --- | ---: | ---: | ---: |
-| [Verter](https://github.com/pikax/verter) | **1.6 ms** | 1.00x | **0.5 ms** |
-| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **662.4 ms** | 412.48x | **14.2 ms** |
-| [Volar (JS)](https://github.com/vuejs/language-tools) | **818.5 ms** | 509.65x | **72.7 ms** |
-| [Vize](https://github.com/ubugeeei-prod/vize) ⚠ | (64.0 ms) | not ranked | (0.3 ms) |
+| [Verter](https://github.com/pikax/verter) | **0.4 ms** | 1.00x | **0.3 ms** |
+| [Vize](https://github.com/ubugeeei-prod/vize) | **363.4 ms** | 850.11x | **4.5 ms** |
+| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **448.3 ms** | 1048.49x | **17.4 ms** |
+| [Volar (JS)](https://github.com/vuejs/language-tools) | **1.12 s** | 2614.81x | **170.1 ms** |
+
+#### Peak RSS (process tree)
+
+![Peak RSS (process tree)](docs/results/charts/ide-linux-md-ide-navigation-peak-rss-process-tree.svg)
+
+| Tool | **Peak RSS** |
+| --- | ---: |
+| [Verter](https://github.com/pikax/verter) | 249.6 MB |
+| [Vize](https://github.com/ubugeeei-prod/vize) | 384.5 MB |
+| [Volar (JS)](https://github.com/vuejs/language-tools) | 548.4 MB |
+| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | 834.0 MB |
 
 ### IDE · edit-loop
 
 #### Edit plants type error -> reported
 
-![Edit plants type error -> reported](docs/results/charts/ide-win32-md-ide-edit-loop-edit-plants-type-error-reported.svg)
+![Edit plants type error -> reported](docs/results/charts/ide-linux-md-ide-edit-loop-edit-plants-type-error-reported.svg)
 
 | Tool | **Median** | vs fastest |
 | --- | ---: | ---: |
-| [Volar (JS)](https://github.com/vuejs/language-tools) | **386.0 ms** | 1.00x |
-| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **429.2 ms** | 1.11x |
-| [Verter](https://github.com/pikax/verter) | **890.2 ms** | 2.31x |
-| [Vize](https://github.com/ubugeeei-prod/vize) ⚠ | (4.01 s) | not ranked |
+| [Vize](https://github.com/ubugeeei-prod/vize) | **68.7 ms** | 1.00x |
+| [Volar (JS)](https://github.com/vuejs/language-tools) | **393.6 ms** | 5.73x |
+| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **455.1 ms** | 6.62x |
+| [Verter](https://github.com/pikax/verter) | **499.8 ms** | 7.27x |
+
+#### Peak RSS (process tree)
+
+![Peak RSS (process tree)](docs/results/charts/ide-linux-md-ide-edit-loop-peak-rss-process-tree.svg)
+
+| Tool | **Peak RSS** |
+| --- | ---: |
+| [Vize](https://github.com/ubugeeei-prod/vize) | 344.4 MB |
+| [Volar (JS)](https://github.com/vuejs/language-tools) | 601.3 MB |
+| [Verter](https://github.com/pikax/verter) | 619.5 MB |
+| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | 705.2 MB |
+
+### IDE · Peak RSS (process tree)
+
+#### Peak RSS (process tree)
+
+![Peak RSS (process tree)](docs/results/charts/ide-linux-md-ide-peak-rss-process-tree-peak-rss-process-tree.svg)
+
+| Tool | **Peak RSS** |
+| --- | ---: |
+| [Verter](https://github.com/pikax/verter) | 236.1 MB |
+| [Vize](https://github.com/ubugeeei-prod/vize) | 293.0 MB |
+| [Volar (JS)](https://github.com/vuejs/language-tools) | 534.4 MB |
+| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | 693.3 MB |
 
 
 <!-- IDE_RESULTS_END -->
