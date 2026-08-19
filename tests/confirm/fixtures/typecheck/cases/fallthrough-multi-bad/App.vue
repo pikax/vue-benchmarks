@@ -4,5 +4,6 @@ import Child from "./Child.vue";
 
 <template>
   <!-- plant: fragment root — nowhere for id to fall through -->
+  <!-- @plant-error -->
   <Child title="ok" id="outer" />
 </template>

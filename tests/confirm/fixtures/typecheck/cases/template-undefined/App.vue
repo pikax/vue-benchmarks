@@ -4,5 +4,6 @@ const known = 1;
 
 <template>
   <!-- plant: missingName is not defined in script -->
+  <!-- @plant-error -->
   <div>{{ known }} / {{ missingName }}</div>
 </template>

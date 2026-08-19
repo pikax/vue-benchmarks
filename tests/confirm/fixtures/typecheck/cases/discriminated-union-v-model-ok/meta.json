@@ -1,0 +1,6 @@
+{
+  "id": "discriminated-union-v-model-ok",
+  "description": "Discriminated union child: kind='num' with v-model:n number stays clean",
+  "expectErrors": false,
+  "requires": ["v-model"]
+}

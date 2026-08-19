@@ -4,5 +4,6 @@
   "expectErrors": true,
   "minErrors": 1,
   "mustMatch": ["TS2339", "TS2551", "key", "MouseEvent"],
-  "requires": ["dom-events"]
+  "requires": ["dom-events"],
+  "expectMention": ["key"]
 }

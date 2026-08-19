@@ -5,6 +5,7 @@ const inputEl = useTemplateRef<HTMLInputElement>("inputEl");
 
 function go() {
   // plant: HTMLInputElement has no `notAMethod`
+  // @plant-error
   inputEl.value?.notAMethod();
 }
 </script>

@@ -6,5 +6,6 @@ const value = ref<string | number>(1);
 
 <template>
   <!-- plant: no typeof guard, toUpperCase is string-only -->
+  <!-- @plant-error -->
   <span>{{ value.toUpperCase() }}</span>
 </template>

@@ -9,6 +9,7 @@ defineSlots<{
 <template>
   <div>
     <!-- plant: id is string, slot payload wants number -->
+    <!-- @plant-error -->
     <slot name="row" v-bind="row" />
   </div>
 </template>

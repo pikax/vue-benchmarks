@@ -17,6 +17,7 @@ import { fileURLToPath } from "node:url";
 import { createSuite } from "../lib/harness.mjs";
 import { resolveSpawnable, runCliMeasured, rootDir } from "../lib/run-cli.mjs";
 import { isToolBootstrapFailure, scoreDiagnostics } from "../lib/diagnostics.mjs";
+import { findExpectErrorPins, stripExpectErrorDirectives } from "../lib/plant-pins.mjs";
 import {
   VERTER_TS_IMPORT_EXTRA_COMPILER_OPTIONS,
   verterExtraTsconfigWarning,
@@ -108,7 +109,12 @@ function prepareCase(caseId) {
   );
 
   const meta = JSON.parse(readFileSync(join(src, "meta.json"), "utf8"));
-  return { dest, meta };
+  const pins = findExpectErrorPins(src);
+  // @plant-error is a harness pin, not a compiler directive. Strip it so
+  // line numbers of the bad code stay put. Real // @ts-expect-error in .ts
+  // (unused-directive plants) is never stripped.
+  if (pins.length && meta.expectErrors) stripExpectErrorDirectives(dest);
+  return { dest, meta, pins: meta.expectErrors ? pins : [] };
 }
 
 /** Isolated extra tsconfig for the verter-tsc retry — never mutates tsconfig.json. */
@@ -148,6 +154,23 @@ function resourcesFrom(run) {
   return out;
 }
 
+function scoreOpts(meta, result) {
+  return {
+    combined: result.combined,
+    status: result.status,
+    expectErrors: meta.expectErrors,
+    minErrors: meta.minErrors ?? 1,
+    maxErrors: meta.maxErrors,
+    mustMatch: meta.mustMatch,
+    mustNotMatch: meta.mustNotMatch,
+    expectFile: meta.expectFile,
+    expectLine: meta.expectLine,
+    expectCode: meta.expectCode,
+    pins: meta._pins || [],
+    expectMention: meta.expectMention,
+  };
+}
+
 function scoreOne(meta, result) {
   if (!meta.expectErrors) {
     const leaks = findVirtualCodeLeaks(result.combined);
@@ -158,15 +181,7 @@ function scoreOne(meta, result) {
       };
     }
   }
-  return scoreDiagnostics({
-    combined: result.combined,
-    status: result.status,
-    expectErrors: meta.expectErrors,
-    minErrors: meta.minErrors ?? 1,
-    maxErrors: meta.maxErrors,
-    mustMatch: meta.mustMatch,
-    mustNotMatch: meta.mustNotMatch,
-  });
+  return scoreDiagnostics(scoreOpts(meta, result));
 }
 
 /**
@@ -296,7 +311,8 @@ export async function runTypecheckSuite() {
   mkdirSync(workRoot, { recursive: true });
 
   for (const caseId of listCases()) {
-    const { dest, meta } = prepareCase(caseId);
+    const { dest, meta, pins } = prepareCase(caseId);
+    meta._pins = pins;
     const runners = toolRunners(dest);
 
     for (const tool of runners) {
@@ -420,15 +436,7 @@ export async function runTypecheckSuite() {
         }
         result = extraRun;
         const stillSkipped = verterSkippedTsImporter(result.combined, meta.tsImporter);
-        const score = scoreDiagnostics({
-          combined: result.combined,
-          status: result.status,
-          expectErrors: meta.expectErrors,
-          minErrors: meta.minErrors ?? 1,
-          maxErrors: meta.maxErrors,
-          mustMatch: meta.mustMatch,
-          mustNotMatch: meta.mustNotMatch,
-        });
+        const score = scoreDiagnostics(scoreOpts(meta, result));
         const snippet = result.combined.slice(0, 800);
         const measured = { snippet, extraTsconfig: extraRel, ...resourcesFrom(result) };
         if (stillSkipped) {
@@ -472,15 +480,7 @@ export async function runTypecheckSuite() {
         }
       }
 
-      const score = scoreDiagnostics({
-        combined: result.combined,
-        status: result.status,
-        expectErrors: meta.expectErrors,
-        minErrors: meta.minErrors ?? 1,
-        maxErrors: meta.maxErrors,
-        mustMatch: meta.mustMatch,
-        mustNotMatch: meta.mustNotMatch,
-      });
+      const score = scoreDiagnostics(scoreOpts(meta, result));
 
       if (score.ok) {
         suite.pass(meta.id, tool.id, score.message, resourcesFrom(result));

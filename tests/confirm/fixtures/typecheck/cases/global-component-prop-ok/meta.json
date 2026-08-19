@@ -1,0 +1,6 @@
+{
+  "id": "global-component-prop-ok",
+  "description": "GlobalComponents Fancy with title: string accepts a string attribute (clean)",
+  "expectErrors": false,
+  "requires": ["prop-types"]
+}

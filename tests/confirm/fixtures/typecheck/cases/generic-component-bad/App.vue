@@ -9,5 +9,6 @@ const rows = [
 
 <template>
   <!-- plant: `selected` must be the same T inferred from `items`; a string is not -->
+  <!-- @plant-error -->
   <Child :items="rows" :selected="'nope'" />
 </template>

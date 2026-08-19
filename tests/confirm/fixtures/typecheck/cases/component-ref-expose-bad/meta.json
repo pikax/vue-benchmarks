@@ -3,5 +3,6 @@
   "description": "Calling a method that was not defineExpose'd on a component template ref must error",
   "expectErrors": true,
   "minErrors": 1,
-  "mustMatch": ["TS2339", "hide", "does not exist"]
+  "mustMatch": ["TS2339", "hide", "does not exist"],
+  "expectMention": ["hide"]
 }

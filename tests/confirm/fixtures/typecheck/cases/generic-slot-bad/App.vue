@@ -9,6 +9,7 @@ function takesString(s: string) {
 <template>
   <Child :item="{ id: 1, label: 'a' }">
     <!-- plant: item.id is number -->
+    <!-- @plant-error -->
     <template #default="{ item }">{{ takesString(item.id) }}</template>
   </Child>
 </template>

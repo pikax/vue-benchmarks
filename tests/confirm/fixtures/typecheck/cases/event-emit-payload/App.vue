@@ -8,5 +8,6 @@ function onChange(value: string) {
 
 <template>
   <!-- plant: emit payload is number, handler expects string -->
+  <!-- @plant-error -->
   <Child @change="onChange" />
 </template>

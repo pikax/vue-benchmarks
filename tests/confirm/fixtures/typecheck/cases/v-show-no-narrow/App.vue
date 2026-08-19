@@ -6,5 +6,6 @@ const user = ref<{ name: string } | null>(null);
 
 <template>
   <!-- plant: v-show is visibility only and must NOT narrow user -->
+  <!-- @plant-error -->
   <div v-show="user">{{ user.name }}</div>
 </template>

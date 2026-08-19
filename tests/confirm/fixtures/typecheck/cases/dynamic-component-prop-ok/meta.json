@@ -1,0 +1,6 @@
+{
+  "id": "dynamic-component-prop-ok",
+  "description": "<component :is> with a typed SFC and a matching number prop stays clean",
+  "expectErrors": false,
+  "requires": ["prop-types"]
+}

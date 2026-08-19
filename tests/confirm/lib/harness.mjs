@@ -63,7 +63,7 @@ export function formatReport(allResults) {
   lines.push("# Confirmation suite (correctness, not performance)");
   lines.push("");
   lines.push(
-    "Tools are checked against planted expectations (compile → mount, lint counts, type diagnostics, component-meta shapes).",
+    "Tools are checked against planted expectations (compile → mount, lint counts, type diagnostics, component-meta shapes, format parse/idempotence/tokens).",
   );
   lines.push(
     "Skip = missing API/binary or out of scope. Fail = plant expectation not met. Warn = extra harness behaviour for one tool (not a pass).",

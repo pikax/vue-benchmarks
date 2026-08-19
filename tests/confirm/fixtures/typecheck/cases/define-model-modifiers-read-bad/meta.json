@@ -3,5 +3,6 @@
   "description": "Reading modifiers.nope must error when the union is 'trim' | 'capitalize'",
   "expectErrors": true,
   "minErrors": 1,
-  "mustMatch": ["TS2339", "TS2551", "nope"]
+  "mustMatch": ["TS2339", "TS2551", "nope"],
+  "expectMention": ["nope"]
 }

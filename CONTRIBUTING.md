@@ -61,7 +61,7 @@ Do **not** commit:
 
 ## Adding a confirmation plant
 
-See existing cases under `tests/confirm/fixtures/{compile,lint,typecheck,component-meta}/`.
+See existing cases under `tests/confirm/fixtures/{compile,lint,typecheck,component-meta,format,lsp}/`.
 
 ```bash
 pnpm confirm:typecheck

@@ -6,5 +6,6 @@ function onKey(e: MouseEvent) {
 
 <template>
   <!-- plant: @keyup is KeyboardEvent, handler expects MouseEvent -->
+  <!-- @plant-error -->
   <input @keyup="onKey" />
 </template>

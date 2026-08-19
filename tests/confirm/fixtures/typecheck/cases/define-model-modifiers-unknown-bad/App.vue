@@ -7,5 +7,6 @@ const text = ref("ok");
 
 <template>
   <!-- plant: .nope is not in the declared modifier union -->
+  <!-- @plant-error -->
   <Child v-model.nope="text" />
 </template>

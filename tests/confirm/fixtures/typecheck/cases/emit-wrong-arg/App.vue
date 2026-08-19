@@ -4,6 +4,7 @@ const emit = defineEmits<{
 }>();
 
 // plant: payload must be number
+// @plant-error
 emit("change", "nope");
 </script>
 

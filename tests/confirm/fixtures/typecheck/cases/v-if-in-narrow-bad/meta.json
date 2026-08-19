@@ -1,0 +1,9 @@
+{
+  "id": "v-if-in-narrow-bad",
+  "description": "After v-if=\"'a' in x\", accessing x.b in the true branch must error",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS2339", "b", "does not exist"],
+  "expectMention": ["'b'"],
+  "requires": ["v-if-narrow"]
+}

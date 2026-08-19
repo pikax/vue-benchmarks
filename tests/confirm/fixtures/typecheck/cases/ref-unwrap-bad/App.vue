@@ -6,5 +6,6 @@ const count = ref(1);
 
 <template>
   <!-- plant: unwrapped count is number, toUpperCase is string-only -->
+  <!-- @plant-error -->
   <span>{{ count.toUpperCase() }}</span>
 </template>

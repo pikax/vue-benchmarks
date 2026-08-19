@@ -1,0 +1,9 @@
+{
+  "id": "generic-define-model-bad",
+  "description": "generic defineModel<T extends string | number> must reject an object v-model",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS2322", "TS2345", "TS2769", "not assignable"],
+  "expectMention": ["string | number"],
+  "requires": ["v-model"]
+}

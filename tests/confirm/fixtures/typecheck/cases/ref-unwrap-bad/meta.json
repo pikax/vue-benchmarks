@@ -4,5 +4,6 @@
   "expectErrors": true,
   "minErrors": 1,
   "mustMatch": ["TS2339", "toUpperCase", "does not exist"],
-  "requires": ["template-bindings"]
+  "requires": ["template-bindings"],
+  "expectMention": ["toUpperCase"]
 }

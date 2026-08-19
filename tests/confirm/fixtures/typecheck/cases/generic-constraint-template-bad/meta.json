@@ -4,5 +4,6 @@
   "description": "Inside a generic SFC, T extends { id: number } must reject item.name",
   "expectErrors": true,
   "minErrors": 1,
-  "mustMatch": ["TS2339", "name", "does not exist"]
+  "mustMatch": ["TS2339", "name", "does not exist"],
+  "expectMention": ["name"]
 }

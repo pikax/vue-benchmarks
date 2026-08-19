@@ -1,0 +1,9 @@
+{
+  "id": "async-component-prop-bad",
+  "description": "defineAsyncComponent child must reject a string where count expects number",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS2322", "string", "number"],
+  "expectMention": ["number"],
+  "requires": ["prop-types"]
+}

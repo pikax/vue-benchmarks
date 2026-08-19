@@ -3,5 +3,6 @@
   "description": "Generic <script setup> component: `selected` must unify with the element type inferred from `items`",
   "expectErrors": true,
   "minErrors": 1,
-  "mustMatch": ["TS2322", "TS2345", "TS2769", "not assignable", "string"]
+  "mustMatch": ["TS2322", "TS2345", "TS2769", "not assignable", "string"],
+  "expectMention": ["selected"]
 }

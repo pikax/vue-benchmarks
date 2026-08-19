@@ -6,5 +6,6 @@ const bound = { title: "ok", count: "nope" };
 
 <template>
   <!-- plant: count is string, child expects number -->
+  <!-- @plant-error -->
   <Child v-bind="bound" />
 </template>

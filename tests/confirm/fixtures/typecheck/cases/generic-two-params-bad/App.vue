@@ -8,5 +8,6 @@ function takesString(s: string) {
 
 <template>
   <!-- plant: value is inferred as number from :value="1"; takesString wants string -->
+  <!-- @plant-error -->
   <Child key-name="id" :value="1" #default="{ value }">{{ takesString(value) }}</Child>
 </template>

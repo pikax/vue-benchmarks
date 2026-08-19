@@ -21,6 +21,8 @@ import {
   verterSkippedTsImporter,
 } from "../confirm/lib/ts-import-vue.mjs";
 import { createSuite, formatReport, summarize } from "../confirm/lib/harness.mjs";
+import { countErrors, parseDiagnostics, scoreDiagnostics } from "../confirm/lib/diagnostics.mjs";
+import { findExpectErrorPins } from "../confirm/lib/plant-pins.mjs";
 import {
   formatMs,
   formatRss,
@@ -274,6 +276,111 @@ describe("typecheck.md generator", () => {
     assert.equal(formatRss(4.2), "4.2MB");
     assert.equal(formatRss(48.7), "49MB");
     assert.equal(formatRss(0), "–");
+  });
+});
+
+describe("scoreDiagnostics oracle", () => {
+  const dirty = "App.vue(10,18): error TS2322: Type 'number' is not assignable to type 'string'.\n";
+  const extra = `${dirty}App.vue(11,1): error TS2339: Property 'nope' does not exist.\n`;
+
+  test("parseDiagnostics reads vue-tsc / golar file(line,col) lines", () => {
+    const d = parseDiagnostics(dirty);
+    assert.equal(d.length, 1);
+    assert.equal(d[0].code, "TS2322");
+    assert.equal(d[0].line, 10);
+    assert.equal(d[0].column, 18);
+    assert.match(d[0].file, /App\.vue$/);
+  });
+
+  test("parseDiagnostics reads vize error:line:col [TSxxxx] after a file line", () => {
+    const d = parseDiagnostics("D:/x/App.vue\nerror:9:4 [TS2345] Argument of type 'string' is not assignable.\n");
+    assert.equal(d.length, 1);
+    assert.equal(d[0].code, "TS2345");
+    assert.equal(d[0].line, 9);
+    assert.match(d[0].file, /App\.vue$/);
+  });
+
+  test("countErrors prefers parsed diagnostics over a lying summary", () => {
+    assert.equal(countErrors(`${dirty}Found 99 errors\n`), 1);
+  });
+
+  test("maxErrors is a hard fail, not a note on an ok score", () => {
+    const r = scoreDiagnostics({
+      combined: extra,
+      expectErrors: true,
+      minErrors: 1,
+      maxErrors: 1,
+    });
+    assert.equal(r.ok, false);
+    assert.match(r.message, /≤1/);
+    assert.equal(r.errors, 2);
+  });
+
+  test("without maxErrors, extra diagnostics still pass a dirty plant", () => {
+    const r = scoreDiagnostics({
+      combined: extra,
+      expectErrors: true,
+      minErrors: 1,
+    });
+    assert.equal(r.ok, true);
+  });
+
+  test("expectLine / expectCode fail when the planted error is on the wrong line", () => {
+    const r = scoreDiagnostics({
+      combined: dirty,
+      expectErrors: true,
+      expectCode: "TS2322",
+      expectFile: "App.vue",
+      expectLine: 99,
+    });
+    assert.equal(r.ok, false);
+    assert.match(r.message, /line 99/);
+  });
+
+  test("expectLine / expectCode pass when a diagnostic hits the pin", () => {
+    const r = scoreDiagnostics({
+      combined: dirty,
+      expectErrors: true,
+      expectCode: "TS2322",
+      expectFile: "App.vue",
+      expectLine: 10,
+    });
+    assert.equal(r.ok, true);
+  });
+
+  test("@plant-error pin requires a diagnostic on the target line that mentions the plant", () => {
+    const pins = [{ file: "App.vue", commentLine: 9, targetLine: 10 }];
+    const miss = scoreDiagnostics({
+      combined: "Other.vue(1,1): error TS2322: nope\n",
+      expectErrors: true,
+      pins,
+      expectMention: ["count"],
+    });
+    assert.equal(miss.ok, false);
+    assert.match(miss.message, /App\.vue:10/);
+
+    const wrongMsg = scoreDiagnostics({
+      combined: dirty,
+      expectErrors: true,
+      pins,
+      expectMention: ["count"],
+    });
+    assert.equal(wrongMsg.ok, false);
+    assert.match(wrongMsg.message, /did not mention count/);
+
+    const ok = scoreDiagnostics({
+      combined: "App.vue(10,18): error TS2322: Type 'string' is not assignable to type 'number' for prop 'count'.\n",
+      expectErrors: true,
+      pins,
+      expectMention: ["count"],
+    });
+    assert.equal(ok.ok, true);
+  });
+
+  test("findExpectErrorPins reads script and template plant pins", () => {
+    const dir = join(repoRoot, "tests/confirm/fixtures/typecheck/cases/wrong-prop-type");
+    const pins = findExpectErrorPins(dir);
+    assert.ok(pins.some((p) => p.file === "App.vue" && p.targetLine > p.commentLine));
   });
 });
 

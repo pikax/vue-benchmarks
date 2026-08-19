@@ -6,5 +6,6 @@ const value = ref<string | number>("ada");
 
 <template>
   <!-- plant: string branch has no toFixed -->
+  <!-- @plant-error -->
   <div v-if="typeof value === 'string'">{{ value.toFixed(1) }}</div>
 </template>

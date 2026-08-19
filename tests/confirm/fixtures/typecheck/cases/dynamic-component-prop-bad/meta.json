@@ -1,0 +1,9 @@
+{
+  "id": "dynamic-component-prop-bad",
+  "description": "<component :is> must reject a string where the resolved SFC expects count: number",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS2322", "string", "number"],
+  "expectMention": ["number"],
+  "requires": ["prop-types"]
+}

@@ -8,6 +8,7 @@ provide(userKey, { name: "Ada" });
 const user = inject(userKey);
 
 // plant: inject() without a default returns `{ name: string } | undefined`
+// @plant-error
 const upper = user.name.toUpperCase();
 </script>
 

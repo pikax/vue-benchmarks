@@ -1,0 +1,5 @@
+{
+  "id": "required-slot-ok",
+  "description": "Named header slot from defineSlots is provided with the declared title payload (clean)",
+  "expectErrors": false
+}

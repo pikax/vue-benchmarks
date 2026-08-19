@@ -5,6 +5,7 @@ import Child from "./Child.vue";
 <template>
   <Child>
     <!-- plant: payload has msg, not missing -->
+    <!-- @plant-error -->
     <template #default="{ missing }">{{ missing }}</template>
   </Child>
 </template>

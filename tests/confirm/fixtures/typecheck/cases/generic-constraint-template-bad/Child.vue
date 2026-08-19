@@ -6,5 +6,6 @@ defineProps<{
 
 <template>
   <!-- plant: T is only known to have id; name is not on the constraint -->
+  <!-- @plant-error -->
   <span>{{ item.name }}</span>
 </template>

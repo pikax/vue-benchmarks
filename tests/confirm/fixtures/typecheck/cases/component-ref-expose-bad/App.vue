@@ -6,6 +6,7 @@ const child = useTemplateRef("child");
 
 function go() {
   // plant: hide was not defineExpose'd
+  // @plant-error
   child.value?.hide();
 }
 </script>

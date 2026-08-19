@@ -7,5 +7,6 @@ const text = ref("hello");
 
 <template>
   <!-- plant: Child model is number, parent ref is string -->
+  <!-- @plant-error -->
   <Child v-model="text" />
 </template>

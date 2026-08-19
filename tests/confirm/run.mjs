@@ -8,6 +8,8 @@
  *   lint            — planted issues + clean files, expected counts
  *   typecheck       — clean projects + diagnostic plants
  *   component-meta  — props/events/slots/expose extraction correctness
+ *   lsp             — hover / definition / publishDiagnostics plants
+ *   format          — formatters keep SFCs parseable, idempotent, tokens intact
  *
  * Usage:
  *   node tests/confirm/run.mjs
@@ -24,6 +26,8 @@ import { runJsxCompileConfirmSuite } from "./suites/jsx-compile.mjs";
 import { runLintSuite } from "./suites/lint.mjs";
 import { runTypecheckSuite } from "./suites/typecheck.mjs";
 import { runComponentMetaSuite } from "./suites/component-meta.mjs";
+import { runLspConfirmSuite } from "./suites/lsp.mjs";
+import { runFormatSuite } from "./suites/format.mjs";
 
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../..");
 
@@ -106,7 +110,7 @@ function reportKnownFailures(results, { strict = false } = {}) {
 
 function parseArgs(argv) {
   const args = {
-    surfaces: "compile,jsx-compile,lint,typecheck,component-meta",
+    surfaces: "compile,jsx-compile,lint,typecheck,component-meta,format,lsp",
     json: "",
     out: "",
     strict: false,
@@ -127,7 +131,7 @@ function help() {
   console.log(`Confirmation suite (correctness, not performance)
 
 Usage:
-  node tests/confirm/run.mjs [--surfaces compile,jsx-compile,lint,typecheck,component-meta]
+  node tests/confirm/run.mjs [--surfaces compile,jsx-compile,lint,typecheck,component-meta,format,lsp]
                              [--json path] [--out path.md] [--strict]
 
 Exit code:
@@ -175,6 +179,14 @@ async function main() {
   if (surfaces.includes("component-meta") || surfaces.includes("meta")) {
     console.log("→ component-meta");
     all.push(...(await runComponentMetaSuite()));
+  }
+  if (surfaces.includes("lsp")) {
+    console.log("→ lsp");
+    all.push(...(await runLspConfirmSuite()));
+  }
+  if (surfaces.includes("format")) {
+    console.log("→ format");
+    all.push(...(await runFormatSuite()));
   }
 
   console.log("");

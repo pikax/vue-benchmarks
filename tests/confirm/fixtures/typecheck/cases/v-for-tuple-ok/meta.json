@@ -1,0 +1,6 @@
+{
+  "id": "v-for-tuple-ok",
+  "description": "v-for over an as const [string, number] tuple uses the string element (clean)",
+  "expectErrors": false,
+  "requires": ["template-bindings"]
+}

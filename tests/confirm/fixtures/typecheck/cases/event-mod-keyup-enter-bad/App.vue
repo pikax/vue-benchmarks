@@ -6,5 +6,6 @@ function onClick(e: MouseEvent) {
 
 <template>
   <!-- plant: key modifier does not turn KeyboardEvent into MouseEvent -->
+  <!-- @plant-error -->
   <input @keyup.enter="onClick" />
 </template>

@@ -3,5 +3,6 @@
   "description": "defineModel<number> set() must not call string-only methods on the value",
   "expectErrors": true,
   "minErrors": 1,
-  "mustMatch": ["TS2339", "TS2551", "trim"]
+  "mustMatch": ["TS2339", "TS2551", "trim"],
+  "expectMention": ["trim"]
 }

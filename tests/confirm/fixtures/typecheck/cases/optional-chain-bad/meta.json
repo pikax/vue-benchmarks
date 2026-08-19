@@ -3,5 +3,6 @@
   "description": "Unguarded member access on an optional property inside a template expression",
   "expectErrors": true,
   "minErrors": 1,
-  "mustMatch": ["TS18048", "TS2532", "possibly", "undefined"]
+  "mustMatch": ["TS18048", "TS2532", "possibly", "undefined"],
+  "expectMention": ["profile"]
 }

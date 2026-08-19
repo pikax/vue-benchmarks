@@ -1,0 +1,9 @@
+{
+  "id": "global-component-prop-bad",
+  "description": "GlobalComponents Fancy must reject a number where title expects string",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS2322", "number", "string"],
+  "expectMention": ["string"],
+  "requires": ["prop-types"]
+}

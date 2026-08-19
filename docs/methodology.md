@@ -449,12 +449,13 @@ Conditions for reading the `vue-tsc (TNB / tsgo)` row: it was measured on the ty
 Benchmarks measure **throughput**. The confirmation suite checks tools against planted expectations:
 
 ```bash
-pnpm confirm                 # compile + jsx-compile + lint + typecheck + component-meta
+pnpm confirm                 # compile + jsx-compile + lint + typecheck + component-meta + format
 pnpm confirm:compile
 pnpm confirm:jsx-compile
 pnpm confirm:lint
 pnpm confirm:typecheck
 pnpm confirm:component-meta
+pnpm confirm:format
 ```
 
 | Surface            | What we assert                                                                                                                                                                                                                                                                                        |
@@ -464,6 +465,7 @@ pnpm confirm:component-meta
 | **lint**           | Clean fixtures → 0 issues; planted dirty fixtures → at least the expected issue count (and matching rule/code when the tool has that rule).                                                                                                                                                           |
 | **typecheck**      | Clean projects stay clean; planted bugs in `<script>` and `<template>` are reported. Full plant list, inheritAttrs/root-shape rules, and the last pass/fail matrix: [docs/typecheck.md](typecheck.md).                                                                                                 |
 | **component-meta** | Extracted public API matches plants: prop names/types/required/defaults, emits, slots, `defineExpose`. Tools are normalized to a common shape — schema phrasing may differ; missing API surface is a FAIL. Vize is scored via `generateDeclaration` (declaration emit, not a dedicated meta package). |
+| **format**          | Formatters (Prettier, Oxfmt, Vize, Biome) exit 0, keep the SFC parseable via `@vue/compiler-sfc`, stay idempotent (`format(format(x)) === format(x)`), and preserve planted comments / `v-for` identifiers / `generic=`. Exit 0 alone is not a pass. |
 
 Results: `results/confirm.md` + `results/confirm.json`. Exit code **1** on any FAIL; **skip** is allowed (e.g. verter-tsc without tsgo).
 

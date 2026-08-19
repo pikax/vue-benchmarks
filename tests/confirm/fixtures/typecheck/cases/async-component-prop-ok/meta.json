@@ -1,0 +1,6 @@
+{
+  "id": "async-component-prop-ok",
+  "description": "defineAsyncComponent(() => import('./Child.vue')) with a matching number prop stays clean",
+  "expectErrors": false,
+  "requires": ["prop-types"]
+}

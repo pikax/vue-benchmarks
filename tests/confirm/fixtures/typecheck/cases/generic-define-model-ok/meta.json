@@ -1,0 +1,6 @@
+{
+  "id": "generic-define-model-ok",
+  "description": "generic defineModel<T extends string | number> accepts a string v-model (clean)",
+  "expectErrors": false,
+  "requires": ["v-model"]
+}

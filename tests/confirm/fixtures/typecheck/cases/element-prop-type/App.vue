@@ -5,5 +5,6 @@ const disabledFlag: string = "yes";
 
 <template>
   <!-- plant: @click expects a function; :disabled expects boolean -->
+  <!-- @plant-error -->
   <button type="button" :disabled="disabledFlag" @click="notAHandler">go</button>
 </template>

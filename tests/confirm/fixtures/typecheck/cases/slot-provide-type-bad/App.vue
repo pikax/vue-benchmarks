@@ -7,6 +7,7 @@ defineSlots<{
 <template>
   <div>
     <!-- plant: msg is string, 1 is a number -->
+    <!-- @plant-error -->
     <slot :msg="1" />
   </div>
 </template>

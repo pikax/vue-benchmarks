@@ -8,5 +8,6 @@ function onChange(value: string) {
 
 <template>
   <!-- plant: emit payload is number; .once does not make it a string -->
+  <!-- @plant-error -->
   <Child @change.once="onChange" />
 </template>

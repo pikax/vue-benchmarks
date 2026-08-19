@@ -4,5 +4,6 @@ import Child from "./Child.vue";
 
 <template>
   <!-- plant: id is not in props and not in AllowedComponentProps (class/style only) -->
+  <!-- @plant-error -->
   <Child title="ok" id="outer" />
 </template>

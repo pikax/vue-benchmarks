@@ -8,5 +8,6 @@ function onChange(value: string) {
 
 <template>
   <!-- plant: T is number from :value="1"; handler expects string -->
+  <!-- @plant-error -->
   <Child :value="1" @change="onChange" />
 </template>

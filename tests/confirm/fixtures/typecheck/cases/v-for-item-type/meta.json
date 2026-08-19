@@ -3,5 +3,6 @@
   "description": "v-for alias must carry the array element type into template expressions",
   "expectErrors": true,
   "minErrors": 1,
-  "mustMatch": ["TS2339", "toUpperCase", "does not exist", "number"]
+  "mustMatch": ["TS2339", "toUpperCase", "does not exist", "number"],
+  "expectMention": ["toUpperCase"]
 }

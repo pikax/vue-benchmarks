@@ -4,6 +4,7 @@ const emit = defineEmits<{
 }>();
 
 // plant: "nope" is not a declared emit
+// @plant-error
 emit("nope", 1);
 </script>
 

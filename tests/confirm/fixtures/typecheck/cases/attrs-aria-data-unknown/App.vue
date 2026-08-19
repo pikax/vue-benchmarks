@@ -8,5 +8,6 @@ import Child from "./Child.vue";
     AllowedComponentProps. A hyphen (or a well-known prefix) is not an exemption
     from strictTemplates — `foo-bar="1"` on the same component does error.
   -->
+  <!-- @plant-error -->
   <Child title="ok" aria-zzz="1" data-x="1" />
 </template>

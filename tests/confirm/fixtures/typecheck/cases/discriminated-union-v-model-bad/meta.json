@@ -1,0 +1,9 @@
+{
+  "id": "discriminated-union-v-model-bad",
+  "description": "Discriminated union child: kind='num' must reject a bound s field",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS2353", "TS2322", "s", "does not exist"],
+  "expectMention": ["'s'"],
+  "requires": ["prop-types"]
+}

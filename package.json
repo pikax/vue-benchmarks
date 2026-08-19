@@ -54,6 +54,8 @@
     "confirm:lint": "node tests/confirm/run.mjs --surfaces lint",
     "confirm:typecheck": "node tests/confirm/run.mjs --surfaces typecheck",
     "confirm:component-meta": "node tests/confirm/run.mjs --surfaces component-meta",
+    "confirm:lsp": "node tests/confirm/run.mjs --surfaces lsp",
+    "confirm:format": "node tests/confirm/run.mjs --surfaces format",
     "smoke": "node scripts/generate.mjs --counts 20 && node scripts/bench.mjs --fixture fixtures/20 --runs 2 --warmups 1 --surfaces compile,jsx-compile,lint,typecheck,format,component-meta,lsp --check-file-limit 20 --meta-file-limit 20",
     "prepublishOnly": "node -e \"console.error('This package is private and not published to npm.'); process.exit(1)\"",
     "bench:ide": "node scripts/ide-bench.mjs",

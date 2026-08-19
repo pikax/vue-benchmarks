@@ -6,5 +6,6 @@ function onKey(e: KeyboardEvent) {
 
 <template>
   <!-- plant: .prevent does not rewrite @click as KeyboardEvent -->
+  <!-- @plant-error -->
   <button type="button" @click.prevent="onKey">go</button>
 </template>

@@ -4,5 +4,6 @@
   "expectErrors": true,
   "minErrors": 1,
   "mustMatch": ["TS18047", "TS2339", "TS18048", "possibly", "null", "does not exist"],
-  "requires": ["v-if-narrow"]
+  "requires": ["v-if-narrow"],
+  "expectMention": ["user"]
 }

@@ -5,5 +5,6 @@
   "description": "inheritAttrs:false + v-if/v-else both single-root: undeclared id must still error",
   "expectErrors": true,
   "minErrors": 1,
-  "mustMatch": ["TS2353", "id", "does not exist"]
+  "mustMatch": ["TS2353", "id", "does not exist"],
+  "expectMention": ["id"]
 }

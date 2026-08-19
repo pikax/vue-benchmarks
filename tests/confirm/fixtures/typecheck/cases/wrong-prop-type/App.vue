@@ -4,5 +4,6 @@ import Child from "./Child.vue";
 
 <template>
   <!-- plant: count must be number -->
+  <!-- @plant-error -->
   <Child :count="'nope'" label="ok" />
 </template>

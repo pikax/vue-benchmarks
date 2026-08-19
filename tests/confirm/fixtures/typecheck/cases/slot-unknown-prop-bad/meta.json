@@ -3,5 +3,6 @@
   "description": "Scoped slot destructure must reject a property that is not on the payload",
   "expectErrors": true,
   "minErrors": 1,
-  "mustMatch": ["TS2339", "TS2551", "missing"]
+  "mustMatch": ["TS2339", "TS2551", "missing"],
+  "expectMention": ["missing"]
 }

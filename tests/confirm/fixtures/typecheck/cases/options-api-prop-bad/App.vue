@@ -7,6 +7,7 @@ export default defineComponent({
   },
   created() {
     // plant: this.count is number, not string
+    // @plant-error
     const label: string = this.count;
     console.log(label);
   },

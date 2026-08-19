@@ -29,6 +29,9 @@ const GROUPS = [
   ["events", "Native events / $event / modifiers"],
   ["v-model", "v-model / defineModel"],
   ["slots", "Slots"],
+  ["v-for", "v-for"],
+  ["components", "Dynamic / async / global components"],
+  ["directives", "Directives"],
   ["props", "Props / v-bind"],
   ["refs", "Refs / expose / unwrap"],
   ["script", "Script / inject / options API"],
@@ -52,7 +55,17 @@ function inferGroup(id, explicit) {
     id.startsWith("native-v-model")
   )
     return "v-model";
-  if (id.startsWith("slot-") || id.startsWith("define-slots-")) return "slots";
+  if (id.startsWith("slot-") || id.startsWith("define-slots-") || id.startsWith("required-slot"))
+    return "slots";
+  if (id.startsWith("v-for-")) return "v-for";
+  if (
+    id.startsWith("dynamic-component") ||
+    id.startsWith("async-component") ||
+    id.startsWith("global-component")
+  )
+    return "components";
+  if (id.startsWith("custom-directive") || id.startsWith("global-directive")) return "directives";
+  if (id.startsWith("discriminated-union-v-model")) return "v-model";
   if (
     id.startsWith("wrong-prop") ||
     id.startsWith("missing-required") ||
@@ -370,7 +383,7 @@ export function formatTypecheckDoc({
     "- `expectErrors: false` — the fixture is clean. Any diagnostic is a fail. A diagnostic that names the tool's own virtual code (`__VLS_`, `___VERTER___`, …) is called out as a codegen leak.",
   );
   lines.push(
-    "- `expectErrors: true` — at least one error, matching `mustMatch` when set. Missing the plant is a fail.",
+    "- `expectErrors: true` — at least one error, matching `mustMatch` when set. Dirty plants mark the bad line with a harness pin (`<!-- @plant-error -->` in template, `// @plant-error` in script). That is **not** TypeScript: HTML comments are ignored by every checker, so the pin always survives. The harness requires a diagnostic **on the next line** that mentions `expectMention` (e.g. the invalid prop name). A hit on the wrong line, or an error that does not name the plant, is a fail. `// @ts-expect-error` is only used in `.ts` where unused-directive is itself the plant.",
   );
   lines.push(
     "- **skip** — the tool does not claim the capability (`meta.requires`), or the binary/engine is missing.",

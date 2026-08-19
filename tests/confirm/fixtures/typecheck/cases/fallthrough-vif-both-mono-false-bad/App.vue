@@ -7,5 +7,6 @@ const on = ref(true);
 
 <template>
   <!-- inheritAttrs false: even a guaranteed single root must not accept undeclared id -->
+  <!-- @plant-error -->
   <Child title="ok" :on="on" id="outer" />
 </template>

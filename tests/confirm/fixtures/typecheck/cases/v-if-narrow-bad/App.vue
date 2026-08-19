@@ -6,5 +6,6 @@ const user = ref<{ name: string } | null>(null);
 
 <template>
   <!-- plant: user may be null -->
+  <!-- @plant-error -->
   <div>{{ user.name }}</div>
 </template>

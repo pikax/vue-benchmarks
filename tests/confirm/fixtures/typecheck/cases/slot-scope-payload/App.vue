@@ -9,6 +9,7 @@ function takesString(value: string) {
 <template>
   <Child>
     <!-- plant: item.id is number, takesString wants string -->
+    <!-- @plant-error -->
     <template #row="{ item }">{{ takesString(item.id) }}</template>
   </Child>
 </template>

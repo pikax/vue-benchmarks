@@ -4,5 +4,6 @@
   "expectErrors": true,
   "minErrors": 1,
   "mustMatch": ["TS2339", "notAMethod", "does not exist"],
-  "requires": ["dom-events"]
+  "requires": ["dom-events"],
+  "expectMention": ["notAMethod"]
 }

@@ -7,5 +7,6 @@ const total = ref(0);
 
 <template>
   <!-- plant: the `title` model is string, but a number ref is bound to it -->
+  <!-- @plant-error -->
   <Child v-model:title="total" />
 </template>

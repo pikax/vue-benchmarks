@@ -6,6 +6,7 @@ import Child from "./Child.vue";
   <Child>
     <template #default="{ submit }">
       <!-- plant: submit expects number -->
+      <!-- @plant-error -->
       <button type="button" @click="submit('nope')">go</button>
     </template>
   </Child>

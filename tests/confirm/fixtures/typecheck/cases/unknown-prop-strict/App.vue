@@ -4,5 +4,6 @@ import Child from "./Child.vue";
 
 <template>
   <!-- plant: extra is not a declared prop -->
+  <!-- @plant-error -->
   <Child title="ok" extra="nope" />
 </template>

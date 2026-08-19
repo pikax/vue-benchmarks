@@ -4,5 +4,6 @@ import Child from "./Child.vue";
 
 <template>
   <!-- plant: "danger" is not a member of the declared union -->
+  <!-- @plant-error -->
   <Child variant="danger" />
 </template>

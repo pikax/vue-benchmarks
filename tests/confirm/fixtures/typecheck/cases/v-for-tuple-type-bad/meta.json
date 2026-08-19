@@ -1,0 +1,9 @@
+{
+  "id": "v-for-tuple-type-bad",
+  "description": "v-for over an as const [string, number] tuple must reject toFixed on the string element",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS2339", "TS2551", "toFixed", "does not exist"],
+  "expectMention": ["toFixed"],
+  "requires": ["template-bindings"]
+}

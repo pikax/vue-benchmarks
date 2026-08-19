@@ -1,0 +1,6 @@
+{
+  "id": "v-if-in-narrow-ok",
+  "description": "v-if=\"'a' in x\" narrows a {a} | {b} union so x.a is a string (clean)",
+  "expectErrors": false,
+  "requires": ["v-if-narrow"]
+}

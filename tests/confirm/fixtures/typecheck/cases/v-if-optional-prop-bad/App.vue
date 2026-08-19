@@ -6,5 +6,6 @@ defineProps<{
 
 <template>
   <!-- plant: optional prop is string | undefined without a guard -->
+  <!-- @plant-error -->
   <span>{{ label.toUpperCase() }}</span>
 </template>

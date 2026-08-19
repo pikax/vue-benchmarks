@@ -1,0 +1,5 @@
+{
+  "id": "custom-directive-value-ok",
+  "description": "Local directive typed DirectiveBinding<number> accepts a numeric value (clean)",
+  "expectErrors": false
+}

@@ -9,5 +9,6 @@ const pet = ref<Dog | Cat>({ kind: "dog", bark: () => "woof" });
 
 <template>
   <!-- plant: dog branch has bark, not meow -->
+  <!-- @plant-error -->
   <div v-if="pet.kind === 'dog'">{{ pet.meow() }}</div>
 </template>

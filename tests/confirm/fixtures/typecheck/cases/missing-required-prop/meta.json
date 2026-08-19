@@ -4,5 +4,6 @@
   "expectErrors": true,
   "minErrors": 1,
   "mustMatch": ["TS2322", "TS2741", "title", "missing", "required"],
-  "requires": ["prop-types"]
+  "requires": ["prop-types"],
+  "expectMention": ["title"]
 }

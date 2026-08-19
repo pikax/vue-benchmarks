@@ -4,5 +4,6 @@
   "expectErrors": true,
   "minErrors": 1,
   "mustMatch": ["TS2353", "data-x", "does not exist", "dataX"],
-  "requires": ["strict-component-attrs"]
+  "requires": ["strict-component-attrs"],
+  "expectMention": ["data-x"]
 }

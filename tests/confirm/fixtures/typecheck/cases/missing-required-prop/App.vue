@@ -4,5 +4,6 @@ import Child from "./Child.vue";
 
 <template>
   <!-- plant: title is required -->
+  <!-- @plant-error -->
   <Child />
 </template>

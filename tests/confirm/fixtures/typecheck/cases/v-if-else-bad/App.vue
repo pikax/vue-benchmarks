@@ -7,5 +7,6 @@ const user = ref<{ name: string } | null>(null);
 <template>
   <div v-if="user">{{ user.name }}</div>
   <!-- plant: v-else is the null branch; user.name is not valid here -->
+  <!-- @plant-error -->
   <div v-else>{{ user.name }}</div>
 </template>

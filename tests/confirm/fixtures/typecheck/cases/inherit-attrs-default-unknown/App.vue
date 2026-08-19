@@ -4,5 +4,6 @@ import Child from "./Child.vue";
 
 <template>
   <!-- plant: inheritAttrs defaults to true, but strictTemplates still rejects undeclared attrs -->
+  <!-- @plant-error -->
   <Child title="ok" id="outer" />
 </template>
