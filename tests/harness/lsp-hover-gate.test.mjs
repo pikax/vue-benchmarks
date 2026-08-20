@@ -110,9 +110,14 @@ describe("classifyTemplateHover (template position)", () => {
  * loading the project answers the first one with nothing and raises no error,
  * so the error-only retry never fired.
  *
- * The environment race does not reproduce on demand — an idle box, a 4-CPU box
- * and a 1-CPU box all answer the first hover correctly here — so the contract
- * is pinned directly instead.
+ * The suite allowed 50ms. Measured time to first non-empty answer on the
+ * confirm workspace: 317-619ms on 4 CPUs, and 230-4934ms on 1 CPU. The budget
+ * was never large enough for any of the three, and the fastest server to become
+ * ready (verter, ~280ms) is the one the flake was reported against — which is
+ * what makes this the harness's problem rather than a tool's.
+ *
+ * The race itself does not reproduce on demand, so the contract is pinned here
+ * directly rather than by trying to recreate the timing.
  */
 describe("hoverWithRetry", () => {
   const uri = "file:///App.vue";
@@ -144,19 +149,22 @@ describe("hoverWithRetry", () => {
   });
 
   test("a server that only ever answers empty still returns empty, bounded", async () => {
+    // Bounded, and then SCORED — never skipped on the grounds of not being
+    // ready. A server that cannot answer its first request on a two-file
+    // workspace is reporting something real, and the suite must say so.
     let calls = 0;
     const ask = async () => {
       calls += 1;
       return null;
     };
-    assert.equal(await hoverWithRetry(ask, uri, at), null);
-    assert.ok(calls > 1 && calls <= 6, `bounded attempts, got ${calls}`);
+    assert.equal(await hoverWithRetry(ask, uri, at, { maxAttempts: 3 }), null);
+    assert.equal(calls, 3);
   });
 
   test("a throwing server still surfaces its error rather than a false empty", async () => {
     const ask = async () => {
       throw new Error("connection closed");
     };
-    await assert.rejects(() => hoverWithRetry(ask, uri, at), /connection closed/);
+    await assert.rejects(() => hoverWithRetry(ask, uri, at, { maxAttempts: 2 }), /connection closed/);
   });
 });

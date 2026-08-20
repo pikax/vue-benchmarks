@@ -88,7 +88,31 @@ const PLANTED_PROP = "plantedBadProp";
 const INIT_TIMEOUT_MS = 30_000;
 const REQUEST_TIMEOUT_MS = 15_000;
 const DIAG_WAIT_MS = 20_000;
-const HOVER_ATTEMPTS = 6;
+/**
+ * Readiness budget, shared by every server, as wall clock rather than a retry
+ * count — the number that matters is how long a server is given, not how many
+ * times it is asked.
+ *
+ * Measured on this workspace, time to the first non-empty answer:
+ *
+ *            4 CPUs            1 CPU
+ *   volar     619ms            1373 / 4934 / 1457 ms
+ *   vize      582ms            1181 / 1301 / 1289 ms
+ *   verter    317ms             280 /  230 /  288 ms
+ *
+ * The suite used to allow 50ms. Every server needs 6-12x that on a healthy
+ * box, and volar needed 4.9s once under contention — 100x. Nothing was wrong
+ * with the servers; the budget was never large enough, and passing depended on
+ * the first request's own round-trip absorbing the wait. 30s is ~6x the worst
+ * figure above and matches INIT_TIMEOUT_MS, which is the other "how long may a
+ * server take to come up" number in this file.
+ *
+ * Note which server was fastest to answer: the flake was reported against
+ * verter, the one that becomes ready first. Any of the three could lose that
+ * coin flip, which is what makes it the harness's problem and not a tool's.
+ */
+const READY_BUDGET_MS = 30_000;
+const READY_BACKOFF_MS = (attempt) => Math.min(1_000, 200 * (attempt + 1));
 
 function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
@@ -354,6 +378,10 @@ function resolveServers() {
           hybrid: false,
           env: withTsgoEnv({}, rootDir),
           initializationOptions: {},
+          // Recorded for the report, never awaited — see the readiness note on
+          // hoverWithRetry. Volar and vize document no equivalent, and waiting
+          // on this one would hand verter a different protocol than they get.
+          readyNotifications: ["$/verter/ready"],
         }
       : { id: "verter", available: false, unavailable: "verter-lsp not installed" },
   );
@@ -405,8 +433,13 @@ async function openSession(server, ws) {
   });
 
   const diags = createDiagStore(ws.appFile);
+  // Attached BEFORE initialize: the notification can arrive during it.
+  const tSession = performance.now();
+  let readySignalMs = null;
+  const readySet = new Set(server.readyNotifications ?? []);
   client.on("notification", (method, params) => {
     if (method === "textDocument/publishDiagnostics") diags.onPublish("server", params);
+    if (readySignalMs == null && readySet.has(method)) readySignalMs = performance.now() - tSession;
   });
 
   let hybrid = null;
@@ -468,9 +501,31 @@ async function openSession(server, ws) {
 
     openDoc(appUri, ws.appSource);
     openDoc(childUri, ws.childSource);
-    await sleep(50);
 
-    return { client, hybrid, ask, changeDoc, appUri, childUri, diags, close };
+    // Readiness gate for the WHOLE session, not just the case that happened to
+    // run first. Every later case — definition, completion, references, rename,
+    // diagnostics — has the same "answers nothing while loading" exposure; they
+    // survived only because hover went first and absorbed the wait. Paid once,
+    // here, on one code path with one budget for every server.
+    const tReady = performance.now();
+    const firstHover = await hoverWithRetry(ask, appUri, ws.hoverProbe);
+    const readyMs = Number((performance.now() - tReady).toFixed(1));
+
+    return {
+      client,
+      hybrid,
+      ask,
+      changeDoc,
+      appUri,
+      childUri,
+      diags,
+      close,
+      firstHover,
+      readyMs,
+      // Observed, never awaited: only verter documents one, so waiting on
+      // signals would hand it a different protocol than the others get.
+      readySignalMs: readySignalMs == null ? null : Number(readySignalMs.toFixed(1)),
+    };
   } catch (error) {
     await close();
     throw error;
@@ -478,25 +533,44 @@ async function openSession(server, ws) {
 }
 
 /**
- * First request of the session, and therefore the readiness gate for all of it.
+ * Establish that the session can answer at all, before anything is scored.
  *
- * `openSession` returns 50ms after didOpen. A server that has not finished
- * loading the project by then answers a hover with NOTHING rather than raising,
- * so an error-only retry never fired and a slow start was scored as an empty
- * payload — a content bug it is not. Seen on a loaded 4-core runner and not on
- * an idle machine, which is the signature of a readiness race, not a defect.
+ * THE FLAKE THIS EXISTS FOR. `openSession` used to return 50ms after didOpen
+ * and the first scored case asked immediately. LSP has no standard readiness
+ * signal, and a server still loading its project answers a request with NOTHING
+ * and raises no error — so "not yet" was recorded as "wrong answer". One
+ * Benchmark run failed `hover-template-binding · verter — empty hover payload`
+ * while definition, documentSymbol, completion, definition-prop-attr and both
+ * diagnostics cases on that same session passed, and the Test workflow passed
+ * on the identical commit. That is a race in the harness, not a defect in the
+ * server: answering null while loading is protocol-legal, and a real editor
+ * retries too.
  *
- * So: an EMPTY payload is not an answer and is retried. A NON-EMPTY payload IS
- * an answer and is returned as it stands, even when it carries no type —
- * retrying that away would launder a real "this server has no type here"
- * verdict into a pass, which is the opposite of what this suite is for. Same
- * bounded schedule for every server: ~4.2s of backoff across HOVER_ATTEMPTS.
+ * Readiness is established on CONTENT, through one code path every server
+ * takes, with one budget for all of them — the same rule the timed LSP surface
+ * and the ide-ops suites already follow, and for the same reason: exactly one
+ * server documents a ready notification ($/verter/ready), so waiting on
+ * signals would give that server a different protocol than the rest. The
+ * notification is still observed, passively, because it is useful to report.
+ *
+ * What counts as an answer is deliberately narrow: ANY non-empty payload. Not
+ * "a payload with a type" — waiting for that would launder a real "this server
+ * has no type here" verdict into a pass, which is the one thing this suite
+ * exists to catch. And a server that never answers is never skipped on that
+ * basis: the budget expires, the empty payload is scored, and the failure is
+ * then a finding rather than a coin flip.
  */
-export async function hoverWithRetry(ask, uri, position) {
+export async function hoverWithRetry(
+  ask,
+  uri,
+  position,
+  { budgetMs = READY_BUDGET_MS, maxAttempts = Infinity } = {},
+) {
+  const deadline = performance.now() + budgetMs;
   let lastErr = null;
   let lastHover = null;
   let answered = false;
-  for (let attempt = 0; attempt < HOVER_ATTEMPTS; attempt++) {
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
     try {
       const hover = await ask(
         "textDocument/hover",
@@ -510,7 +584,8 @@ export async function hoverWithRetry(ask, uri, position) {
     } catch (error) {
       lastErr = error;
     }
-    await sleep(200 * (attempt + 1));
+    if (performance.now() >= deadline) break;
+    await sleep(READY_BACKOFF_MS(attempt));
   }
   if (answered) return lastHover;
   throw lastErr ?? new Error("hover failed");
@@ -558,7 +633,10 @@ async function runServerCases(suite, server, ws) {
   try {
     // --- hover-template-binding ---
     try {
-      const hover = await hoverWithRetry(session.ask, session.appUri, ws.hoverProbe);
+      // The readiness gate already asked this exact question and kept the
+      // answer; asking again would only add a second, warmer sample and hide
+      // how long the first one took.
+      const hover = session.firstHover;
       const text = contentText(hover);
       const typed = hoverMentionsType(text);
       // Corsa-down is a degraded backend, not a hover-content bug. Linux CI
@@ -589,8 +667,13 @@ async function runServerCases(suite, server, ws) {
             ? `template hover mentions a type (${text.replace(/\s+/g, " ").trim().slice(0, 120)})`
             : text
               ? `template hover has no type (string/number): ${text.replace(/\s+/g, " ").trim().slice(0, 160)}`
-              : "empty hover payload at {{ greeting }}",
-          { snippet: text.slice(0, 400), ms: Number((performance.now() - t0).toFixed(1)) },
+              : `empty hover payload at {{ greeting }} after ${session.readyMs}ms of readiness retries`,
+          {
+            snippet: text.slice(0, 400),
+            ms: Number((performance.now() - t0).toFixed(1)),
+            readyMs: session.readyMs,
+            readySignalMs: session.readySignalMs,
+          },
         );
       }
     } catch (error) {
