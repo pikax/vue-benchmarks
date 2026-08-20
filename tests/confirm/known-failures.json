@@ -45,8 +45,6 @@
   "lint/dupe-else-if/verter-lint": "rule registered in getLintRuleMetadata() as vue-essential but never fires.",
   "lint/duplicate-attributes/verter-lint": "rule registered in getLintRuleMetadata() as vue-essential but never fires.",
   "lint/mutating-props/verter-lint": "rule registered in getLintRuleMetadata() as vue-essential but never fires.",
-  "lint/mutating-props/vize-lint": "no-mutating-props never fires on `props.count += 1` under default, essential, opinionated or ecosystem presets.",
-  "lint/deprecated-slot-attr/vize-lint": "no-deprecated-slot-attribute never fires on Vue 2 `slot=\"header\"` under any preset.",
   "lint/template-key/verter-lint": "no-template-key registered in getLintRuleMetadata() as vue-essential but never fires on `<template :key>` outside v-for; the planted :key is only reported as no-useless-template-attributes ('Directive \":\" on <template> is useless') plus no-lone-template.",
   "lint/invalid-v-model/verter-lint": "valid-v-model registered as vue-essential but never fires on `<div v-model=\"text\">` — zero diagnostics. vize and eslint both report it.",
   "lint/invalid-v-slot/verter-lint": "valid-v-slot registered as vue-essential but never fires on a v-slot modifier (`<template #header.foo>`); only unrelated no-undef-components/no-bare-strings/multi-word diagnostics are emitted.",
@@ -134,8 +132,6 @@
   "typecheck/slot-v-bind-bad/verter-tsc": "verter-tsc does not type <slot v-bind=\"obj\"> as the slot payload: it reports TS2554 Expected 1 arguments, but got 0 instead of the id string/number mismatch. vue-tsc and golar report the payload mismatch.",
   "typecheck/slot-v-bind-ok/verter-tsc": "Same <slot v-bind> hole as slot-v-bind-bad/verter-tsc on a CLEAN fixture: TS2554 Expected 1 arguments, but got 0. vue-tsc, vize and golar stay clean.",
 
-  "component-meta/generic-props/vize-declaration-meta": "vize generateDeclaration emits unparseable TypeScript — `export type Props<T extends { id: number } = any> = <{ ... }>;` wraps the body in angle brackets (3 TS parse errors). Minimal repro shows the trigger is an arrow-function prop type (this case's `keyOf: (row: T) => string`), not generics — see complex-defaults.",
-  "component-meta/complex-defaults/vize-declaration-meta": "vize generateDeclaration emits unparseable TypeScript when the props type literal contains a function-typed member — the body is wrapped in angle brackets (`export type Props = <{ ... }>;`). Minimal repro: defineProps<{ a?: (v: number) => string }>(). Same wrapping bug as generic-props.",
   "component-meta/define-model/vize-declaration-meta": "vize generateDeclaration ignores defineModel entirely — Props and Emits are both emitted as {} for a component whose real API is modelValue/count props plus update:modelValue/update:count events.",
   "component-meta/external-props-import/vize-declaration-meta": "vize generateDeclaration re-exports the imported type by reference (`export type Props = BaseFieldProps & { value: number };` plus the import) — valid TS, but the declaration-derived meta path cannot enumerate props hidden behind an imported type reference, so name/hint/value go unreported.",
   "component-meta/props-destructure/verter-component-meta": "@verter/component-meta does not surface destructure initializers as prop defaults — `const { count = 1, verbose = false } = defineProps<...>()` reports both props with an empty default; vue-component-meta reports both defaults.",
