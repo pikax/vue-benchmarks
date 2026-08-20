@@ -396,6 +396,18 @@ test("stripAnsi removes colour sequences without eating ordinary characters", ()
   // the diagnostics the reports quote verbatim.
   assert.equal(stripAnsi("module failed"), "module failed");
   assert.equal(stripAnsi("m"), "m");
+
+  // Not just SGR. This is the shared definition every surface strips with, and
+  // the confirmation scorer's narrower private copy is what let a colour code
+  // inside `path(line,col)` read 0 diagnostics out of 64 (#34). A clickable
+  // filename (OSC 8) is the same failure waiting to happen.
+  const bel = String.fromCharCode(7);
+  assert.equal(stripAnsi(`${esc}]8;;file:///a/B.vue${bel}B.vue${esc}]8;;${bel}`), "B.vue");
+  assert.equal(stripAnsi(`${esc}[?25l${esc}[4mApp.vue${esc}[0m`), "App.vue");
+  assert.equal(
+    stripAnsi(`  ${esc}[38;2;244;191;117;1m[vize:a11y/alt-text] x${esc}[0m`),
+    "  [vize:a11y/alt-text] x",
+  );
 });
 
 test("parseVitestSummary reads counts and never reports a crash as zero fast tests", () => {

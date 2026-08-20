@@ -1,7 +1,8 @@
 export {};
 
+// Unique member name — see global-component-prop-ok/globals.d.ts.
 declare module "vue" {
   interface GlobalComponents {
-    Fancy: typeof import("./Child.vue").default;
+    FancyBad: typeof import("./Child.vue").default;
   }
 }

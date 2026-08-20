@@ -147,6 +147,10 @@ function Measure-TreeWorkingSet([int]$RootId, [datetime]$Started) {
   $engine = [int64]0
   $cutoff = $Started.AddSeconds(-2)
   Get-Process -Name verter-tsc,tsgo,tsc,corsa -ErrorAction SilentlyContinue | ForEach-Object {
+    # The root is accounted for by the caller (measure-cli's Note-Root, or the
+    # $rootWs read in listPidTreeMembers). Counting it here too would double it
+    # whenever the root IS one of these names — i.e. exactly the verter-tsc row.
+    if ($_.Id -eq $RootId) { return }
     if ($_.StartTime -lt $cutoff) { return }
     $n = $_.ProcessName.ToLowerInvariant()
     $ws = [int64]$_.WorkingSet64
@@ -234,11 +238,25 @@ function collectDescendantPids(rootPid) {
 export function listPidTreeMembers(pid) {
   if (!pid || pid <= 0) return [];
   if (process.platform === "win32") {
+    // The ROOT's own working set is read here and added to the tool column.
+    //
+    // Measure-TreeWorkingSet only enumerates the four engine/native names it
+    // knows (see windowsTreeRssPsFunction), because measure-cli tracks the root
+    // separately in its own wait loop. Callers of THIS function have no such
+    // loop, so without the root the breakdown was 0 for every ordinary process:
+    // an LSP server hosting its checker in-process reported no memory at all,
+    // and one that spawns tsgo reported the engine while hiding itself. Volar's
+    // two halves are passed here as two pids, so each contributes its own set.
     const script = `${windowsTreeRssPsFunction()}
 $proc = Get-Process -Id ${Number(pid)} -ErrorAction SilentlyContinue
 $started = if ($proc) { $proc.StartTime } else { [datetime]::Now }
+$rootWs = [int64]0
+if ($proc) {
+  $rootWs = [int64]$proc.WorkingSet64
+  try { $hwm = [int64]$proc.PeakWorkingSet64; if ($hwm -gt $rootWs) { $rootWs = $hwm } } catch {}
+}
 $snap = Measure-TreeWorkingSet ${Number(pid)} $started
-Write-Output ('{0}|{1}|0' -f ${Number(pid)}, $snap.Tool)
+Write-Output ('{0}|{1}|0' -f ${Number(pid)}, ($rootWs + $snap.Tool))
 if ($snap.Engine -gt 0) { Write-Output ('0|{0}|1' -f $snap.Engine) }
 `;
     const psFile = join(os.tmpdir(), `vue-bench-rss-tree-${process.pid}-${Date.now()}.ps1`);

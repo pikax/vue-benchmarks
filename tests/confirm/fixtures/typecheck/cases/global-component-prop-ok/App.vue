@@ -1,5 +1,5 @@
 <script setup lang="ts"></script>
 
 <template>
-  <Fancy title="ok" />
+  <FancyOk title="ok" />
 </template>

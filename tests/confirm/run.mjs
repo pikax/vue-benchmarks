@@ -18,7 +18,7 @@
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { formatReport, printConsole, summarize } from "./lib/harness.mjs";
 import { acquireRunLock, lockConflictMessage } from "./lib/run-lock.mjs";
 import { collectRunner } from "./lib/typecheck-doc.mjs";
@@ -41,8 +41,65 @@ function loadKnownFailures() {
   const path = join(dirname(fileURLToPath(import.meta.url)), "known-failures.json");
   if (!existsSync(path)) return {};
   const raw = JSON.parse(readFileSync(path, "utf8"));
-  // Drop the embedded "$comment" documentation block.
+  // Drop the embedded "$comment" documentation blocks.
   return Object.fromEntries(Object.entries(raw).filter(([k]) => !k.startsWith("$")));
+}
+
+/**
+ * A known-failure value is either a plain reason, or `{ why, path }` when the
+ * verdict depends on WHICH typecheck path produced it.
+ *
+ * The two paths ask the same question of different projects: `per-case` gives
+ * each plant its own 5-file project, `combined` puts all 150 in one. A tool
+ * whose analysis degrades at project scale genuinely passes one and fails the
+ * other — measured: vize resolves a GlobalComponents augmentation per-case and
+ * reports nothing for the same files inside the combined project. With one
+ * unqualified entry, whichever path you run calls the file wrong: CI (combined)
+ * sees an unexpected failure, a local per-case run sees a stale suppression.
+ * `path` scopes the entry so both runs can be right.
+ */
+export function knownEntryFor(known, row) {
+  const raw = known[resultKey(row)];
+  if (raw == null) return null;
+  const entry = typeof raw === "string" ? { why: raw, path: null } : { why: raw.why ?? "", path: raw.path ?? null };
+  if (entry.path && entry.path !== (row.path ?? "per-case")) return null;
+  return entry;
+}
+
+/**
+ * Rows the gate should judge, with the combined typecheck run expanded.
+ *
+ * `--all` (what CI runs) scores every plant inside ONE `typecheck-all` row per
+ * tool, with the per-plant verdicts buried in `detail.plants`. Nothing else
+ * looks in there, so a plant that started failing could not turn CI red: five
+ * plants were failing for all four tools with no known-failures entry and no
+ * red build. Expanded here — for the exit code only, not for the report or the
+ * JSON — under the same `typecheck/<caseId>/<tool>` keys the per-case suite
+ * uses, so one known-failures file covers both paths.
+ *
+ * Skipped when the per-case suite ran too: those rows are the authority (they
+ * carry the fallthrough / extra-tsconfig retries) and duplicating a case under
+ * both verdicts would let a pass in one path cancel a fail in the other.
+ */
+export function gateRows(results) {
+  const rows = results ?? [];
+  if (rows.some((r) => r.suite === "typecheck")) return rows;
+  const expanded = [];
+  for (const r of rows) {
+    if (r.suite !== "typecheck-all") continue;
+    for (const p of r.detail?.plants ?? []) {
+      expanded.push({
+        suite: "typecheck",
+        caseId: p.caseId,
+        tool: r.tool,
+        status: p.status ?? (p.skip ? "skip" : p.ok ? "pass" : "fail"),
+        message: p.message,
+        // Which project produced this verdict — see knownEntryFor.
+        path: "combined",
+      });
+    }
+  }
+  return [...rows, ...expanded];
 }
 
 /**
@@ -62,13 +119,18 @@ function reportKnownFailures(results, { strict = false } = {}) {
   const known = loadKnownFailures();
   const failures = results.filter((r) => /fail/i.test(r.status ?? ""));
 
-  const unexpected = failures.filter((r) => !(resultKey(r) in known));
-  const expected = failures.filter((r) => resultKey(r) in known);
+  const unexpected = failures.filter((r) => !knownEntryFor(known, r));
+  const expected = failures.filter((r) => knownEntryFor(known, r));
 
-  const passingKeys = new Set(
-    results.filter((r) => /pass/i.test(r.status ?? "")).map(resultKey),
-  );
-  const fixed = Object.keys(known).filter((k) => passingKeys.has(k));
+  // A pass only makes an entry stale if the entry APPLIES to the path that
+  // produced the pass: a combined-only entry is not refuted by a per-case pass.
+  const fixed = [
+    ...new Set(
+      results
+        .filter((r) => /pass/i.test(r.status ?? "") && knownEntryFor(known, r))
+        .map(resultKey),
+    ),
+  ];
 
   const warnings = results.filter((r) => /warn/i.test(r.status ?? ""));
   if (warnings.length) {
@@ -80,7 +142,11 @@ function reportKnownFailures(results, { strict = false } = {}) {
   console.log("");
   if (expected.length) {
     console.log(`Known upstream failures (allowed): ${expected.length}`);
-    for (const r of expected) console.log(`  · ${resultKey(r)} — ${known[resultKey(r)]}`);
+    for (const r of expected) {
+      const entry = knownEntryFor(known, r);
+      const scope = entry.path ? ` [${entry.path} run only]` : "";
+      console.log(`  · ${resultKey(r)}${scope} — ${entry.why}`);
+    }
   }
 
   if (fixed.length) {
@@ -262,13 +328,19 @@ async function main() {
   console.log(`\nWrote ${outMd}`);
   console.log(`Wrote ${outJson}`);
 
-  // --all scores plants from the combined dump for docs/typecheck.md. Those
-  // rows are not the per-case spawn gate (fallthrough retries, extra tsconfig).
-  // CI therefore gates typecheck on the typecheck-all row only.
-  process.exit(reportKnownFailures(all, { strict: args.strict }));
+  // --all scores plants from the combined dump for docs/typecheck.md. The
+  // aggregate row is always a pass, so its per-plant verdicts are expanded
+  // (gate only — the report and JSON above keep the compact shape) and gated
+  // under the same keys the per-case spawns use.
+  process.exit(reportKnownFailures(gateRows(all), { strict: args.strict }));
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exit(2);
-});
+// Only run when executed directly. `gateRows` is imported by the harness
+// self-tests, and an unguarded call here would spawn the whole confirmation
+// suite — every compiler, every plant — from `node --test`.
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main().catch((error) => {
+    console.error(error);
+    process.exit(2);
+  });
+}

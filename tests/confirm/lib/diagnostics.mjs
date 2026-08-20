@@ -1,6 +1,7 @@
 /**
  * Parse / score CLI diagnostic output for confirmation plants.
  */
+import { stripAnsi } from "../../../scripts/lib/real-world/ansi.mjs";
 
 /**
  * Normalize one diagnostic from vue-tsc / golar / verter / vize text.
@@ -9,11 +10,12 @@
 export function parseDiagnostics(text) {
   if (!text) return [];
   const out = [];
-  // vize colorizes unconditionally (TERM unset, output piped — still ANSI),
-  // and a colour code inside `path(line,col)` makes every pattern below miss.
-  // Strip escapes before parsing; the other tools are unaffected.
-  const plain = String(text).replace(/\x1b\[[0-9;]*[A-Za-z]/g, "");
-  const lines = plain.split(/\r?\n/);
+  // vize colorizes unconditionally — TERM unset, output piped, NO_COLOR=1 set:
+  // measured, it still emits `ESC[4m<path>ESC[0m` / `ESC[31merror:…`. A colour
+  // code inside `path(line,col)` makes every pattern below miss, so escapes are
+  // stripped before parsing. Shared definition, not a local copy: a narrower
+  // one is what let issue #34 read 0 diagnostics out of 64.
+  const lines = stripAnsi(text).split(/\r?\n/);
   let lastFile = "";
 
   for (const raw of lines) {
@@ -125,9 +127,50 @@ function diagHay(d) {
   return `${d.code || ""} ${d.message || ""} ${d.raw || ""}`;
 }
 
+function escapeRe(s) {
+  return String(s).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/**
+ * Does a diagnostic NAME the thing the plant is about?
+ *
+ * `expectMention` exists so a plant is not satisfied by an unrelated error that
+ * happens to land on the pinned line. It must not become a message-phrasing
+ * lottery: the tools word the same finding differently and quote identifiers
+ * differently, and a plain case-sensitive `includes` scored two correct
+ * diagnostics as misses —
+ *
+ *   expectMention "style"  vs  vize's `Type '123' is not assignable to type
+ *                              'StyleValue'.` (correct, and pinned to the exact
+ *                              binding column — failed on the capital S)
+ *   expectMention "'s'"    vs  vize's `{ kind: "num"; s: string; }` (same error
+ *                              as vue-tsc's TS2353, without TypeScript's quoting)
+ *
+ * So: compare case-insensitively, and when the needle is itself quoted, also
+ * accept the bare token on an identifier boundary. The boundary is what keeps
+ * a one-character needle like `'s'` from matching the `s` inside "string".
+ */
+export function mentions(hay, needle) {
+  const text = String(hay || "");
+  const n = String(needle ?? "");
+  if (!n) return true;
+  if (text.toLowerCase().includes(n.toLowerCase())) return true;
+  const bare = n.replace(/^["'`]+|["'`]+$/g, "");
+  if (!bare || bare === n) return false;
+  return new RegExp(`(^|[^\\w$])${escapeRe(bare)}($|[^\\w$])`, "i").test(text);
+}
+
+/**
+ * `strippedLine` is where the planted code sits in the work copy (pin comments
+ * are removed before the tools run); `targetLine` / `commentLine` are the
+ * source coordinates, still accepted so a fixture that was never stripped — or
+ * a tool that points at the line above — is not failed on arithmetic.
+ */
 function diagOnPin(d, pin) {
   if (!fileMatches(d.file, pin.file)) return false;
-  return d.line === pin.targetLine || d.line === pin.commentLine;
+  return (
+    d.line === pin.strippedLine || d.line === pin.targetLine || d.line === pin.commentLine
+  );
 }
 
 /**
@@ -154,7 +197,7 @@ function diagOnPin(d, pin) {
  *   expectFile?: string,
  *   expectLine?: number,
  *   expectCode?: string,
- *   pins?: Array<{ file: string, commentLine: number, targetLine: number }>,
+ *   pins?: Array<{ file: string, commentLine: number, targetLine: number, strippedLine?: number }>,
  *   expectMention?: string[],
  *   diags?: ReturnType<typeof parseDiagnostics>,
  * }} opts
@@ -223,7 +266,7 @@ export function scoreDiagnostics(opts) {
             message: `plant at ${pin.file}:${pin.targetLine} did not mention one of: ${mustMatch.join(" | ")}`,
           };
         }
-        const missing = expectMention.filter((n) => !hay.includes(n));
+        const missing = expectMention.filter((n) => !mentions(hay, n));
         if (missing.length) {
           return {
             ok: false,

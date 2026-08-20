@@ -4,7 +4,10 @@ const disabledFlag: string = "yes";
 </script>
 
 <template>
-  <!-- plant: @click expects a function; :disabled expects boolean -->
+  <!-- plant: :disabled expects boolean, gets string -->
   <!-- @plant-error -->
-  <button type="button" :disabled="disabledFlag" @click="notAHandler">go</button>
+  <button type="button" :disabled="disabledFlag">go</button>
+  <!-- plant: @click expects a function, gets a number -->
+  <!-- @plant-error -->
+  <button type="button" @click="notAHandler">go</button>
 </template>

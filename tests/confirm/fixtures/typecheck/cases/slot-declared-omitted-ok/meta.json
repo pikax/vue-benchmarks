@@ -1,0 +1,5 @@
+{
+  "id": "slot-declared-omitted-ok",
+  "description": "A slot declared with defineSlots is optional: omitting it at the call site must stay clean",
+  "expectErrors": false
+}

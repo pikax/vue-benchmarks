@@ -1,8 +1,0 @@
-{
-  "id": "required-slot-missing-bad",
-  "description": "Omitting a named header slot declared in defineSlots must error if the checker treats it as required",
-  "expectErrors": true,
-  "minErrors": 1,
-  "mustMatch": ["TS2322", "TS2741", "header", "missing", "required"],
-  "expectMention": ["header"]
-}

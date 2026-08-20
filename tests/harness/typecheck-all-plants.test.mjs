@@ -153,6 +153,159 @@ describe("diagsForCase / scoreCombinedRun", () => {
   });
 });
 
+describe("fallthroughAttributes plants are judged on both configs", () => {
+  // The shared tsconfig cannot answer what these plants ask: with the opt-in
+  // off a legitimate fallthrough `id` IS an unknown prop, so a checker that
+  // models fallthrough reports TS2353 on a plant whose expected answer is
+  // "clean" — marked wrong for being right — while a checker that does not
+  // implement fallthrough at all passes for free. Shared-only scoring made
+  // that 12 of the plants, in favour of the least capable tool in the table.
+  const cases = [
+    {
+      caseId: "fallthrough-mono-ok",
+      meta: { expectErrors: false, needsFallthroughAttributes: true, _pins: [] },
+    },
+  ];
+  const clean = { combined: "", status: 0 };
+  const errored = {
+    combined:
+      "cases/fallthrough-mono-ok/App.vue(7,21): error TS2353: Object literal may only specify known properties, and 'id' does not exist",
+    status: 2,
+  };
+
+  test("shared ✗ + opt-in ✓ is a WARN, not a fail", () => {
+    const tally = scoreCombinedRun(cases, "vue-tsc", errored, clean);
+    assert.equal(tally.warn, 1);
+    assert.equal(tally.fail, 0);
+    assert.equal(tally.pass, 0);
+    assert.equal(tally.plants[0].status, "warn");
+    assert.match(tally.plants[0].message, /EXTRA VUE COMPILER OPTION/);
+  });
+
+  test("a warn is not a pass and stays in the denominator", () => {
+    const tally = scoreCombinedRun(cases, "vue-tsc", errored, clean);
+    assert.equal(tally.scored, 1);
+    assert.equal(tally.passPct, 0, "needing the opt-in must never read as better than not needing it");
+  });
+
+  test("clean on both configs is a plain pass", () => {
+    const tally = scoreCombinedRun(cases, "vize-check", clean, clean);
+    assert.equal(tally.pass, 1);
+    assert.equal(tally.warn, 0);
+  });
+
+  test("shared ✓ + opt-in ✗ is a fail — the opt-in revealed a miss", () => {
+    const dirty = [
+      {
+        caseId: "fallthrough-multi-bad",
+        meta: { expectErrors: true, needsFallthroughAttributes: true, _pins: [] },
+      },
+    ];
+    const tally = scoreCombinedRun(dirty, "vue-tsc", errored2("fallthrough-multi-bad"), clean);
+    assert.equal(tally.fail, 1);
+    assert.match(tally.plants[0].message, /EXTRA VUE COMPILER OPTION/);
+  });
+
+  test("without the second dump the plants fall back to shared-only scoring", () => {
+    const tally = scoreCombinedRun(cases, "vue-tsc", errored, null);
+    assert.equal(tally.fail, 1, "no silent pass when the extra spawn could not run");
+    assert.equal(tally.warn, 0);
+  });
+});
+
+function errored2(caseId) {
+  return {
+    combined: `cases/${caseId}/App.vue(7,21): error TS2353: Object literal may only specify known properties, and 'id' does not exist`,
+    status: 2,
+  };
+}
+
+describe("capability gaps are scored from evidence, not from the table", () => {
+  const meta = {
+    expectErrors: true,
+    requires: ["strict-component-attrs"],
+    _pins: [{ file: "App.vue", commentLine: 7, targetLine: 8, strippedLine: 7 }],
+  };
+
+  test("a tool that has closed the gap passes and says the table is stale", () => {
+    const tally = scoreCombinedRun([{ caseId: "unknown-prop-strict", meta }], "vize-check", {
+      combined:
+        "cases/unknown-prop-strict/App.vue(7,10): error TS2353: 'notdeclared' does not exist in type",
+      status: 2,
+    });
+    assert.equal(tally.pass, 1);
+    assert.match(tally.plants[0].message, /TOOL_CAPABILITIES is stale/);
+  });
+
+  test("a tool that still has it fails, with the unclaimed capability disclosed", () => {
+    const tally = scoreCombinedRun([{ caseId: "unknown-prop-strict", meta }], "vize-check", {
+      combined: "",
+      status: 0,
+    });
+    assert.equal(tally.fail, 1);
+    assert.match(tally.plants[0].message, /capability gap — tool does not claim/);
+    assert.match(tally.plants[0].message, /scored:/, "the real verdict is shown too");
+  });
+});
+
+describe("diagnostics that belong to no plant are disclosed", () => {
+  test("a virtual-file diagnostic is counted, not silently dropped", () => {
+    // verter-tsc reports some of its own generated code as
+    // `.tmpXXXX/App_<hash>.vue.ts`: it belongs to a plant but does not say
+    // which, so per-plant scoring cannot see it and a CLEAN plant is credited
+    // with silence it did not earn.
+    const tally = scoreCombinedRun(
+      [{ caseId: "generic-component-ok", meta: { expectErrors: false, _pins: [] } }],
+      "verter-tsc",
+      {
+        combined:
+          ".tmpqr5A2o/App_79d1e3f427cc6fe9.vue.ts(14,11): error TS2707: Generic type '___VERTER___Attrs' requires 1 type argument.",
+        status: 2,
+      },
+    );
+    assert.equal(tally.unattributed, 1);
+    assert.deepEqual(tally.unattributedFiles, [".tmpqr5A2o/App_79d1e3f427cc6fe9.vue.ts"]);
+  });
+
+  test("a fully attributed dump reports zero", () => {
+    const tally = scoreCombinedRun(
+      [{ caseId: "clean-basic", meta: { expectErrors: false, _pins: [] } }],
+      "vue-tsc",
+      { combined: "", status: 0 },
+    );
+    assert.equal(tally.unattributed, 0);
+  });
+});
+
+describe("the codegen-leak check does not depend on line format", () => {
+  test("vize's severity-first layout is checked like the tsc layout", () => {
+    // The old filter was /error\s+TS\d+/ — the tsc-family shape. vize prints
+    // `error:9:11 [TS2322] …` and never matched, so it alone was exempt from a
+    // check the other three were held to.
+    const leak = (combined) =>
+      scoreCombinedRun([{ caseId: "clean-basic", meta: { expectErrors: false, _pins: [] } }], "t", {
+        combined,
+        status: 2,
+      }).plants[0].message;
+
+    assert.match(
+      leak(
+        "cases/clean-basic/App.vue(3,5): error TS2707: Generic type '___VERTER___Attrs' requires 1 type argument.",
+      ),
+      /own generated code/,
+    );
+    assert.match(
+      leak(
+        [
+          "cases/clean-basic/App.vue",
+          "  error:3:5 [TS2707] Generic type '__vize_Attrs' requires 1 type argument.",
+        ].join("\n"),
+      ),
+      /own generated code/,
+    );
+  });
+});
+
 describe("prepareAllPlants", () => {
   test("writes one tsconfig and nests each plant under cases/<id>/", () => {
     // Own scratch root — preparing the shared work/confirm-typecheck-all here
@@ -163,6 +316,11 @@ describe("prepareAllPlants", () => {
       const tsconfig = JSON.parse(readFileSync(join(dest, "tsconfig.json"), "utf8"));
       assert.equal(tsconfig.vueCompilerOptions.strictTemplates, true);
       assert.ok(!("fallthroughAttributes" in (tsconfig.vueCompilerOptions || {})));
+      // The opt-in lives in its OWN file, never in the shared one: every plant
+      // that is not an inheritAttrs/root-shape plant is judged on the default.
+      const extra = JSON.parse(readFileSync(join(dest, "tsconfig.fallthrough.json"), "utf8"));
+      assert.equal(extra.vueCompilerOptions.fallthroughAttributes, true);
+      assert.equal(extra.vueCompilerOptions.strictTemplates, true);
       assert.ok(existsSync(join(dest, "cases", cases[0].caseId)));
       assert.equal(existsSync(join(dest, "cases", cases[0].caseId, "meta.json")), false);
       assert.equal(existsSync(join(dest, "cases", cases[0].caseId, "tsconfig.json")), false);

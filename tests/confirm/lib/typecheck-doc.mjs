@@ -145,7 +145,11 @@ function typecheckPlantRows(results) {
         tool: r.tool,
         // A capability gap is a fail. Older dumps recorded gaps as skips
         // ("tool lacks capability: …"); current runs score them directly.
-        status: legacyGap ? "fail" : p.skip ? "skip" : p.ok ? "pass" : "fail",
+        // `status` carries warn (needed fallthroughAttributes) when the run
+        // produced one; older dumps only have the ok/skip booleans.
+        status: legacyGap
+          ? "fail"
+          : (p.status ?? (p.skip ? "skip" : p.ok ? "pass" : "fail")),
         message: legacyGap ? `capability gap — ${p.message}` : p.message,
       });
     }
@@ -282,7 +286,7 @@ function appendAllPlants(lines, results, { chartsHref = "charts", writeChart: wr
   );
   lines.push("");
   lines.push(
-    "Wall ranking uses the **median** of a **speed** pass (`--runs`, default 5, after `--warmups`, default 1) with **no** RSS sampler; **Avg** is the arithmetic mean of those same measured runs. Peak RSS is a **separate memory pass** (one sampled spawn after speed) so process-tree polling cannot inflate the clock. Engine RSS is a child `tsgo` / native `tsc` / `tsserver` when one was spawned. Pass rate is plants that met their pin over ALL plants, as a **percentage** — a capability gap counts as a fail.",
+    "Wall ranking uses the **median** of a **speed** pass (`--runs`, default 5, after `--warmups`, default 1) with **no** RSS sampler; **Avg** is the arithmetic mean of those same measured runs. Peak RSS is a **separate memory pass** (one sampled spawn after speed) so process-tree polling cannot inflate the clock. Engine RSS is a child `tsgo` / native `tsc` / `tsserver` when one was spawned. Pass rate is plants that met their pin over ALL plants, as a **percentage** — a capability gap counts as a fail, and a plant that only scored with `fallthroughAttributes` counts as a ⚠, never a pass.",
   );
   lines.push("");
   if (landing.trim()) lines.push(landing.trim(), "");
@@ -435,7 +439,8 @@ export function formatTypecheckDoc({
   lines.push("");
   lines.push("- Each case is a tiny project under `tests/confirm/fixtures/typecheck/cases/<id>/`. CI scores the matrix from **one spawn per tool** (`--all`) over every plant. `pnpm confirm:typecheck` without `--all` still runs each plant as its own spawn (fallthrough / extra-tsconfig retries).");
   lines.push(
-    "- **All plants (one tsconfig)** — extra check: every plant is copied under `cases/<id>/` and typechecked in **one** process with the shared `tsconfig.json` (no per-case overlay, no fallthroughAttributes retry). Wall is a speed pass (no RSS sampler). Peak RSS is a **separate** memory spawn. Pass rate is the per-plant score of the last speed dump, as a percentage of ALL plants — a capability gap counts as a fail.",
+    "- **All plants (one tsconfig)** — extra check: every plant is copied under `cases/<id>/` and typechecked in **one** process with the shared `tsconfig.json` (no per-case overlay). Wall is a speed pass (no RSS sampler). Peak RSS is a **separate** memory spawn. Pass rate is the per-plant score of the last speed dump, as a percentage of ALL plants — a capability gap counts as a fail.",
+    "- The **inheritAttrs / root-shape** plants get one extra spawn per tool on `tsconfig.fallthrough.json`, taken AFTER every measurement so it enters neither the wall clock nor the RSS peak, and scored as the same pass/⚠/fail pair the per-case path uses. The shared config cannot answer what those plants ask: with the opt-in off a legitimate fallthrough attribute IS an unknown prop, so a checker that models fallthrough is marked wrong for being right while one that does not implement it at all passes for free.",
   );
   lines.push(
     "- Every tool runs on the **same shared tsconfig** (`strictTemplates: true`). Extra TypeScript flags that only one tool needs are **not** added globally.",
@@ -447,7 +452,7 @@ export function formatTypecheckDoc({
     "- `expectErrors: true` — at least one error, matching `mustMatch` when set. Dirty plants mark the bad line with a harness pin (`<!-- @plant-error -->` in template, `// @plant-error` in script). That is **not** TypeScript: HTML comments are ignored by every checker, so the pin always survives. The harness requires a diagnostic **on the next line** that mentions `expectMention` (e.g. the invalid prop name). A hit on the wrong line, or an error that does not name the plant, is a fail. `// @ts-expect-error` is only used in `.ts` where unused-directive is itself the plant.",
   );
   lines.push(
-    "- **skip** — the binary/engine is missing, so the tool never ran. A tool that runs but does not claim a capability (`meta.requires`) **fails** that plant: an unclaimed capability is a gap, not an exemption.",
+    "- **skip** — the binary/engine is missing, so the tool never ran. A tool that runs but does not claim a capability (`meta.requires`) still runs and is still scored on what it printed: it **fails** the plant because the diagnostic is missing, not because of the capability table, and the unclaimed capability is named in the message. An unclaimed capability is a gap, not an exemption — and one a tool has since closed reads as a pass, not a stale fail.",
   );
   lines.push(
     "- **warn** — extra harness behaviour for one tool (today: verter-tsc retried with `allowArbitraryExtensions` + `allowImportingTsExtensions` that the others do not need). A warn is **not** a pass.",
@@ -464,7 +469,7 @@ export function formatTypecheckDoc({
   );
   lines.push("");
   lines.push(
-    "Plants in **inheritAttrs + root shape** run **twice**: once on the shared tsconfig, then on an isolated `tsconfig.fallthrough.json`. Scoring:",
+    "Plants in **inheritAttrs + root shape** run **twice** on BOTH paths — the per-case spawns and the combined one-tsconfig run: once on the shared tsconfig, then on an isolated `tsconfig.fallthrough.json` (in the combined run that second spawn is untimed and unsampled, so it enters neither the wall clock nor the peak RSS). Scoring:",
   );
   lines.push("");
   lines.push("- shared ✓ and extra ✓ → **pass** (no opt-in needed, or a dirty plant errors either way)");

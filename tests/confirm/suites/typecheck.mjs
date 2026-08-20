@@ -188,7 +188,7 @@ function scoreOpts(meta, result) {
 
 function scoreOne(meta, result, diags) {
   if (!meta.expectErrors) {
-    const leaks = findVirtualCodeLeaks(result.combined);
+    const leaks = findVirtualCodeLeaks(result.combined, diags);
     if (leaks.length) {
       return {
         ok: false,
@@ -200,9 +200,13 @@ function scoreOne(meta, result, diags) {
 }
 
 /**
- * Capability tags for plants (`meta.requires`).
- * Tools without a required capability skip that plant (not a silent pass).
- * `*` means all plants.
+ * Capability tags for plants (`meta.requires`). `*` means all plants.
+ *
+ * This table is DISCLOSURE, not scoring. A tool that does not claim a plant's
+ * capability still runs and is still judged on what it printed: it fails the
+ * plant because the diagnostic is missing, not because of a line in this file.
+ * The claim is appended to the message so the reason is visible, and a tool
+ * that has since closed the gap passes and says the table is stale.
  *
  * Observed gap: Vize/Corsa currently does not flag undeclared component attrs
  * the way Volar strictTemplates does — those plants require strict-component-attrs.
@@ -235,13 +239,21 @@ const TOOL_CAPABILITIES = {
  */
 const VIRTUAL_CODE_MARKERS = ["__VLS_", "___VERTER___", "__vize_", "__golar_"];
 
-/** @returns {string[]} diagnostic lines that leak a virtual-code identifier */
-function findVirtualCodeLeaks(combined) {
-  if (!combined) return [];
-  return combined
-    .split(/\r?\n/)
-    .filter((line) => /error\s+TS\d+/i.test(line))
-    .filter((line) => VIRTUAL_CODE_MARKERS.some((marker) => line.includes(marker)));
+/**
+ * @returns {string[]} diagnostics that leak a virtual-code identifier
+ *
+ * Detection runs over PARSED diagnostics, not raw lines. The old line filter
+ * was `/error\s+TS\d+/`, which is the tsc-family layout — vize prints
+ * `error:9:11 [TS2322] …` and never matched it, so vize alone was exempt from
+ * a check the other three were held to. Whether a tool is scolded for
+ * diagnosing its own codegen must not depend on how it formats a line.
+ */
+function findVirtualCodeLeaks(combined, diags) {
+  const parsed = diags ?? parseDiagnostics(combined);
+  return parsed
+    .filter((d) => d.code)
+    .map((d) => d.raw || d.message || "")
+    .filter((text) => VIRTUAL_CODE_MARKERS.some((marker) => text.includes(marker)));
 }
 
 function toolSupports(toolId, requires) {
@@ -359,11 +371,36 @@ export async function runTypecheckSuite(opts = {}) {
         // An unclaimed capability is a GAP in the tool, not a neutral skip:
         // the plant exists because correct tools catch it. Skip remains only
         // for a missing binary/engine (the tool never ran at all).
-        suite.fail(
-          meta.id,
-          tool.id,
-          `capability gap — tool does not claim: ${(meta.requires || []).join(", ")}`,
-        );
+        //
+        // The tool still RUNS. TOOL_CAPABILITIES is a hand-maintained claim,
+        // and short-circuiting on it means the day a tool starts catching the
+        // plant the harness keeps printing a fail until someone edits the
+        // list. Scoring the real output cannot go stale: a gap the tool has
+        // actually closed shows up as a pass, and the verdict below always
+        // comes from what the tool did, never from what the table says.
+        const gapRun = await tool.run();
+        // Same skip rules as the normal path: a tool whose engine is missing
+        // never ran, and "did not report the plant" would be a lie about it.
+        const gapBroken = tool.after?.(gapRun)?.skip || runLooksBroken(gapRun);
+        if (gapBroken) {
+          suite.skip(meta.id, tool.id, gapBroken);
+          continue;
+        }
+        const gapScore = scoreDiagnostics(scoreOpts(meta, gapRun));
+        const claim = `capability gap — tool does not claim: ${(meta.requires || []).join(", ")}`;
+        if (gapScore.ok) {
+          suite.pass(
+            meta.id,
+            tool.id,
+            `${gapScore.message} — passed despite an unclaimed capability (${(meta.requires || []).join(", ")}); TOOL_CAPABILITIES is stale`,
+            resourcesFrom(gapRun),
+          );
+        } else {
+          suite.fail(meta.id, tool.id, `${claim} (scored: ${gapScore.message})`, {
+            snippet: gapRun.combined.slice(0, 800),
+            ...resourcesFrom(gapRun),
+          });
+        }
         continue;
       }
 
@@ -605,41 +642,124 @@ export function prepareAllPlants(root = allPlantsRoot) {
     join(root, "golar.config.ts"),
     `import { defineConfig } from "golar/unstable";\nimport "@golar/vue";\nexport default defineConfig({});\n`,
   );
-  return { dest: root, cases };
+  // Second config for the inheritAttrs/root-shape plants only. Never written
+  // over tsconfig.json: the shared file stays the default one every other plant
+  // is judged on, and a tool that only scores with the opt-in is a warn.
+  const fallthroughTsconfig = "tsconfig.fallthrough.json";
+  writeFileSync(
+    join(root, fallthroughTsconfig),
+    JSON.stringify(
+      {
+        ...base,
+        vueCompilerOptions: {
+          ...(base.vueCompilerOptions || {}),
+          ...FALLTHROUGH_EXTRA_VUE_COMPILER_OPTIONS,
+        },
+      },
+      null,
+      2,
+    ),
+  );
+  return { dest: root, cases, fallthroughTsconfig };
 }
 
-/** Score each plant from one combined diagnostic dump. */
-export function scoreCombinedRun(cases, toolId, result) {
+/** One plant's verdict from a combined dump: the parsed subset plus its score. */
+function scorePlantFromDump(meta, caseId, result, diags) {
+  // Score the parsed subset directly — combinedFromDiags keeps only the raw
+  // diagnostic lines, and re-parsing those loses the file for tools that
+  // print it on a separate header line (vize), failing every pin check.
+  const subset = diagsForCase(diags, caseId);
+  return scoreOne(meta, { ...result, combined: combinedFromDiags(subset) }, subset);
+}
+
+/**
+ * Score each plant from one combined diagnostic dump.
+ *
+ * `fallthroughResult`, when given, is a second dump of the SAME project taken
+ * with `vueCompilerOptions.fallthroughAttributes` on. Plants flagged
+ * `needsFallthroughAttributes` are judged from the pair exactly as the per-case
+ * path judges them, because the shared config cannot answer what they ask:
+ * with the opt-in off, a legitimate fallthrough `id` IS an unknown prop, so a
+ * checker that models fallthrough correctly reports TS2353 on a plant whose
+ * expected answer is "clean" — and is marked wrong for being right, while a
+ * checker that does not implement fallthrough at all passes for free. Without
+ * the second dump this is 12 of the plants and it favours the least capable
+ * tool in the table.
+ */
+export function scoreCombinedRun(cases, toolId, result, fallthroughResult = null) {
   const diags = parseDiagnostics(result.combined);
+  const extraDiags = fallthroughResult ? parseDiagnostics(fallthroughResult.combined) : null;
   let pass = 0;
   let fail = 0;
+  let warn = 0;
   let skip = 0;
   const plants = [];
+  // Diagnostics this scorer cannot hand to any plant, because their path is not
+  // under `cases/<id>/` — verter-tsc reports some of its own generated code as
+  // `.tmpXXXX/App_<hash>.vue.ts`, which belongs to a plant but does not say
+  // which. They are invisible to per-plant scoring by construction, so on a
+  // CLEAN plant the tool is credited with silence it did not earn. Counted and
+  // disclosed on the row rather than dropped: the per-case path, which scores
+  // one project at a time, still catches them properly.
+  const attributed = new Set();
+  for (const { caseId } of cases) for (const d of diagsForCase(diags, caseId)) attributed.add(d);
+  const unattributed = diags.filter((d) => !attributed.has(d));
+  const record = (caseId, status, message) => {
+    if (status === "pass") pass++;
+    else if (status === "warn") warn++;
+    else fail++;
+    plants.push({ caseId, skip: false, status, ok: status === "pass", message });
+  };
+
   for (const { caseId, meta } of cases) {
-    if (!toolSupports(toolId, meta.requires)) {
-      // Capability gap = fail, scored like any missed plant. `skip` stays in
-      // the tally shape (always 0 from this path) for older readers.
-      fail++;
-      plants.push({
-        caseId,
-        skip: false,
-        ok: false,
-        message: `capability gap — tool does not claim: ${(meta.requires || []).join(", ")}`,
-      });
+    const claimed = toolSupports(toolId, meta.requires);
+
+    if (meta.needsFallthroughAttributes && extraDiags) {
+      const pair = scoreFallthroughPair(
+        scorePlantFromDump(meta, caseId, result, diags),
+        scorePlantFromDump(meta, caseId, fallthroughResult, extraDiags),
+      );
+      record(caseId, pair.status, pair.message);
       continue;
     }
-    // Score the parsed subset directly — combinedFromDiags keeps only the raw
-    // diagnostic lines, and re-parsing those loses the file for tools that
-    // print it on a separate header line (vize), failing every pin check.
-    const subset = diagsForCase(diags, caseId);
-    const score = scoreOne(meta, { ...result, combined: combinedFromDiags(subset) }, subset);
-    if (score.ok) pass++;
-    else fail++;
-    plants.push({ caseId, skip: false, ok: score.ok, message: score.message });
+
+    const score = scorePlantFromDump(meta, caseId, result, diags);
+
+    // The tool ran over every plant in this dump, so an unclaimed capability
+    // is scored from what it actually reported — never short-circuited on the
+    // hand-maintained TOOL_CAPABILITIES table. A gap it has since closed reads
+    // as a pass; one it still has reads as a fail, with the claim disclosed.
+    if (!claimed) {
+      const requires = (meta.requires || []).join(", ");
+      record(
+        caseId,
+        score.ok ? "pass" : "fail",
+        score.ok
+          ? `${score.message} — passed despite an unclaimed capability (${requires}); TOOL_CAPABILITIES is stale`
+          : `capability gap — tool does not claim: ${requires} (scored: ${score.message})`,
+      );
+      continue;
+    }
+
+    record(caseId, score.ok ? "pass" : "fail", score.message);
   }
-  const scored = pass + fail;
+
+  // warn is NOT a pass (it means the plant only scored with a non-default
+  // compiler option) and it stays in the denominator, so needing the opt-in
+  // can never read as better than not needing it.
+  const scored = pass + fail + warn;
   const passPct = scored ? (100 * pass) / scored : 0;
-  return { pass, fail, skip, scored, passPct, plants };
+  return {
+    pass,
+    fail,
+    warn,
+    skip,
+    scored,
+    passPct,
+    plants,
+    unattributed: unattributed.length,
+    unattributedFiles: [...new Set(unattributed.map((d) => d.file || "(no file)"))].slice(0, 5),
+  };
 }
 
 /**
@@ -672,7 +792,7 @@ function runLooksBroken(result) {
  */
 export async function runTypecheckAllPlants(suite = createSuite("typecheck-all"), opts = {}) {
   const { runs, warmups } = allPlantsRunCounts(process.env, opts);
-  const { dest, cases } = prepareAllPlants();
+  const { dest, cases, fallthroughTsconfig } = prepareAllPlants();
   const runners = toolRunners(dest, { timeout: 300_000 });
   for (const tool of runners) {
     if (!tool.available) {
@@ -738,7 +858,23 @@ export async function runTypecheckAllPlants(suite = createSuite("typecheck-all")
       `    rss ${rssMb ?? "–"} MB (engine ${engMb ?? "–"})${memBroken ? ` — ${memBroken}` : ""}`,
     );
 
-    const tally = scoreCombinedRun(cases, tool.id, last);
+    // Correctness-only second spawn, AFTER every measurement, for the
+    // inheritAttrs/root-shape plants. Untimed and unsampled on purpose: it must
+    // not enter the wall clock or the RSS peak, it exists so those 12 plants
+    // are judged on the config that can actually answer them (see
+    // scoreCombinedRun). Every tool gets the identical extra tsconfig; if the
+    // spawn is broken the pair is dropped and they fall back to shared-only
+    // scoring rather than silently passing.
+    let fallthroughRun = null;
+    if (fallthroughTsconfig && tool.runProject && cases.some((c) => c.meta.needsFallthroughAttributes)) {
+      console.log(`  → ${tool.id}  fallthroughAttributes: 1 correctness run (untimed)`);
+      const extra = await tool.runProject(fallthroughTsconfig);
+      const extraBroken = tool.after?.(extra)?.skip || runLooksBroken(extra);
+      if (extraBroken) console.log(`    skipped fallthrough pass — ${extraBroken}`);
+      else fallthroughRun = extra;
+    }
+
+    const tally = scoreCombinedRun(cases, tool.id, last, fallthroughRun);
     const ms = measuredMs.length ? median(measuredMs) : last.ms;
     const avgMs = measuredMs.length ? mean(measuredMs) : last.ms;
     const measured = {
@@ -754,11 +890,15 @@ export async function runTypecheckAllPlants(suite = createSuite("typecheck-all")
       runCount: runs,
       ...tally,
     };
-    const msg = `${tally.passPct.toFixed(0)}% (${tally.pass}/${tally.scored}) · median ${
+    const warnPart = tally.warn ? ` · ${tally.warn} ⚠ (needed fallthroughAttributes)` : "";
+    const orphanPart = tally.unattributed
+      ? ` · ${tally.unattributed} diagnostic(s) not attributable to a plant (${tally.unattributedFiles.join(", ")})`
+      : "";
+    const msg = `${tally.passPct.toFixed(0)}% (${tally.pass}/${tally.scored})${warnPart} · median ${
       Number.isFinite(measured.ms) ? `${(measured.ms / 1000).toFixed(2)}s` : "–"
     } · avg ${
       Number.isFinite(measured.avgMs) ? `${(measured.avgMs / 1000).toFixed(2)}s` : "–"
-    } of ${runs} after ${warmups} warmup(s)`;
+    } of ${runs} after ${warmups} warmup(s)${orphanPart}`;
     suite.pass("all-plants", tool.id, msg, measured);
   }
   return suite.results;

@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
 import { withTsgoEnv } from "../../../scripts/lib/tsgo.mjs";
 import { measureCli } from "../../../scripts/lib/measure-cli.mjs";
+import { stripAnsi } from "../../../scripts/lib/real-world/ansi.mjs";
 
 const require = createRequire(import.meta.url);
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../../..");
@@ -101,6 +102,12 @@ function cliEnv(extra = {}) {
       ...process.env,
       NODE_PATH: nodePath,
       PATH: pathEnv,
+      // Parity with runCliMeasured, which has always set these: the SCORED dump
+      // must not come from a different environment than the MEASURED one.
+      // It is not sufficient on its own — vize colours regardless (verified) —
+      // which is why every captured stream is also stripped below.
+      NO_COLOR: "1",
+      FORCE_COLOR: "0",
       ...extra,
     },
     rootDir,
@@ -118,6 +125,22 @@ function emptyRun(reason) {
 }
 
 /**
+ * Every captured stream is decoloured HERE, once, at the boundary.
+ *
+ * Scoring reads `combined` in more places than the diagnostic parser: forbidden
+ * patterns (`mustNotMatch`), the no-pin `mustMatch` fallback, `countErrors`'
+ * summary-line fallback, the bootstrap-failure sniffer, snippets in the report.
+ * Leaving escapes in and stripping them in ONE of those readers is how a colour
+ * code inside `path(line,col)` silently zeroed a tool's diagnostics (#34);
+ * every reader downstream of this now sees the same plain text.
+ */
+function decolour(run) {
+  const stdout = stripAnsi(run.stdout || "");
+  const stderr = stripAnsi(run.stderr || "");
+  return { ...run, stdout, stderr, combined: stdout + stderr };
+}
+
+/**
  * @returns {{ status: number|null, stdout: string, stderr: string, combined: string, ms: number }}
  */
 export function runCli(bin, args, { cwd, env = {}, timeout = 120_000 } = {}) {
@@ -131,16 +154,13 @@ export function runCli(bin, args, { cwd, env = {}, timeout = 120_000 } = {}) {
     shell: process.platform === "win32" && /\.cmd$/i.test(bin),
     maxBuffer: 20 * 1024 * 1024,
   });
-  const stdout = r.stdout || "";
-  const stderr = r.stderr || "";
-  return {
+  return decolour({
     status: r.status,
-    stdout,
-    stderr,
-    combined: stdout + stderr,
+    stdout: r.stdout || "",
+    stderr: r.stderr || "",
     error: r.error,
     ms: performance.now() - t0,
-  };
+  });
 }
 
 /**
@@ -178,6 +198,7 @@ export function runCliMeasured(bin, args, { cwd, env = {}, timeout = 120_000, sa
         NODE_PATH: nodePath,
         PATH: pathEnv,
         NO_COLOR: "1",
+        FORCE_COLOR: "0",
         ...env,
       },
       rootDir,
@@ -185,7 +206,7 @@ export function runCliMeasured(bin, args, { cwd, env = {}, timeout = 120_000, sa
     timeoutMs: timeout,
     shell: spec.shell ?? false,
     sampleRss,
-  });
+  }).then(decolour);
 }
 
 export { rootDir };

@@ -4,7 +4,12 @@
     "files": ["clean/CleanCard.vue", "clean/CleanButton.vue", "clean/CleanAdvanced.vue"],
     "tools": {
       "eslint-plugin-vue": { "maxIssues": 0 },
-      "vize-lint": { "maxIssues": 0 }
+      "vize-lint": { "maxIssues": 0 },
+      "verter-lint": {
+        "maxIssues": 0,
+        "scopeToPlantRules": true,
+        "note": "Scoped to the rules this suite plants. verter-lint is driven through VerterHost.lint(), which exposes no rule-set selection here, so it runs its FULL default set — no-bare-strings-in-template, multi-word-component-names, define-props-declaration, click-events-have-key-events and no-undef-components all fire on these files. eslint runs a pinned flat config and vize a named preset, so an unscoped zero-issue check would compare default rule sets rather than false positives. Out-of-scope hits are disclosed on the row, not scored."
+      }
     }
   },
   "dirty": [

@@ -15,6 +15,7 @@ import {
 } from "../work-gate.mjs";
 import { resolveToolEngine, resolveTsgoBin, withTsgoEnv } from "../tsgo.mjs";
 import { resolveTnbVueTsc, tnbActive } from "../tnb.mjs";
+import { stripAnsi } from "../real-world/ansi.mjs";
 
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../../..");
 
@@ -29,22 +30,6 @@ function tryResolveBin(name) {
 function isWinShell(bin) {
   return process.platform === "win32" && bin.endsWith(".cmd");
 }
-
-/**
- * ANSI escape sequences (CSI colour/SGR, OSC hyperlinks, bare two-char escapes).
- *
- * Stripping is not optional. Measured on this repo: `vize check` colours every
- * diagnostic line (`ESC[31merror:3:7 [TS2322] ...ESC[0m`) even with NO_COLOR=1 and
- * FORCE_COLOR=0 set, which is exactly what runCommand sets. Any pattern that
- * expects a diagnostic to START with a severity word therefore has to see
- * through the colour codes first.
- *
- * OSC (`ESC ] ... BEL`) is matched before CSI because its payload may itself
- * contain `[`.
- */
-const ANSI_ESCAPE_RE =
-  // eslint-disable-next-line no-control-regex
-  /\u001B\][\s\S]*?(?:\u0007|\u001B\\)|\u001B\[[0-9;?]*[ -\/]*[@-~]|\u001B[@-Z\\-_]/g;
 
 /**
  * The diagnostic-line shapes actually emitted by the checkers on this surface.
@@ -89,9 +74,17 @@ const DIAGNOSTIC_LINE_PATTERNS = [
  * appends them unindented but without a `severity:line:col` prefix — in both
  * shapes only the first line carries a position, so only the first line counts.
  * The `^\S` anchor on the tsc patterns is the load-bearing half of that.
+ *
+ * Stripping ANSI first is not optional. Measured on this repo: `vize check`
+ * colours every diagnostic line (`ESC[31merror:3:7 [TS2322] ...ESC[0m`) even
+ * with NO_COLOR=1 and FORCE_COLOR=0 set, which is exactly what runCommand
+ * sets, so a pattern expecting a line to START with a severity word has to see
+ * through the colour codes. The pattern lives in `real-world/ansi.mjs`: ONE
+ * definition for every surface. A per-surface copy is what let the confirmation
+ * scorer read 0 diagnostics out of 64 while this surface counted them (#34).
  */
 export function countDiagnostics(stdout = "", stderr = "") {
-  const text = `${stdout}\n${stderr}`.replace(ANSI_ESCAPE_RE, "");
+  const text = stripAnsi(`${stdout}\n${stderr}`);
   let count = 0;
   for (const line of text.split("\n")) {
     if (DIAGNOSTIC_LINE_PATTERNS.some((re) => re.test(line))) count += 1;

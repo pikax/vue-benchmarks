@@ -43,20 +43,35 @@ function nextCodeLine(lines, fromIdx) {
 }
 
 /**
- * @returns {Array<{ file: string, commentLine: number, targetLine: number, text: string }>}
+ * @returns {Array<{ file: string, commentLine: number, targetLine: number, strippedLine: number, text: string }>}
+ *
+ * `targetLine` / `commentLine` are SOURCE coordinates (what the docs and the
+ * failure messages quote). `strippedLine` is where that code actually lands in
+ * the work copy once `stripExpectErrorDirectives` has removed the pin lines
+ * above it — which is the only line number a tool can possibly report.
+ *
+ * With one pin per file the shift is exactly one line, so `commentLine` was
+ * numerically the same as `strippedLine` and the distinction never surfaced.
+ * The second pin in a file shifts by two, the third by three: a two-error plant
+ * was unscoreable, and quietly failed every tool at once.
  */
 export function findExpectErrorPins(dir) {
   const pins = [];
   for (const abs of listSourceFiles(dir)) {
     const rel = relative(dir, abs).replace(/\\/g, "/");
     const lines = readFileSync(abs, "utf8").split(/\r?\n/);
+    let stripped = 0;
     for (let i = 0; i < lines.length; i++) {
       if (!PIN_RE.test(lines[i])) continue;
+      // Only @plant-error is stripped from the work copy; a real
+      // `// @ts-expect-error` stays and shifts nothing.
+      if (PLANT_RE.test(lines[i])) stripped += 1;
       const target = nextCodeLine(lines, i);
       pins.push({
         file: rel,
         commentLine: i + 1,
         targetLine: target + 1,
+        strippedLine: target + 1 - stripped,
         text: lines[i].trim(),
       });
     }

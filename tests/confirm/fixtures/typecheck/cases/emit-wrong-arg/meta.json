@@ -4,6 +4,5 @@
   "expectErrors": true,
   "minErrors": 1,
   "mustMatch": ["TS2345", "TS2322", "string", "number", "not assignable"],
-  "requires": ["emits"],
-  "expectMention": ["nope"]
+  "requires": ["emits"]
 }

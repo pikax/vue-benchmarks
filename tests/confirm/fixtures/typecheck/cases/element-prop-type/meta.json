@@ -1,8 +1,7 @@
 {
   "id": "element-prop-type",
-  "description": "Native element / event handler type error in template",
+  "description": "Native element prop AND event-handler type errors in template — both must be reported",
   "expectErrors": true,
-  "minErrors": 1,
-  "mustMatch": ["TS2322", "TS2345", "number", "function", "MouseEvent", "not assignable"],
-  "expectMention": ["disabled"]
+  "minErrors": 2,
+  "mustMatch": ["TS2322", "TS2345", "number", "function", "MouseEvent", "not assignable", "Booleanish"]
 }

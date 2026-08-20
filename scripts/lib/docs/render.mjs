@@ -369,6 +369,8 @@ function allPlantTools(rows) {
         passPct,
         pass,
         plants,
+        warn: Number(d.warn ?? r.warn) || 0,
+        unattributed: Number(d.unattributed) || 0,
         legacySkips: skip,
       };
     });
@@ -453,16 +455,26 @@ export function typecheckAllLanding(rows, { writeChart: write, chartsHref = "doc
     });
   }
   if (pctBars.length) {
-    out.push("| Tool | **Pass rate** | pass / plants |", "| --- | ---: | ---: |");
+    const anyWarn = tools.some((t) => t.warn > 0);
+    out.push(
+      anyWarn
+        ? "| Tool | **Pass rate** | pass / plants | ⚠ needed opt-in |"
+        : "| Tool | **Pass rate** | pass / plants |",
+      anyWarn ? "| --- | ---: | ---: | ---: |" : "| --- | ---: | ---: |",
+    );
     for (const t of [...tools].sort((a, b) => (b.passPct ?? -1) - (a.passPct ?? -1))) {
       if (!Number.isFinite(t.passPct)) continue;
       const frac =
         Number.isFinite(t.pass) && t.plants > 0 ? `${t.pass} / ${t.plants}` : "–";
-      out.push(`| ${t.label} | **${t.passPct.toFixed(0)}%** | ${frac} |`);
+      out.push(
+        anyWarn
+          ? `| ${t.label} | **${t.passPct.toFixed(0)}%** | ${frac} | ${t.warn || "–"} |`
+          : `| ${t.label} | **${t.passPct.toFixed(0)}%** | ${frac} |`,
+      );
     }
     out.push("");
     out.push(
-      "An unclaimed capability is a **gap and counts as a fail** — every tool is scored over the same full plant set. Skip is reserved for a missing binary/engine.",
+      "An unclaimed capability is a **gap and counts as a fail** — every tool is scored over the same full plant set, on what it actually reported. Skip is reserved for a missing binary/engine. **⚠ needed opt-in** counts the inheritAttrs/root-shape plants a tool only scored with `vueCompilerOptions.fallthroughAttributes`: not a pass, and still in the denominator.",
       "",
     );
   }
@@ -902,7 +914,7 @@ export function renderGroupDoc(group, model, { chartsDir, chartsHref = "charts",
     if (landing.trim()) {
       lines.push("### All plants (one tsconfig)", "");
       lines.push(
-        "One spawn per tool over every plant with the shared `strictTemplates` tsconfig — no per-case overlays, no retries.",
+        "One spawn per tool over every plant with the shared `strictTemplates` tsconfig — no per-case overlays. The inheritAttrs/root-shape plants get one extra, untimed spawn on `tsconfig.fallthrough.json`; needing that opt-in scores ⚠, never a pass.",
         "",
       );
       lines.push(landing.trim(), "");

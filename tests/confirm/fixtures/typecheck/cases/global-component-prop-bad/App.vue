@@ -3,5 +3,5 @@
 <template>
   <!-- plant: title must be string -->
   <!-- @plant-error -->
-  <Fancy :title="1" />
+  <FancyBad :title="1" />
 </template>

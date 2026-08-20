@@ -3,7 +3,6 @@ import Child from "./Child.vue";
 </script>
 
 <template>
-  <!-- plant: named header slot is omitted -->
-  <!-- @plant-error -->
+  <!-- clean: Child declares a `header` slot; omitting it is legal Vue -->
   <Child />
 </template>

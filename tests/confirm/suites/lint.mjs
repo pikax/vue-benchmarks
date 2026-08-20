@@ -74,6 +74,28 @@ function looksLikeIssue(b) {
   return /\[vize:/i.test(b) || /\bhelp:/i.test(b);
 }
 
+/**
+ * The parts of vize's report that are the DIAGNOSTIC: its rule tag, message
+ * and help line. Not the `╭─[path:line:col]` frame and not the quoted source
+ * excerpt underneath it.
+ *
+ * eslint and verter are judged on rule ids (`mustIncludeRules`) because their
+ * APIs return structured diagnostics; vize is a CLI, so it is judged on
+ * substrings. Matching those substrings against the WHOLE dump quietly made
+ * the file path and the planted markup part of the evidence — `ImgNoAlt.vue`
+ * satisfies `["alt","img"]`, `DupeElseIf.vue` satisfies `"dupe"`,
+ * `MutatingProps.vue` satisfies `"mutat"` — so vize could report a different
+ * rule than the plant and still pass, a bar the other two are never held to.
+ * (Checked against live output: every current pass is backed by the real rule
+ * tag, so this closes a latent hole rather than changing a verdict.)
+ */
+export function vizeIssueText(text) {
+  return String(text || "")
+    .split(/\r?\n/)
+    .filter((line) => /\[vize:/i.test(line) || /^\s*help:/i.test(line))
+    .join("\n");
+}
+
 function matchesNeedles(text, needles) {
   if (!needles?.length) return true;
   const lower = (text || "").toLowerCase();
@@ -171,6 +193,52 @@ export async function runLintSuite() {
     }
   }
 
+  // verter clean — the third linter was the only one never checked for false
+  // positives, so a noisy rule set cost it nothing while eslint and vize were
+  // both held to zero. See the `note` in expect.json for why its check is
+  // scoped to the rules this suite plants; everything else it fires is
+  // disclosed on the row instead of scored.
+  {
+    const vtClean = expect.clean.tools["verter-lint"];
+    if (vtClean) {
+      if (verterLinter.skip) {
+        suite.skip("clean", "verter-lint", verterLinter.skip);
+      } else {
+        try {
+          const plantedRules = new Set(
+            expect.dirty.flatMap((p) => p.tools["verter-lint"]?.mustIncludeRules ?? []),
+          );
+          const all = cleanFiles.flatMap((f) => verterLinter.lint(f));
+          const inScope = vtClean.scopeToPlantRules
+            ? all.filter((d) => plantedRules.has(d.rule))
+            : all;
+          const outOfScope = [...new Set(all.filter((d) => !inScope.includes(d)).map((d) => d.rule))];
+          const disclose = outOfScope.length
+            ? ` (also fired, not scored: ${outOfScope.join(", ")})`
+            : "";
+          const max = vtClean.maxIssues ?? 0;
+          if (inScope.length > max) {
+            suite.fail(
+              "clean",
+              "verter-lint",
+              `expected ≤${max} issues from planted rules, got ${inScope.length} (${inScope
+                .map((d) => d.rule)
+                .join(", ")})${disclose}`,
+            );
+          } else {
+            suite.pass("clean", "verter-lint", `issues=${inScope.length}${disclose}`);
+          }
+        } catch (error) {
+          suite.fail(
+            "clean",
+            "verter-lint",
+            error instanceof Error ? error.message : String(error),
+          );
+        }
+      }
+    }
+  }
+
   // --- dirty plants ---
   for (const plant of expect.dirty) {
     // eslint
@@ -231,7 +299,10 @@ export async function runLintSuite() {
           suite.fail(plant.id, "vize-lint", `expected ≥${min} issues, got ${issues}`, {
             snippet: r.combined.slice(0, 600),
           });
-        } else if (vzSpec.mustMatch?.length && !matchesNeedles(r.combined, vzSpec.mustMatch)) {
+        } else if (
+          vzSpec.mustMatch?.length &&
+          !matchesNeedles(vizeIssueText(r.combined), vzSpec.mustMatch)
+        ) {
           suite.fail(
             plant.id,
             "vize-lint",
