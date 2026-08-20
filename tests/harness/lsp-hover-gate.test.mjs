@@ -19,6 +19,7 @@ import { describe, test } from "node:test";
 import assert from "node:assert/strict";
 
 import { classifyHover, classifyTemplateHover } from "../../scripts/lib/surfaces/lsp.mjs";
+import { hoverWithRetry } from "../confirm/suites/lsp.mjs";
 
 /** Verbatim server payloads. Do not tidy — the formatting IS the test. */
 const REAL = {
@@ -95,5 +96,67 @@ describe("classifyTemplateHover (template position)", () => {
       classifyTemplateHover(REAL.volarTemplate).bytes,
       Buffer.byteLength(REAL.volarTemplate, "utf8"),
     );
+  });
+});
+
+/**
+ * The confirmation suite's first request of a session, and therefore its
+ * readiness gate.
+ *
+ * Observed on a Benchmark run: `hover-template-binding · verter — empty hover
+ * payload`, while definition, documentSymbol, completion, definition-prop-attr
+ * and both diagnostics cases on the SAME session all passed. A server that is
+ * dead does not answer six later requests correctly; one that has not finished
+ * loading the project answers the first one with nothing and raises no error,
+ * so the error-only retry never fired.
+ *
+ * The environment race does not reproduce on demand — an idle box, a 4-CPU box
+ * and a 1-CPU box all answer the first hover correctly here — so the contract
+ * is pinned directly instead.
+ */
+describe("hoverWithRetry", () => {
+  const uri = "file:///App.vue";
+  const at = { line: 0, character: 0 };
+  const typed = { contents: { kind: "markdown", value: "```typescript\nconst greeting: string\n```" } };
+
+  test("an empty payload is not an answer — it is retried", async () => {
+    let calls = 0;
+    const ask = async () => {
+      calls += 1;
+      return calls < 3 ? null : typed;
+    };
+    assert.deepEqual(await hoverWithRetry(ask, uri, at), typed);
+    assert.equal(calls, 3);
+  });
+
+  test("a non-empty payload IS an answer and is returned as it stands", async () => {
+    // The fairness half: retrying an untyped payload until it turns typed
+    // would launder a real "this server has no type here" verdict into a pass,
+    // which is the one thing this suite exists to catch.
+    let calls = 0;
+    const untyped = { contents: { kind: "markdown", value: "greeting" } };
+    const ask = async () => {
+      calls += 1;
+      return untyped;
+    };
+    assert.deepEqual(await hoverWithRetry(ask, uri, at), untyped);
+    assert.equal(calls, 1, "answered on the first attempt; no retry, no delay");
+  });
+
+  test("a server that only ever answers empty still returns empty, bounded", async () => {
+    let calls = 0;
+    const ask = async () => {
+      calls += 1;
+      return null;
+    };
+    assert.equal(await hoverWithRetry(ask, uri, at), null);
+    assert.ok(calls > 1 && calls <= 6, `bounded attempts, got ${calls}`);
+  });
+
+  test("a throwing server still surfaces its error rather than a false empty", async () => {
+    const ask = async () => {
+      throw new Error("connection closed");
+    };
+    await assert.rejects(() => hoverWithRetry(ask, uri, at), /connection closed/);
   });
 });

@@ -477,21 +477,42 @@ async function openSession(server, ws) {
   }
 }
 
-async function hoverWithRetry(ask, uri, position) {
+/**
+ * First request of the session, and therefore the readiness gate for all of it.
+ *
+ * `openSession` returns 50ms after didOpen. A server that has not finished
+ * loading the project by then answers a hover with NOTHING rather than raising,
+ * so an error-only retry never fired and a slow start was scored as an empty
+ * payload — a content bug it is not. Seen on a loaded 4-core runner and not on
+ * an idle machine, which is the signature of a readiness race, not a defect.
+ *
+ * So: an EMPTY payload is not an answer and is retried. A NON-EMPTY payload IS
+ * an answer and is returned as it stands, even when it carries no type —
+ * retrying that away would launder a real "this server has no type here"
+ * verdict into a pass, which is the opposite of what this suite is for. Same
+ * bounded schedule for every server: ~4.2s of backoff across HOVER_ATTEMPTS.
+ */
+export async function hoverWithRetry(ask, uri, position) {
   let lastErr = null;
+  let lastHover = null;
+  let answered = false;
   for (let attempt = 0; attempt < HOVER_ATTEMPTS; attempt++) {
     try {
-      return await ask(
+      const hover = await ask(
         "textDocument/hover",
         { textDocument: { uri }, position },
         REQUEST_TIMEOUT_MS,
         mergeHover,
       );
+      if (contentText(hover).trim()) return hover;
+      lastHover = hover;
+      answered = true;
     } catch (error) {
       lastErr = error;
-      await sleep(200 * (attempt + 1));
     }
+    await sleep(200 * (attempt + 1));
   }
+  if (answered) return lastHover;
   throw lastErr ?? new Error("hover failed");
 }
 
