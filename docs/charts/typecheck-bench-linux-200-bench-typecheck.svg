@@ -11,47 +11,47 @@
   <line x1="248" y1="48" x2="248" y2="272" stroke="#d0d7de" stroke-opacity="0.55" />
   <text fill="#59636e" x="248" y="292" text-anchor="middle" font-size="11">0.0 ms</text>
   <line x1="348.5" y1="48" x2="348.5" y2="272" stroke="#d0d7de" stroke-opacity="0.55" />
-  <text fill="#59636e" x="348.5" y="292" text-anchor="middle" font-size="11">1.29 s</text>
+  <text fill="#59636e" x="348.5" y="292" text-anchor="middle" font-size="11">1.23 s</text>
   <line x1="449" y1="48" x2="449" y2="272" stroke="#d0d7de" stroke-opacity="0.55" />
-  <text fill="#59636e" x="449" y="292" text-anchor="middle" font-size="11">2.59 s</text>
+  <text fill="#59636e" x="449" y="292" text-anchor="middle" font-size="11">2.47 s</text>
   <line x1="549.5" y1="48" x2="549.5" y2="272" stroke="#d0d7de" stroke-opacity="0.55" />
-  <text fill="#59636e" x="549.5" y="292" text-anchor="middle" font-size="11">3.88 s</text>
+  <text fill="#59636e" x="549.5" y="292" text-anchor="middle" font-size="11">3.70 s</text>
   <line x1="650" y1="48" x2="650" y2="272" stroke="#d0d7de" stroke-opacity="0.55" />
-  <text fill="#59636e" x="650" y="292" text-anchor="middle" font-size="11">5.18 s</text>
+  <text fill="#59636e" x="650" y="292" text-anchor="middle" font-size="11">4.93 s</text>
   <text fill="#59636e" x="16" y="77" font-size="11">1</text>
       <text fill="#1f2328" x="36" y="77" font-size="13">verter-tsc</text>
       
       <rect x="248" y="61" width="402" height="22" rx="5" fill="#afb8c133"/>
-      <rect x="248" y="61" width="96.0" height="22" rx="5" fill="#e11d48"/>
-      <text fill="#1f2328" x="351.98243635531094" y="77" font-size="12" font-weight="600">1.24 s</text>
+      <rect x="248" y="61" width="90.7" height="22" rx="5" fill="#e11d48"/>
+      <text fill="#1f2328" x="346.68151706608126" y="77" font-size="12" font-weight="600">1.11 s</text>
   <text fill="#59636e" x="16" y="113" font-size="11">2</text>
-      <text fill="#1f2328" x="36" y="113" font-size="13">Vize</text>
+      <text fill="#1f2328" x="36" y="113" font-size="13">Golar (lint+check)</text>
       
       <rect x="248" y="97" width="402" height="22" rx="5" fill="#afb8c133"/>
-      <rect x="248" y="97" width="125.0" height="22" rx="5" fill="#2563eb"/>
-      <text fill="#ffffff" x="256" y="113" font-size="12" font-weight="600">1.61 s</text>
+      <rect x="248" y="97" width="127.4" height="22" rx="5" fill="#c9842a"/>
+      <text fill="#ffffff" x="256" y="113" font-size="12" font-weight="600">1.56 s</text>
   <text fill="#59636e" x="16" y="149" font-size="11">3</text>
       <text fill="#1f2328" x="36" y="149" font-size="13">Golar typecheck</text>
       
       <rect x="248" y="133" width="402" height="22" rx="5" fill="#afb8c133"/>
-      <rect x="248" y="133" width="131.8" height="22" rx="5" fill="#c9842a"/>
-      <text fill="#ffffff" x="256" y="149" font-size="12" font-weight="600">1.70 s</text>
+      <rect x="248" y="133" width="128.9" height="22" rx="5" fill="#c9842a"/>
+      <text fill="#ffffff" x="256" y="149" font-size="12" font-weight="600">1.58 s</text>
   <text fill="#59636e" x="16" y="185" font-size="11">4</text>
-      <text fill="#1f2328" x="36" y="185" font-size="13">Golar (lint+check)</text>
+      <text fill="#1f2328" x="36" y="185" font-size="13">Vize</text>
       
       <rect x="248" y="169" width="402" height="22" rx="5" fill="#afb8c133"/>
-      <rect x="248" y="169" width="131.8" height="22" rx="5" fill="#c9842a"/>
-      <text fill="#ffffff" x="256" y="185" font-size="12" font-weight="600">1.70 s</text>
+      <rect x="248" y="169" width="133.7" height="22" rx="5" fill="#2563eb"/>
+      <text fill="#ffffff" x="256" y="185" font-size="12" font-weight="600">1.64 s</text>
   <text fill="#59636e" x="16" y="221" font-size="11">5</text>
       <text fill="#1f2328" x="36" y="221" font-size="13">vue-tsc (N)</text>
       
       <rect x="248" y="205" width="402" height="22" rx="5" fill="#afb8c133"/>
-      <rect x="248" y="205" width="190.7" height="22" rx="5" fill="#42b883"/>
-      <text fill="#ffffff" x="256" y="221" font-size="12" font-weight="600">2.46 s</text>
+      <rect x="248" y="205" width="188.5" height="22" rx="5" fill="#42b883"/>
+      <text fill="#ffffff" x="256" y="221" font-size="12" font-weight="600">2.31 s</text>
   <text fill="#59636e" x="16" y="257" font-size="11">6</text>
       <text fill="#1f2328" x="36" y="257" font-size="13">vue-tsc (JS)</text>
       
       <rect x="248" y="241" width="402" height="22" rx="5" fill="#afb8c133"/>
       <rect x="248" y="241" width="402.0" height="22" rx="5" fill="#42b883"/>
-      <text fill="#ffffff" x="256" y="257" font-size="12" font-weight="600">5.18 s</text>
+      <text fill="#ffffff" x="256" y="257" font-size="12" font-weight="600">4.93 s</text>
 </svg>

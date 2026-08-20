@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="760" height="228" viewBox="0 0 760 228" role="img" aria-label="IDE · edit-loop — Child prop retype -&gt; Parent diagnostic">
-  <title>IDE · edit-loop — Child prop retype -&gt; Parent diagnostic (lower is better)</title>
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="228" viewBox="0 0 760 228" role="img" aria-label="IDE · Edit loop (type, wait, hover) — Child prop retype -&gt; Parent diagnostic">
+  <title>IDE · Edit loop (type, wait, hover) — Child prop retype -&gt; Parent diagnostic (lower is better)</title>
   <style><![CDATA[
     text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
   ]]></style>
-  <defs><pattern id="hatch-2" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="8" height="8" fill="#2563eb"/><line x1="0" y1="0" x2="0" y2="8" stroke="#fff" stroke-width="3" opacity="0.35"/></pattern><pattern id="hatch-3" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="8" height="8" fill="#e11d48"/><line x1="0" y1="0" x2="0" y2="8" stroke="#fff" stroke-width="3" opacity="0.35"/></pattern></defs>
-  <text fill="#e6edf3" x="16" y="20" font-size="15" font-weight="600">IDE · edit-loop — Child prop retype -&gt; Parent diagnostic</text>
+  <defs><pattern id="hatch-3" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="8" height="8" fill="#e11d48"/><line x1="0" y1="0" x2="0" y2="8" stroke="#fff" stroke-width="3" opacity="0.35"/></pattern></defs>
+  <text fill="#e6edf3" x="16" y="20" font-size="15" font-weight="600">IDE · Edit loop (type, wait, hover) — Child prop retype -&gt; Parent diagnostic</text>
   <text fill="#9198a1" x="16" y="36" font-size="11">lower is better</text>
   
   <line x1="248" y1="48" x2="248" y2="200" stroke="#3d444d" stroke-opacity="0.55" />
@@ -15,31 +15,31 @@
   <line x1="449" y1="48" x2="449" y2="200" stroke="#3d444d" stroke-opacity="0.55" />
   <text fill="#9198a1" x="449" y="220" text-anchor="middle" font-size="11">2.00 s</text>
   <line x1="549.5" y1="48" x2="549.5" y2="200" stroke="#3d444d" stroke-opacity="0.55" />
-  <text fill="#9198a1" x="549.5" y="220" text-anchor="middle" font-size="11">3.01 s</text>
+  <text fill="#9198a1" x="549.5" y="220" text-anchor="middle" font-size="11">3.00 s</text>
   <line x1="650" y1="48" x2="650" y2="200" stroke="#3d444d" stroke-opacity="0.55" />
-  <text fill="#9198a1" x="650" y="220" text-anchor="middle" font-size="11">4.01 s</text>
+  <text fill="#9198a1" x="650" y="220" text-anchor="middle" font-size="11">4.00 s</text>
   <text fill="#9198a1" x="16" y="77" font-size="11">1</text>
-      <text fill="#e6edf3" x="36" y="77" font-size="13">Volar (JS)</text>
+      <text fill="#e6edf3" x="36" y="77" font-size="13">Vize</text>
       
       <rect x="248" y="61" width="402" height="22" rx="5" fill="#6e768166"/>
-      <rect x="248" y="61" width="42.1" height="22" rx="5" fill="#42b883"/>
-      <text fill="#e6edf3" x="298.05384193387545" y="77" font-size="12" font-weight="600">419 ms</text>
+      <rect x="248" y="61" width="19.2" height="22" rx="5" fill="#2563eb"/>
+      <text fill="#e6edf3" x="275.17403470841737" y="77" font-size="12" font-weight="600">191 ms</text>
   <text fill="#9198a1" x="16" y="113" font-size="11">2</text>
-      <text fill="#e6edf3" x="36" y="113" font-size="13">Volar (N)</text>
+      <text fill="#e6edf3" x="36" y="113" font-size="13">Volar (JS)</text>
       
       <rect x="248" y="97" width="402" height="22" rx="5" fill="#6e768166"/>
-      <rect x="248" y="97" width="43.7" height="22" rx="5" fill="#42b883"/>
-      <text fill="#e6edf3" x="299.6570191837262" y="113" font-size="12" font-weight="600">435 ms</text>
+      <rect x="248" y="97" width="38.0" height="22" rx="5" fill="#42b883"/>
+      <text fill="#e6edf3" x="294.0471806435881" y="113" font-size="12" font-weight="600">379 ms</text>
   <text fill="#9198a1" x="16" y="149" font-size="11">3</text>
-      <text fill="#e6edf3" x="36" y="149" font-size="13" fill-opacity="0.62">Vize</text>
-      <line x1="36" y1="144" x2="240" y2="144" stroke="#e6edf3" stroke-opacity="0.45" />
+      <text fill="#e6edf3" x="36" y="149" font-size="13">Volar (N)</text>
+      
       <rect x="248" y="133" width="402" height="22" rx="5" fill="#6e768166"/>
-      <rect x="248" y="133" width="402.0" height="22" rx="5" fill="url(#hatch-2)"/>
-      <text fill="#ffffff" x="256" y="149" font-size="12" font-weight="600">4.01 s · unranked</text>
+      <rect x="248" y="133" width="38.7" height="22" rx="5" fill="#42b883"/>
+      <text fill="#e6edf3" x="294.70945208046373" y="149" font-size="12" font-weight="600">386 ms</text>
   <text fill="#9198a1" x="16" y="185" font-size="11">4</text>
       <text fill="#e6edf3" x="36" y="185" font-size="13" fill-opacity="0.62">Verter</text>
       <line x1="36" y1="180" x2="240" y2="180" stroke="#e6edf3" stroke-opacity="0.45" />
       <rect x="248" y="169" width="402" height="22" rx="5" fill="#6e768166"/>
       <rect x="248" y="169" width="402.0" height="22" rx="5" fill="url(#hatch-3)"/>
-      <text fill="#ffffff" x="256" y="185" font-size="12" font-weight="600">4.01 s · unranked</text>
+      <text fill="#ffffff" x="256" y="185" font-size="12" font-weight="600">4.00 s · unranked</text>
 </svg>
