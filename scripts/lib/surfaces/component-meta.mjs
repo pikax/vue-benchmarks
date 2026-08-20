@@ -8,6 +8,7 @@ import { measureVariants, timedAsync, timedSync } from "../timing.mjs";
 import { measureFreshChildVariants } from "../compile-cold-runs.mjs";
 import {
   applyComponentMetaValidityGates,
+  COMPONENT_META_ALL_ENTRYPOINTS,
   runComponentMetaValidityChildren,
 } from "../component-meta-validity-gates.mjs";
 
@@ -83,12 +84,29 @@ export function ensureMetaNodePath() {
  * rule, and the same reason, as the compiler surface's fresh children.
  */
 export function componentMetaFreshChildPackageSelection(id) {
+  // Prefix-matched so a row added to the concurrent class cannot silently fall
+  // through to "no package selected" and fail its fresh child on a name.
   return {
-    vueComponentMeta: id === "vue-component-meta",
-    verterComponentMeta: id === "verter-component-meta",
-    vizeNative: id === "vize-component-meta",
+    vueComponentMeta: String(id).startsWith("vue-component-meta"),
+    verterComponentMeta: String(id).startsWith("verter-component-meta"),
+    vizeNative: String(id).startsWith("vize-component-meta"),
   };
 }
+
+/**
+ * The concurrent (stress) class.
+ *
+ * Separate from the sequential class because ratios must never cross the two:
+ * "extract metadata for N files, one request at a time" and "extract metadata
+ * for N files with all N requests issued before any is awaited" are different
+ * questions, and a tool can be strong at one and weak at the other. Within the
+ * class the workload IS identical — same files, same members materialised,
+ * same open/close cycle per iteration — so only the issuing strategy differs,
+ * which is what the class exists to measure.
+ */
+const CONCURRENT_CLASS = "component-public-api-concurrent";
+const CONCURRENT_CLASS_LABEL =
+  "Component public-API metadata — concurrent (every request in flight)";
 
 /**
  * Stable identity of what a row was configured to do.
@@ -288,6 +306,171 @@ export function buildComponentMetaVariants({
     });
   }
 
+  // ---------------------------------------------------------------------
+  // Concurrent class — same corpus, every request issued before any is awaited.
+  //
+  // A row is added only when its package loaded. The sequential class already
+  // publishes the unavailability notice for a package that did not, and a
+  // second skip row carrying the identical reason reads as two separate gaps.
+  // ---------------------------------------------------------------------
+
+  if (!vueMeta.error) {
+    const optionsHash = adapterOptionsHash("vue-component-meta-concurrent", tsconfigPath, files);
+    variants.push({
+      id: "vue-component-meta-concurrent",
+      label: "vue-component-meta (Promise.all)",
+      package: "vue-component-meta",
+      comparisonClass: CONCURRENT_CLASS,
+      comparisonClassLabel: CONCURRENT_CLASS_LABEL,
+      baseline: true,
+      baselineLabel: "Vue official",
+      validityEntrypoint: "vue-component-meta-concurrent",
+      threading: "single-threaded",
+      invocation: "in-process API, Promise.all over a synchronous call",
+      // The single most important note on this surface. getComponentMeta is
+      // SYNCHRONOUS: wrapping it in a promise issues every request up front but
+      // cannot overlap any of them — the event loop runs them one after another
+      // and the row measures the same work as its sequential sibling plus
+      // microtask overhead. It is published because the class needs its
+      // official Vue reference and because "what happens when you fan this API
+      // out" is a real question callers ask. It is NOT evidence about parallel
+      // throughput, and the ratio beside it must not be read as one.
+      notes:
+        "createChecker(tsconfig) + Promise.all over getComponentMeta for each .vue file. getComponentMeta is SYNCHRONOUS: every request is issued before any is awaited, but a synchronous API cannot overlap them — the event loop serialises the whole fan-out on one thread. Read this row as the cost of fanning out a sync API, never as a parallel result.",
+      artifactLabel: "Meta members",
+      artifactPolarity: "informational",
+      measure: async () => {
+        let work = 0;
+        const { ms } = await timedAsync(async () => {
+          const { createChecker } = vueMeta.mod;
+          const checker = createChecker(tsconfigPath, { forceUseTs: true });
+          const metas = await Promise.all(
+            absFiles.map((file) => Promise.resolve().then(() => checker.getComponentMeta(file))),
+          );
+          for (const meta of metas) work += countMetaMembers(meta);
+        });
+        return {
+          ms,
+          artifact: work,
+          inputCount: absFiles.length,
+          maxInFlight: absFiles.length,
+          adapterOptionsHash: optionsHash,
+        };
+      },
+    });
+  }
+
+  if (!verterMetaPkg.error && typeof verterMetaPkg.mod.openComponentMetaSession === "function") {
+    const { openComponentMetaSession, evictComponentMetaSession } = verterMetaPkg.mod;
+    const sessionConfig = {
+      root: metaDir.replace(/\\/g, "/"),
+      tsconfig: tsconfigPath.replace(/\\/g, "/"),
+    };
+    // Same full open/evict cycle per iteration as the sequential Verter row.
+    // A concurrent row that kept a pooled engine alive between runs would be
+    // measuring a warm engine against the class reference's cold one.
+    const withSession = async (body) => {
+      const session = await openComponentMetaSession(sessionConfig);
+      try {
+        return await body(session);
+      } finally {
+        try {
+          session.close();
+        } catch {
+          /* ignore */
+        }
+        try {
+          evictComponentMetaSession(sessionConfig);
+        } catch {
+          /* ignore */
+        }
+      }
+    };
+
+    const concurrentHash = adapterOptionsHash(
+      "verter-component-meta-concurrent",
+      tsconfigPath,
+      files,
+    );
+    variants.push({
+      id: "verter-component-meta-concurrent",
+      label: "@verter/component-meta (Promise.all)",
+      package: "@verter/component-meta",
+      comparisonClass: CONCURRENT_CLASS,
+      comparisonClassLabel: CONCURRENT_CLASS_LABEL,
+      validityEntrypoint: "verter-component-meta-concurrent",
+      threading: "native scheduler",
+      invocation: "in-process API, Promise.all over an async call",
+      notes:
+        "openComponentMetaSession(root, tsconfig) + Promise.all over getComponentMeta for each .vue file, so the whole corpus is in flight at once against one session; no updateFile overlay. In-flight count equals the corpus size, so this number is corpus-dependent by construction.",
+      artifactLabel: "Meta members",
+      artifactPolarity: "informational",
+      measure: async () => {
+        let work = 0;
+        const { ms } = await timedAsync(() =>
+          withSession(async (session) => {
+            const metas = await Promise.all(
+              normalizedAbsFiles.map((path) => session.getComponentMeta(path)),
+            );
+            for (const meta of metas) work += countMetaMembers(meta);
+          }),
+        );
+        return {
+          ms,
+          artifact: work,
+          inputCount: normalizedAbsFiles.length,
+          maxInFlight: normalizedAbsFiles.length,
+          adapterOptionsHash: concurrentHash,
+        };
+      },
+    });
+
+    // The published batch surface, when the installed version ships it. Not
+    // substituted by a hand-rolled fan-out if it is absent: a row measured
+    // through an API the package does not export is not that package's number.
+    if (typeof verterMetaPkg.mod.ComponentMetaSession?.prototype?.getComponentMetaBatch === "function") {
+      const batchHash = adapterOptionsHash("verter-component-meta-batch", tsconfigPath, files);
+      variants.push({
+        id: "verter-component-meta-batch",
+        label: "@verter/component-meta (getComponentMetaBatch)",
+        package: "@verter/component-meta",
+        comparisonClass: CONCURRENT_CLASS,
+        comparisonClassLabel: CONCURRENT_CLASS_LABEL,
+        validityEntrypoint: "verter-component-meta-batch",
+        threading: "native scheduler",
+        invocation: "in-process API, one batch call",
+        notes:
+          "openComponentMetaSession(root, tsconfig) + a SINGLE getComponentMetaBatch(files) call — one scheduler dispatch with the host-owned admission caches shared across the batch, rather than N independent requests; no updateFile overlay.",
+        artifactLabel: "Meta members",
+        artifactPolarity: "informational",
+        measure: async () => {
+          let work = 0;
+          const { ms } = await timedAsync(() =>
+            withSession(async (session) => {
+              const metas = await session.getComponentMetaBatch(normalizedAbsFiles);
+              // Documented contract is one slot per input in input order. A
+              // short array would otherwise show up only as a suspiciously
+              // fast row with a smaller member count.
+              if (!Array.isArray(metas) || metas.length !== normalizedAbsFiles.length) {
+                throw new Error(
+                  `getComponentMetaBatch returned ${Array.isArray(metas) ? metas.length : "a non-array"} slots for ${normalizedAbsFiles.length} inputs`,
+                );
+              }
+              for (const meta of metas) work += countMetaMembers(meta);
+            }),
+          );
+          return {
+            ms,
+            artifact: work,
+            inputCount: normalizedAbsFiles.length,
+            maxInFlight: normalizedAbsFiles.length,
+            adapterOptionsHash: batchHash,
+          };
+        },
+      });
+    }
+  }
+
   return variants;
 }
 
@@ -420,7 +603,9 @@ export async function runComponentMetaSurface(fixtureDir, options) {
   // Run after timing and in separate children. The validators reproduce each
   // row's disk-backed lifecycle, so neither TypeScript program construction nor
   // Verter's pooled native session can warm a measured pass.
-  const componentMetaSemantics = runComponentMetaValidityChildren();
+  const componentMetaSemantics = runComponentMetaValidityChildren({
+    entrypoints: COMPONENT_META_ALL_ENTRYPOINTS,
+  });
   applyComponentMetaValidityGates(results, componentMetaSemantics);
 
   return {
@@ -456,6 +641,10 @@ export async function runComponentMetaSurface(fixtureDir, options) {
       "A fresh child imports ONLY its own row's benchmarked package. Importing all three would keep the others' startup out of the timer while still letting their native initialization change the allocator and thread-pool state the row is measured in.",
       "The fresh-child child process is spawned before the warm pass runs, so the warm pass cannot be what warmed the OS page cache for it. Node startup, package import and project materialisation are outside the child's timer; checker/session construction is inside it, because it is inside the warm timer too. OS page and filesystem caches are NOT flushed and no wholly-cold runtime is claimed.",
       "The two paths are checked for ADAPTER PARITY: same adapter options hash, same input count, same materialised member count. A row whose fresh-child and warm passes disagree keeps both timings but is UNRANKED — a cold number produced from a different workload is a second benchmark, not this row's cold reading.",
+      "TWO WORK-EQUIVALENCE CLASSES, and no ratio crosses between them. SEQUENTIAL asks what it costs to extract metadata for the corpus one request at a time. CONCURRENT asks what the same corpus costs when EVERY request is issued before any is awaited — the in-flight count equals the corpus size, so this is a stress reading and is corpus-dependent by construction. Within the concurrent class the workload is identical to the sequential one (same files, same materialised members, same open/evict cycle per iteration); only the issuing strategy differs, which is the whole of what the class measures.",
+      "THE OFFICIAL VUE CONCURRENT ROW IS NOT A PARALLEL RESULT. vue-component-meta's getComponentMeta is SYNCHRONOUS: Promise.all issues every request up front but cannot overlap them, so the event loop runs the whole fan-out on one thread. It is published because the class needs its official Vue reference and because fanning out this API is a real thing callers do — not as evidence about parallel throughput. Every row's threading and invocation model is stated on the row itself, so a ratio is always read next to what produced it.",
+      "The concurrent rows are gated through THEIR OWN plant runs, not the sequential verdict. `getComponentMetaBatch` is a method the sequential plants never call, and issuing every scalar request at once is exactly the condition under which a shared scheduler or admission cache could return a different answer — a concurrency bug that corrupts metadata is the most valuable thing this class can find, so each entry point earns its own isolated child.",
+      "The batch row is published only when the installed package actually exports `getComponentMetaBatch`. It is never substituted by a hand-rolled fan-out: a row measured through an API the package does not ship is not that package's number. Its returned slot count is checked against the input count inside the timer, so a short array shows up as a failure rather than as a fast row with a smaller member count.",
       `POST-TIMING SEMANTIC GATE: suite ${componentMetaSemantics.suiteVersion} runs ${componentMetaSemantics.plantCount} existing component-meta cases in one isolated child per exact row. Vue creates one checker over a disk-backed tsconfig and calls getComponentMeta for every planted disk file. Verter opens one published session over the same disk-backed project and calls getComponentMeta for every file without updateFile overlays. Named props/events/slots/exposed members, coarse type facts, requiredness, defaults and deliberate absence are scored by one tool-neutral oracle; output objects and type strings are never byte-compared. FAIL, crash, missing verdict and UNKNOWN remain measured but UNRANKED, and a failed official Vue baseline invalidates the class.`,
       "Each row reports the meta members it materialised. The counts are NOT equivalent between tools and no threshold is applied to them: on this corpus most generated SFCs declare no macros, and the tools differ on whether a component with no declared API still has implicit members. Read the member counts alongside the times rather than treating the ratio as like-for-like.",
       "Tool order is ROTATED on every warmup and measured run (not merely alternated), so no tool keeps a fixed position in the sequence. Fresh-child samples use a paired forward/reverse schedule, which balances row position over any complete pair even when fewer runs than rows were requested; the executed order is retained in JSON.",

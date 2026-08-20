@@ -14,6 +14,32 @@ export const COMPONENT_META_VALIDITY_ENTRYPOINTS = Object.freeze([
   "verter-component-meta",
 ]);
 
+/**
+ * The concurrent-class entry points, gated SEPARATELY from the scalar ones.
+ *
+ * Handing these rows the sequential verdict would be the substitution this
+ * surface refuses everywhere else: `getComponentMetaBatch` is a different
+ * method the scalar plants never call, and issuing every scalar request at
+ * once is exactly the condition under which a shared native cache or scheduler
+ * could return a different answer. A concurrency bug that corrupts metadata is
+ * the most valuable thing a stress test can find, so the stress rows earn their
+ * own plant run rather than inheriting a verdict from a quieter one.
+ *
+ * Kept out of COMPONENT_META_VALIDITY_ENTRYPOINTS so surfaces that publish no
+ * concurrent rows — project-component-meta — do not spawn three children whose
+ * verdicts nothing reads.
+ */
+export const COMPONENT_META_CONCURRENT_ENTRYPOINTS = Object.freeze([
+  "vue-component-meta-concurrent",
+  "verter-component-meta-concurrent",
+  "verter-component-meta-batch",
+]);
+
+export const COMPONENT_META_ALL_ENTRYPOINTS = Object.freeze([
+  ...COMPONENT_META_VALIDITY_ENTRYPOINTS,
+  ...COMPONENT_META_CONCURRENT_ENTRYPOINTS,
+]);
+
 const childFile = join(
   dirname(fileURLToPath(import.meta.url)),
   "component-meta-validity-child.mjs",
@@ -52,9 +78,13 @@ function parsePayload(stdout) {
   );
 }
 
-export function runComponentMetaValidityChildren({ timeoutMs = 120_000, spawn = spawnSync } = {}) {
+export function runComponentMetaValidityChildren({
+  timeoutMs = 120_000,
+  spawn = spawnSync,
+  entrypoints = COMPONENT_META_VALIDITY_ENTRYPOINTS,
+} = {}) {
   const results = {};
-  for (const entrypoint of COMPONENT_META_VALIDITY_ENTRYPOINTS) {
+  for (const entrypoint of entrypoints) {
     const child = spawn(process.execPath, [childFile, "--entrypoint", entrypoint], {
       cwd: process.cwd(),
       encoding: "utf8",
@@ -108,7 +138,11 @@ function summary(gate) {
 export function applyComponentMetaValidityGates(rows, validity) {
   for (const row of rows) {
     if (row.status === "skipped" || row.status === "error") continue;
-    const gate = validity?.results?.[row.id];
+    // A row states which exact entry point its verdict must come from. It
+    // defaults to the row id, so the scalar rows are unaffected; the stress
+    // rows name their own, and a row that names one nothing ran is UNKNOWN
+    // rather than quietly borrowing the nearest verdict.
+    const gate = validity?.results?.[row.validityEntrypoint ?? row.id];
     if (!gate || gate.status !== "PASS") {
       unrank(row);
       const status = gate?.status ?? "UNKNOWN";
@@ -118,9 +152,22 @@ export function applyComponentMetaValidityGates(rows, validity) {
     }
   }
 
-  const baseline = rows.find((row) => row.baseline && row.status !== "skipped");
-  if (baseline && baseline.status !== "ok") {
-    for (const row of rows) {
+  // Reference invalidation is scoped to the COMPARISON CLASS, not the surface.
+  //
+  // With one class the two are the same thing, which is why this was a single
+  // surface-wide lookup. They stop being the same the moment a surface declares
+  // a second class: ratios never cross a class boundary, so a reference that
+  // failed in one class has not invalidated a comparison it was never the
+  // denominator of. A surface-wide `find` would also have picked whichever
+  // baseline came first in declaration order and applied its verdict to every
+  // other class — an invalidation notice naming a row the reader cannot see in
+  // that table.
+  const classOf = (row) => row.comparisonClass ?? "";
+  for (const className of new Set(rows.map(classOf))) {
+    const inClass = rows.filter((row) => classOf(row) === className);
+    const baseline = inClass.find((row) => row.baseline && row.status !== "skipped");
+    if (!baseline || baseline.status === "ok") continue;
+    for (const row of inClass) {
       if (row === baseline || row.status === "skipped" || row.status === "error") continue;
       unrank(row);
       row.notes = `${row.notes ?? ""} ⚠ COMPARISON REFERENCE INVALID: the official Vue component-meta baseline did not pass mandatory validation.`;

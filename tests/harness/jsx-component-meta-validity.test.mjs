@@ -213,11 +213,11 @@ test("generated and project capability plants are wired strictly after timing", 
   assert.ok(jsx.indexOf("await measureVariants(") < jsx.indexOf("runJsxValidityChildren()"));
   assert.ok(
     generatedMeta.indexOf("await measureVariants(") <
-      generatedMeta.indexOf("runComponentMetaValidityChildren()"),
+      generatedMeta.indexOf("runComponentMetaValidityChildren("),
   );
   assert.ok(
     projectMeta.indexOf("await measureVariants(") <
-      projectMeta.indexOf("runComponentMetaValidityChildren()"),
+      projectMeta.indexOf("runComponentMetaValidityChildren("),
   );
   assert.match(projectMeta, /PROJECT METADATA EQUIVALENCE remains UNKNOWN/);
   assert.match(projectMeta, /never reads or writes the third-party checkout/);

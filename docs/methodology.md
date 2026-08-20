@@ -466,6 +466,48 @@ inside the timer) and the warm median that remains the ranking metric. See
 for what the child excludes and why this surface keeps host construction inside
 the timer.
 
+#### Two classes: sequential and concurrent
+
+The surface declares two work-equivalence classes, and **no ratio crosses
+between them**:
+
+| Class          | Question                                                                        | Rows                                                                                                       |
+| -------------- | ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| **Sequential** | What does the corpus cost one request at a time?                                 | `vue-component-meta`, `@verter/component-meta`                                                              |
+| **Concurrent** | What does the same corpus cost with **every** request issued before any is awaited? | `vue-component-meta (Promise.all)`, `@verter/component-meta (Promise.all)`, `@verter/component-meta (getComponentMetaBatch)` |
+
+Inside the concurrent class the workload is identical to the sequential one —
+same files, same materialised members, same session open/evict cycle per
+iteration. Only the issuing strategy differs, which is the whole of what the
+class measures. The in-flight count equals the corpus size, so it is a stress
+reading and is **corpus-dependent by construction**: the number on `fixtures/20`
+is not the number on `fixtures/200`.
+
+**The official Vue concurrent row is not a parallel result.**
+`vue-component-meta`'s `getComponentMeta` is synchronous. `Promise.all` issues
+every request up front but cannot overlap them — the event loop runs the whole
+fan-out on one thread, so the row measures its sequential sibling's work plus
+microtask overhead. It is published because the class needs its official Vue
+reference, and because fanning this API out is a real thing callers do. It is
+not evidence about parallel throughput, and every row states its threading and
+invocation model so a ratio is always read next to what produced it.
+
+**Each concurrent row is gated through its own plant run.**
+`getComponentMetaBatch` is a method the sequential plants never call, and
+issuing every scalar request at once is exactly the condition under which a
+shared scheduler or admission cache could hand back a different answer. A
+concurrency bug that corrupts metadata is the most valuable thing this class can
+find, so all five entry points run the plants in their own isolated child rather
+than inheriting a quieter row's verdict. Reference invalidation is scoped to the
+class for the same reason a ratio is: a reference that failed in one class was
+never the denominator of the other.
+
+The batch row is published **only** when the installed package actually exports
+`getComponentMetaBatch`, and is never substituted by a hand-rolled fan-out. Its
+returned slot count is checked against the input count inside the timer, so a
+short array surfaces as a failure instead of as a fast row with a smaller member
+count.
+
 ### LSP (language servers)
 
 Harness shape: init → didOpen → hover cold/warm (same workspace, file, and position for every server).
