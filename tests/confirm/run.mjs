@@ -46,23 +46,36 @@ function loadKnownFailures() {
 }
 
 /**
- * A known-failure value is either a plain reason, or `{ why, path }` when the
- * verdict depends on WHICH typecheck path produced it.
+ * A known-failure value is either a plain reason, or `{ why, path, platform }`
+ * when the verdict depends on WHERE it was produced rather than on the tool.
  *
- * The two paths ask the same question of different projects: `per-case` gives
- * each plant its own 5-file project, `combined` puts all 150 in one. A tool
- * whose analysis degrades at project scale genuinely passes one and fails the
- * other — measured: vize resolves a GlobalComponents augmentation per-case and
- * reports nothing for the same files inside the combined project. With one
- * unqualified entry, whichever path you run calls the file wrong: CI (combined)
- * sees an unexpected failure, a local per-case run sees a stale suppression.
- * `path` scopes the entry so both runs can be right.
+ * `path` — the two typecheck paths ask the same question of different projects:
+ * `per-case` gives each plant its own 5-file project, `combined` puts all 150
+ * in one. A tool whose analysis degrades at project scale genuinely passes one
+ * and fails the other: vize resolves a GlobalComponents augmentation per-case
+ * and reports nothing for the same files inside the combined project.
+ *
+ * `platform` — the tools do not behave identically on every OS. Measured on the
+ * same commit: verter-tsc leaks `___VERTER___` virtual code into diagnostics on
+ * a clean generic SFC on Linux and stays silent on Windows, and vize's LSP
+ * lowercases a document path on Linux so a cross-file reference is lost. CI is
+ * Linux and is the authority for what is published; a developer on another OS
+ * must still get a truthful run.
+ *
+ * Without these qualifiers one file cannot describe both runs: whichever you
+ * did, the other one is wrong — an unexpected failure here, a stale suppression
+ * there. A qualified entry is invisible outside its scope, so it neither
+ * excuses a failure nor is refuted by a pass that never applied to it.
  */
-export function knownEntryFor(known, row) {
+export function knownEntryFor(known, row, { platform = process.platform } = {}) {
   const raw = known[resultKey(row)];
   if (raw == null) return null;
-  const entry = typeof raw === "string" ? { why: raw, path: null } : { why: raw.why ?? "", path: raw.path ?? null };
+  const entry =
+    typeof raw === "string"
+      ? { why: raw, path: null, platform: null }
+      : { why: raw.why ?? "", path: raw.path ?? null, platform: raw.platform ?? null };
   if (entry.path && entry.path !== (row.path ?? "per-case")) return null;
+  if (entry.platform && entry.platform !== platform) return null;
   return entry;
 }
 

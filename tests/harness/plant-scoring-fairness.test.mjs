@@ -200,3 +200,48 @@ describe("a known failure can be scoped to one typecheck path", () => {
     assert.equal(knownEntryFor(known, row("always", "combined"))?.why, "plain string entry, both paths");
   });
 });
+
+describe("a known failure can be scoped to one platform", () => {
+  // The tools are not identical per OS. Measured on one commit: verter-tsc
+  // leaks ___VERTER___ virtual code into diagnostics on clean generic SFCs on
+  // Linux and is silent on win32. CI is Linux; a developer elsewhere still has
+  // to get a truthful run out of the same file.
+  const known = {
+    "typecheck/generic-slot-ok/verter-tsc": { why: "virtual-code leak", platform: "linux" },
+    "typecheck/attrs-unknown-fallthrough/verter-tsc": { why: "undeclared attr", platform: "win32" },
+    "typecheck/always/verter-tsc": "not platform specific",
+  };
+  const row = (caseId) => ({ suite: "typecheck", caseId, tool: "verter-tsc" });
+
+  test("it excuses the failure only on its own platform", () => {
+    assert.equal(knownEntryFor(known, row("generic-slot-ok"), { platform: "linux" })?.why, "virtual-code leak");
+    assert.equal(knownEntryFor(known, row("generic-slot-ok"), { platform: "win32" }), null);
+  });
+
+  test("a pass on another platform does not report it stale", () => {
+    // The stale check runs through the same lookup, so an entry that does not
+    // apply cannot be refuted by a run it was never about.
+    assert.equal(knownEntryFor(known, row("attrs-unknown-fallthrough"), { platform: "linux" }), null);
+    assert.equal(
+      knownEntryFor(known, row("attrs-unknown-fallthrough"), { platform: "win32" })?.why,
+      "undeclared attr",
+    );
+  });
+
+  test("an unqualified entry still applies everywhere", () => {
+    for (const platform of ["linux", "win32", "darwin"]) {
+      assert.equal(knownEntryFor(known, row("always"), { platform })?.why, "not platform specific");
+    }
+  });
+
+  test("path and platform compose", () => {
+    const scoped = {
+      "typecheck/both/vize-check": { why: "combined + win32 only", path: "combined", platform: "win32" },
+    };
+    const at = (path, platform) =>
+      knownEntryFor(scoped, { suite: "typecheck", caseId: "both", tool: "vize-check", path }, { platform });
+    assert.equal(at("combined", "win32")?.why, "combined + win32 only");
+    assert.equal(at("combined", "linux"), null);
+    assert.equal(at("per-case", "win32"), null);
+  });
+});
