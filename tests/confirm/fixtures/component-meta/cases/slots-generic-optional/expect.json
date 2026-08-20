@@ -1,0 +1,6 @@
+{
+  "id": "slots-generic-optional",
+  "description": "defineSlots on a generic component: a scoped slot whose payload names the type parameter, plus an OPTIONAL slot member. The optional slot's payload type is unpinned — tools render an empty optional payload as any, {} | undefined and (): any respectively",
+  "props": [{ "name": "rows", "required": true, "typeIncludes": ["row"] }],
+  "slots": [{ "name": "row", "typeIncludes": ["row", "index"] }, { "name": "empty" }]
+}

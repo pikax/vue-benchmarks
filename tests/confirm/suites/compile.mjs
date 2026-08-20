@@ -465,6 +465,166 @@ export async function runCompileSuite() {
         w.unmount();
       },
     },
+    {
+      id: "define-model-modifiers",
+      file: "DefineModelChild.vue",
+      async assert(component) {
+        const w = mount(component, {
+          props: { modelValue: "seed", modelModifiers: { upper: true } },
+        });
+        expectText(w.get("[data-testid=value]").text(), "seed");
+        expectText(w.get("[data-testid=mods]").text(), "upper");
+        await w.get("[data-testid=send]").trigger("click");
+        const events = w.emitted("update:modelValue");
+        if (!events || events.length !== 1) {
+          throw new Error(
+            `expected exactly one update:modelValue emit, got ${JSON.stringify(events)}`,
+          );
+        }
+        if (events[0][0] !== "NEXT") {
+          throw new Error(
+            `defineModel set()/modifiers lost: emitted ${JSON.stringify(events[0][0])}, expected "NEXT"`,
+          );
+        }
+        w.unmount();
+      },
+    },
+    {
+      id: "v-bind-object",
+      file: "VBindObject.vue",
+      async assert(component) {
+        const w = mount(component);
+        const target = w.get("[data-testid=target]");
+        if (target.attributes("data-x") !== "1" || target.attributes("title") !== "first") {
+          throw new Error(
+            `v-bind object attrs not applied: data-x=${target.attributes("data-x")}, title=${target.attributes("title")}`,
+          );
+        }
+        if (!target.classes("static") || !target.classes("from-obj")) {
+          throw new Error(
+            `class not merged across v-bind object: classes=${JSON.stringify(target.classes())}`,
+          );
+        }
+        await w.get("[data-testid=change]").trigger("click");
+        const after = w.get("[data-testid=target]");
+        if (after.attributes("title") !== "second") {
+          throw new Error(
+            "changed v-bind object key not repatched (title should be second — needs FULL_PROPS)",
+          );
+        }
+        if (after.attributes("data-y") !== "2") {
+          throw new Error("newly added v-bind object key data-y not applied on update");
+        }
+        if (after.attributes("data-x") !== undefined) {
+          throw new Error("deleted v-bind object key data-x not removed on update");
+        }
+        w.unmount();
+      },
+    },
+    {
+      id: "dynamic-arg",
+      file: "DynamicArgs.vue",
+      async assert(component) {
+        const w = mount(component);
+        const target = w.get("[data-testid=target]");
+        if (target.attributes("data-a") !== "v") {
+          throw new Error(`:[attrName] initial attr missing: data-a=${target.attributes("data-a")}`);
+        }
+        await w.get("[data-testid=hit]").trigger("click");
+        expectText(w.get("[data-testid=hits]").text(), "1");
+        await w.get("[data-testid=hit]").trigger("dblclick");
+        expectText(w.get("[data-testid=hits]").text(), "1");
+
+        await w.get("[data-testid=rename]").trigger("click");
+        const after = w.get("[data-testid=target]");
+        if (after.attributes("data-b") !== "v") {
+          throw new Error("dynamic attr name change did not add data-b");
+        }
+        if (after.attributes("data-a") !== undefined) {
+          throw new Error("dynamic attr name change did not remove old data-a");
+        }
+        await w.get("[data-testid=hit]").trigger("click");
+        expectText(w.get("[data-testid=hits]").text(), "1");
+        await w.get("[data-testid=hit]").trigger("dblclick");
+        expectText(w.get("[data-testid=hits]").text(), "2");
+        w.unmount();
+      },
+    },
+    {
+      id: "template-ref",
+      file: "TemplateRef.vue",
+      async assert(component) {
+        const w = mount(component);
+        // onMounted wrote into a ref; let the queued re-render flush
+        await w.vm.$nextTick();
+        expectText(w.get("[data-testid=tag]").text(), "section#target-box");
+        w.unmount();
+      },
+    },
+    {
+      id: "v-for-template-destructure",
+      file: "VForTemplateKeyed.vue",
+      async assert(component) {
+        const w = mount(component);
+        const rows = w.findAll("[data-testid=row]");
+        if (rows.length !== 3) {
+          throw new Error(`expected 3 rows, got ${rows.length}`);
+        }
+        expectText(rows[0].text(), "0:Alpha");
+        expectText(rows[2].text(), "2:Gamma");
+        if (rows[0].attributes("data-id") !== "a") {
+          throw new Error(`destructured id lost: data-id=${rows[0].attributes("data-id")}`);
+        }
+        // Mark the first row's DOM node; a keyed move must carry it along.
+        rows[0].element.setAttribute("data-marker", "M");
+        await w.get("[data-testid=rotate]").trigger("click");
+        const after = w.findAll("[data-testid=row]");
+        expectText(after[0].text(), "0:Beta");
+        expectText(after[2].text(), "2:Alpha");
+        const moved = after.find((r) => r.attributes("data-id") === "a");
+        if (!moved) {
+          throw new Error("keyed row a disappeared after rotate");
+        }
+        if (moved.attributes("data-marker") !== "M") {
+          throw new Error(
+            "keyed <template v-for> recreated the row instead of moving it (marker lost)",
+          );
+        }
+        w.unmount();
+      },
+    },
+    {
+      id: "v-model-choice",
+      file: "VModelChoice.vue",
+      async assert(component) {
+        const w = mount(component);
+        if (w.get("[data-testid=check-b]").element.checked !== true) {
+          throw new Error("checkbox array binding did not seed checked state for value b");
+        }
+        if (w.get("[data-testid=check-a]").element.checked !== false) {
+          throw new Error("checkbox a should start unchecked");
+        }
+        await w.get("[data-testid=check-a]").setValue(true);
+        expectText(w.get("[data-testid=picks]").text(), "a,b");
+        await w.get("[data-testid=check-b]").setValue(false);
+        expectText(w.get("[data-testid=picks]").text(), "a");
+
+        if (w.get("[data-testid=radio-low]").element.checked !== true) {
+          throw new Error("radio binding did not seed checked state");
+        }
+        await w.get("[data-testid=radio-high]").setValue();
+        expectText(w.get("[data-testid=tone]").text(), "high");
+
+        if (w.get("[data-testid=select]").element.value !== "york") {
+          throw new Error(
+            `select binding did not seed value: got ${JSON.stringify(w.get("[data-testid=select]").element.value)}`,
+          );
+        }
+        await w.get("[data-testid=select]").setValue("leeds");
+        expectText(w.get("[data-testid=city]").text(), "leeds");
+        w.unmount();
+      },
+    },
   ];
 
   for (const c of cases) {

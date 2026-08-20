@@ -10,7 +10,7 @@ export const COMPONENT_META_CASES_ROOT = join(
   "../../tests/confirm/fixtures/component-meta/cases",
 );
 
-export const COMPONENT_META_VALIDITY_SUITE_VERSION = "2026-08-20.1";
+export const COMPONENT_META_VALIDITY_SUITE_VERSION = "2026-08-20.2";
 
 function coverageFor(expect) {
   const coverage = [];
@@ -30,7 +30,7 @@ function coverageFor(expect) {
   return coverage;
 }
 
-/** The existing eleven source-level cases, loaded as one revisioned manifest. */
+/** Every disk-backed source-level case, loaded as one revisioned manifest. */
 export const COMPONENT_META_VALIDITY_PLANTS = Object.freeze(
   readdirSync(COMPONENT_META_CASES_ROOT, { withFileTypes: true })
     .filter((entry) => entry.isDirectory())

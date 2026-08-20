@@ -1,0 +1,6 @@
+{
+  "id": "v-if-prop-discriminant-ok",
+  "description": "v-if on a union prop's discriminant narrows each branch (types imported from a .ts module)",
+  "expectErrors": false,
+  "requires": ["v-if-narrow"]
+}

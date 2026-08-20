@@ -1,0 +1,10 @@
+{
+  "id": "define-options",
+  "description": "defineOptions({ name, inheritAttrs }) declares component options, not public API members — the option keys must never surface as props alongside the real ones",
+  "props": [
+    { "name": "heading", "required": true, "typeIncludes": ["string"] },
+    { "name": "tone", "required": false, "typeIncludes": ["info", "warn"] }
+  ],
+  "events": [],
+  "absentProps": ["name", "inheritAttrs", "FancyPanel"]
+}

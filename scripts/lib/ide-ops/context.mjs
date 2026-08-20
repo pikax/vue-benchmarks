@@ -49,7 +49,7 @@ import {
 import { resolveTnbTsdk } from "../tnb.mjs";
 import { withTsgoEnv } from "../tsgo.mjs";
 import { budgetFor } from "./budget.mjs";
-import { sumPidTreeRssBytes } from "../memory.mjs";
+import { pidPeakRssBytes, pidTreeRssBreakdown } from "../memory.mjs";
 
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../../..");
 
@@ -451,14 +451,42 @@ export async function createSession({
   // Whole-process RSS of every half of the product. Volar's TypeScript half is
   // a sibling (not a child of the Vue server), so both pids are summed.
   //
+  // Split tool vs engine EXACTLY like the typecheck surface: verter/vize spawn
+  // a tsgo child and Volar's sibling runs tsserver — those are the TypeScript
+  // engine's share, attributed via the same pidTreeRssBreakdown classifier.
+  //
   // Linux VmHWM and Windows PeakWorkingSet64 are exact high-water marks — one
   // read at close is enough, and polling would put PowerShell /proc cost into
   // the timed requests. Darwin has no per-pid peak from outside, so it polls.
   const rssSamples = [];
   const sampleRss = () => {
-    const n = sumPidTreeRssBytes([client.pid, hybrid?.pid]);
-    if (Number.isFinite(n) && n > 0) rssSamples.push(n);
+    let total = 0;
+    let tool = 0;
+    let engine = 0;
+    let hwm = 0;
+    for (const pid of [client.pid, hybrid?.pid]) {
+      if (!pid) continue;
+      const b = pidTreeRssBreakdown(pid);
+      total += b.totalBytes;
+      tool += b.toolBytes;
+      engine += b.engineBytes;
+      // Exact per-pid high-water mark: the fallback that keeps a total on
+      // platforms where the tree walk cannot read member RSS (and a floor
+      // where a poll missed the true peak).
+      hwm += pidPeakRssBytes(pid) || 0;
+    }
+    if (total > 0) rssSamples.push({ total, tool, engine });
+    // The HWM enters as its own split-less sample: if it wins the peak, the
+    // published number is right and the split honestly disappears rather than
+    // summing to something other than the total.
+    if (hwm > total) rssSamples.push({ total: hwm, tool: null, engine: null });
   };
+  // One consistent snapshot: the sample with the highest total, so
+  // tool + engine always sums to the reported peak.
+  const peakSample = () =>
+    rssSamples.length
+      ? rssSamples.reduce((a, b) => (b.total > a.total ? b : a))
+      : null;
   const rssTimer =
     process.platform === "darwin" ? setInterval(sampleRss, 250) : null;
   if (rssTimer && typeof rssTimer.unref === "function") rssTimer.unref();
@@ -485,10 +513,14 @@ export async function createSession({
     initializeMs,
     snapshotRss() {
       sampleRss();
-      return rssSamples.length ? Math.max(...rssSamples) : null;
+      return peakSample()?.total ?? null;
     },
     get peakRssBytes() {
-      return rssSamples.length ? Math.max(...rssSamples) : null;
+      return peakSample()?.total ?? null;
+    },
+    /** {total, tool, engine} bytes at the peak-total sample, or null. */
+    get peakRssBreakdown() {
+      return peakSample();
     },
     ask,
     notify,

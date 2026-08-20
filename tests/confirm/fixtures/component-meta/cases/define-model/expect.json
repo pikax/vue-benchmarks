@@ -1,0 +1,17 @@
+{
+  "id": "define-model",
+  "description": "defineModel generates prop/event pairs: default model (required) and named model (with default)",
+  "props": [
+    { "name": "modelValue", "required": true, "typeIncludes": ["string"] },
+    {
+      "name": "count",
+      "required": false,
+      "typeIncludes": ["number"],
+      "hasDefault": true
+    }
+  ],
+  "events": [
+    { "name": "update:modelValue", "typeIncludes": ["string"] },
+    { "name": "update:count", "typeIncludes": ["number"] }
+  ]
+}

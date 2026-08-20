@@ -111,10 +111,10 @@ test("JSX UNKNOWN rows are unranked and a failed baseline invalidates its class"
   assert.match(rows[1].notes, /COMPARISON REFERENCE INVALID/);
 });
 
-test("component-meta manifest is the eleven existing disk-backed cases", () => {
+test("component-meta manifest is the twenty-nine disk-backed cases", () => {
   assert.match(COMPONENT_META_VALIDITY_SUITE_VERSION, /^\d{4}-\d{2}-\d{2}\.\d+$/);
   assert.match(COMPONENT_META_VALIDITY_SUITE_HASH, /^[a-f0-9]{64}$/);
-  assert.equal(COMPONENT_META_VALIDITY_PLANTS.length, 11);
+  assert.equal(COMPONENT_META_VALIDITY_PLANTS.length, 29);
   assert.equal(
     new Set(COMPONENT_META_VALIDITY_PLANTS.map((plant) => plant.id)).size,
     COMPONENT_META_VALIDITY_PLANTS.length,

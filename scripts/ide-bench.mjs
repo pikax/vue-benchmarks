@@ -33,6 +33,7 @@ import { budgetFor } from "./lib/ide-ops/budget.mjs";
 import { SUITES } from "./lib/ide-ops/registry.mjs";
 import { buildIdeSurfaces, buildTypingLoopSurface } from "./lib/ide-report.mjs";
 import { IDE_RANKING_RULES, RANKING_RULES, renderSurfaceMarkdown } from "./lib/report.mjs";
+import { collectVersions } from "./lib/versions.mjs";
 
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -136,11 +137,16 @@ async function runSuiteOnServer({ suite, server, workRoot, verbose, keepWork, on
       skipOpIds,
     });
     const peakRssBytes = ctx.snapshotRss?.() ?? ctx.peakRssBytes;
+    // Same attribution as the typecheck surface: the spawned tsgo/tsserver
+    // share is the engine's, the rest is the tool's.
+    const rssBreakdown = ctx.peakRssBreakdown ?? null;
     return {
       ok: true,
       ops,
       initializeMs: ctx.initializeMs,
       peakRssBytes,
+      peakRssToolBytes: rssBreakdown?.tool ?? null,
+      peakRssEngineBytes: rssBreakdown?.engine ?? null,
       stderr: ctx.stderrTail(),
     };
   } catch (e) {
@@ -190,8 +196,18 @@ async function runSuiteSessions({ suite, server, workRoot, verbose, keepWork, wa
     initializeSamples: [full.initializeMs, ...extras.map((e) => e.initializeMs)].filter(
       Number.isFinite,
     ),
-    peakRssBytes:
-      Math.max(0, ...[full, ...extras].map((s) => s.peakRssBytes).filter(Number.isFinite)) || null,
+    // Carry the split from the session with the peak total, so tool + engine
+    // still sums to the reported peak.
+    ...(() => {
+      const sessions = [full, ...extras].filter((s) => Number.isFinite(s.peakRssBytes));
+      if (!sessions.length) return { peakRssBytes: null };
+      const peak = sessions.reduce((a, b) => (b.peakRssBytes > a.peakRssBytes ? b : a));
+      return {
+        peakRssBytes: peak.peakRssBytes,
+        peakRssToolBytes: peak.peakRssToolBytes ?? null,
+        peakRssEngineBytes: peak.peakRssEngineBytes ?? null,
+      };
+    })(),
     stderr: [full.stderr, ...extras.map((e) => e.stderr)].filter(Boolean).join("\n"),
   };
 }
@@ -338,15 +354,27 @@ async function main() {
         .flatMap((r) => r.initializeSamples ?? [r.initializeMs])
         .filter(Number.isFinite);
       const rssRuns = runs.map((r) => r.peakRssBytes).filter(Number.isFinite);
+      // Split from the median-total run so tool + engine sums to the
+      // published figure — same attribution model as the typecheck surface.
+      const rssSorted = runs
+        .filter((r) => Number.isFinite(r.peakRssBytes))
+        .sort((a, b) => a.peakRssBytes - b.peakRssBytes);
+      const medianRun = rssSorted.length
+        ? rssSorted[Math.floor((rssSorted.length - 1) / 2)]
+        : null;
+      const toMb = (b) => (Number.isFinite(b) && b > 0 ? b / (1024 * 1024) : null);
       results.push({
         suite: suite.id,
+        suiteLabel: suite.label,
         server: server.id,
         label: server.label,
         ops,
         backendFallback: fallback ?? null,
         initializeMs: median(initializeRuns),
         initializeRuns,
-        peakRssMb: rssRuns.length ? median(rssRuns) / (1024 * 1024) : null,
+        peakRssMb: medianRun ? toMb(medianRun.peakRssBytes) : null,
+        rssToolMb: medianRun ? toMb(medianRun.peakRssToolBytes) : null,
+        rssEngineMb: medianRun ? toMb(medianRun.peakRssEngineBytes) : null,
         rssRuns: rssRuns.length ? rssRuns.map((b) => b / (1024 * 1024)) : undefined,
       });
     }
@@ -355,7 +383,29 @@ async function main() {
   if (args.json) {
     const out = resolve(rootDir, args.json);
     mkdirSync(dirname(out), { recursive: true });
-    writeFileSync(out, `${JSON.stringify({ results }, null, 2)}\n`);
+    // Same envelope as bench.mjs so docs generation (and the Linux-only
+    // publish guard) can read runner/settings without falling back to the
+    // file name. `results` stays the payload key for existing readers.
+    const data = {
+      schemaVersion: 1,
+      kind: "ide",
+      generatedAt: new Date().toISOString(),
+      settings: {
+        suites: [...new Set(results.map((r) => r.suite))],
+        servers: [...new Set(results.map((r) => r.server))],
+        runs: args.runs,
+        warmups: Math.max(1, args.warmups),
+      },
+      runner: {
+        label: process.env.RUNNER_OS ?? process.env.VIZE_BENCH_RUNNER ?? "local",
+        platform: process.platform,
+        arch: process.arch,
+        node: process.version,
+      },
+      versions: collectVersions(),
+      results,
+    };
+    writeFileSync(out, `${JSON.stringify(data, null, 2)}\n`);
     console.log(`\nWrote ${out}`);
   }
 

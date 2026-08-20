@@ -14,7 +14,7 @@ name: Test
 #                             spawn per tool over every plant (not ~500 per-case
 #                             spawns). Known upstream bugs are allowlisted in
 #                             tests/confirm/known-failures.json. Writes
-#                             docs/typecheck.md on the runner only — Benchmark
+#                             results/confirm.{json,md} on the runner only — Benchmark
 #                             is what commits that file (and the README summary).
 #
 # Neither suite reads the generated corpora, so there is no `scripts/generate.mjs`

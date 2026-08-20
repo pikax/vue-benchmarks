@@ -1,0 +1,7 @@
+{
+  "id": "props-destructure-ok",
+  "group": "props",
+  "description": "Reactive props destructure with defaults keeps prop types in the template (clean)",
+  "expectErrors": false,
+  "requires": ["prop-types"]
+}

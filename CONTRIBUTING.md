@@ -33,7 +33,7 @@ Do **not** commit:
 - `work/**` (ephemeral)
 - `node_modules/`
 
-Published landing charts (`docs/results/charts/*.svg`), full reports (`docs/results/*.md`), and the latest CI JSON/MD under `results/benchmarks/` + `results/real_world/` are committed by the Benchmark publish jobs. A new publish **clears** those folders first so only the latest run remains. Refresh locally with `pnpm pull:ci-results`.
+Published charts (`docs/charts/*.svg`), the generated group pages (`docs/*.md`, `docs/real-world/*.md`), and the latest CI JSON under `results/benchmarks/` + `results/real_world/` are committed by the Benchmark publish jobs. A new publish **clears** the snapshot folders first so only the latest run remains; `pnpm docs` regenerates every page from that JSON. Refresh locally with `pnpm pull:ci-results`.
 
 ## Project layout
 
@@ -50,7 +50,7 @@ Published landing charts (`docs/results/charts/*.svg`), full reports (`docs/resu
 | `tests/confirm/`                  | Correctness plants + `known-failures.json` (tracked in git)                                                   |
 | `.github/workflows/test.yml`      | Harness + confirm on every PR and `main` push. Publishes nothing                                              |
 | `.github/workflows/pr.yml`        | PR smoke: tiny `fixtures/20` throughput pass only. Does **not** run `pnpm confirm` — `test.yml` already does, on the same event |
-| `.github/workflows/benchmark.yml` | Manual dispatch only. `build` → `bench` + `ide` + `ide-scale` + `memory` + `confirm` → README.md + MEMORY.md + `docs/typecheck.md`. The only workflow that commits |
+| `.github/workflows/benchmark.yml` | Manual dispatch only. `build` → `bench` + `ide` + `ide-scale` + `memory` + `confirm` → README.md + generated `docs/` pages. The only workflow that commits |
 
 **`benchmark.yml` deliberately does not shard.** Every timing surface runs in the one `bench` job so no result is ever merged across runners — runner-to-runner variance is easily larger than the differences being measured. The job header states the rejection and the measured per-surface costs that make it affordable; do not "optimise" it into a matrix.
 

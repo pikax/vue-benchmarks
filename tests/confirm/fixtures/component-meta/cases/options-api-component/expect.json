@@ -1,0 +1,15 @@
+{
+  "id": "options-api-component",
+  "description": "Options API defineComponent (no <script setup>): the props option — with required and default — and the array-form emits option are the component's public API. data/methods members are not props",
+  "props": [
+    { "name": "label", "required": true, "typeIncludes": ["string"] },
+    {
+      "name": "step",
+      "required": false,
+      "typeIncludes": ["number"],
+      "hasDefault": true
+    }
+  ],
+  "events": [{ "name": "increment" }, { "name": "reset" }],
+  "absentProps": ["count", "bump", "clear"]
+}

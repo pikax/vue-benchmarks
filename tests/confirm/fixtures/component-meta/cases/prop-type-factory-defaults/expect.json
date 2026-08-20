@@ -1,0 +1,20 @@
+{
+  "id": "prop-type-factory-defaults",
+  "description": "Runtime props whose declared type comes from PropType<...> and whose defaults are object/array factory functions: the factory is a default, and the PropType argument — not the Array/Object constructor — is the reported type",
+  "props": [
+    {
+      "name": "filters",
+      "required": false,
+      "typeIncludes": ["filter"],
+      "hasDefault": true
+    },
+    {
+      "name": "pagination",
+      "required": false,
+      "typeIncludes": ["page", "size"],
+      "hasDefault": true
+    },
+    { "name": "scope", "required": true, "typeIncludes": ["all", "active"] }
+  ],
+  "absentProps": ["Filter"]
+}

@@ -1,0 +1,10 @@
+{
+  "id": "props-destructure-bad",
+  "group": "props",
+  "description": "A destructured prop (count?: number, default 0) must reject string-only methods in the template",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS2339", "toUpperCase", "does not exist"],
+  "requires": ["prop-types"],
+  "expectMention": ["toUpperCase"]
+}

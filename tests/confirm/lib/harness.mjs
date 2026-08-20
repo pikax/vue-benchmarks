@@ -68,7 +68,7 @@ export function formatReport(allResults) {
     "Tools are checked against planted expectations (compile → mount, lint counts, type diagnostics, component-meta shapes, format parse/idempotence/tokens).",
   );
   lines.push(
-    "Skip = missing API/binary or out of scope. Fail = plant expectation not met. Warn = extra harness behaviour for one tool (not a pass).",
+    "Skip = missing API/binary (the tool never ran); a tool that runs but lacks a capability FAILS. Fail = plant expectation not met. Warn = extra harness behaviour for one tool (not a pass).",
   );
   lines.push("");
 

@@ -217,6 +217,151 @@
           "mustIncludeRules": ["vue/no-unused-components"]
         }
       }
+    },
+    {
+      "id": "template-key",
+      "file": "dirty/TemplateKey.vue",
+      "tools": {
+        "eslint-plugin-vue": {
+          "minIssues": 1,
+          "mustIncludeRules": ["vue/no-template-key"]
+        },
+        "vize-lint": {
+          "minIssues": 1,
+          "mustMatch": ["no-template-key"]
+        },
+        "verter-lint": {
+          "minIssues": 1,
+          "mustIncludeRules": ["no-template-key"]
+        }
+      }
+    },
+    {
+      "id": "invalid-v-model",
+      "file": "dirty/InvalidVModel.vue",
+      "tools": {
+        "eslint-plugin-vue": {
+          "minIssues": 1,
+          "mustIncludeRules": ["vue/valid-v-model"]
+        },
+        "vize-lint": {
+          "minIssues": 1,
+          "mustMatch": ["valid-v-model"]
+        },
+        "verter-lint": {
+          "minIssues": 1,
+          "mustIncludeRules": ["valid-v-model"]
+        }
+      }
+    },
+    {
+      "id": "invalid-v-slot",
+      "file": "dirty/InvalidVSlot.vue",
+      "tools": {
+        "eslint-plugin-vue": {
+          "minIssues": 1,
+          "mustIncludeRules": ["vue/valid-v-slot"]
+        },
+        "vize-lint": {
+          "minIssues": 1,
+          "mustMatch": ["valid-v-slot", "v-slot"]
+        },
+        "verter-lint": {
+          "minIssues": 1,
+          "mustIncludeRules": ["valid-v-slot"]
+        }
+      }
+    },
+    {
+      "id": "v-on-native-modifier",
+      "file": "dirty/VOnNativeModifier.vue",
+      "tools": {
+        "eslint-plugin-vue": {
+          "minIssues": 1,
+          "mustIncludeRules": ["vue/no-deprecated-v-on-native-modifier"]
+        },
+        "vize-lint": {
+          "minIssues": 1,
+          "mustMatch": ["no-deprecated-v-on-native-modifier", ".native"]
+        },
+        "verter-lint": {
+          "minIssues": 1,
+          "mustIncludeRules": ["no-deprecated-v-on-native-modifier"]
+        }
+      }
+    },
+    {
+      "id": "reserved-props",
+      "file": "dirty/ReservedProps.vue",
+      "tools": {
+        "eslint-plugin-vue": {
+          "minIssues": 1,
+          "mustIncludeRules": ["vue/no-reserved-props"]
+        },
+        "vize-lint": {
+          "minIssues": 1,
+          "mustMatch": ["no-reserved-props", "reserved"]
+        },
+        "verter-lint": {
+          "minIssues": 1,
+          "mustIncludeRules": ["no-reserved-props"]
+        }
+      }
+    },
+    {
+      "id": "computed-side-effect",
+      "file": "dirty/ComputedSideEffect.vue",
+      "tools": {
+        "eslint-plugin-vue": {
+          "minIssues": 1,
+          "mustIncludeRules": ["vue/no-side-effects-in-computed-properties"]
+        },
+        "vize-lint": {
+          "minIssues": 1,
+          "mustMatch": ["side-effect", "side effect"]
+        },
+        "verter-lint": {
+          "minIssues": 1,
+          "mustIncludeRules": ["no-side-effects-in-computed"]
+        }
+      }
+    },
+    {
+      "id": "async-computed",
+      "file": "dirty/AsyncComputed.vue",
+      "tools": {
+        "eslint-plugin-vue": {
+          "minIssues": 1,
+          "mustIncludeRules": ["vue/no-async-in-computed-properties"]
+        },
+        "vize-lint": {
+          "minIssues": 1,
+          "mustMatch": ["async"]
+        },
+        "verter-lint": {
+          "minIssues": 1,
+          "mustIncludeRules": ["no-async-in-computed"]
+        }
+      }
+    },
+    {
+      "id": "prop-type-constructor",
+      "note": "vize/verter have no require-prop-type-constructor equivalent; both flag the planted `type: \"String\"` via their prop-typing rules (require-typed-props / require-prop-types), which stay silent on the corrected `type: String` control, so the plant itself is what fires",
+      "file": "dirty/PropTypeConstructor.vue",
+      "tools": {
+        "eslint-plugin-vue": {
+          "minIssues": 1,
+          "mustIncludeRules": ["vue/require-prop-type-constructor"]
+        },
+        "vize-lint": {
+          "minIssues": 1,
+          "mustMatch": ["require-typed-props", "constructor"]
+        },
+        "verter-lint": {
+          "minIssues": 1,
+          "mustIncludeRules": ["require-prop-types"]
+        }
+      }
     }
   ]
 }

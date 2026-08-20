@@ -7,64 +7,79 @@ Linux CI runner per dispatch and committed back here.
 This project has two equally important outputs:
 
 1. **Apples-to-apples performance comparisons.** A candidate is timed against
-   the official or established reference for the same work. For SFC compilation,
-   that reference is Vue's official compiler. Different targets, artifacts,
-   threading modes and cache states are disclosed; materially different work is
-   separated or left unranked.
-2. **Actionable tooling-gap findings.** Executable gates and confirmation cases
-   expose missing transforms, invalid output, skipped files, incomplete source
-   maps, semantic differences and integration failures. The timing stays visible
-   when useful, but incomplete work cannot become a performance win. Upgrade
-   audits re-run these checks so a fixed limitation clears automatically.
+   the official or established reference for the same work. Different targets,
+   artifacts, threading modes and cache states are disclosed; materially
+   different work is separated or left unranked.
+2. **Actionable tooling-gap findings.** Executable gates and confirmation
+   plants expose missing transforms, invalid output, skipped files and semantic
+   differences. The timing stays visible when useful, but incomplete work
+   cannot become a performance win.
 
-The goal is not a leaderboard between Vize and Verter. It is to give maintainers
-of new Vue tooling reproducible evidence about both performance and compatibility,
-with Vue and the relevant established toolchain as the reference point.
+The goal is not a leaderboard. It is reproducible evidence about both
+performance and compatibility, with Vue and the relevant established toolchain
+as the reference point.
 
-This page is the **landing view**: a bar chart and compact ranking (median · vs reference, or vs fastest where no reference is declared) for the surfaces people actually compare. Compile is explicitly anchored to Vue. Every chart links a full report — all tables, notes, raw runs, tool versions, runner — in [`docs/results/`](docs/results/). Memory lives in [MEMORY.md](MEMORY.md). Methodology: [docs/methodology.md](docs/methodology.md).
+This page is the **landing view**: one chart and a compact ranking per main
+group. Every group links its full page under [`docs/`](docs/) — all tables,
+per-row notes, raw runs, validation plants and the memory probe — generated
+from the JSON snapshots in [`results/benchmarks/`](results/benchmarks/) and
+[`results/real_world/`](results/real_world/).
 
 <!-- RESULTS_INDEX_START -->
 
-**Results index** — charts below; every entry links its FULL report (tables, methodology, per-row notes, raw runs, environment) in [`docs/results/`](docs/results/):
+**Results index** — compact charts below; every group links its full page under [`docs/`](docs/):
 
-- **[Reference results](#reference-results)** — [how to read](docs/results/notes-benchmark.md) · [bench](docs/results/bench-Linux-200-bench.md)
-- **[Typecheck confirmation](#typecheck-confirmation)** — [full matrix](docs/typecheck.md)
-- **[IDE operation results](#ide-operation-results)** — [how to read](docs/results/notes-ide.md) · [ide ops](docs/results/ide-Linux.md)
-- **[Real-world project results](#real-world-project-results)** — [how to read](docs/results/notes-real-world.md) · [element-plus](docs/results/real-world-Linux-element-plus.md) · [hoppscotch](docs/results/real-world-Linux-hoppscotch.md) · [naive-ui](docs/results/real-world-Linux-naive-ui.md) · [nuxt-ui](docs/results/real-world-Linux-nuxt-ui.md) · [quasar](docs/results/real-world-Linux-quasar.md) · [vue-vben-admin](docs/results/real-world-Linux-vue-vben-admin.md) · [vuetify](docs/results/real-world-Linux-vuetify.md)
-- **[Memory](#memory)** — [MEMORY.md](MEMORY.md)
+- **[Compiler](#compiler)** — [docs/compiler.md](docs/compiler.md)
+- **[Typecheck](#typecheck)** — [docs/typecheck.md](docs/typecheck.md)
+- **[Format](#format)** — [docs/format.md](docs/format.md)
+- **[Lint](#lint)** — [docs/lint.md](docs/lint.md)
+- **[Component-meta](#component-meta)** — [docs/component-meta.md](docs/component-meta.md)
+- **[LSP and IDE operations](#lsp-and-ide-operations)** — [docs/lsp.md](docs/lsp.md)
+- **[Real-world projects](#real-world-projects)** — [docs/real-world.md](docs/real-world.md)
+- **Memory** — [docs/memory.md](docs/memory.md)
+- **Methodology** — [docs/methodology.md](docs/methodology.md) · [docs/how-to-read.md](docs/how-to-read.md)
 
 <!-- RESULTS_INDEX_END -->
 
 ## What is compared
 
-| Surface                    | Tools                                                                                                                       |
-| -------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| **Compiler**               | `@vue/compiler-sfc` 3.5 & 3.6 · Vize · Verter · [fervid](https://github.com/phoenix-ru/fervid) (validity-gated)             |
-| **Typecheck**              | `vue-tsc` (JS + TNB/tsgo) · golar · Vize · `verter-tsc`                                                                     |
-| **Format / lint**          | Prettier · Oxfmt · Vize · eslint-plugin-vue · Verter · Biome / Oxlint (script-only, unranked)                               |
-| **Meta / LSP / IDE**       | vue-component-meta · Verter · Volar (JS + TNB) · Vize                                                                       |
-| **Bundle / HMR / project** | Vite 8 · Vite 7 · Rolldown · Rspack · webpack 5, each × its Vue plugin; plus a project's own build / test / typecheck / LSP |
-| **Memory**                 | same tools, isolated probe — [MEMORY.md](MEMORY.md)                                                                         |
+<!-- WHAT_IS_COMPARED_START -->
 
-Real-world rows use pinned checkouts (Element Plus, Naive UI, Vuetify, PrimeVue, Quasar, Ant Design Vue, Hoppscotch, Vue Vben Admin, Nuxt UI). Ranked **within** a corpus, never across. Details: [Real-world corpora](docs/methodology.md#real-world-corpora).
+| Group | Measured in the published run |
+| --- | --- |
+| **[Compiler](docs/compiler.md)** | [`@vue/compiler-sfc`](https://github.com/vuejs/core) · [`@vue/compiler-sfc-36`](https://github.com/vuejs/core) · [`@vizejs/native`](https://github.com/ubugeeei-prod/vize) · [`@fervid/napi`](https://github.com/phoenix-ru/fervid) · [`@verter/native`](https://github.com/pikax/verter) · [`@vue-jsx-vapor/compiler-rs`](https://github.com/vuejs/vue-jsx-vapor) · [`vue-jsx-vapor`](https://github.com/vuejs/vue-jsx-vapor) · [`@vue/babel-plugin-jsx`](https://github.com/vuejs/babel-plugin-jsx) |
+| **[Typecheck](docs/typecheck.md)** | [`vue-tsc`](https://github.com/vuejs/language-tools) · [`typescript-native-bridge`](https://github.com/johnsoncodehk/typescript-native-bridge) · [`golar`](https://github.com/auvred/golar) · [`vize`](https://github.com/ubugeeei-prod/vize) · [`verter-tsc`](https://github.com/pikax/verter) |
+| **[Format](docs/format.md)** | [`prettier`](https://github.com/prettier/prettier) · [`oxfmt`](https://github.com/oxc-project/oxc) · [`vize`](https://github.com/ubugeeei-prod/vize) · [`@biomejs/biome`](https://github.com/biomejs/biome) |
+| **[Lint](docs/lint.md)** | [`eslint-plugin-vue`](https://github.com/vuejs/eslint-plugin-vue) · [`vize`](https://github.com/ubugeeei-prod/vize) · [`@biomejs/biome`](https://github.com/biomejs/biome) · [`oxlint`](https://github.com/oxc-project/oxc) · [`@verter/native`](https://github.com/pikax/verter) |
+| **[Component-meta](docs/component-meta.md)** | [`vue-component-meta`](https://github.com/vuejs/language-tools) · [`@verter/component-meta`](https://github.com/pikax/verter) · [`vize`](https://github.com/ubugeeei-prod/vize) |
+| **[LSP and IDE operations](docs/lsp.md)** | [`@vue/language-server`](https://github.com/vuejs/language-tools) · [`vize`](https://github.com/ubugeeei-prod/vize) · [`verter-lsp`](https://github.com/pikax/verter) |
+| **[Real-world projects](docs/real-world.md)** | 9 pinned checkouts — each project's own test / build / typecheck vs plugin swaps (`unplugin-vue` · `@vizejs/vite-plugin` · `@verter/unplugin`); bundle / HMR across [`@vitejs/plugin-vue`](https://github.com/vitejs/vite-plugin-vue) · [`unplugin-vue`](https://github.com/unplugin/unplugin-vue) · [`@vizejs/vite-plugin`](https://github.com/ubugeeei-prod/vize) · [`@verter/unplugin`](https://github.com/pikax/verter) · `vue-loader` · [`@vizejs/rspack-plugin`](https://github.com/ubugeeei-prod/vize) |
+| **[Memory](docs/memory.md)** | same tools, isolated resource probe — plus the **Peak RSS** column on every timing table |
+
+<!-- WHAT_IS_COMPARED_END -->
 
 ## How to read
 
-Median of measured runs. Compiler charts show separately sampled **Fresh child**
-and primary **Warm** workloads; IDE charts show first-request and repeated-request
-Cold/Warm. Other throughput surfaces remain warm-only. **⚠** failed a work gate
-(shown, unranked) · **❌** error · **⏭** skipped. Struck chart names carry the
-same gate. Why a fast or official tool can be unranked (Biome, Oxlint, noisy
-series, no lockfile): [docs/how-to-read.md](docs/how-to-read.md).
+Median of measured runs; Compiler and Component-meta show a separately sampled
+**Fresh child** column plus primary **Warm**; IDE operations show **Cold** and
+**Warm**. **⚠** failed a
+validation gate (shown, unranked) · **❌** error · **⏭** skipped. Each timing
+table carries a **Peak RSS** column instead of a separate memory chart.
+Details: [docs/how-to-read.md](docs/how-to-read.md) ·
+[docs/methodology.md](docs/methodology.md).
+
+Published numbers are **Linux CI only**; local runs are for comparison on your
+own box, never against the published charts.
 
 <!-- RUN_META_START -->
 
 ## This run
 
-- **Date:** 2026-08-19 (`2026-08-19T18:37:25.414Z`)
-- **Runner:** Linux · linux/x64 · 4 CPUs · AMD EPYC 7763 64-Core Processor
-- **Fixture:** `fixtures/200` (200 SFCs)
+- **Generated:** 2026-08-19T18:37:25.414Z
+- **Fixture:** `fixtures/200` (200 files)
 - **Runs / warmups:** 5 / 1
+- **Runner:** Linux · linux/x64 · 4 CPUs · AMD EPYC 7763 64-Core Processor · 15.6 GB · Node v22.23.2
+- **Commit:** [`94f6696`](https://github.com/pikax/vue-benchmarks/commit/94f6696b1c7b6f54928678126b9831febd70b4ff)
 - **CI run:** https://github.com/pikax/vue-benchmarks/actions/runs/32287835178
 
 <!-- RUN_META_END -->
@@ -74,1116 +89,262 @@ series, no lockfile): [docs/how-to-read.md](docs/how-to-read.md).
 ```bash
 corepack enable && pnpm install   # Node 22+, pnpm 10
 pnpm generate                     # fixtures
-pnpm audit:compiler-capabilities  # source maps, CSS/style APIs and upgrade-sensitive behavior
-pnpm audit:compiler-validity      # exact-entrypoint runtime compiler semantics
 pnpm bench                        # full local bench (5 runs, 1 warmup)
+pnpm confirm                      # validity plants
+pnpm docs                         # regenerate README + docs/ from the published results JSON
+pnpm docs:local                   # same, but also include your local runs (banner-disclosed)
 ```
 
-Published numbers are **Linux only**; local runs are for comparison on your own box, never against the charts below. More commands: [docs/methodology.md](docs/methodology.md#quick-start).
+More commands: [docs/methodology.md](docs/methodology.md#quick-start).
 
-## Reference results
-
-**Before reading the numbers — five caveats the charts will not tell you:**
-
-| Caveat                                                                                                                                                                    | Effect on the tables                                                                                                                                                                                                                                                                                          |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`verter-tsc` is the only checker not silent on a clean corpus](docs/methodology.md#caveat-verter-tsc-is-the-only-checker-that-is-not-silent-on-a-clean-corpus)           | It emits 442 diagnostics on 200 files (every other ranked checker: 0) and ranks 1st in its class on the smaller corpus. Passes the work gate; not bracketed.                                                                                                                                                  |
-| [Vize's tsgo/Corsa backend sometimes never starts](docs/methodology.md#caveat-vizes-type-checking-backend-sometimes-never-starts-and-the-row-still-answers)               | Non-deterministic. When it fires, the row was measured with the type-checking backend absent. Look for `⚠ BACKEND FALLBACK` in Notes.                                                                                                                                                                         |
-| [Volar's memory excludes its tsserver half; its timing includes it](docs/methodology.md#caveat-volars-lsp-memory-row-is-not-the-whole-of-volar-but-the-lsp-timing-row-is) | Volar's memory row covers one of its two processes; its latency rows include both. Vize and Verter are single-process, so their rows cover the whole tool.                                                                                                                                                    |
-| [The TNB engine swap fails an IDE completion resolve](docs/methodology.md#caveat-the-tnb-engine-swap-fails-an-ide-completion-resolve-operation)                           | TNB passes the typecheck work gate. On the IDE surface, resolving an auto-import completion item errors in the tsgo half.                                                                                                                                                                                     |
-| [fervid is measured but validity-gated on every run](docs/methodology.md#caveat-fervid-is-measured-but-validity-gated-on-every-run)                                       | The pinned `@fervid/napi` currently emits invalid arrow parameters for some multi-binding `v-for` inputs. Every compiler's generated output is re-parsed in each selected target/environment cell; current failure counts live in the generated report, and a fixed release clears the bracket automatically. |
-
-Two surfaces (`format`, `lint`) still have [no per-timed-run artifact census](docs/methodology.md#artifact-column--fast-vs-did-less), so their rankings remain provisional even though both now have mandatory exact-row semantic plants and file/work coverage gates. JSX records generated code bytes; component-meta records materialised metadata members.
+## Results
 
 <!-- BENCHMARK_RESULTS_START -->
 
-> Most tables were generated 2026-08-19 from the latest published **Linux benchmark artifact**. The Compiler block is a local Windows run from a dirty worktree on 2026-08-20. It is not attributable to commit `ca167f8` alone; the next clean Linux Benchmark workflow replaces it.
-> Numbers are reference-only; re-run on your hardware for local relevance.
-> Warm is the Compiler ranking metric after >= 1 discarded pass. Compiler additionally publishes Fresh-child medians for the first timed row workload; imports/setup are excluded, the OS page cache is not flushed, and the delta is not treated as initialization overhead.
-
-> 📄 **[Full details →](docs/results/bench-Linux-200-bench.md)** — methodology, per-row notes and raw runs (22 collapsed block(s) moved out of this page).
-> Repeated-input study (not ranking): [full report](docs/results/bench-Linux-200-repeated-cache-demo.md).
-
-<!-- notes: notes-benchmark.md -->
-
-> 📖 **[How to read these tables →](docs/results/notes-benchmark.md)** — ranking rules, standing notes and the tools legend shared by every block in this section.
-
-#### Windows · Compiler (local dirty-worktree run)
-
-<!-- source: compiler-win32-current.md + compiler-memory-win32-current.md -->
-
-- Runner: **local Windows · win32/x64 · AMD Ryzen 9 7950X · Node 26.5.0**
-- Timing: **200 SFCs · 5 Fresh-child runs · 5 Warm runs · 1 discarded warmup**
-- Resource probe: **200 SFCs · 3 isolated samples per row**
-
-<!-- COMPILER_RESULTS_START -->
+> Generated 2026-08-20 from the latest published **Linux** JSON snapshot in `results/benchmarks/`. Numbers are reference-only; re-run on your hardware for local relevance.
+> Median of measured runs; **Peak RSS** column: memory for the same row (timed session where sampled there, isolated probe otherwise). ⚠ failed a validation gate (bracketed, unranked). How to read: [docs/how-to-read.md](docs/how-to-read.md).
 
 ### Compiler
 
-Files: **200** · Bytes: **285,701**
+> 📄 **[Full results →](docs/compiler.md)** — every table, per-row notes, raw runs, validation plants and the isolated memory probe.
 
-| Package | Version |
-| --- | --- |
-| vue | 3.5.41 |
-| vue-36 | 3.6.0-rc.4 |
-| @vue/compiler-sfc | 3.5.41 |
-| @vue/compiler-sfc-36 | 3.6.0-rc.4 |
-| vize | 0.350.2 |
-| @vizejs/native | 0.350.2 |
-| @verter/native | 0.0.1-beta.3 |
-| @fervid/napi | 0.4.1 |
+> ⚠ **Local run — not the published Linux CI series** (win32/x64 · **dirty worktree** — not attributable to a single commit). Shown because it is the newest data for this group; the next clean Linux Benchmark publish replaces it.
 
-> 📄 **[Complete Compiler data →](docs/compiler.md)** — full tables, raw timing samples, validation plants, execution order, adapter-parity evidence, and the isolated resource-probe samples.
-> Fresh and Warm share one combined bar per tool: the internal boundary is the faster measurement and the full endpoint is the slower measurement. The two timings are not added.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/charts/readme-compiler-vdom-production-sourcemap-off-raw-sfc-compilatio-1ec7hu9-dark.svg">
+  <img alt="Compiler — VDOM · production · sourcemap off — Raw SFC compilation — identical changed inputs; no output-cache reuse" src="docs/charts/readme-compiler-vdom-production-sourcemap-off-raw-sfc-compilatio-1ec7hu9.svg">
+</picture>
 
-#### VDOM · production · sourcemap off
-
-Target: `vdom` · Environment: `production` · Source map: `off`
-
-##### Raw SFC compilation — identical changed inputs; no output-cache reuse
-
-![Raw SFC compilation — identical changed inputs; no output-cache reuse](docs/results/charts/compiler-win32-current-md-compiler-vdom-production-sourcemap-off-raw-sfc-compilation-ident-0w8ecus.svg)
-
-| Tool | **Fresh child** | vs Vue fresh child | **Warm (primary)** | vs Vue warm |
+| Tool | Fresh child | **Warm (primary)** | vs fastest | Peak RSS |
 | --- | ---: | ---: | ---: | ---: |
-| [Vue compiler-sfc 3.5 reference (raw render, 1T)](https://github.com/vuejs/core) | 226.3 ms | 1.00x | **145.2 ms** | 1.00x |
-| [Vize compileSfcBatchWithResults (raw render)](https://github.com/ubugeeei-prod/vize) ⚠ | (11.3 ms) | not ranked | (10.0 ms) | not ranked |
-| [Verter compileMany (first-admission stateless raw render)](https://github.com/pikax/verter) ⚠ | (53.6 ms) | not ranked | (37.8 ms) | not ranked |
+| [Vue compiler-sfc 3.5 reference (raw render, 1T)](https://github.com/vuejs/core) | 235.8 ms | **146.1 ms** | 1.00x | – |
+| [Vize compileSfcBatchWithResults (raw render)](https://github.com/ubugeeei-prod/vize) ⚠ | (10.5 ms) | (7.4 ms) | not ranked | (21.4 MB) |
+| [Verter compileMany (first-admission stateless raw render)](https://github.com/pikax/verter) ⚠ | (44.9 ms) | (36.4 ms) | not ranked | (67.1 MB) |
 
-##### SFC compilation with CSS — script, template and style changed
+> ⚠ rows failed a validation gate (time bracketed, unranked); errors, skips and per-row notes: [full results](docs/compiler.md).
 
-![SFC compilation with CSS — script, template and style changed](docs/results/charts/compiler-win32-current-md-compiler-vdom-production-sourcemap-off-sfc-compilation-with-css--0psb1yb.svg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/charts/readme-compiler-vdom-production-sourcemap-off-sfc-compilation-wi-1n1ebc6-dark.svg">
+  <img alt="Compiler — VDOM · production · sourcemap off — SFC compilation with CSS — script, template and style changed" src="docs/charts/readme-compiler-vdom-production-sourcemap-off-sfc-compilation-wi-1n1ebc6.svg">
+</picture>
 
-| Tool | **Fresh child** | vs Vue fresh child | **Warm (primary)** | vs Vue warm |
+| Tool | Fresh child | **Warm (primary)** | vs fastest | Peak RSS |
 | --- | ---: | ---: | ---: | ---: |
-| [Vue compiler-sfc 3.5 reference (render + CSS, 1T)](https://github.com/vuejs/core) | 233.5 ms | 1.00x | **168.3 ms** | 1.00x |
-| [Vize compileSfc loop (full SFC, 1T)](https://github.com/ubugeeei-prod/vize) ⚠ | (38.2 ms) | not ranked | (51.0 ms) | not ranked |
-| [Vize compileSfcBatchWithResults (render + CSS, Rayon batch)](https://github.com/ubugeeei-prod/vize) ⚠ | (10.9 ms) | not ranked | (9.9 ms) | not ranked |
-| [fervid compileSync (1T)](https://github.com/phoenix-ru/fervid) ⚠ | (33.6 ms) | not ranked | (45.4 ms) | not ranked |
-| [fervid compileAsync (4-thread libuv pool)](https://github.com/phoenix-ru/fervid) ⚠ | (11.8 ms) | not ranked | (12.9 ms) | not ranked |
-| [Verter compileMany + processStyle (render + CSS)](https://github.com/pikax/verter) ⚠ | (47.1 ms) | not ranked | (39.7 ms) | not ranked |
+| [Vue compiler-sfc 3.5 reference (render + CSS, 1T)](https://github.com/vuejs/core) | 267.2 ms | **171.0 ms** | 1.00x | 103.8 MB |
+| [Vize compileSfc loop (full SFC, 1T)](https://github.com/ubugeeei-prod/vize) ⚠ | (39.3 ms) | (47.1 ms) | not ranked | (16.7 MB) |
+| [Vize compileSfcBatchWithResults (render + CSS, Rayon batch)](https://github.com/ubugeeei-prod/vize) ⚠ | (11.9 ms) | (9.3 ms) | not ranked | (21.6 MB) |
+| [fervid compileSync (1T)](https://github.com/phoenix-ru/fervid) ⚠ | (33.5 ms) | (39.1 ms) | not ranked | (15.9 MB) |
+| [fervid compileAsync (4-thread libuv pool)](https://github.com/phoenix-ru/fervid) ⚠ | (12.0 ms) | (13.0 ms) | not ranked | – |
+| [Verter compileMany + processStyle (render + CSS)](https://github.com/pikax/verter) ⚠ | (53.0 ms) | (39.0 ms) | not ranked | (68.6 MB) |
 
-#### VAPOR · production · sourcemap off
+> ⚠ rows failed a validation gate (time bracketed, unranked); errors, skips and per-row notes: [full results](docs/compiler.md).
 
-Target: `vapor` · Environment: `production` · Source map: `off`
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/charts/readme-compiler-vapor-production-sourcemap-off-raw-sfc-compilati-1uzi4el-dark.svg">
+  <img alt="Compiler — VAPOR · production · sourcemap off — Raw SFC compilation — identical changed inputs; no output-cache reuse" src="docs/charts/readme-compiler-vapor-production-sourcemap-off-raw-sfc-compilati-1uzi4el.svg">
+</picture>
 
-##### Raw SFC compilation — identical changed inputs; no output-cache reuse
-
-![Raw SFC compilation — identical changed inputs; no output-cache reuse](docs/results/charts/compiler-win32-current-md-compiler-vapor-production-sourcemap-off-raw-sfc-compilation-iden-0ulusuu.svg)
-
-| Tool | **Fresh child** | vs Vue fresh child | **Warm (primary)** | vs Vue warm |
+| Tool | Fresh child | **Warm (primary)** | vs fastest | Peak RSS |
 | --- | ---: | ---: | ---: | ---: |
-| [Vue compiler-sfc 3.6 reference (raw render, 1T)](https://github.com/vuejs/core) ⚠ | (361.7 ms) | not ranked | (277.3 ms) | not ranked |
-| [Vize compileSfcBatchWithResults (raw render)](https://github.com/ubugeeei-prod/vize) ⚠ | (12.5 ms) | not ranked | (4.9 ms) | not ranked |
-| [Verter compileMany (first-admission stateless raw render)](https://github.com/pikax/verter) ⚠ | (45.9 ms) | not ranked | (41.2 ms) | not ranked |
+| [Vue compiler-sfc 3.6 reference (raw render, 1T)](https://github.com/vuejs/core) ⚠ | (392.2 ms) | (270.9 ms) | not ranked | – |
+| [Vize compileSfcBatchWithResults (raw render)](https://github.com/ubugeeei-prod/vize) ⚠ | (12.7 ms) | (5.2 ms) | not ranked | (20.9 MB) |
+| [Verter compileMany (first-admission stateless raw render)](https://github.com/pikax/verter) ⚠ | (46.7 ms) | (34.5 ms) | not ranked | (65.8 MB) |
 
-##### SFC compilation with CSS — script, template and style changed
+> ⚠ rows failed a validation gate (time bracketed, unranked); errors, skips and per-row notes: [full results](docs/compiler.md).
 
-![SFC compilation with CSS — script, template and style changed](docs/results/charts/compiler-win32-current-md-compiler-vapor-production-sourcemap-off-sfc-compilation-with-css-01pnmxp.svg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/charts/readme-compiler-vapor-production-sourcemap-off-sfc-compilation-w-02joyyi-dark.svg">
+  <img alt="Compiler — VAPOR · production · sourcemap off — SFC compilation with CSS — script, template and style changed" src="docs/charts/readme-compiler-vapor-production-sourcemap-off-sfc-compilation-w-02joyyi.svg">
+</picture>
 
-| Tool | **Fresh child** | vs Vue fresh child | **Warm (primary)** | vs Vue warm |
+| Tool | Fresh child | **Warm (primary)** | vs fastest | Peak RSS |
 | --- | ---: | ---: | ---: | ---: |
-| [Vue compiler-sfc 3.6 reference (render + CSS, 1T)](https://github.com/vuejs/core) ⚠ | (426.9 ms) | not ranked | (335.2 ms) | not ranked |
-| [Vize compileSfc loop (full SFC, 1T)](https://github.com/ubugeeei-prod/vize) ⚠ | (41.9 ms) | not ranked | (52.8 ms) | not ranked |
-| [Vize compileSfcBatchWithResults (render + CSS, Rayon batch)](https://github.com/ubugeeei-prod/vize) ⚠ | (13.2 ms) | not ranked | (5.5 ms) | not ranked |
-| [fervid (vapor)](https://github.com/phoenix-ru/fervid) ⏭ | skipped | – | – | – |
-| [Verter compileMany + processStyle (render + CSS)](https://github.com/pikax/verter) ⚠ | (51.2 ms) | not ranked | (46.0 ms) | not ranked |
+| [Vue compiler-sfc 3.6 reference (render + CSS, 1T)](https://github.com/vuejs/core) ⚠ | (421.8 ms) | (300.2 ms) | not ranked | (114.7 MB) |
+| [Vize compileSfc loop (full SFC, 1T)](https://github.com/ubugeeei-prod/vize) ⚠ | (42.9 ms) | (41.3 ms) | not ranked | (15.4 MB) |
+| [Vize compileSfcBatchWithResults (render + CSS, Rayon batch)](https://github.com/ubugeeei-prod/vize) ⚠ | (13.9 ms) | (5.8 ms) | not ranked | (20.4 MB) |
+| [Verter compileMany + processStyle (render + CSS)](https://github.com/pikax/verter) ⚠ | (50.0 ms) | (43.9 ms) | not ranked | (68.7 MB) |
 
-#### Peak RSS
+> ⚠ rows failed a validation gate (time bracketed, unranked); errors, skips and per-row notes: [full results](docs/compiler.md).
 
-> Isolated from timing. In-process rows show tool-attributed RSS delta from the worker's GC baseline; CLI rows show the child/process-tree RSS. Full probe (min/max/avg, CPU): [MEMORY.md](MEMORY.md).
+Development builds, sourcemap cells, the single-file size ladder and the repeated-input study: [full results](docs/compiler.md).
 
-#### Raw SFC compilation — identical style-free inputs
-
-![Raw SFC compilation — identical style-free inputs](docs/results/charts/compiler-memory-win32-current-md-resource-probe-results-memory-allocations-cpu-compile-raw-sfc-co-19njy0v.svg)
-
-| Tool | **Peak RSS** |
-| --- | ---: |
-| [@vue/compiler-sfc 3.5 (1T) vdom-prod](https://github.com/vuejs/core) | 98.5 MB |
-| [@vue/compiler-sfc 3.6 (1T) vdom-prod](https://github.com/vuejs/core) | 100.3 MB |
-| [Vize compileSfcBatchWithResults (raw style-free render, Rayon global pool) vapor-prod ⚠ INVALID](https://github.com/ubugeeei-prod/vize) | 20.9 MB |
-| [Vize compileSfcBatchWithResults (raw style-free render, Rayon global pool) vdom-prod ⚠ INVALID](https://github.com/ubugeeei-prod/vize) | 21.4 MB |
-| [Verter compileMany (stateless raw render) vapor-prod ⚠ INVALID](https://github.com/pikax/verter) | 65.8 MB |
-| [Verter compileMany (stateless raw render) vdom-prod ⚠ INVALID](https://github.com/pikax/verter) | 67.1 MB |
-| [@vue/compiler-sfc 3.6 vapor (1T) vapor-prod ⚠ INVALID](https://github.com/vuejs/core) | 115.7 MB |
-
-#### SFC compilation with CSS — styles included
-
-![SFC compilation with CSS — styles included](docs/results/charts/compiler-memory-win32-current-md-resource-probe-results-memory-allocations-cpu-compile-sfc-compil-0eedcvc.svg)
-
-| Tool | **Peak RSS** |
-| --- | ---: |
-| [Vue compiler-sfc 3.5 reference (render + CSS, 1T) vdom-prod](https://github.com/vuejs/core) | 103.8 MB |
-| [fervid compileSync (1T) vdom-prod ⚠ INVALID](https://github.com/phoenix-ru/fervid) | 3.4 MB |
-| [Vize compileSfc loop (render + CSS, 1T) vapor-prod ⚠ INVALID](https://github.com/ubugeeei-prod/vize) | 5.1 MB |
-| [Vize compileSfc loop (render + CSS, 1T) vdom-prod ⚠ INVALID](https://github.com/ubugeeei-prod/vize) | 7.6 MB |
-| [Vize compileSfcBatchWithResults (render + CSS, Rayon global pool) vapor-prod ⚠ INVALID](https://github.com/ubugeeei-prod/vize) | 20.4 MB |
-| [Vize compileSfcBatchWithResults (render + CSS, Rayon global pool) vdom-prod ⚠ INVALID](https://github.com/ubugeeei-prod/vize) | 21.6 MB |
-| [Verter compileMany + processStyle (render + CSS) vdom-prod ⚠ INVALID](https://github.com/pikax/verter) | 68.6 MB |
-| [Verter compileMany + processStyle (render + CSS) vapor-prod ⚠ INVALID](https://github.com/pikax/verter) | 68.7 MB |
-| [Vue compiler-sfc 3.6 reference (render + CSS, 1T) vapor-prod ⚠ INVALID](https://github.com/vuejs/core) | 114.7 MB |
-<!-- COMPILER_RESULTS_END -->
-
-
-
-#### Ubuntu/Linux · bench
-
-<!-- source: bench-Linux-200-bench.md -->
+JSX compile (vue-jsx-vapor vs Babel) is ranked per codegen target on the [Compiler page](docs/compiler.md).
 
 ### Typecheck
 
-Files: **200** · Bytes: **285,701**
+> 📄 **[Full results →](docs/typecheck.md)** — every table, per-row notes, raw runs, validation plants and the isolated memory probe.
 
-| Tool                                                                                        | Version                                                                                                                        |
-| ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| [vize](https://github.com/ubugeeei-prod/vize)                                               | [0.350.2](https://www.npmjs.com/package/vize/v/0.350.2) · 2026-08-19                                                           |
-| [vue-tsc](https://github.com/vuejs/language-tools)                                          | [3.3.10](https://www.npmjs.com/package/vue-tsc/v/3.3.10) · 2026-08-15                                                          |
-| [typescript-native-bridge (TNB)](https://github.com/johnsoncodehk/typescript-native-bridge) | [6.0.3-bridge.13.tsgo.7.0.2](https://www.npmjs.com/package/typescript-native-bridge/v/6.0.3-bridge.13.tsgo.7.0.2) · 2026-08-13 |
-| [verter-tsc](https://github.com/pikax/verter)                                               | [0.0.1-beta.3](https://www.npmjs.com/package/verter-tsc/v/0.0.1-beta.3) · 2026-07-27                                           |
-| [@golar/vue](https://github.com/auvred/golar)                                               | [0.1.10](https://www.npmjs.com/package/@golar/vue/v/0.1.10) · 2026-07-19                                                       |
-| [golar](https://github.com/auvred/golar)                                                    | [0.1.10](https://www.npmjs.com/package/golar/v/0.1.10) · 2026-07-19                                                            |
-| [typescript](https://github.com/microsoft/TypeScript)                                       | [6.0.3](https://www.npmjs.com/package/typescript/v/6.0.3) · 2026-04-16                                                         |
+> ⚠ **Local run — not the published Linux CI series** (win32/x64 · **dirty worktree** — not attributable to a single commit). Shown because it is the newest data for this group; the next clean Linux Benchmark publish replaces it.
 
-![Typecheck](docs/results/charts/bench-linux-200-bench-md-typecheck.svg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/charts/readme-typecheck-typecheck-dark.svg">
+  <img alt="Typecheck" src="docs/charts/readme-typecheck-typecheck.svg">
+</picture>
 
-| Tool                                                                     | **Median** | vs fastest |
-| ------------------------------------------------------------------------ | ---------: | ---------: |
-| [verter-tsc](https://github.com/pikax/verter)                            | **1.24 s** |      1.00x |
-| [Vize](https://github.com/ubugeeei-prod/vize)                            | **1.61 s** |      1.30x |
-| [Golar typecheck](https://github.com/auvred/golar)                       | **1.70 s** |      1.37x |
-| [Golar (lint+check)](https://github.com/auvred/golar)                    | **1.70 s** |      1.37x |
-| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **2.46 s** |      1.99x |
-| [vue-tsc (JS)](https://github.com/vuejs/language-tools)                  | **5.18 s** |      4.19x |
+| Tool | **Median** | vs fastest | Peak RSS |
+| --- | ---: | ---: | ---: |
+| [Golar (lint+check)](https://github.com/auvred/golar) | **1.16 s** | 1.00x | – |
+| [Golar typecheck](https://github.com/auvred/golar) | **1.17 s** | 1.01x | 384.0 MB |
+| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **1.60 s** | 1.39x | – |
+| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | **3.28 s** | 2.84x | 353.9 MB |
+| [verter-tsc](https://github.com/pikax/verter) | **3.74 s** | 3.23x | 216.5 MB |
+| [Vize](https://github.com/ubugeeei-prod/vize) | **6.29 s** | 5.44x | 211.6 MB |
 
-#### Peak RSS
+> Errors, skips and per-row notes: [full results](docs/typecheck.md).
 
-> Isolated from timing. Full probe (min/max/avg, CPU): [MEMORY.md](MEMORY.md).
+**Correctness (plant suite, one tsconfig):**
 
-![typecheck](docs/results/charts/memory-linux-100-md-resource-probe-results-memory-allocations-cpu-typecheck.svg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/charts/typecheck-all-wall-dark.svg">
+  <img alt="All plants · wall (one tsconfig)" src="docs/charts/typecheck-all-wall.svg">
+</picture>
 
-| Tool                                                | **Peak RSS** |
-| --------------------------------------------------- | -----------: |
-| [Vize check](https://github.com/ubugeeei-prod/vize) |     211.5 MB |
-| [verter-tsc](https://github.com/pikax/verter)       |     214.8 MB |
-| [Golar typecheck](https://github.com/auvred/golar)  |     382.6 MB |
-| [vue-tsc](https://github.com/vuejs/language-tools)  |     353.8 MB |
+| Tool | **Median** | Avg | vs fastest | Peak RSS |
+| --- | ---: | ---: | ---: | ---: |
+| golar | **687 ms** | 675 ms | 1.00x | **335.5 MB** |
+| vize | **1.11 s** | 1.09 s | 1.61x | 82.5 + 364.1 = **446.6 MB** |
+| vue-tsc | **1.98 s** | 1.99 s | 2.89x | **345.8 MB** |
+| verter-tsc | **2.66 s** | 2.66 s | 3.86x | 353.5 + 445.5 = **799.0 MB** |
+
+Peak RSS is the separate memory pass, split `tool + tsgo/tsc = total` when the checker spawns a TypeScript engine; in-process engines cannot be split.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/charts/typecheck-all-pass-dark.svg">
+  <img alt="All plants · pass rate (one tsconfig)" src="docs/charts/typecheck-all-pass.svg">
+</picture>
+
+| Tool | **Pass rate** | pass / plants |
+| --- | ---: | ---: |
+| vue-tsc | **93%** | 139 / 150 |
+| golar | **91%** | 137 / 150 |
+| verter-tsc | **83%** | 125 / 150 |
+| vize | **49%** | 73 / 150 |
+
+An unclaimed capability is a **gap and counts as a fail** — every tool is scored over the same full plant set. Skip is reserved for a missing binary/engine.
 
 ### Format
 
-Files: **200** · Bytes: **285,701**
+> 📄 **[Full results →](docs/format.md)** — every table, per-row notes, raw runs, validation plants and the isolated memory probe.
 
-| Tool                                               | Version                                                                    |
-| -------------------------------------------------- | -------------------------------------------------------------------------- |
-| [vize](https://github.com/ubugeeei-prod/vize)      | [0.350.2](https://www.npmjs.com/package/vize/v/0.350.2) · 2026-08-19       |
-| [oxfmt](https://github.com/oxc-project/oxc)        | [0.64.0](https://www.npmjs.com/package/oxfmt/v/0.64.0) · 2026-08-18        |
-| [@biomejs/biome](https://github.com/biomejs/biome) | [2.5.9](https://www.npmjs.com/package/@biomejs/biome/v/2.5.9) · 2026-08-17 |
-| [prettier](https://github.com/prettier/prettier)   | [3.9.6](https://www.npmjs.com/package/prettier/v/3.9.6) · 2026-07-21       |
+> ⚠ **Local run — not the published Linux CI series** (win32/x64 · **dirty worktree** — not attributable to a single commit). Shown because it is the newest data for this group; the next clean Linux Benchmark publish replaces it.
 
-![Format](docs/results/charts/bench-linux-200-bench-md-format.svg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/charts/readme-format-format-dark.svg">
+  <img alt="Format" src="docs/charts/readme-format-format.svg">
+</picture>
 
-| Tool                                               |   **Median** | vs fastest |
-| -------------------------------------------------- | -----------: | ---------: |
-| [Vize](https://github.com/ubugeeei-prod/vize)      | **127.6 ms** |      1.00x |
-| [Oxfmt](https://github.com/oxc-project/oxc)        |   **3.27 s** |     25.66x |
-| [Prettier](https://github.com/prettier/prettier)   |   **3.78 s** |     29.60x |
-| [Biome format](https://github.com/biomejs/biome) ⚠ |   (116.3 ms) | not ranked |
+| Tool | **Median** | vs fastest | Peak RSS |
+| --- | ---: | ---: | ---: |
+| [Vize](https://github.com/ubugeeei-prod/vize) | **356.0 ms** | 1.00x | 68.1 MB |
+| [Oxfmt](https://github.com/oxc-project/oxc) | **1.48 s** | 4.15x | 689.9 MB |
+| [Prettier](https://github.com/prettier/prettier) | **2.28 s** | 6.41x | 195.6 MB |
+| [Biome format](https://github.com/biomejs/biome) ⚠ | (229.8 ms) | not ranked | (97.7 MB) |
 
-#### Peak RSS
-
-> Isolated from timing. Full probe (min/max/avg, CPU): [MEMORY.md](MEMORY.md).
-
-![format](docs/results/charts/memory-linux-100-md-resource-probe-results-memory-allocations-cpu-format.svg)
-
-| Tool                                              | **Peak RSS** |
-| ------------------------------------------------- | -----------: |
-| [Vize fmt](https://github.com/ubugeeei-prod/vize) |      68.0 MB |
-| [Biome format](https://github.com/biomejs/biome)  |      95.8 MB |
-| [Prettier](https://github.com/prettier/prettier)  |     186.2 MB |
-| [Oxfmt](https://github.com/oxc-project/oxc)       |     685.3 MB |
+> ⚠ rows failed a validation gate (time bracketed, unranked); errors, skips and per-row notes: [full results](docs/format.md).
 
 ### Lint
 
-Files: **200** · Bytes: **285,701**
+> 📄 **[Full results →](docs/lint.md)** — every table, per-row notes, raw runs, validation plants and the isolated memory probe.
 
-#### Peak RSS
+> ⚠ **Local run — not the published Linux CI series** (win32/x64 · **dirty worktree** — not attributable to a single commit). Shown because it is the newest data for this group; the next clean Linux Benchmark publish replaces it.
 
-> Isolated from timing. Full probe (min/max/avg, CPU): [MEMORY.md](MEMORY.md).
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/charts/readme-lint-lint-vue-sfc-lint-fresh-cli-process-dark.svg">
+  <img alt="Lint — Vue SFC lint — fresh CLI process" src="docs/charts/readme-lint-lint-vue-sfc-lint-fresh-cli-process.svg">
+</picture>
 
-![lint](docs/results/charts/memory-linux-100-md-resource-probe-results-memory-allocations-cpu-lint.svg)
+| Tool | **Median** | vs fastest | Peak RSS |
+| --- | ---: | ---: | ---: |
+| [eslint-plugin-vue (CLI)](https://github.com/vuejs/eslint-plugin-vue) | **1.94 s** | 1.00x | – |
+| [Vize lint (1T)](https://github.com/ubugeeei-prod/vize) ⚠ | (162.8 ms) | not ranked | – |
+| [Vize lint (default threads)](https://github.com/ubugeeei-prod/vize) ⚠ | (134.3 ms) | not ranked | (68.5 MB) |
+| [Biome lint (1T)](https://github.com/biomejs/biome) ⚠ | (376.9 ms) | not ranked | – |
+| [Biome lint (default threads)](https://github.com/biomejs/biome) ⚠ | (227.1 ms) | not ranked | (104.7 MB) |
+| [Oxlint (1T)](https://github.com/oxc-project/oxc) ⚠ | (128.7 ms) | not ranked | – |
+| [Oxlint (default threads)](https://github.com/oxc-project/oxc) ⚠ | (124.9 ms) | not ranked | (99.4 MB) |
 
-| Tool                                                                  | **Peak RSS** |
-| --------------------------------------------------------------------- | -----------: |
-| [Verter host lint](https://github.com/pikax/verter)                   |      31.6 MB |
-| [Vize lint](https://github.com/ubugeeei-prod/vize)                    |      68.5 MB |
-| [Oxlint (Node host + NAPI addon)](https://github.com/oxc-project/oxc) |      99.3 MB |
-| [Biome lint](https://github.com/biomejs/biome)                        |     103.2 MB |
-| [eslint-plugin-vue (1T)](https://github.com/vuejs/eslint-plugin-vue)  |     213.3 MB |
+> ⚠ rows failed a validation gate (time bracketed, unranked); errors, skips and per-row notes: [full results](docs/lint.md).
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/charts/readme-lint-lint-vue-sfc-lint-in-process-apis-dark.svg">
+  <img alt="Lint — Vue SFC lint — in-process APIs" src="docs/charts/readme-lint-lint-vue-sfc-lint-in-process-apis.svg">
+</picture>
+
+| Tool | **Median** | vs fastest | Peak RSS |
+| --- | ---: | ---: | ---: |
+| [eslint-plugin-vue (1T)](https://github.com/vuejs/eslint-plugin-vue) | **1.22 s** | 1.00x | 213.8 MB |
+| [eslint-plugin-vue (32 workers)](https://github.com/vuejs/eslint-plugin-vue) | **5.53 s** | 4.53x | – |
+| [Verter host lint](https://github.com/pikax/verter) ⚠ | (163.5 ms) | not ranked | (31.7 MB) |
+
+> ⚠ rows failed a validation gate (time bracketed, unranked); errors, skips and per-row notes: [full results](docs/lint.md).
 
 ### Component-meta
 
-Files: **100** · Bytes: **142,771**
+> 📄 **[Full results →](docs/component-meta.md)** — every table, per-row notes, raw runs, validation plants and the isolated memory probe.
 
-| Tool                                                          | Version                                                                                          |
-| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| [vize](https://github.com/ubugeeei-prod/vize)                 | [0.350.2](https://www.npmjs.com/package/vize/v/0.350.2) · 2026-08-19                             |
-| [vue-component-meta](https://github.com/vuejs/language-tools) | [3.3.10](https://www.npmjs.com/package/vue-component-meta/v/3.3.10) · 2026-08-15                 |
-| [@verter/component-meta](https://github.com/pikax/verter)     | [0.0.1-beta.3](https://www.npmjs.com/package/@verter/component-meta/v/0.0.1-beta.3) · 2026-07-27 |
+> ⚠ **Local run — not the published Linux CI series** (win32/x64 · **dirty worktree** — not attributable to a single commit). Shown because it is the newest data for this group; the next clean Linux Benchmark publish replaces it.
 
-![Component-meta](docs/results/charts/bench-linux-200-bench-md-component-meta.svg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/charts/readme-component-meta-component-meta-component-public-api-metadata-dark.svg">
+  <img alt="Component-meta — Component public-API metadata" src="docs/charts/readme-component-meta-component-meta-component-public-api-metadata.svg">
+</picture>
 
-| Tool                                                           |   **Median** | vs fastest |
-| -------------------------------------------------------------- | -----------: | ---------: |
-| [@verter/component-meta](https://github.com/pikax/verter)      | **469.1 ms** |      1.00x |
-| [vue-component-meta](https://github.com/vuejs/language-tools)  |   **1.32 s** |      2.82x |
-| [Vize component-meta](https://github.com/ubugeeei-prod/vize) ⏭ |      skipped |          – |
+| Tool | **Median** | vs fastest | Peak RSS |
+| --- | ---: | ---: | ---: |
+| [vue-component-meta](https://github.com/vuejs/language-tools) | **648.4 ms** | 1.00x | 245.6 MB |
+| [@verter/component-meta](https://github.com/pikax/verter) | **694.2 ms** | 1.07x | 33.5 MB |
 
-#### Peak RSS
+> Errors, skips and per-row notes: [full results](docs/component-meta.md).
 
-> Isolated from timing. Full probe (min/max/avg, CPU): [MEMORY.md](MEMORY.md).
+### LSP and IDE operations
 
-![component-meta](docs/results/charts/memory-linux-100-md-resource-probe-results-memory-allocations-cpu-component-meta.svg)
+> 📄 **[Full results →](docs/lsp.md)** — every table, per-row notes, raw runs, validation plants and the isolated memory probe.
 
-| Tool                                                          | **Peak RSS** |
-| ------------------------------------------------------------- | -----------: |
-| [Verter ComponentMetaHost](https://github.com/pikax/verter)   |      33.5 MB |
-| [vue-component-meta](https://github.com/vuejs/language-tools) |     243.8 MB |
+> ⚠ **Local run — not the published Linux CI series** (win32/x64 · **dirty worktree** — not attributable to a single commit). Shown because it is the newest data for this group; the next clean Linux Benchmark publish replaces it.
 
-### LSP (editor language server)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/charts/readme-lsp-lsp-dark.svg">
+  <img alt="LSP (editor language server)" src="docs/charts/readme-lsp-lsp.svg">
+</picture>
 
-Files: **1** · Bytes: **745**
+| Tool | **Median** | vs fastest | Peak RSS |
+| --- | ---: | ---: | ---: |
+| [Verter](https://github.com/pikax/verter) | **409.4 ms** | 1.00x | 263.7 MB |
+| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **465.5 ms** | 1.14x | – |
+| [Volar (JS)](https://github.com/vuejs/language-tools) | **771.3 ms** | 1.88x | 140.2 MB |
+| [Vize](https://github.com/ubugeeei-prod/vize) ⚠ | (75.3 ms) | not ranked | (280.0 MB) |
 
-| Tool                                                                                                   | Version                                                                                                                        |
-| ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
-| [vize](https://github.com/ubugeeei-prod/vize)                                                          | [0.350.2](https://www.npmjs.com/package/vize/v/0.350.2) · 2026-08-19                                                           |
-| [@vue/language-server](https://github.com/vuejs/language-tools)                                        | [3.3.10](https://www.npmjs.com/package/@vue/language-server/v/3.3.10) · 2026-08-15                                             |
-| [@vue/typescript-plugin](https://github.com/vuejs/language-tools)                                      | [3.3.10](https://www.npmjs.com/package/@vue/typescript-plugin/v/3.3.10) · 2026-08-15                                           |
-| [typescript-native-bridge (TNB)](https://github.com/johnsoncodehk/typescript-native-bridge)            | [6.0.3-bridge.13.tsgo.7.0.2](https://www.npmjs.com/package/typescript-native-bridge/v/6.0.3-bridge.13.tsgo.7.0.2) · 2026-08-13 |
-| [verter-lsp](https://github.com/pikax/verter)                                                          | [0.0.1-beta.3](https://www.npmjs.com/package/verter-lsp/v/0.0.1-beta.3) · 2026-07-27                                           |
-| [typescript-language-server](https://github.com/typescript-language-server/typescript-language-server) | [5.3.0](https://www.npmjs.com/package/typescript-language-server/v/5.3.0) · 2026-05-21                                         |
+> ⚠ rows failed a validation gate (time bracketed, unranked); errors, skips and per-row notes: [full results](docs/lsp.md).
 
-![LSP (editor language server)](docs/results/charts/bench-linux-200-bench-md-lsp-editor-language-server.svg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/charts/readme-lsp-typing-loop-dark.svg">
+  <img alt="IDE typing loop (edit → diagnostic + hover + completion)" src="docs/charts/readme-lsp-typing-loop.svg">
+</picture>
 
-| Tool                                                                   |   **Median** | vs fastest |
-| ---------------------------------------------------------------------- | -----------: | ---------: |
-| [Verter](https://github.com/pikax/verter)                              | **303.1 ms** |      1.00x |
-| [Vize](https://github.com/ubugeeei-prod/vize)                          | **355.7 ms** |      1.17x |
-| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **459.9 ms** |      1.52x |
-| [Volar (JS)](https://github.com/vuejs/language-tools)                  |   **1.22 s** |      4.04x |
+| Tool | **Median** | vs fastest |
+| --- | ---: | ---: |
+| [Volar (JS)](https://github.com/vuejs/language-tools) | **448.1 ms** | 1.00x |
+| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **466.5 ms** | 1.04x |
+| [Vize](https://github.com/ubugeeei-prod/vize) ⚠ | (4.01 s) | not ranked |
+| [Verter](https://github.com/pikax/verter) ⚠ | (941.5 ms) | not ranked |
 
-#### Peak RSS
+> ⚠ rows failed a validation gate (time bracketed, unranked); errors, skips and per-row notes: [full results](docs/lsp.md).
 
-> Isolated from timing. Full probe (min/max/avg, CPU): [MEMORY.md](MEMORY.md).
-
-![lsp](docs/results/charts/memory-linux-100-md-resource-probe-results-memory-allocations-cpu-lsp.svg)
-
-| Tool                                                                             | **Peak RSS** |
-| -------------------------------------------------------------------------------- | -----------: |
-| [LSP verter (server process, npm 0.0.1-beta.3)](https://github.com/pikax/verter) |     223.1 MB |
-| [LSP volar (server process)](https://github.com/vuejs/language-tools)            |     140.2 MB |
-| [LSP vize (server process, Node shim)](https://github.com/ubugeeei-prod/vize)    |     276.1 MB |
+Per-operation IDE latency (initialize, completion, hover, navigation, edit loop — Cold and Warm) is ranked on the [LSP page](docs/lsp.md).
 
 <!-- BENCHMARK_RESULTS_END -->
 
-<!-- TYPECHECK_CONFIRM_START -->
-
-## Typecheck confirmation
-
-> 📄 **[Full matrix →](docs/typecheck.md)** — plants, documented gaps, per-plant time/memory. **142** plants. Generated 2026-08-19T18:33:13.434Z.
-
-### All plants (one tsconfig)
-
-One spawn per tool over every plant. Pass rate is a **percentage** of scored plants.
-
-![All plants wall](docs/results/charts/typecheck-all-wall.svg)
-
-| Tool       | **Median** |    Avg | vs fastest |
-| ---------- | ---------: | -----: | ---------: |
-| vize       | **603 ms** | 602 ms |      1.00x |
-| verter-tsc | **755 ms** | 756 ms |      1.25x |
-| golar      | **915 ms** | 913 ms |      1.52x |
-| vue-tsc    | **3.18 s** | 3.17 s |      5.28x |
-
-![All plants peak RSS](docs/results/charts/typecheck-all-rss.svg)
-
-| Tool       |     Tool | tsgo / tsc |    **Total** |
-| ---------- | -------: | ---------: | -----------: |
-| verter-tsc |  81.6 MB |   141.9 MB | **223.5 MB** |
-| vue-tsc    | 340.1 MB |          — | **340.1 MB** |
-| golar      | 353.5 MB |          — | **353.5 MB** |
-| vize       |  72.3 MB |   319.6 MB | **392.0 MB** |
-
-Engine is a **child** `tsgo` / native `tsc` / `tsserver`. vue-tsc, golar, and vize host the checker **in-process** — Peak RSS is that process's high-water mark (Tool = Total, engine —).
-
-![All plants pass rate](docs/results/charts/typecheck-all-pass.svg)
-
-| Tool       | **Pass rate** | pass / scored | skipped |
-| ---------- | ------------: | ------------: | ------: |
-| vue-tsc    |       **84%** |     119 / 142 |       0 |
-| golar      |       **82%** |     117 / 142 |       0 |
-| verter-tsc |       **70%** |     100 / 142 |       0 |
-| vize       |       **52%** |      71 / 136 |       6 |
-
-**vize** scored 136 of 142 (6 skipped). Skips are capability gaps, not fails — Vize does not claim `strict-component-attrs` (undeclared component attrs under `strictTemplates`).
-
-<!-- TYPECHECK_CONFIRM_END -->
-
-## IDE operation results
-
-Per-operation editor benchmarks from the `ide` job (`scripts/ide-bench.mjs`). Ranked **per operation**, never pooled — `didOpen→diagnostics` and `foldingRange` differ by orders of magnitude and answer unrelated questions. Not comparable to the timing tables above: different job, different load profile.
-
-Servers here are Volar, **Volar on the TNB/tsgo tsdk**, Vize and Verter. Three caveats apply to these tables specifically:
-
-- **`Volar (TNB / tsgo tsdk)` errors resolving an auto-import completion** — `Debug Failure. False expression. at getCompletionEntryCodeActionsAndSourceDisplay`. Stock Volar resolves the same item. [Details](docs/methodology.md#caveat-the-tnb-engine-swap-fails-an-ide-completion-resolve-operation).
-- **Vize may answer with its tsgo backend absent**, with no error in the LSP traffic. [Details](docs/methodology.md#caveat-vizes-type-checking-backend-sometimes-never-starts-and-the-row-still-answers).
-- **Both Volar rows are two processes**, charged the slower half on every operation; Vize and Verter are one. [Details](docs/methodology.md#caveat-volars-lsp-memory-row-is-not-the-whole-of-volar-but-the-lsp-timing-row-is).
-
-<!-- IDE_RESULTS_START -->
-
-> Auto-updated 2026-08-19 from the **Benchmark** workflow (`ide` job — per-operation editor benchmarks).
-> Ranked **per operation**, never pooled: `didOpen→diagnostics` and `foldingRange` answer unrelated questions.
-> Same-VM rule holds within the job; these numbers are not comparable to the timing tables above.
-> **⚠ unranked** is a noise or work gate, not “the official tool is unofficial”. A series with CV > 50% is too noisy to rank.
-> Each chart row combines **Warm** (solid, repeated request) and **Cold** (pale, first request) in one range bar. The segment boundary marks the faster value and the full endpoint marks the slower value; the values are not additive. Ranking uses **Cold**; vs-fastest-cold sits next to it.
-
-> 📄 **[Full details →](docs/results/ide-Linux.md)** — methodology, per-row notes and raw runs (82 collapsed block(s) moved out of this page).
-> IDE scale: [full report](docs/results/ide-scale-Linux.md).
-
-<!-- notes: notes-ide.md -->
-
-> 📖 **[How to read these tables →](docs/results/notes-ide.md)** — ranking rules, standing notes and the tools legend shared by every block in this section.
-
-#### Ubuntu/Linux · ide ops
-
-<!-- source: ide-Linux.md -->
-
-### IDE · initialize
-
-| Tool                                                                                                   | Version                                                                                                                        |
-| ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
-| [vize](https://github.com/ubugeeei-prod/vize)                                                          | [0.350.2](https://www.npmjs.com/package/vize/v/0.350.2) · 2026-08-19                                                           |
-| [@vue/language-server](https://github.com/vuejs/language-tools)                                        | [3.3.10](https://www.npmjs.com/package/@vue/language-server/v/3.3.10) · 2026-08-15                                             |
-| [@vue/typescript-plugin](https://github.com/vuejs/language-tools)                                      | [3.3.10](https://www.npmjs.com/package/@vue/typescript-plugin/v/3.3.10) · 2026-08-15                                           |
-| [typescript-native-bridge (TNB)](https://github.com/johnsoncodehk/typescript-native-bridge)            | [6.0.3-bridge.13.tsgo.7.0.2](https://www.npmjs.com/package/typescript-native-bridge/v/6.0.3-bridge.13.tsgo.7.0.2) · 2026-08-13 |
-| [verter-lsp](https://github.com/pikax/verter)                                                          | [0.0.1-beta.3](https://www.npmjs.com/package/verter-lsp/v/0.0.1-beta.3) · 2026-07-27                                           |
-| [typescript-language-server](https://github.com/typescript-language-server/typescript-language-server) | [5.3.0](https://www.npmjs.com/package/typescript-language-server/v/5.3.0) · 2026-05-21                                         |
-
-#### LSP initialize
-
-![LSP initialize](docs/results/charts/ide-linux-md-ide-initialize-lsp-initialize.svg)
-
-| Tool                                                                   |   **Median** | vs fastest |
-| ---------------------------------------------------------------------- | -----------: | ---------: |
-| [Verter](https://github.com/pikax/verter)                              |   **5.4 ms** |      1.00x |
-| [Vize](https://github.com/ubugeeei-prod/vize)                          |  **40.1 ms** |      7.46x |
-| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **541.7 ms** |    100.61x |
-| [Volar (JS)](https://github.com/vuejs/language-tools)                  | **542.4 ms** |    100.74x |
-
-### IDE · completion
-
-#### Completion: script member
-
-![Completion: script member](docs/results/charts/ide-linux-md-ide-completion-completion-script-member.svg)
-
-| Tool                                                                   |     **Cold** | vs fastest cold |    **Warm** |
-| ---------------------------------------------------------------------- | -----------: | --------------: | ----------: |
-| [Verter](https://github.com/pikax/verter)                              | **301.8 ms** |           1.00x | **32.9 ms** |
-| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **442.4 ms** |           1.47x | **20.1 ms** |
-| [Volar (JS)](https://github.com/vuejs/language-tools)                  |   **1.08 s** |           3.59x | **25.2 ms** |
-| [Vize](https://github.com/ubugeeei-prod/vize) ⚠                        |   (256.0 ms) |      not ranked |   (47.2 ms) |
-
-#### Peak RSS (process tree)
-
-![Peak RSS (process tree)](docs/results/charts/ide-linux-md-ide-completion-peak-rss-process-tree.svg)
-
-| Tool                                                                   | **Peak RSS** |
-| ---------------------------------------------------------------------- | -----------: |
-| [Verter](https://github.com/pikax/verter)                              |     304.0 MB |
-| [Vize](https://github.com/ubugeeei-prod/vize)                          |     330.5 MB |
-| [Volar (JS)](https://github.com/vuejs/language-tools)                  |     584.6 MB |
-| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) |     726.4 MB |
-
-### IDE · template interpolation
-
-#### Hover (template interpolation)
-
-![Hover (template interpolation)](docs/results/charts/ide-linux-md-ide-template-interpolation-hover-template-interpolation.svg)
-
-| Tool                                                                   |     **Cold** | vs fastest cold |    **Warm** |
-| ---------------------------------------------------------------------- | -----------: | --------------: | ----------: |
-| [Vize](https://github.com/ubugeeei-prod/vize)                          | **223.5 ms** |           1.00x | **21.4 ms** |
-| [Verter](https://github.com/pikax/verter)                              | **243.8 ms** |           1.09x |  **1.5 ms** |
-| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **485.6 ms** |           2.17x | **24.5 ms** |
-| [Volar (JS)](https://github.com/vuejs/language-tools) ⚠                |     (1.15 s) |      not ranked |  (150.7 ms) |
-
-#### Peak RSS (process tree)
-
-![Peak RSS (process tree)](docs/results/charts/ide-linux-md-ide-template-interpolation-peak-rss-process-tree.svg)
-
-| Tool                                                                   | **Peak RSS** |
-| ---------------------------------------------------------------------- | -----------: |
-| [Verter](https://github.com/pikax/verter)                              |     174.1 MB |
-| [Vize](https://github.com/ubugeeei-prod/vize)                          |     264.1 MB |
-| [Volar (JS)](https://github.com/vuejs/language-tools)                  |     523.9 MB |
-| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) |     613.3 MB |
-
-### IDE · smoke
-
-#### Hover (script setup)
-
-![Hover (script setup)](docs/results/charts/ide-linux-md-ide-smoke-hover-script-setup.svg)
-
-| Tool                                                                   |     **Cold** | vs fastest cold |     **Warm** |
-| ---------------------------------------------------------------------- | -----------: | --------------: | -----------: |
-| [Vize](https://github.com/ubugeeei-prod/vize)                          | **232.8 ms** |           1.00x |  **25.4 ms** |
-| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **480.8 ms** |           2.07x |  **18.6 ms** |
-| [Volar (JS)](https://github.com/vuejs/language-tools)                  |   **1.10 s** |           4.72x | **176.1 ms** |
-| [Verter](https://github.com/pikax/verter) ⚠                            |   (250.9 ms) |      not ranked |     (0.9 ms) |
-
-### IDE · navigation
-
-#### Definition: imported fn (script)
-
-![Definition: imported fn (script)](docs/results/charts/ide-linux-md-ide-navigation-definition-imported-fn-script.svg)
-
-| Tool                                                                   |     **Cold** | vs fastest cold |     **Warm** |
-| ---------------------------------------------------------------------- | -----------: | --------------: | -----------: |
-| [Verter](https://github.com/pikax/verter)                              |   **0.4 ms** |           1.00x |   **0.3 ms** |
-| [Vize](https://github.com/ubugeeei-prod/vize)                          | **363.4 ms** |         850.11x |   **4.5 ms** |
-| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **448.3 ms** |        1048.49x |  **17.4 ms** |
-| [Volar (JS)](https://github.com/vuejs/language-tools)                  |   **1.12 s** |        2614.81x | **170.1 ms** |
-
-#### Peak RSS (process tree)
-
-![Peak RSS (process tree)](docs/results/charts/ide-linux-md-ide-navigation-peak-rss-process-tree.svg)
-
-| Tool                                                                   | **Peak RSS** |
-| ---------------------------------------------------------------------- | -----------: |
-| [Verter](https://github.com/pikax/verter)                              |     249.6 MB |
-| [Vize](https://github.com/ubugeeei-prod/vize)                          |     384.5 MB |
-| [Volar (JS)](https://github.com/vuejs/language-tools)                  |     548.4 MB |
-| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) |     834.0 MB |
-
-### IDE · edit-loop
-
-#### Edit plants type error -> reported
-
-![Edit plants type error -> reported](docs/results/charts/ide-linux-md-ide-edit-loop-edit-plants-type-error-reported.svg)
-
-| Tool                                                                   |   **Median** | vs fastest |
-| ---------------------------------------------------------------------- | -----------: | ---------: |
-| [Vize](https://github.com/ubugeeei-prod/vize)                          |  **68.7 ms** |      1.00x |
-| [Volar (JS)](https://github.com/vuejs/language-tools)                  | **393.6 ms** |      5.73x |
-| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **455.1 ms** |      6.62x |
-| [Verter](https://github.com/pikax/verter)                              | **499.8 ms** |      7.27x |
-
-#### Peak RSS (process tree)
-
-![Peak RSS (process tree)](docs/results/charts/ide-linux-md-ide-edit-loop-peak-rss-process-tree.svg)
-
-| Tool                                                                   | **Peak RSS** |
-| ---------------------------------------------------------------------- | -----------: |
-| [Vize](https://github.com/ubugeeei-prod/vize)                          |     344.4 MB |
-| [Volar (JS)](https://github.com/vuejs/language-tools)                  |     601.3 MB |
-| [Verter](https://github.com/pikax/verter)                              |     619.5 MB |
-| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) |     705.2 MB |
-
-### IDE · Peak RSS (process tree)
-
-#### Peak RSS (process tree)
-
-![Peak RSS (process tree)](docs/results/charts/ide-linux-md-ide-peak-rss-process-tree-peak-rss-process-tree.svg)
-
-| Tool                                                                   | **Peak RSS** |
-| ---------------------------------------------------------------------- | -----------: |
-| [Verter](https://github.com/pikax/verter)                              |     236.1 MB |
-| [Vize](https://github.com/ubugeeei-prod/vize)                          |     293.0 MB |
-| [Volar (JS)](https://github.com/vuejs/language-tools)                  |     534.4 MB |
-| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) |     693.3 MB |
-
-<!-- IDE_RESULTS_END -->
-
-## Real-world project results
-
-Pinned third-party Vue checkouts, **one job per project**. Ranked within a corpus, never across — Naive UI's demo SFCs are not PrimeVue's published components. Full compile / bundle / HMR / lint tables: each project's report. The generated `fixtures/N` corpus remains the primary ranking corpus.
+## Real-world projects
 
 <!-- REAL_WORLD_RESULTS_START -->
 
-> Auto-updated 2026-08-19 from the **Benchmark (real-world)** workflow — one job per project, every surface and every tool inside it.
-> Corpora are pinned checkouts of third-party open-source Vue projects. Sources are unmodified; every table names its ref and resolved commit SHA.
-> **Rank within a corpus, never across it.** The corpora differ in size and in kind — library source, application source, and documentation demos are not the same code.
-> The generated `fixtures/N` corpus remains the primary ranking corpus; these tables exist to catch what a designed corpus cannot.
-> Landing view is the project's **own** typecheck / test / build (plugin swaps included). Harness compilation of extracted SFCs stays in the full report. Unranked tools are listed under the table with the gate that dropped them.
-> **⚠ unranked** is a gate, not a ranking of the official toolchain. A project that ships **no lockfile** at the pinned ref (Naive UI, Ant Design Vue) cannot be installed frozen, so every typecheck / test / build / lsp row on that corpus is unranked equally — including vue-tsc.
+> Auto-updated 2026-08-20 from the **Benchmark (real-world)** workflow — pinned checkouts of third-party Vue projects, each project's **own** test / build / typecheck. Ranked **within** a corpus, never across.
 
-<!-- notes: notes-real-world.md -->
+📄 **[Main numbers with charts → docs/real-world.md](docs/real-world.md)** · full per-project reports:
 
-> 📖 **[How to read these tables →](docs/results/notes-real-world.md)** — ranking rules, standing notes and the tools legend shared by every block in this section.
-
-# element-plus
-
-<!-- source: real-world-Linux-element-plus.md -->
-
-> 📄 **[Full details →](docs/results/real-world-Linux-element-plus.md)** — methodology, per-row notes and raw runs (46 collapsed block(s) moved out of this page).
-
-## Project test suite — element-plus:components
-
-Files: **162** · Bytes: **765,295**
-
-![Project test suite — element-plus:components](docs/results/charts/real-world-linux-element-plus-md-project-test-suite-element-plus-components.svg)
-
-| Tool                                              |   **Median** | vs fastest |
-| ------------------------------------------------- | -----------: | ---------: |
-| element-plus — project's own toolchain (baseline) | **160.55 s** |      1.00x |
-| element-plus — unplugin-vue                       | **162.66 s** |      1.01x |
-
-**Not ranked**
-
-- **[element-plus — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize)**: FAILED TEST-COUNT GATE — passed 2047 tests where the project's own toolchain passed 2533; failed 434 test(s) where the project's own toolchain failed 0 — a failing test is not a faster test.
-- **[element-plus — @verter/unplugin](https://github.com/pikax/verter)**: FAILED TEST-COUNT GATE — passed 527 tests where the project's own toolchain passed 2533; failed 30 test(s) where the project's own toolchain failed 0 — a failing test is not a faster test.
-
-### Peak RSS
-
-![Peak RSS](docs/results/charts/real-world-linux-element-plus-md-project-test-suite-element-plus-components-peak-rss.svg)
-
-| Tool                                                                          | **Peak RSS** |
-| ----------------------------------------------------------------------------- | -----------: |
-| [element-plus — @verter/unplugin](https://github.com/pikax/verter) ⚠          |    1365.2 MB |
-| element-plus — project's own toolchain (baseline)                             |    1629.9 MB |
-| element-plus — unplugin-vue                                                   |    1785.9 MB |
-| [element-plus — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) ⚠ |    5421.2 MB |
-
-**Not ranked**
-
-- **[element-plus — @verter/unplugin](https://github.com/pikax/verter)**: unranked
-- **[element-plus — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize)**: unranked
-
-## Project typecheck (own tsconfig) — element-plus:components
-
-Files: **162** · Bytes: **765,295**
-
-### JavaScript TypeScript engine — ranked alone
-
-![JavaScript TypeScript engine — ranked alone](docs/results/charts/real-world-linux-element-plus-md-project-typecheck-own-tsconfig-element-plus-components-javascript-typesc.svg)
-
-| Tool                                                    |  **Median** | vs fastest |
-| ------------------------------------------------------- | ----------: | ---------: |
-| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | **29.62 s** |      1.00x |
-
-### Peak RSS
-
-![Peak RSS](docs/results/charts/real-world-linux-element-plus-md-project-typecheck-own-tsconfig-element-plus-components-peak-rss.svg)
-
-| Tool                                                    | **Peak RSS** |
-| ------------------------------------------------------- | -----------: |
-| [vue-tsc (JS)](https://github.com/vuejs/language-tools) |    1916.7 MB |
-
-### Native tsgo engines — ranked together
-
-![Native tsgo engines — ranked together](docs/results/charts/real-world-linux-element-plus-md-project-typecheck-own-tsconfig-element-plus-components-native-tsgo-engin.svg)
-
-| Tool                                                                     |  **Median** | vs fastest |
-| ------------------------------------------------------------------------ | ----------: | ---------: |
-| [verter-tsc](https://github.com/pikax/verter)                            |  **4.79 s** |      1.00x |
-| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **13.34 s** |      2.79x |
-| [Vize](https://github.com/ubugeeei-prod/vize)                            | **61.13 s** |     12.77x |
-
-**Not ranked**
-
-- **[Golar typecheck](https://github.com/auvred/golar)**: skipped
-
-### Peak RSS
-
-![Peak RSS](docs/results/charts/real-world-linux-element-plus-md-project-typecheck-own-tsconfig-element-plus-components-peak-rss.svg)
-
-| Tool                                                                     | **Peak RSS** |
-| ------------------------------------------------------------------------ | -----------: |
-| [verter-tsc](https://github.com/pikax/verter)                            |     649.7 MB |
-| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) |    2552.4 MB |
-| [Vize](https://github.com/ubugeeei-prod/vize)                            |    5188.7 MB |
-
-# hoppscotch
-
-<!-- source: real-world-Linux-hoppscotch.md -->
-
-> 📄 **[Full details →](docs/results/real-world-Linux-hoppscotch.md)** — methodology, per-row notes and raw runs (46 collapsed block(s) moved out of this page).
-
-## Project test suite — hoppscotch:common
-
-Files: **293** · Bytes: **1,978,501**
-
-![Project test suite — hoppscotch:common](docs/results/charts/real-world-linux-hoppscotch-md-project-test-suite-hoppscotch-common.svg)
-
-| Tool                                                                              |  **Median** | vs fastest |
-| --------------------------------------------------------------------------------- | ----------: | ---------: |
-| @hoppscotch/common — project's own toolchain (baseline)                           | **20.20 s** |      1.00x |
-| @hoppscotch/common — unplugin-vue                                                 | **20.28 s** |      1.00x |
-| [@hoppscotch/common — @verter/unplugin](https://github.com/pikax/verter)          | **20.29 s** |      1.00x |
-| [@hoppscotch/common — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) | **20.40 s** |      1.01x |
-
-### Peak RSS
-
-![Peak RSS](docs/results/charts/real-world-linux-hoppscotch-md-project-test-suite-hoppscotch-common-peak-rss.svg)
-
-| Tool                                                                              | **Peak RSS** |
-| --------------------------------------------------------------------------------- | -----------: |
-| @hoppscotch/common — project's own toolchain (baseline)                           |     701.5 MB |
-| [@hoppscotch/common — @verter/unplugin](https://github.com/pikax/verter)          |     709.3 MB |
-| @hoppscotch/common — unplugin-vue                                                 |     710.9 MB |
-| [@hoppscotch/common — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) |     756.0 MB |
-
-## Project build (own config) — hoppscotch:common
-
-Files: **293** · Bytes: **1,978,501**
-
-![Project build (own config) — hoppscotch:common](docs/results/charts/real-world-linux-hoppscotch-md-project-build-own-config-hoppscotch-common.svg)
-
-| Tool                                                                            | **Median** | vs fastest |
-| ------------------------------------------------------------------------------- | ---------: | ---------: |
-| hoppscotch-agent — project's own toolchain (baseline)                           | **1.16 s** |      1.00x |
-| hoppscotch-agent — unplugin-vue                                                 | **1.20 s** |      1.03x |
-| [hoppscotch-agent — @verter/unplugin](https://github.com/pikax/verter)          | **1.23 s** |      1.05x |
-| [hoppscotch-agent — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) | **1.26 s** |      1.08x |
-
-### Peak RSS
-
-![Peak RSS](docs/results/charts/real-world-linux-hoppscotch-md-project-build-own-config-hoppscotch-common-peak-rss.svg)
-
-| Tool                                                                            | **Peak RSS** |
-| ------------------------------------------------------------------------------- | -----------: |
-| hoppscotch-agent — unplugin-vue                                                 |     431.0 MB |
-| hoppscotch-agent — project's own toolchain (baseline)                           |     439.2 MB |
-| [hoppscotch-agent — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) |     446.0 MB |
-| [hoppscotch-agent — @verter/unplugin](https://github.com/pikax/verter)          |     459.9 MB |
-
-## Project typecheck (own tsconfig) — hoppscotch:common
-
-Files: **293** · Bytes: **1,978,501**
-
-### JavaScript TypeScript engine — ranked alone
-
-![JavaScript TypeScript engine — ranked alone](docs/results/charts/real-world-linux-hoppscotch-md-project-typecheck-own-tsconfig-hoppscotch-common-javascript-typescript-e.svg)
-
-| Tool                                                    | **Median** | vs fastest |
-| ------------------------------------------------------- | ---------: | ---------: |
-| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | **5.26 s** |      1.00x |
-
-### Peak RSS
-
-![Peak RSS](docs/results/charts/real-world-linux-hoppscotch-md-project-typecheck-own-tsconfig-hoppscotch-common-peak-rss.svg)
-
-| Tool                                                    | **Peak RSS** |
-| ------------------------------------------------------- | -----------: |
-| [vue-tsc (JS)](https://github.com/vuejs/language-tools) |     628.3 MB |
-
-### Native tsgo engines — ranked together
-
-![Native tsgo engines — ranked together](docs/results/charts/real-world-linux-hoppscotch-md-project-typecheck-own-tsconfig-hoppscotch-common-native-tsgo-engines-ran.svg)
-
-| Tool                                          | **Median** | vs fastest |
-| --------------------------------------------- | ---------: | ---------: |
-| [verter-tsc](https://github.com/pikax/verter) | **1.28 s** |      1.00x |
-| [Vize](https://github.com/ubugeeei-prod/vize) | **2.23 s** |      1.75x |
-
-**Not ranked**
-
-- **[vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge)**: FAILED PROGRAM-CONSTRUCTION GATE — at least one measured run exited 2 reporting 1 diagnostic(s) across 1 file(s).
-- **[Golar typecheck](https://github.com/auvred/golar)**: skipped
-
-### Peak RSS
-
-![Peak RSS](docs/results/charts/real-world-linux-hoppscotch-md-project-typecheck-own-tsconfig-hoppscotch-common-peak-rss.svg)
-
-| Tool                                                                       | **Peak RSS** |
-| -------------------------------------------------------------------------- | -----------: |
-| [verter-tsc](https://github.com/pikax/verter)                              |     352.4 MB |
-| [Vize](https://github.com/ubugeeei-prod/vize)                              |     431.6 MB |
-| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) ⚠ |     465.6 MB |
-
-**Not ranked**
-
-- **[vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge)**: unranked
-
-# naive-ui
-
-<!-- source: real-world-Linux-naive-ui.md -->
-
-> 📄 **[Full details →](docs/results/real-world-Linux-naive-ui.md)** — methodology, per-row notes and raw runs (45 collapsed block(s) moved out of this page).
-
-## Project test suite — naive-ui:demos
-
-Files: **1,682** · Bytes: **1,751,750**
-
-**Not ranked** — NO LOCKFILE: naive-ui ships no lockfile at the pinned ref, so its install cannot be frozen and the dependency set is whatever resolved when fetch ran.
-
-### Peak RSS
-
-![Peak RSS](docs/results/charts/real-world-linux-naive-ui-md-project-test-suite-naive-ui-demos-peak-rss.svg)
-
-| Tool                                                                      | **Peak RSS** |
-| ------------------------------------------------------------------------- | -----------: |
-| [naive-ui — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) ⚠ |    1537.3 MB |
-| [naive-ui — @verter/unplugin](https://github.com/pikax/verter) ⚠          |    1540.5 MB |
-| naive-ui — project's own toolchain (baseline) ⚠                           |    1583.2 MB |
-| naive-ui — unplugin-vue ⚠                                                 |    1661.0 MB |
-
-**Not ranked**
-
-- **[naive-ui — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize)**: unranked
-- **[naive-ui — @verter/unplugin](https://github.com/pikax/verter)**: unranked
-- **naive-ui — project's own toolchain (baseline)**: unranked
-- **naive-ui — unplugin-vue**: unranked
-
-## Project typecheck (own tsconfig) — naive-ui:demos
-
-Files: **1,682** · Bytes: **1,751,750**
-
-### JavaScript TypeScript engine — ranked alone
-
-**Not ranked** — NO LOCKFILE: naive-ui ships no lockfile at the pinned ref, so its install cannot be frozen and the dependency set is whatever resolved when fetch ran.
-
-### Peak RSS
-
-![Peak RSS](docs/results/charts/real-world-linux-naive-ui-md-project-typecheck-own-tsconfig-naive-ui-demos-peak-rss.svg)
-
-| Tool                                                      | **Peak RSS** |
-| --------------------------------------------------------- | -----------: |
-| [vue-tsc (JS)](https://github.com/vuejs/language-tools) ⚠ |    2487.2 MB |
-
-**Not ranked**
-
-- **[vue-tsc (JS)](https://github.com/vuejs/language-tools)**: unranked
-
-### Native tsgo engines — ranked together
-
-**Not ranked**
-
-- **[vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge)**: UNRANKED — NO LOCKFILE: naive-ui ships no lockfile at the pinned ref, so its install cannot be frozen and the dependency set is whatever resolved when fetch ran.
-- **[verter-tsc](https://github.com/pikax/verter)**: UNRANKED — NO LOCKFILE: naive-ui ships no lockfile at the pinned ref, so its install cannot be frozen and the dependency set is whatever resolved when fetch ran.
-- **[Vize](https://github.com/ubugeeei-prod/vize)**: UNRANKED — NO LOCKFILE: naive-ui ships no lockfile at the pinned ref, so its install cannot be frozen and the dependency set is whatever resolved when fetch ran.
-- **[Golar typecheck](https://github.com/auvred/golar)**: skipped
-
-### Peak RSS
-
-![Peak RSS](docs/results/charts/real-world-linux-naive-ui-md-project-typecheck-own-tsconfig-naive-ui-demos-peak-rss.svg)
-
-| Tool                                                                       | **Peak RSS** |
-| -------------------------------------------------------------------------- | -----------: |
-| [verter-tsc](https://github.com/pikax/verter) ⚠                            |    1363.1 MB |
-| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) ⚠ |    2923.9 MB |
-| [Vize](https://github.com/ubugeeei-prod/vize) ⚠                            |    3167.7 MB |
-
-**Not ranked**
-
-- **[verter-tsc](https://github.com/pikax/verter)**: unranked
-- **[vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge)**: unranked
-- **[Vize](https://github.com/ubugeeei-prod/vize)**: unranked
-
-# nuxt-ui
-
-<!-- source: real-world-Linux-nuxt-ui.md -->
-
-> 📄 **[Full details →](docs/results/real-world-Linux-nuxt-ui.md)** — methodology, per-row notes and raw runs (45 collapsed block(s) moved out of this page).
-
-## Project test suite — nuxt-ui:runtime
-
-Files: **187** · Bytes: **1,014,900**
-
-**Not ranked**
-
-- **@nuxt/ui — project's own toolchain (baseline)**: errored
-- **@nuxt/ui — unplugin-vue**: errored
-- **[@nuxt/ui — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize)**: errored
-- **[@nuxt/ui — @verter/unplugin](https://github.com/pikax/verter)**: errored
-
-## Project typecheck (own tsconfig) — nuxt-ui:runtime
-
-Files: **187** · Bytes: **1,014,900**
-
-### JavaScript TypeScript engine — ranked alone
-
-![JavaScript TypeScript engine — ranked alone](docs/results/charts/real-world-linux-nuxt-ui-md-project-typecheck-own-tsconfig-nuxt-ui-runtime-javascript-typescript-eng.svg)
-
-| Tool                                                    |  **Median** | vs fastest |
-| ------------------------------------------------------- | ----------: | ---------: |
-| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | **43.09 s** |      1.00x |
-
-### Peak RSS
-
-![Peak RSS](docs/results/charts/real-world-linux-nuxt-ui-md-project-typecheck-own-tsconfig-nuxt-ui-runtime-peak-rss.svg)
-
-| Tool                                                    | **Peak RSS** |
-| ------------------------------------------------------- | -----------: |
-| [vue-tsc (JS)](https://github.com/vuejs/language-tools) |    3377.2 MB |
-
-### Native tsgo engines — ranked together
-
-![Native tsgo engines — ranked together](docs/results/charts/real-world-linux-nuxt-ui-md-project-typecheck-own-tsconfig-nuxt-ui-runtime-native-tsgo-engines-ranke.svg)
-
-| Tool                                                                     |  **Median** | vs fastest |
-| ------------------------------------------------------------------------ | ----------: | ---------: |
-| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **12.33 s** |      1.00x |
-| [Vize](https://github.com/ubugeeei-prod/vize)                            | **30.09 s** |      2.44x |
-
-**Not ranked**
-
-- **[verter-tsc](https://github.com/pikax/verter)**: FAILED PROGRAM-CONSTRUCTION GATE — at least one measured run exited 2 reporting 0 diagnostic(s) across 0 file(s).
-- **[Golar typecheck](https://github.com/auvred/golar)**: skipped
-
-### Peak RSS
-
-![Peak RSS](docs/results/charts/real-world-linux-nuxt-ui-md-project-typecheck-own-tsconfig-nuxt-ui-runtime-peak-rss.svg)
-
-| Tool                                                                     | **Peak RSS** |
-| ------------------------------------------------------------------------ | -----------: |
-| [verter-tsc](https://github.com/pikax/verter) ⚠                          |     925.5 MB |
-| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) |    4145.5 MB |
-| [Vize](https://github.com/ubugeeei-prod/vize)                            |    4468.5 MB |
-
-**Not ranked**
-
-- **[verter-tsc](https://github.com/pikax/verter)**: unranked
-
-# quasar
-
-<!-- source: real-world-Linux-quasar.md -->
-
-> 📄 **[Full details →](docs/results/real-world-Linux-quasar.md)** — methodology, per-row notes and raw runs (41 collapsed block(s) moved out of this page).
-
-## Project test suite — quasar:playground
-
-Files: **252** · Bytes: **1,565,611**
-
-![Project test suite — quasar:playground](docs/results/charts/real-world-linux-quasar-md-project-test-suite-quasar-playground.svg)
-
-| Tool                                            | **Median** | vs fastest |
-| ----------------------------------------------- | ---------: | ---------: |
-| quasar.dev — project's own toolchain (baseline) | **3.35 s** |      1.00x |
-
-**Not ranked**
-
-- **quasar.dev — unplugin-vue**: a generated config that imports the project's real config and replaces only the Vue plugin · extends vitest.config.
-- **[quasar.dev — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize)**: a generated config that imports the project's real config and replaces only the Vue plugin · extends vitest.config.
-- **[quasar.dev — @verter/unplugin](https://github.com/pikax/verter)**: a generated config that imports the project's real config and replaces only the Vue plugin · extends vitest.config.
-
-### Peak RSS
-
-![Peak RSS](docs/results/charts/real-world-linux-quasar-md-project-test-suite-quasar-playground-peak-rss.svg)
-
-| Tool                                            | **Peak RSS** |
-| ----------------------------------------------- | -----------: |
-| quasar.dev — project's own toolchain (baseline) |     455.8 MB |
-
-## Project typecheck (own tsconfig) — quasar:playground
-
-Files: **252** · Bytes: **1,565,611**
-
-### JavaScript TypeScript engine — ranked alone
-
-![JavaScript TypeScript engine — ranked alone](docs/results/charts/real-world-linux-quasar-md-project-typecheck-own-tsconfig-quasar-playground-javascript-typescript-e.svg)
-
-| Tool                                                    | **Median** | vs fastest |
-| ------------------------------------------------------- | ---------: | ---------: |
-| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | **8.55 s** |      1.00x |
-
-### Peak RSS
-
-![Peak RSS](docs/results/charts/real-world-linux-quasar-md-project-typecheck-own-tsconfig-quasar-playground-peak-rss.svg)
-
-| Tool                                                    | **Peak RSS** |
-| ------------------------------------------------------- | -----------: |
-| [vue-tsc (JS)](https://github.com/vuejs/language-tools) |     505.3 MB |
-
-### Native tsgo engines — ranked together
-
-![Native tsgo engines — ranked together](docs/results/charts/real-world-linux-quasar-md-project-typecheck-own-tsconfig-quasar-playground-native-tsgo-engines-ran.svg)
-
-| Tool                                                                     | **Median** | vs fastest |
-| ------------------------------------------------------------------------ | ---------: | ---------: |
-| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **1.90 s** |      1.00x |
-| [Vize](https://github.com/ubugeeei-prod/vize)                            | **2.36 s** |      1.24x |
-
-**Not ranked**
-
-- **[verter-tsc](https://github.com/pikax/verter)**: FAILED DIAGNOSTIC-CENSUS GATE — the baseline reported 0 diagnostics and exited 0, so a checker that agrees must also exit 0; this row exited 1 while reporting 11 diagnostic(s) against a clean reference — a non-zero exit …
-- **[Golar typecheck](https://github.com/auvred/golar)**: skipped
-
-### Peak RSS
-
-![Peak RSS](docs/results/charts/real-world-linux-quasar-md-project-typecheck-own-tsconfig-quasar-playground-peak-rss.svg)
-
-| Tool                                                                     | **Peak RSS** |
-| ------------------------------------------------------------------------ | -----------: |
-| [verter-tsc](https://github.com/pikax/verter) ⚠                          |     136.5 MB |
-| [Vize](https://github.com/ubugeeei-prod/vize)                            |     390.5 MB |
-| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) |     734.6 MB |
-
-**Not ranked**
-
-- **[verter-tsc](https://github.com/pikax/verter)**: unranked
-
-# vue-vben-admin
-
-<!-- source: real-world-Linux-vue-vben-admin.md -->
-
-> 📄 **[Full details →](docs/results/real-world-Linux-vue-vben-admin.md)** — methodology, per-row notes and raw runs (41 collapsed block(s) moved out of this page).
-
-## Project test suite — vue-vben-admin:core-ui
-
-Files: **330** · Bytes: **933,224**
-
-![Project test suite — vue-vben-admin:core-ui](docs/results/charts/real-world-linux-vue-vben-admin-md-project-test-suite-vue-vben-admin-core-ui.svg)
-
-| Tool                                                                               |  **Median** | vs fastest |
-| ---------------------------------------------------------------------------------- | ----------: | ---------: |
-| vben-admin-monorepo — project's own toolchain (baseline)                           | **10.77 s** |      1.00x |
-| vben-admin-monorepo — unplugin-vue                                                 | **11.12 s** |      1.03x |
-| [vben-admin-monorepo — @verter/unplugin](https://github.com/pikax/verter)          | **11.22 s** |      1.04x |
-| [vben-admin-monorepo — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) | **41.94 s** |      3.90x |
-
-### Peak RSS
-
-![Peak RSS](docs/results/charts/real-world-linux-vue-vben-admin-md-project-test-suite-vue-vben-admin-core-ui-peak-rss.svg)
-
-| Tool                                                                               | **Peak RSS** |
-| ---------------------------------------------------------------------------------- | -----------: |
-| [vben-admin-monorepo — @verter/unplugin](https://github.com/pikax/verter)          |     657.8 MB |
-| vben-admin-monorepo — project's own toolchain (baseline)                           |     697.8 MB |
-| vben-admin-monorepo — unplugin-vue                                                 |     708.7 MB |
-| [vben-admin-monorepo — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) |    6581.0 MB |
-
-## Project typecheck (own tsconfig) — vue-vben-admin:core-ui
-
-Files: **330** · Bytes: **933,224**
-
-### JavaScript TypeScript engine — ranked alone
-
-![JavaScript TypeScript engine — ranked alone](docs/results/charts/real-world-linux-vue-vben-admin-md-project-typecheck-own-tsconfig-vue-vben-admin-core-ui-javascript-typescr.svg)
-
-| Tool                                                    |  **Median** | vs fastest |
-| ------------------------------------------------------- | ----------: | ---------: |
-| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | **21.14 s** |      1.00x |
-
-### Peak RSS
-
-![Peak RSS](docs/results/charts/real-world-linux-vue-vben-admin-md-project-typecheck-own-tsconfig-vue-vben-admin-core-ui-peak-rss.svg)
-
-| Tool                                                    | **Peak RSS** |
-| ------------------------------------------------------- | -----------: |
-| [vue-tsc (JS)](https://github.com/vuejs/language-tools) |    1672.6 MB |
-
-### Native tsgo engines — ranked together
-
-![Native tsgo engines — ranked together](docs/results/charts/real-world-linux-vue-vben-admin-md-project-typecheck-own-tsconfig-vue-vben-admin-core-ui-native-tsgo-engine.svg)
-
-| Tool                                                                     |  **Median** | vs fastest |
-| ------------------------------------------------------------------------ | ----------: | ---------: |
-| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **10.26 s** |      1.00x |
-
-**Not ranked**
-
-- **[verter-tsc](https://github.com/pikax/verter)**: FAILED DIAGNOSTIC-CENSUS GATE — the baseline reported 0 diagnostics and exited 0, so a checker that agrees must also exit 0; this row exited 1 while reporting 156 diagnostic(s) against a clean reference — a non-zero exit…
-- **[Vize](https://github.com/ubugeeei-prod/vize)**: FAILED DIAGNOSTIC-CENSUS GATE — the baseline reported 0 diagnostics and exited 0, so a checker that agrees must also exit 0; this row exited 1 while reporting 21 diagnostic(s) against a clean reference — a non-zero exit …
-- **[Golar typecheck](https://github.com/auvred/golar)**: skipped
-
-### Peak RSS
-
-![Peak RSS](docs/results/charts/real-world-linux-vue-vben-admin-md-project-typecheck-own-tsconfig-vue-vben-admin-core-ui-peak-rss.svg)
-
-| Tool                                                                     | **Peak RSS** |
-| ------------------------------------------------------------------------ | -----------: |
-| [verter-tsc](https://github.com/pikax/verter) ⚠                          |     728.4 MB |
-| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) |    2696.7 MB |
-| [Vize](https://github.com/ubugeeei-prod/vize) ⚠                          |    3022.8 MB |
-
-**Not ranked**
-
-- **[verter-tsc](https://github.com/pikax/verter)**: unranked
-- **[Vize](https://github.com/ubugeeei-prod/vize)**: unranked
-
-# vuetify
-
-<!-- source: real-world-Linux-vuetify.md -->
-
-> 📄 **[Full details →](docs/results/real-world-Linux-vuetify.md)** — methodology, per-row notes and raw runs (45 collapsed block(s) moved out of this page).
-
-## Project test suite — vuetify:docs
-
-Files: **1,246** · Bytes: **2,032,022**
-
-![Project test suite — vuetify:docs](docs/results/charts/real-world-linux-vuetify-md-project-test-suite-vuetify-docs.svg)
-
-| Tool                                                                   |  **Median** | vs fastest |
-| ---------------------------------------------------------------------- | ----------: | ---------: |
-| vuetify — unplugin-vue                                                 | **45.05 s** |      1.00x |
-| [vuetify — @verter/unplugin](https://github.com/pikax/verter)          | **45.20 s** |      1.00x |
-| vuetify — project's own toolchain (baseline)                           | **45.27 s** |      1.00x |
-| [vuetify — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) | **46.06 s** |      1.02x |
-
-### Peak RSS
-
-![Peak RSS](docs/results/charts/real-world-linux-vuetify-md-project-test-suite-vuetify-docs-peak-rss.svg)
-
-| Tool                                                                   | **Peak RSS** |
-| ---------------------------------------------------------------------- | -----------: |
-| [vuetify — @verter/unplugin](https://github.com/pikax/verter)          |     979.6 MB |
-| vuetify — project's own toolchain (baseline)                           |     995.8 MB |
-| vuetify — unplugin-vue                                                 |    1035.9 MB |
-| [vuetify — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) |    1079.9 MB |
-
-## Project typecheck (own tsconfig) — vuetify:docs
-
-Files: **1,246** · Bytes: **2,032,022**
-
-### JavaScript TypeScript engine — ranked alone
-
-![JavaScript TypeScript engine — ranked alone](docs/results/charts/real-world-linux-vuetify-md-project-typecheck-own-tsconfig-vuetify-docs-javascript-typescript-engine.svg)
-
-| Tool                                                    |  **Median** | vs fastest |
-| ------------------------------------------------------- | ----------: | ---------: |
-| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | **31.12 s** |      1.00x |
-
-### Peak RSS
-
-![Peak RSS](docs/results/charts/real-world-linux-vuetify-md-project-typecheck-own-tsconfig-vuetify-docs-peak-rss.svg)
-
-| Tool                                                    | **Peak RSS** |
-| ------------------------------------------------------- | -----------: |
-| [vue-tsc (JS)](https://github.com/vuejs/language-tools) |    2080.2 MB |
-
-### Native tsgo engines — ranked together
-
-![Native tsgo engines — ranked together](docs/results/charts/real-world-linux-vuetify-md-project-typecheck-own-tsconfig-vuetify-docs-native-tsgo-engines-ranked-t.svg)
-
-| Tool                                                                     |  **Median** | vs fastest |
-| ------------------------------------------------------------------------ | ----------: | ---------: |
-| [verter-tsc](https://github.com/pikax/verter)                            |  **5.09 s** |      1.00x |
-| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **12.64 s** |      2.48x |
-| [Vize](https://github.com/ubugeeei-prod/vize)                            | **14.39 s** |      2.83x |
-
-**Not ranked**
-
-- **[Golar typecheck](https://github.com/auvred/golar)**: skipped
-
-### Peak RSS
-
-![Peak RSS](docs/results/charts/real-world-linux-vuetify-md-project-typecheck-own-tsconfig-vuetify-docs-peak-rss.svg)
-
-| Tool                                                                     | **Peak RSS** |
-| ------------------------------------------------------------------------ | -----------: |
-| [verter-tsc](https://github.com/pikax/verter)                            |     771.2 MB |
-| [Vize](https://github.com/ubugeeei-prod/vize)                            |    2435.0 MB |
-| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) |    2523.8 MB |
+[ant-design-vue](docs/real-world/ant-design-vue.md) · [element-plus](docs/real-world/element-plus.md) · [hoppscotch](docs/real-world/hoppscotch.md) · [naive-ui](docs/real-world/naive-ui.md) · [nuxt-ui](docs/real-world/nuxt-ui.md) · [primevue](docs/real-world/primevue.md) · [quasar](docs/real-world/quasar.md) · [vue-vben-admin](docs/real-world/vue-vben-admin.md) · [vuetify](docs/real-world/vuetify.md)
 
 <!-- REAL_WORLD_RESULTS_END -->
-
-## Memory
-
-<!-- MEMORY_SUMMARY_START -->
-
-> Auto-updated 2026-08-19 from the **Benchmark** workflow (`memory` job). Peak RSS; isolated from timing.
-> Peak RSS for compile / typecheck / format / lint / component-meta / LSP sits next to those timing tables. Full probe (every surface, min/max/avg, CPU): [MEMORY.md](MEMORY.md) · source `memory-linux-100.md`.
-
-<!-- MEMORY_SUMMARY_END -->
 
 ## Contributing
 

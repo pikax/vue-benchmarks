@@ -49,7 +49,7 @@ import { LspClient, pathToFileUri } from "../lsp-client.mjs";
 import { ensureLspWorkspace } from "../lsp-workspace.mjs";
 import { attachVolarHybridBridge } from "../tsserver-bridge.mjs";
 import { measureVariants, resolveBin, median } from "../timing.mjs";
-import { pidCpuMs, pidPeakRssBytes, pidTreeRssBytes } from "../memory.mjs";
+import { pidCpuMs, pidPeakRssBytes, pidTreeRssBreakdown } from "../memory.mjs";
 import { resolveToolEngine, withTsgoEnv } from "../tsgo.mjs";
 import { resolveTnbTsdk } from "../tnb.mjs";
 
@@ -642,10 +642,27 @@ export async function runLspSession({
   // Held by reference in the returned object. `return expr` builds the object
   // before `finally` runs, so a plain local would still be null by then —
   // mutating this shared object in `finally` is what makes the numbers arrive.
-  const resource = { serverRssMaxMb: null, serverRssAvgMb: null, serverCpuMs: null };
+  const resource = {
+    serverRssMaxMb: null,
+    serverRssAvgMb: null,
+    // Same split as the typecheck surface: a spawned tsgo child (verter/vize)
+    // or Volar's tsserver half is the ENGINE's share of the tree.
+    serverRssToolMb: null,
+    serverRssEngineMb: null,
+    serverCpuMs: null,
+  };
   const sampleRss = () => {
-    const rss = client.pid ? pidTreeRssBytes(client.pid) : null;
-    if (Number.isFinite(rss) && rss > 0) rssSamples.push(rss);
+    let total = 0;
+    let tool = 0;
+    let engine = 0;
+    for (const pid of [client.pid, hybrid?.pid]) {
+      if (!pid) continue;
+      const b = pidTreeRssBreakdown(pid);
+      total += b.totalBytes;
+      tool += b.toolBytes;
+      engine += b.engineBytes;
+    }
+    if (total > 0) rssSamples.push({ total, tool, engine });
   };
   const rssTimer = sampleResources ? setInterval(sampleRss, resourcePollMs) : null;
   if (rssTimer && typeof rssTimer.unref === "function") rssTimer.unref();
@@ -891,12 +908,15 @@ export async function runLspSession({
     if (onReadyNotification) client.off("notification", onReadyNotification);
     // Read CPU BEFORE shutdown — the counter disappears with the process.
     if (rssTimer) clearInterval(rssTimer);
+    let exactPeakBytes = null;
     if (sampleResources) {
       sampleRss();
       // Exact high-water mark where the OS exposes it, so the peak does not
-      // depend on what the poll interval happened to catch.
+      // depend on what the poll interval happened to catch. Single-pid and
+      // unsplittable — it can only raise the TOTAL; the tool/engine split
+      // comes from the peak sampled tree.
       const exact = client.pid ? pidPeakRssBytes(client.pid) : null;
-      if (Number.isFinite(exact) && exact > 0) rssSamples.push(exact);
+      if (Number.isFinite(exact) && exact > 0) exactPeakBytes = exact;
       try {
         resource.serverCpuMs = client.pid ? pidCpuMs(client.pid) : null;
       } catch {
@@ -905,8 +925,19 @@ export async function runLspSession({
     }
     if (rssSamples.length) {
       const toMb = (b) => Number((b / (1024 * 1024)).toFixed(2));
-      resource.serverRssMaxMb = toMb(Math.max(...rssSamples));
-      resource.serverRssAvgMb = toMb(rssSamples.reduce((a, b) => a + b, 0) / rssSamples.length);
+      const peak = rssSamples.reduce((a, b) => (b.total > a.total ? b : a));
+      resource.serverRssMaxMb = toMb(Math.max(peak.total, exactPeakBytes ?? 0));
+      resource.serverRssAvgMb = toMb(
+        rssSamples.reduce((a, b) => a + b.total, 0) / rssSamples.length,
+      );
+      // Split only when it sums to the published total — an exact HWM above
+      // every sampled tree total wins the number and drops the split.
+      if (peak.total >= (exactPeakBytes ?? 0)) {
+        resource.serverRssToolMb = toMb(peak.tool);
+        resource.serverRssEngineMb = peak.engine > 0 ? toMb(peak.engine) : null;
+      }
+    } else if (Number.isFinite(exactPeakBytes) && exactPeakBytes > 0) {
+      resource.serverRssMaxMb = Number((exactPeakBytes / (1024 * 1024)).toFixed(2));
     }
     await client.shutdown();
     if (hybrid) await hybrid.close();

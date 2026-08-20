@@ -1,0 +1,17 @@
+{
+  "id": "define-model-modifiers",
+  "description": "defineModel destructured as a [model, modifiers] tuple, plus a second named model declared with options, still generates the ordinary prop/event pairs. The generated modelModifiers prop is deliberately NOT pinned: vue-component-meta reports it and @verter/component-meta does not, so its presence is not a tool-neutral fact",
+  "props": [
+    { "name": "modelValue", "required": true, "typeIncludes": ["string"] },
+    {
+      "name": "page",
+      "required": false,
+      "typeIncludes": ["number"],
+      "hasDefault": true
+    }
+  ],
+  "events": [
+    { "name": "update:modelValue", "typeIncludes": ["string"] },
+    { "name": "update:page", "typeIncludes": ["number"] }
+  ]
+}

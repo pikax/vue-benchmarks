@@ -1,8 +1,12 @@
 #!/usr/bin/env node
 /**
  * Snapshot the latest CI artifacts into committed folders:
- *   results/benchmarks/   — bench, ide, memory, confirm (Linux)
- *   results/real_world/   — per-project real-world reports (Linux)
+ *   results/benchmarks/   — bench, ide, memory, confirm (Linux, JSON only)
+ *   results/real_world/   — per-project real-world results (Linux, JSON only)
+ *
+ * JSON only: the committed snapshot is the machine-readable source that
+ * `pnpm docs` renders README.md and docs/ from. Markdown artifacts remain
+ * run-local conveniences and are never committed.
  *
  * A new publish CLEARS the destination first so only the latest run remains.
  * Local Windows reports at results/*.json stay gitignored and untouched.
@@ -25,7 +29,7 @@ const SKIP_DIRS = new Set([
 function isLinuxLeaf(name) {
   if (/^(bench|ide|ide-scale|real-world)-/i.test(name) && /linux/i.test(name)) return true;
   if (/^memory-linux/i.test(name)) return true;
-  if (/^confirm\.(json|md)$/i.test(name)) return true;
+  if (/^confirm\.json$/i.test(name)) return true;
   return false;
 }
 
@@ -41,7 +45,7 @@ function listLeaves(dir, acc = []) {
     const full = join(dir, name);
     const st = statSync(full);
     if (st.isDirectory()) listLeaves(full, acc);
-    else if (/\.(md|json)$/i.test(name) && isLinuxLeaf(name)) acc.push(full);
+    else if (/\.json$/i.test(name) && isLinuxLeaf(name)) acc.push(full);
   }
   return acc;
 }

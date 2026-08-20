@@ -1,0 +1,10 @@
+{
+  "id": "attr-name-normalization",
+  "description": "Naming normalisation: a camelCase prop that shadows a kebab-case DOM attribute is reported under its declared camelCase name and the kebab spelling is not a second prop, while a kebab-declared EVENT keeps the kebab spelling it was declared with",
+  "props": [
+    { "name": "ariaLabel", "required": true, "typeIncludes": ["string"] },
+    { "name": "dataTestId", "required": false, "typeIncludes": ["string"] }
+  ],
+  "events": [{ "name": "row-select", "typeIncludes": ["number"] }],
+  "absentProps": ["aria-label", "data-test-id", "ariaLabelledby"]
+}

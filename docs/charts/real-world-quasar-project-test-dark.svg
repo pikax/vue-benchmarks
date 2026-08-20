@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="120" viewBox="0 0 760 120" role="img" aria-label="Project test suite — quasar:playground">
+  <title>Project test suite — quasar:playground (lower is better)</title>
+  <style><![CDATA[
+    text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
+  ]]></style>
+  
+  <text fill="#e6edf3" x="16" y="20" font-size="15" font-weight="600">Project test suite — quasar:playground</text>
+  <text fill="#9198a1" x="16" y="36" font-size="11">lower is better</text>
+  
+  <line x1="248" y1="48" x2="248" y2="92" stroke="#3d444d" stroke-opacity="0.55" />
+  <text fill="#9198a1" x="248" y="112" text-anchor="middle" font-size="11">0.0 ms</text>
+  <line x1="348.5" y1="48" x2="348.5" y2="92" stroke="#3d444d" stroke-opacity="0.55" />
+  <text fill="#9198a1" x="348.5" y="112" text-anchor="middle" font-size="11">838 ms</text>
+  <line x1="449" y1="48" x2="449" y2="92" stroke="#3d444d" stroke-opacity="0.55" />
+  <text fill="#9198a1" x="449" y="112" text-anchor="middle" font-size="11">1.68 s</text>
+  <line x1="549.5" y1="48" x2="549.5" y2="92" stroke="#3d444d" stroke-opacity="0.55" />
+  <text fill="#9198a1" x="549.5" y="112" text-anchor="middle" font-size="11">2.52 s</text>
+  <line x1="650" y1="48" x2="650" y2="92" stroke="#3d444d" stroke-opacity="0.55" />
+  <text fill="#9198a1" x="650" y="112" text-anchor="middle" font-size="11">3.35 s</text>
+  <text fill="#9198a1" x="16" y="77" font-size="11">1</text>
+      <text fill="#e6edf3" x="36" y="77" font-size="13">quasar.dev — project's o…</text>
+      
+      <rect x="248" y="61" width="402" height="22" rx="5" fill="#6e768166"/>
+      <rect x="248" y="61" width="402.0" height="22" rx="5" fill="#64748b"/>
+      <text fill="#ffffff" x="256" y="77" font-size="12" font-weight="600">3.35 s</text>
+</svg>

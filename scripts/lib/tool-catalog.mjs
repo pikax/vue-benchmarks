@@ -9,7 +9,8 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../..");
-const CACHE_PATH = join(rootDir, "docs", "results", "npm-times.json");
+// Gitignored scratch: publish dates are a nicety, not a published artifact.
+const CACHE_PATH = join(rootDir, "results", "npm-times.json");
 
 function pkgJson(name) {
   const direct = join(rootDir, "node_modules", ...name.split("/"), "package.json");

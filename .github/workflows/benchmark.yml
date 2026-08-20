@@ -1,7 +1,7 @@
 name: Benchmark
 
 # Full multi-pass benchmarks. MANUAL DISPATCH ONLY — this is the only workflow
-# that ever writes README.md / MEMORY.md.
+# that ever writes README.md / docs/.
 #
 # Pattern mirrors rolldown/benchmarks (measure on CI, merge artifacts into the
 # README, auto-commit with [skip ci]) with one deliberate divergence: rolldown
@@ -403,15 +403,19 @@ jobs:
 
   # ---------------------------------------------------------------------------
   # CONFIRM — typecheck correctness plants. Isolated from SPEED/MEMORY.
-  # Writes docs/typecheck.md (combined --all spawn: matrix + wall/RSS) for publish.
+  # Writes results/confirm.{json,md}; `pnpm docs` embeds the plant matrices
+  # into the group pages (docs/typecheck.md etc.) at publish time.
   # ---------------------------------------------------------------------------
   confirm:
-    name: Confirm typecheck (Linux)
+    name: Confirm plants (Linux)
     needs: build
     runs-on: ubuntu-latest
-    # --all: one spawn per tool over every plant. --runs/--warmups match the
-    # bench job (5 + 1 by default). Per-case typecheck spawns are local-only.
-    timeout-minutes: 25
+    # EVERY suite (compile, jsx-compile, lint, typecheck, component-meta, lsp,
+    # format), so each group page publishes its Validation section — not just
+    # typecheck. --all: one typecheck spawn per tool over every plant.
+    # --runs/--warmups match the bench job (5 + 1 by default). Per-case
+    # typecheck spawns are local-only.
+    timeout-minutes: 35
     defaults:
       run:
         shell: bash
@@ -423,15 +427,15 @@ jobs:
           fixtures-artifact: fixtures-bench-linux
           node-modules-cache-key: ${{ env.NM_CACHE_PREFIX }}-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', 'envs/tnb/pnpm-lock.yaml', '.node-version') }}-${{ github.sha }}
 
-      - name: Typecheck confirmation (--all)
+      - name: Plant confirmation, every suite (--all)
         env:
           RUNNER_OS: ${{ runner.os }}
         run: |
-          node tests/confirm/run.mjs --surfaces typecheck --all \
+          node tests/confirm/run.mjs --all \
             --runs "${{ env.BENCH_RUNS }}" \
             --warmups "${{ env.BENCH_WARMUPS }}"
 
-      - name: Upload typecheck confirmation
+      - name: Upload plant confirmation
         if: always()
         uses: actions/upload-artifact@v7
         with:
@@ -439,13 +443,12 @@ jobs:
           path: |
             results/confirm.json
             results/confirm.md
-            docs/typecheck.md
           if-no-files-found: warn
           retention-days: 30
 
   # ---------------------------------------------------------------------------
-  # README + MEMORY.md + docs/typecheck.md update (rolldown-style). The ONLY
-  # publishing job in the repository.
+  # README + docs/ publish (rolldown-style). The ONLY publishing job in the
+  # repository.
   #
   # Gate, explicitly and not by accident:
   #   - workflow_dispatch only. A fork PR could not obtain `contents: write`
@@ -462,7 +465,7 @@ jobs:
   # auto-commit the erasure.
   # ---------------------------------------------------------------------------
   update-readme:
-    name: Update README + MEMORY.md + typecheck.md
+    name: Publish results (README + docs/)
     needs: [bench, ide, ide-scale, memory, confirm]
     runs-on: ubuntu-latest
     # Download artifacts, run two updaters, one commit. Seconds of work.
@@ -496,28 +499,23 @@ jobs:
       - name: Snapshot latest artifacts (clears previous results/benchmarks)
         run: node scripts/publish-ci-results.mjs --from ./results-dl --scope bench
 
-      - name: Update README results section
-        run: node scripts/update-readme.mjs --dir ./results
-
-      - name: Update MEMORY.md resource probe section
-        run: node scripts/update-memory-readme.mjs --dir ./results
+      - name: Generate README blocks + docs/ from the JSON snapshot
+        run: node scripts/generate-docs.mjs
 
       # `[skip ci]` still earns its keep now that this workflow no longer runs
       # on push: the auto-commit lands on `main` and would otherwise trigger a
       # full `test.yml` run for a docs-only change.
       # EXACTLY ONE commit per publish run, and it is the only commit this repo
-      # ever makes automatically. Both updaters run first and this step commits
-      # their combined output, so a run publishes bench + ide + memory results
-      # as a single reviewable change rather than a trail of partial ones.
-      #
-      # Do not add a second commit step, and do not move this above either
-      # updater: splitting it would produce commits where README and MEMORY.md
-      # disagree about which run they came from.
+      # ever makes automatically. The generator runs first and this step
+      # commits its combined output (JSON snapshot + README + docs/), so a run
+      # publishes everything as a single reviewable change. A missing input
+      # leaves its pages untouched — a partial run never erases results it did
+      # not measure.
       #
       # The action no-ops when nothing changed, so an idempotent re-run does not
       # create an empty commit.
-      - name: Stage snapshot including deletions
-        run: git add -A results/benchmarks
+      - name: Stage snapshot and generated docs including deletions
+        run: git add -A results/benchmarks docs
 
       - name: Commit results (single commit, skip ci)
         uses: stefanzweifel/git-auto-commit-action@v7
@@ -535,8 +533,6 @@ jobs:
             fixtures: ${{ env.FIXTURE_COUNT }} SFCs · runs: ${{ env.BENCH_RUNS }} · warmups: ${{ env.BENCH_WARMUPS }}
             bench: ${{ needs.bench.result }} · ide: ${{ needs.ide.result }} · ide-scale: ${{ needs['ide-scale'].result }} · memory: ${{ needs.memory.result }} · confirm: ${{ needs.confirm.result }}
             Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          # docs/results carries the full per-artifact reports the README's
-          # summary tables link to — same commit, or the links 404.
-          # docs/typecheck.md is the full confirm matrix; docs/compiler.md is
-          # the lossless Compiler timing + validity + resource publication.
-          file_pattern: README.md MEMORY.md docs/results/*.md docs/results/charts/*.svg docs/typecheck.md docs/compiler.md results/benchmarks/*
+          # docs/ carries the per-group pages and charts the README summary
+          # links to — same commit, or the links 404.
+          file_pattern: README.md docs/*.md docs/charts/*.svg docs/real-world/*.md results/benchmarks/*

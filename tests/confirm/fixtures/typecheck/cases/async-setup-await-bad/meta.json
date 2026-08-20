@@ -1,0 +1,9 @@
+{
+  "id": "async-setup-await-bad",
+  "description": "A top-level awaited binding keeps its resolved type in the template (data.count must be rejected)",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS2339", "count", "does not exist"],
+  "mustNotMatch": ["TS1308"],
+  "expectMention": ["count"]
+}

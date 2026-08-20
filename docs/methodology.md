@@ -37,8 +37,8 @@ and self-clearing rather than permanent claims about a project.
 ### Upgrade audit rule
 
 Benchmark labels and old prose are not capability evidence. Reports are tied to
-the package versions printed in their tool table, and historical files under
-`docs/results/` remain historical even after dependencies move. After any tool
+the package versions printed in their tool table, and superseded results in
+git history remain historical even after dependencies move. After any tool
 upgrade, re-run the executable checks before carrying a limitation forward:
 
 ```bash
@@ -459,6 +459,13 @@ accordingly.
 | Verter             | `@verter/component-meta` | Published `openComponentMetaSession` + `getComponentMeta` API. The earlier native-host workaround was removed when 0.0.1-beta.3 began shipping its `dist/` entry points. |
 | Vize               | —                        | No dedicated public component-meta API on `vize` / `@vizejs/native`; row is `skipped` (declaration emit is a different job).                                             |
 
+Every available row publishes **two independent series**: a fresh-child sample
+(one new process per sample, building its checker or session for the first time
+inside the timer) and the warm median that remains the ranking metric. See
+[Component-meta's boundary is not the Compiler's](#component-metas-boundary-is-not-the-compilers)
+for what the child excludes and why this surface keeps host construction inside
+the timer.
+
 ### LSP (language servers)
 
 Harness shape: init → didOpen → hover cold/warm (same workspace, file, and position for every server).
@@ -582,11 +589,14 @@ Results: `results/confirm.md` + `results/confirm.json`. Exit code **1** on any F
 
 Fixtures live under `tests/confirm/fixtures/`. This suite is for correctness checks, not throughput ranking.
 
-## Compiler Fresh child and Warm metrics
+## Fresh child and Warm metrics
 
-The first timed row workload in a new child is a valid workload, but it is
-different from steady-state compilation. The Compiler tables publish both
-without combining them:
+Two surfaces publish both series: **Compiler** and **Component-meta**. The
+first timed row workload in a new child is a valid workload, but it is
+different from steady-state work. Those tables publish both without combining
+them. The bullets below describe the **Compiler** boundary; Component-meta
+draws it in a different place, for a stated reason — see
+[Component-meta's boundary is not the Compiler's](#component-metas-boundary-is-not-the-compilers).
 
 - **Fresh child** is the median first timed row workload across new child processes,
   one child per row and sample. Child process startup, package import, shared
@@ -644,6 +654,27 @@ pnpm bench          # default: 5 measured runs, 1 warmup
 pnpm bench:quick    # 3 runs, 1 warmup
 pnpm bench:deep     # 9 runs, 2 warmups — use when CV% is high
 ```
+
+### Component-meta's boundary is not the Compiler's
+
+Component-meta uses the same runner and the same two-series presentation, with
+one deliberate difference: **checker/session construction stays inside the
+timer**. `createChecker` builds a TypeScript program and the Verter row opens
+and evicts a pooled native engine on every iteration, and both do so inside the
+*warm* timer too — moving them out of the fresh child would have deleted the
+part of the cost the column exists to show, and compared two different
+workloads. Excluded from that child are process startup, package import, and
+project materialisation: the parent prepares the disk-backed project once and
+passes its path, so the child reads a project it did not build.
+
+Each child imports only its own row's meta package. The fresh children run
+**before** the warm pass, so the warm pass cannot be what warmed the OS page
+cache for them; the cache is still not dropped, and no wholly-cold runtime is
+claimed. The two paths are checked for adapter parity — same adapter option
+hash, same input count, same materialised member count — and a row whose fresh
+and warm passes disagree keeps both timings but is unranked, because a cold
+number produced from a different workload is a second benchmark rather than
+that row's cold reading.
 
 ### Artifact column — "fast" vs "did less"
 
@@ -1022,7 +1053,7 @@ They find things a generated corpus cannot. The first run of the bundle surface 
 | ------------------------------------------------------------------------- | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Test** (`.github/workflows/test.yml`)                                   | pull_request, `main` push    | `tests/harness/run.mjs` + `tests/confirm/run.mjs`. Install only, no fixtures. **Publishes nothing.**                                                                                                                                                                                |
 | **PR** (`.github/workflows/pr.yml`)                                       | pull_request                 | **Smoke only**: build (install + `fixtures/20`) → one throughput pass over every surface at `--runs 1 --warmups 0`. **No** `pnpm confirm` (that runs in `test.yml` on the same event — see [`pr.yml`](../.github/workflows/pr.yml) L92), **no** full bench, **no** README rewrite.  |
-| **Benchmark** (`.github/workflows/benchmark.yml`)                         | `workflow_dispatch` **only** | build → **bench** + **ide** + **ide-scale** + **memory** + **confirm** → update `README.md` + [`MEMORY.md`](../MEMORY.md) + [`docs/typecheck.md`](typecheck.md). The only workflow that commits.                                                                                    |
+| **Benchmark** (`.github/workflows/benchmark.yml`)                         | `workflow_dispatch` **only** | build → **bench** + **ide** + **ide-scale** + **memory** + **confirm** → publish `README.md` + the generated pages under `docs/` (per-group results, memory, plant matrix). The only workflow that commits.                                                                                    |
 | **Benchmark (real-world)** (`.github/workflows/benchmark-real-world.yml`) | `workflow_dispatch` **only** | Matrix of **one job per project**: clone at the pinned ref → install → `compile,format,lint,bundle,hmr,project-test,project-build,project-typecheck` for every tool on that one runner → `README.md` real-world section. `fail-fast: false`; the clone is cached on the pinned ref. |
 | **E2E VS Code** (`.github/workflows/e2e-vscode.yml`)                      | `workflow_dispatch` **only** | Heavy extension-host path (optional). No schedule.                                                                                                                                                                                                                                  |
 
@@ -1033,11 +1064,11 @@ They find things a generated corpus cannot. The first run of the bundle surface 
 Doc updates follow the [rolldown/benchmarks](https://github.com/rolldown/benchmarks) pattern:
 
 1. Measure on a single Linux runner; upload `results/*` artifacts.
-2. On a `main` dispatch, a final job downloads artifacts, runs `scripts/update-readme.mjs` and `scripts/update-memory-readme.mjs`, and **auto-commits** `README.md` + `MEMORY.md` + `docs/typecheck.md` with `[skip ci]`.
+2. On a `main` dispatch, a final job downloads artifacts, snapshots the JSON into `results/benchmarks/`, runs `scripts/generate-docs.mjs`, and **auto-commits** `README.md` + `docs/` with `[skip ci]`.
 
 A section whose artifacts are missing — because its job failed, or was not part of the run — is **left exactly as published**. It is never replaced with a "no artifacts" placeholder, so a partial run can never erase good results and commit the erasure.
 
-Published resource numbers: **[MEMORY.md](../MEMORY.md)**.
+Published resource numbers: **[docs/memory.md](memory.md)**.
 
 ## Methodology
 
@@ -1125,8 +1156,8 @@ scripts/
   bench-memory.mjs          # resource probe orchestrator
   memory-worker.mjs         # one isolated child per tool, for the probe
   bench-compile-single.mjs  # tinybench size-ladder microbench
-  update-readme.mjs         # CI merge into BENCHMARK_RESULTS / IDE_RESULTS
-  update-memory-readme.mjs  # CI merge into MEMORY.md MEMORY_RESULTS
+  publish-ci-results.mjs    # snapshot CI JSON into results/benchmarks + real_world
+  generate-docs.mjs         # README blocks + docs/ from results JSON
   e2e-vscode/               # headless extension-host runner
   lib/
     surfaces/               # compile, jsx-compile, typecheck, format, lint, meta, lsp
@@ -1148,7 +1179,7 @@ results/                    # local + CI reports — see results/README.md.
   test.yml                  # harness + confirm on PR / main push (publishes nothing)
   pr.yml                    # PR smoke: tiny throughput pass only (no confirm)
   benchmark.yml             # manual dispatch: bench + ide + ide-scale + memory
-                            #   + confirm → README / MEMORY.md / docs/typecheck.md
+                            #   + confirm → README + generated docs/
   e2e-vscode.yml            # optional VS Code E2E (manual dispatch)
 ```
 
@@ -1173,7 +1204,7 @@ Output: `results/memory-<platform>-<limit>.{json,md}`.
 
 Compiler memory is split into the same work scopes as timing. The **Raw SFC compilation** table gives Vue, Vize `compileSfcBatchWithResults`, and Verter `compileMany` identical style-free strings; Verter explicitly uses stateless runtime-render and asserts zero cache hits. The **SFC compilation with CSS** table includes the Vue reference, Vize single/batch, Verter `compileMany + processStyle`, and fervid on the same revised style-bearing sources. These classes are not visually mixed.
 
-On `main`, Linux CI copies the latest report into **[MEMORY.md](../MEMORY.md)** (committed).
+On `main`, Linux CI publishes the latest report as **[docs/memory.md](memory.md)** (committed).
 
 #### Caveat: Volar's LSP memory row is not the whole of Volar, but the LSP timing row is
 

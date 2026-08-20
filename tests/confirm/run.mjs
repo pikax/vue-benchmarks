@@ -20,8 +20,8 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { formatReport, printConsole, summarize } from "./lib/harness.mjs";
-import { collectRunner, formatTypecheckDoc } from "./lib/typecheck-doc.mjs";
-import { writeChart } from "../../scripts/lib/readme-charts.mjs";
+import { acquireRunLock, lockConflictMessage } from "./lib/run-lock.mjs";
+import { collectRunner } from "./lib/typecheck-doc.mjs";
 import { runCompileSuite } from "./suites/compile.mjs";
 import { runJsxCompileConfirmSuite } from "./suites/jsx-compile.mjs";
 import { runLintSuite } from "./suites/lint.mjs";
@@ -174,6 +174,17 @@ async function main() {
   /** @type {import('./lib/harness.mjs').createSuite extends Function ? any : never[]} */
   const all = [];
 
+  // Suites rebuild fixed scratch trees under work/ (rmSync + recopy), so a
+  // second concurrent run corrupts the first's scoring instead of crashing it.
+  // Fail fast; `exit` also fires on process.exit() so the lock always clears.
+  const lockPath = join(rootDir, "work", "confirm.lock");
+  const lock = acquireRunLock(lockPath);
+  if (!lock.ok) {
+    console.error(lockConflictMessage(lockPath, lock.holder));
+    process.exit(2);
+  }
+  process.on("exit", lock.release);
+
   console.log("Confirmation suite — correctness checks (not benchmarks)\n");
 
   if (surfaces.includes("compile")) {
@@ -243,18 +254,9 @@ async function main() {
 
   const typecheckRows = all.filter((r) => r.suite === "typecheck" || r.suite === "typecheck-all");
   if (typecheckRows.length) {
-    const typecheckDoc = join(rootDir, "docs", "typecheck.md");
-    writeFileSync(
-      typecheckDoc,
-      formatTypecheckDoc({
-        results: all,
-        generatedAt,
-        runner,
-        writeChart: (file, svg) => writeChart(join(rootDir, "docs", "results", "charts"), file, svg),
-      }),
-      "utf8",
-    );
-    console.log(`Wrote ${typecheckDoc}`);
+    // The full plant matrix embeds into docs/typecheck.md when `pnpm docs`
+    // renders from this run's confirm.json — this runner only writes results.
+    console.log("Typecheck plant matrix: run `pnpm docs` to embed it in docs/typecheck.md");
   }
 
   console.log(`\nWrote ${outMd}`);

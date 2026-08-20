@@ -1,0 +1,11 @@
+{
+  "id": "external-props-import",
+  "description": "Props type imported from a sibling .ts module, intersected with inline members",
+  "props": [
+    { "name": "name", "required": true, "typeIncludes": ["string"] },
+    { "name": "hint", "required": false, "typeIncludes": ["string"] },
+    { "name": "value", "required": true, "typeIncludes": ["number"] }
+  ],
+  "events": [],
+  "absentProps": ["BaseFieldProps"]
+}

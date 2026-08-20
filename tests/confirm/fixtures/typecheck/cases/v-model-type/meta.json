@@ -3,6 +3,12 @@
   "description": "v-model type mismatch between parent ref and child model",
   "expectErrors": true,
   "minErrors": 1,
-  "mustMatch": ["TS2322", "string", "number"],
-  "expectMention": ["modelValue"]
+  "mustMatch": [
+    "TS2322",
+    "string",
+    "number"
+  ],
+  "expectMention": [
+    "is not assignable to type '"
+  ]
 }

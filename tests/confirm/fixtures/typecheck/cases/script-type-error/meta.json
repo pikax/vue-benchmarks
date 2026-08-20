@@ -3,6 +3,12 @@
   "description": "Planted TS error in <script setup>",
   "expectErrors": true,
   "minErrors": 1,
-  "mustMatch": ["TS2322", "string", "number"],
-  "expectMention": ["count"]
+  "mustMatch": [
+    "TS2322",
+    "string",
+    "number"
+  ],
+  "expectMention": [
+    "'string' is not assignable to type 'number'"
+  ]
 }

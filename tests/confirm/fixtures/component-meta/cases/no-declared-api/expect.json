@@ -1,0 +1,5 @@
+{
+  "id": "no-declared-api",
+  "description": "A component that declares no API at all. Nothing but absence is pinned: a setup binding used in the template is not a prop, and a tool must not invent members for a component that has none",
+  "absentProps": ["now", "modelValue", "title", "value"]
+}

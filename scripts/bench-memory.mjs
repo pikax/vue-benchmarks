@@ -222,6 +222,23 @@ function aggregateSamples(sampleResults) {
     avgMb: Number(median(avgs).toFixed(2)),
     peakMaxMb: Number(Math.max(...maxs).toFixed(2)),
     troughMinMb: Number(Math.min(...mins).toFixed(2)),
+    // LSP sessions split the tree like the typecheck surface: a spawned tsgo
+    // child (verter/vize) or Volar's tsserver half is the engine's share.
+    // Taken from the sample with the highest server total, so tool + engine
+    // sums to one consistent peak.
+    ...(() => {
+      const withSplit = ok.filter((s) =>
+        Number.isFinite(s.lspResource?.serverRssToolMb),
+      );
+      if (!withSplit.length) return {};
+      const peak = withSplit.reduce((a, b) =>
+        (b.lspResource.serverRssMaxMb ?? 0) > (a.lspResource.serverRssMaxMb ?? 0) ? b : a,
+      );
+      return {
+        rssToolMb: peak.lspResource.serverRssToolMb,
+        rssEngineMb: peak.lspResource.serverRssEngineMb ?? null,
+      };
+    })(),
     // Allocations: heap (inproc) or private bytes (CLI on Windows)
     allocMinMb: heapMins.length ? Number(median(heapMins).toFixed(2)) : Number.NaN,
     allocMaxMb: heapMaxs.length ? Number(median(heapMaxs).toFixed(2)) : Number.NaN,

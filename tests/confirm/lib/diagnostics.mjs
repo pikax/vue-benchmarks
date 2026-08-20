@@ -9,7 +9,11 @@
 export function parseDiagnostics(text) {
   if (!text) return [];
   const out = [];
-  const lines = String(text).split(/\r?\n/);
+  // vize colorizes unconditionally (TERM unset, output piped — still ANSI),
+  // and a colour code inside `path(line,col)` makes every pattern below miss.
+  // Strip escapes before parsing; the other tools are unaffected.
+  const plain = String(text).replace(/\x1b\[[0-9;]*[A-Za-z]/g, "");
+  const lines = plain.split(/\r?\n/);
   let lastFile = "";
 
   for (const raw of lines) {
@@ -133,6 +137,12 @@ function diagOnPin(d, pin) {
  * Location/code pins (`expectFile` / `expectLine` / `expectCode`) are optional and
  * only applied when parsed diagnostics exist.
  *
+ * `diags`, when given, is used as-is instead of re-parsing `combined`. Pass it
+ * when `combined` was rebuilt from already-parsed diagnostics (a per-case
+ * subset of a combined dump): re-parsing that text loses file attribution for
+ * tools that print the file on a separate header line (vize), which silently
+ * breaks every pin check.
+ *
  * @param {{
  *   combined: string,
  *   status: number|null,
@@ -146,6 +156,7 @@ function diagOnPin(d, pin) {
  *   expectCode?: string,
  *   pins?: Array<{ file: string, commentLine: number, targetLine: number }>,
  *   expectMention?: string[],
+ *   diags?: ReturnType<typeof parseDiagnostics>,
  * }} opts
  */
 export function scoreDiagnostics(opts) {
@@ -163,8 +174,8 @@ export function scoreDiagnostics(opts) {
     expectMention = [],
   } = opts;
 
-  const diags = parseDiagnostics(combined);
-  const errors = countErrors(combined);
+  const diags = opts.diags ?? parseDiagnostics(combined);
+  const errors = opts.diags ? diags.length : countErrors(combined);
 
   if (mustNotMatch.some((n) => combined.includes(n))) {
     return {

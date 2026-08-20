@@ -125,12 +125,60 @@ export function normalizeVolarComponentMeta(raw, source) {
 /**
  * Extract `export type Name = { ... }` body with nested-brace awareness.
  * Tolerates a generic parameter list on the alias (`export type Props<T> = {`).
+ *
+ * The parameter list is skipped by BALANCED scanning rather than by the
+ * `<[^=]*>` character class this used to use. A generic <script setup>
+ * component compiles to a declaration whose parameter list carries both a
+ * brace-bearing constraint and a DEFAULT — `export type Slots<TRow extends
+ * { id: number } = any> = { ... }` — and an `=`-excluding class cannot match
+ * across that `= any`, so the whole alias silently failed to match and the
+ * section came back empty. That turned a HARNESS parse miss into what looked
+ * like a tool that reported no props/slots at all, which would then have been
+ * recorded against the tool in known-failures.json. The declaration is the
+ * tool's answer; only a real gap in it may be scored as one.
  */
 function extractExportTypeBody(text, typeName) {
-  const re = new RegExp(`export\\s+type\\s+${typeName}\\s*(?:<[^=]*>)?\\s*=\\s*\\{`);
-  const m = re.exec(text);
+  const head = new RegExp(`export\\s+type\\s+${typeName}(?![\\w$])`);
+  const m = head.exec(text);
   if (!m) return null;
   let i = m.index + m[0].length;
+
+  const skipSpace = () => {
+    while (i < text.length && /\s/.test(text[i])) i++;
+  };
+
+  skipSpace();
+  if (text[i] === "<") {
+    let angle = 0;
+    while (i < text.length) {
+      // An arrow inside a default type (`<T = () => void>`) is not a closing
+      // bracket; consuming it as one would end the parameter list early.
+      if (text[i] === "=" && text[i + 1] === ">") {
+        i += 2;
+        continue;
+      }
+      if (text[i] === "<") angle++;
+      else if (text[i] === ">") {
+        angle--;
+        if (angle === 0) {
+          i++;
+          break;
+        }
+      }
+      i++;
+    }
+  }
+
+  skipSpace();
+  if (text[i] !== "=") return null;
+  i++;
+  skipSpace();
+  // A declaration that aliases a NAMED type (`export type Props = FieldProps;`)
+  // has no inline body to enumerate; returning null is the honest answer and
+  // the caller reports the section as unextracted.
+  if (text[i] !== "{") return null;
+  i++;
+
   let depth = 1;
   const start = i;
   while (i < text.length && depth > 0) {
@@ -221,9 +269,15 @@ export function normalizeVizeDeclaration(code) {
 
   const slotsBody = extractExportTypeBody(text, "Slots");
   if (slotsBody) {
-    // Split on top-level newlines; each slot is `name(...): ret`
+    // Split on top-level newlines; each slot is `name(...): ret`.
+    //
+    // The `\??` accepts the OPTIONAL-member form `empty?(): any;`, which
+    // `defineSlots<{ empty?(): any }>()` compiles to. Without it the marker sat
+    // between the name and the `(` and neither pattern matched, so a slot the
+    // tool had emitted correctly was scored as missing — a harness miss wearing
+    // a tool's name. Optionality itself is not scored for slots; only presence.
     for (const line of slotsBody.split(/\r?\n/)) {
-      const m = line.match(/^\s*([A-Za-z_][\w-]*)\s*\((.*)\)\s*:\s*(.+?)\s*;?\s*$/);
+      const m = line.match(/^\s*([A-Za-z_][\w-]*)\s*\??\s*\((.*)\)\s*:\s*(.+?)\s*;?\s*$/);
       if (m) {
         slots.push({
           name: m[1],
@@ -231,7 +285,7 @@ export function normalizeVizeDeclaration(code) {
         });
         continue;
       }
-      const m2 = line.match(/^\s*([A-Za-z_][\w-]*)\s*\(/);
+      const m2 = line.match(/^\s*([A-Za-z_][\w-]*)\s*\??\s*\(/);
       if (m2) {
         slots.push({ name: m2[1], type: line.trim() });
       }

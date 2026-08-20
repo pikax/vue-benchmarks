@@ -186,7 +186,7 @@ function scoreOpts(meta, result) {
   };
 }
 
-function scoreOne(meta, result) {
+function scoreOne(meta, result, diags) {
   if (!meta.expectErrors) {
     const leaks = findVirtualCodeLeaks(result.combined);
     if (leaks.length) {
@@ -196,7 +196,7 @@ function scoreOne(meta, result) {
       };
     }
   }
-  return scoreDiagnostics(scoreOpts(meta, result));
+  return scoreDiagnostics({ ...scoreOpts(meta, result), diags });
 }
 
 /**
@@ -258,7 +258,7 @@ function invoke(spec, args, { cwd, timeout, sampleRss = false }) {
   return Promise.resolve(runCli(bin, [...prefix, ...(args || [])], { cwd, timeout }));
 }
 
-function toolRunners(cwd, { timeout = 120_000 } = {}) {
+export function toolRunners(cwd, { timeout = 120_000 } = {}) {
   const vueTsc = resolveSpawnable("vue-tsc");
   const vize = resolveSpawnable("vize");
   const verterTsc = resolveSpawnable("verter-tsc");
@@ -356,7 +356,14 @@ export async function runTypecheckSuite(opts = {}) {
       }
 
       if (!toolSupports(tool.id, meta.requires)) {
-        suite.skip(meta.id, tool.id, `tool lacks capability: ${(meta.requires || []).join(", ")}`);
+        // An unclaimed capability is a GAP in the tool, not a neutral skip:
+        // the plant exists because correct tools catch it. Skip remains only
+        // for a missing binary/engine (the tool never ran at all).
+        suite.fail(
+          meta.id,
+          tool.id,
+          `capability gap — tool does not claim: ${(meta.requires || []).join(", ")}`,
+        );
         continue;
       }
 
@@ -545,16 +552,21 @@ function copyCaseSources(src, dest) {
 /**
  * One project, one tsconfig, every plant under `cases/<id>/`.
  * Shared compiler options only — no per-case overlay, no fallthrough retry.
+ *
+ * `root` defaults to the shared work tree the confirm runner uses (guarded by
+ * run.mjs's single-run lock). Harness tests must pass their own scratch root —
+ * preparing (rmSync!) the shared tree from a test deletes it out from under a
+ * concurrently running confirm suite.
  */
-export function prepareAllPlants() {
-  rmSync(allPlantsRoot, { recursive: true, force: true });
-  mkdirSync(join(allPlantsRoot, "cases"), { recursive: true });
-  cpSync(join(sharedRoot, "env.d.ts"), join(allPlantsRoot, "env.d.ts"));
+export function prepareAllPlants(root = allPlantsRoot) {
+  rmSync(root, { recursive: true, force: true });
+  mkdirSync(join(root, "cases"), { recursive: true });
+  cpSync(join(sharedRoot, "env.d.ts"), join(root, "env.d.ts"));
 
   const cases = [];
   for (const caseId of listCases()) {
     const src = join(casesRoot, caseId);
-    const dest = join(allPlantsRoot, "cases", caseId);
+    const dest = join(root, "cases", caseId);
     mkdirSync(dest, { recursive: true });
     copyCaseSources(src, dest);
     const meta = JSON.parse(readFileSync(join(src, "meta.json"), "utf8"));
@@ -573,9 +585,9 @@ export function prepareAllPlants() {
   };
   base.include = ["**/*.vue", "**/*.ts", "**/*.d.ts"];
   base.exclude = ["golar.config.ts", "node_modules"];
-  writeFileSync(join(allPlantsRoot, "tsconfig.json"), JSON.stringify(base, null, 2));
+  writeFileSync(join(root, "tsconfig.json"), JSON.stringify(base, null, 2));
   writeFileSync(
-    join(allPlantsRoot, "package.json"),
+    join(root, "package.json"),
     JSON.stringify(
       {
         name: "confirm-typecheck-all",
@@ -590,10 +602,10 @@ export function prepareAllPlants() {
     ),
   );
   writeFileSync(
-    join(allPlantsRoot, "golar.config.ts"),
+    join(root, "golar.config.ts"),
     `import { defineConfig } from "golar/unstable";\nimport "@golar/vue";\nexport default defineConfig({});\n`,
   );
-  return { dest: allPlantsRoot, cases };
+  return { dest: root, cases };
 }
 
 /** Score each plant from one combined diagnostic dump. */
@@ -605,12 +617,22 @@ export function scoreCombinedRun(cases, toolId, result) {
   const plants = [];
   for (const { caseId, meta } of cases) {
     if (!toolSupports(toolId, meta.requires)) {
-      skip++;
-      plants.push({ caseId, skip: true, ok: false, message: `tool lacks capability: ${(meta.requires || []).join(", ")}` });
+      // Capability gap = fail, scored like any missed plant. `skip` stays in
+      // the tally shape (always 0 from this path) for older readers.
+      fail++;
+      plants.push({
+        caseId,
+        skip: false,
+        ok: false,
+        message: `capability gap — tool does not claim: ${(meta.requires || []).join(", ")}`,
+      });
       continue;
     }
+    // Score the parsed subset directly — combinedFromDiags keeps only the raw
+    // diagnostic lines, and re-parsing those loses the file for tools that
+    // print it on a separate header line (vize), failing every pin check.
     const subset = diagsForCase(diags, caseId);
-    const score = scoreOne(meta, { ...result, combined: combinedFromDiags(subset) });
+    const score = scoreOne(meta, { ...result, combined: combinedFromDiags(subset) }, subset);
     if (score.ok) pass++;
     else fail++;
     plants.push({ caseId, skip: false, ok: score.ok, message: score.message });

@@ -1,0 +1,10 @@
+{
+  "id": "script-mixed-blocks",
+  "description": "A normal <script> block exporting a type next to a <script setup> block that consumes it: the macros in the setup block are still the whole public API, and the exported type name is not a prop",
+  "props": [
+    { "name": "rows", "required": true, "typeIncludes": ["row"] },
+    { "name": "emptyText", "required": false, "typeIncludes": ["string"] }
+  ],
+  "events": [{ "name": "select", "typeIncludes": ["row"] }],
+  "absentProps": ["Row"]
+}

@@ -61,10 +61,13 @@ function prepareCase(caseId) {
 
 function applyOverrides(expect, toolId) {
   const override = expect.toolOverrides?.[toolId];
-  if (!override) return { expect, skip: null };
+  if (!override) return { expect, skip: null, gap: null };
 
   if (override.skip) {
-    return { expect, skip: override.reason || "tool override skip" };
+    // A fixture-declared "this tool cannot do this" is a capability GAP —
+    // scored as a fail (allow-listed in known-failures.json while upstream),
+    // never a neutral skip.
+    return { expect, skip: null, gap: override.reason || "tool override gap" };
   }
 
   const next = { ...expect };
@@ -76,7 +79,7 @@ function applyOverrides(expect, toolId) {
   if (override.expect) {
     Object.assign(next, override.expect);
   }
-  return { expect: next, skip: null };
+  return { expect: next, skip: null, gap: null };
 }
 
 export async function runComponentMetaSuite() {
@@ -99,7 +102,11 @@ export async function runComponentMetaSuite() {
           continue;
         }
 
-        const { expect: caseExpect, skip } = applyOverrides(expect, tool.id);
+        const { expect: caseExpect, skip, gap } = applyOverrides(expect, tool.id);
+        if (gap) {
+          suite.fail(expect.id, tool.id, `capability gap — ${gap}`);
+          continue;
+        }
         if (skip) {
           suite.skip(expect.id, tool.id, skip);
           continue;

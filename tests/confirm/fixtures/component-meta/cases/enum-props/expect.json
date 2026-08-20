@@ -1,0 +1,17 @@
+{
+  "id": "enum-props",
+  "description": "TS enum prop type declared in <script setup>, plus a string-literal-union prop",
+  "props": [
+    {
+      "name": "priority",
+      "required": true,
+      "typeIncludes": ["priority", "low", "high"]
+    },
+    {
+      "name": "mode",
+      "required": false,
+      "typeIncludes": ["auto", "manual"]
+    }
+  ],
+  "events": [{ "name": "update:priority", "typeIncludes": ["priority", "low"] }]
+}

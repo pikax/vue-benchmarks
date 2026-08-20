@@ -3,6 +3,14 @@
   "description": "Child <slot :msg=number> must error when defineSlots says msg: string",
   "expectErrors": true,
   "minErrors": 1,
-  "mustMatch": ["TS2322", "TS2345", "number", "string", "not assignable"],
-  "expectMention": ["msg"]
+  "mustMatch": [
+    "TS2322",
+    "TS2345",
+    "number",
+    "string",
+    "not assignable"
+  ],
+  "expectMention": [
+    "'number' is not assignable to type 'string'"
+  ]
 }

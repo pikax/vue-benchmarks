@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="236" viewBox="0 0 760 236" role="img" aria-label="IDE · completion — Completion: event name &lt;C @">
+  <title>IDE · completion — Completion: event name &lt;C @ (lower is better)</title>
+  <style><![CDATA[
+    text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
+  ]]></style>
+  <defs><pattern id="hatch-2" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="8" height="8" fill="#e11d48"/><line x1="0" y1="0" x2="0" y2="8" stroke="#fff" stroke-width="3" opacity="0.35"/></pattern><pattern id="hatch-3" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="8" height="8" fill="#2563eb"/><line x1="0" y1="0" x2="0" y2="8" stroke="#fff" stroke-width="3" opacity="0.35"/></pattern></defs>
+  <text fill="#e6edf3" x="16" y="20" font-size="15" font-weight="600">IDE · completion — Completion: event name &lt;C @</text>
+  <text fill="#9198a1" x="16" y="36" font-size="11">lower is better</text>
+  <rect x="146" y="33" width="10" height="10" rx="2" fill="#e6edf3"/>
+  <text fill="#9198a1" x="160" y="42" font-size="11">warm</text>
+  <rect x="204" y="33" width="10" height="10" rx="2" fill="#e6edf3" fill-opacity="0.38"/>
+  <text fill="#9198a1" x="218" y="42" font-size="11">cold</text>
+  <line x1="248" y1="56" x2="248" y2="208" stroke="#3d444d" stroke-opacity="0.55" />
+  <text fill="#9198a1" x="248" y="228" text-anchor="middle" font-size="11">0.0 ms</text>
+  <line x1="348.5" y1="56" x2="348.5" y2="208" stroke="#3d444d" stroke-opacity="0.55" />
+  <text fill="#9198a1" x="348.5" y="228" text-anchor="middle" font-size="11">1.9 ms</text>
+  <line x1="449" y1="56" x2="449" y2="208" stroke="#3d444d" stroke-opacity="0.55" />
+  <text fill="#9198a1" x="449" y="228" text-anchor="middle" font-size="11">3.8 ms</text>
+  <line x1="549.5" y1="56" x2="549.5" y2="208" stroke="#3d444d" stroke-opacity="0.55" />
+  <text fill="#9198a1" x="549.5" y="228" text-anchor="middle" font-size="11">5.7 ms</text>
+  <line x1="650" y1="56" x2="650" y2="208" stroke="#3d444d" stroke-opacity="0.55" />
+  <text fill="#9198a1" x="650" y="228" text-anchor="middle" font-size="11">7.6 ms</text>
+  <text fill="#9198a1" x="16" y="85" font-size="11">1</text>
+      <text fill="#e6edf3" x="36" y="85" font-size="13">Volar (N)</text>
+      
+      <rect x="248" y="69" width="402" height="22" rx="5" fill="#6e768166"/>
+      <rect x="248" y="69" width="330.6" height="22" rx="5" fill="#42b883" fill-opacity="0.38"/>
+      <rect x="248" y="69" width="297.2" height="22" rx="5" fill="#42b883" fill-opacity="1"/>
+      <line x1="545.2450474577399" y1="68" x2="545.2450474577399" y2="92" stroke="#0d1117" stroke-width="2" stroke-opacity="0.9"/>
+      <text fill="#ffffff" x="256" y="85" font-size="12" font-weight="600">5.6 ms warm / 6.3 ms cold</text>
+  <text fill="#9198a1" x="16" y="121" font-size="11">2</text>
+      <text fill="#e6edf3" x="36" y="121" font-size="13">Volar (JS)</text>
+      
+      <rect x="248" y="105" width="402" height="22" rx="5" fill="#6e768166"/>
+      <rect x="248" y="105" width="402.0" height="22" rx="5" fill="#42b883" fill-opacity="0.38"/>
+      <rect x="248" y="105" width="359.7" height="22" rx="5" fill="#42b883" fill-opacity="1"/>
+      <line x1="607.6589342680224" y1="104" x2="607.6589342680224" y2="128" stroke="#0d1117" stroke-width="2" stroke-opacity="0.9"/>
+      <text fill="#ffffff" x="256" y="121" font-size="12" font-weight="600">6.8 ms warm / 7.6 ms cold</text>
+  <text fill="#9198a1" x="16" y="157" font-size="11">3</text>
+      <text fill="#e6edf3" x="36" y="157" font-size="13" fill-opacity="0.62">Verter</text>
+      <line x1="36" y1="152" x2="240" y2="152" stroke="#e6edf3" stroke-opacity="0.45" />
+      <rect x="248" y="141" width="402" height="22" rx="5" fill="#6e768166"/>
+      <rect x="248" y="141" width="16.5" height="22" rx="5" fill="url(#hatch-2)" fill-opacity="0.38"/>
+      <rect x="248" y="141" width="15.7" height="22" rx="5" fill="url(#hatch-2)" fill-opacity="1"/>
+      <line x1="263.6608640857216" y1="140" x2="263.6608640857216" y2="164" stroke="#0d1117" stroke-width="2" stroke-opacity="0.9"/>
+      <text fill="#e6edf3" x="272.5369225316237" y="157" font-size="12" font-weight="600">0.3 ms warm / 0.3 ms cold · unranked</text>
+  <text fill="#9198a1" x="16" y="193" font-size="11">4</text>
+      <text fill="#e6edf3" x="36" y="193" font-size="13" fill-opacity="0.62">Vize</text>
+      <line x1="36" y1="188" x2="240" y2="188" stroke="#e6edf3" stroke-opacity="0.45" />
+      <rect x="248" y="177" width="402" height="22" rx="5" fill="#6e768166"/>
+      <rect x="248" y="177" width="21.0" height="22" rx="5" fill="url(#hatch-3)" fill-opacity="0.38"/>
+      <rect x="248" y="177" width="15.9" height="22" rx="5" fill="url(#hatch-3)" fill-opacity="1"/>
+      <line x1="263.8561301248323" y1="176" x2="263.8561301248323" y2="200" stroke="#0d1117" stroke-width="2" stroke-opacity="0.9"/>
+      <text fill="#e6edf3" x="276.9779055570401" y="193" font-size="12" font-weight="600">0.3 ms warm / 0.4 ms cold · unranked</text>
+</svg>

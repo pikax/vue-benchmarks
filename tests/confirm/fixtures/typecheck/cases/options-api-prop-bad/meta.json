@@ -3,7 +3,15 @@
   "description": "Options API: assigning this.count (number) to a string must error",
   "expectErrors": true,
   "minErrors": 1,
-  "mustMatch": ["TS2322", "string", "number"],
-  "requires": ["script-types"],
-  "expectMention": ["count"]
+  "mustMatch": [
+    "TS2322",
+    "string",
+    "number"
+  ],
+  "requires": [
+    "script-types"
+  ],
+  "expectMention": [
+    "'number' is not assignable to type 'string'"
+  ]
 }

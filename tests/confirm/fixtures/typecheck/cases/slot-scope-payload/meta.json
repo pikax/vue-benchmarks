@@ -3,6 +3,14 @@
   "description": "Scoped slot payload type must flow into the parent's v-slot destructuring",
   "expectErrors": true,
   "minErrors": 1,
-  "mustMatch": ["TS2345", "TS2322", "number", "string", "not assignable"],
-  "expectMention": ["id"]
+  "mustMatch": [
+    "TS2345",
+    "TS2322",
+    "number",
+    "string",
+    "not assignable"
+  ],
+  "expectMention": [
+    "'number' is not assignable to parameter of type 'string'"
+  ]
 }

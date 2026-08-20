@@ -71,14 +71,25 @@ function childFailure(probe, outputPath) {
  * Measure one first timed row workload per fresh child process and row.
  *
  * The child imports the packages and builds the same row adapter before its
- * internal timer starts. Node process startup, module loading, input
- * materialisation and compiler-host construction are therefore excluded, just
- * like setup around the warm timed call. Process-local V8/native/thread-pool and
- * allocator state may already have been changed by imports and adapter setup.
- * OS page/filesystem caches are not flushed. This is intentionally named by
- * its observable boundary rather than implying a wholly cold process.
+ * internal timer starts. Node process startup, module loading and input
+ * materialisation are therefore excluded, just like setup around the warm timed
+ * call. Whether host/session construction is excluded too is the CALLING
+ * SURFACE'S choice, because it has to match what that surface's warm timer
+ * covers: compile builds its compiler host outside the timer, component-meta
+ * builds its checker/session inside it, and each surface states which in its
+ * own methodology. Process-local V8/native/thread-pool and allocator state may
+ * already have been changed by imports and adapter setup. OS page/filesystem
+ * caches are not flushed. This is intentionally named by its observable
+ * boundary rather than implying a wholly cold process.
+ *
+ * The runner itself is surface-agnostic: `childScript` is the only
+ * surface-specific part, and it is spawned once per row per iteration with
+ * `(payloadPath, variantId, iteration, outputPath)`. Surfaces other than
+ * compile import it under the neutral `measureFreshChildVariants` alias below,
+ * so a reader of those files is not told they are calling the compiler's
+ * measurer.
  */
-export function measureCompileFreshChildVariants(
+export function measureFreshChildVariants(
   variants,
   { runs = 3, payload, timeoutMs = 300_000, childScript = childPath } = {},
 ) {
@@ -168,6 +179,10 @@ export function measureCompileFreshChildVariants(
   return { byId, executedOrder };
 }
 
+// The compiler surface's own name for the runner above. Its default
+// `childScript` is the compiler child, so compile reads naturally through it.
+export const measureCompileFreshChildVariants = measureFreshChildVariants;
+
 // Kept only for import compatibility with pre-overhaul diagnostics. New code
 // and JSON use the exact fresh-child terminology above.
-export const measureCompileColdVariants = measureCompileFreshChildVariants;
+export const measureCompileColdVariants = measureFreshChildVariants;

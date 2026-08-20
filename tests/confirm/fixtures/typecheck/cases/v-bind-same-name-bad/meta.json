@@ -1,0 +1,9 @@
+{
+  "id": "v-bind-same-name-bad",
+  "description": "v-bind same-name shorthand :count must reject a string local bound to count: number",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": ["TS2322", "TS2345", "string", "number", "not assignable"],
+  "requires": ["prop-types"],
+  "expectMention": ["number"]
+}

@@ -1,0 +1,10 @@
+{
+  "id": "emits-type-alias",
+  "description": "defineEmits typed through a named type alias rather than an inline type literal, with the returned emit binding called from the template",
+  "props": [{ "name": "modelValue", "required": true, "typeIncludes": ["string"] }],
+  "events": [
+    { "name": "update:modelValue", "typeIncludes": ["string"] },
+    { "name": "blur" },
+    { "name": "commit", "typeIncludes": ["string", "boolean"] }
+  ]
+}

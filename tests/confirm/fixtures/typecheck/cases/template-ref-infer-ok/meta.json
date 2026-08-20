@@ -1,0 +1,5 @@
+{
+  "id": "template-ref-infer-ok",
+  "description": "useTemplateRef without a type argument infers the element type from the template ref (clean)",
+  "expectErrors": false
+}

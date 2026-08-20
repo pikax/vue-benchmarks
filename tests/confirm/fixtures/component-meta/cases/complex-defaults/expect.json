@@ -1,0 +1,25 @@
+{
+  "id": "complex-defaults",
+  "description": "withDefaults factory defaults (array/object) and a function-typed prop with a function default",
+  "props": [
+    {
+      "name": "items",
+      "required": false,
+      "typeIncludes": ["string"],
+      "hasDefault": true
+    },
+    {
+      "name": "config",
+      "required": false,
+      "typeIncludes": ["retries", "verbose"],
+      "hasDefault": true
+    },
+    {
+      "name": "formatter",
+      "required": false,
+      "typeIncludes": ["number", "string"],
+      "hasDefault": true
+    }
+  ],
+  "events": []
+}

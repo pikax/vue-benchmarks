@@ -1,0 +1,5 @@
+{
+  "id": "expose-ref-computed",
+  "description": "defineExpose of a ref, a computed and a method. Only the names are pinned: vue-component-meta reports the unwrapped value types (string / boolean / () => void) while @verter/component-meta reports ReturnType<typeof ref> / ReturnType<typeof computed> / unknown, so no exposed type string is a tool-neutral fact here",
+  "exposed": [{ "name": "query" }, { "name": "isEmpty" }, { "name": "clear" }]
+}

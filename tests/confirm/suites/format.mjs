@@ -53,6 +53,105 @@ const PLANTS = [
     file: "format-generic-script-setup.vue",
     mustInclude: ["generic="],
   },
+  {
+    // <pre> content is rendering-significant byte-for-byte, with one HTML
+    // exception: a single newline right after the <pre> start tag is ignored
+    // by rendering, so the regex tolerates it (Prettier/oxfmt insert one).
+    // Inline runs: a glued </b><i> pair must not gain whitespace (that adds a
+    // rendered space) and a spaced </span> <span> pair must not lose it.
+    id: "format-pre-whitespace",
+    file: "format-pre-whitespace.vue",
+    idempotent: true,
+    mustMatch: [
+      /<pre>\r?\n?PRE_LINE_ONE {2}double {2}spaced\r?\n {4}PRE_INDENTED_LINE\r?\nPRE_FLUSH_LINE<\/pre>/,
+      /<\/b\s*><i/, // allows the inside-tag line break trick (</b\n><i)
+    ],
+    mustNotMatch: [/<\/span><span>/],
+  },
+  {
+    // Inside v-pre the mustache is literal rendered text, not an expression.
+    // A formatter that parses it as JS crashes or rewrites rendered output.
+    id: "format-v-pre-content",
+    file: "format-v-pre-content.vue",
+    mustInclude: [
+      "v-pre",
+      "{{ this is not an expression }}",
+      "RAW_VPRE_TOKEN",
+      "notEvaluated",
+    ],
+  },
+  {
+    // <style> v-bind() expressions must survive exactly (compiler-sfc hashes
+    // the expression text into the CSS var name). Quote style inside
+    // v-bind('...') may legally flip — both quote chars are accepted.
+    id: "format-style-v-bind",
+    file: "format-style-v-bind.vue",
+    mustMatch: [
+      /color:\s*v-bind\(themeColor\)/,
+      /padding:\s*v-bind\(spacing\)/,
+      /border-color:\s*v-bind\(\s*['"]theme\.accent['"]\s*\)/,
+    ],
+  },
+  {
+    // An <i18n lang="json"> custom block: reformatting the JSON is fine
+    // (Prettier does), but the parsed messages must be deep-equal and the
+    // block + its lang attr must survive.
+    id: "format-i18n-custom-block",
+    file: "format-i18n-custom-block.vue",
+    mustInclude: ["CONFIRM_I18N_EN", "こんにちは CONFIRM_I18N_JA"],
+    verify: verifyI18nBlock,
+  },
+  {
+    // Pug is indentation-significant and none of the tools parse pug, so the
+    // block must pass through byte-identical (modulo CRLF). Uniformly
+    // re-indenting the block is NOT safe: pug rejects a document whose first
+    // line is indented (`unexpected token "indent"`).
+    id: "format-pug-template",
+    file: "format-pug-template.vue",
+    mustMatch: [
+      /(^|[\r\n])\.wrapper\r?\n {2}h1\.title CONFIRM_PUG_TITLE\r?\n {2}ul\r?\n {4}li\(v-for="item in items" :key="item"\) \{\{ item \}\}/,
+    ],
+  },
+  {
+    // Long :class/:style object expressions and a multi-statement v-on
+    // handler: re-wrapping is fine, but every token must survive and the
+    // wrapping must be stable (attribute re-wrap is a classic idempotence
+    // bug). Quote style may legally flip, so needles avoid quotes.
+    id: "format-multiline-expressions",
+    file: "format-multiline-expressions.vue",
+    idempotent: true,
+    mustInclude: [
+      "has-error",
+      "is-wide-layout-with-a-really-long-name",
+      "--custom-gap",
+      "clicked-with-a-fairly-long-reason-string",
+      "count++",
+      "MULTILINE_ATTR_PLANT",
+    ],
+    mustMatch: [/fontSize\s*\/\s*2/, /count:\s*count/],
+  },
+  {
+    // Void elements written without a slash (<br>, <img>, <input>) plus a
+    // self-closing component. Normalising to <br /> is fine; output must
+    // still parse, stay stable, and <textarea></textarea> must not gain
+    // inner whitespace (that changes its rendered default value).
+    id: "format-void-self-closing",
+    file: "format-void-self-closing.vue",
+    idempotent: true,
+    mustInclude: ["<img", "<br", "<input", "MyWidget"],
+    mustMatch: [/<textarea[^>]*><\/textarea>/],
+  },
+  {
+    // Comments at the SFC top level: before the first block, between blocks,
+    // and after the last block. All three are valid and must survive.
+    id: "format-top-level-comments",
+    file: "format-top-level-comments.vue",
+    mustInclude: [
+      "CONFIRM_TOP_BEFORE_TEMPLATE",
+      "CONFIRM_TOP_BETWEEN_BLOCKS",
+      "CONFIRM_TOP_AFTER_LAST_BLOCK",
+    ],
+  },
 ];
 
 function parseVue(source, filename) {
@@ -71,6 +170,54 @@ function parseVue(source, filename) {
 function hasVForBindings(source) {
   if (!/\bv-for\b/.test(source)) return false;
   return /\bitem\b/.test(source) && /\bindex\b/.test(source);
+}
+
+/** JSON with object keys sorted, so key order never affects equality. */
+function canonicalJson(value) {
+  if (Array.isArray(value)) return `[${value.map(canonicalJson).join(",")}]`;
+  if (value && typeof value === "object") {
+    const body = Object.keys(value)
+      .sort()
+      .map((k) => `${JSON.stringify(k)}:${canonicalJson(value[k])}`)
+      .join(",");
+    return `{${body}}`;
+  }
+  return JSON.stringify(value);
+}
+
+/**
+ * The <i18n> block may be reformatted, but must still exist, keep lang=json,
+ * parse as JSON, and carry deep-equal messages.
+ * @returns {string | null} failure message, or null when semantics held
+ */
+function verifyI18nBlock(formatted, original, plant) {
+  const findBlock = (source) => {
+    const { descriptor } = parseSfc(source, { filename: plant.file });
+    return (descriptor.customBlocks || []).find((b) => b.type === "i18n");
+  };
+  const origBlock = findBlock(original);
+  if (!origBlock) return "fixture bug: original has no <i18n> block";
+  const fmtBlock = findBlock(formatted);
+  if (!fmtBlock) return "<i18n> custom block was dropped";
+  if (fmtBlock.attrs?.lang !== "json") {
+    return `<i18n> lang attr changed: ${JSON.stringify(fmtBlock.attrs?.lang)}`;
+  }
+  let origJson;
+  let fmtJson;
+  try {
+    origJson = JSON.parse(origBlock.content);
+  } catch (error) {
+    return `fixture bug: original i18n JSON invalid: ${error.message}`;
+  }
+  try {
+    fmtJson = JSON.parse(fmtBlock.content);
+  } catch (error) {
+    return `<i18n> JSON no longer parses: ${error.message}`;
+  }
+  if (canonicalJson(origJson) !== canonicalJson(fmtJson)) {
+    return "<i18n> messages changed after formatting";
+  }
+  return null;
 }
 
 function prepareWork(caseId, toolId, srcFile) {
@@ -128,8 +275,25 @@ function judge(plant, original, formatted, firstRun, second = null) {
     }
   }
 
+  for (const re of plant.mustMatch || []) {
+    if (!re.test(formatted)) {
+      return `formatted output does not match ${re}`;
+    }
+  }
+
+  for (const re of plant.mustNotMatch || []) {
+    if (re.test(formatted)) {
+      return `formatted output matches forbidden ${re}`;
+    }
+  }
+
   if (plant.requireVForBindings && !hasVForBindings(formatted)) {
     return "v-for item/index identifiers were not preserved";
+  }
+
+  if (plant.verify) {
+    const message = plant.verify(formatted, original, plant);
+    if (message) return message;
   }
 
   return null;

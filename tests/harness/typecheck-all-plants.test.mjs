@@ -10,8 +10,8 @@ import {
   prepareAllPlants,
   scoreCombinedRun,
 } from "../confirm/suites/typecheck.mjs";
-import { typecheckAllLanding } from "../../scripts/lib/readme-charts.mjs";
-import { compactHighlightBody } from "../../scripts/lib/readme-charts.mjs";
+import { typecheckAllLanding, renderRealWorldIndex } from "../../scripts/lib/docs/render.mjs";
+import { renderBenchBlock } from "../../scripts/lib/docs/readme.mjs";
 import { formatTypecheckDoc } from "../confirm/lib/typecheck-doc.mjs";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "../..");
@@ -21,7 +21,12 @@ describe("CI typecheck uses --all, not per-case spawns", () => {
     const testYml = readFileSync(join(repoRoot, ".github/workflows/test.yml"), "utf8");
     const benchYml = readFileSync(join(repoRoot, ".github/workflows/benchmark.yml"), "utf8");
     assert.match(testYml, /tests\/confirm\/run\.mjs --all/);
-    assert.match(benchYml, /--surfaces typecheck --all/);
+    assert.match(benchYml, /tests\/confirm\/run\.mjs --all/);
+    assert.doesNotMatch(
+      benchYml,
+      /--surfaces typecheck --all/,
+      "benchmark confirm publishes EVERY suite, not just typecheck",
+    );
     assert.doesNotMatch(
       benchYml,
       /Per-plant cells \(~500\)/,
@@ -88,11 +93,71 @@ describe("diagsForCase / scoreCombinedRun", () => {
     assert.equal(tally.fail, 0);
     assert.equal(tally.passPct, 100);
   });
+
+  test("vize-style output (file on a separate header line) still hits pins", () => {
+    // vize's raw diagnostic lines carry no file path — the file sits on its
+    // own header line above them. The per-case subset must be scored as parsed
+    // diags; re-parsing the reduced text drops the attribution and fails every
+    // pin with "no diagnostic at <file>:<line>".
+    const cases = [
+      {
+        caseId: "async-setup-await-bad",
+        meta: {
+          expectErrors: true,
+          _pins: [{ file: "App.vue", commentLine: 11, targetLine: 12 }],
+          mustMatch: ["TS2339", "count", "does not exist"],
+          mustNotMatch: ["TS1308"],
+          expectMention: ["count"],
+        },
+      },
+    ];
+    const result = {
+      combined: [
+        "",
+        "D:\\repo\\work\\confirm-typecheck-all\\cases\\async-setup-await-bad\\App.vue",
+        "  error:11:16 [TS2339] Property 'count' does not exist on type '{ name: string; }'.",
+        "",
+        "✗ Type checked 300 files in 1000ms",
+        "  1 error(s)",
+      ].join("\n"),
+      status: 1,
+    };
+    const tally = scoreCombinedRun(cases, "vize-check", result);
+    assert.equal(tally.fail, 0, tally.plants[0].message);
+    assert.equal(tally.pass, 1);
+  });
+
+  test("an unclaimed capability is scored as a FAIL, never a neutral skip", () => {
+    const cases = [
+      { caseId: "clean-basic", meta: { expectErrors: false, _pins: [] } },
+      {
+        caseId: "unknown-prop-strict",
+        meta: {
+          expectErrors: true,
+          requires: ["strict-component-attrs"],
+          _pins: [{ file: "App.vue", commentLine: 7, targetLine: 8 }],
+          expectMention: ["notdeclared"],
+        },
+      },
+    ];
+    // vize-check does not claim strict-component-attrs.
+    const tally = scoreCombinedRun(cases, "vize-check", { combined: "", status: 0 });
+    assert.equal(tally.skip, 0, "capability gaps are not skips");
+    assert.equal(tally.fail, 1);
+    assert.equal(tally.pass, 1);
+    assert.equal(tally.passPct, 50, "the gap stays in the denominator");
+    const gap = tally.plants.find((p) => p.caseId === "unknown-prop-strict");
+    assert.equal(gap.skip, false);
+    assert.equal(gap.ok, false);
+    assert.match(gap.message, /capability gap/);
+  });
 });
 
 describe("prepareAllPlants", () => {
   test("writes one tsconfig and nests each plant under cases/<id>/", () => {
-    const { dest, cases } = prepareAllPlants();
+    // Own scratch root — preparing the shared work/confirm-typecheck-all here
+    // would rmSync it out from under a concurrently running confirm suite.
+    const { dest, cases } = prepareAllPlants(join(repoRoot, "work", "test-confirm-all-plants"));
     try {
       assert.ok(cases.length > 10);
       const tsconfig = JSON.parse(readFileSync(join(dest, "tsconfig.json"), "utf8"));
@@ -136,14 +201,15 @@ describe("typecheckAllLanding", () => {
     assert.match(md, /\*\*83%\*\*/);
     assert.match(md, /100 \/ 120/);
     assert.match(md, /Pass rate/);
-    assert.match(md, /skipped/);
+    assert.match(md, /gap and counts as a fail/);
+    assert.doesNotMatch(md, /\| skipped \|/);
     const passChart = charts.find((c) => c.file.includes("pass"));
     assert.ok(passChart, "pass-rate chart");
     assert.match(passChart.svg, /83%/);
     assert.doesNotMatch(passChart.svg, />100</);
   });
 
-  test("wall / rss / pass charts include every tool, not just the first", () => {
+  test("wall / pass charts include every tool, not just the first", () => {
     const charts = [];
     const rows = ["vue-tsc", "vize-check", "verter-tsc", "golar-typecheck"].map((tool, i) => ({
       suite: "typecheck-all",
@@ -161,7 +227,10 @@ describe("typecheckAllLanding", () => {
       },
     }));
     typecheckAllLanding(rows, { writeChart: (file, svg) => charts.push({ file, svg }) });
-    assert.equal(charts.length, 3);
+    // Wall + pass rate, each as a light/dark pair. RSS is a column on the
+    // wall table, not a third chart.
+    assert.equal(charts.length, 4);
+    assert.ok(charts.some((c) => c.file.endsWith("-dark.svg")), "dark variants written");
     for (const c of charts) {
       assert.match(c.svg, /vue-tsc/);
       assert.match(c.svg, />vize</);
@@ -246,72 +315,78 @@ describe("formatTypecheckDoc all-plants section", () => {
   });
 });
 
-describe("bench landing omits JSX", () => {
-  test("jsx compile tables are dropped", () => {
-    const md = [
-      "### Typecheck",
-      "",
-      "| Tool | **Median (primary)** | vs fastest |",
-      "| --- | ---: | ---: |",
-      "| verter-tsc | **1.09 s** | 1.00x |",
-      "",
-      "### JSX compile",
-      "",
-      "| Tool | **Median (primary)** | vs fastest |",
-      "| --- | ---: | ---: |",
-      "| vue-jsx-vapor/api | **3.4 ms** | 1.00x |",
-    ].join("\n");
-    const out = compactHighlightBody(md, {
-      kind: "bench",
-      leaf: "bench-Linux-200-bench.md",
-      href: "docs/results/x.md",
-      writeChart: () => {},
-    });
-    assert.match(out, /Typecheck/);
-    assert.doesNotMatch(out, /JSX compile/);
-    assert.doesNotMatch(out, /vue-jsx-vapor/);
+describe("README landing omits JSX tables", () => {
+  test("typecheck gets a chart + table; jsx-compile gets a pointer line", () => {
+    const model = {
+      bench: {
+        name: "bench-Linux-200-bench.json",
+        data: {
+          surfaces: [
+            {
+              id: "typecheck",
+              label: "Typecheck",
+              files: 200,
+              bytes: 1,
+              variants: [
+                { id: "verter-tsc", label: "verter-tsc", status: "ok", medianMs: 1090, runs: [1090] },
+              ],
+            },
+            {
+              id: "jsx-compile",
+              label: "JSX compile",
+              files: 200,
+              bytes: 1,
+              variants: [
+                { id: "jsx", label: "vue-jsx-vapor/api", status: "ok", medianMs: 3.4, runs: [3.4], target: "vapor" },
+              ],
+            },
+          ],
+        },
+      },
+      ide: null,
+      confirm: null,
+      realWorld: [],
+    };
+    const chartsDir = join(repoRoot, "work", "test-charts-readme");
+    const out = renderBenchBlock(model, { chartsDir });
+    rmSync(chartsDir, { recursive: true, force: true });
+    assert.match(out, /### Typecheck/);
+    assert.match(out, /verter-tsc/);
+    assert.match(out, /JSX compile \(vue-jsx-vapor vs Babel\) is ranked per codegen target/);
+    assert.doesNotMatch(out, /vue-jsx-vapor\/api/);
   });
 });
 
-describe("real-world landing keeps compile, typecheck, test", () => {
-  test("drops bundle/hmr and harness Compiler; keeps own typecheck/test", () => {
-    const md = [
-      "## Compiler",
-      "",
-      "#### VDOM · production · sourcemap off",
-      "",
-      "| Tool | **Median (primary)** | vs fastest |",
-      "| --- | ---: | ---: |",
-      "| Vize native batch | **82.8 ms** | 1.00x |",
-      "",
-      "## Bundle (production build)",
-      "",
-      "| Tool | **Median (primary)** | vs fastest |",
-      "| --- | ---: | ---: |",
-      "| Vite 8 | **1.0 s** | 1.00x |",
-      "",
-      "## Project typecheck (own tsconfig) — hoppscotch:common",
-      "",
-      "| Tool | **Median (primary)** | vs fastest |",
-      "| --- | ---: | ---: |",
-      "| verter-tsc | **1.65 s** | 1.00x |",
-      "",
-      "## Project test suite — hoppscotch:common",
-      "",
-      "| Tool | **Median (primary)** | vs fastest |",
-      "| --- | ---: | ---: |",
-      "| baseline | **24.89 s** | 1.00x |",
-    ].join("\n");
-    const out = compactHighlightBody(md, {
-      kind: "real-world",
-      leaf: "real-world-Linux-hoppscotch.md",
-      href: "docs/results/x.md",
-      writeChart: () => {},
+describe("real-world landing keeps the project's own surfaces", () => {
+  test("drops bundle and harness compile; keeps own typecheck/test", () => {
+    const surface = (id, label, toolLabel, ms) => ({
+      id,
+      label,
+      files: 10,
+      bytes: 1,
+      variants: [{ id: `${id}-row`, label: toolLabel, status: "ok", medianMs: ms, runs: [ms] }],
     });
-    assert.doesNotMatch(out, /VDOM · production/);
-    assert.doesNotMatch(out, /## Compiler/);
+    const entry = {
+      project: "hoppscotch",
+      name: "real-world-Linux-hoppscotch.json",
+      data: {
+        corpora: [{ selector: "hoppscotch:common", repo: "https://github.com/hoppscotch/hoppscotch.git", ref: "abc", sha: "abc", files: 293 }],
+        surfaces: [
+          surface("compile", "SFC compile (unique contents)", "Vize native batch", 82.8),
+          surface("bundle", "Bundle (production build)", "Vite 8", 1000),
+          surface("project-typecheck", "Project typecheck (own tsconfig) — hoppscotch:common", "verter-tsc", 1650),
+          surface("project-test", "Project test suite — hoppscotch:common", "baseline", 24890),
+        ],
+      },
+    };
+    const out = renderRealWorldIndex([entry], {
+      chartsDir: join(repoRoot, "work", "test-charts"),
+      chartsHref: "charts",
+    });
+    rmSync(join(repoRoot, "work", "test-charts"), { recursive: true, force: true });
+    assert.doesNotMatch(out, /SFC compile/);
     assert.match(out, /Project typecheck/);
     assert.match(out, /Project test suite/);
-    assert.doesNotMatch(out, /Bundle/);
+    assert.doesNotMatch(out, /Bundle \(production build\)/);
   });
 });

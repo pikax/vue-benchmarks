@@ -3,7 +3,17 @@
   "description": "@keyup.enter is still KeyboardEvent; a MouseEvent handler must error",
   "expectErrors": true,
   "minErrors": 1,
-  "mustMatch": ["TS2322", "TS2345", "KeyboardEvent", "MouseEvent", "not assignable"],
-  "requires": ["dom-events"],
-  "expectMention": ["KeyboardEvent"]
+  "mustMatch": [
+    "TS2322",
+    "TS2345",
+    "KeyboardEvent",
+    "MouseEvent",
+    "not assignable"
+  ],
+  "requires": [
+    "dom-events"
+  ],
+  "expectMention": [
+    "MouseEvent"
+  ]
 }

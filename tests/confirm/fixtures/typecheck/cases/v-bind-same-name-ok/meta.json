@@ -1,0 +1,6 @@
+{
+  "id": "v-bind-same-name-ok",
+  "description": "v-bind same-name shorthand (:count :title) binds matching locals cleanly",
+  "expectErrors": false,
+  "requires": ["prop-types"]
+}

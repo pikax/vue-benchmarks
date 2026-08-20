@@ -1,0 +1,12 @@
+{
+  "id": "interface-extends-props",
+  "description": "Props declared as a local interface that extends a second local interface — members inherited through extends are as public as the ones declared directly, and neither interface name is itself a prop",
+  "props": [
+    { "name": "id", "required": true, "typeIncludes": ["string"] },
+    { "name": "disabled", "required": false, "typeIncludes": ["boolean"] },
+    { "name": "modelValue", "required": true, "typeIncludes": ["string"] },
+    { "name": "maxLength", "required": false, "typeIncludes": ["number"] }
+  ],
+  "events": [],
+  "absentProps": ["BaseControlProps", "TextFieldProps"]
+}

@@ -315,21 +315,21 @@ jobs:
       - name: Snapshot latest artifacts (clears previous results/real_world)
         run: node scripts/publish-ci-results.mjs --from ./results-dl --scope real-world
 
-      - name: Merge into README
-        run: node scripts/update-readme.mjs --dir results
+      - name: Generate README blocks + docs/ from the JSON snapshot
+        run: node scripts/generate-docs.mjs
 
       - name: Commit
         run: |
-          # docs/results carries the full per-artifact reports the README's
-          # summary tables link to — they must land in the SAME commit or the
-          # links 404 until the next publish. results/real_world is the latest
-          # JSON/MD snapshot (previous run is deleted first).
-          if git diff --quiet -- README.md && git diff --quiet -- docs/results && git diff --quiet -- results/real_world && [ -z "$(git status --porcelain docs/results results/real_world)" ]; then
-            echo "No README or details change."
+          # docs/ carries the real-world pages and charts the README summary
+          # links to — they must land in the SAME commit or the links 404
+          # until the next publish. results/real_world is the latest JSON
+          # snapshot (previous run is deleted first).
+          if git diff --quiet -- README.md && git diff --quiet -- docs && git diff --quiet -- results/real_world && [ -z "$(git status --porcelain docs results/real_world)" ]; then
+            echo "No README or docs change."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A README.md docs/results results/real_world
+          git add -A README.md docs results/real_world
           git commit -m "chore: publish real-world benchmark results [skip ci]"
           git push

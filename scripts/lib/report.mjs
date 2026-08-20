@@ -59,29 +59,26 @@ function timesSlower(fastest, current) {
   return `${(current / fastest).toFixed(2)}x`;
 }
 
-function referenceRow(variants) {
-  return variants.find((v) => v.baseline) ?? null;
+/**
+ * Ratios and ordering are ALWAYS vs the fastest ranked row — no tool is
+ * pinned as a reference denominator. A `baseline` flag on a variant remains
+ * in the data (legend/notes can still name the official workload) but never
+ * changes sorting or the 1.00x row.
+ */
+function referenceRow() {
+  return null;
 }
 
 function referenceHeading(reference, cold = false) {
-  if (!reference) return cold ? "vs fastest cold" : "vs fastest";
-  const label = reference.baselineLabel || "baseline";
-  if (label === "baseline") return cold ? "vs baseline cold" : "vs baseline";
-  return cold ? `vs ${label} cold` : `vs ${label} baseline`;
+  return cold ? "vs fastest cold" : "vs fastest";
 }
 
-function freshChildReferenceHeading(reference) {
-  if (!reference) return "vs fastest fresh child";
-  const label = reference.baselineLabel || "baseline";
-  return label === "baseline"
-    ? "vs baseline fresh child"
-    : `vs ${label} fresh child`;
+function freshChildReferenceHeading() {
+  return "vs fastest fresh child";
 }
 
-function warmReferenceHeading(reference) {
-  if (!reference) return "vs fastest warm";
-  const label = reference.baselineLabel || "baseline";
-  return label === "baseline" ? "vs baseline warm" : `vs ${label} warm`;
+function warmReferenceHeading() {
+  return "vs fastest warm";
 }
 
 /**
@@ -193,7 +190,7 @@ const SLIM_RULES = [
   },
 ];
 
-function slimRuleFor(rawLabel) {
+export function slimRuleFor(rawLabel) {
   return SLIM_RULES.find((r) => r.re.test(String(rawLabel ?? "")));
 }
 
@@ -216,13 +213,19 @@ function statusMark(status) {
 }
 
 /** Table display name: slimmed label + engine tag + status marker. */
-function displayName(v) {
+export function displayName(v) {
   const rule = slimRuleFor(v.label);
   return `${rule ? rule.slim : v.label}${engineTag(v)}${statusMark(v.status)}`;
 }
 
+/** Chart/legend name: slimmed label + engine tag, no status marker. */
+export function plainDisplayName(v) {
+  const rule = slimRuleFor(v.label);
+  return `${rule ? rule.slim : v.label}${engineTag(v)}`;
+}
+
 /** Comparison class: explicit workload class when supplied, then target. */
-function classKey(v) {
+export function classKey(v) {
   // Most surfaces deliberately remain one table. A surface may opt into an
   // explicit work-equivalence split when two rows do materially different
   // compiler work (compile's raw render vs render+CSS split is the motivating
@@ -241,7 +244,7 @@ function classKey(v) {
       : "all";
 }
 
-function classLabel(key, variants) {
+export function classLabel(key, variants) {
   if (key.startsWith("comparison:")) {
     const declared = variants.find(
       (v) => v.comparisonClassLabel,
@@ -306,6 +309,28 @@ function renderVariantTable(rawVariants, { title } = {}) {
     Number.isFinite(v.freshChildMedianMs),
   );
   const showCold = variants.some((v) => Number.isFinite(v.coldMedianMs));
+  // Memory is a COLUMN on the timing table, not a separate table/chart. The
+  // value is whatever the run (or the isolated probe, injected upstream)
+  // attributed to the row; provenance is stated once per document.
+  const showRss = variants.some(
+    (v) => Number.isFinite(v.rssMaxMb) && v.rssMaxMb > 0,
+  );
+  const rssHead = showRss ? " Peak RSS |" : "";
+  const rssAlign = showRss ? " ---: |" : "";
+  const rssCell = (v) => {
+    if (!showRss) return "";
+    if (!Number.isFinite(v.rssMaxMb) || v.rssMaxMb <= 0) return " – |";
+    // Split `tool + tsgo/tsserver = total` when the run attributed a child
+    // TypeScript engine — same presentation as the typecheck surface.
+    const split =
+      Number.isFinite(v.rssToolMb) &&
+      Number.isFinite(v.rssEngineMb) &&
+      v.rssEngineMb > 0;
+    const cell = split
+      ? `${v.rssToolMb.toFixed(1)} + ${v.rssEngineMb.toFixed(1)} = ${formatMb(v.rssMaxMb)}`
+      : formatMb(v.rssMaxMb);
+    return ` ${v.status === "ok" ? cell : `(${cell})`} |`;
+  };
   const reference = referenceRow(variants);
   const primaryHeading = referenceHeading(reference);
   const coldHeading = referenceHeading(reference, true);
@@ -313,23 +338,23 @@ function renderVariantTable(rawVariants, { title } = {}) {
   const warmHeading = warmReferenceHeading(reference);
   if (showFreshChild) {
     lines.push(
-      `| Tool | Fresh child | Fresh min | Fresh stddev | Fresh CV% | ${freshChildHeading} | **Warm (primary)** | Warm min | Warm stddev | Warm CV% | ${warmHeading} | ${artifactLabel} | Throughput |`,
+      `| Tool | Fresh child | Fresh min | Fresh stddev | Fresh CV% | ${freshChildHeading} | **Warm (primary)** | Warm min | Warm stddev | Warm CV% | ${warmHeading} | ${artifactLabel} | Throughput |${rssHead}`,
     );
     lines.push(
-      "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+      `| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |${rssAlign}`,
     );
   } else if (showCold) {
     lines.push(
-      `| Tool | **Cold** | ${coldHeading} | **Warm** | Min | Stddev | CV% | ${primaryHeading} | ${artifactLabel} | Throughput |`,
+      `| Tool | **Cold** | ${coldHeading} | **Warm** | Min | Stddev | CV% | ${primaryHeading} | ${artifactLabel} | Throughput |${rssHead}`,
     );
     lines.push(
-      "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+      `| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |${rssAlign}`,
     );
   } else {
     lines.push(
-      `| Tool | **Median (primary)** | Min | Stddev | CV% | ${primaryHeading} | ${artifactLabel} | Throughput |`,
+      `| Tool | **Median (primary)** | Min | Stddev | CV% | ${primaryHeading} | ${artifactLabel} | Throughput |${rssHead}`,
     );
-    lines.push("| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |");
+    lines.push(`| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |${rssAlign}`);
   }
 
   const base = reference ? primaryMs(reference) : fastestPrimary(variants);
@@ -421,7 +446,7 @@ function renderVariantTable(rawVariants, { title } = {}) {
             ? timesSlower(freshChildBase, v.freshChildMedianMs)
             : "not ranked";
           lines.push(
-            `| ${name} | ${fresh} | ${formatMs(v.freshChildMinMs)} | ${formatMs(v.freshChildStddevMs)} | ${freshCv} | ${freshRatio} | **${formatMs(v.medianMs)}** | ${formatMs(v.minMs)} | ${formatMs(v.stddevMs)} | ${cv} | ${timesSlower(base, v.medianMs)} | ${artifact} | ${v.throughput} |`,
+            `| ${name} | ${fresh} | ${formatMs(v.freshChildMinMs)} | ${formatMs(v.freshChildStddevMs)} | ${freshCv} | ${freshRatio} | **${formatMs(v.medianMs)}** | ${formatMs(v.minMs)} | ${formatMs(v.stddevMs)} | ${cv} | ${timesSlower(base, v.medianMs)} | ${artifact} | ${v.throughput} |${rssCell(v)}`,
           );
           if (freshNoisy) {
             noteText = `${noteText ? `${noteText} | ` : ""}⚠ FRESH-CHILD SERIES TOO NOISY FOR ITS OWN RATIO — CV ${v.freshChildCvPct.toFixed(1)}% (ceiling ${NOISE_CV_LIMIT_PCT}%). Warm remains independently ranked; raw fresh-child values stay visible.`;
@@ -431,11 +456,11 @@ function renderVariantTable(rawVariants, { title } = {}) {
             ? formatMs(v.coldMedianMs)
             : "–";
           lines.push(
-            `| ${name} | **${cold}** | ${timesSlower(coldBase, v.coldMedianMs)} | **${formatMs(v.medianMs)}** | ${formatMs(v.minMs)} | ${formatMs(v.stddevMs)} | ${cv} | ${timesSlower(base, v.medianMs)} | ${artifact} | ${v.throughput} |`,
+            `| ${name} | **${cold}** | ${timesSlower(coldBase, v.coldMedianMs)} | **${formatMs(v.medianMs)}** | ${formatMs(v.minMs)} | ${formatMs(v.stddevMs)} | ${cv} | ${timesSlower(base, v.medianMs)} | ${artifact} | ${v.throughput} |${rssCell(v)}`,
           );
         } else {
           lines.push(
-            `| ${name} | **${formatMs(v.medianMs)}** | ${formatMs(v.minMs)} | ${formatMs(v.stddevMs)} | ${cv} | ${timesSlower(base, v.medianMs)} | ${artifact} | ${v.throughput} |`,
+            `| ${name} | **${formatMs(v.medianMs)}** | ${formatMs(v.minMs)} | ${formatMs(v.stddevMs)} | ${cv} | ${timesSlower(base, v.medianMs)} | ${artifact} | ${v.throughput} |${rssCell(v)}`,
           );
         }
       } else {
@@ -445,7 +470,7 @@ function renderVariantTable(rawVariants, { title } = {}) {
         const throughput =
           v.throughput && v.throughput !== "n/a" ? v.throughput : "–";
         lines.push(
-          `| ${name} | – | – | – | – | – | ${artifact} | ${throughput} |`,
+          `| ${name} | – | – | – | – | – | ${artifact} | ${throughput} |${rssCell(v)}`,
         );
       }
       noteText = noteText + cacheNote + artifactWarn;
@@ -464,35 +489,35 @@ function renderVariantTable(rawVariants, { title } = {}) {
           ? `(${formatMs(v.freshChildMedianMs)})`
           : "–";
         lines.push(
-          `| ${name} | ${fresh} | ${Number.isFinite(v.freshChildMinMs) ? `(${formatMs(v.freshChildMinMs)})` : "–"} | ${Number.isFinite(v.freshChildStddevMs) ? `(${formatMs(v.freshChildStddevMs)})` : "n/a"} | ${Number.isFinite(v.freshChildCvPct) ? `(${v.freshChildCvPct.toFixed(1)}%)` : "n/a"} | not ranked | ${bracketed} | ${Number.isFinite(v.minMs) ? `(${formatMs(v.minMs)})` : "–"} | ${Number.isFinite(v.stddevMs) ? `(${formatMs(v.stddevMs)})` : "n/a"} | ${Number.isFinite(v.cvPct) ? `(${v.cvPct.toFixed(1)}%)` : "n/a"} | not ranked | ${artifact} | – |`,
+          `| ${name} | ${fresh} | ${Number.isFinite(v.freshChildMinMs) ? `(${formatMs(v.freshChildMinMs)})` : "–"} | ${Number.isFinite(v.freshChildStddevMs) ? `(${formatMs(v.freshChildStddevMs)})` : "n/a"} | ${Number.isFinite(v.freshChildCvPct) ? `(${v.freshChildCvPct.toFixed(1)}%)` : "n/a"} | not ranked | ${bracketed} | ${Number.isFinite(v.minMs) ? `(${formatMs(v.minMs)})` : "–"} | ${Number.isFinite(v.stddevMs) ? `(${formatMs(v.stddevMs)})` : "n/a"} | ${Number.isFinite(v.cvPct) ? `(${v.cvPct.toFixed(1)}%)` : "n/a"} | not ranked | ${artifact} | – |${rssCell(v)}`,
         );
       } else if (showCold) {
         const cold = Number.isFinite(v.coldMedianMs)
           ? `(${formatMs(v.coldMedianMs)})`
           : "–";
         lines.push(
-          `| ${name} | ${cold} | not ranked | ${bracketed} | ${Number.isFinite(v.minMs) ? `(${formatMs(v.minMs)})` : "–"} | – | – | not ranked | ${artifact} | – |`,
+          `| ${name} | ${cold} | not ranked | ${bracketed} | ${Number.isFinite(v.minMs) ? `(${formatMs(v.minMs)})` : "–"} | – | – | not ranked | ${artifact} | – |${rssCell(v)}`,
         );
       } else {
         lines.push(
-          `| ${name} | ${bracketed} | ${Number.isFinite(v.minMs) ? `(${formatMs(v.minMs)})` : "–"} | – | – | not ranked | ${artifact} | – |`,
+          `| ${name} | ${bracketed} | ${Number.isFinite(v.minMs) ? `(${formatMs(v.minMs)})` : "–"} | – | – | not ranked | ${artifact} | – |${rssCell(v)}`,
         );
       }
     } else if (v.status === "skipped") {
       lines.push(
-        showFreshChild
+        (showFreshChild
           ? `| ${name} | skipped | – | – | – | – | – | – | – | – | – | – | – |`
           : showCold
             ? `| ${name} | skipped | – | – | – | – | – | – | – | – |`
-            : `| ${name} | skipped | – | – | – | – | – | – |`,
+            : `| ${name} | skipped | – | – | – | – | – | – |`) + rssCell(v),
       );
     } else {
       lines.push(
-        showFreshChild
+        (showFreshChild
           ? `| ${name} | error | – | – | – | – | – | – | – | – | – | – | – |`
           : showCold
             ? `| ${name} | error | – | – | – | – | – | – | – | – |`
-            : `| ${name} | error | – | – | – | – | – | – |`,
+            : `| ${name} | error | – | – | – | – | – | – |`) + rssCell(v),
       );
       noteText = v.error || v.notes || "";
     }
@@ -532,6 +557,9 @@ function renderPeakRssBlock(variants, { heading = true } = {}) {
   );
   if (!rows.length) return [];
   const sorted = [...rows].sort((a, b) => a.rssMaxMb - b.rssMaxMb);
+  const split = sorted.some(
+    (v) => Number.isFinite(v.rssToolMb) && Number.isFinite(v.rssEngineMb) && v.rssEngineMb > 0,
+  );
   const lines = [];
   if (heading) {
     lines.push("#### Peak RSS", "");
@@ -540,15 +568,38 @@ function renderPeakRssBlock(variants, { heading = true } = {}) {
       "",
     );
   }
-  lines.push("| Tool | **Peak RSS** |");
-  lines.push("| --- | ---: |");
-  for (const v of sorted) {
-    const name = displayName(v);
-    const cell =
-      v.status === "ok"
-        ? `**${formatMb(v.rssMaxMb)}**`
-        : `(${formatMb(v.rssMaxMb)})`;
-    lines.push(`| ${name} | ${cell} |`);
+  if (split) {
+    lines.push("| Tool | Tool | tsgo / tsserver | **Total** |");
+    lines.push("| --- | ---: | ---: | ---: |");
+    for (const v of sorted) {
+      const name = displayName(v);
+      const engine = Number.isFinite(v.rssEngineMb) && v.rssEngineMb > 0 ? v.rssEngineMb : null;
+      const tool = Number.isFinite(v.rssToolMb)
+        ? v.rssToolMb
+        : engine != null
+          ? v.rssMaxMb - engine
+          : v.rssMaxMb;
+      const total =
+        v.status === "ok" ? `**${formatMb(v.rssMaxMb)}**` : `(${formatMb(v.rssMaxMb)})`;
+      lines.push(
+        `| ${name} | ${formatMb(tool)} | ${engine != null ? formatMb(engine) : "—"} | ${total} |`,
+      );
+    }
+    lines.push("");
+    lines.push(
+      "Engine is a **child** `tsgo` / sibling `tsserver` process — the same attribution the typecheck surface uses. `—` = the server hosts its checker in-process.",
+    );
+  } else {
+    lines.push("| Tool | **Peak RSS** |");
+    lines.push("| --- | ---: |");
+    for (const v of sorted) {
+      const name = displayName(v);
+      const cell =
+        v.status === "ok"
+          ? `**${formatMb(v.rssMaxMb)}**`
+          : `(${formatMb(v.rssMaxMb)})`;
+      lines.push(`| ${name} | ${cell} |`);
+    }
   }
   lines.push("");
   return lines;
@@ -658,7 +709,7 @@ export const IDE_RANKING_RULES =
   "Ranked **per operation**, never pooled. These operations differ by orders of magnitude and answer unrelated questions, so one table each. Each request-style operation publishes **Cold** (first request after initialize+didOpen in a **fresh session dedicated to that operation** — later ops do not reuse a warmed server) and **Warm** (the same request immediately after). Ranking uses Cold; vs-fastest-cold sits next to it. A row that failed its content gate on the cold request is shown in brackets and excluded from ranking — latency without a correct answer is not a comparable measurement.";
 
 export const RANKING_RULES =
-  "Ranked on the **median of measured runs**. Warm series follow ≥1 discarded warmup and are the Compiler surface's primary ordering and ranking metric. Compiler additionally publishes a separately sampled **Fresh child** column: the first timed row workload after excluded process startup, imports and adapter setup. It is not called Cold and its ratio/noise gate never substitutes for Warm. A table with an explicit reference uses that row as its ratio denominator even when another row is faster; otherwise it uses fastest. One table per surface unless that surface declares explicit work-equivalence classes; engine, invocation and threading are row properties, not implicit table splits — rows tagged **(JS)** run the JavaScript TypeScript compiler (a cross-engine ratio measures TypeScript's rewrite as much as the tool), and a row's label/notes say whether it is a CLI (pays process startup every run), an in-process API, single-threaded or a thread pool. Name markers: ⚠ failed validation (time bracketed, unranked) · ❌ error · ⏭ skipped. A row above CV 50% with at least three warm samples is bracketed as TOO NOISY TO RANK, baseline included (a two-run spread has no third sample to adjudicate, so it is flagged, not bracketed). Per-row detail is under **Notes** below each table.";
+  "Ranked on the **median of measured runs**. Warm series follow ≥1 discarded warmup and are the primary ordering and ranking metric wherever both series exist. Compiler and Component-meta additionally publish a separately sampled **Fresh child** column: the first timed row workload in a new child process, after excluded process startup and package imports. It is not called Cold and its ratio/noise gate never substitutes for Warm. What else the child excludes differs by surface and each surface states it in its own methodology — Compiler builds its compiler host outside the timer, Component-meta builds its checker/session inside it, because its warm timer does too. Every table sorts fastest-first and every ratio column is **vs fastest** — the fastest ranked row is the 1.00x denominator; no tool is pinned as a reference. One table per surface unless that surface declares explicit work-equivalence classes; engine, invocation and threading are row properties, not implicit table splits — rows tagged **(JS)** run the JavaScript TypeScript compiler (a cross-engine ratio measures TypeScript's rewrite as much as the tool), and a row's label/notes say whether it is a CLI (pays process startup every run), an in-process API, single-threaded or a thread pool. Name markers: ⚠ failed validation (time bracketed, unranked) · ❌ error · ⏭ skipped. A row above CV 50% with at least three warm samples is bracketed as TOO NOISY TO RANK, no tool exempted (a two-run spread has no third sample to adjudicate, so it is flagged, not bracketed). Per-row detail is under **Notes** below each table.";
 
 /**
  * Tools that produced NO measurement, rendered ABOVE the tables.
@@ -728,12 +779,12 @@ export function renderSurfaceMarkdown(surface) {
       if (group.metric === "rss") {
         lines.push(...renderPeakRssBlock(group.variants, { heading: false }));
       } else {
+        // Peak RSS is a column on the timing table (rssCell); no second table.
         const { lines: tableLines, sorted } = renderByThreadingClass(
           group.variants,
         );
         lines.push(...tableLines);
         lines.push(...renderRawRuns(sorted));
-        lines.push(...renderPeakRssBlock(group.variants, { heading: true }));
       }
       lines.push("");
     }
@@ -749,12 +800,11 @@ export function renderSurfaceMarkdown(surface) {
     return lines.join("\n");
   }
 
-  // Flat surfaces
+  // Flat surfaces — Peak RSS is a column on the timing table (rssCell).
   const { lines: tableLines, sorted } = renderByThreadingClass(
     surface.variants,
   );
   lines.push(...tableLines);
-  lines.push(...renderPeakRssBlock(surface.variants, { heading: true }));
   lines.push("<details><summary>Methodology</summary>");
   lines.push("");
   for (const note of surface.methodology ?? []) {
@@ -844,9 +894,9 @@ export function renderFullMarkdown(data) {
 export function buildMethodologyNotes() {
   return [
     "This suite publishes two complementary outputs: apples-to-apples performance rankings against each surface's declared reference, and executable compatibility-gap findings for tool maintainers. Failed or incomplete work remains visible with evidence but cannot win a speed ranking.",
-    "Primary ranking metric is the **Warm median of measured runs**. Every warm measured series is preceded by at least one discarded warmup pass (enforced — `--warmups 0` is clamped to 1). Compiler also reports a separately sampled Fresh-child median for the first timed row workload; its surface methodology defines exactly which setup is outside that timer.",
-    "An explicit reference row remains the ratio denominator even when a candidate is faster. On the Compiler surface, the reference is Vue's official compiler-sfc workload; Vize or Verter never becomes the baseline merely by winning a run.",
-    "Warm columns rank steady-state work after a discarded pass. Compiler additionally publishes Fresh child, but that value cannot be interpreted as pure first-use overhead: process startup, package import and adapter setup are excluded and may already change V8/native/thread/allocator state; the OS page cache is not flushed. `pnpm diagnose:compile-warmth` remains the deeper state diagnostic.",
+    "Primary ranking metric is the **Warm median of measured runs**. Every warm measured series is preceded by at least one discarded warmup pass (enforced — `--warmups 0` is clamped to 1). Compiler and Component-meta also report a separately sampled Fresh-child median for the first timed row workload; each surface methodology defines exactly which setup is outside that timer, and they do not draw that line in the same place.",
+    "Every ratio is **vs fastest**: tables sort fastest-first and the fastest ranked row is the 1.00x denominator. No tool is pinned as a reference — the official Vue workload competes on the same terms and its row is labelled so it stays easy to find.",
+    "Warm columns rank steady-state work after a discarded pass. Compiler and Component-meta additionally publish Fresh child, but that value cannot be interpreted as pure first-use overhead: process startup, package import and adapter setup are excluded and may already change V8/native/thread/allocator state; the OS page cache is not flushed. `pnpm diagnose:compile-warmth` remains the deeper state diagnostic.",
     "Min / stddev / CV% are reported per row. CV% > 10 is flagged ⚠ — treat that row as noisy (thermal drift or a contended runner), not as a result. Above CV 50% a row with at least three samples is TOO NOISY TO RANK: bracketed and excluded exactly like a gate failure, baseline included — an unstable series buys more shots at a lucky median, so ranking it rewards instability. A two-run row is never bracketed by the ceiling (its stddev is |a−b|/√2 and there is no third sample to adjudicate); it keeps the ⚠ flag.",
     "Status is a marker on the tool NAME, not a column: ⚠ failed a validation gate (time in brackets, unranked) · ❌ error · ⏭ skipped. Per-row detail is in the collapsible **Notes** under each table, and each surface carries a **Tools** legend naming what actually ran.",
     "Each surface is one table unless it explicitly declares work-equivalence classes. Engine, invocation and threading remain row properties, not implicit table splits: a CLI pays process startup on every run (~85ms measured for one native CLI) while an in-process API amortises it, and a thread pool is not a single thread — the row's label and notes say which mode it ran, so compare like with like.",

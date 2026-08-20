@@ -165,8 +165,12 @@ Options:
 Ranking:
   Warm median of measured runs. Warm series follow >= 1 discarded pass.
   Compiler also reports Fresh child: the first timed row workload in a new
-  child per row/sample. Process startup, import and input/host setup are
-  excluded and may already affect runtime/allocator state; OS cache is not flushed.
+  child per row/sample, and so does Component-meta. Process startup, package
+  import and input materialisation are excluded and may already affect
+  runtime/allocator state; OS cache is not flushed. Host setup differs by
+  surface and each says which: Compiler builds its compiler host outside the
+  timer, Component-meta builds its checker/session inside it, because that is
+  where its warm timer builds it too.
   --warmups 0 is clamped to 1.
 
 Corpus notes:

@@ -8,7 +8,8 @@ import {
   listPidTreeMembers,
   pidTreeRssBreakdown,
 } from "../../scripts/lib/memory.mjs";
-import { typecheckAllLanding, barChartSvg } from "../../scripts/lib/readme-charts.mjs";
+import { barChartSvg } from "../../scripts/lib/chart-svg.mjs";
+import { typecheckAllLanding } from "../../scripts/lib/docs/render.mjs";
 
 describe("isTypeScriptEngineProcess", () => {
   test("names native tsgo / tsc / corsa as the engine", () => {
@@ -83,7 +84,7 @@ describe("pid tree walks descendants", () => {
 });
 
 describe("typecheck all-plants RSS split", () => {
-  test("table has Tool / tsgo tsc / Total columns and a stacked chart", () => {
+  test("wall table carries a split Peak RSS column instead of a second table", () => {
     const charts = [];
     const md = typecheckAllLanding(
       [
@@ -117,13 +118,15 @@ describe("typecheck all-plants RSS split", () => {
       ],
       { writeChart: (file, svg) => charts.push({ file, svg }) },
     );
-    assert.match(md, /\| Tool \| Tool \| tsgo \/ tsc \| \*\*Total\*\* \|/);
-    assert.match(md, /vize \| 90\.0 MB \| 210\.0 MB \| \*\*300\.0 MB\*\*/);
-    assert.match(md, /vue-tsc \| 350\.0 MB \| — \| \*\*350\.0 MB\*\*/);
-    const rss = charts.find((c) => c.file.includes("rss"));
-    assert.ok(rss, "rss chart");
-    assert.match(rss.svg, /tsgo \/ tsc/);
-    assert.match(rss.svg, /90\.0 MB \+ 210\.0 MB = 300\.0 MB/);
+    // RSS is a COLUMN on the wall table — the engine share stays visible as
+    // `tool + tsgo/tsc = total`, without a second table or chart.
+    assert.match(md, /\| Tool \| \*\*Wall\*\* \| vs fastest \| Peak RSS \|/);
+    assert.match(md, /vize \| [^|]+\| [^|]+\| 90\.0 \+ 210\.0 = \*\*300\.0 MB\*\* \|/);
+    assert.match(md, /vue-tsc \| [^|]+\| [^|]+\| \*\*350\.0 MB\*\* \|/);
+    assert.match(md, /split `tool \+ tsgo\/tsc = total`/);
+    assert.ok(!charts.some((c) => c.file.includes("rss")), "no separate rss chart");
+    assert.ok(charts.some((c) => c.file.includes("wall")), "wall chart");
+    assert.ok(charts.some((c) => c.file.includes("pass")), "pass-rate chart");
   });
 });
 

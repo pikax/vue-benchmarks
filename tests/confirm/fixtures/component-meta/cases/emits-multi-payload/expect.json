@@ -1,0 +1,10 @@
+{
+  "id": "emits-multi-payload",
+  "description": "Tuple defineEmits with multi-argument, optional-argument, and kebab-named events",
+  "props": [],
+  "events": [
+    { "name": "move", "typeIncludes": ["number"] },
+    { "name": "toggle", "typeIncludes": ["boolean"] },
+    { "name": "item-click", "typeIncludes": ["shift", "id"] }
+  ]
+}

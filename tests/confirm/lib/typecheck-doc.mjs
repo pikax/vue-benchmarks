@@ -1,5 +1,6 @@
 /**
- * Generate docs/typecheck.md from confirmation results + plant metas.
+ * Render the typecheck plant matrix from confirmation results + plant
+ * metas — standalone, or embedded into docs/typecheck.md by `pnpm docs`.
  *
  * The methodology prose is the source of truth for *how* we judge tools.
  * The results tables are generated so they cannot drift from confirm.json.
@@ -8,7 +9,8 @@ import { readdirSync, readFileSync } from "node:fs";
 import os from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { typecheckAllLanding, writeChart } from "../../../scripts/lib/readme-charts.mjs";
+import { writeChart } from "../../../scripts/lib/chart-svg.mjs";
+import { typecheckAllLanding } from "../../../scripts/lib/docs/render.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const casesRoot = join(here, "../fixtures/typecheck/cases");
@@ -136,12 +138,15 @@ function typecheckPlantRows(results) {
   for (const r of results || []) {
     if (r.suite !== "typecheck-all" && r.caseId !== "all-plants") continue;
     for (const p of r.detail?.plants || []) {
+      const legacyGap = p.skip && /lacks capability/i.test(p.message || "");
       out.push({
         suite: "typecheck",
         caseId: p.caseId,
         tool: r.tool,
-        status: p.skip ? "skip" : p.ok ? "pass" : "fail",
-        message: p.message,
+        // A capability gap is a fail. Older dumps recorded gaps as skips
+        // ("tool lacks capability: …"); current runs score them directly.
+        status: legacyGap ? "fail" : p.skip ? "skip" : p.ok ? "pass" : "fail",
+        message: legacyGap ? `capability gap — ${p.message}` : p.message,
       });
     }
   }
@@ -261,13 +266,13 @@ function appendTimeAndMemory(lines, metas, byCase, host) {
   lines.push("");
 }
 
-function appendAllPlants(lines, results, { chartsHref = "results/charts", writeChart: write } = {}) {
+function appendAllPlants(lines, results, { chartsHref = "charts", writeChart: write } = {}) {
   const rows = (results || []).filter((r) => r.suite === "typecheck-all");
   if (!rows.length) return;
   const landing = typecheckAllLanding(rows, {
     chartsHref,
     // Tests must not clobber published SVGs — only callers that pass writeChart
-    // (confirm run / README splice) write to docs/results/charts.
+    // (confirm run / docs generation) write to docs/charts.
     writeChart: typeof write === "function" ? write : undefined,
   });
   lines.push("## All plants (one tsconfig)");
@@ -277,7 +282,7 @@ function appendAllPlants(lines, results, { chartsHref = "results/charts", writeC
   );
   lines.push("");
   lines.push(
-    "Wall ranking uses the **median** of a **speed** pass (`--runs`, default 5, after `--warmups`, default 1) with **no** RSS sampler; **Avg** is the arithmetic mean of those same measured runs. Peak RSS is a **separate memory pass** (one sampled spawn after speed) so process-tree polling cannot inflate the clock. Engine RSS is a child `tsgo` / native `tsc` / `tsserver` when one was spawned. Pass rate is scored plants that met their pin (skips excluded), as a **percentage**.",
+    "Wall ranking uses the **median** of a **speed** pass (`--runs`, default 5, after `--warmups`, default 1) with **no** RSS sampler; **Avg** is the arithmetic mean of those same measured runs. Peak RSS is a **separate memory pass** (one sampled spawn after speed) so process-tree polling cannot inflate the clock. Engine RSS is a child `tsgo` / native `tsc` / `tsserver` when one was spawned. Pass rate is plants that met their pin over ALL plants, as a **percentage** — a capability gap counts as a fail.",
   );
   lines.push("");
   if (landing.trim()) lines.push(landing.trim(), "");
@@ -338,8 +343,8 @@ export function formatTypecheckReadmeSummary({ results, generatedAt, runner }) {
   );
   lines.push("");
   const allLanding = typecheckAllLanding(results, {
-    chartsHref: "docs/results/charts",
-    writeChart: (file, svg) => writeChart(join(here, "../../../docs/results/charts"), file, svg),
+    chartsHref: "docs/charts",
+    writeChart: (file, svg) => writeChart(join(here, "../../../docs/charts"), file, svg),
   });
   if (allLanding.trim()) {
     lines.push("### All plants (one tsconfig)");
@@ -371,6 +376,12 @@ export function formatTypecheckDoc({
   ci,
   runner,
   writeChart,
+  chartsHref = "charts",
+  // Embedded mode renders the matrix BODY for splicing into the Typecheck
+  // group page (docs/typecheck.md): no title/run header (the page has its
+  // own), no all-plants landing (the page renders it above), no Running
+  // section. Standalone mode keeps the full self-describing document.
+  embedded = false,
 }) {
   runner = runner ?? {
     platform: platform ?? process.platform,
@@ -390,34 +401,41 @@ export function formatTypecheckDoc({
   const known = loadKnownFailureKeys();
 
   const lines = [];
-  lines.push("# Typecheck confirmation");
-  lines.push("");
-  lines.push(
-    "This is the **correctness** suite for Vue typecheckers, not a throughput benchmark.",
-  );
-  lines.push(
-    "A tool is compatible only if it reports the planted error (or stays clean) on every plant.",
-  );
-  lines.push(
-    "vue-tsc (Volar) is the usual reference, but it is **not assumed perfect** — a plant it fails is a real gap and is listed as such.",
-  );
-  lines.push("");
   const host = hostLabel(platform, ci);
-  lines.push(`Generated from \`pnpm confirm:typecheck\` at ${generatedAt} on **${host}**.`);
-  const runnerLine = formatRunnerLine(runner);
-  if (runnerLine) lines.push(runnerLine);
-  if (runner.runUrl) lines.push(`- **CI run:** ${runner.runUrl}`);
-  lines.push("");
-  lines.push(
-    "On a **Benchmark** dispatch, Linux CI re-runs this and commits the file. Do not hand-edit the results.",
-  );
-  lines.push("");
+  if (!embedded) {
+    lines.push("# Typecheck confirmation");
+    lines.push("");
+    lines.push(
+      "This is the **correctness** suite for Vue typecheckers, not a throughput benchmark.",
+    );
+    lines.push(
+      "A tool is compatible only if it reports the planted error (or stays clean) on every plant.",
+    );
+    lines.push(
+      "vue-tsc (Volar) is the usual reference, but it is **not assumed perfect** — a plant it fails is a real gap and is listed as such.",
+    );
+    lines.push("");
+    lines.push(`Generated from \`pnpm confirm:typecheck\` at ${generatedAt} on **${host}**.`);
+    const runnerLine = formatRunnerLine(runner);
+    if (runnerLine) lines.push(runnerLine);
+    if (runner.runUrl) lines.push(`- **CI run:** ${runner.runUrl}`);
+    lines.push("");
+    lines.push(
+      "On a **Benchmark** dispatch, Linux CI re-runs this and commits the file. Do not hand-edit the results.",
+    );
+    lines.push("");
+  } else {
+    lines.push(
+      "A tool is compatible only if it reports the planted error (or stays clean) on every plant. vue-tsc (Volar) is the usual reference, but it is **not assumed perfect** — a plant it fails is a real gap and is listed as such.",
+    );
+    lines.push("");
+  }
 
   lines.push("## How plants are judged");
   lines.push("");
   lines.push("- Each case is a tiny project under `tests/confirm/fixtures/typecheck/cases/<id>/`. CI scores the matrix from **one spawn per tool** (`--all`) over every plant. `pnpm confirm:typecheck` without `--all` still runs each plant as its own spawn (fallthrough / extra-tsconfig retries).");
   lines.push(
-    "- **All plants (one tsconfig)** — extra check: every plant is copied under `cases/<id>/` and typechecked in **one** process with the shared `tsconfig.json` (no per-case overlay, no fallthroughAttributes retry). Wall is a speed pass (no RSS sampler). Peak RSS is a **separate** memory spawn. Pass rate is the per-plant score of the last speed dump, as a percentage of scored plants (skips excluded).",
+    "- **All plants (one tsconfig)** — extra check: every plant is copied under `cases/<id>/` and typechecked in **one** process with the shared `tsconfig.json` (no per-case overlay, no fallthroughAttributes retry). Wall is a speed pass (no RSS sampler). Peak RSS is a **separate** memory spawn. Pass rate is the per-plant score of the last speed dump, as a percentage of ALL plants — a capability gap counts as a fail.",
   );
   lines.push(
     "- Every tool runs on the **same shared tsconfig** (`strictTemplates: true`). Extra TypeScript flags that only one tool needs are **not** added globally.",
@@ -429,7 +447,7 @@ export function formatTypecheckDoc({
     "- `expectErrors: true` — at least one error, matching `mustMatch` when set. Dirty plants mark the bad line with a harness pin (`<!-- @plant-error -->` in template, `// @plant-error` in script). That is **not** TypeScript: HTML comments are ignored by every checker, so the pin always survives. The harness requires a diagnostic **on the next line** that mentions `expectMention` (e.g. the invalid prop name). A hit on the wrong line, or an error that does not name the plant, is a fail. `// @ts-expect-error` is only used in `.ts` where unused-directive is itself the plant.",
   );
   lines.push(
-    "- **skip** — the tool does not claim the capability (`meta.requires`), or the binary/engine is missing.",
+    "- **skip** — the binary/engine is missing, so the tool never ran. A tool that runs but does not claim a capability (`meta.requires`) **fails** that plant: an unclaimed capability is a gap, not an exemption.",
   );
   lines.push(
     "- **warn** — extra harness behaviour for one tool (today: verter-tsc retried with `allowArbitraryExtensions` + `allowImportingTsExtensions` that the others do not need). A warn is **not** a pass.",
@@ -478,7 +496,7 @@ export function formatTypecheckDoc({
   lines.push("| ✓ | pass — plant met on the shared (or disclosed case-local) config |");
   lines.push("| **✗** | fail — plant not met. If listed in known-failures.json it is a documented upstream gap |");
   lines.push("| ⚠ | warn — extra harness behaviour; not scored as a pass |");
-  lines.push("| ○ | skip — missing capability or engine |");
+  lines.push("| ○ | skip — missing binary/engine (an unclaimed capability is a ✗ fail, not a skip) |");
   lines.push("| – | no row (tool did not run this case) |");
   lines.push("");
 
@@ -502,8 +520,10 @@ export function formatTypecheckDoc({
   lines.push("- one-spawn combined run: [All plants (one tsconfig)](#all-plants-one-tsconfig)");
   lines.push("");
 
-  appendAllPlants(lines, results, { chartsHref: "results/charts", writeChart });
-  lines.push("");
+  if (!embedded) {
+    appendAllPlants(lines, results, { chartsHref, writeChart });
+    lines.push("");
+  }
 
   if (typecheckRows.length) for (const [groupId, groupTitle] of GROUPS) {
     const rows = metas.filter((m) => m.group === groupId);
@@ -561,17 +581,19 @@ export function formatTypecheckDoc({
 
   appendTimeAndMemory(lines, metas, byCase, host);
 
-  lines.push("## Running");
-  lines.push("");
-  lines.push("```bash");
-  lines.push("pnpm confirm:typecheck          # local: per-plant + all-plants");
-  lines.push("pnpm confirm --all              # CI: one typecheck spawn per tool");
-  lines.push("```");
-  lines.push("");
-  lines.push(
-    "Writes `results/confirm.json`, `results/confirm.md`, and refreshes this file. A Benchmark dispatch on `main` commits this file and a README summary (`[skip ci]`).",
-  );
-  lines.push("");
+  if (!embedded) {
+    lines.push("## Running");
+    lines.push("");
+    lines.push("```bash");
+    lines.push("pnpm confirm:typecheck          # local: per-plant + all-plants");
+    lines.push("pnpm confirm --all              # CI: one typecheck spawn per tool");
+    lines.push("```");
+    lines.push("");
+    lines.push(
+      "Writes `results/confirm.json`, `results/confirm.md`; `pnpm docs` renders the matrix into `docs/typecheck.md`. A Benchmark dispatch on `main` commits that page and a README summary (`[skip ci]`).",
+    );
+    lines.push("");
+  }
   return lines.join("\n");
 }
 

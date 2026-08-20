@@ -1,0 +1,20 @@
+{
+  "id": "props-destructure",
+  "description": "Reactive props destructure (Vue 3.5): optionality preserved, destructure initializers are defaults",
+  "props": [
+    { "name": "label", "required": true, "typeIncludes": ["string"] },
+    {
+      "name": "count",
+      "required": false,
+      "typeIncludes": ["number"],
+      "hasDefault": true
+    },
+    {
+      "name": "verbose",
+      "required": false,
+      "typeIncludes": ["boolean"],
+      "hasDefault": true
+    }
+  ],
+  "events": []
+}

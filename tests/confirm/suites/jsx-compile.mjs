@@ -185,6 +185,53 @@ export default function App() {
     },
   },
   {
+    id: "component-slot-children",
+    source: `const Child = (props, { slots }) => <div data-testid="child">{slots.default?.()}</div>
+export default function App() {
+  return <Child><i data-testid="inner">inner</i></Child>
+}
+`,
+    expect: {
+      // element children of a component must become a default slot, not vnode children
+      vapor: [/createComponent/, /slots\.default/],
+      vdomInterop: [/withCtx/, /slots\.default/],
+      babel: [/default:\s*\(\)\s*=>/, /slots\.default/],
+    },
+    async runtime(mount, component) {
+      const w = mount(component);
+      const child = w.get("[data-testid=child]");
+      const inner = child.find("[data-testid=inner]");
+      if (!inner.exists()) {
+        throw new Error("component children were not delivered as the default slot");
+      }
+      expectText(inner.text(), "inner");
+      w.unmount();
+    },
+  },
+  {
+    id: "v-show-directive",
+    source: `export default function App(props) {
+  return <div data-testid="root" v-show={props.on}>x</div>
+}
+`,
+    expect: {
+      vapor: [/applyVShow/],
+      vdomInterop: [/withDirectives/, /vShow/],
+      babel: [/withDirectives/, /vShow/],
+    },
+    async runtime(mount, component) {
+      const w = mount(component, { props: { on: true } });
+      if (w.get("[data-testid=root]").element.style.display === "none") {
+        throw new Error("v-show true should not set display:none");
+      }
+      await w.setProps({ on: false });
+      if (w.get("[data-testid=root]").element.style.display !== "none") {
+        throw new Error("v-show false must set display:none (element must stay in the DOM)");
+      }
+      w.unmount();
+    },
+  },
+  {
     id: "event-handler",
     source: `export default function App(props) {
   return <button data-testid="btn" onClick={props.onPing}>go</button>

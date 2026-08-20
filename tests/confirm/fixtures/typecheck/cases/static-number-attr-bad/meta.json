@@ -3,7 +3,16 @@
   "description": "Static attribute count=\"1\" is a string and must not satisfy count: number",
   "expectErrors": true,
   "minErrors": 1,
-  "mustMatch": ["TS2322", "string", "number", "not assignable"],
-  "requires": ["prop-types"],
-  "expectMention": ["count"]
+  "mustMatch": [
+    "TS2322",
+    "string",
+    "number",
+    "not assignable"
+  ],
+  "requires": [
+    "prop-types"
+  ],
+  "expectMention": [
+    "'string' is not assignable to type 'number'"
+  ]
 }

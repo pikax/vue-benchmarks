@@ -397,11 +397,15 @@ export function buildIdeSurfaces(results) {
           label: row.label ?? row.server,
           status: Number.isFinite(mb) ? "ok" : row.error ? "error" : "skipped",
           rssMaxMb: Number.isFinite(mb) ? mb : undefined,
+          // Same split as the typecheck surface: the spawned tsgo/tsserver
+          // share is the engine's, the rest the tool's.
+          rssToolMb: Number.isFinite(row.rssToolMb) ? row.rssToolMb : undefined,
+          rssEngineMb: Number.isFinite(row.rssEngineMb) ? row.rssEngineMb : undefined,
           threading: "lsp",
           invocation: "lsp",
           engine: engine.engine,
           notes: [
-            "Whole language-server process tree during the timed session (Volar = Vue half + TypeScript half).",
+            "Whole language-server process tree during the timed session (Volar = Vue half + TypeScript half), split `tool + tsgo/tsserver = total` with the same attribution as the typecheck surface.",
             row.backendFallback && `⚠ BACKEND FALLBACK — ${row.backendFallback}`,
             `engine: ${engine.label}`,
           ]

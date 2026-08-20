@@ -5,7 +5,7 @@ Where every bench writes its markdown + JSON. Two kinds of files live here:
 1. **Latest Linux CI snapshot** (committed): `benchmarks/` and `real_world/`. A new publish **clears** the folder first so only that run remains.
 2. **Local and working copies** (gitignored): everything else at this directory's root, plus `ci-tmp/`. Windows reports, logs, and pull scratch belong here and stay on the machine that produced them.
 
-The landing page is the root [`README.md`](../README.md). Full tables the landing page links live under [`docs/results/`](../docs/results/) (markdown copies + SVG charts). This folder is the **source** of those reports, not the published HTML view.
+The landing page is the root [`README.md`](../README.md). The committed snapshot here is **JSON only** — `pnpm docs` renders it into the per-group pages and charts under [`docs/`](../docs/). Markdown written next to a local run is a convenience and stays gitignored.
 
 Linux numbers and local Windows/macOS numbers are not comparable. The README publishes Linux only unless `PUBLISH_ANY_PLATFORM=1`.
 

@@ -1,0 +1,6 @@
+{
+  "id": "emits-runtime-validators",
+  "description": "Object-form runtime defineEmits (non-TS) whose values are validator functions: the object keys are the event names. Payload types are deliberately unpinned — the tools legitimately render an untyped validator argument as [payload: any], [unknown] and any[] respectively, so no coarse token is shared by all three",
+  "props": [],
+  "events": [{ "name": "submit" }, { "name": "cancel" }]
+}

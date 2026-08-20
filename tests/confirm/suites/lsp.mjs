@@ -4,10 +4,22 @@
  * One small workspace, one session per server:
  *   hover-template-binding      hover {{ greeting }} mentions a type
  *   definition-component        go-to-definition on <Child /> lands in Child.vue
+ *   document-symbol-structure   documentSymbol on App.vue names the `greeting` binding
+ *   completion-prop-template    completion inside <Child …> offers the epilogueText prop
+ *   definition-prop-attr        definition on the :title attr lands on Child.vue's prop decl
+ *   references-prop-template    references from the prop decl reach App.vue's template use
+ *   rename-prop-template        rename of the prop returns edits in App.vue's TEMPLATE too
  *   diagnostics-template        publishDiagnostics (or pull) names the extra-prop plant
  *   diagnostics-clear-after-fix didChange to App.fixed.vue clears that plant
  *
+ * The five middle cases fire BEFORE the didChange to App.fixed.vue, so every
+ * probe position is computed against the original App.vue text. Rename edits
+ * are INSPECTED, never applied — the document the diagnostics cases watch is
+ * untouched.
+ *
  * Missing server binary → skip, same as typecheck. Bootstrap failure → skip.
+ * Vize with Corsa unreachable degrades type-backed answers; those cases skip
+ * (same policy as hover) instead of failing on a downed backend.
  */
 import { mkdirSync, readFileSync, symlinkSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -23,9 +35,19 @@ import {
 } from "../../../scripts/lib/surfaces/lsp.mjs";
 import { attachVolarHybridBridge } from "../../../scripts/lib/tsserver-bridge.mjs";
 import { withTsgoEnv } from "../../../scripts/lib/tsgo.mjs";
-import { contentText, mergeHover, removeWorkspace } from "../../../scripts/lib/ide-ops/context.mjs";
 import {
+  contentText,
+  mergeCompletions,
+  mergeHover,
+  removeWorkspace,
+} from "../../../scripts/lib/ide-ops/context.mjs";
+import {
+  gateReferences,
+  gateRename,
   mergeLocations,
+  mergeWorkspaceEdits,
+  normalizeUri,
+  textInRange,
   toLocations,
   uriMatchesPath,
 } from "../../../scripts/lib/ide-ops/suites/navigation.mjs";
@@ -37,12 +59,25 @@ const workRoot = join(rootDir, "work", "confirm-lsp");
 const CASES = [
   "hover-template-binding",
   "definition-component",
+  "document-symbol-structure",
+  "completion-prop-template",
+  "definition-prop-attr",
+  "references-prop-template",
+  "rename-prop-template",
   "diagnostics-template",
   "diagnostics-clear-after-fix",
 ];
 
 const BINDING = "greeting";
 const BINDING_VALUE = "confirm-lsp";
+/** Declared prop bound in App.vue's template (`:title="greeting"`). */
+const PROP_NAME = "title";
+/** Distinctive optional prop of Child.vue — the completion plant's answer.
+ *  Deliberately NOT a standard HTML attribute, so global attribute data
+ *  (`title`, `class`, …) cannot satisfy the gate by accident. */
+const COMPLETION_PROP = "epilogueText";
+/** Rename target. Edits are inspected in memory, never applied. */
+const RENAME_NEW_NAME = "renamedTitle";
 // Vue templates write extra attrs in kebab-case. CamelCase (`plantedBadProp`)
 // trips vize's vue/attribute-hyphenation lint, whose message does not name the
 // attribute, so the plant never matches even when the server is otherwise
@@ -127,6 +162,48 @@ function pullItems(report) {
   if (!report || typeof report !== "object") return [];
   if (Array.isArray(report.items)) return report.items;
   if (Array.isArray(report)) return report;
+  return [];
+}
+
+/** Case/punctuation-insensitive identity, so `epilogue-text` matches `epilogueText`. */
+function squash(s) {
+  return String(s ?? "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
+}
+
+/** DocumentSymbol[] (nested) | SymbolInformation[] (flat) → every symbol name. */
+function collectSymbolNames(list, out = []) {
+  for (const s of Array.isArray(list) ? list : []) {
+    if (!s || typeof s !== "object") continue;
+    if (typeof s.name === "string") out.push(s.name);
+    if (Array.isArray(s.children)) collectSymbolNames(s.children, out);
+  }
+  return out;
+}
+
+/** Union of documentSymbol answers from both halves of a hybrid server. */
+function mergeSymbolLists(...results) {
+  const out = [];
+  for (const r of results) if (Array.isArray(r)) out.push(...r);
+  return out.length ? out : null;
+}
+
+/** Every text an editor would match a CompletionItem by. Label may be a
+ *  string or a CompletionItemLabel object per LSP 3.17. */
+function completionLabelBits(item) {
+  const bits = [];
+  if (typeof item?.label === "string") bits.push(item.label);
+  else if (typeof item?.label?.label === "string") bits.push(item.label.label);
+  if (typeof item?.insertText === "string") bits.push(item.insertText);
+  if (typeof item?.filterText === "string") bits.push(item.filterText);
+  return bits;
+}
+
+function completionItemsOf(result) {
+  if (!result) return [];
+  if (Array.isArray(result)) return result;
+  if (Array.isArray(result.items)) return result.items;
   return [];
 }
 
@@ -217,6 +294,13 @@ function prepareWorkspace() {
     childSource,
     hoverProbe: templateBindingProbe(appSource, BINDING),
     componentProbe: { line: childTag.line, character: childTag.character + 1 },
+    // Cursor in the attribute area of `<Child |:title=…` — before the colon,
+    // empty prefix, i.e. where an editor invokes attribute completion.
+    completionProbe: positionOf(appSource, `:${PROP_NAME}`, 1),
+    // On the attribute NAME (`t` of `:title=`), past the v-bind colon.
+    propAttrProbe: positionOf(appSource, `${PROP_NAME}="`, 1),
+    // The prop declaration inside defineProps<{…}>() in Child.vue.
+    propDeclProbe: positionOf(childSource, `${PROP_NAME}: string`, 1),
   };
 }
 
@@ -517,6 +601,212 @@ async function runServerCases(suite, server, ws) {
       );
     } catch (error) {
       suite.fail("definition-component", server.id, `definition request failed: ${error.message}`);
+    }
+
+    // Vize without Corsa has no type backend; a type-backed answer it cannot
+    // give is a degraded-backend skip (same policy as hover), not a content bug.
+    const corsaDown = () => typecheckUnavailable(session.diags.merged());
+    const CORSA_SKIP = "type checking unavailable (Corsa not reachable) — type-backed answer cannot be confirmed";
+
+    // --- document-symbol-structure ---
+    // Syntactic outline: no type backend involved, so no Corsa guard.
+    try {
+      const result = await session.ask(
+        "textDocument/documentSymbol",
+        { textDocument: { uri: session.appUri } },
+        REQUEST_TIMEOUT_MS,
+        mergeSymbolLists,
+      );
+      const names = collectSymbolNames(result);
+      const hit = names.some((n) => squash(n).includes(squash(BINDING)));
+      const seen = [...new Set(names)].slice(0, 8).join(", ");
+      record(
+        suite,
+        "document-symbol-structure",
+        server.id,
+        hit,
+        hit
+          ? `documentSymbol names the ${BINDING} binding (${names.length} symbols)`
+          : names.length
+            ? `documentSymbol never names ${BINDING} — saw: ${seen}`
+            : "documentSymbol returned no symbols for the SFC",
+        { snippet: seen || JSON.stringify(result ?? null).slice(0, 200) },
+      );
+    } catch (error) {
+      suite.fail(
+        "document-symbol-structure",
+        server.id,
+        `documentSymbol request failed: ${error.message}`,
+      );
+    }
+
+    // --- completion-prop-template ---
+    try {
+      const result = await session.ask(
+        "textDocument/completion",
+        {
+          textDocument: { uri: session.appUri },
+          position: ws.completionProbe,
+          context: { triggerKind: 1 },
+        },
+        REQUEST_TIMEOUT_MS,
+        mergeCompletions,
+      );
+      const items = completionItemsOf(result);
+      const matches = items.filter((i) =>
+        completionLabelBits(i).some((b) => squash(b).includes(squash(COMPLETION_PROP))),
+      );
+      const hit = matches.length > 0;
+      if (!hit && corsaDown()) {
+        suite.skip("completion-prop-template", server.id, CORSA_SKIP);
+      } else {
+        const sampleLabels = items
+          .slice(0, 8)
+          .map((i) => completionLabelBits(i)[0] ?? "")
+          .filter(Boolean)
+          .join(", ");
+        record(
+          suite,
+          "completion-prop-template",
+          server.id,
+          hit,
+          hit
+            ? `attribute completion offers ${COMPLETION_PROP} (${matches
+                .slice(0, 2)
+                .map((i) => completionLabelBits(i)[0])
+                .join(", ")}; ${items.length} items)`
+            : items.length
+              ? `${items.length} completion items, none offering ${COMPLETION_PROP} — saw: ${sampleLabels}`
+              : "completion returned no items inside the component tag",
+          { snippet: sampleLabels || JSON.stringify(result ?? null).slice(0, 200) },
+        );
+      }
+    } catch (error) {
+      suite.fail(
+        "completion-prop-template",
+        server.id,
+        `completion request failed: ${error.message}`,
+      );
+    }
+
+    // --- definition-prop-attr ---
+    try {
+      const result = await session.ask(
+        "textDocument/definition",
+        { textDocument: { uri: session.appUri }, position: ws.propAttrProbe },
+        REQUEST_TIMEOUT_MS,
+        mergeLocations,
+      );
+      const locs = toLocations(result);
+      const inChild = locs.filter((l) => uriMatchesPath(l.uri, ws.childFile));
+      // A location in the REAL Child.vue must cover the prop identifier; a
+      // generated twin (Child.vue.ts) has ranges in virtual code we cannot
+      // check against the fixture, so the file-level hit stands for it.
+      const exact = inChild.filter((l) => normalizeUri(l.uri) === normalizeUri(ws.childFile));
+      const covered = exact.map((l) => textInRange(ws.childSource, l.range));
+      const exactOk = exact.length
+        ? covered.some((t) => squash(t).includes(squash(PROP_NAME)))
+        : inChild.length > 0;
+      const hit = inChild.length > 0 && exactOk;
+      const seen = [...new Set(locs.map((l) => l.uri.split("/").pop()))].join(", ");
+      if (!hit && corsaDown()) {
+        suite.skip("definition-prop-attr", server.id, CORSA_SKIP);
+      } else {
+        record(
+          suite,
+          "definition-prop-attr",
+          server.id,
+          hit,
+          hit
+            ? `:${PROP_NAME} attr resolves to Child.vue prop declaration`
+            : inChild.length
+              ? `landed in Child.vue but range covers ${JSON.stringify(
+                  covered[0] ?? "",
+                )} — expected the ${PROP_NAME} declaration`
+              : locs.length
+                ? `definition resolved to ${seen} — expected Child.vue`
+                : "definition on the prop attribute returned no location",
+          { snippet: JSON.stringify(locs).slice(0, 400) },
+        );
+      }
+    } catch (error) {
+      suite.fail(
+        "definition-prop-attr",
+        server.id,
+        `definition request failed: ${error.message}`,
+      );
+    }
+
+    // --- references-prop-template ---
+    try {
+      const result = await session.ask(
+        "textDocument/references",
+        {
+          textDocument: { uri: session.childUri },
+          position: ws.propDeclProbe,
+          context: { includeDeclaration: true },
+        },
+        REQUEST_TIMEOUT_MS,
+        mergeLocations,
+      );
+      const gate = gateReferences(result, { declPath: ws.childFile, usePath: ws.appFile });
+      if (!gate.valid && corsaDown()) {
+        suite.skip("references-prop-template", server.id, CORSA_SKIP);
+      } else {
+        record(
+          suite,
+          "references-prop-template",
+          server.id,
+          gate.valid,
+          gate.valid
+            ? `references from the ${PROP_NAME} declaration reach App.vue's template`
+            : gate.reason,
+          { snippet: gate.sample?.slice(0, 400) },
+        );
+      }
+    } catch (error) {
+      suite.fail(
+        "references-prop-template",
+        server.id,
+        `references request failed: ${error.message}`,
+      );
+    }
+
+    // --- rename-prop-template ---
+    // Edits are INSPECTED in memory, never applied: the open documents the
+    // diagnostics cases watch are untouched.
+    try {
+      const result = await session.ask(
+        "textDocument/rename",
+        {
+          textDocument: { uri: session.childUri },
+          position: ws.propDeclProbe,
+          newName: RENAME_NEW_NAME,
+        },
+        REQUEST_TIMEOUT_MS,
+        mergeWorkspaceEdits,
+      );
+      const gate = gateRename(result, {
+        templatePath: ws.appFile,
+        declPath: ws.childFile,
+        newName: RENAME_NEW_NAME,
+      });
+      if (!gate.valid && corsaDown()) {
+        suite.skip("rename-prop-template", server.id, CORSA_SKIP);
+      } else {
+        record(
+          suite,
+          "rename-prop-template",
+          server.id,
+          gate.valid,
+          gate.valid
+            ? `rename of ${PROP_NAME} edits App.vue's template usage (${gate.sample?.slice(0, 120)})`
+            : gate.reason,
+          { snippet: gate.sample?.slice(0, 400) },
+        );
+      }
+    } catch (error) {
+      suite.fail("rename-prop-template", server.id, `rename request failed: ${error.message}`);
     }
 
     // --- diagnostics-template ---

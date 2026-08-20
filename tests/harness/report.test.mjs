@@ -775,7 +775,7 @@ describe("comparison classes", () => {
     assert.equal(retainedTable.body[0][COL.vsFastest], "1.00x");
   });
 
-  test("an explicit Vue reference remains the denominator when a candidate is faster", () => {
+  test("a baseline flag never pins the ratio — everything is vs fastest", () => {
     const md = renderSurfaceMarkdown(
       surface([
         okRow({
@@ -796,19 +796,20 @@ describe("comparison classes", () => {
     );
 
     const table = collectMarkdownTables(md)[0];
-    assert.match(table.header.join(" | "), /vs Vue baseline/);
+    assert.match(table.header.join(" | "), /vs fastest/);
+    assert.doesNotMatch(table.header.join(" | "), /vs Vue/);
     assert.equal(
       table.body[0][COL.tool],
-      "Vue reference",
-      "reference renders first",
+      "Native candidate",
+      "fastest ranked row renders first",
     );
     assert.equal(table.body[0][COL.vsFastest], "1.00x");
     assert.equal(
-      table.body.find((row) => row[COL.tool] === "Native candidate")[
+      table.body.find((row) => row[COL.tool] === "Vue reference")[
         COL.vsFastest
       ],
-      "0.25x",
-      "candidate is relative to Vue, not itself",
+      "4.00x",
+      "the flagged row is measured against the fastest like everyone else",
     );
   });
 
@@ -1213,21 +1214,29 @@ describe("markdown table integrity", () => {
 });
 
 describe("Peak RSS", () => {
-  test("a speed surface with rssMaxMb grows a Peak RSS table", () => {
+  test("a speed surface with rssMaxMb grows a Peak RSS COLUMN, not a second table", () => {
     const md = renderSurfaceMarkdown(
       surface([
         okRow({ label: "Small", medianMs: 10, rssMaxMb: 32.3 }),
         okRow({ label: "Large", medianMs: 20, rssMaxMb: 140.7 }),
+        okRow({ label: "NoRss", medianMs: 30 }),
       ]),
     );
-    assert.match(md, /#### Peak RSS/);
-    assert.match(md, /\*\*32\.3 MB\*\*/);
-    const small = md.indexOf("**32.3 MB**");
-    const large = md.indexOf("**140.7 MB**");
-    assert.ok(
-      small >= 0 && large >= 0 && small < large,
-      "RSS table sorted ascending",
+    assert.doesNotMatch(md, /#### Peak RSS/);
+    assert.match(md, /\| Tool \| \*\*Median \(primary\)\*\*[^\n]*\| Peak RSS \|/);
+    assert.match(md, /\| Small \|[^\n]*\| 32\.3 MB \|/);
+    assert.match(md, /\| Large \|[^\n]*\| 140\.7 MB \|/);
+    assert.match(md, /\| NoRss \|[^\n]*\| – \|/, "row without a measurement stays honest");
+  });
+
+  test("an unranked row's RSS is bracketed like its time", () => {
+    const md = renderSurfaceMarkdown(
+      surface([
+        okRow({ label: "Ranked", medianMs: 10, rssMaxMb: 32.3 }),
+        okRow({ label: "Gated", medianMs: 5, rssMaxMb: 99.9, status: "unranked" }),
+      ]),
     );
+    assert.match(md, /\(99\.9 MB\)/);
   });
 });
 

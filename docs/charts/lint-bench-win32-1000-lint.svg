@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="372" viewBox="0 0 760 372" role="img" aria-label="Lint">
+  <title>Lint (lower is better)</title>
+  <style><![CDATA[
+    text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
+  ]]></style>
+  <defs><pattern id="hatch-3" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="8" height="8" fill="#ca8a04"/><line x1="0" y1="0" x2="0" y2="8" stroke="#fff" stroke-width="3" opacity="0.35"/></pattern><pattern id="hatch-4" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="8" height="8" fill="#ca8a04"/><line x1="0" y1="0" x2="0" y2="8" stroke="#fff" stroke-width="3" opacity="0.35"/></pattern><pattern id="hatch-5" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="8" height="8" fill="#0ea5e9"/><line x1="0" y1="0" x2="0" y2="8" stroke="#fff" stroke-width="3" opacity="0.35"/></pattern><pattern id="hatch-6" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="8" height="8" fill="#4b32c3"/><line x1="0" y1="0" x2="0" y2="8" stroke="#fff" stroke-width="3" opacity="0.35"/></pattern><pattern id="hatch-7" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="8" height="8" fill="#0ea5e9"/><line x1="0" y1="0" x2="0" y2="8" stroke="#fff" stroke-width="3" opacity="0.35"/></pattern></defs>
+  <text fill="#1f2328" x="16" y="20" font-size="15" font-weight="600">Lint</text>
+  <text fill="#59636e" x="16" y="36" font-size="11">lower is better</text>
+  
+  <line x1="248" y1="48" x2="248" y2="344" stroke="#d0d7de" stroke-opacity="0.55" />
+  <text fill="#59636e" x="248" y="364" text-anchor="middle" font-size="11">0.0 ms</text>
+  <line x1="348.5" y1="48" x2="348.5" y2="344" stroke="#d0d7de" stroke-opacity="0.55" />
+  <text fill="#59636e" x="348.5" y="364" text-anchor="middle" font-size="11">697 ms</text>
+  <line x1="449" y1="48" x2="449" y2="344" stroke="#d0d7de" stroke-opacity="0.55" />
+  <text fill="#59636e" x="449" y="364" text-anchor="middle" font-size="11">1.39 s</text>
+  <line x1="549.5" y1="48" x2="549.5" y2="344" stroke="#d0d7de" stroke-opacity="0.55" />
+  <text fill="#59636e" x="549.5" y="364" text-anchor="middle" font-size="11">2.09 s</text>
+  <line x1="650" y1="48" x2="650" y2="344" stroke="#d0d7de" stroke-opacity="0.55" />
+  <text fill="#59636e" x="650" y="364" text-anchor="middle" font-size="11">2.79 s</text>
+  <text fill="#59636e" x="16" y="77" font-size="11">1</text>
+      <text fill="#1f2328" x="36" y="77" font-size="13">Vize lint (max threads)</text>
+      
+      <rect x="248" y="61" width="402" height="22" rx="5" fill="#afb8c133"/>
+      <rect x="248" y="61" width="35.5" height="22" rx="5" fill="#2563eb"/>
+      <text fill="#1f2328" x="291.4724698791294" y="77" font-size="12" font-weight="600">246 ms</text>
+  <text fill="#59636e" x="16" y="113" font-size="11">2</text>
+      <text fill="#1f2328" x="36" y="113" font-size="13">Vize lint (1T)</text>
+      
+      <rect x="248" y="97" width="402" height="22" rx="5" fill="#afb8c133"/>
+      <rect x="248" y="97" width="121.3" height="22" rx="5" fill="#2563eb"/>
+      <text fill="#ffffff" x="256" y="113" font-size="12" font-weight="600">842 ms</text>
+  <text fill="#59636e" x="16" y="149" font-size="11">3</text>
+      <text fill="#1f2328" x="36" y="149" font-size="13">Verter host lint</text>
+      
+      <rect x="248" y="133" width="402" height="22" rx="5" fill="#afb8c133"/>
+      <rect x="248" y="133" width="402.0" height="22" rx="5" fill="#e11d48"/>
+      <text fill="#ffffff" x="256" y="149" font-size="12" font-weight="600">2.79 s</text>
+  <text fill="#59636e" x="16" y="185" font-size="11">4</text>
+      <text fill="#1f2328" x="36" y="185" font-size="13" fill-opacity="0.62">Oxlint (max threads)</text>
+      <line x1="36" y1="180" x2="240" y2="180" stroke="#1f2328" stroke-opacity="0.45" />
+      <rect x="248" y="169" width="402" height="22" rx="5" fill="#afb8c133"/>
+      <rect x="248" y="169" width="25.2" height="22" rx="5" fill="url(#hatch-3)"/>
+      <text fill="#1f2328" x="281.16586748178986" y="185" font-size="12" font-weight="600">175 ms · unranked</text>
+  <text fill="#59636e" x="16" y="221" font-size="11">5</text>
+      <text fill="#1f2328" x="36" y="221" font-size="13" fill-opacity="0.62">Oxlint (1T)</text>
+      <line x1="36" y1="216" x2="240" y2="216" stroke="#1f2328" stroke-opacity="0.45" />
+      <rect x="248" y="205" width="402" height="22" rx="5" fill="#afb8c133"/>
+      <rect x="248" y="205" width="51.1" height="22" rx="5" fill="url(#hatch-4)"/>
+      <text fill="#1f2328" x="307.07956125001164" y="221" font-size="12" font-weight="600">354 ms · unranked</text>
+  <text fill="#59636e" x="16" y="257" font-size="11">6</text>
+      <text fill="#1f2328" x="36" y="257" font-size="13" fill-opacity="0.62">Biome lint (max threads)</text>
+      <line x1="36" y1="252" x2="240" y2="252" stroke="#1f2328" stroke-opacity="0.45" />
+      <rect x="248" y="241" width="402" height="22" rx="5" fill="#afb8c133"/>
+      <rect x="248" y="241" width="99.8" height="22" rx="5" fill="url(#hatch-5)"/>
+      <text fill="#ffffff" x="256" y="257" font-size="12" font-weight="600">693 ms · unranked</text>
+  <text fill="#59636e" x="16" y="293" font-size="11">7</text>
+      <text fill="#1f2328" x="36" y="293" font-size="13" fill-opacity="0.62">eslint-plugin-vue (CLI)</text>
+      <line x1="36" y1="288" x2="240" y2="288" stroke="#1f2328" stroke-opacity="0.45" />
+      <rect x="248" y="277" width="402" height="22" rx="5" fill="#afb8c133"/>
+      <rect x="248" y="277" width="100.8" height="22" rx="5" fill="url(#hatch-6)"/>
+      <text fill="#ffffff" x="256" y="293" font-size="12" font-weight="600">700 ms · unranked</text>
+  <text fill="#59636e" x="16" y="329" font-size="11">8</text>
+      <text fill="#1f2328" x="36" y="329" font-size="13" fill-opacity="0.62">Biome lint (1T)</text>
+      <line x1="36" y1="324" x2="240" y2="324" stroke="#1f2328" stroke-opacity="0.45" />
+      <rect x="248" y="313" width="402" height="22" rx="5" fill="#afb8c133"/>
+      <rect x="248" y="313" width="400.1" height="22" rx="5" fill="url(#hatch-7)"/>
+      <text fill="#ffffff" x="256" y="329" font-size="12" font-weight="600">2.78 s · unranked</text>
+</svg>

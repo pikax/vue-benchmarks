@@ -55,4 +55,4 @@ download(latestRun("benchmark.yml"), "bench");
 download(latestRun("benchmark-real-world.yml"), "real-world");
 const { copied } = publishCiResults({ fromDir: tmp, scope: "all" });
 console.log(`snapshotted ${copied} Linux files into results/benchmarks and results/real_world (previous cleared).`);
-console.log("Regenerate the README landing page with: pnpm update-readme");
+console.log("Regenerate README + docs/ with: pnpm docs");

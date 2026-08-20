@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="372" viewBox="0 0 760 372" role="img" aria-label="SFC compile (unique contents) — VDOM · development · sourcemap off">
+  <title>SFC compile (unique contents) — VDOM · development · sourcemap off (lower is better)</title>
+  <style><![CDATA[
+    text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
+  ]]></style>
+  <defs><pattern id="hatch-6" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="8" height="8" fill="#78716c"/><line x1="0" y1="0" x2="0" y2="8" stroke="#fff" stroke-width="3" opacity="0.35"/></pattern><pattern id="hatch-7" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="8" height="8" fill="#78716c"/><line x1="0" y1="0" x2="0" y2="8" stroke="#fff" stroke-width="3" opacity="0.35"/></pattern></defs>
+  <text fill="#1f2328" x="16" y="20" font-size="15" font-weight="600">SFC compile (unique contents) — VDOM · development · sourcemap off</text>
+  <text fill="#59636e" x="16" y="36" font-size="11">lower is better</text>
+  
+  <line x1="248" y1="48" x2="248" y2="344" stroke="#d0d7de" stroke-opacity="0.55" />
+  <text fill="#59636e" x="248" y="364" text-anchor="middle" font-size="11">0.0 ms</text>
+  <line x1="348.5" y1="48" x2="348.5" y2="344" stroke="#d0d7de" stroke-opacity="0.55" />
+  <text fill="#59636e" x="348.5" y="364" text-anchor="middle" font-size="11">42.0 ms</text>
+  <line x1="449" y1="48" x2="449" y2="344" stroke="#d0d7de" stroke-opacity="0.55" />
+  <text fill="#59636e" x="449" y="364" text-anchor="middle" font-size="11">84.0 ms</text>
+  <line x1="549.5" y1="48" x2="549.5" y2="344" stroke="#d0d7de" stroke-opacity="0.55" />
+  <text fill="#59636e" x="549.5" y="364" text-anchor="middle" font-size="11">126 ms</text>
+  <line x1="650" y1="48" x2="650" y2="344" stroke="#d0d7de" stroke-opacity="0.55" />
+  <text fill="#59636e" x="650" y="364" text-anchor="middle" font-size="11">168 ms</text>
+  <text fill="#59636e" x="16" y="77" font-size="11">1</text>
+      <text fill="#1f2328" x="36" y="77" font-size="13">Vize native batch (max t…</text>
+      
+      <rect x="248" y="61" width="402" height="22" rx="5" fill="#afb8c133"/>
+      <rect x="248" y="61" width="64.1" height="22" rx="5" fill="#2563eb"/>
+      <text fill="#1f2328" x="320.0616098794822" y="77" font-size="12" font-weight="600">26.8 ms</text>
+  <text fill="#59636e" x="16" y="113" font-size="11">2</text>
+      <text fill="#1f2328" x="36" y="113" font-size="13">Verter compileMany (sess…</text>
+      
+      <rect x="248" y="97" width="402" height="22" rx="5" fill="#afb8c133"/>
+      <rect x="248" y="97" width="78.1" height="22" rx="5" fill="#e11d48"/>
+      <text fill="#1f2328" x="334.1295164410058" y="113" font-size="12" font-weight="600">32.7 ms</text>
+  <text fill="#59636e" x="16" y="149" font-size="11">3</text>
+      <text fill="#1f2328" x="36" y="149" font-size="13">Vize native loop (1T)</text>
+      
+      <rect x="248" y="133" width="402" height="22" rx="5" fill="#afb8c133"/>
+      <rect x="248" y="133" width="140.2" height="22" rx="5" fill="#2563eb"/>
+      <text fill="#ffffff" x="256" y="149" font-size="12" font-weight="600">58.6 ms</text>
+  <text fill="#59636e" x="16" y="185" font-size="11">4</text>
+      <text fill="#1f2328" x="36" y="185" font-size="13">Verter compileMany (stat…</text>
+      
+      <rect x="248" y="169" width="402" height="22" rx="5" fill="#afb8c133"/>
+      <rect x="248" y="169" width="318.4" height="22" rx="5" fill="#e11d48"/>
+      <text fill="#ffffff" x="256" y="185" font-size="12" font-weight="600">133 ms</text>
+  <text fill="#59636e" x="16" y="221" font-size="11">5</text>
+      <text fill="#1f2328" x="36" y="221" font-size="13">@vue/compiler-sfc 3.6 (1…</text>
+      
+      <rect x="248" y="205" width="402" height="22" rx="5" fill="#afb8c133"/>
+      <rect x="248" y="205" width="379.6" height="22" rx="5" fill="#42b883"/>
+      <text fill="#ffffff" x="256" y="221" font-size="12" font-weight="600">159 ms</text>
+  <text fill="#59636e" x="16" y="257" font-size="11">6</text>
+      <text fill="#1f2328" x="36" y="257" font-size="13">@vue/compiler-sfc 3.5 (1…</text>
+      
+      <rect x="248" y="241" width="402" height="22" rx="5" fill="#afb8c133"/>
+      <rect x="248" y="241" width="402.0" height="22" rx="5" fill="#42b883"/>
+      <text fill="#ffffff" x="256" y="257" font-size="12" font-weight="600">168 ms</text>
+  <text fill="#59636e" x="16" y="293" font-size="11">7</text>
+      <text fill="#1f2328" x="36" y="293" font-size="13" fill-opacity="0.62">fervid compileAsync (4-t…</text>
+      <line x1="36" y1="288" x2="240" y2="288" stroke="#1f2328" stroke-opacity="0.45" />
+      <rect x="248" y="277" width="402" height="22" rx="5" fill="#afb8c133"/>
+      <rect x="248" y="277" width="80.2" height="22" rx="5" fill="url(#hatch-6)"/>
+      <text fill="#1f2328" x="336.2325249218866" y="293" font-size="12" font-weight="600">33.5 ms · unranked</text>
+  <text fill="#59636e" x="16" y="329" font-size="11">8</text>
+      <text fill="#1f2328" x="36" y="329" font-size="13" fill-opacity="0.62">fervid compileSync (1T)</text>
+      <line x1="36" y1="324" x2="240" y2="324" stroke="#1f2328" stroke-opacity="0.45" />
+      <rect x="248" y="313" width="402" height="22" rx="5" fill="#afb8c133"/>
+      <rect x="248" y="313" width="139.7" height="22" rx="5" fill="url(#hatch-7)"/>
+      <text fill="#ffffff" x="256" y="329" font-size="12" font-weight="600">58.4 ms · unranked</text>
+</svg>
