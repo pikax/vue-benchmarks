@@ -114,7 +114,22 @@ export function diagsForCase(diags, caseId) {
 }
 
 export function combinedFromDiags(diags) {
-  return (diags || []).map((d) => d.raw || d.message || "").filter(Boolean).join("\n");
+  const lines = [];
+  let lastFile = "";
+  for (const d of diags || []) {
+    const raw = d.raw || d.message || "";
+    if (!raw) continue;
+    if (d.file && d.file !== lastFile && !raw.includes(d.file) && isVizeDiagnosticLine(raw)) {
+      lines.push(d.file);
+      lastFile = d.file;
+    }
+    lines.push(raw);
+  }
+  return lines.join("\n");
+}
+
+function isVizeDiagnosticLine(raw) {
+  return /^(?:error|warning):\d+:\d+\s+\[TS\d+\]/i.test(String(raw).trim());
 }
 
 function diagHay(d) {

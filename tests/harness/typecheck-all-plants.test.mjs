@@ -55,6 +55,36 @@ describe("diagsForCase / scoreCombinedRun", () => {
     assert.equal(combinedFromDiags(diagsForCase(diags, "clean-basic")), "b");
   });
 
+  test("preserves Vize file headings when re-scoring combined diagnostics", () => {
+    const file = "work/confirm-typecheck-all/cases/wrong-prop-type/App.vue";
+    const combined = combinedFromDiags([
+      {
+        file,
+        line: 8,
+        message: "Type mismatch on count",
+        raw: "error:8:1 [TS2322] Type mismatch on count",
+      },
+    ]);
+    assert.equal(combined, `${file}\nerror:8:1 [TS2322] Type mismatch on count`);
+
+    const tally = scoreCombinedRun(
+      [
+        {
+          caseId: "wrong-prop-type",
+          meta: {
+            expectErrors: true,
+            _pins: [{ file: "App.vue", commentLine: 7, targetLine: 8 }],
+            expectMention: ["count"],
+          },
+        },
+      ],
+      "vize-check",
+      { combined, status: 1 },
+    );
+    assert.equal(tally.pass, 1);
+    assert.equal(tally.fail, 0);
+  });
+
   test("a dirty plant without a pin hit fails; a clean plant with no diags passes", () => {
     const cases = [
       {
