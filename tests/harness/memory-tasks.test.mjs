@@ -1,18 +1,39 @@
-import { mkdtempSync, rmSync } from "node:fs";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
 import assert from "node:assert/strict";
 import test from "node:test";
 
 import { buildMemoryTasks } from "../../scripts/lib/memory-tasks.mjs";
+import { createTemplates, uniquify } from "../../scripts/lib/templates.mjs";
 
-const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../..");
+/**
+ * A throwaway corpus in the generator's own shape and naming.
+ *
+ * This test used to point at `fixtures/20`, which is gitignored and which no CI
+ * job generates: it passed on a developer machine that had run `pnpm generate`
+ * and failed on a clean checkout with `files: []`. The harness suite is meant to
+ * run in seconds against nothing but the repo, so the corpus is built here.
+ *
+ * THREE files with `fileLimit: 2`, so the limit is proven to truncate rather
+ * than being satisfied by a corpus that was that size anyway.
+ */
+function makeCorpus() {
+  const dir = mkdtempSync(join(tmpdir(), "vue-bench-memory-corpus-"));
+  const templates = createTemplates();
+  for (let i = 0; i < 3; i++) {
+    writeFileSync(
+      join(dir, `Comp${String(i).padStart(5, "0")}.vue`),
+      uniquify(templates[i % templates.length], i),
+    );
+  }
+  return dir;
+}
 
 test("memory tasks preserve the timed corpus/config and exact public entrypoints", () => {
   const workRoot = mkdtempSync(join(tmpdir(), "vue-bench-memory-tasks-"));
+  const fixtureDir = makeCorpus();
   try {
-    const fixtureDir = join(rootDir, "fixtures", "20");
     const tasks = buildMemoryTasks(fixtureDir, {
       fileLimit: 2,
       checkFileLimit: 2,
@@ -53,5 +74,6 @@ test("memory tasks preserve the timed corpus/config and exact public entrypoints
     assert.match(byId.get("mem-lsp-volar").label, /Vue server process only/);
   } finally {
     rmSync(workRoot, { recursive: true, force: true });
+    rmSync(fixtureDir, { recursive: true, force: true });
   }
 });
