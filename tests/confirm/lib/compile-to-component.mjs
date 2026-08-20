@@ -7,6 +7,10 @@ import { createHash } from "node:crypto";
 import { mkdirSync, writeFileSync, rmSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { pathToFileURL, fileURLToPath } from "node:url";
+import {
+  fervidDiagnosticMessage,
+  isAllowedFervidDiagnostic,
+} from "../../../scripts/lib/fervid-diagnostics.mjs";
 const require = createRequire(import.meta.url);
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../../..");
 
@@ -91,6 +95,8 @@ export function getCompilers() {
           vapor: false,
           sourceMap: false,
           isTs: false,
+          templateHoistStatic: true,
+          templateCacheHandlers: true,
         });
         const errors = (result?.errors || []).map((e) =>
           typeof e === "string" ? e : e.message || String(e),
@@ -118,7 +124,6 @@ export function getCompilers() {
   // Deliberately narrow: any other diagnostic, and any diagnostic at all when
   // no code came back, still fails the case. Runtime behaviour remains the real
   // gate — this only stops a parser-strictness note from pre-empting it.
-  const FERVID_NONFATAL = /NonVoidHtmlElementStartTagWithTrailingSolidus/;
   const fervid = loadOptional("@fervid/napi");
   if (!fervid.error && typeof fervid.mod.Compiler === "function") {
     const fervidCompiler = new fervid.mod.Compiler({ isProduction: true });
@@ -134,8 +139,8 @@ export function getCompilers() {
         }
         const code = result?.code ?? null;
         const errors = (result?.errors || [])
-          .map((e) => (typeof e === "string" ? e : e.message || String(e)))
-          .filter((message) => !(code && FERVID_NONFATAL.test(message)));
+          .filter((diagnostic) => !(code && isAllowedFervidDiagnostic(diagnostic)))
+          .map(fervidDiagnosticMessage);
         return { code, errors };
       },
     });
@@ -153,7 +158,10 @@ export function getCompilers() {
       id: "verter",
       label: "@verter/native",
       compile(source, filename) {
-        const host = new verter.mod.VerterHost({ devMode: false });
+        const host = new verter.mod.VerterHost({
+          devMode: false,
+          analysisLevel: "full",
+        });
         const results = host.compileMany(
           [
             {
@@ -170,6 +178,10 @@ export function getCompilers() {
               isProduction: true,
               customElement: false,
               ssr: false,
+              // Runtime confirmation imports the result directly in Node, so
+              // this path deliberately asks Verter to downcompile TS. The timed
+              // comparison uses forceJs:false (TS passthrough); this suite gates
+              // component behaviour, not timed output-shape equivalence.
               forceJs: true,
               forceVapor: false,
               sourceMap: false,

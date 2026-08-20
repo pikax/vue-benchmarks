@@ -17,8 +17,10 @@ import {
 } from "../../scripts/lib/real-world/projects.mjs";
 import {
   BUNDLERS,
+  BUNDLE_CANARY_MARKERS,
   INTEGRATIONS,
   attributeBuildFailure,
+  bundleCanaryVerdict,
   corpusCompileVerdict,
 } from "../../scripts/lib/surfaces/bundle.mjs";
 import {
@@ -71,7 +73,10 @@ test("every registered project pins a ref and declares at least one corpus", () 
       assert.ok(CORPUS_KINDS.includes(c.kind), `${p.id}:${c.id}: unknown kind ${c.kind}`);
       assert.ok(c.roots.length > 0, `${p.id}:${c.id}: must name at least one root`);
       for (const root of c.roots) {
-        assert.ok(!root.startsWith("/") && !root.includes(".."), `${p.id}:${c.id}: root must be repo-relative`);
+        assert.ok(
+          !root.startsWith("/") && !root.includes(".."),
+          `${p.id}:${c.id}: root must be repo-relative`,
+        );
       }
       // The kind is what stops a docs-demo corpus being read as library source.
       assert.ok(c.note && c.note.length > 10, `${p.id}:${c.id}: needs a note saying what it is`);
@@ -151,10 +156,13 @@ test("collectVueFilesDeep honours roots and de-duplicates overlapping ones", () 
     write(dir, "pkg/Two.vue");
     write(dir, "other/Three.vue");
 
-    assert.deepEqual(collectVueFilesDeep(dir, { roots: ["pkg"] }), ["pkg/Two.vue", "pkg/a/One.vue"]);
+    assert.deepEqual(collectVueFilesDeep(dir, { roots: ["pkg"] }), [
+      "pkg/Two.vue",
+      "pkg/a/One.vue",
+    ]);
 
-    // Overlapping roots must not hand a tool the same source twice: it would
-    // inflate the file count and content-hash caches serve the repeat for free.
+    // Overlapping roots must not hand a tool the same project file twice: it
+    // would inflate the file count and misstate corpus coverage.
     const overlapping = collectVueFilesDeep(dir, { roots: ["pkg", "pkg/a"] });
     assert.deepEqual(overlapping, ["pkg/Two.vue", "pkg/a/One.vue"]);
   } finally {
@@ -170,7 +178,10 @@ test("collectVueFilesDeep limit takes a stable prefix", () => {
     // Same truncated corpus for every tool, or the tools are not being compared
     // on the same input.
     assert.deepEqual(collectVueFilesDeep(dir, { limit: 2 }), all.slice(0, 2));
-    assert.deepEqual(collectVueFilesDeep(dir, { limit: 2 }), collectVueFilesDeep(dir, { limit: 2 }));
+    assert.deepEqual(
+      collectVueFilesDeep(dir, { limit: 2 }),
+      collectVueFilesDeep(dir, { limit: 2 }),
+    );
   } finally {
     cleanup();
   }
@@ -217,10 +228,7 @@ test("every Vue integration declares package, strategy and a usable specifier", 
       // Vize pre-compiles the corpus at plugin-init while the others compile
       // lazily. A row that does not say which strategy it used is not readable.
       assert.ok(i.strategy, `${family}/${i.id}: must declare its compile strategy`);
-      assert.ok(
-        i.spec || i.specByBundler,
-        `${family}/${i.id}: must declare spec or specByBundler`,
-      );
+      assert.ok(i.spec || i.specByBundler, `${family}/${i.id}: must declare spec or specByBundler`);
       if (family === "webpack") {
         assert.equal(
           typeof i.apply,
@@ -314,7 +322,11 @@ test("discoverBuildTargets accepts only literal vite build and rejects framework
   const { dir, cleanup } = scratch();
   try {
     const pkg = (rel, scripts, extra = {}) => {
-      write(dir, `${rel}/package.json`, `${JSON.stringify({ name: `@p/${rel.split("/").pop()}`, scripts })}\n`);
+      write(
+        dir,
+        `${rel}/package.json`,
+        `${JSON.stringify({ name: `@p/${rel.split("/").pop()}`, scripts })}\n`,
+      );
       write(dir, `${rel}/src/A.vue`);
       for (const [f, c] of Object.entries(extra)) write(dir, `${rel}/${f}`, c);
     };
@@ -325,10 +337,18 @@ test("discoverBuildTargets accepts only literal vite build and rejects framework
     pkg("packages/nuxt", { build: "nuxt build" }, { "vite.config.ts": "export default {}\n" });
     pkg("packages/quasar", { build: "quasar build" }, { "vite.config.ts": "export default {}\n" });
     // Workspace fan-out would time packages containing no Vue at all.
-    pkg("packages/mono", { build: "pnpm -r do-build-prod" }, { "vite.config.ts": "export default {}\n" });
+    pkg(
+      "packages/mono",
+      { build: "pnpm -r do-build-prod" },
+      { "vite.config.ts": "export default {}\n" },
+    );
 
     const names = discoverBuildTargets(dir).map((t) => t.packageName);
-    assert.deepEqual(names, ["@p/app"], `expected only the literal vite build target, got ${names}`);
+    assert.deepEqual(
+      names,
+      ["@p/app"],
+      `expected only the literal vite build target, got ${names}`,
+    );
   } finally {
     cleanup();
   }
@@ -339,16 +359,27 @@ test("discoverBuildTargets ignores vitest-only configs and packages with no SFCs
   try {
     // A vitest.config has no `build` section; building through it would measure a
     // different pipeline from the one the project ships.
-    write(dir, "a/package.json", `${JSON.stringify({ name: "@p/a", scripts: { build: "vite build" } })}\n`);
+    write(
+      dir,
+      "a/package.json",
+      `${JSON.stringify({ name: "@p/a", scripts: { build: "vite build" } })}\n`,
+    );
     write(dir, "a/vitest.config.ts", "export default {}\n");
     write(dir, "a/src/A.vue");
 
     // No SFCs: a Vue plugin cannot be exercised here.
-    write(dir, "b/package.json", `${JSON.stringify({ name: "@p/b", scripts: { build: "vite build" } })}\n`);
+    write(
+      dir,
+      "b/package.json",
+      `${JSON.stringify({ name: "@p/b", scripts: { build: "vite build" } })}\n`,
+    );
     write(dir, "b/vite.config.ts", "export default {}\n");
 
     const targets = discoverBuildTargets(dir);
-    assert.deepEqual(targets.map((t) => t.packageName), ["@p/a"]);
+    assert.deepEqual(
+      targets.map((t) => t.packageName),
+      ["@p/a"],
+    );
     // Discovered as a baseline-only target: no importable BUILD config to override.
     assert.equal(targets[0].canOverride, false);
     assert.equal(targets[0].config, null);
@@ -487,19 +518,43 @@ test("project-test reports a half-collected suite on every row, baseline include
       package: "@vitejs/plugin-vue",
       notes: "n",
       status: "ok",
-      metaSamples: [{ tests: 416, testsPassed: 414, testsFailed: 0, files: 62, filesPassed: 31, filesFailed: 31, exit: 1 }],
+      metaSamples: [
+        {
+          tests: 416,
+          testsPassed: 414,
+          testsFailed: 0,
+          files: 62,
+          filesPassed: 31,
+          filesFailed: 31,
+          exit: 1,
+        },
+      ],
     },
     {
       id: "swap-vize",
       package: "@vizejs/vite-plugin",
       notes: "n",
       status: "ok",
-      metaSamples: [{ tests: 416, testsPassed: 414, testsFailed: 0, files: 62, filesPassed: 31, filesFailed: 31, exit: 1 }],
+      metaSamples: [
+        {
+          tests: 416,
+          testsPassed: 414,
+          testsFailed: 0,
+          files: 62,
+          filesPassed: 31,
+          filesFailed: 31,
+          exit: 1,
+        },
+      ],
     },
   ];
   applyTestCountGate(results);
   for (const row of results) {
-    assert.match(row.notes, /31 of 62 test FILES failed to collect/, `${row.id} must disclose the collapse`);
+    assert.match(
+      row.notes,
+      /31 of 62 test FILES failed to collect/,
+      `${row.id} must disclose the collapse`,
+    );
   }
   assert.equal(results[1].status, "ok", "an equal-passing challenger is still ranked");
 });
@@ -545,9 +600,16 @@ test("the swap refusal is a harness limitation, never a challenger error", () =>
       package: "@vizejs/vite-plugin",
       notes: "n",
       status: "error",
-      error: 'vitest produced no summary (exit 1): bench: no plugin named "vite:vue" in vitest.config.ts — refusing to add a second Vue plugin',
+      error:
+        'vitest produced no summary (exit 1): bench: no plugin named "vite:vue" in vitest.config.ts — refusing to add a second Vue plugin',
     },
-    { id: "swap-verter", package: "@verter/unplugin", notes: "n", status: "error", error: "Build failed with 5 errors" },
+    {
+      id: "swap-verter",
+      package: "@verter/unplugin",
+      notes: "n",
+      status: "error",
+      error: "Build failed with 5 errors",
+    },
     {
       // Row errors embed the PROJECT's output, so a genuine challenger failure
       // can contain the generic phrase without the harness's `bench:` sentinel
@@ -558,7 +620,8 @@ test("the swap refusal is a harness limitation, never a challenger error", () =>
       package: "unplugin-vue",
       notes: "n",
       status: "error",
-      error: 'vitest produced no summary (exit 1): Error: no plugin named "vite:vue" could be loaded by the adapter',
+      error:
+        'vitest produced no summary (exit 1): Error: no plugin named "vite:vue" could be loaded by the adapter',
     },
   ];
   reclassifySwapRefusals(results);
@@ -648,13 +711,19 @@ test("allCells is the full cross-product and every cell resolves a specifier or 
     // webpack entry point — but it must be DISCOVERABLE, so the surface can emit
     // a skipped row that names the reason instead of throwing mid-matrix.
     const spec = integrationSpec(cell.integration, cell.bundler);
-    assert.ok(spec === null || typeof spec === "string", `${cell.id}: specifier must be string or null`);
+    assert.ok(
+      spec === null || typeof spec === "string",
+      `${cell.id}: specifier must be string or null`,
+    );
   }
 
   // The reference implementations must be present, or the tables have no anchor
   // to read the alternatives against.
   assert.ok(ids.has("vite8__plugin-vue"), "Vite 8 × @vitejs/plugin-vue is the reference cell");
-  assert.ok(ids.has("webpack__vue-loader"), "webpack × vue-loader is the webpack-family reference cell");
+  assert.ok(
+    ids.has("webpack__vue-loader"),
+    "webpack × vue-loader is the webpack-family reference cell",
+  );
 });
 
 /* -------------------------------------------------------------------------- */
@@ -705,7 +774,11 @@ test("project-test gate ranks on tests PASSED, not tests collected", () => {
   assert.equal(results[1].status, "unranked", "passing 4 of 125 is not a speed result");
   assert.match(results[1].notes, /FAILED TEST-COUNT GATE/);
   assert.match(results[1].notes, /passed 4 tests where the project's own toolchain passed 123/);
-  assert.match(results[1].notes, /121 test\(s\) FAILED/, "the correctness finding is still reported");
+  assert.match(
+    results[1].notes,
+    /121 test\(s\) FAILED/,
+    "the correctness finding is still reported",
+  );
 });
 
 test("project-test gate unranks a collapsed suite even with no baseline census", () => {
@@ -721,7 +794,8 @@ test("project-test gate unranks a collapsed suite even with no baseline census",
       status: "ok",
       metaSamples: [{ tests: 40, testsPassed: null, testsFailed: 40, exit: 1 }],
     },
-    // And a row that did pass equally is ranked, but told the gate never ran.
+    // A healthy-looking row is still unranked: without the declared project
+    // Vue baseline there is no comparison to certify.
     {
       id: "swap-unplugin",
       package: "unplugin-vue",
@@ -734,18 +808,30 @@ test("project-test gate unranks a collapsed suite even with no baseline census",
 
   assert.equal(results[1].status, "unranked");
   assert.match(results[1].notes, /exited 1 having passed no tests/);
-  assert.equal(results[2].status, "ok");
+  assert.equal(results[2].status, "unranked");
   assert.match(
     results[2].notes,
-    /GATE NOT RUN/,
-    "an ungated row must say so rather than render like a row that cleared the gate",
+    /GATE UNKNOWN/,
+    "an ungated row must stay visible without becoming a candidate-only ranking",
   );
 });
 
 test("project-test gate notes never argue for keeping a red suite ranked", () => {
   const results = [
-    { id: "baseline", package: "b", notes: "n", status: "ok", metaSamples: [{ tests: 10, testsPassed: 10, testsFailed: 0, exit: 0 }] },
-    { id: "swap-x", package: "x", notes: "n", status: "ok", metaSamples: [{ tests: 10, testsPassed: 3, testsFailed: 7, exit: 1 }] },
+    {
+      id: "baseline",
+      package: "b",
+      notes: "n",
+      status: "ok",
+      metaSamples: [{ tests: 10, testsPassed: 10, testsFailed: 0, exit: 0 }],
+    },
+    {
+      id: "swap-x",
+      package: "x",
+      notes: "n",
+      status: "ok",
+      metaSamples: [{ tests: 10, testsPassed: 3, testsFailed: 7, exit: 1 }],
+    },
   ];
   applyTestCountGate(results);
   // Impartiality guard, same rule as the integration-notes test above: a note may
@@ -805,7 +891,11 @@ test("actuallyChecked separates a typecheck from an aborted program construction
   // vue-tsc reports exactly that one diagnostic after ~4 s having checked none of
   // the 293 SFCs — indistinguishable from a fast, thorough checker on wall clock.
   assert.equal(
-    actuallyChecked({ status: 1, output: "src/types/post-request.d.ts(1294,5): error TS1128: Declaration or statement expected." }),
+    actuallyChecked({
+      status: 1,
+      output:
+        "src/types/post-request.d.ts(1294,5): error TS1128: Declaration or statement expected.",
+    }),
     false,
   );
   // Diagnostics across two files cannot come from a program that never got built.
@@ -863,7 +953,11 @@ test("typecheck census gate holds a clean baseline to an exit-0 comparison", () 
     mk("verter-tsc", 0, 0), // agreed with the baseline
   ];
   applyTypecheckGates(results);
-  assert.equal(results[1].status, "unranked", "reporting nothing while failing is not a clean pass");
+  assert.equal(
+    results[1].status,
+    "unranked",
+    "reporting nothing while failing is not a clean pass",
+  );
   assert.match(results[1].notes, /FAILED DIAGNOSTIC-CENSUS GATE/);
   assert.equal(results[2].status, "ok");
 });
@@ -878,7 +972,11 @@ test("typecheck census gate still catches an under-reporting checker on a dirty 
   });
   const results = [mk("vue-tsc-js", 100), mk("vize-check", 10), mk("verter-tsc", 400)];
   applyTypecheckGates(results);
-  assert.equal(results[1].status, "unranked", "under half the baseline's diagnostics is a gate failure");
+  assert.equal(
+    results[1].status,
+    "unranked",
+    "under half the baseline's diagnostics is a gate failure",
+  );
   assert.equal(results[2].status, "ok", "stricter is legitimate — annotated, not gated");
   assert.match(results[2].notes, /Diagnostic equivalence is NOT asserted/);
 });
@@ -939,7 +1037,8 @@ test("the TS5101 retry flag actually silences the INSTALLED TypeScript's depreca
     );
     writeFileSync(join(dir, "a.ts"), "export const n: number = 1;\n");
     const tsc = createRequire(import.meta.url).resolve("typescript/lib/tsc.js");
-    const run = (args) => spawnSync(process.execPath, [tsc, ...args], { cwd: dir, encoding: "utf8" });
+    const run = (args) =>
+      spawnSync(process.execPath, [tsc, ...args], { cwd: dir, encoding: "utf8" });
 
     const bare = run(tscRowArgs("tsconfig.json"));
     assert.notEqual(bare.status, 0, "the fixture must actually trigger the deprecation abort");
@@ -1057,6 +1156,30 @@ test("a failed bundle cell is attributed on the transform census, not the error 
   });
 });
 
+test("bundle canary judges relational SFC artifacts rather than whole output text", () => {
+  const output = `
+    const x = ${JSON.stringify(BUNDLE_CANARY_MARKERS.text)};
+    const attr = ${JSON.stringify(BUNDLE_CANARY_MARKERS.attribute)};
+    const cls = ${JSON.stringify(BUNDLE_CANARY_MARKERS.className)};
+    const cssVars = { "a1b2-tone": tone };
+    .${BUNDLE_CANARY_MARKERS.className}[data-v-a1b2c3] { color: var(--a1b2-tone); }
+  `;
+  const pass = bundleCanaryVerdict({ output, vueModules: 1, styleRequests: 1 });
+  assert.equal(pass.status, "PASS");
+
+  const stale = bundleCanaryVerdict({
+    output: output.replace(BUNDLE_CANARY_MARKERS.text, "stale"),
+    vueModules: 1,
+    styleRequests: 1,
+  });
+  assert.equal(stale.status, "FAIL");
+  assert.ok(stale.failed.includes("staticText"));
+
+  const skippedCompile = bundleCanaryVerdict({ output, vueModules: 0, styleRequests: 1 });
+  assert.equal(skippedCompile.status, "FAIL");
+  assert.ok(skippedCompile.failed.includes("compiledOneSfc"));
+});
+
 test("the corpus-compile gate does not let a lone survivor self-anchor", () => {
   // The audit case: one cell built, it compiled 3 of 200 SFCs, and it was the
   // best-in-class by virtue of being the only one — so it ranked first.
@@ -1161,7 +1284,11 @@ test("a bracketed baseline cannot anchor the typecheck diagnostic census", () =>
   ];
   applyTypecheckGates(results);
   assert.equal(results[0].status, "unranked", "the baseline is gated like everything else");
-  assert.equal(results[1].status, "ok", "a completing checker is not punished for the baseline's abort");
+  assert.equal(
+    results[1].status,
+    "ok",
+    "a completing checker is not punished for the baseline's abort",
+  );
   assert.match(results[1].notes, /baseline row is itself unranked/);
   assert.ok(
     !/FAILED DIAGNOSTIC-CENSUS GATE/.test(results[1].notes),

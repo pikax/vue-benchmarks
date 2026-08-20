@@ -210,6 +210,11 @@ export function applyTestCountGate(results) {
 
   for (const row of results) {
     if (row.id === "baseline" || row.status !== "ok") continue;
+    if (!baselineRow || baselineRow.status !== "ok") {
+      row.status = "unranked";
+      row.notes = `${row.notes} | ⚠ PROJECT VUE REFERENCE INVALID — the project's own Vue test row did not produce a valid measured result, so this candidate timing remains visible but cannot rank.`;
+      continue;
+    }
     const sample = row.metaSamples?.[0] ?? null;
     const collected = sample?.tests ?? null;
     // Vitest omits the `n passed` clause entirely when nothing passed, so a
@@ -231,7 +236,9 @@ export function applyTestCountGate(results) {
         "no test census could be read from this run — Vitest printed no test total, so there is nothing to compare against the baseline",
       );
     } else if (baselinePassed !== null && passed < baselinePassed) {
-      reasons.push(`passed ${passed} tests where the project's own toolchain passed ${baselinePassed}`);
+      reasons.push(
+        `passed ${passed} tests where the project's own toolchain passed ${baselinePassed}`,
+      );
     }
     // A pass-count tie does not clear a row that FAILS tests the baseline does
     // not: a toolchain can change what the suite collects, so equal passes can
@@ -258,7 +265,8 @@ export function applyTestCountGate(results) {
       // letting it render identically to a row that cleared the gate — an
       // unstated ungated row silently favours whichever tool the harness failed
       // to measure a baseline for.
-      row.notes = `${row.notes} | ⓘ TEST-COUNT GATE NOT RUN — the baseline row produced no test census, so this row's test count was never compared against the project's own toolchain. Ranked, but unverified rather than verified-equal.`;
+      row.status = "unranked";
+      row.notes = `${row.notes} | ⚠ TEST-COUNT GATE UNKNOWN — the baseline row produced no test census, so this row's test count was never compared against the project's own toolchain. Measured but UNRANKED.`;
     }
 
     // Reported whether or not the row was unranked above, and worded as a plain
@@ -328,6 +336,8 @@ export async function runProjectTestSurface(resolved, options) {
       id: "baseline",
       label: `${target.packageName} — project's own toolchain (baseline)`,
       package: "@vitejs/plugin-vue",
+      baseline: true,
+      baselineLabel: "project Vue toolchain",
       target: "project-test",
       invocation: "vitest CLI",
       artifactLabel: "tests passed",

@@ -7,19 +7,20 @@
 
 **Standing notes** — these apply to every block in the section (each full report carries its own copy):
 
-- Primary ranking metric is the **median of measured runs**. Every measured run is preceded by at least one discarded warmup pass (enforced — `--warmups 0` is clamped to 1).
-- There is **no cold column**. An unwarmed first run costs a JS compiler ~3.2x its steady state and a native compiler nothing, so ranking on it measures V8 warmup rather than the tool.
+- Primary ranking metric is the **Warm median of measured runs**. Every warm measured series is preceded by at least one discarded warmup pass (enforced — `--warmups 0` is clamped to 1). Compiler also reports a separately sampled Fresh-child median for the first timed row workload.
+- An explicit reference row remains the ratio denominator even when a candidate is faster. On SFC compile, Vue's official compiler-sfc workload is the reference; Vize or Verter never becomes the baseline merely by winning a run.
+- Warm columns rank steady-state work after a discarded pass. Compiler additionally publishes Fresh child. Child startup/import/input and host setup are excluded, those excluded steps may already change runtime/native/thread/allocator state, and the OS page cache is not flushed. Fresh-child minus Warm is therefore not pure initialization overhead; `pnpm diagnose:compile-warmth` remains the deeper state diagnostic.
 - Min / stddev / CV% are reported per row. CV% > 10 is flagged ⚠ — treat that row as noisy (thermal drift or a contended runner), not as a result. Above CV 50% a row with at least three samples is TOO NOISY TO RANK: bracketed and excluded exactly like a gate failure, baseline included — an unstable series buys more shots at a lucky median, so ranking it rewards instability. A two-run row is never bracketed by the ceiling (its stddev is |a−b|/√2 and there is no third sample to adjudicate); it keeps the ⚠ flag.
 - Status is a marker on the tool NAME, not a column: ⚠ failed a validation gate (time in brackets, unranked) · ❌ error · ⏭ skipped. Per-row detail is in the collapsible **Notes** under each table, and each surface carries a **Tools** legend naming what actually ran.
-- Each surface is ONE table. Engine, invocation and threading are row properties, not table splits: a CLI pays process startup on every run (~85ms measured for one native CLI) while an in-process API amortises it, and a thread pool is not a single thread — the row's label and notes say which mode it ran, so compare like with like.
+- Each surface is one table unless it declares explicit work-equivalence classes. Compile now separates Vue-anchored raw render, SFC render + CSS, and official Vue-version context; engine, invocation and threading remain row properties rather than implicit splits.
 - Rows tagged **(JS)** run the JavaScript TypeScript compiler, untagged typecheck/LSP rows run native tsgo. A cross-engine ratio measures TypeScript's Go rewrite as much as the Vue layer on top of it.
 - Surfaces are independent: compile ms is not comparable to jsx-compile/typecheck/lint/format ms.
 - jsx-compile uses fixtures/jsx-N (.jsx); SFC compile uses fixtures/N (.vue).
 - Compile matrix cells (VDOM/Vapor × production/development × sourcemap on/off) are independent.
 - Source map is an explicit, independent dimension applied identically to every compiler — it is never folded into the production/development flag for some tools and not others.
 - Primary compile corpus is unique file contents (fixtures/N).
-- Content-hash caches skip work on duplicate bodies — unique fixtures required for ranking.
-- Tool order is **rotated** on every warmup and measured run, so no tool is pinned to the expensive first slot.
+- Duplicate bodies are disclosed as a corpus property; the exact compileSfcBatchWithResults path still recompiles every input.
+- Compiler uses paired forward/reverse row order for Fresh-child samples, warmups and measured Warm runs. Complete pairs balance positions even when runs < rows; executed order is retained in JSON.
 - CI does not drop OS page cache; later tools in a job may share a warmer file cache.
 - Typecheck/lint/format tools that fail a work gate are unranked (skipped). Typecheck gates require both a script-level and a template-level diagnostic, and are re-verified against the full timed corpus. Lint gates require the planted vue/no-v-html. The format gate requires the tool to actually rewrite the &lt;template> block, so a script-only formatter is not ranked against whole-SFC formatters.
 - Compile measures assert non-empty codegen where applicable.

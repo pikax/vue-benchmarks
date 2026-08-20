@@ -33,15 +33,12 @@
  * Nothing in the wall-clock number said so. The census did.
  */
 
-import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { join, posix, relative } from "node:path";
 import { copyFixtureSubset, copyRelativeImportClosure } from "../fixtures.mjs";
 import { GATE_IS_THE_WARM_PASS, measureVariants } from "../timing.mjs";
-import {
-  writeAppPackageJson,
-  writeEntry,
-  writeIndexHtml,
-} from "../real-world/app-shell.mjs";
+import { writeAppPackageJson, writeEntry, writeIndexHtml } from "../real-world/app-shell.mjs";
 import {
   BUNDLERS,
   INTEGRATIONS,
@@ -55,6 +52,175 @@ export { BUNDLERS, INTEGRATIONS, enabledBundlers };
 
 /** Back-compat alias: the Vite-family integrations, which the HMR surface uses. */
 export const VUE_PLUGINS = INTEGRATIONS.vite;
+
+export const BUNDLE_CANARY_SUITE_VERSION = "2026-08-20.1";
+export const BUNDLE_CANARY_MARKERS = Object.freeze({
+  text: "__VUE_BENCH_BUNDLE_CANARY_TEXT_20260820__",
+  attribute: "data-bench-bundle-canary",
+  className: "bench-canary-root",
+});
+
+const BUNDLE_CANARY_SOURCE = `<script setup lang="ts">
+import { ref } from 'vue'
+const count = ref(3)
+const tone = ref('rgb(1, 2, 3)')
+function increment() { count.value++ }
+</script>
+
+<template>
+  <button class="${BUNDLE_CANARY_MARKERS.className}" ${BUNDLE_CANARY_MARKERS.attribute} @click="increment">
+    {{ count }}${BUNDLE_CANARY_MARKERS.text}
+  </button>
+</template>
+
+<style scoped>
+.${BUNDLE_CANARY_MARKERS.className} { color: v-bind(tone); }
+</style>
+`;
+
+export const BUNDLE_CANARY_SUITE_HASH = createHash("sha256")
+  .update(BUNDLE_CANARY_SOURCE)
+  .update(JSON.stringify(BUNDLE_CANARY_MARKERS))
+  .digest("hex");
+
+/**
+ * Structural, intentionally non-byte-exact oracle for the generated bundle
+ * canary. Runtime behaviour belongs to project-test; this gate proves the exact
+ * integration did not merely accept an SFC and emit an unrelated/non-style
+ * artifact.
+ */
+export function bundleCanaryVerdict({ output = "", vueModules = 0, styleRequests = 0 } = {}) {
+  const cssVariableUses = new Set(
+    [...output.matchAll(/var\(\s*--([\w-]+)/gi)].map((match) => match[1]),
+  );
+  // Vue-style SFC pipelines normally emit the corresponding v-bind expression
+  // as a quoted object key in JS. A bundler may instead preserve a CSS custom
+  // property declaration. Accept either representation, but require the SAME
+  // generated name to appear at the CSS use site. Requiring the name to retain
+  // the source identifier (`tone`) would test an implementation detail.
+  const cssVariableDefinitions = new Set([
+    ...[...output.matchAll(/["']([\w-]+)["']\s*:/g)].map((match) => match[1]),
+    ...[...output.matchAll(/--([\w-]+)\s*:/g)].map((match) => match[1]),
+  ]);
+  const linkedCssVariable = [...cssVariableUses].some((name) => cssVariableDefinitions.has(name));
+  const checks = {
+    compiledOneSfc: vueModules === 1,
+    staticText: output.includes(BUNDLE_CANARY_MARKERS.text),
+    staticAttribute: output.includes(BUNDLE_CANARY_MARKERS.attribute),
+    classAndCss: output.includes(BUNDLE_CANARY_MARKERS.className),
+    scopedCss: /data-v-[\w-]+/i.test(output),
+    cssVariableLinkage: linkedCssVariable,
+    styleProcessed: styleRequests > 0 || /color\s*:\s*var\(/i.test(output),
+  };
+  const failed = Object.entries(checks)
+    .filter(([, ok]) => !ok)
+    .map(([name]) => name);
+  return { status: failed.length ? "FAIL" : "PASS", checks, failed };
+}
+
+function prepareBundleCanary(workRoot) {
+  const appDir = join(workRoot, "bundle-validity", "app");
+  rmSync(appDir, { recursive: true, force: true });
+  mkdirSync(appDir, { recursive: true });
+  writeFileSync(join(appDir, "BenchCanary.vue"), BUNDLE_CANARY_SOURCE);
+  writeFileSync(
+    join(appDir, "tsconfig.json"),
+    `${JSON.stringify({ compilerOptions: {} }, null, 2)}\n`,
+  );
+  writeAppPackageJson(appDir, "bench-bundle-validity");
+  const entry = writeEntry(appDir, ["BenchCanary.vue"]);
+  writeIndexHtml(appDir);
+  return { appDir, entry };
+}
+
+function outputText(dir) {
+  if (!statSync(dir, { throwIfNoEntry: false })?.isDirectory()) return "";
+  const chunks = [];
+  const walk = (current) => {
+    for (const entry of readdirSync(current, { withFileTypes: true })) {
+      const path = join(current, entry.name);
+      if (entry.isDirectory()) walk(path);
+      else {
+        try {
+          chunks.push(readFileSync(path, "utf8"));
+        } catch {
+          // A binary asset cannot carry any of the textual canary invariants.
+        }
+      }
+    }
+  };
+  walk(dir);
+  return chunks.join("\n");
+}
+
+function isBundleBaseline(cell) {
+  if (cell.bundler.family === "vite") return cell.integration.id === "plugin-vue";
+  if (cell.bundler.family === "webpack") return cell.integration.id === "vue-loader";
+  // Bare Rolldown has no dedicated official plugin. unplugin-vue is the
+  // official compiler pipeline used as that family's reference.
+  return cell.integration.id === "unplugin-vue";
+}
+
+async function runBundleCanaryGates(cells, workRoot) {
+  const { appDir, entry } = prepareBundleCanary(workRoot);
+  const byId = new Map();
+  for (const cell of cells) {
+    const outDir = join(workRoot, "bundle-validity", "out", cell.id);
+    try {
+      const built = await cell.run({ appDir, entry, outDir });
+      const verdict = bundleCanaryVerdict({
+        output: outputText(outDir),
+        vueModules: built.vueModules,
+        styleRequests: built.styleRequests,
+      });
+      byId.set(cell.id, {
+        ...verdict,
+        exactPath: `${cell.bundler.id} × ${cell.integration.id} production build`,
+        vueModules: built.vueModules,
+        styleRequests: built.styleRequests,
+      });
+    } catch (error) {
+      byId.set(cell.id, {
+        status: "FAIL",
+        exactPath: `${cell.bundler.id} × ${cell.integration.id} production build`,
+        failed: ["build"],
+        error: String(error instanceof Error ? error.message : error)
+          .split("\n")[0]
+          .slice(0, 300),
+      });
+    } finally {
+      rmSync(outDir, { recursive: true, force: true });
+    }
+  }
+  return byId;
+}
+
+function applyBundleCanaryGates(results, cells, validity) {
+  const cellById = new Map(cells.map((cell) => [cell.id, cell]));
+  const invalidBaselineBundlers = new Set();
+  for (const cell of cells) {
+    if (isBundleBaseline(cell) && validity.get(cell.id)?.status !== "PASS") {
+      invalidBaselineBundlers.add(cell.bundler.id);
+    }
+  }
+  for (const row of results) {
+    const cell = cellById.get(row.id);
+    if (!cell || row.status === "skipped" || row.status === "error") continue;
+    const gate = validity.get(row.id);
+    if (gate?.status !== "PASS") {
+      row.unranked = true;
+      if (row.status === "ok") row.status = "unranked";
+      row.notes = `${row.notes} | ⚠ BUNDLE STRUCTURAL VALIDITY ${gate?.status ?? "UNKNOWN"}: ${gate?.error ?? gate?.failed?.join(", ") ?? "no exact-cell verdict"}. Time remains visible but is excluded from ranking.`;
+    } else {
+      row.notes = `${row.notes} | ✓ BUNDLE STRUCTURAL VALIDITY: exact-cell SFC canary preserved render text, dynamic/event-bearing module structure, scoped CSS and v-bind() CSS-variable linkage.`;
+    }
+    if (invalidBaselineBundlers.has(cell.bundler.id)) {
+      row.unranked = true;
+      if (row.status === "ok") row.status = "unranked";
+      row.notes = `${row.notes} | ⚠ COMPARISON REFERENCE INVALID: this bundler's official/reference integration did not pass the same canary, so no peer ratio in the class may rank.`;
+    }
+  }
+}
 
 /**
  * Lay out the app whose module graph is the corpus.
@@ -95,7 +261,10 @@ export async function prepareBundleApp(resolved, workRoot, label) {
   // this, findConfigFile walks UP from the work directory and whatever tsconfig
   // it happens to find above it (this harness's own, say) decides type
   // resolution for third-party code — nondeterministic across machines.
-  writeFileSync(join(appDir, "tsconfig.json"), `${JSON.stringify({ compilerOptions: {} }, null, 2)}\n`);
+  writeFileSync(
+    join(appDir, "tsconfig.json"),
+    `${JSON.stringify({ compilerOptions: {} }, null, 2)}\n`,
+  );
 
   const compiler = await import("@vue/compiler-sfc");
   registerCompilerTS(compiler);
@@ -114,7 +283,12 @@ export async function prepareBundleApp(resolved, workRoot, label) {
       corpusTraits.styleBlocks += descriptor.styles?.length ?? 0;
       corpusTraits.customBlocks += descriptor.customBlocks?.length ?? 0;
       if (descriptor.scriptSetup || descriptor.script) {
-        compiler.compileScript(descriptor, { id: abs, inlineTemplate: false, isProd: true, fs: compilerFs });
+        compiler.compileScript(descriptor, {
+          id: abs,
+          inlineTemplate: false,
+          isProd: true,
+          fs: compilerFs,
+        });
       }
       entryFiles.push(rel);
     } catch (error) {
@@ -310,6 +484,8 @@ export async function runBundleSurface(resolved, options) {
         package: cell.integration.package,
         target: cell.bundler.id,
         engine: cell.bundler.engine,
+        baseline: isBundleBaseline(cell),
+        baselineLabel: isBundleBaseline(cell) ? "Vue reference" : undefined,
         notes: `⏭ NOT MEASURED — this corpus carries ${corpusTraits.styleBlocks} <style> block(s), and bare Rolldown no longer bundles CSS (rolldown#4271) while this harness gives the bare-Rolldown family no substitute style pipeline. A failure here would be the pairing's, not ${cell.integration.label}'s. The Vite 8 group bundles the same corpus with the same Rolldown engine under Vite's CSS handling.`,
         skip: true,
       });
@@ -323,6 +499,8 @@ export async function runBundleSurface(resolved, options) {
         package: cell.integration.package,
         target: cell.bundler.id,
         engine: cell.bundler.engine,
+        baseline: isBundleBaseline(cell),
+        baselineLabel: isBundleBaseline(cell) ? "Vue reference" : undefined,
         notes: loaded.error,
         skip: true,
       });
@@ -384,6 +562,8 @@ export async function runBundleSurface(resolved, options) {
       package: cell.integration.package,
       target: cell.bundler.id,
       engine: cell.bundler.engine,
+      baseline: isBundleBaseline(cell),
+      baselineLabel: isBundleBaseline(cell) ? "Vue reference" : undefined,
       invocation: "in-process API",
       threading: "bundler default",
       artifactLabel: "output bytes",
@@ -427,7 +607,11 @@ export async function runBundleSurface(resolved, options) {
 
     const best = bestById.get(cell.bundler.id) ?? 0;
     const survivors = survivorsById.get(cell.bundler.id) ?? 0;
-    let { ranked: compiledAll, matchesPeers, soleSurvivorShortfall } = corpusCompileVerdict({
+    let {
+      ranked: compiledAll,
+      matchesPeers,
+      soleSurvivorShortfall,
+    } = corpusCompileVerdict({
       compiled: gate.vueModules,
       best,
       survivors,
@@ -519,6 +703,24 @@ export async function runBundleSurface(resolved, options) {
     fileCount,
   });
 
+  // Last on purpose: these exact-cell canary builds are validation, not warmup.
+  // Running them after every measured build prevents their compiler/plugin,
+  // allocator and OS-cache state from improving the numbers they qualify.
+  const bundleValidity = await runBundleCanaryGates(runnable, workRoot);
+  applyBundleCanaryGates(results, runnable, bundleValidity);
+  for (const bundler of BUNDLERS) {
+    const members = results.filter((row) => row.target === bundler.id);
+    if (members.length === 0) continue;
+    const reference = members.find((row) => row.baseline);
+    if (reference?.status === "ok") continue;
+    for (const row of members) {
+      if (row === reference || row.status === "skipped" || row.status === "error") continue;
+      if (row.status === "ok") row.status = "unranked";
+      row.unranked = true;
+      row.notes = `${row.notes} | ⚠ COMPARISON REFERENCE UNAVAILABLE/INVALID: ${bundler.label}'s Vue reference row did not produce a valid ranked result, so candidate timings remain visible but no ratio in this class may rank.`;
+    }
+  }
+
   // One group per bundler. The bundler is the comparison class: mixing Rollup,
   // Rolldown and webpack rows into one ranking would rank bundler architectures
   // while appearing to rank Vue integrations.
@@ -536,6 +738,15 @@ export async function runBundleSurface(resolved, options) {
     groups,
     groupingNote:
       "Grouped by **bundler**, ranked within each group by Vue integration. Rows from different bundlers are never ranked against each other: read **across a row** (same bundler, different integration) for the Vue layer, and **down a column** (same integration, different bundler) for bundler architecture — the second is context, not a verdict.",
+    validation: {
+      bundleCanary: {
+        suiteVersion: BUNDLE_CANARY_SUITE_VERSION,
+        suiteHash: BUNDLE_CANARY_SUITE_HASH,
+        plantCount: 1,
+        markers: BUNDLE_CANARY_MARKERS,
+        results: Object.fromEntries(bundleValidity),
+      },
+    },
     variants: results,
     methodology: bundleMethodology(resolved, fileCount, { stagingNote, closureCopied }),
   };
@@ -555,6 +766,7 @@ function bundleMethodology(resolved, fileCount, { stagingNote = null, closureCop
       ? null
       : "Vite 7 (Rollup) is an OPT-IN study, not part of the default matrix — enable with BENCH_BUNDLERS=vite8,vite7,rolldown,rspack,webpack. Vite 8 is the current release; the 7-vs-8 comparison measures Rollup vs Rolldown under Vite and does not change any integration's standing within a group.",
     "No minification and no tree-shaking/side-effect elimination in any cell. Minifying folds a second, bundler-specific tool into the number; dead-code elimination would reward a bundler for discarding corpus modules.",
+    `BUNDLE STRUCTURAL VALIDITY PLANT (suite ${BUNDLE_CANARY_SUITE_VERSION}, sha256 ${BUNDLE_CANARY_SUITE_HASH.slice(0, 12)}): after every timing has finished, each exact bundler × integration cell builds a separate one-SFC canary with static/dynamic render content, an event handler, scoped CSS and v-bind()-backed CSS. The gate checks relational markers in the emitted module/CSS — including agreement between the generated CSS-variable declaration and its var() use without prescribing the generated name — and a one-SFC transform census; it never compares whole output. This proves structural integration work, not browser runtime behaviour (project-test remains that oracle). FAIL/UNKNOWN is measured but UNRANKED, and a failed reference invalidates its whole bundler comparison class. Running last means the canary cannot pre-warm measured plugins or native libraries.`,
     "Corpus-compile gate: one untimed build per cell counts how many corpus SFCs were compiled. A cell reaching fewer than the best cell FOR THE SAME BUNDLER — the same key the tables are grouped and ranked by — is measured but UNRANKED. The count is keyed on the source SFC, not the intermediate module id, because integrations rename them (Vize hands the bundler `.vue.ts` sidecars).",
     "Where a bundler has only ONE surviving cell, the peer anchor is that cell itself, so it is gated against the CORPUS instead: a lone cell that compiled part of the corpus is unranked, because nothing shows whether the rest is unreachable here or was skipped by that integration. A lone cell that did clear the corpus is ranked and labelled as the only row that ran, so its 1.00x is not read as beating a reference implementation that is absent.",
     "Where every surviving cell reached the same count and that count is below the corpus, the rows are ranked and the shortfall is disclosed: it is common to every cell, so it is treated as unreachable code in this corpus rather than as a fault of any integration.",

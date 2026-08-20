@@ -67,6 +67,7 @@ export function collectVersions() {
   return {
     node: process.version,
     vue: pkgVersion("vue"),
+    "vue-36": pkgVersion("vue-36"),
     "@vue/compiler-sfc": pkgVersion("@vue/compiler-sfc"),
     "@vue/compiler-sfc-36": pkgVersion("@vue/compiler-sfc-36"),
     vize: pkgVersion("vize"),

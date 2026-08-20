@@ -2,6 +2,7 @@
  * Lightweight "does this tool actually report planted failures?" gates.
  * Tools that skip real work are demoted to unranked (skipped), not sorted as fast.
  */
+import { createHash } from "node:crypto";
 import {
   cpSync,
   existsSync,
@@ -90,6 +91,25 @@ const disabledFlag: string = "yes"
 </template>
 `;
 
+export const TYPECHECK_PLANT_SUITE_VERSION = "2026-08-20.1";
+export const TYPECHECK_PLANT_IDS = Object.freeze([
+  "script-assignment",
+  "template-native-prop",
+  "template-event-handler",
+  "timed-corpus-inclusion",
+]);
+export const TYPECHECK_PLANT_SUITE_HASH = createHash("sha256")
+  .update(
+    [
+      BAD_SCRIPT_VUE,
+      BAD_TEMPLATE_PROP_VUE,
+      BAD_TEMPLATE_EVENT_VUE,
+      BAD_CORPUS_VUE,
+      "strictTemplates=true;target=ESNext;moduleResolution=bundler;noEmit=true",
+    ].join("\0"),
+  )
+  .digest("hex");
+
 const DIRTY_VUE = `<script setup>
 const html = "<b>x</b>"
 </script>
@@ -162,7 +182,11 @@ export function dirtyForCoverage(source) {
  *   touched) are disclosed, not gated.
  * - census failed to run → ⓘ "coverage unverified", never a silent pass.
  */
-export function applyFileCoverageGate(results, coverage, { verb = "processed", what = "corpus files" } = {}) {
+export function applyFileCoverageGate(
+  results,
+  coverage,
+  { verb = "processed", what = "corpus files" } = {},
+) {
   for (const row of results) {
     const c = coverage.get(row.id);
     if (!c) continue;
@@ -174,7 +198,9 @@ export function applyFileCoverageGate(results, coverage, { verb = "processed", w
       row.notes = `${row.notes} | ⓘ file coverage by construction: this invocation is handed the ${c.corpus} corpus files as an explicit list, not a directory walk.`;
       continue;
     }
-    const extras = c.extras?.length ? ` (also touched: ${c.extras.join(", ")} — a directory-walk side effect, disclosed not gated)` : "";
+    const extras = c.extras?.length
+      ? ` (also touched: ${c.extras.join(", ")} — a directory-walk side effect, disclosed not gated)`
+      : "";
     if (c.covered < c.corpus) {
       if (row.status === "ok") {
         row.status = "unranked";
@@ -231,7 +257,10 @@ export function countCoveredFiles(output, rels, { absPrefix = null } = {}) {
     .replace(/\\/g, "/")
     .replace(/\/{2,}/g, "/");
   const prefix = absPrefix
-    ? absPrefix.replace(/\\/g, "/").replace(/\/{2,}/g, "/").replace(/\/+$/, "")
+    ? absPrefix
+        .replace(/\\/g, "/")
+        .replace(/\/{2,}/g, "/")
+        .replace(/\/+$/, "")
     : null;
   let covered = 0;
   const missing = [];
@@ -488,10 +517,7 @@ declare module "*.vue" {
     join(dir, "golar.config.ts"),
     `import { defineConfig } from "golar/unstable";\nimport "@golar/vue";\nexport default defineConfig({});\n`,
   );
-  writeFileSync(
-    join(dir, "package.json"),
-    JSON.stringify({ name, private: true, type: "module" }),
-  );
+  writeFileSync(join(dir, "package.json"), JSON.stringify({ name, private: true, type: "module" }));
   return dir;
 }
 
@@ -659,6 +685,11 @@ export function applyWorkGate(variants, gateFn) {
       // reader see the trade — "118ms, but it misses prop-type checking" —
       // instead of silently omitting the row.
       v.unranked = true;
+      // Before timing this flag is copied by measureVariants. Post-timing gates
+      // operate on result rows directly, where ranking keys on `status`; keep
+      // both representations in sync so moving validation after timing cannot
+      // accidentally turn a failed plant back into a ranked row.
+      if (v.status === "ok") v.status = "unranked";
       v.notes =
         `${v.notes || ""} | ⚠ FAILED VALIDATION — time shown in brackets, excluded from ranking`.trim();
     }

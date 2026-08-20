@@ -6,8 +6,10 @@ name: Benchmark
 # Pattern mirrors rolldown/benchmarks (measure on CI, merge artifacts into the
 # README, auto-commit with [skip ci]) with one deliberate divergence: rolldown
 # runs its benchmark job on every push and pull request, we do not. Measured on
-# a 32-core box: bench 4.2 min, memory 4.8 min, and ide dominated by repeated
-# 500-file project loads — hanging that off a pull request would burn runner
+# a 32-core box before Fresh-child Compiler sampling was added: bench 4.2 min
+# and memory 4.8 min. That estimate is intentionally no longer presented as
+# current; Fresh-child now starts one process per row/sample. IDE is dominated by
+# repeated 500-file project loads — hanging that off a pull request would burn runner
 # time per review round for numbers nobody reads. Validation on PR / push lives in `test.yml` (harness + confirm,
 # a couple of minutes) and publishes nothing.
 #
@@ -25,9 +27,9 @@ name: Benchmark
 # Two job groups, matching how the harness itself is split: SPEED and MEMORY
 # are always separate runs, never the same one.
 #
-#   bench  — SPEED. Every timing surface in ONE job. MEASURED at 4.2 min on a
-#            32-core box with --runs 5: lint 100s, typecheck 76s, format 33s,
-#            lsp 25s, component-meta 9s, compile 8s, jsx-compile 2s.
+#   bench  — SPEED. Every timing surface in ONE job. The old 4.2-minute total
+#            predates per-row Fresh-child Compiler sampling and is not a current
+#            estimate; consult the newest workflow duration before retuning.
 #            All numbers in a
 #            report come off the same VM, so no result is ever merged across
 #            runners. Runner-to-runner variance is easily larger than the
@@ -46,9 +48,10 @@ name: Benchmark
 #            free) and exact OS high-water marks folded in. Kept apart because a
 #            sampler running beside a timer measures its own overhead.
 #
-# There is no cold job. Every measured run is preceded by a discarded warmup
-# pass, because an unwarmed first run costs a JS compiler ~3.2x its steady
-# state and a native compiler nothing — ranking on it measures V8 warmup.
+# There is no separate cold job. Every Warm measured run is preceded by a
+# discarded pass because this workflow ranks steady-state throughput. Compiler
+# also samples the first timed row workload in fresh children, with startup,
+# imports and adapter setup excluded. It is labelled Fresh child, not Cold.
 
 on:
   workflow_dispatch:
@@ -136,7 +139,7 @@ jobs:
           restore-keys: |
             ${{ env.NM_CACHE_PREFIX }}-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', 'envs/tnb/pnpm-lock.yaml', '.node-version') }}-
 
-      - name: Generate fixtures (unique + vapor + repeated demo)
+      - name: Generate fixtures (unique + vapor + repeated-input study)
         run: |
           COUNT="${{ env.FIXTURE_COUNT }}"
           node scripts/generate.mjs --counts "50,${COUNT}"
@@ -150,7 +153,7 @@ jobs:
           if-no-files-found: error
 
   # ---------------------------------------------------------------------------
-  # BENCH — EVERY surface, one job per OS. All numbers in a report come off the
+  # BENCH — EVERY surface, one Linux job. All numbers in a report come off the
   # same VM.
   #
   # Splitting by surface would shave some wall time (lint 100s and typecheck 76s
@@ -160,26 +163,26 @@ jobs:
   # enough that two reports merged from two VMs are not one measurement. Keeping
   # everything on one box removes that discrepancy entirely and means a
   # comparison class can never accidentally span machines as surfaces evolve.
-  # 4.2 min measured is a fine price for a benchmark somebody asked for.
+  # The prior 4.2 min measurement predates Fresh-child Compiler sampling and is
+  # retained nowhere as a current runtime promise.
   #
   # Surface ORDER matters: lsp runs last. Not because it is the longest — it is
   # ~25s against lint's ~100s — but because it spawns and tears down language
   # servers repeatedly, and its hover retries heat the box. Running it first
   # would leave every later surface measuring a warmer, more throttled machine.
   #
-  # Every measured run is preceded by a discarded warmup pass (enforced by the
-  # harness); there is no separate cold job because an unwarmed run measures
-  # JIT warmup for JS tools and nothing for native tools.
+  # Every Warm measured run is preceded by a discarded pass (enforced by the
+  # harness). Compiler separately reports the first timed row workload in a new
+  # child, excluding startup/import/setup; that is not a machine-cold result.
   # ---------------------------------------------------------------------------
   bench:
     name: Bench (Linux)
     needs: build
     runs-on: ubuntu-latest
-    # MEASURED 4.2 min on a 32-core box at --runs 5. 20 allows ~4.8x for a
-    # slower 2-core CI runner. If a run ever approaches this, cut --runs
-    # before raising the ceiling: a ceiling that merely accommodates the
-    # runtime tells you nothing.
-    timeout-minutes: 20
+    # 30 minutes accommodates the added per-row Fresh-child processes. Revisit
+    # this only from a completed current workflow; the old 4.2-minute estimate
+    # predates this measurement model.
+    timeout-minutes: 30
     defaults:
       run:
         shell: bash
@@ -213,7 +216,7 @@ jobs:
             --json "results/bench-${{ runner.os }}-${COUNT}-bench.json" \
             --out "results/bench-${{ runner.os }}-${COUNT}-bench.md"
 
-      - name: Compile cache-demo on REPEATED corpus (not for ranking)
+      - name: Compile repeated-input corpus study (not for ranking)
         env:
           RUNNER_OS: ${{ runner.os }}
         run: |
@@ -225,8 +228,8 @@ jobs:
             --compile-envs production \
             --compile-sourcemaps off \
             --runs 2 \
-            --json "results/bench-${{ runner.os }}-${COUNT}-repeated-cache-demo.json" \
-            --out "results/bench-${{ runner.os }}-${COUNT}-repeated-cache-demo.md" || true
+            --json "results/bench-${{ runner.os }}-${COUNT}-repeated-input-study.json" \
+            --out "results/bench-${{ runner.os }}-${COUNT}-repeated-input-study.md" || true
 
       - name: Upload bench results
         id: upload-bench
@@ -534,5 +537,6 @@ jobs:
             Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           # docs/results carries the full per-artifact reports the README's
           # summary tables link to — same commit, or the links 404.
-          # docs/typecheck.md is the full confirm matrix (Benchmark only).
-          file_pattern: README.md MEMORY.md docs/results/*.md docs/results/charts/*.svg docs/typecheck.md results/benchmarks/*
+          # docs/typecheck.md is the full confirm matrix; docs/compiler.md is
+          # the lossless Compiler timing + validity + resource publication.
+          file_pattern: README.md MEMORY.md docs/results/*.md docs/results/charts/*.svg docs/typecheck.md docs/compiler.md results/benchmarks/*

@@ -47,19 +47,35 @@ function orderPerPass(calls, phase) {
     if (!byIteration.has(call.iteration)) byIteration.set(call.iteration, []);
     byIteration.get(call.iteration).push(call.id);
   }
-  return [...byIteration.entries()].sort((a, b) => a[0] - b[0]).map(([, ids]) => ids);
+  return [...byIteration.entries()]
+    .sort((a, b) => a[0] - b[0])
+    .map(([, ids]) => ids);
 }
 
 /** With N variants over N passes, each variant must visit each slot once. */
 function assertEveryPositionVisitedOnce(orders, ids, what) {
-  assert.equal(orders.length, ids.length, `${what}: need ${ids.length} passes to cover ${ids.length} positions`);
+  assert.equal(
+    orders.length,
+    ids.length,
+    `${what}: need ${ids.length} passes to cover ${ids.length} positions`,
+  );
   for (const order of orders) {
-    assert.deepEqual([...order].sort(), [...ids].sort(), `${what}: every pass must run every variant once`);
+    assert.deepEqual(
+      [...order].sort(),
+      [...ids].sort(),
+      `${what}: every pass must run every variant once`,
+    );
   }
   const allPositions = ids.map((_, i) => i);
   for (const id of ids) {
-    const visited = orders.map((order) => order.indexOf(id)).sort((a, b) => a - b);
-    assert.deepEqual(visited, allPositions, `${what}: variant ${id} did not occupy every position exactly once`);
+    const visited = orders
+      .map((order) => order.indexOf(id))
+      .sort((a, b) => a - b);
+    assert.deepEqual(
+      visited,
+      allPositions,
+      `${what}: variant ${id} did not occupy every position exactly once`,
+    );
   }
 }
 
@@ -94,7 +110,11 @@ describe("measureVariants — warmups", () => {
     assert.equal(warmupCalls.length, 2, "one warmup pass x two variants");
     for (const row of rows) {
       assert.equal(row.warmupPasses, 1);
-      assert.deepEqual(row.runs, [7, 7, 7], "warmup timings must never appear in runs");
+      assert.deepEqual(
+        row.runs,
+        [7, 7, 7],
+        "warmup timings must never appear in runs",
+      );
       assert.equal(row.medianMs, 7);
     }
   });
@@ -119,7 +139,11 @@ describe("measureVariants — order rotation", () => {
 
     await measureVariants(variants, { runs: 3, warmups: 1 });
 
-    assertEveryPositionVisitedOnce(orderPerPass(calls, "measure"), ids, "measured runs");
+    assertEveryPositionVisitedOnce(
+      orderPerPass(calls, "measure"),
+      ids,
+      "measured runs",
+    );
   });
 
   test("warmups are rotated too — no tool is pinned to the cold first slot", async () => {
@@ -128,27 +152,99 @@ describe("measureVariants — order rotation", () => {
 
     await measureVariants(variants, { runs: 1, warmups: 3 });
 
-    assertEveryPositionVisitedOnce(orderPerPass(calls, "warmup"), ids, "warmup passes");
+    assertEveryPositionVisitedOnce(
+      orderPerPass(calls, "warmup"),
+      ids,
+      "warmup passes",
+    );
   });
 
   test("rotation skips inactive variants without disturbing the cycle", async () => {
     const ids = ["a", "b", "c"];
     const { variants, calls } = recordingVariants(ids);
-    variants.splice(1, 0, { id: "skipped", label: "S", skip: true, measure: () => 1 });
+    variants.splice(1, 0, {
+      id: "skipped",
+      label: "S",
+      skip: true,
+      measure: () => 1,
+    });
 
     await measureVariants(variants, { runs: 3, warmups: 1 });
 
-    assertEveryPositionVisitedOnce(orderPerPass(calls, "measure"), ids, "measured runs with a skip");
+    assertEveryPositionVisitedOnce(
+      orderPerPass(calls, "measure"),
+      ids,
+      "measured runs with a skip",
+    );
+  });
+
+  test("Compiler mode prepares every row before timing and balances a two-run schedule", async () => {
+    const events = [];
+    const orderLog = { warmups: [], runs: [] };
+    const variants = ["a", "b", "c", "d"].map((id) => ({
+      id,
+      label: id,
+      prepare: ({ phase, iteration }) => {
+        events.push(`prepare:${phase}:${iteration}:${id}`);
+        return { inputCount: 4, adapterOptionsHash: `options-${id}` };
+      },
+      measure: ({ phase, iteration }) => {
+        events.push(`measure:${phase}:${iteration}:${id}`);
+        return { ms: 1, artifact: 10 };
+      },
+    }));
+
+    const rows = await measureVariants(variants, {
+      runs: 2,
+      warmups: 1,
+      prepareAllBeforeTiming: true,
+      balancedShortRuns: true,
+      orderLog,
+    });
+
+    const firstMeasure = events.findIndex((event) =>
+      event.startsWith("measure:measure:0"),
+    );
+    const lastPrepare = events.reduce(
+      (index, event, i) => (event.startsWith("prepare:measure:0") ? i : index),
+      -1,
+    );
+    assert.ok(
+      lastPrepare < firstMeasure,
+      "all pass setup must precede every timer",
+    );
+    for (const id of ["a", "b", "c", "d"]) {
+      assert.equal(
+        orderLog.runs[0].indexOf(id) + orderLog.runs[1].indexOf(id),
+        3,
+        `${id} must occupy complementary positions`,
+      );
+    }
+    assert.equal(rows[0].metaSamples[0].inputCount, 4);
+    assert.equal(rows[0].metaSamples[0].artifact, 10);
   });
 });
 
 describe("measureVariants — result row shape", () => {
-  const REQUIRED = ["medianMs", "minMs", "maxMs", "meanMs", "stddevMs", "cvPct", "runs", "warmupPasses"];
+  const REQUIRED = [
+    "medianMs",
+    "minMs",
+    "maxMs",
+    "meanMs",
+    "stddevMs",
+    "cvPct",
+    "runs",
+    "warmupPasses",
+  ];
 
   test("ok rows expose every summary statistic", async () => {
     const { variants } = recordingVariants(["a"], { value: () => 5 });
 
-    const [row] = await measureVariants(variants, { runs: 3, warmups: 1, fileCount: 20 });
+    const [row] = await measureVariants(variants, {
+      runs: 3,
+      warmups: 1,
+      fileCount: 20,
+    });
 
     assert.equal(row.status, "ok");
     for (const key of REQUIRED) {
@@ -159,14 +255,17 @@ describe("measureVariants — result row shape", () => {
     assert.equal(row.throughput, formatThroughput(20, row.medianMs));
   });
 
-  test("no cold metric is reported — regression guard, the cold column was removed", async () => {
+  test("generic measureVariants does not invent cold — surfaces must sample it explicitly", async () => {
     const { variants } = recordingVariants(["a"], { value: () => 5 });
 
     const [row] = await measureVariants(variants, { runs: 3, warmups: 1 });
 
     assert.ok(!("coldMs" in row), "coldMs must not come back");
     assert.ok(!("warmMedianMs" in row), "warmMedianMs must not come back");
-    assert.ok(!/cold/i.test(JSON.stringify(row)), `result row leaked a cold metric: ${JSON.stringify(row)}`);
+    assert.ok(
+      !/cold/i.test(JSON.stringify(row)),
+      `result row leaked a cold metric: ${JSON.stringify(row)}`,
+    );
   });
 
   test("summary statistics and CV% are correct for a known series", async () => {
@@ -209,7 +308,11 @@ describe("measureVariants — result row shape", () => {
 
     assert.equal(row.runs.length, 1);
     assert.equal(row.medianMs, 12, "the median is still a real measurement");
-    assert.equal(row.stddevMs, null, "stddev of one sample must be null, not 0");
+    assert.equal(
+      row.stddevMs,
+      null,
+      "stddev of one sample must be null, not 0",
+    );
     assert.equal(row.cvPct, null, "CV% of one sample must be null, not 0");
   });
 
@@ -240,13 +343,20 @@ describe("measureVariants — result row shape", () => {
 
     const cells = md
       .split("\n")
-      .find((l) => /^\| .*\| \*\*[\d.]+ (ms|s)\*\* \|/.test(l) || /^\|[^|]+\| \*\*[\d.]+ (ms|s)\*\*/.test(l))
+      .find(
+        (l) =>
+          /^\| .*\| \*\*[\d.]+ (ms|s)\*\* \|/.test(l) ||
+          /^\|[^|]+\| \*\*[\d.]+ (ms|s)\*\*/.test(l),
+      )
       .split("|")
       .map((c) => c.trim());
     // | Tool | Median | Min | Stddev | CV% | ...
     assert.equal(cells[4], "n/a", `stddev cell should be n/a, got ${cells[4]}`);
     assert.equal(cells[5], "n/a", `CV% cell should be n/a, got ${cells[5]}`);
-    assert.ok(!/0\.0 ms \| 0\.0%/.test(md), "must not print a fabricated 0.0 ms / 0.0% pair");
+    assert.ok(
+      !/0\.0 ms \| 0\.0%/.test(md),
+      "must not print a fabricated 0.0 ms / 0.0% pair",
+    );
   });
 });
 
@@ -271,7 +381,10 @@ describe("measureVariants — the ranking metric is the median of measured runs"
   test("medianMs is the median — not the mean, min, max or midrange", async () => {
     const { variants } = skewedVariant();
 
-    const [row] = await measureVariants(variants, { runs: SKEWED.length, warmups: 1 });
+    const [row] = await measureVariants(variants, {
+      runs: SKEWED.length,
+      warmups: 1,
+    });
 
     assert.deepEqual(row.runs, SKEWED);
     assert.equal(row.medianMs, 12, "ranking metric must be the median");
@@ -287,7 +400,11 @@ describe("measureVariants — the ranking metric is the median of measured runs"
       max: row.maxMs,
       midrange: (row.minMs + row.maxMs) / 2,
     })) {
-      assert.notEqual(row.medianMs, value, `medianMs must not equal the ${what} for this series`);
+      assert.notEqual(
+        row.medianMs,
+        value,
+        `medianMs must not equal the ${what} for this series`,
+      );
     }
   });
 
@@ -296,7 +413,12 @@ describe("measureVariants — the ranking metric is the median of measured runs"
     // the mean, `steady` wins (20 vs 30) — one slow run would have flipped the
     // published ordering of two tools.
     const variants = [
-      { id: "spiky", label: "Spiky", measure: ({ phase, iteration }) => (phase === "warmup" ? 1000 : [10, 10, 10, 10, 110][iteration]) },
+      {
+        id: "spiky",
+        label: "Spiky",
+        measure: ({ phase, iteration }) =>
+          phase === "warmup" ? 1000 : [10, 10, 10, 10, 110][iteration],
+      },
       { id: "steady", label: "Steady", measure: () => 20 },
     ];
 
@@ -305,11 +427,17 @@ describe("measureVariants — the ranking metric is the median of measured runs"
 
     assert.equal(byId.spiky.medianMs, 10);
     assert.equal(byId.steady.medianMs, 20);
-    assert.ok(byId.spiky.medianMs < byId.steady.medianMs, "median ranks spiky first");
+    assert.ok(
+      byId.spiky.medianMs < byId.steady.medianMs,
+      "median ranks spiky first",
+    );
     // The same two rows ranked on the mean give the opposite answer.
     assert.equal(byId.spiky.meanMs, 30);
     assert.equal(byId.steady.meanMs, 20);
-    assert.ok(byId.steady.meanMs < byId.spiky.meanMs, "mean would rank steady first");
+    assert.ok(
+      byId.steady.meanMs < byId.spiky.meanMs,
+      "mean would rank steady first",
+    );
   });
 
   test("the ranking metric is taken over MEASURED runs only — warmups cannot move it", async () => {
@@ -317,14 +445,29 @@ describe("measureVariants — the ranking metric is the median of measured runs"
     // the majority of the series and drag the median from 12 to 154.
     const { variants, calls } = skewedVariant(["a"], { warmupMs: 1000 });
 
-    const [row] = await measureVariants(variants, { runs: SKEWED.length, warmups: 4 });
+    const [row] = await measureVariants(variants, {
+      runs: SKEWED.length,
+      warmups: 4,
+    });
 
     assert.equal(calls.filter((c) => c.phase === "warmup").length, 4);
     assert.equal(row.warmupPasses, 4);
-    assert.deepEqual(row.runs, SKEWED, "warmup timings must never enter the series");
-    assert.equal(row.runs.length, SKEWED.length, "the series is exactly the measured runs");
+    assert.deepEqual(
+      row.runs,
+      SKEWED,
+      "warmup timings must never enter the series",
+    );
+    assert.equal(
+      row.runs.length,
+      SKEWED.length,
+      "the series is exactly the measured runs",
+    );
     assert.equal(row.medianMs, 12, "median of the measured runs");
-    assert.notEqual(row.medianMs, 154, "median of warmups+runs — warmups were folded in");
+    assert.notEqual(
+      row.medianMs,
+      154,
+      "median of warmups+runs — warmups were folded in",
+    );
     assert.equal(row.meanMs, 40, "mean of the measured runs");
     assert.equal(row.maxMs, 154, "a 1000ms warmup is not the max");
   });
@@ -332,17 +475,28 @@ describe("measureVariants — the ranking metric is the median of measured runs"
   test("CV% is stddev over the MEDIAN, not over the mean", async () => {
     const { variants } = skewedVariant();
 
-    const [row] = await measureVariants(variants, { runs: SKEWED.length, warmups: 1 });
+    const [row] = await measureVariants(variants, {
+      runs: SKEWED.length,
+      warmups: 1,
+    });
 
     assert.equal(row.stddevMs, 63.738);
     assert.equal(row.cvPct, 531.1, "63.738 / 12 * 100");
-    assert.notEqual(row.cvPct, 159.3, "63.738 / 40 * 100 — CV% was taken over the mean");
+    assert.notEqual(
+      row.cvPct,
+      159.3,
+      "63.738 / 40 * 100 — CV% was taken over the mean",
+    );
   });
 
   test("throughput is derived from the median, not from any other statistic", async () => {
     const { variants } = skewedVariant();
 
-    const [row] = await measureVariants(variants, { runs: SKEWED.length, warmups: 1, fileCount: 120 });
+    const [row] = await measureVariants(variants, {
+      runs: SKEWED.length,
+      warmups: 1,
+      fileCount: 120,
+    });
 
     assert.equal(row.throughput, formatThroughput(120, 12));
     assert.equal(row.throughput, "10.0k files/s");
@@ -369,7 +523,11 @@ describe("measureVariants — failure handling", () => {
 
     assert.equal(boom.status, "error");
     assert.match(boom.error, /kaboom/);
-    assert.equal(boom.medianMs, undefined, "an error row must carry no ranking metric");
+    assert.equal(
+      boom.medianMs,
+      undefined,
+      "an error row must carry no ranking metric",
+    );
     assert.equal(boom.runs, undefined);
     assert.equal(boom.throughput, "n/a");
     assert.equal(rows.find((r) => r.id === "ok").status, "ok");
@@ -426,13 +584,22 @@ describe("measureVariants — baseRow metadata", () => {
     sourceMap: true,
     threading: "batch",
     invocation: "cli",
+    comparisonClass: "raw-render-batch",
+    comparisonClassLabel: "Raw render batch",
     notes: "some note",
   };
 
   test("classification metadata is propagated onto ok rows", async () => {
-    const { variants } = recordingVariants(["a"], { value: () => 3, extra: META });
+    const { variants } = recordingVariants(["a"], {
+      value: () => 3,
+      extra: META,
+    });
 
-    const [row] = await measureVariants(variants, { runs: 2, warmups: 1, fileCount: 4 });
+    const [row] = await measureVariants(variants, {
+      runs: 2,
+      warmups: 1,
+      fileCount: 4,
+    });
 
     for (const [key, value] of Object.entries(META)) {
       assert.equal(row[key], value, `baseRow dropped ${key}`);
@@ -475,17 +642,24 @@ describe("measureSeries", () => {
       { runs: 3, warmups: 0 },
     );
 
-    assert.equal(calls.filter((p) => p === "warmup").length, 1, "warmups: 0 is clamped to 1");
+    assert.equal(
+      calls.filter((p) => p === "warmup").length,
+      1,
+      "warmups: 0 is clamped to 1",
+    );
     assert.deepEqual(result.runs, [10, 20, 30]);
     assert.equal(result.medianMs, 20);
     assert.ok(!("coldMs" in result));
   });
 
   test("meta payloads are collected from measure() objects", async () => {
-    const result = await measureSeries(({ iteration }) => ({ ms: 5, meta: { cacheHits: iteration } }), {
-      runs: 2,
-      warmups: 1,
-    });
+    const result = await measureSeries(
+      ({ iteration }) => ({ ms: 5, meta: { cacheHits: iteration } }),
+      {
+        runs: 2,
+        warmups: 1,
+      },
+    );
 
     assert.deepEqual(result.metaSamples, [{ cacheHits: 0 }, { cacheHits: 1 }]);
   });
@@ -501,7 +675,11 @@ describe("statistics primitives", () => {
   test("mean and stddev match the textbook sample formulas", () => {
     assert.equal(mean([2, 4, 6]), 4);
     assert.equal(stddev([2, 4, 6]), 2);
-    assert.equal(stddev([5]), null, "a single sample has no MEASURED spread — that is null, not 0");
+    assert.equal(
+      stddev([5]),
+      null,
+      "a single sample has no MEASURED spread — that is null, not 0",
+    );
     assert.equal(stddev([]), null, "no samples, no spread");
   });
 

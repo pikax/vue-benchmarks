@@ -5,7 +5,7 @@
  *
  * Prints a single JSON object to stdout (last line).
  */
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, existsSync, rmSync } from "node:fs";
 import { spawn, spawnSync } from "node:child_process";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
@@ -20,9 +20,93 @@ import {
   windowsTreeRssPsFunction,
 } from "./lib/memory.mjs";
 import { copyFixtureSubset } from "./lib/fixtures.mjs";
+import { assertOnlyAllowedFervidDiagnostics } from "./lib/fervid-diagnostics.mjs";
 
 const require = createRequire(import.meta.url);
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "..");
+const CLI_OUTPUT_LIMIT = 1024 * 1024;
+
+function appendBounded(current, chunk, limit = CLI_OUTPUT_LIMIT) {
+  if (current.length >= limit) return current;
+  return current + String(chunk).slice(0, limit - current.length);
+}
+
+function cliValidity(cli, { exitCode, stdout = "", stderr = "" }) {
+  const policy = cli.validation ?? { kind: "exit-zero" };
+  const output = `${stdout}\n${stderr}`;
+  if (!Number.isInteger(exitCode)) {
+    return { status: "fail", detail: "child exited without an integer exit code" };
+  }
+  if (policy.kind === "typecheck-clean") {
+    // The resource corpus is intentionally the same clean corpus as the timed
+    // row. A non-zero code is therefore never "expected diagnostics": it is a
+    // failed workload and its RSS remains visible only as an invalid row.
+    const ok = exitCode === 0;
+    return {
+      status: ok ? "pass" : "fail",
+      detail: ok
+        ? "clean typecheck corpus completed with exit 0"
+        : `clean typecheck corpus unexpectedly exited ${exitCode}: ${output.slice(0, 240).trim() || "no diagnostic output"}`,
+      exitCode,
+    };
+  }
+  if (policy.kind === "lint-scan") {
+    if (exitCode === 0) {
+      const reportedCounts = [...output.matchAll(/\b(\d+)\s+files?\b/gi)].map((match) =>
+        Number(match[1]),
+      );
+      const reportedFiles = reportedCounts.length ? Math.max(...reportedCounts) : null;
+      if (Number.isFinite(policy.expectedMinimumFiles)) {
+        const ok = Number.isFinite(reportedFiles) && reportedFiles >= policy.expectedMinimumFiles;
+        return {
+          status: ok ? "pass" : "fail",
+          detail: ok
+            ? `lint completed with exit 0 and reported ${reportedFiles} files (minimum ${policy.expectedMinimumFiles})`
+            : `lint exited 0 but did not prove the expected ${policy.expectedMinimumFiles}-file scan (reported ${reportedFiles ?? "no count"})`,
+          exitCode,
+          reportedFiles,
+        };
+      }
+      if (policy.silentExitZero === "unknown" && !output.trim()) {
+        return {
+          status: "unknown",
+          detail:
+            "lint exited 0 silently; this CLI exposes no per-file census in its normal invocation",
+          exitCode,
+        };
+      }
+      return { status: "pass", detail: "lint completed with exit 0", exitCode };
+    }
+    const findingExitCodes = policy.findingExitCodes ?? [1];
+    const namesVueFile = /\.vue(?::|\(|\s|$)/i.test(output);
+    const ok = findingExitCodes.includes(exitCode) && namesVueFile;
+    return {
+      status: ok ? "pass" : "fail",
+      detail: ok
+        ? `lint finding exit ${exitCode}; output names a .vue input`
+        : `unexpected lint exit ${exitCode}${namesVueFile ? "" : "; output names no .vue input"}`,
+      exitCode,
+    };
+  }
+  const ok = exitCode === 0;
+  return {
+    status: ok ? "pass" : "fail",
+    detail: ok ? "process completed with exit 0" : `unexpected process exit ${exitCode}`,
+    exitCode,
+  };
+}
+
+function prepareCliSample(cli) {
+  if (!cli.freshCopy) return { cli, cleanup: () => {} };
+  const fresh = cli.freshCopy;
+  const cwd = join(fresh.workRoot, `${fresh.id}-${process.pid}`);
+  rmSync(cwd, { recursive: true, force: true });
+  copyFixtureSubset(fresh.fixtureDir, cwd, fresh.files, fresh.extraFiles ?? []);
+  return {
+    cli: { ...cli, cwd, freshCopy: undefined },
+    cleanup: () => rmSync(cwd, { recursive: true, force: true }),
+  };
+}
 
 function parseArgs(argv) {
   const args = { task: "" };
@@ -32,10 +116,21 @@ function parseArgs(argv) {
   return args;
 }
 
-function vueCompileSfc(compiler, source, filename, { vapor, isProd }) {
-  const { descriptor } = compiler.parse(source, { filename });
+function vueCompileSfc(
+  compiler,
+  source,
+  filename,
+  { vapor, isProd, includeStyles = false, componentId = filename },
+) {
+  const { descriptor, errors } = compiler.parse(source, { filename });
+  if (errors?.length) throw new Error(String(errors[0]?.message ?? errors[0]));
   let bindings = {};
-  const scriptOpts = { id: filename, inlineTemplate: false, isProd };
+  let generatedBytes = 0;
+  const scriptOpts = {
+    id: includeStyles ? componentId : filename,
+    inlineTemplate: false,
+    isProd,
+  };
   if (vapor) {
     scriptOpts.vapor = true;
     scriptOpts.templateOptions = { vapor: true, isProd };
@@ -43,12 +138,13 @@ function vueCompileSfc(compiler, source, filename, { vapor, isProd }) {
   if (descriptor.scriptSetup || descriptor.script) {
     const scriptResult = compiler.compileScript(descriptor, scriptOpts);
     bindings = scriptResult.bindings || {};
+    generatedBytes += scriptResult.content?.length ?? 0;
   }
   if (descriptor.template) {
     const templateOpts = {
       source: descriptor.template.content,
       filename,
-      id: filename,
+      id: includeStyles ? componentId : filename,
       isProd,
       compilerOptions: {
         bindingMetadata: bindings,
@@ -56,22 +152,56 @@ function vueCompileSfc(compiler, source, filename, { vapor, isProd }) {
         hoistStatic: isProd,
         cacheHandlers: isProd,
         prefixIdentifiers: true,
+        scopeId:
+          includeStyles && descriptor.styles.some((style) => style.scoped)
+            ? `data-v-${componentId}`
+            : undefined,
       },
     };
     if (vapor) templateOpts.vapor = true;
-    compiler.compileTemplate(templateOpts);
+    const result = compiler.compileTemplate(templateOpts);
+    if (result.errors?.length)
+      throw new Error(String(result.errors[0]?.message ?? result.errors[0]));
+    generatedBytes += result.code?.length ?? 0;
   }
+  if (includeStyles) {
+    for (const style of descriptor.styles) {
+      const result = compiler.compileStyle({
+        source: style.content,
+        filename,
+        id: `data-v-${componentId}`,
+        scoped: style.scoped,
+        isProd,
+      });
+      if (result.errors?.length) {
+        throw new Error(String(result.errors[0]?.message ?? result.errors[0]));
+      }
+      if (!result.code?.length) throw new Error(`Vue emitted no CSS for ${filename}`);
+      generatedBytes += result.code.length;
+    }
+  }
+  if (generatedBytes === 0) throw new Error(`Vue emitted no output for ${filename}`);
+  return generatedBytes;
 }
 
 const handlers = {
   async "vue-compile-sfc"(payload) {
     const compiler = require(require.resolve(payload.packageName, { paths: [rootDir] }));
+    let outputBytes = 0;
     for (const f of payload.sources) {
-      vueCompileSfc(compiler, f.source, f.filename, {
+      outputBytes += vueCompileSfc(compiler, f.source, f.filename, {
         vapor: payload.vapor,
         isProd: payload.isProd,
+        includeStyles: payload.includeStyles,
+        componentId: f.componentId,
       });
     }
+    return {
+      validity: {
+        status: "pass",
+        detail: `parsed and generated non-empty output for ${payload.sources.length} SFCs (${outputBytes} bytes)`,
+      },
+    };
   },
 
   async "vize-compile-sfc"(payload) {
@@ -82,18 +212,74 @@ const handlers = {
         vapor: payload.vapor,
         sourceMap: payload.sourceMap,
         isTs: true,
+        templateHoistStatic: payload.isProd,
+        templateCacheHandlers: payload.isProd,
       });
       if (result?.errors?.length) throw new Error(result.errors.join("; "));
+      if (!(result?.code?.length > 0)) throw new Error(`vize emitted no code for ${f.filename}`);
+      if ((f.styles?.length ?? 0) > 0 && !(result?.css?.length > 0)) {
+        throw new Error(`vize emitted no CSS for ${f.filename}`);
+      }
+      for (const style of f.styles ?? []) {
+        if (!String(result?.css ?? "").includes(style.sentinel)) {
+          throw new Error(`vize compileSfc omitted style block ${style.index} for ${f.filename}`);
+        }
+      }
     }
+    return {
+      validity: {
+        status: "pass",
+        detail: `compileSfc returned code for ${payload.sources.length} SFCs and every expected CSS sentinel`,
+      },
+    };
   },
 
   async "vize-compile-batch"(payload) {
     const vize = require(require.resolve("@vizejs/native", { paths: [rootDir] }));
-    const result = vize.compileSfcBatchWithResults(
-      payload.sources.map((f) => ({ path: f.filename, source: f.source })),
-      { vapor: payload.vapor, isTs: true },
-    );
+    const inputs = payload.sources.map((f) => ({ path: f.filename, source: f.source }));
+    const result = vize.compileSfcBatchWithResults(inputs, {
+      vapor: payload.vapor,
+      isTs: true,
+      includeSourceMap: false,
+      templateHoistStatic: payload.isProd,
+      templateCacheHandlers: payload.isProd,
+    });
     if (result.failedCount) throw new Error(`vize batch failed ${result.failedCount}`);
+    if (result.errors?.length) {
+      throw new Error(`vize batch returned top-level errors: ${result.errors.join("; ")}`);
+    }
+    const rows = result.results ?? result.items ?? [];
+    if (rows.length !== inputs.length) {
+      throw new Error(`vize batch returned ${rows.length}/${inputs.length} results`);
+    }
+    const failedRows = rows.filter((row) => row?.errors?.length);
+    if (failedRows.length) {
+      throw new Error(
+        `vize batch returned per-file errors for ${failedRows.length}/${inputs.length}: ${failedRows[0].errors.join("; ")}`,
+      );
+    }
+    if (rows.some((row) => !(row?.code?.length > 0))) {
+      throw new Error("vize batch returned an empty generated-code result");
+    }
+    const expectedCss = payload.sources.filter((f) => (f.styles?.length ?? 0) > 0).length;
+    if (expectedCss && rows.filter((row) => (row?.css?.length ?? 0) > 0).length !== expectedCss) {
+      throw new Error("vize batch did not return CSS for every styled SFC");
+    }
+    for (let index = 0; index < rows.length; index++) {
+      for (const style of payload.sources[index].styles ?? []) {
+        if (!String(rows[index]?.css ?? "").includes(style.sentinel)) {
+          throw new Error(
+            `vize batch omitted style block ${style.index} for ${payload.sources[index].filename}`,
+          );
+        }
+      }
+    }
+    return {
+      validity: {
+        status: "pass",
+        detail: `compileSfcBatchWithResults returned ${rows.length}/${inputs.length} code results and every expected CSS sentinel`,
+      },
+    };
   },
 
   async "fervid-compile-sfc"(payload) {
@@ -104,17 +290,44 @@ const handlers = {
       // Gated on codegen, not on diagnostic silence: fervid reports non-fatal
       // HTML-strictness diagnostics on self-closing non-void tags while still
       // emitting complete code. See scripts/lib/surfaces/compile.mjs.
+      assertOnlyAllowedFervidDiagnostics(result, `fervid ${f.filename}`);
       if (!result?.code?.length) throw new Error(`fervid emitted no code for ${f.filename}`);
+      if ((f.styles?.length ?? 0) > 0 && !(result.styles?.[0]?.code?.length > 0)) {
+        throw new Error(`fervid emitted no CSS for ${f.filename}`);
+      }
     }
+    return {
+      validity: {
+        status: "pass",
+        detail: `compileSync returned code for ${payload.sources.length} SFCs and CSS where expected`,
+      },
+    };
   },
 
   async "verter-compile-many"(payload) {
-    const { VerterHost } = require(require.resolve("@verter/native", { paths: [rootDir] }));
-    const host = new VerterHost({ devMode: !payload.isProd });
+    const native = require(require.resolve("@verter/native", { paths: [rootDir] }));
+    const config = {
+      devMode: !payload.isProd,
+      analysisLevel: "full",
+    };
+    let host;
+    if (
+      payload.workspaceRoot &&
+      typeof native.Workspace === "function" &&
+      typeof native.VerterHost?.withWorkspace === "function"
+    ) {
+      const root = payload.workspaceRoot.replace(/\\/g, "/");
+      const workspace = new native.Workspace([root]);
+      workspace.configureProjects([{ root, workspaceRoot: root }]);
+      host = native.VerterHost.withWorkspace(config, workspace);
+    } else {
+      host = new native.VerterHost(config);
+    }
     const batchInputs = payload.sources.map((f) => ({
       canonicalId: (f.path || f.filename).replace(/\\/g, "/"),
       source: f.source,
       requestedMode: "stateless",
+      componentId: f.componentId,
     }));
     const results = host.compileMany(batchInputs, {
       target: "runtime-render",
@@ -126,13 +339,49 @@ const handlers = {
         ssr: false,
         forceJs: false, // one TS-passthrough standard for every compiler — see compile.mjs renderProfile
         forceVapor: payload.vapor,
-        sourceMap: !payload.isProd,
+        // Keep memory cells comparable: no compiler is asked to materialise
+        // source maps here. Map cost is measured by the compile timing matrix.
+        sourceMap: false,
         hmrStrategy: payload.isProd ? "none" : "vite",
         runtimeModuleName: "vue",
       },
     });
     const failed = results.filter((r) => r.errors?.length);
     if (failed.length) throw new Error(String(failed[0].errors[0]));
+    if (results.length !== batchInputs.length) {
+      throw new Error(`verter returned ${results.length}/${batchInputs.length} results`);
+    }
+    if (results.some((r) => !(r?.code?.length > 0))) {
+      throw new Error("verter returned an empty generated-code result");
+    }
+    if (results.some((r) => r.cacheHit)) {
+      throw new Error("verter runtime-render unexpectedly reported an output-cache hit");
+    }
+    if (results.some((r) => r.actualMode !== "stateless")) {
+      throw new Error("verter runtime-render did not use requestedMode=stateless");
+    }
+    if (payload.includeStyles) {
+      const { processStyle } = require(require.resolve("@verter/native", { paths: [rootDir] }));
+      let cssBytes = 0;
+      for (const f of payload.sources) {
+        for (const style of f.styles ?? []) {
+          const result = processStyle(style.content, {
+            scopeId: style.scopeId,
+            scoped: style.scoped,
+            isModule: false,
+            filename: style.filename,
+          });
+          cssBytes += result?.code?.length ?? 0;
+        }
+      }
+      if (cssBytes === 0) throw new Error("verter processStyle emitted no CSS");
+    }
+    return {
+      validity: {
+        status: "pass",
+        detail: `workspace-backed compileMany returned ${results.length}/${batchInputs.length} stateless, non-cached code results${payload.includeStyles ? " plus processStyle output" : ""}`,
+      },
+    };
   },
 
   async "jsx-compiler-rs"(payload) {
@@ -185,12 +434,18 @@ const handlers = {
       overrideConfigFile: existsSync(configFile) ? configFile : undefined,
       cwd: payload.fixtureDir,
     });
-    await eslint.lintFiles(payload.files);
+    const results = await eslint.lintFiles(payload.files);
+    return {
+      validity: {
+        status: results.length === payload.files.length ? "pass" : "fail",
+        detail: `ESLint returned ${results.length}/${payload.files.length} explicitly requested SFC results`,
+      },
+    };
   },
 
   async "verter-lint"(payload) {
     const { VerterHost } = require(require.resolve("@verter/native", { paths: [rootDir] }));
-    const host = new VerterHost({ devMode: false });
+    const host = new VerterHost({ devMode: false, analysisLevel: "full" });
     for (const f of payload.sources) {
       const path = (f.path || f.filename).replace(/\\/g, "/");
       if (typeof host.upsert === "function") {
@@ -204,6 +459,12 @@ const handlers = {
       if (typeof host.lint === "function") host.lint(path);
       else throw new Error("VerterHost.lint not available");
     }
+    return {
+      validity: {
+        status: "pass",
+        detail: `workspace host upserted and linted ${payload.sources.length}/${payload.sources.length} explicitly requested SFCs`,
+      },
+    };
   },
 
   /**
@@ -232,6 +493,7 @@ const handlers = {
       filePath: ws.file,
       source: ws.source,
       probe: ws.probe,
+      templateProbe: ws.templateProbe,
       initializationOptions: payload.server === "volar" ? { typescript: { tsdk } } : {},
       readyNotifications: payload.server === "verter" ? ["$/verter/ready"] : [],
       volarHybrid: payload.server === "volar",
@@ -241,22 +503,74 @@ const handlers = {
       resourcePollMs: Number(process.env.MEM_LSP_POLL_MS ?? 10),
     });
     // Surfaced through the task result for the report.
-    return { lspResource: out.resource, hoverValid: out.hoverValid };
+    const contentValid = out.hoverValid === true && out.templateHoverValid === true;
+    return {
+      lspResource: out.resource,
+      hoverValid: out.hoverValid,
+      templateHoverValid: out.templateHoverValid,
+      validity: {
+        // runLspSession currently samples the Vue-server pid. In Volar hybrid
+        // mode the TypeScript server is a sibling process, not its descendant,
+        // so claiming this is the two-process product would understate it.
+        status: payload.server === "volar" ? "unknown" : contentValid ? "pass" : "fail",
+        detail:
+          payload.server === "volar"
+            ? `script/template hover validity=${contentValid}; resource sampler covers only @vue/language-server, not its required TypeScript-server half`
+            : contentValid
+              ? "script hover and template auto-unwrapped hover both passed"
+              : `hover validation failed (script=${out.hoverValid}, template=${out.templateHoverValid})`,
+      },
+    };
   },
 
   async "vue-component-meta"(payload) {
     const { createChecker } = require(require.resolve("vue-component-meta", { paths: [rootDir] }));
     const checker = createChecker(payload.tsconfig, { forceUseTs: true });
-    for (const file of payload.files) checker.getComponentMeta(file);
+    let resolved = 0;
+    for (const file of payload.files) {
+      if (checker.getComponentMeta(file)) resolved++;
+    }
+    return {
+      validity: {
+        status: resolved === payload.files.length ? "pass" : "fail",
+        detail: `getComponentMeta resolved ${resolved}/${payload.files.length} components`,
+      },
+    };
   },
 
   async "verter-component-meta"(payload) {
-    const { ComponentMetaHost } = require(require.resolve("@verter/native", { paths: [rootDir] }));
-    const project = new ComponentMetaHost({ devMode: false });
-    for (const f of payload.sources) project.upsertBase(f.path, f.source);
-    const session = project.openSession();
-    for (const f of payload.sources) session.getComponentMeta(f.path);
-    project.shutdown?.();
+    const mod = await import("@verter/component-meta");
+    if (typeof mod.openComponentMetaSession !== "function") {
+      throw new Error("@verter/component-meta exports no openComponentMetaSession");
+    }
+    const sessionConfig = {
+      root: payload.root.replace(/\\/g, "/"),
+      tsconfig: payload.tsconfig.replace(/\\/g, "/"),
+    };
+    const session = await mod.openComponentMetaSession(sessionConfig);
+    let resolved = 0;
+    try {
+      for (const file of payload.files) {
+        if (await session.getComponentMeta(file.replace(/\\/g, "/"))) resolved++;
+      }
+    } finally {
+      try {
+        session.close();
+      } catch {
+        /* ignore */
+      }
+      try {
+        mod.evictComponentMetaSession?.(sessionConfig);
+      } catch {
+        /* ignore */
+      }
+    }
+    return {
+      validity: {
+        status: resolved === payload.files.length ? "pass" : "fail",
+        detail: `published @verter/component-meta session resolved ${resolved}/${payload.files.length} components`,
+      },
+    };
   },
 };
 
@@ -331,6 +645,16 @@ if ($timedOut) {
 }
 $p.WaitForExit()
 $sw.Stop()
+$stdoutText = $outTask.GetAwaiter().GetResult()
+$stderrText = $errTask.GetAwaiter().GetResult()
+$captureChars = ${Math.floor(CLI_OUTPUT_LIMIT / 2)}
+if ($stdoutText.Length -gt $captureChars) { $stdoutText = $stdoutText.Substring(0, $captureChars) }
+if ($stderrText.Length -gt $captureChars) { $stderrText = $stderrText.Substring(0, $captureChars) }
+$stdout64 = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($stdoutText))
+$stderr64 = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($stderrText))
+if (-not $stdout64) { $stdout64 = '-' }
+if (-not $stderr64) { $stderr64 = '-' }
+$childExit = $p.ExitCode
 try {
   $snap = Measure-TreeWorkingSet $p.Id
   if ($snap.Total -gt 0) { [void]$ws.Add([Int64]$snap.Total) }
@@ -359,7 +683,7 @@ try { $cpuMs = [math]::Round($p.TotalProcessorTime.TotalMilliseconds, 2) } catch
 $userMs = 0
 try { $userMs = [math]::Round($p.UserProcessorTime.TotalMilliseconds, 2) } catch {}
 $wallMs = [math]::Round($sw.Elapsed.TotalMilliseconds, 2)
-Write-Output ("{0} {1} {2} {3} {4} {5} {6} {7} {8} {9}" -f $wsMin, $wsMax, $wsAvg, $ws.Count, $prMin, $prMax, $prAvg, $cpuMs, $userMs, $wallMs)
+Write-Output ("{0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11} {12}" -f $wsMin, $wsMax, $wsAvg, $ws.Count, $prMin, $prMax, $prAvg, $cpuMs, $userMs, $wallMs, $childExit, $stdout64, $stderr64)
 `;
 
   const psFile = join(rootDir, "work", "memory", `ps-${process.pid}-${Date.now()}.ps1`);
@@ -374,8 +698,7 @@ Write-Output ("{0} {1} {2} {3} {4} {5} {6} {7} {8} {9}" -f $wsMin, $wsMax, $wsAv
     timeout: timeoutMs + 30_000,
   });
   try {
-    // best-effort cleanup
-    // eslint-disable-next-line no-empty
+    rmSync(psFile, { force: true });
   } catch {}
 
   const line = String(r.stdout || "")
@@ -401,8 +724,14 @@ Write-Output ("{0} {1} {2} {3} {4} {5} {6} {7} {8} {9}" -f $wsMin, $wsMax, $wsAv
       baselineRssMb: 0,
     };
   }
-  const parts = line.split(/\s+/).map(Number);
-  const [minB, maxB, avgB, count, prMin, prMax, prAvg, cpuMs, userMs, wallMs] = parts;
+  const parts = line.split(/\s+/);
+  const [minB, maxB, avgB, count, prMin, prMax, prAvg, cpuMs, userMs, wallMs, exitCode] = parts
+    .slice(0, 11)
+    .map(Number);
+  const decode = (value) =>
+    value && value !== "-" ? Buffer.from(value, "base64").toString("utf8") : "";
+  const stdout = decode(parts[11]);
+  const stderr = decode(parts[12]);
   if (![minB, maxB, avgB].every(Number.isFinite)) {
     return {
       status: "error",
@@ -416,6 +745,7 @@ Write-Output ("{0} {1} {2} {3} {4} {5} {6} {7} {8} {9}" -f $wsMin, $wsMax, $wsAv
     Number.isFinite(wallMs) && wallMs > 0 && Number.isFinite(cpuTotal)
       ? Number(((cpuTotal / wallMs) * 100).toFixed(1))
       : Number.NaN;
+  const validity = cliValidity(cli, { exitCode, stdout, stderr });
   return {
     sampleCount: count,
     minRssMb: toMb(minB),
@@ -460,7 +790,14 @@ Write-Output ("{0} {1} {2} {3} {4} {5} {6} {7} {8} {9}" -f $wsMin, $wsMax, $wsAv
       };
     })(),
     isolation: "cli-child-rss",
-    note: "RSS=WorkingSet of the full descendant tree (tool + child tsgo/tsc); alloc≈PrivateMemorySize64 of the root process; CPU=TotalProcessorTime of the root process",
+    exitCode,
+    output: {
+      stdout: stdout.slice(0, 4_000),
+      stderr: stderr.slice(0, 4_000),
+      truncatedAt: CLI_OUTPUT_LIMIT,
+    },
+    validity,
+    note: "RSS=WorkingSet of the full descendant tree (tool + child tsgo/tsc); alloc≈PrivateMemorySize64 of the root process; CPU=TotalProcessorTime of the root process; exit/output validity retained",
   };
 }
 
@@ -477,6 +814,9 @@ async function runCli(cli) {
 
   const timeoutMs = Number(cli.timeoutMs ?? process.env.MEM_CLI_TIMEOUT_MS ?? 180_000);
   let timedOut = false;
+  let exitCode = null;
+  let stdout = "";
+  let stderr = "";
 
   await new Promise((resolve, reject) => {
     const child = spawn(cli.bin, cli.args, {
@@ -487,12 +827,16 @@ async function runCli(cli) {
       windowsHide: true,
     });
 
-    // Drain both pipes. Same deadlock the Windows path hit: stdout/stderr are
-    // piped, so once the child writes past the OS pipe buffer it blocks on
-    // write and never exits, and 'close' never fires. We do not need the
-    // output here — resume() discards it while keeping the pipe empty.
-    child.stdout?.resume();
-    child.stderr?.resume();
+    // Drain both pipes while retaining a bounded prefix for correctness. Exit
+    // status without output cannot distinguish expected diagnostics from a
+    // config/bootstrap abort, and unbounded capture would make the sampler
+    // itself a memory benchmark.
+    child.stdout?.on("data", (chunk) => {
+      stdout = appendBounded(stdout, chunk);
+    });
+    child.stderr?.on("data", (chunk) => {
+      stderr = appendBounded(stderr, chunk);
+    });
 
     const sample = () => {
       const rss = pidTreeRssBytes(child.pid);
@@ -522,7 +866,8 @@ async function runCli(cli) {
       clearTimeout(killer);
       reject(err);
     });
-    child.on("close", () => {
+    child.on("close", (code) => {
+      exitCode = code;
       sample();
       clearInterval(iv);
       clearTimeout(killer);
@@ -559,6 +904,7 @@ async function runCli(cli) {
       ? Number(((cpuTotal / wallMs) * 100).toFixed(1))
       : Number.NaN;
 
+  const validity = cliValidity(cli, { exitCode, stdout, stderr });
   return {
     ...stats,
     heap: {
@@ -576,7 +922,14 @@ async function runCli(cli) {
     },
     isolation: "cli-child-rss",
     baselineRssMb: 0,
-    note: "RSS = child tree; CPU total from /proc when available (Linux)",
+    exitCode,
+    output: {
+      stdout: stdout.slice(0, 4_000),
+      stderr: stderr.slice(0, 4_000),
+      truncatedAt: CLI_OUTPUT_LIMIT,
+    },
+    validity,
+    note: "RSS = child tree; CPU total from /proc when available (Linux); exit/output validity retained",
   };
 }
 
@@ -626,13 +979,22 @@ async function runInproc(task) {
       },
       lspResource,
       hoverValid: handlerResult?.hoverValid ?? null,
+      templateHoverValid: handlerResult?.templateHoverValid ?? null,
+      validity: handlerResult?.validity ?? {
+        status: "unknown",
+        detail: "handler returned no validity verdict",
+      },
       isolation: "lsp-session-server-process",
-      note: "RSS/CPU are the LANGUAGE SERVER process, sampled by the session. Worker-process figures are reported separately as worker*. NOTE: for Volar this covers the Vue server only — its tsserver half is a separate, larger process and is NOT included.",
+      note: "RSS/CPU are the LANGUAGE SERVER process, sampled by the session. Worker-process figures are reported separately as worker*. Volar is explicitly UNVERIFIED because this covers its Vue server only — its required tsserver half is a separate process and is NOT included.",
     };
   }
 
   return {
     ...result,
+    validity: handlerResult?.validity ?? {
+      status: "unknown",
+      detail: "handler completed but has no semantic/work validation verdict",
+    },
     isolation: "inproc-child-resource-delta",
     note: "RSS/heap deltas vs baseline after GC; CPU via process.cpuUsage() in isolated worker",
   };
@@ -651,14 +1013,20 @@ async function main() {
     if (task.skip) {
       out = { id: task.id, status: "skipped", skip: task.skip };
     } else if (task.kind === "cli" && task.cli) {
-      out = {
-        id: task.id,
-        status: "ok",
-        label: task.label,
-        package: task.package,
-        surface: task.surface,
-        ...(await runCli(task.cli)),
-      };
+      const prepared = prepareCliSample(task.cli);
+      try {
+        out = {
+          id: task.id,
+          status: "ok",
+          label: task.label,
+          package: task.package,
+          surface: task.surface,
+          comparisonClass: task.comparisonClass,
+          ...(await runCli(prepared.cli)),
+        };
+      } finally {
+        prepared.cleanup();
+      }
     } else if (task.kind === "inproc" && task.inproc) {
       out = {
         id: task.id,
@@ -666,6 +1034,7 @@ async function main() {
         label: task.label,
         package: task.package,
         surface: task.surface,
+        comparisonClass: task.comparisonClass,
         ...(await runInproc(task)),
       };
       if (out.error) {
@@ -681,6 +1050,7 @@ async function main() {
       label: task.label,
       package: task.package,
       surface: task.surface,
+      comparisonClass: task.comparisonClass,
       error: error instanceof Error ? error.message : String(error),
     };
   }

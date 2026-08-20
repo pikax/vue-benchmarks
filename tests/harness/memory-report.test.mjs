@@ -14,17 +14,18 @@ import { collectMarkdownTables } from "./helpers.mjs";
 
 /**
  * Column layout, by name. There is no Status column (status is a marker on the
- * name: ❌ error, ⏭ skipped) and no Notes column (notes live in a <details>
+ * name: ❌ error, ⏭ skipped, ⚠ invalid, ❔ unverified) and no Notes column (notes live in a <details>
  * block under the table); min/max/avg are one cell per metric.
  */
 const COL = {
   tool: 0,
   rss: 1,
-  alloc: 2,
-  cpuMs: 3,
-  cpuPct: 4,
-  wallMs: 5,
-  samples: 6,
+  peakRss: 2,
+  alloc: 3,
+  cpuMs: 4,
+  cpuPct: 5,
+  wallMs: 6,
+  samples: 7,
 };
 
 function okRow(overrides = {}) {
@@ -36,6 +37,7 @@ function okRow(overrides = {}) {
     minMb: 10,
     maxMb: 20,
     avgMb: 15,
+    peakMaxMb: 21,
     allocMinMb: 1,
     allocMaxMb: 2,
     allocAvgMb: 1.5,
@@ -78,7 +80,11 @@ describe("memory table shape", () => {
 
     assert.ok(!header.includes("Status"), "Status must be a name marker, not a column");
     assert.ok(!header.includes("Notes"), "Notes must live below the table");
-    assert.equal(header.length, 7, `expected 7 columns, got ${header.length}: ${header.join(" | ")}`);
+    assert.equal(
+      header.length,
+      8,
+      `expected 8 columns, got ${header.length}: ${header.join(" | ")}`,
+    );
     assert.equal(header[COL.tool], "Tool");
     assert.equal(header[COL.samples], "Samples");
   });
@@ -103,6 +109,7 @@ describe("memory table shape", () => {
     const row = rowsByLabel(md)["A"];
 
     assert.equal(row[COL.rss], "10.00 / 20.00 / 15.00");
+    assert.equal(row[COL.peakRss], "21.00 MB");
     assert.equal(row[COL.alloc], "1.00 / 2.00 / 1.50");
   });
 
@@ -135,6 +142,27 @@ describe("memory table shape", () => {
       ["C", "C2"],
     );
   });
+
+  test("compile work classes render in separate tables", () => {
+    const md = renderMemoryMarkdown(
+      report([
+        okRow({ label: "Raw Vize", comparisonClass: "raw-render" }),
+        okRow({ label: "Full Vize", comparisonClass: "sfc-with-style" }),
+        okRow({ label: "Raw Verter", comparisonClass: "raw-render" }),
+      ]),
+    );
+
+    assert.match(md, /#### Raw SFC compilation — identical style-free inputs/);
+    assert.match(md, /#### SFC compilation with CSS — styles included/);
+    assert.deepEqual(
+      resultsTable(md, 0).body.map((cells) => cells[COL.tool]),
+      ["Raw Vize", "Raw Verter"],
+    );
+    assert.deepEqual(
+      resultsTable(md, 1).body.map((cells) => cells[COL.tool]),
+      ["Full Vize"],
+    );
+  });
 });
 
 describe("status markers", () => {
@@ -153,12 +181,44 @@ describe("status markers", () => {
     assert.ok(rows["Broke ❌"], "error row must be marked ❌");
   });
 
+  test("invalid and unverified rows keep measured figures but are visibly unranked", () => {
+    const md = renderMemoryMarkdown(
+      report([
+        okRow({
+          label: "Bad",
+          status: "invalid",
+          validity: { status: "fail", detail: "diagnostic plant was absent" },
+        }),
+        okRow({
+          label: "Unknown",
+          status: "unverified",
+          validity: { status: "unknown", detail: "only half the product was sampled" },
+        }),
+      ]),
+    );
+    const rows = rowsByLabel(md);
+
+    assert.equal(rows["Bad ⚠ INVALID"][COL.rss], "10.00 / 20.00 / 15.00");
+    assert.equal(rows["Unknown ❔ UNVERIFIED"][COL.rss], "10.00 / 20.00 / 15.00");
+    assert.match(md, /Validation: INVALID — diagnostic plant was absent/);
+    assert.match(md, /Validation: UNVERIFIED — only half the product was sampled/);
+    assert.match(md, /excluded from performance comparison/);
+  });
+
   test("a row that never ran prints – in every metric cell, never a number", () => {
     const md = renderMemoryMarkdown(
       report([okRow({ label: "Gone", status: "skipped", skip: "not installed" })]),
     );
     const row = rowsByLabel(md)["Gone ⏭"];
-    for (const col of [COL.rss, COL.alloc, COL.cpuMs, COL.cpuPct, COL.wallMs, COL.samples]) {
+    for (const col of [
+      COL.rss,
+      COL.peakRss,
+      COL.alloc,
+      COL.cpuMs,
+      COL.cpuPct,
+      COL.wallMs,
+      COL.samples,
+    ]) {
       assert.equal(row[col], "–");
     }
   });
@@ -192,9 +252,7 @@ describe("unmeasurable vs did-not-run", () => {
   });
 
   test("a partially measured triple keeps the numbers it has", () => {
-    const md = renderMemoryMarkdown(
-      report([okRow({ label: "Partial", allocMaxMb: Number.NaN })]),
-    );
+    const md = renderMemoryMarkdown(report([okRow({ label: "Partial", allocMaxMb: Number.NaN })]));
     assert.equal(rowsByLabel(md)["Partial"][COL.alloc], "1.00 / n/a / 1.50");
   });
 
@@ -219,11 +277,7 @@ describe("notes", () => {
       ]),
     );
 
-    assert.equal(
-      md.split(shared).length - 1,
-      1,
-      "the same note must not be repeated once per row",
-    );
+    assert.equal(md.split(shared).length - 1, 1, "the same note must not be repeated once per row");
     assert.ok(md.includes(`- **All rows** — ${shared}`));
   });
 

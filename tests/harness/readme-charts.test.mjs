@@ -18,11 +18,18 @@ import {
   TOOL_COLORS,
   toolSectionForTitle,
 } from "../../scripts/lib/readme-charts.mjs";
-import { extractRunMeta, formatRunMeta } from "../../scripts/update-readme.mjs";
+import {
+  dropIncompatibleLandingSections,
+  extractRunMeta,
+  formatRunMeta,
+} from "../../scripts/update-readme.mjs";
 
 describe("parseMedianCell", () => {
   test("ranked bold median", () => {
-    assert.deepEqual(parseMedianCell("**22.8 ms**"), { ms: 22.8, ranked: true });
+    assert.deepEqual(parseMedianCell("**22.8 ms**"), {
+      ms: 22.8,
+      ranked: true,
+    });
     assert.deepEqual(parseMedianCell("**1.09 s**"), { ms: 1090, ranked: true });
   });
 
@@ -62,6 +69,21 @@ describe("compactSpeedTable", () => {
     assert.doesNotMatch(out, /Min/);
     assert.match(out, /22\.8 ms/);
     assert.match(out, /\[Vize\]\(https:\/\/github.com\/ubugeeei-prod\/vize\)/);
+  });
+
+  test("preserves an explicit Vue-reference ratio column", () => {
+    const header = "| Tool | **Median (primary)** | Min | vs Vue baseline | Throughput |";
+    const sep = "| --- | ---: | ---: | ---: | ---: |";
+    const rows = [
+      "| Vue reference | **20.0 ms** | 19.0 ms | 1.00x | 1k files/s |",
+      "| Vize | **5.0 ms** | 4.9 ms | 0.25x | 4k files/s |",
+    ];
+    const out = compactSpeedTable(header, sep, rows);
+
+    assert.match(out, /vs Vue baseline/);
+    assert.match(out, /Vue reference.*1\.00x/);
+    assert.match(out, /Vize.*0\.25x/);
+    assert.doesNotMatch(out, /vs fastest/);
   });
 
   test("keeps cold and warm columns for IDE tables", () => {
@@ -109,7 +131,11 @@ describe("barChartSvg", () => {
       unit: "ms",
       bars: [
         { label: "verter-tsc", value: 1090, ranked: true },
-        { label: "Verter compileMany (session cache)", value: 2000, ranked: true },
+        {
+          label: "Verter compileMany (warm-host stateless re-render)",
+          value: 2000,
+          ranked: true,
+        },
       ],
     });
     assert.match(svg, /fill="#6b7280"[^>]*>lower is better</);
@@ -124,7 +150,7 @@ describe("barChartSvg", () => {
     assert.equal(barChartSvg({ title: "x", bars: [] }), "");
   });
 
-  test("cold/warm stack into one bar per tool, warm first", () => {
+  test("cold/warm share one range bar with exact endpoints", () => {
     const svg = barChartSvg({
       title: "Completion",
       unit: "ms",
@@ -142,13 +168,17 @@ describe("barChartSvg", () => {
     assert.match(svg, />warm</);
     assert.match(svg, />cold</);
     assert.equal((svg.match(/Volar \(JS\)/g) || []).length, 1);
-    assert.match(svg, /1\.0 ms \/ 12\.0 ms/);
+    assert.match(svg, /1\.0 ms warm \/ 12\.0 ms cold/);
+    assert.doesNotMatch(svg, /height="9"/);
+    assert.match(svg, /class="cold"[^>]*height="22"/);
+    assert.match(svg, /class="warm"[^>]*height="22"/);
+    assert.match(svg, /class="series-boundary"/);
   });
 });
 
 describe("compactHighlightBody", () => {
   const bench = [
-    "### SFC compile (unique contents)",
+    "### Compiler",
     "",
     "Files: **200** · Bytes: **285,701**",
     "",
@@ -198,9 +228,55 @@ describe("compactHighlightBody", () => {
     assert.doesNotMatch(out, /Throughput/);
   });
 
-  test("cache-demo and ide-scale collapse to a link", () => {
+  test("bench landing keeps both current Vue-anchored compiler work classes", () => {
+    const charts = [];
+    const md = [
+      "### Compiler",
+      "",
+      "**Vue-anchored apples-to-apples compiler results.**",
+      "",
+      "#### VDOM · production · sourcemap off",
+      "",
+      "##### Raw SFC compilation — identical changed inputs; no output-cache reuse",
+      "",
+      "| Tool | Fresh child | vs Vue fresh child | **Warm (primary)** | vs Vue warm | Generated JS bytes |",
+      "| --- | ---: | ---: | ---: | ---: | ---: |",
+      "| Vue compiler-sfc 3.5 reference (raw render, 1T) | **180 ms** | 1.00x | **120 ms** | 1.00x | 100 |",
+      "| Vize compileSfcBatchWithResults (raw render) ⚠ | (12 ms) | not ranked | (7 ms) | not ranked | (90) |",
+      "| Verter compileMany (first-admission stateless raw render) ⚠ | (35 ms) | not ranked | (27 ms) | not ranked | (80) |",
+      "",
+      "##### SFC compilation with CSS — script, template and style changed",
+      "",
+      "| Tool | Fresh child | vs Vue fresh child | **Warm (primary)** | vs Vue warm | Generated JS + CSS bytes |",
+      "| --- | ---: | ---: | ---: | ---: | ---: |",
+      "| Vue compiler-sfc 3.5 reference (render + CSS, 1T) | **205 ms** | 1.00x | **135 ms** | 1.00x | 110 |",
+      "| Vize compileSfcBatchWithResults (render + CSS, Rayon batch) ⚠ | (16 ms) | not ranked | (9 ms) | not ranked | (100) |",
+    ].join("\n");
+    const out = compactHighlightBody(md, {
+      kind: "bench",
+      leaf: "bench-Linux-200-bench.md",
+      href: "docs/results/bench-Linux-200-bench.md",
+      writeChart: (file) => charts.push(file),
+    });
+
+    assert.match(out, /Raw SFC compilation — identical changed inputs/);
+    assert.match(out, /SFC compilation with CSS/);
+    assert.doesNotMatch(out, /Official render pipeline/);
+    assert.match(out, /vs Vue fresh child/);
+    assert.match(out, /\*\*Fresh child\*\*/);
+    assert.match(out, /\*\*Warm \(primary\)\*\*/);
+    assert.match(out, /vs Vue warm/);
+    assert.match(out, /compileSfcBatchWithResults \(raw render\)/);
+    assert.match(out, /first-admission stateless raw render/);
+    assert.match(out, /not ranked/);
+    assert.doesNotMatch(out, /vs fastest/);
+    assert.equal(charts.length, 2);
+    assert.equal(new Set(charts).size, charts.length, "comparison classes need distinct SVG files");
+  });
+
+  test("repeated-input and ide-scale studies collapse to a link", () => {
     const out = compactHighlightBody(bench, {
-      kind: "cache-demo",
+      kind: "repeated-input",
       leaf: "x.md",
       href: "docs/results/x.md",
     });
@@ -334,12 +410,17 @@ describe("compactHighlightBody", () => {
       leaf: "bench-Linux-200-bench.md",
       href: "docs/results/bench-Linux-200-bench.md",
       writeChart: () => {},
-      toolTable: (id) => (id === "typecheck" ? "| Tool | Version |\n| --- | --- |\n| vue-tsc | 3.3.10 |\n" : ""),
+      toolTable: (id) =>
+        id === "typecheck" ? "| Tool | Version |\n| --- | --- |\n| vue-tsc | 3.3.10 |\n" : "",
       memorySnippets: {
-        typecheck: "#### Peak RSS\n\n| Tool | **Peak RSS** |\n| --- | ---: |\n| vue-tsc | 354.8 MB |\n",
+        typecheck:
+          "#### Peak RSS\n\n| Tool | **Peak RSS** |\n| --- | ---: |\n| vue-tsc | 354.8 MB |\n",
       },
     });
-    assert.match(out, /### Typecheck[\s\S]*\| Tool \| Version \|[\s\S]*vue-tsc[\s\S]*!\[Typecheck\]/);
+    assert.match(
+      out,
+      /### Typecheck[\s\S]*\| Tool \| Version \|[\s\S]*vue-tsc[\s\S]*!\[Typecheck\]/,
+    );
     assert.match(out, /### Typecheck[\s\S]*#### Peak RSS[\s\S]*354\.8 MB/);
     assert.doesNotMatch(out, /### Tools/);
     const vdom = out.slice(0, out.indexOf("### Typecheck"));
@@ -377,12 +458,14 @@ describe("compactHighlightBody", () => {
 
 describe("toolSectionForTitle / memorySurfaceForTitle", () => {
   test("maps bench headings and leaves VDOM children unmatched", () => {
+    assert.equal(toolSectionForTitle("bench", "Compiler"), "compile");
     assert.equal(toolSectionForTitle("bench", "SFC compile (unique contents)"), "compile");
     assert.equal(toolSectionForTitle("bench", "Typecheck"), "typecheck");
     assert.equal(toolSectionForTitle("bench", "LSP (editor language server)"), "lsp");
     assert.equal(toolSectionForTitle("bench", "VDOM · production · sourcemap off"), null);
     assert.equal(toolSectionForTitle("ide", "IDE · initialize"), "lsp");
     assert.equal(toolSectionForTitle("ide", "IDE · completion"), null);
+    assert.equal(memorySurfaceForTitle("bench", "Compiler"), "compile");
     assert.equal(memorySurfaceForTitle("bench", "SFC compile (unique contents)"), "compile");
     assert.equal(memorySurfaceForTitle("bench", "Format"), "format");
     assert.equal(memorySurfaceForTitle("bench", "Lint"), "lint");
@@ -391,7 +474,9 @@ describe("toolSectionForTitle / memorySurfaceForTitle", () => {
   });
 
   test("memorySnippetsFromBody nests Peak RSS under the speed heading", () => {
-    const map = memorySnippetsFromBody("### typecheck\n\n![typecheck](x.svg)\n\n| Tool | **Peak RSS** |\n");
+    const map = memorySnippetsFromBody(
+      "### typecheck\n\n![typecheck](x.svg)\n\n| Tool | **Peak RSS** |\n",
+    );
     assert.match(map.typecheck, /#### Peak RSS/);
     assert.match(map.typecheck, /MEMORY\.md/);
     assert.match(map.typecheck, /Peak RSS/);
@@ -401,7 +486,10 @@ describe("toolSectionForTitle / memorySurfaceForTitle", () => {
 describe("colorForTool", () => {
   test("verter is red, official Vue is green, vize is not Vue-green", () => {
     assert.equal(colorForTool("verter-tsc"), TOOL_COLORS.verter);
-    assert.equal(colorForTool("Verter compileMany (session cache)"), TOOL_COLORS.verter);
+    assert.equal(
+      colorForTool("Verter compileMany (warm-host stateless re-render)"),
+      TOOL_COLORS.verter,
+    );
     assert.equal(colorForTool("vue-tsc (JS)"), TOOL_COLORS.vue);
     assert.equal(colorForTool("@vue/compiler-sfc 3.6 (1T)"), TOOL_COLORS.vue);
     assert.equal(colorForTool("Volar (N)"), TOOL_COLORS.vue);
@@ -419,7 +507,10 @@ describe("highlightHasRanking", () => {
 
   test("a chart or compact table counts", () => {
     assert.equal(highlightHasRanking("![Typecheck](docs/results/charts/x.svg)\n"), true);
-    assert.equal(highlightHasRanking("| Tool | **Median** |\n| --- | ---: |\n| Vize | **1 ms** |\n"), true);
+    assert.equal(
+      highlightHasRanking("| Tool | **Median** |\n| --- | ---: |\n| Vize | **1 ms** |\n"),
+      true,
+    );
   });
 });
 
@@ -439,10 +530,10 @@ describe("compactHighlightBody real-world empty", () => {
     assert.equal(out, "");
   });
 
-  test("SFC compile is omitted from the real-world landing (harness, not the project's process)", () => {
+  test("Compiler is omitted from the real-world landing (harness, not the project's process)", () => {
     const charts = [];
     const md = [
-      "## SFC compile (⚠ 2 duplicate bodies — content-hash caches may inflate throughput)",
+      "## Compiler",
       "",
       "Files: **1,682** · Bytes: **1,751,750**",
       "",
@@ -470,7 +561,7 @@ describe("compactHighlightBody real-world empty", () => {
       href: "docs/results/real-world-Linux-naive-ui.md",
       writeChart: (file, svg) => charts.push({ file, svg }),
     });
-    assert.doesNotMatch(out, /SFC compile/);
+    assert.doesNotMatch(out, /## Compiler/);
     assert.doesNotMatch(out, /VDOM · production/);
     assert.equal(charts.length, 0);
   });
@@ -522,14 +613,32 @@ describe("compactHighlightBody real-world empty", () => {
 });
 
 describe("artifactKind / slugify", () => {
-  test("cache-demo and ide-scale are their own kinds", () => {
-    assert.equal(artifactKind("benchmark", "bench-Linux-200-repeated-cache-demo.md"), "cache-demo");
+  test("repeated-input and ide-scale are their own kinds", () => {
+    assert.equal(
+      artifactKind("benchmark", "bench-Linux-200-repeated-input-study.md"),
+      "repeated-input",
+    );
+    assert.equal(
+      artifactKind("benchmark", "bench-Linux-200-repeated-cache-demo.md"),
+      "repeated-input",
+      "archived artifact names remain recognized",
+    );
     assert.equal(artifactKind("ide", "ide-scale-Linux.md"), "ide-scale");
     assert.equal(artifactKind("ide", "ide-Linux.md"), "ide");
   });
 
   test("slugify is filename-safe", () => {
     assert.equal(slugify("VDOM · production · sourcemap off"), "vdom-production-sourcemap-off");
+  });
+
+  test("slugify keeps long comparison-class chart paths collision-free", () => {
+    const prefix = "Benchmark Results › Compiler › VDOM · production · sourcemap off › ";
+    const raw = slugify(`${prefix}Raw SFC compilation — identical changed inputs`);
+    const style = slugify(`${prefix}SFC compilation with CSS — every block changed`);
+
+    assert.notEqual(raw, style);
+    assert.ok(raw.length <= 72);
+    assert.ok(style.length <= 72);
   });
 });
 
@@ -566,15 +675,70 @@ describe("extractRunMeta", () => {
   });
 });
 
+describe("incompatible landing comparison removal", () => {
+  test("removes non-reference-anchored compile and lint sections without transition notes", () => {
+    const old = `### SFC compile (unique contents)
+
+Files: **200**
+
+| Tool | **Median** | vs fastest |
+| --- | ---: | ---: |
+| Verter compileMany (session cache) | **20 ms** | 1.00x |
+
+### Lint
+
+Files: **200**
+
+| Tool | **Median** | vs fastest |
+| --- | ---: | ---: |
+| Vize lint (max threads) | **80 ms** | 1.00x |
+| eslint-plugin-vue (CLI) | **3 s** | 37.50x |
+
+### Typecheck
+
+Files: **200**`;
+    const landing = dropIncompatibleLandingSections(old);
+
+    assert.doesNotMatch(landing, /SFC compile|### Lint|session cache|max threads|37\.50x/);
+    assert.doesNotMatch(landing, /previous|historical|legacy/i);
+    assert.match(landing, /### Typecheck/);
+  });
+
+  test("leaves current grouped reports untouched", () => {
+    const current = `### Compiler
+
+**Vue-anchored apples-to-apples compiler results.**
+
+#### VDOM · production · sourcemap off
+
+##### Raw SFC compilation — identical changed inputs; no output-cache reuse
+
+| Tool | **Median (primary)** | vs Vue baseline |
+| --- | ---: | ---: |
+| Vue compiler-sfc 3.5 reference (raw render, 1T) | **20 ms** | 1.00x |
+| Vize compileSfcBatchWithResults (raw render) | **4 ms** | 0.20x |
+| Verter compileMany (first-admission stateless raw render) | **8 ms** | 0.40x |
+
+##### SFC compilation with CSS — script, template and style changed
+
+| Tool | **Median (primary)** | vs Vue baseline |
+| --- | ---: | ---: |
+| Vue compiler-sfc 3.5 reference (render + CSS, 1T) | **25 ms** | 1.00x |`;
+    assert.equal(dropIncompatibleLandingSections(current), current);
+    assert.match(current, /Vue-anchored apples-to-apples/);
+    assert.match(current, /Raw SFC compilation — identical changed inputs/);
+    assert.match(current, /compileSfcBatchWithResults \(raw render\)/);
+    assert.match(current, /first-admission stateless raw render/);
+    assert.match(current, /SFC compilation with CSS/);
+  });
+});
+
 describe("barsFromSpeedTable", () => {
   test("emits cold and warm series from a dual column table", () => {
-    const bars = barsFromSpeedTable(
-      "| Tool | **Cold** | **Warm** | vs fastest |",
-      [
-        "| Volar (JS) ⚠ | (46.4 ms) | (4.3 ms) | not ranked |",
-        "| Vize | **12.0 ms** | **1.0 ms** | 1.00x |",
-      ],
-    );
+    const bars = barsFromSpeedTable("| Tool | **Cold** | **Warm** | vs fastest |", [
+      "| Volar (JS) ⚠ | (46.4 ms) | (4.3 ms) | not ranked |",
+      "| Vize | **12.0 ms** | **1.0 ms** | 1.00x |",
+    ]);
     assert.equal(bars.length, 4);
     assert.equal(bars[0].series, "cold");
     assert.equal(bars[1].series, "warm");
@@ -583,15 +747,32 @@ describe("barsFromSpeedTable", () => {
     assert.equal(bars[3].value, 1);
   });
 
-  test("skips skipped rows", () => {
+  test("renders fresh-child and warm as one range bar even when fresh is faster", () => {
     const bars = barsFromSpeedTable(
-      "| Tool | **Median (primary)** | vs fastest |",
+      "| Tool | Fresh child | vs Vue fresh child | **Warm (primary)** | vs Vue warm |",
+      ["| Vue | 20 ms | 1.00x | **30 ms** | 1.00x |"],
+    );
+    assert.deepEqual(
+      bars.map(({ series, value }) => ({ series, value })),
       [
-        "| Vize | **22.8 ms** | 1.00x |",
-        "| fervid ⚠ | (57.4 ms) | not ranked |",
-        "| vapor ⏭ | skipped | – |",
+        { series: "fresh", value: 20 },
+        { series: "warm", value: 30 },
       ],
     );
+    const svg = barChartSvg({ title: "Compiler", bars });
+    assert.match(svg, /20\.0 ms fresh child/);
+    assert.match(svg, /30\.0 ms warm/);
+    assert.match(svg, /class="warm"[^>]*width="402\.0"[^>]*height="22"/);
+    assert.match(svg, /class="fresh"[^>]*width="268\.0"[^>]*height="22"/);
+    assert.match(svg, /class="series-boundary"[^>]*x1="516"/);
+  });
+
+  test("skips skipped rows", () => {
+    const bars = barsFromSpeedTable("| Tool | **Median (primary)** | vs fastest |", [
+      "| Vize | **22.8 ms** | 1.00x |",
+      "| fervid ⚠ | (57.4 ms) | not ranked |",
+      "| vapor ⏭ | skipped | – |",
+    ]);
     assert.equal(bars.length, 2);
     assert.equal(bars[0].ranked, true);
     assert.equal(bars[1].ranked, false);

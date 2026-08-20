@@ -149,8 +149,7 @@ function resultSize(result) {
 function hoverText(result) {
   const c = result?.contents;
   if (c == null) return "";
-  const one = (x) =>
-    typeof x === "string" ? x : typeof x?.value === "string" ? x.value : "";
+  const one = (x) => (typeof x === "string" ? x : typeof x?.value === "string" ? x.value : "");
   return (Array.isArray(c) ? c.map(one).join("\n") : one(c)).trim();
 }
 
@@ -164,7 +163,8 @@ export function classifyHover(text) {
   if (!text) return { ok: false, bytes, reason: "empty hover payload" };
   const hasSymbol = text.includes(HOVER_EXPECT_SYMBOL);
   const hasType = HOVER_EXPECT_TYPE.test(text);
-  if (!hasSymbol) return { ok: false, bytes, reason: `hover does not mention ${HOVER_EXPECT_SYMBOL}` };
+  if (!hasSymbol)
+    return { ok: false, bytes, reason: `hover does not mention ${HOVER_EXPECT_SYMBOL}` };
   if (!hasType) {
     return {
       ok: false,
@@ -421,9 +421,7 @@ export function resolveVizeLsp({
   if (env.VIZE_LSP_BIN && existsSync(env.VIZE_LSP_BIN)) {
     return {
       command: env.VIZE_LSP_BIN,
-      args: env.VIZE_LSP_ARGS
-        ? env.VIZE_LSP_ARGS.split(/\s+/).filter(Boolean)
-        : ["lsp", "--stdio"],
+      args: env.VIZE_LSP_ARGS ? env.VIZE_LSP_ARGS.split(/\s+/).filter(Boolean) : ["lsp", "--stdio"],
       shell: false,
       entry: "native",
       labelExtra: env.VIZE_LSP_LABEL ?? "custom binary",
@@ -908,9 +906,7 @@ export async function runLspSession({
     if (rssSamples.length) {
       const toMb = (b) => Number((b / (1024 * 1024)).toFixed(2));
       resource.serverRssMaxMb = toMb(Math.max(...rssSamples));
-      resource.serverRssAvgMb = toMb(
-        rssSamples.reduce((a, b) => a + b, 0) / rssSamples.length,
-      );
+      resource.serverRssAvgMb = toMb(rssSamples.reduce((a, b) => a + b, 0) / rssSamples.length);
     }
     await client.shutdown();
     if (hybrid) await hybrid.close();
@@ -1011,6 +1007,8 @@ export async function runLspSurface(_fixtureDir, options) {
       id: "volar-language-server",
       label: "Volar (@vue/language-server)",
       package: "@vue/language-server",
+      baseline: true,
+      baselineLabel: "Vue official",
       threading: "lsp",
       artifactLabel: "Hover bytes",
       notes:
@@ -1073,6 +1071,8 @@ export async function runLspSurface(_fixtureDir, options) {
       id: "volar-language-server",
       label: "Volar (@vue/language-server)",
       package: "@vue/language-server",
+      baseline: true,
+      baselineLabel: "Vue official",
       notes: "Package not installed",
       skip: true,
     });
@@ -1090,12 +1090,11 @@ export async function runLspSurface(_fixtureDir, options) {
       package: "vize",
       threading: "lsp",
       artifactLabel: "Hover bytes",
-      notes:
-        `vize lsp --stdio, launched from the ${
-          vize.entry === "native"
-            ? "standalone NATIVE server — the executable the VS Code extension downloads and runs"
-            : "npm package's NODE entry (bin/vize → NAPI addon under Node) because no version-matched native server was found; this costs ~35ms of Node bootstrap per spawn, inside initialize"
-        } (${vize.command}). Set VIZE_LSP_BIN to pin a specific binary. Same workspace/file/position as Volar. Ready signal: none standardized → workspaceReady = n/a.`,
+      notes: `vize lsp --stdio, launched from the ${
+        vize.entry === "native"
+          ? "standalone NATIVE server — the executable the VS Code extension downloads and runs"
+          : "npm package's NODE entry (bin/vize → NAPI addon under Node) because no version-matched native server was found; this costs ~35ms of Node bootstrap per spawn, inside initialize"
+      } (${vize.command}). Set VIZE_LSP_BIN to pin a specific binary. Same workspace/file/position as Volar. Ready signal: none standardized → workspaceReady = n/a.`,
       measure: async () =>
         runLspSession({
           name: "Vize",
@@ -1232,6 +1231,15 @@ export async function runLspSurface(_fixtureDir, options) {
         const tmplProbed = r.metaSamples.some((m) => m.templateHoverValid === true);
         r.notes = `${r.notes} | hover verified: returns a TypeScript type for \`${HOVER_EXPECT_SYMBOL}\` in <script setup>${tmplProbed ? " AND the auto-unwrapped `string` inside {{ }} (template is really typechecked)" : ""}`;
       }
+    }
+  }
+
+  const vueReference = results.find((row) => row.id === "volar-language-server");
+  if (!vueReference || vueReference.status !== "ok") {
+    for (const row of results) {
+      if (row === vueReference || row.status === "skipped" || row.status === "error") continue;
+      if (row.status === "ok") row.status = "unranked";
+      row.notes = `${row.notes} | ⚠ VUE REFERENCE INVALID — official Volar did not clear the same content gates, so candidate latency remains visible but cannot rank without the declared baseline.`;
     }
   }
 

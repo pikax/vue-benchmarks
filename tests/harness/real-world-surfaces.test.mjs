@@ -32,7 +32,12 @@ import {
 } from "../../scripts/lib/real-world/corpus.mjs";
 import { applyComponentMetaGates } from "../../scripts/lib/surfaces/project-component-meta.mjs";
 import { applyProjectLspGates, hoverCandidates } from "../../scripts/lib/surfaces/project-lsp.mjs";
-import { hmrRoundTrip, updateTableRuns } from "../../scripts/lib/surfaces/hmr.mjs";
+import {
+  editTemplate,
+  hmrRevisionToken,
+  hmrRoundTrip,
+  updateTableRuns,
+} from "../../scripts/lib/surfaces/hmr.mjs";
 import { appendRunBudgetDisclosures } from "../../scripts/lib/timing.mjs";
 
 function scratchDir() {
@@ -242,7 +247,11 @@ test("the webpack census collapses unplugin's virtual sub-request onto its sourc
     },
   };
   const census = webpackCensus(appDir, stats);
-  assert.equal(census.vueModules, 2, "two components, however many sub-requests they were split into");
+  assert.equal(
+    census.vueModules,
+    2,
+    "two components, however many sub-requests they were split into",
+  );
   assert.equal(census.styleRequests, 1);
 });
 
@@ -278,7 +287,11 @@ test("the webpack TypeScript rules put SFC-derived modules in the POST slot only
     // `setup(__props: any, …)` and every `webpack × unplugin` cell failed while the
     // vue-loader cells passed: a difference in how each integration NAMES its
     // output, published as a difference in capability.
-    assert.doesNotMatch(String(plainTs.test), /lang/, "lang.ts must not be matched by a NORMAL rule");
+    assert.doesNotMatch(
+      String(plainTs.test),
+      /lang/,
+      "lang.ts must not be matched by a NORMAL rule",
+    );
     assert.ok(plainTs.exclude, "the plain .ts rule must exclude SFC-derived modules");
     assert.equal(
       plainTs.exclude.test("/app/_virtual_%2Fapp%2FA.vue%3Fvue%26type%3Dscript%26lang.ts"),
@@ -304,8 +317,12 @@ test("the webpack TypeScript rules put SFC-derived modules in the POST slot only
     // blocks in the not-TypeScript set (naive-ui's <markdown> was handed to swc
     // and the parse error read as an integration defect).
     const excludes = Array.isArray(sfcRule.exclude) ? sfcRule.exclude : [sfcRule.exclude];
-    assert.ok(excludes.some((re) => re.test("/app/_virtual_%2FA.vue%3Fvue%26type%3Dstyle%26lang.scss")));
-    assert.ok(excludes.some((re) => re.test("/app/_virtual_%2FA.vue%3Fvue%26type%3Dmarkdown%26index%3D0")));
+    assert.ok(
+      excludes.some((re) => re.test("/app/_virtual_%2FA.vue%3Fvue%26type%3Dstyle%26lang.scss")),
+    );
+    assert.ok(
+      excludes.some((re) => re.test("/app/_virtual_%2FA.vue%3Fvue%26type%3Dmarkdown%26index%3D0")),
+    );
     assert.ok(
       !excludes.some((re) => re.test("/app/_virtual_%2FA.vue%3Fvue%26type%3Dscript%26lang.ts")),
       "script blocks must still reach the TypeScript transform",
@@ -314,13 +331,23 @@ test("the webpack TypeScript rules put SFC-derived modules in the POST slot only
       !excludes.some((re) => re.test("/app/_virtual_%2FA.vue%3Fvue%26type%3Dtemplate%26id%3D1")),
       "template blocks must still reach the TypeScript transform",
     );
-    assert.equal(sfcRule.resourceQuery.not.some((re) => re.test("?vue&type=markdown&index=0")), true);
-    assert.equal(sfcRule.resourceQuery.not.some((re) => re.test("?vue&type=script&lang.ts")), false);
+    assert.equal(
+      sfcRule.resourceQuery.not.some((re) => re.test("?vue&type=markdown&index=0")),
+      true,
+    );
+    assert.equal(
+      sfcRule.resourceQuery.not.some((re) => re.test("?vue&type=script&lang.ts")),
+      false,
+    );
 
     // And they must be STORED rather than parsed, identically in every cell —
     // style and custom blocks alike, each in both id shapes.
     const storedRules = rules.filter((r) => r.type === "asset/source");
-    assert.equal(storedRules.length, 4, "one rule per (block class × id shape) — webpack ANDs a rule's conditions");
+    assert.equal(
+      storedRules.length,
+      4,
+      "one rule per (block class × id shape) — webpack ANDs a rule's conditions",
+    );
   }
 });
 
@@ -366,7 +393,14 @@ test("the webpack externals rule externalises a project ALIAS that happens to en
 /* -------------------------------------------------------------------------- */
 
 function metaRow(id, sample, status = "ok") {
-  return { id, package: id, notes: "n", status, artifactMedian: sample?.components, metaSamples: sample ? [sample] : [] };
+  return {
+    id,
+    package: id,
+    notes: "n",
+    status,
+    artifactMedian: sample?.components,
+    metaSamples: sample ? [sample] : [],
+  };
 }
 
 const metaSample = (over = {}) => ({
@@ -426,7 +460,15 @@ test("the prop-coverage anchor excludes components that declare NO props", () =>
 test("component-meta gate unranks a tool that resolved fewer components than the baseline", () => {
   const results = [
     metaRow("vue-component-meta", metaSample()),
-    metaRow("verter-component-meta", metaSample({ components: 9, componentsFailed: 11, withProps: 5, propBearing: ["src/C0.vue"] })),
+    metaRow(
+      "verter-component-meta",
+      metaSample({
+        components: 9,
+        componentsFailed: 11,
+        withProps: 5,
+        propBearing: ["src/C0.vue"],
+      }),
+    ),
   ];
   applyComponentMetaGates(results);
   assert.equal(results[0].status, "ok", "the baseline is not gated against itself");
@@ -440,7 +482,10 @@ test("component-meta gate unranks a tool that returned an EMPTY API for componen
   // `{}` for it: the component count looks healthy and the pass is nearly free.
   const results = [
     metaRow("vue-component-meta", metaSample()),
-    metaRow("verter-component-meta", metaSample({ withProps: 2, propBearing: ["src/C0.vue", "src/C1.vue"] })),
+    metaRow(
+      "verter-component-meta",
+      metaSample({ withProps: 2, propBearing: ["src/C0.vue", "src/C1.vue"] }),
+    ),
   ];
   applyComponentMetaGates(results);
   assert.equal(results[1].status, "unranked");
@@ -450,7 +495,10 @@ test("component-meta gate unranks a tool that returned an EMPTY API for componen
 
 test("component-meta gate unranks ANY row that resolved nothing, the baseline included", () => {
   const results = [
-    metaRow("vue-component-meta", metaSample({ components: 0, componentsFailed: 20, withProps: 0, propBearing: [] })),
+    metaRow(
+      "vue-component-meta",
+      metaSample({ components: 0, componentsFailed: 20, withProps: 0, propBearing: [] }),
+    ),
     metaRow("verter-component-meta", metaSample()),
   ];
   applyComponentMetaGates(results);
@@ -506,7 +554,10 @@ test("hoverCandidates picks script-block declarations and ignores the template",
   // as not, and every row would then fail the content gate for the harness's
   // choice of cursor.
   const line = source.split("\n")[found[0].line];
-  assert.equal(line.slice(found[0].character, found[0].character + "interceptor".length), "interceptor");
+  assert.equal(
+    line.slice(found[0].character, found[0].character + "interceptor".length),
+    "interceptor",
+  );
   assert.deepEqual(hoverCandidates(""), []);
 });
 
@@ -544,7 +595,8 @@ test("project-lsp diagnostic gate anchors on the maximum any ranked row publishe
   applyProjectLspGates(results);
   assert.equal(results[1].status, "unranked");
   assert.match(results[1].notes, /FAILED DIAGNOSTIC-CONTENT GATE/);
-  assert.equal(results[2].status, "ok");
+  assert.equal(results[2].status, "unranked");
+  assert.match(results[2].notes, /OBSERVATIONAL ONLY/);
 
   // Volar v3's hybrid can structurally publish 0 (its tsserver half carries the
   // TS diagnostics), which used to disarm the baseline-only anchor for the whole
@@ -557,10 +609,14 @@ test("project-lsp diagnostic gate anchors on the maximum any ranked row publishe
     lspRow("verter-lsp-diagnostics", [{ diagnosticsCount: 0 }, { diagnosticsCount: 0 }]),
   ];
   applyProjectLspGates(peerAnchored);
-  assert.equal(peerAnchored[1].status, "ok", "the anchoring row itself stays ranked");
+  assert.equal(peerAnchored[1].status, "unranked", "the anchoring row is still observational");
   assert.equal(peerAnchored[2].status, "unranked");
   assert.match(peerAnchored[2].notes, /FAILED DIAGNOSTIC-CONTENT GATE/);
-  assert.equal(peerAnchored[0].status, "unranked", "the baseline earns no exemption from its own gate");
+  assert.equal(
+    peerAnchored[0].status,
+    "unranked",
+    "the baseline earns no exemption from its own gate",
+  );
 
   // Every server empty: a legitimate answer but not an anchor, and each row
   // must say so rather than rendering as though it had cleared the gate.
@@ -569,8 +625,8 @@ test("project-lsp diagnostic gate anchors on the maximum any ranked row publishe
     lspRow("vize-lsp-diagnostics", [{ diagnosticsCount: 0 }]),
   ];
   applyProjectLspGates(clean);
-  assert.equal(clean[0].status, "ok");
-  assert.equal(clean[1].status, "ok");
+  assert.equal(clean[0].status, "unranked");
+  assert.equal(clean[1].status, "unranked");
   assert.match(clean[0].notes, /GATE NOT RUN/);
   assert.match(clean[1].notes, /GATE NOT RUN/);
 });
@@ -585,11 +641,14 @@ test("a diagnostics row with no recorded census says the gate never saw it", () 
     lspRow("vize-lsp-diagnostics", []),
   ];
   applyProjectLspGates(results);
-  assert.equal(results[1].status, "ok", "no census is not a gate failure — there is nothing to rule on");
+  assert.equal(results[1].status, "unranked", "no census cannot establish comparable correctness");
   assert.match(results[1].notes, /DIAGNOSTIC-CONTENT GATE NOT RUN/);
   assert.match(results[1].notes, /no diagnostic census was recorded/);
-  assert.equal(results[0].status, "ok", "the anchoring peer is unaffected");
-  assert.ok(!results[0].notes.includes("no diagnostic census"), "a row WITH a census gets no such note");
+  assert.equal(results[0].status, "unranked", "even an anchoring peer is observational only");
+  assert.ok(
+    !results[0].notes.includes("no diagnostic census"),
+    "a row WITH a census gets no such note",
+  );
 
   // When EVERY row is censusless, each one says so — the old early exit left
   // all of them silent at once.
@@ -609,13 +668,32 @@ test("project-lsp reports a degraded type backend on any row, ranked or not", ()
     ]),
   ];
   applyProjectLspGates(results);
-  assert.equal(results[1].status, "ok", "a fallback is reported, never used to fail a row on its own");
+  assert.equal(
+    results[1].status,
+    "ok",
+    "a fallback is reported, never used to fail a row on its own",
+  );
   assert.match(results[1].notes, /BACKEND FALLBACK/);
 });
 
 /* -------------------------------------------------------------------------- */
 /* HMR — round-trip attribution and the update table's run-count exception.    */
 /* -------------------------------------------------------------------------- */
+
+test("HMR edits carry one fixed-width, observable semantic revision plant", () => {
+  const source = "<template><div /></template>\n";
+  const one = hmrRevisionToken("measure-1");
+  const two = hmrRevisionToken("a much longer iteration label");
+  assert.equal(one.length, two.length);
+  assert.notEqual(one, two);
+  const edited = editTemplate(source, "measure-1");
+  assert.match(edited, /<span hidden data-vue-bench-hmr="h[0-9a-f]{15}"><\/span>/);
+  assert.ok(edited.includes(one), "the exact revision token must be present in source");
+  assert.ok(
+    !edited.includes("<!--"),
+    "a compiler may legally drop comments, so comments are not a gate",
+  );
+});
 
 test("hmrRoundTrip only accepts an HMR message that belongs to the probe", async () => {
   // Warm per-row sessions keep several servers alive over one staged directory
@@ -628,9 +706,9 @@ test("hmrRoundTrip only accepts an HMR message that belongs to the probe", async
     const original = "<template><div /></template>\n";
     writeFileSync(join(dir, "src/App.vue"), original);
     const probe = { rel: "src/App.vue", original };
-    const run = (messages) =>
+    const run = (messages, server = { watcher: { emit() {} } }) =>
       hmrRoundTrip({
-        server: { watcher: { emit() {} } },
+        server,
         hmr: {
           drain() {},
           // Delivers the queued messages through the round trip's own
@@ -663,6 +741,63 @@ test("hmrRoundTrip only accepts an HMR message that belongs to the probe", async
     ]);
     assert.equal(update.kind, "update");
     assert.equal(update.fetchedBytes, 0);
+    assert.equal(
+      update.revisionObserved,
+      false,
+      "an update message alone cannot satisfy the plant",
+    );
+
+    const ownTemplate = {
+      url: "/src/App.vue?vue&type=template&index=0",
+      importedModules: new Set([{ url: "/src/Other.vue", importedModules: new Set() }]),
+    };
+    const ownFacade = { url: "/src/App.vue", importedModules: new Set([ownTemplate]) };
+    const revisionServer = (where) => ({
+      watcher: { emit() {} },
+      moduleGraph: { getModuleByUrl: async () => ownFacade },
+      transformRequest: async (url) => ({
+        code: url.includes(where) ? hmrRevisionToken(1) : "export default {}",
+      }),
+    });
+    const ownRevision = await hmrRoundTrip({
+      server: revisionServer("type=template"),
+      hmr: {
+        drain() {},
+        next: async () => ({
+          type: "update",
+          updates: [{ acceptedPath: "/src/App.vue?vue&type=template&index=0" }],
+        }),
+      },
+      appDir: dir,
+      probe,
+      iteration: 1,
+      port: 0,
+    });
+    assert.equal(
+      ownRevision.revisionObserved,
+      true,
+      "the changed SFC's own template module may prove the revision",
+    );
+
+    const foreignOnly = await hmrRoundTrip({
+      server: revisionServer("Other.vue"),
+      hmr: {
+        drain() {},
+        next: async () => ({
+          type: "update",
+          updates: [{ acceptedPath: "/src/App.vue?vue&type=template&index=0" }],
+        }),
+      },
+      appDir: dir,
+      probe,
+      iteration: 1,
+      port: 0,
+    });
+    assert.equal(
+      foreignOnly.revisionObserved,
+      false,
+      "validation must not wander into imported components to find the token",
+    );
 
     // A pathless full-reload stays accepted: plugins that only full-reload may
     // send no path at all, and rejecting it would reclassify a real reload as
@@ -687,7 +822,11 @@ test("the hmr update table obeys BENCH_UNIFORM_RUNS over its own floor", () => {
   // ("capped at 2") false on the very rows it sat over.
   assert.equal(updateTableRuns({ runs: 2 }), 5, "the floor lifts the capped default");
   assert.equal(updateTableRuns({ runs: 7 }), 7, "the floor never lowers a higher request");
-  assert.equal(updateTableRuns({ runs: 2, uniformRuns: true }), 2, "BENCH_UNIFORM_RUNS wins over the floor");
+  assert.equal(
+    updateTableRuns({ runs: 2, uniformRuns: true }),
+    2,
+    "BENCH_UNIFORM_RUNS wins over the floor",
+  );
   assert.equal(updateTableRuns({ runs: 1, uniformRuns: true }), 1);
 });
 
@@ -751,7 +890,11 @@ test("the single-run stamp lands only on rows that actually have one sample", ()
   const root = new URL("../../", import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1");
   const child = readFileSync(join(root, "scripts/run-surface.mjs"), "utf8");
   assert.match(child, /uniformRuns,/, "BENCH_UNIFORM_RUNS must reach the surface options");
-  assert.match(child, /appendRunBudgetDisclosures\(surface/, "disclosures must run at the choke point");
+  assert.match(
+    child,
+    /appendRunBudgetDisclosures\(surface/,
+    "disclosures must run at the choke point",
+  );
 });
 
 /* -------------------------------------------------------------------------- */

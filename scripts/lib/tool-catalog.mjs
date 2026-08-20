@@ -25,7 +25,10 @@ function gitUrl(raw) {
   if (!raw) return "";
   let u = String(raw);
   if (typeof raw === "object") u = raw.url || "";
-  u = u.replace(/^git\+/, "").replace(/^git@github\.com:/, "https://github.com/").replace(/\.git$/, "");
+  u = u
+    .replace(/^git\+/, "")
+    .replace(/^git@github\.com:/, "https://github.com/")
+    .replace(/\.git$/, "");
   if (u.startsWith("git://")) u = `https://${u.slice(6)}`;
   const gh = /github\.com[:/]([^/\s]+\/[^/\s#?]+)/i.exec(u);
   return gh ? `https://github.com/${gh[1].replace(/\.git$/i, "")}` : "";
@@ -40,9 +43,10 @@ function projectUrl(name, fallback = "") {
   return fallback;
 }
 
-/** Registry package for a harness alias (`@vue/compiler-sfc-36` → `@vue/compiler-sfc`). */
+/** Registry package for harness aliases pinned beside the primary Vue release. */
 export function registryName(name) {
   if (name === "@vue/compiler-sfc-36") return "@vue/compiler-sfc";
+  if (name === "vue-36") return "vue";
   if (name.startsWith("cli:")) return name.slice(4);
   return name;
 }
@@ -68,10 +72,11 @@ export function tnbVersion() {
 export const TOOL_SECTIONS = [
   {
     id: "compile",
-    title: "SFC compile",
+    title: "Compiler",
     names: [
       "@vue/compiler-sfc",
       "@vue/compiler-sfc-36",
+      "vue-36",
       "vize",
       "@vizejs/native",
       "@verter/native",
@@ -124,6 +129,7 @@ const GITHUB = {
   vue: "https://github.com/vuejs/core",
   "@vue/compiler-sfc": "https://github.com/vuejs/core",
   "@vue/compiler-sfc-36": "https://github.com/vuejs/core",
+  "vue-36": "https://github.com/vuejs/core",
   vize: "https://github.com/ubugeeei-prod/vize",
   "@vizejs/native": "https://github.com/ubugeeei-prod/vize",
   "@verter/native": "https://github.com/pikax/verter",
@@ -142,13 +148,15 @@ const GITHUB = {
   oxlint: "https://github.com/oxc-project/oxc",
   "@biomejs/biome": "https://github.com/biomejs/biome",
   typescript: "https://github.com/microsoft/TypeScript",
-  "typescript-language-server": "https://github.com/typescript-language-server/typescript-language-server",
+  "typescript-language-server":
+    "https://github.com/typescript-language-server/typescript-language-server",
   "eslint-plugin-vue": "https://github.com/vuejs/eslint-plugin-vue",
   "typescript-native-bridge": "https://github.com/johnsoncodehk/typescript-native-bridge",
 };
 
 const DISPLAY = {
   "@vue/compiler-sfc-36": "@vue/compiler-sfc 3.6",
+  "vue-36": "Vue 3.6 Vapor runtime",
   "typescript-native-bridge": "typescript-native-bridge (TNB)",
 };
 
@@ -156,7 +164,10 @@ const DISPLAY = {
 const LABEL_GITHUB = [
   { re: /\(N\)|\(TNB|tsgo tsdk/i, and: /volar|vue-tsc/i, url: GITHUB["typescript-native-bridge"] },
   { re: /typescript-native-bridge|\btnb\b/i, url: GITHUB["typescript-native-bridge"] },
-  { re: /volar|vue-tsc|vue-component-meta|@vue\/language-server|@vue\/typescript-plugin/i, url: GITHUB["vue-tsc"] },
+  {
+    re: /volar|vue-tsc|vue-component-meta|@vue\/language-server|@vue\/typescript-plugin/i,
+    url: GITHUB["vue-tsc"],
+  },
   { re: /verter/i, url: GITHUB["verter-tsc"] },
   { re: /vize/i, url: GITHUB.vize },
   { re: /golar/i, url: GITHUB.golar },
@@ -194,7 +205,9 @@ async function fetchNpmTime(pkg, version) {
 
 async function fetchCrateTime(crate, version) {
   const url = `https://crates.io/api/v1/crates/${encodeURIComponent(crate)}`;
-  const res = await fetch(url, { headers: { accept: "application/json", "user-agent": "vue-benchmarks" } });
+  const res = await fetch(url, {
+    headers: { accept: "application/json", "user-agent": "vue-benchmarks" },
+  });
   if (!res.ok) return "";
   const data = await res.json();
   const ver = (data?.versions || []).find((v) => v.num === version);

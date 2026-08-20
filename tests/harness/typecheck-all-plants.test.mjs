@@ -48,8 +48,18 @@ describe("allPlantsRunCounts", () => {
 describe("diagsForCase / scoreCombinedRun", () => {
   test("keeps only diagnostics under cases/<id>/", () => {
     const diags = [
-      { file: "work/confirm-typecheck-all/cases/wrong-prop-type/App.vue", line: 8, message: "title", raw: "a" },
-      { file: "work/confirm-typecheck-all/cases/clean-basic/App.vue", line: 3, message: "nope", raw: "b" },
+      {
+        file: "work/confirm-typecheck-all/cases/wrong-prop-type/App.vue",
+        line: 8,
+        message: "title",
+        raw: "a",
+      },
+      {
+        file: "work/confirm-typecheck-all/cases/clean-basic/App.vue",
+        line: 3,
+        message: "nope",
+        raw: "b",
+      },
     ];
     assert.equal(diagsForCase(diags, "wrong-prop-type").length, 1);
     assert.equal(combinedFromDiags(diagsForCase(diags, "clean-basic")), "b");
@@ -142,7 +152,13 @@ describe("typecheckAllLanding", () => {
       status: "pass",
       ms: 1000 * (i + 1),
       rssMb: 50 * (i + 1),
-      detail: { passPct: 90 - i * 10, pass: 90 - i * 10, scored: 100, ms: 1000 * (i + 1), rssMb: 50 * (i + 1) },
+      detail: {
+        passPct: 90 - i * 10,
+        pass: 90 - i * 10,
+        scored: 100,
+        ms: 1000 * (i + 1),
+        rssMb: 50 * (i + 1),
+      },
     }));
     typecheckAllLanding(rows, { writeChart: (file, svg) => charts.push({ file, svg }) });
     assert.equal(charts.length, 3);
@@ -159,7 +175,15 @@ describe("formatTypecheckDoc all-plants section", () => {
   test("renders the combined section when typecheck-all rows exist", () => {
     const md = formatTypecheckDoc({
       generatedAt: "2026-08-19T00:00:00.000Z",
-      runner: { platform: "linux", ci: true, arch: "x64", cpuCount: 4, cpuModel: "Test", totalmem: 8e9, node: "v22" },
+      runner: {
+        platform: "linux",
+        ci: true,
+        arch: "x64",
+        cpuCount: 4,
+        cpuModel: "Test",
+        totalmem: 8e9,
+        node: "v22",
+      },
       results: [
         { suite: "typecheck", caseId: "clean-basic", tool: "vue-tsc", status: "pass" },
         {
@@ -180,7 +204,15 @@ describe("formatTypecheckDoc all-plants section", () => {
   test("--all dump (no per-plant suite rows) still fills the matrix, summary, and wall avg", () => {
     const md = formatTypecheckDoc({
       generatedAt: "2026-08-19T00:00:00.000Z",
-      runner: { platform: "linux", ci: true, arch: "x64", cpuCount: 4, cpuModel: "Test", totalmem: 8e9, node: "v22" },
+      runner: {
+        platform: "linux",
+        ci: true,
+        arch: "x64",
+        cpuCount: 4,
+        cpuModel: "Test",
+        totalmem: 8e9,
+        node: "v22",
+      },
       results: [
         {
           suite: "typecheck-all",
@@ -242,9 +274,9 @@ describe("bench landing omits JSX", () => {
 });
 
 describe("real-world landing keeps compile, typecheck, test", () => {
-  test("drops bundle/hmr and harness SFC compile; keeps own typecheck/test", () => {
+  test("drops bundle/hmr and harness Compiler; keeps own typecheck/test", () => {
     const md = [
-      "## SFC compile (unique contents)",
+      "## Compiler",
       "",
       "#### VDOM · production · sourcemap off",
       "",
@@ -277,7 +309,7 @@ describe("real-world landing keeps compile, typecheck, test", () => {
       writeChart: () => {},
     });
     assert.doesNotMatch(out, /VDOM · production/);
-    assert.doesNotMatch(out, /SFC compile/);
+    assert.doesNotMatch(out, /## Compiler/);
     assert.match(out, /Project typecheck/);
     assert.match(out, /Project test suite/);
     assert.doesNotMatch(out, /Bundle/);

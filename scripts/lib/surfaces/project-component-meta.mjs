@@ -60,6 +60,10 @@ import { dirname, join, relative, resolve as resolvePath } from "node:path";
 import { fileURLToPath } from "node:url";
 import { measureVariants, timedAsync, timedSync } from "../timing.mjs";
 import { discoverTypecheckTargets } from "../real-world/test-targets.mjs";
+import {
+  applyComponentMetaValidityGates,
+  runComponentMetaValidityChildren,
+} from "../component-meta-validity-gates.mjs";
 
 const require = createRequire(import.meta.url);
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../../..");
@@ -227,7 +231,9 @@ export function applyComponentMetaGates(results) {
       row.status = "unranked";
       row.notes = `${row.notes} | ⚠ FAILED PROP-COVERAGE GATE — reported ZERO props for ${missed.length} of the ${anchor.length} components that DECLARE props in their source and that the baseline also found props on (e.g. ${missed
         .slice(0, 3)
-        .join(", ")}). Returning an empty API is the trivial way to be fast on this surface. Measured but UNRANKED.`;
+        .join(
+          ", ",
+        )}). Returning an empty API is the trivial way to be fast on this surface. Measured but UNRANKED.`;
     } else {
       row.notes = `${row.notes} | prop coverage verified: reported at least one prop for all ${anchor.length} components that declare props in their source. Components that declare NO props are excluded from this gate, because the tools legitimately disagree about whether such a component still has implicit and inherited surface.`;
     }
@@ -421,6 +427,10 @@ export async function runProjectComponentMetaSurface(resolved, options) {
     package: "vue-component-meta",
     target: "project-component-meta",
     invocation: "in-process API",
+    comparisonClass: "project-component-public-api",
+    comparisonClassLabel: "Project component public-API metadata",
+    baseline: true,
+    baselineLabel: "Vue official",
     artifactLabel: "components resolved",
     // MORE is more work here, so the renderer's low-artifact warning is wanted:
     // a row well below the largest component count is not comparable on speed.
@@ -455,6 +465,8 @@ export async function runProjectComponentMetaSurface(resolved, options) {
       package: "@verter/component-meta",
       target: "project-component-meta",
       invocation: "in-process API",
+      comparisonClass: "project-component-public-api",
+      comparisonClassLabel: "Project component public-API metadata",
       artifactLabel: "components resolved",
       notes: `openComponentMetaSession({root: ${target.relDir}, tsconfig: ${target.tsconfig}}) + getComponentMeta for the same ${components.length} corpus SFCs`,
       measure: async () => {
@@ -526,22 +538,31 @@ export async function runProjectComponentMetaSurface(resolved, options) {
 
   applyComponentMetaGates(results);
 
+  // Capability plants are isolated from the real checkout and run only after
+  // all project timings. They certify the exact published entrypoints against
+  // known generated cases; they do not claim what the correct metadata for a
+  // third-party component should be.
+  const componentMetaCapability = runComponentMetaValidityChildren();
+  applyComponentMetaValidityGates(results, componentMetaCapability);
+
   const p = resolved.project;
   return {
     ...base,
     files: components.length,
     variants: results,
+    validation: { componentMetaCapability },
     methodology: [
       `Target: ${target.packageName} (${target.relDir}) — ${components.length} corpus SFCs, read with the project's OWN ${target.tsconfig} and its own installed dependencies.`,
       `Corpus pin: ${p.ref} @ ${(resolved.sha ?? "").slice(0, 8)}, ${p.releasedAt ? `released ${p.releasedAt}` : `committed ${p.committedAt}`} (${p.releaseKind}), pinned ${p.pinnedAt}.`,
       "The component set is the RESOLVED CORPUS restricted to the target package, not a private walk — so `--file-limit` and its truncation disclosure apply here exactly as they do to every other real-world surface. A private walk would quietly measure a different file set from the one the corpus line names.",
       "Both tools are given the same absolute file list, the same tsconfig and the same directory, and each is driven through its own published entry point. No payload is hand-decoded and no row is measured through an API it does not ship.",
+      `POST-TIMING ENTRYPOINT-CAPABILITY GATE: suite ${componentMetaCapability.suiteVersion} runs ${componentMetaCapability.plantCount} known generated cases through the same createChecker/getComponentMeta and openComponentMetaSession/getComponentMeta lifecycles in isolated children. It never reads or writes the third-party checkout and cannot warm its timed programs. A failure or UNKNOWN exact entrypoint is measured but UNRANKED; a failed Vue reference invalidates the class. This gate proves only that the published API handles the planted language features, not that this project's metadata is semantically equivalent.`,
       "The target was pre-flighted: the baseline built a checker and extracted from a bounded sample untimed first, and the target is measured only because that resolved components AND found declared props on some of them. A target the baseline cannot read publishes no rows at all — every other row would be gated against a reference that did no work.",
       ...rejectedNotes,
       "Metadata census gate: a row that resolved metadata for fewer components than the baseline is UNRANKED, and so is a row that resolved none at all — including the baseline's own row, which is gated identically. Returning `{}` is the fastest thing a metadata extractor can do.",
       "Prop-coverage gate: a row reporting ZERO props for any component the baseline found props on is UNRANKED. This is the gate that catches a fast, empty answer hiding behind a healthy-looking component count.",
       "Member totals (props+events+slots) are published but NEVER gated. The tools disagree about what belongs to a component's public API — vue-component-meta reports inherited and implicit surface, Verter reports the declared API — and gating on that would brand a tool for a schema definition rather than for doing less work. The per-component prop coverage above is the part that is not a schema disagreement.",
-      "Metadata EQUIVALENCE is not asserted, and correctness of the extracted metadata is not checked against the third-party sources: nobody has written down what the right answer is for these components. This is a throughput surface with a coverage census.",
+      "PROJECT METADATA EQUIVALENCE remains UNKNOWN and is not asserted: the generated capability plants do not supply an oracle for the third-party components, and nobody has written down their complete correct public APIs. This is a throughput surface with a project coverage census plus a separate entrypoint-capability gate.",
       "Each measured run constructs a fresh checker/session and Verter's pooled engine is evicted afterwards, so no run inherits another's warm program. Tool order is rotated on every warmup and measured run.",
       "The checkout is never written to by this surface — it only reads.",
     ],

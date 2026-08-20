@@ -3,38 +3,11 @@ import { fileURLToPath } from "node:url";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { collectVueFiles, prepareFormatCopy, totalBytes } from "../fixtures.mjs";
 import { measureVariants, resolveBin, runCommand } from "../timing.mjs";
-import {
-  applyFileCoverageGate,
-  applyWorkGate,
-  dirtyForCoverage,
-  formatterRewritesTemplate,
-  prepareFormatPlant,
-} from "../work-gate.mjs";
+import { applyFileCoverageGate, dirtyForCoverage } from "../work-gate.mjs";
+import { formatConfigFiles, formatRowCommand } from "../format-row-specs.mjs";
+import { applyFormatValidityGates, runFormatValidityChildren } from "../format-validity-gates.mjs";
 
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../../..");
-
-const PRETTIER_CONFIG = `${JSON.stringify(
-  { semi: true, singleQuote: true, trailingComma: "all", printWidth: 100 },
-  null,
-  2,
-)}\n`;
-
-/**
- * Biome's equivalent of the Prettier config above — same indent, same width,
- * same quote/semicolon/trailing-comma choices — so neither tool is doing more
- * rewriting than the other for reasons of style settings alone.
- */
-const BIOME_CONFIG = `${JSON.stringify(
-  {
-    formatter: { enabled: true, indentStyle: "space", indentWidth: 2, lineWidth: 100 },
-    javascript: {
-      formatter: { quoteStyle: "single", semicolons: "always", trailingCommas: "all" },
-    },
-    linter: { enabled: false },
-  },
-  null,
-  2,
-)}\n`;
 
 function tryResolveBin(name) {
   try {
@@ -62,14 +35,16 @@ export async function runFormatSurface(fixtureDir, options) {
   const vize = tryResolveBin("vize");
   const biome = tryResolveBin("biome");
 
-  // Prettier Vue: built-in support in modern Prettier for .vue
-  // Write a shared prettier config into fixture root for copies to inherit via walk-up if needed.
-  writeFileSync(join(fixtureDir, ".prettierrc.json"), PRETTIER_CONFIG);
-  // Same for Biome — prepareFormatCopy carries both into every work copy.
-  writeFileSync(join(fixtureDir, "biome.json"), BIOME_CONFIG);
-
   let invocation = 0;
-  const nextCopy = (label) => prepareFormatCopy(fixtureDir, files, workRoot, label, ++invocation);
+  const nextCopy = (label) => {
+    const cwd = prepareFormatCopy(fixtureDir, files, workRoot, label, ++invocation);
+    // Never overwrite a generated fixture or a checked-out real-world project.
+    // The benchmark's parity configs belong only to the disposable work copy.
+    for (const [name, content] of Object.entries(formatConfigFiles())) {
+      writeFileSync(join(cwd, name), content);
+    }
+    return cwd;
+  };
 
   const variants = [];
 
@@ -80,8 +55,7 @@ export async function runFormatSurface(fixtureDir, options) {
       package: "prettier",
       threading: "1t",
       invocation: "cli",
-      notes:
-        "prettier --write **/*.vue (fresh copy each run) · single-threaded by design",
+      notes: "prettier --write **/*.vue (fresh copy each run) · single-threaded by design",
       measure: () => {
         const cwd = nextCopy("prettier");
         // RECURSIVE glob. `*.vue` matched nothing on nested real-world corpora,
@@ -90,7 +64,8 @@ export async function runFormatSurface(fixtureDir, options) {
         // doing zero work (2026-07-30 audit, finding 1). The format work gate
         // now plants its probe in a NESTED directory so a non-recursive
         // invocation of any tool fails the gate instead of topping the table.
-        const { ms } = runCommand(prettier, ["--write", "**/*.vue", "--log-level", "error"], {
+        const { args } = formatRowCommand("prettier");
+        const { ms } = runCommand(prettier, args, {
           cwd,
           // Consistent with the other formatters: a non-zero exit from a
           // style diagnostic must not fail one tool while the others are
@@ -119,11 +94,12 @@ export async function runFormatSurface(fixtureDir, options) {
       threading: "max",
       invocation: "cli",
       notes:
-        "oxfmt --write (fresh copy each run) · .vue files route through oxfmt's BUNDLED PRETTIER fallback in worker threads, not the Rust core (its dist ships Prettier and exposes Prettier's Vue options) — read this row as Prettier-with-workers until oxfmt formats SFCs natively",
+        "oxfmt --write (fresh copy each run) · pinned 0.64.0 routes a full .vue file through its bundled Prettier formatFile callback in worker threads; the native binding orchestrates the call, but Vue parsing/printing is the bundled Prettier path. Re-audit this package path after upgrades.",
       measure: () => {
         const cwd = nextCopy("oxfmt");
         // oxfmt accepts paths; try write mode flags used by oxfmt CLI
-        const { ms } = runCommand(oxfmt, [".", "--write"], {
+        const { args } = formatRowCommand("oxfmt");
+        const { ms } = runCommand(oxfmt, args, {
           cwd,
           allowNonZeroExit: true,
           shell: process.platform === "win32" && oxfmt.endsWith(".cmd"),
@@ -152,7 +128,8 @@ export async function runFormatSurface(fixtureDir, options) {
         "vize fmt --write (fresh copy each run) · does not report thread usage — not assumed single-threaded",
       measure: () => {
         const cwd = nextCopy("vize-fmt");
-        const { ms } = runCommand(vize, ["fmt", "--write", "."], {
+        const { args } = formatRowCommand("vize-fmt");
+        const { ms } = runCommand(vize, args, {
           cwd,
           allowNonZeroExit: true,
           shell: process.platform === "win32" && vize.endsWith(".cmd"),
@@ -178,10 +155,11 @@ export async function runFormatSurface(fixtureDir, options) {
       threading: "max",
       invocation: "cli",
       notes:
-        "biome format --write . (fresh copy each run) · multi-threaded (Rayon; honours RAYON_NUM_THREADS) · formats the <script> block ONLY — template and style are returned byte-identical",
+        "biome format --write . (fresh copy each run) · multi-threaded (Rayon; honours RAYON_NUM_THREADS) · exact pinned row currently rewrites none of the planted .vue corpus",
       measure: () => {
         const cwd = nextCopy("biome-fmt");
-        const { ms } = runCommand(biome, ["format", "--write", "."], {
+        const { args } = formatRowCommand("biome-fmt");
+        const { ms } = runCommand(biome, args, {
           cwd,
           allowNonZeroExit: true,
           shell: process.platform === "win32" && biome.endsWith(".cmd"),
@@ -197,6 +175,13 @@ export async function runFormatSurface(fixtureDir, options) {
       notes: "Binary not found",
       skip: true,
     });
+  }
+
+  for (const variant of variants) {
+    variant.comparisonClass = "format-full-vue-sfc-cli";
+    variant.comparisonClassLabel = "Full Vue SFC formatting — CLI";
+    variant.baseline = variant.id === "prettier";
+    variant.baselineLabel = "Prettier established Vue SFC reference";
   }
 
   // File-coverage census, untimed, one pass per tool with its EXACT timed
@@ -222,7 +207,10 @@ export async function runFormatSurface(fixtureDir, options) {
       }
       const cfgNames = [".prettierrc.json", "biome.json"];
       const cfgBefore = new Map(
-        cfgNames.map((n) => [n, existsSync(join(cwd, n)) ? readFileSync(join(cwd, n), "utf8") : null]),
+        cfgNames.map((n) => [
+          n,
+          existsSync(join(cwd, n)) ? readFileSync(join(cwd, n), "utf8") : null,
+        ]),
       );
       runCommand(bin, args, { cwd, allowNonZeroExit: true, shell });
       let covered = 0;
@@ -234,71 +222,48 @@ export async function runFormatSurface(fixtureDir, options) {
       );
       coverage.set(id, { covered, corpus: files.length, extras });
     } catch (error) {
-      coverage.set(id, { covered: null, corpus: files.length, extras: [], error: String(error?.message ?? error) });
+      coverage.set(id, {
+        covered: null,
+        corpus: files.length,
+        extras: [],
+        error: String(error?.message ?? error),
+      });
     }
   };
-  if (prettier) coverageCensus("prettier", prettier, ["--write", "**/*.vue", "--log-level", "error"], { shell: process.platform === "win32" && prettier.endsWith(".cmd") });
-  if (oxfmt) coverageCensus("oxfmt", oxfmt, [".", "--write"], { shell: process.platform === "win32" && oxfmt.endsWith(".cmd") });
-  if (vize) coverageCensus("vize-fmt", vize, ["fmt", "--write", "."], { shell: process.platform === "win32" && vize.endsWith(".cmd") });
-  if (biome) coverageCensus("biome-fmt", biome, ["format", "--write", "."], { shell: process.platform === "win32" && biome.endsWith(".cmd") });
-
-  // Work gate: a formatter is ranked only if it actually rewrites the template
-  // block. Without this the table silently compares whole-SFC formatters against
-  // a script-only one on wall clock — see prepareFormatPlant.
-  const fmtPlant = prepareFormatPlant(options.workRoot ?? join(rootDir, "work"));
-  try {
-    const isWinShell = (bin) => process.platform === "win32" && bin.endsWith(".cmd");
-    applyWorkGate(variants, (v) => {
-      if (v.id === "prettier") {
-        return formatterRewritesTemplate(fmtPlant, {
-          bin: prettier,
-          args: ["--write", "**/*.vue", "--log-level", "error"],
-          label: "prettier",
-          shell: isWinShell(prettier),
-          configFiles: { ".prettierrc.json": PRETTIER_CONFIG },
-        });
-      }
-      if (v.id === "oxfmt") {
-        return formatterRewritesTemplate(fmtPlant, {
-          bin: oxfmt,
-          args: [".", "--write"],
-          label: "oxfmt",
-          shell: isWinShell(oxfmt),
-        });
-      }
-      if (v.id === "vize-fmt") {
-        return formatterRewritesTemplate(fmtPlant, {
-          bin: vize,
-          args: ["fmt", "--write", "."],
-          label: "vize-fmt",
-          shell: isWinShell(vize),
-        });
-      }
-      if (v.id === "biome-fmt") {
-        return formatterRewritesTemplate(fmtPlant, {
-          bin: biome,
-          args: ["format", "--write", "."],
-          label: "biome-fmt",
-          shell: isWinShell(biome),
-          configFiles: { "biome.json": BIOME_CONFIG },
-        });
-      }
-      return true;
-    });
-  } finally {
-    fmtPlant.cleanup();
-  }
-
   const results = await measureVariants(variants, {
     runs: options.runs,
     warmups: options.warmups,
     fileCount: files.length,
   });
 
+  // Validation is deliberately post-timing. These extra process launches may
+  // warm executable pages and the OS file cache, so they must never precede a
+  // reported sample.
+  if (prettier)
+    coverageCensus("prettier", prettier, formatRowCommand("prettier").args, {
+      shell: process.platform === "win32" && prettier.endsWith(".cmd"),
+    });
+  if (oxfmt)
+    coverageCensus("oxfmt", oxfmt, formatRowCommand("oxfmt").args, {
+      shell: process.platform === "win32" && oxfmt.endsWith(".cmd"),
+    });
+  if (vize)
+    coverageCensus("vize-fmt", vize, formatRowCommand("vize-fmt").args, {
+      shell: process.platform === "win32" && vize.endsWith(".cmd"),
+    });
+  if (biome)
+    coverageCensus("biome-fmt", biome, formatRowCommand("biome-fmt").args, {
+      shell: process.platform === "win32" && biome.endsWith(".cmd"),
+    });
+
   applyFileCoverageGate(results, coverage, {
     verb: "rewrote",
     what: "planted corpus files",
   });
+  const formatSemantics = runFormatValidityChildren({
+    entrypoints: results.filter((row) => row.status !== "skipped").map((row) => row.id),
+  });
+  applyFormatValidityGates(results, formatSemantics);
 
   return {
     id: "format",
@@ -307,17 +272,18 @@ export async function runFormatSurface(fixtureDir, options) {
     bytes,
     methodology: [
       "Each invocation receives a fresh copy of the same Vue SFC corpus (formatters rewrite files).",
-      ".prettierrc.json and biome.json are copied into every work copy so each tool's config actually resolves (config left in the fixture root is not on the work dir's lookup path). Both configs set the same indent, width, quote, semicolon and trailing-comma choices.",
+      "Prettier is the explicit established-reference denominator for the full-Vue-SFC CLI comparison class. A faster candidate never silently becomes the baseline.",
+      ".prettierrc.json and biome.json are written only into disposable work copies; the input fixture or checked-out real-world project is never overwritten. Both configs set the same indent, width, quote, semicolon and trailing-comma choices.",
       "All four formatters are CLI invocations and share the same non-zero-exit policy — no tool is failed for a diagnostic another tool is forgiven for.",
       "Output style is NOT normalized across tools — this measures format throughput, not style identity. Spot-checked: on a messy SFC, oxfmt and Prettier produce byte-identical output and Vize reformats template + script + style, so no tool is winning by no-op.",
-      "Oxfmt's .vue path is NOT its Rust core: oxfmt (verified through 0.63) bundles Prettier and routes SFCs through it in worker threads — which is also why its output is byte-identical to Prettier's. Its row measures that pipeline, disclosed in its label notes; Vize is currently the only ranked formatter compiling SFCs natively.",
+      "Oxfmt 0.64.0 is a hybrid native/JS package. Its shipped native binding delegates a full .vue file to the bundled JS formatFile callback, whose implementation calls bundled Prettier with parser=vue; worker orchestration remains oxfmt's. Its output is byte-identical to Prettier on the work-gate probe. This is pinned-version evidence and must be re-audited after an oxfmt upgrade rather than assumed forever.",
       "Every work copy and gate plant carries an empty .git dir as a repo-boundary marker: walk tools that honour ancestor .gitignore rules (oxfmt 0.63+) otherwise inherit THIS repo's exclusion of the work/ dir the copies live in, see zero files, and get unranked for walking reasons rather than formatting ones. A real project root has the boundary; the marker changes no tool's invocation.",
-      "The template-rewrite gate probe lives in a NESTED directory, so a tool invoked non-recursively fails the gate rather than being ranked on an empty match (this exact fault put Prettier at 1.00x on every nested corpus while formatting zero files).",
-      "Template-rewrite work gate: each formatter is run against a messy SFC and must actually change the <template> block, or it is measured but unranked.",
+      `FORMAT SEMANTIC GATE (untimed, post-timing): suite ${formatSemantics.suiteVersion} runs ${formatSemantics.plantCount} nested plants twice through each row's exact directory/glob command and shared configs. Every plant must remain parseable and idempotent; preserve SFC block attrs/custom blocks and template/script AST meaning; preserve scoped/module/v-bind/deep/slotted/global CSS constructs; and actually rewrite the messy template. Generated output is never compared between tools. Every outcome and the suite hash are retained in validation.formatSemantics.`,
       "FILE-COVERAGE GATE, untimed, per tool with its exact timed invocation: every corpus file is planted with a mess (trailing spaces, stacked blank lines) that any formatter under the shared configs must undo, and files rewritten are counted by byte comparison — the same method for every tool. A ranked tool that rewrites fewer than every corpus file is measured but UNRANKED: tools walking different file sets are not doing the same job, however similar the clock looks. A walk-invoked tool that also rewrites a config file is disclosed, not gated (one extra tiny file is noise; skipping corpus files is not).",
       "Prettier, Oxfmt, and Vize format the whole SFC. On the pinned Biome, `biome format --write .` reports .vue files as formatted but applies NO fixes to any block of them (probed: 0 of 50 planted files rewritten, 'No fixes applied') — its bracketed time is a walk-and-parse, which both gates say on the row. Rule/option parity is not guaranteed for any tool.",
       "Tool order is rotated on every warmup and measured run; ranking metric is the median of warmed runs.",
     ],
     variants: results,
+    validation: { formatSemantics },
   };
 }

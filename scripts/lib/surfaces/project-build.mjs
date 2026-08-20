@@ -244,7 +244,7 @@ export async function runProjectBuildSurface(resolved, options) {
       methodology: [
         `No build target in ${resolved.project.id} could build with its OWN toolchain in this environment, so there is no baseline to compare anything against and no rows are published.`,
         ...rejectedNotes,
-        "A common cause is code generation: several projects import files produced by a `postinstall` script, and `pnpm fetch:real-world` installs with `--ignore-scripts` because postinstall scripts in this set download browsers and build native modules that no surface here uses. Such a package is not \"easy and reliable\" to build, which is the bar this surface holds itself to.",
+        'A common cause is code generation: several projects import files produced by a `postinstall` script, and `pnpm fetch:real-world` installs with `--ignore-scripts` because postinstall scripts in this set download browsers and build native modules that no surface here uses. Such a package is not "easy and reliable" to build, which is the bar this surface holds itself to.',
       ],
     };
   }
@@ -254,6 +254,8 @@ export async function runProjectBuildSurface(resolved, options) {
       id: "baseline",
       label: `${target.packageName} — project's own toolchain (baseline)`,
       package: "@vitejs/plugin-vue",
+      baseline: true,
+      baselineLabel: "project Vue toolchain",
       target: "project-build",
       invocation: "vite build CLI",
       artifactLabel: "output bytes",
@@ -267,7 +269,10 @@ export async function runProjectBuildSurface(resolved, options) {
               `vite build exited ${r.status}${r.timedOut ? " (timed out)" : ""} with ${r.files} output files: ${firstFailure(r.output)}`,
             );
           }
-          return { ms: r.ms, meta: { artifact: r.bytes, outputFiles: r.files, exit: r.status, rssBytes: r.rssBytes } };
+          return {
+            ms: r.ms,
+            meta: { artifact: r.bytes, outputFiles: r.files, exit: r.status, rssBytes: r.rssBytes },
+          };
         } finally {
           rmSync(outDir, { recursive: true, force: true });
         }
@@ -322,7 +327,9 @@ export async function runProjectBuildSurface(resolved, options) {
             if (r.status !== 0 || r.files === 0) {
               throw new Error(
                 `vite build exited ${r.status}${r.timedOut ? " (timed out)" : ""} with ${r.files} output files${
-                  redirect.fired ? "" : " AND the alias redirect never fired, so this may not be this tool's failure at all"
+                  redirect.fired
+                    ? ""
+                    : " AND the alias redirect never fired, so this may not be this tool's failure at all"
                 }: ${firstFailure(r.output)}`,
               );
             }
@@ -367,13 +374,21 @@ export async function runProjectBuildSurface(resolved, options) {
       measure: async ({ phase, iteration }) => {
         const outDir = join(outRoot, `${challenger.id}-${phase}-${iteration}`);
         try {
-          const r = await runViteBuild({ cwd: target.dir, configFile: configName, outDir, timeoutMs });
+          const r = await runViteBuild({
+            cwd: target.dir,
+            configFile: configName,
+            outDir,
+            timeoutMs,
+          });
           if (r.status !== 0 || r.files === 0) {
             throw new Error(
               `vite build exited ${r.status}${r.timedOut ? " (timed out)" : ""} with ${r.files} output files: ${firstFailure(r.output)}`,
             );
           }
-          return { ms: r.ms, meta: { artifact: r.bytes, outputFiles: r.files, exit: r.status, rssBytes: r.rssBytes } };
+          return {
+            ms: r.ms,
+            meta: { artifact: r.bytes, outputFiles: r.files, exit: r.status, rssBytes: r.rssBytes },
+          };
         } finally {
           rmSync(outDir, { recursive: true, force: true });
         }
@@ -410,17 +425,23 @@ export async function runProjectBuildSurface(resolved, options) {
   const baselineBytes = baselineRow?.artifactMedian ?? null;
   for (const row of results) {
     if (row.id === "baseline" || row.status !== "ok") continue;
+    if (!baselineRow || baselineRow.status !== "ok") {
+      row.status = "unranked";
+      row.notes = `${row.notes} | ⚠ PROJECT VUE REFERENCE INVALID — the project's own Vue build did not produce a valid measured result, so this candidate timing remains visible but cannot rank.`;
+      continue;
+    }
     const bytes = row.artifactMedian ?? null;
     if (baselineBytes === null || bytes === null || baselineBytes === 0) {
       // Say the gate did not run, on the row. An ungated row rendered
       // identically to a gated one, which quietly favours whichever tool the
       // harness failed to produce a baseline artifact for — the same reasoning
       // `applyCodegenGates` uses on the compile surface.
-      row.notes = `${row.notes} | ⓘ OUTPUT-SIZE GATE NOT RUN — ${
+      row.status = "unranked";
+      row.notes = `${row.notes} | ⚠ OUTPUT-SIZE GATE UNKNOWN — ${
         baselineBytes === null || baselineBytes === 0
           ? "the baseline row produced no output-byte census to anchor against"
           : "this row produced no output-byte census"
-      }, so its output size was never compared with the project's own toolchain. Ranked, but unverified rather than verified-equal.`;
+      }, so its output size was never compared with the project's own toolchain. Measured but UNRANKED.`;
       continue;
     }
     const ratio = bytes / baselineBytes;

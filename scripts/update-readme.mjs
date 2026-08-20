@@ -44,6 +44,7 @@ import {
   tnbVersion,
   versionsFromTableRows,
 } from "./lib/tool-catalog.mjs";
+import { updateCompilerDoc, wrapCompilerLanding } from "./update-compiler-doc.mjs";
 
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -407,11 +408,17 @@ export function collapseAllFailedTables(markdown, href) {
     const uniform = sentences[0] && sentences.every((s) => s === sentences[0]);
     const cells = one ? "The only cell" : `All ${names.length} cells`;
     if (uniform) {
-      out.push(`> ${marker} **${cells} in this group ${verb} — no measurements.** ${sentences[0]} Per-row wording: [full report](${href}).`);
+      out.push(
+        `> ${marker} **${cells} in this group ${verb} — no measurements.** ${sentences[0]} Per-row wording: [full report](${href}).`,
+      );
     } else {
-      out.push(`> ${marker} **${cells} in this group ${verb} — no measurements.** ([full report](${href}))`);
+      out.push(
+        `> ${marker} **${cells} in this group ${verb} — no measurements.** ([full report](${href}))`,
+      );
       names.forEach((n, idx) => {
-        out.push(`> - **${n}**: ${sentences[idx] ?? "reason not stated in the summary — see the full report."}`);
+        out.push(
+          `> - **${n}**: ${sentences[idx] ?? "reason not stated in the summary — see the full report."}`,
+        );
       });
     }
     i = j - 1;
@@ -518,7 +525,9 @@ export function mergeEngineTables(markdown) {
       trailing.push(seg);
       cursor = t3.end;
     }
-    const rows = tables.flatMap((t) => t.rows).map((r, order) => ({ r, order, v: parseMedianMs(r) }));
+    const rows = tables
+      .flatMap((t) => t.rows)
+      .map((r, order) => ({ r, order, v: parseMedianMs(r) }));
     rows.sort((a, b) => (a.v ?? Infinity) - (b.v ?? Infinity) || a.order - b.order);
     const lead = tables.find((t) => t.rows.some((r) => parseMedianMs(r) !== null)) ?? t1;
     const vsIdx = lead.header.split("|").findIndex((c) => c.trim().toLowerCase() === "vs fastest");
@@ -579,7 +588,10 @@ export function condenseExclusionBlocks(markdown, href) {
       if (line.length > 320) line = `${line.slice(0, 319)}…`;
       out.push(">", line);
     }
-    out.push(">", `> _Why an aborted tool is excluded rather than bracketed, and the full per-tool detail: [full report](${href})._`);
+    out.push(
+      ">",
+      `> _Why an aborted tool is excluded rather than bracketed, and the full per-tool detail: [full report](${href})._`,
+    );
     i = j - 1;
   }
   return out.join("\n");
@@ -589,13 +601,18 @@ export function condenseExclusionBlocks(markdown, href) {
 export function slimAndLink(leaf, heading, content) {
   // The full report keeps its own <details>/<summary>; everything else that
   // looks like HTML is escaped in both outputs — see escapeLooseHtml.
-  const href = writeDetailFile(leaf, heading, escapeLooseHtml(content, ["details", "summary", "br"]));
+  const href = writeDetailFile(
+    leaf,
+    heading,
+    escapeLooseHtml(content, ["details", "summary", "br"]),
+  );
   // README-summary transforms, in order. All three leave the full report
   // untouched. Merging runs FIRST so a per-engine table that failed alone
   // joins its measured partner instead of collapsing to a dead-table note;
   // collapsing runs before splitDetails because the reasons it quotes live in
   // the Notes details it scans.
   let readmeView = mergeEngineTables(content);
+  readmeView = dropIncompatibleLandingSections(readmeView);
   readmeView = condenseExclusionBlocks(readmeView, href);
   readmeView = collapseAllFailedTables(readmeView, href).collapsed;
   const { slim: rawSlim, removed } = splitDetails(readmeView);
@@ -688,16 +705,68 @@ export function filterPublishable(files, allowed = publishablePlatforms()) {
   return { publish, rejected };
 }
 
+/**
+ * A report produced from a dirty tree names the commit but explicitly says the
+ * result is not attributable to it. Such a file is useful locally, never safe
+ * for the workflow that commits README numbers as if they were reproducible.
+ */
+export function filterReproducibleBenchmarkArtifacts(files) {
+  const publish = [];
+  const rejected = [];
+  for (const file of files) {
+    const text = readFileSync(file, "utf8");
+    if (/\*\*DIRTY WORKTREE\*\*/i.test(text)) rejected.push(file);
+    else publish.push(file);
+  }
+  return { publish, rejected };
+}
+
 const today = () => new Date().toISOString().slice(0, 10);
 
+/** Drop comparison sections that do not use the current reference-anchored classes. */
+export function dropIncompatibleLandingSections(markdown) {
+  let out = String(markdown);
+  const removals = [];
+  if (
+    out.includes("Verter compileMany (session cache)") ||
+    out.includes("Vize native batch (max threads)")
+  ) {
+    removals.push({
+      heading: /^### (?:SFC compile\b|Compiler$)/,
+    });
+  }
+  if (out.includes("Vize lint (max threads)") && out.includes("| vs fastest |")) {
+    removals.push({
+      heading: /^### Lint\s*$/,
+    });
+  }
+
+  for (const removal of removals) {
+    const lines = out.split("\n");
+    const start = lines.findIndex((line) => removal.heading.test(line));
+    if (start < 0) continue;
+    let end = lines.length;
+    for (let i = start + 1; i < lines.length; i++) {
+      if (/^#{1,3}\s/.test(lines[i])) {
+        end = i;
+        break;
+      }
+    }
+    lines.splice(start, end - start);
+    out = lines.join("\n");
+  }
+  return out;
+}
+
 /**
- * Stable order: ranking tables first, cache demos last.
+ * Stable order: ranking tables first, repeated-input studies last.
  *
- * There is no cold/warm ordering any more. The cold/warm-os/warm phase model
- * was abolished — every measured run is warmed and ranked on the median — and
- * no producer has emitted a `-cold` / `-warm-os` / `-warm` artifact since.
+ * There is no first/warm ARTIFACT ordering. Compiler's Fresh-child and Warm
+ * values are columns in one current artifact, not separate
+ * files. No producer emits the old `-cold` / `-warm-os` / `-warm` artifacts.
  * `benchmark.yml` writes exactly two shapes: `bench-<os>-<n>-bench.md` and
- * `bench-<os>-<n>-repeated-cache-demo.md`.
+ * `bench-<os>-<n>-repeated-input-study.md`. The old `cache-demo` spelling is
+ * still recognized so archived artifacts remain publishable.
  */
 function phaseRank(p) {
   if (p.includes("repeated") || p.includes("cache-demo")) return 9;
@@ -728,9 +797,9 @@ function renderBench(files, { start, end }) {
   const chunks = [
     start,
     "",
-    `> Auto-updated ${today()} from the **Benchmark** workflow (rolldown-style: measure on CI → commit README on \`main\` with \`[skip ci]\`).`,
+    `> Generated ${today()} from the latest published **Linux benchmark artifact**. The normal publication path is the Benchmark workflow (measure on CI → commit README on \`main\` with \`[skip ci]\`); the recorded runner below remains the authority for where a result actually ran.`,
     `> Numbers are reference-only; re-run on your hardware for local relevance.`,
-    `> Every measured run is warmed (>= 1 discarded pass); the ranking metric is the median. There is no cold column.`,
+    `> Warm is the Compiler ranking metric after >= 1 discarded pass. Compiler also publishes separately sampled **Fresh child** medians for the first timed row workload; imports/setup are excluded, the OS page cache is not flushed, and the delta is not interpreted as initialization overhead.`,
     "",
   ];
 
@@ -747,12 +816,16 @@ function renderBench(files, { start, end }) {
       (file, leaf) => {
         const phase =
           leaf.includes("repeated") || leaf.includes("cache-demo")
-            ? "cache-demo (not ranking)"
+            ? "repeated-input study (not ranking)"
             : "bench";
         return `${platformOf(file)} · ${phase}`;
       },
       undefined,
-      { leaf: "notes-benchmark.md", title: "Reference results — how to read", rules: [] },
+      {
+        leaf: "notes-benchmark.md",
+        title: "Reference results — how to read",
+        rules: [],
+      },
       { sectionId: "benchmark" },
     ),
   );
@@ -836,19 +909,38 @@ function renderArtifactBlocks(files, makeHeading, preprocess = (c) => c, notes =
       toolTable: (id) => formatToolTable(id, toolVersions, toolDates),
       memorySnippets: sectionId === "benchmark" ? memorySnippets : undefined,
     });
+    if (sectionId === "benchmark" && kind === "bench") {
+      body = wrapCompilerLanding(body);
+    }
     if (sectionId === "benchmark" && Object.keys(memorySnippets).length) memoryEmbedded = true;
     if (kind === "real-world" && !highlightHasRanking(body)) continue;
-    if (kind === "cache-demo" || kind === "ide-scale") {
-      const label = kind === "cache-demo" ? "Cache-demo (not ranking)" : "IDE scale";
+    if (kind === "repeated-input" || kind === "ide-scale") {
+      const label = kind === "repeated-input" ? "Repeated-input study (not ranking)" : "IDE scale";
       topLinks.push(`> ${label}: [full report](${href}).`);
       continue;
     }
     // Full-details sits under the section/project title, not after the tables.
     if (sectionId === "real-world") {
-      bodyChunks.push(`${blockHeading}${p.heading}`, "", `<!-- source: ${p.leaf} -->`, "", p.link, "", body, "");
+      bodyChunks.push(
+        `${blockHeading}${p.heading}`,
+        "",
+        `<!-- source: ${p.leaf} -->`,
+        "",
+        p.link,
+        "",
+        body,
+        "",
+      );
     } else {
       topLinks.push(p.link);
-      bodyChunks.push(`${blockHeading}${p.heading}`, "", `<!-- source: ${p.leaf} -->`, "", body, "");
+      bodyChunks.push(
+        `${blockHeading}${p.heading}`,
+        "",
+        `<!-- source: ${p.leaf} -->`,
+        "",
+        body,
+        "",
+      );
     }
   }
   return [...topLinks, "", ...sectionNotes(notes, hoisted, allTools), ...bodyChunks];
@@ -862,7 +954,7 @@ function renderIde(files, { start, end }) {
     `> Ranked **per operation**, never pooled: \`didOpen→diagnostics\` and \`foldingRange\` answer unrelated questions.`,
     `> Same-VM rule holds within the job; these numbers are not comparable to the timing tables above.`,
     `> **⚠ unranked** is a noise or work gate, not “the official tool is unofficial”. A series with CV > 50% is too noisy to rank.`,
-    `> Each stacked bar is **warm** (solid, cached request) then **cold** (pale remainder = first-request extra). Ranking uses **Cold**; vs-fastest-cold sits next to it.`,
+    `> Each chart row combines **Warm** (solid, repeated request) and **Cold** (pale, first request) in one range bar. The segment boundary marks the faster value and the full endpoint marks the slower value; the values are not additive. Ranking uses **Cold**; vs-fastest-cold sits next to it.`,
     "",
   ];
 
@@ -902,7 +994,7 @@ function renderRealWorld(files, { start, end }) {
     "> Corpora are pinned checkouts of third-party open-source Vue projects. Sources are unmodified; every table names its ref and resolved commit SHA.",
     "> **Rank within a corpus, never across it.** The corpora differ in size and in kind — library source, application source, and documentation demos are not the same code.",
     "> The generated `fixtures/N` corpus remains the primary ranking corpus; these tables exist to catch what a designed corpus cannot.",
-    "> Landing view is the project's **own** typecheck / test / build (plugin swaps included). Harness SFC compile of extracted files stays in the full report. Unranked tools are listed under the table with the gate that dropped them.",
+    "> Landing view is the project's **own** typecheck / test / build (plugin swaps included). Harness compilation of extracted SFCs stays in the full report. Unranked tools are listed under the table with the gate that dropped them.",
     "> **⚠ unranked** is a gate, not a ranking of the official toolchain. A project that ships **no lockfile** at the pinned ref (Naive UI, Ant Design Vue) cannot be installed frozen, so every typecheck / test / build / lsp row on that corpus is unranked equally — including vue-tsc.",
     "",
   ];
@@ -1002,12 +1094,7 @@ export function extractRunMeta(markdown) {
 
 export function formatRunMeta(meta) {
   if (!meta?.generated && !meta?.table?.length) return "";
-  const lines = [
-    RUN_META_START,
-    "",
-    "## This run",
-    "",
-  ];
+  const lines = [RUN_META_START, "", "## This run", ""];
   if (meta.generated) {
     const day = meta.generated.slice(0, 10);
     lines.push(`- **Date:** ${day} (\`${meta.generated}\`)`);
@@ -1023,7 +1110,8 @@ export function formatRunMeta(meta) {
 
 function spliceRunMeta(readme, dir) {
   const found = walkPublished(dir, "bench-");
-  const { publish } = filterPublishable(found);
+  const { publish: platformFiles } = filterPublishable(found);
+  const { publish } = filterReproducibleBenchmarkArtifacts(platformFiles);
   const file = publish.sort((a, b) => phaseRank(a) - phaseRank(b) || a.localeCompare(b))[0];
   if (!file) {
     console.log("[run-meta] no Linux bench artifact — existing This run section LEFT UNTOUCHED");
@@ -1053,14 +1141,18 @@ export function buildResultsIndex(readme) {
     if (a < 0 || b < 0) continue;
     const body = readme.slice(a, b);
     const title = section.appendHeading.replace(/^#+\s*/, "");
-    const slug = title.toLowerCase().replace(/[^\w]+/g, "-").replace(/^-|-$/g, "");
+    const slug = title
+      .toLowerCase()
+      .replace(/[^\w]+/g, "-")
+      .replace(/^-|-$/g, "");
     const seen = new Set();
     const entries = [...body.matchAll(/^#{1,4} ([^\n]+)\n\n<!-- source: (\S+) -->/gm)].map(
       ([, heading, leaf]) => {
         // The heading's tail is the natural label, but it can repeat (both IDE
         // artifacts head "ide ops") — a repeat falls back to the artifact name.
         let label = heading.split("·").pop().trim();
-        if (seen.has(label)) label = leaf.replace(/\.md$/, "").replace(/-(Linux|Windows|macOS|ubuntu)/i, "");
+        if (seen.has(label))
+          label = leaf.replace(/\.md$/, "").replace(/-(Linux|Windows|macOS|ubuntu)/i, "");
         seen.add(label);
         return `[${label}](${DETAILS_DIR}/${leaf})`;
       },
@@ -1141,7 +1233,11 @@ export function spliceTypecheckConfirm(readme, dir) {
     }),
     "utf8",
   );
-  const summary = formatTypecheckReadmeSummary({ results, generatedAt, runner });
+  const summary = formatTypecheckReadmeSummary({
+    results,
+    generatedAt,
+    runner,
+  });
   if (readme.includes(TYPECHECK_CONFIRM_START) && readme.includes(TYPECHECK_CONFIRM_END)) {
     readme = readme.replace(
       new RegExp(`${TYPECHECK_CONFIRM_START}[\\s\\S]*?${TYPECHECK_CONFIRM_END}`),
@@ -1244,7 +1340,8 @@ export function spliceIndex(readme) {
 
 async function loadToolMeta(dir) {
   const found = walkPublished(dir, "bench-");
-  const { publish } = filterPublishable(found);
+  const { publish: platformFiles } = filterPublishable(found);
+  const { publish } = filterReproducibleBenchmarkArtifacts(platformFiles);
   const file = publish.sort((a, b) => phaseRank(a) - phaseRank(b) || a.localeCompare(b))[0];
   if (file) {
     toolVersions = versionsFromTableRows(extractRunMeta(readFileSync(file, "utf8")).table);
@@ -1256,7 +1353,10 @@ async function loadToolMeta(dir) {
   }
   const tnb = tnbVersion();
   if (tnb) toolVersions["typescript-native-bridge"] = tnb;
-  const entries = Object.entries(toolVersions).map(([name, version]) => ({ name, version }));
+  const entries = Object.entries(toolVersions).map(([name, version]) => ({
+    name,
+    version,
+  }));
   toolDates = await resolvePublishDates(entries);
 }
 
@@ -1268,6 +1368,12 @@ async function main() {
   }
   await loadToolMeta(dir);
   loadMemorySnippets(dir);
+  const compilerDoc = updateCompilerDoc({ dir });
+  if (compilerDoc.updated) {
+    console.log(`[compiler-doc] published ${compilerDoc.output}`);
+  } else {
+    console.log(`[compiler-doc] LEFT UNTOUCHED — ${compilerDoc.reason}`);
+  }
 
   const readmePath = join(rootDir, "README.md");
   if (!existsSync(readmePath)) {
@@ -1280,13 +1386,23 @@ async function main() {
 
   for (const section of SECTIONS) {
     const found = walkPublished(dir, section.prefix);
-    const { publish: files, rejected } = filterPublishable(found);
+    const { publish: platformFiles, rejected } = filterPublishable(found);
+    const reproducible =
+      section.id === "benchmark"
+        ? filterReproducibleBenchmarkArtifacts(platformFiles)
+        : { publish: platformFiles, rejected: [] };
+    const files = reproducible.publish;
     const hasMarkers = readme.includes(section.start) && readme.includes(section.end);
 
     for (const { file, platform } of rejected) {
       console.log(
         `[${section.id}] SKIPPED ${file} — ${platform} artifact, and README publishes Linux only. ` +
           `Set PUBLISH_ANY_PLATFORM=1 to override.`,
+      );
+    }
+    for (const file of reproducible.rejected) {
+      console.log(
+        `[${section.id}] SKIPPED ${file} — DIRTY WORKTREE artifact cannot be published or committed as a reproducible benchmark.`,
       );
     }
 

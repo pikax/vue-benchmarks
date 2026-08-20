@@ -7,7 +7,9 @@ export function median(values) {
   if (values.length === 0) return Number.NaN;
   const sorted = [...values].sort((a, b) => a - b);
   const mid = Math.floor(sorted.length / 2);
-  return sorted.length % 2 === 1 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+  return sorted.length % 2 === 1
+    ? sorted[mid]
+    : (sorted[mid - 1] + sorted[mid]) / 2;
 }
 
 export function mean(values) {
@@ -27,7 +29,8 @@ export function mean(values) {
 export function stddev(values) {
   if (values.length < 2) return null;
   const m = mean(values);
-  const variance = values.reduce((acc, v) => acc + (v - m) ** 2, 0) / (values.length - 1);
+  const variance =
+    values.reduce((acc, v) => acc + (v - m) ** 2, 0) / (values.length - 1);
   return Math.sqrt(variance);
 }
 
@@ -66,9 +69,10 @@ export const MIN_WARMUPS = 1;
 /**
  * Every tool gets at least one discarded warmup pass before measurement.
  *
- * Rationale: a JS compiler pays a large one-off JIT cost on its first pass
- * (measured ~3.2x its own steady state) while a native/NAPI tool pays none.
- * Ranking on an unwarmed first run therefore measures V8 warmup, not the tool.
+ * Rationale: this suite ranks warmed steady-state work. An unwarmed first pass
+ * mixes compiler work with V8 JIT, native-library/thread-pool initialization,
+ * allocator growth and OS cache state. Native/NAPI tools can have a material
+ * first-call penalty too; it is measured separately by the warmth diagnostic.
  */
 export function effectiveWarmups(warmups) {
   const n = Number.isFinite(warmups) ? warmups : MIN_WARMUPS;
@@ -115,7 +119,8 @@ function summarize(all) {
     stddevMs: sd === null ? null : Number(sd.toFixed(3)),
     // Coefficient of variation — noise guard. High CV => thermal drift or a noisy box.
     // Undefined without a spread to divide, for the same reason.
-    cvPct: sd === null ? null : med > 0 ? Number(((sd / med) * 100).toFixed(1)) : 0,
+    cvPct:
+      sd === null ? null : med > 0 ? Number(((sd / med) * 100).toFixed(1)) : 0,
   };
 }
 
@@ -129,6 +134,11 @@ function rotate(list, by) {
   if (list.length === 0) return list;
   const k = ((by % list.length) + list.length) % list.length;
   return [...list.slice(k), ...list.slice(0, k)];
+}
+
+function pairedOrder(list, iteration) {
+  const base = rotate(list, Math.floor(iteration / 2));
+  return iteration % 2 === 0 ? base : [...base].reverse();
 }
 
 /**
@@ -167,17 +177,39 @@ export async function measureSeries(measure, { runs = 3, warmups = 1 } = {}) {
  */
 export async function measureVariants(
   variants,
-  { runs = 3, warmups = 1, fileCount } = {},
+  {
+    runs = 3,
+    warmups = 1,
+    fileCount,
+    prepareAllBeforeTiming = false,
+    balancedShortRuns = false,
+    orderLog,
+  } = {},
 ) {
   const active = variants.filter((v) => !v.skip);
   // The sentinel is checked BEFORE the clamp, because it must never be
   // expressible as a number: numeric 0 is CLI `--warmups 0` and clamps to 1.
-  const warmupPasses = warmups === GATE_IS_THE_WARM_PASS ? 0 : effectiveWarmups(warmups);
+  const warmupPasses =
+    warmups === GATE_IS_THE_WARM_PASS ? 0 : effectiveWarmups(warmups);
 
   for (let w = 0; w < warmupPasses; w++) {
-    for (const v of rotate(active, w)) {
+    const pass = { phase: "warmup", iteration: w };
+    if (prepareAllBeforeTiming) {
+      for (const v of active) {
+        try {
+          await v.prepare?.(pass);
+        } catch (error) {
+          v._error = error instanceof Error ? error.message : String(error);
+        }
+      }
+    }
+    const ordered = balancedShortRuns
+      ? pairedOrder(active, w)
+      : rotate(active, w);
+    orderLog?.warmups?.push(ordered.map((v) => v.id));
+    for (const v of ordered) {
       try {
-        await v.measure({ phase: "warmup", iteration: w });
+        await v.measure(pass);
       } catch (error) {
         // Warmup failures must not abort the suite; mark for measured phase.
         v._error = error instanceof Error ? error.message : String(error);
@@ -189,17 +221,38 @@ export async function measureVariants(
   const metaById = new Map(active.map((v) => [v.id, []]));
 
   for (let i = 0; i < runs; i++) {
-    // Rotate by run index: over runs >= variants every tool visits every slot.
-    const ordered = rotate(active, i);
+    const pass = { phase: "measure", iteration: i };
+    const preparedById = new Map();
+    if (prepareAllBeforeTiming) {
+      for (const v of active) {
+        try {
+          const prepared = await v.prepare?.(pass);
+          if (prepared) preparedById.set(v.id, prepared);
+        } catch (error) {
+          v._error = error instanceof Error ? error.message : String(error);
+        }
+      }
+    }
+    // The paired schedule balances positions over any complete pair of runs;
+    // plain rotation remains the generic default for compatibility.
+    const ordered = balancedShortRuns
+      ? pairedOrder(active, i)
+      : rotate(active, i);
+    orderLog?.runs?.push(ordered.map((v) => v.id));
     for (const v of ordered) {
       try {
-        const out = await v.measure({ phase: "measure", iteration: i });
+        const out = await v.measure(pass);
         if (typeof out === "number") {
           runsById.get(v.id).push(Number(out.toFixed(3)));
         } else {
           runsById.get(v.id).push(Number(out.ms.toFixed(3)));
           const { ms: _ms, meta, ...rest } = out;
-          const payload = meta ?? (Object.keys(rest).length ? rest : null);
+          const measured = meta ?? (Object.keys(rest).length ? rest : null);
+          const prepared = preparedById.get(v.id);
+          const payload =
+            prepared || measured
+              ? { ...(prepared ?? {}), ...(measured ?? {}) }
+              : null;
           if (payload) metaById.get(v.id).push(payload);
         }
       } catch (error) {
@@ -219,6 +272,15 @@ export async function measureVariants(
     sourceMap: v.sourceMap,
     threading: v.threading,
     invocation: v.invocation,
+    // Optional, explicit work-equivalence class. Most surfaces intentionally
+    // keep one table; compile uses this to separate raw render from render+CSS
+    // while giving each candidate class an explicit Vue reference.
+    comparisonClass: v.comparisonClass,
+    comparisonClassLabel: v.comparisonClassLabel,
+    // Optional explicit reference row. Compile uses Vue as the denominator;
+    // candidates do not redefine the baseline merely by being fastest.
+    baseline: Boolean(v.baseline),
+    baselineLabel: v.baselineLabel,
     artifactPolarity: v.artifactPolarity,
     // Underlying engine (e.g. tsc-js vs tsgo). Part of the comparison class.
     engine: v.engine,
@@ -260,7 +322,9 @@ export async function measureVariants(
     if (metas.length) {
       series.metaSamples = metas;
       // Aggregate common cache stats if present
-      const hits = metas.map((m) => m.cacheHits).filter((x) => Number.isFinite(x));
+      const hits = metas
+        .map((m) => m.cacheHits)
+        .filter((x) => Number.isFinite(x));
       if (hits.length) {
         series.cacheHitsMedian = Number(median(hits).toFixed(0));
         series.cacheHitsLast = hits[hits.length - 1];
@@ -273,11 +337,15 @@ export async function measureVariants(
       // with being a better implementation. Every surface reports a
       // countable artifact so a suspiciously fast row is visible in the table
       // instead of being taken at face value.
-      const artifacts = metas.map((m) => m.artifact).filter((x) => Number.isFinite(x));
+      const artifacts = metas
+        .map((m) => m.artifact)
+        .filter((x) => Number.isFinite(x));
       if (artifacts.length) {
         series.artifactMedian = Number(median(artifacts).toFixed(0));
       }
-      const rss = metas.map((m) => m.rssBytes).filter((x) => Number.isFinite(x) && x > 0);
+      const rss = metas
+        .map((m) => m.rssBytes)
+        .filter((x) => Number.isFinite(x) && x > 0);
       if (rss.length) {
         series.rssMaxMb = Number((median(rss) / (1024 * 1024)).toFixed(1));
         series.rssRunsMb = rss.map((b) => b / (1024 * 1024));
@@ -290,7 +358,9 @@ export async function measureVariants(
       status: v.unranked ? "unranked" : "ok",
       ...series,
       warmupPasses,
-      throughput: v.unranked ? "n/a" : formatThroughput(fileCount, series.medianMs),
+      throughput: v.unranked
+        ? "n/a"
+        : formatThroughput(fileCount, series.medianMs),
     });
   }
   return results;
@@ -314,10 +384,15 @@ export async function measureVariants(
  *        `runs` is the capped per-surface run count actually passed to the
  *        surface, `requested` the caller's --runs.
  */
-export function appendRunBudgetDisclosures(surface, { surfaceId, runs, requested }) {
+export function appendRunBudgetDisclosures(
+  surface,
+  { surfaceId, runs, requested },
+) {
   const rows = surface.variants ?? [];
   const sampleCounts = [
-    ...new Set(rows.filter((r) => Array.isArray(r.runs)).map((r) => r.runs.length)),
+    ...new Set(
+      rows.filter((r) => Array.isArray(r.runs)).map((r) => r.runs.length),
+    ),
   ].sort((a, b) => a - b);
 
   if (runs < requested) {
@@ -338,7 +413,8 @@ export function appendRunBudgetDisclosures(surface, { surfaceId, runs, requested
   // number rendered as a bold ranked median is not loud. Applied per row —
   // only a row that actually has ONE sample is a single-run number.
   for (const row of rows) {
-    if (row.skip || row.status === "skipped" || row.status === "error") continue;
+    if (row.skip || row.status === "skipped" || row.status === "error")
+      continue;
     if (!Array.isArray(row.runs) || row.runs.length !== 1) continue;
     row.notes =
       `${row.notes ?? ""} | ⓘ SINGLE MEASURED RUN — the time is indicative (per-surface runtime budget); there is no median or spread behind it.`.replace(
@@ -400,7 +476,12 @@ export function resolveBin(name, fromDir = process.cwd()) {
   const root = parse(current).root;
   while (true) {
     for (const suffix of suffixes) {
-      const candidate = join(current, "node_modules", ".bin", `${name}${suffix}`);
+      const candidate = join(
+        current,
+        "node_modules",
+        ".bin",
+        `${name}${suffix}`,
+      );
       if (existsSync(candidate)) return candidate;
     }
     if (current === root) break;

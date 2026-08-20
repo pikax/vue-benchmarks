@@ -22,6 +22,10 @@ import { collectVueFiles } from "./lib/fixtures.mjs";
 import { collectVersions } from "./lib/versions.mjs";
 import { buildMemoryTasks } from "./lib/memory-tasks.mjs";
 import { renderMemoryMarkdown } from "./lib/memory-report.mjs";
+import {
+  compileValidityConfigKey,
+  runCompileValidityChildren,
+} from "./lib/compile-validity-gates.mjs";
 
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "..");
 const workerPath = join(rootDir, "scripts", "memory-worker.mjs");
@@ -81,6 +85,7 @@ function runWorker(task, taskDir) {
       label: task.label,
       package: task.package,
       surface: task.surface,
+      comparisonClass: task.comparisonClass,
       error: r.stderr || `worker exit ${r.status}`,
     };
   }
@@ -90,6 +95,10 @@ function runWorker(task, taskDir) {
     return {
       id: task.id,
       status: "error",
+      label: task.label,
+      package: task.package,
+      surface: task.surface,
+      comparisonClass: task.comparisonClass,
       error: `bad worker JSON: ${last.slice(0, 200)}`,
     };
   }
@@ -116,6 +125,34 @@ function pickSeries(ok, keys) {
     if (vals.length) return vals;
   }
   return [];
+}
+
+function aggregateValidity(samples) {
+  const verdicts = samples.map((sample) => sample.validity).filter(Boolean);
+  if (verdicts.some((verdict) => verdict.status === "fail")) {
+    return {
+      status: "fail",
+      detail: verdicts.find((verdict) => verdict.status === "fail")?.detail ?? "validation failed",
+      samples: verdicts,
+    };
+  }
+  if (
+    verdicts.length !== samples.length ||
+    verdicts.some((verdict) => verdict.status === "unknown")
+  ) {
+    return {
+      status: "unknown",
+      detail:
+        verdicts.find((verdict) => verdict.status === "unknown")?.detail ??
+        `only ${verdicts.length}/${samples.length} resource samples returned a validity verdict`,
+      samples: verdicts,
+    };
+  }
+  return {
+    status: "pass",
+    detail: verdicts[0]?.detail ?? "every resource sample passed validation",
+    samples: verdicts,
+  };
 }
 
 function aggregateSamples(sampleResults) {
@@ -154,9 +191,29 @@ function aggregateSamples(sampleResults) {
   const cpuSystems = pickSeries(ok, ["cpu.systemMs"]);
   const walls = pickSeries(ok, ["cpu.wallMs"]);
   const mallocPeaks = pickSeries(ok, ["heap.peakMallocedMb", "heap.mallocDeltaMaxMb"]);
+  const failedSamples = sampleResults.filter((sample) => sample.status !== "ok");
+  const validity = failedSamples.length
+    ? {
+        status: "fail",
+        detail: `${failedSamples.length}/${sampleResults.length} resource samples failed: ${failedSamples[0].error ?? failedSamples[0].status}`,
+        samples: sampleResults.map((sample) =>
+          sample.status === "ok"
+            ? (sample.validity ?? {
+                status: "unknown",
+                detail: "sample returned no validity verdict",
+              })
+            : { status: "fail", detail: sample.error ?? sample.status },
+        ),
+      }
+    : aggregateValidity(ok);
 
   return {
-    status: "ok",
+    // Invalid/unverified figures remain visible: resource use happened. They are
+    // marked outside the comparable set instead of erased as if the tool never
+    // ran.
+    status:
+      validity.status === "pass" ? "ok" : validity.status === "fail" ? "invalid" : "unverified",
+    validity,
     isolation: ok[0].isolation,
     note: ok[0].note,
     // RSS / working set (tool-attributed)
@@ -188,8 +245,86 @@ function aggregateSamples(sampleResults) {
       baselineRssMb: s.baselineRssMb,
       heap: s.heap,
       cpu: s.cpu,
+      exitCode: s.exitCode,
+      output: s.output,
+      validity: s.validity,
     })),
   };
+}
+
+function compileValidityEntrypoint(task) {
+  if (task.surface !== "compile") return null;
+  if (task.id.startsWith("mem-vue-3.5")) return "vue-3.5";
+  if (task.id.startsWith("mem-vue-3.6")) return "vue-3.6";
+  if (task.id.startsWith("mem-vue-style-reference")) {
+    return task.package === "@vue/compiler-sfc-36" ? "vue-3.6" : "vue-3.5";
+  }
+  if (task.id.startsWith("mem-vize-1t")) return "vize-single";
+  if (task.id.includes("vize-full-sfc-batch") || task.id.includes("vize-raw-render-batch")) {
+    return "vize-batch";
+  }
+  if (task.id.startsWith("mem-verter-")) return "verter-compile-many";
+  if (task.id.startsWith("mem-fervid-")) return "fervid-sync";
+  return null;
+}
+
+function semanticVerdictDetail(verdict) {
+  if (verdict?.reason) return verdict.reason;
+  const misses = (verdict?.results ?? []).filter((result) => result.status !== "PASS");
+  if (!misses.length) return `${verdict?.passed ?? 0}/${verdict?.plantCount ?? 0} plants passed`;
+  const examples = misses
+    .slice(0, 3)
+    .map((miss) => `${miss.id}${miss.detail ? `: ${miss.detail}` : ""}`)
+    .join("; ");
+  return `${misses.length}/${verdict?.plantCount ?? misses.length} plants did not pass: ${examples}`;
+}
+
+function applyCompileSemanticValidity(results, tasks) {
+  const taskById = new Map(tasks.map((task) => [task.id, task]));
+  const configs = new Map();
+  for (const task of tasks) {
+    const entrypoint = compileValidityEntrypoint(task);
+    if (!entrypoint || task.skip) continue;
+    const target = task.id.includes("-vapor-") ? "vapor" : "vdom";
+    const env = task.id.endsWith("-prod") ? "production" : "development";
+    const key = compileValidityConfigKey({ target, env, sourceMap: false });
+    if (!configs.has(key)) configs.set(key, { target, env, entrypoints: new Set() });
+    configs.get(key).entrypoints.add(entrypoint);
+  }
+
+  const suites = {};
+  for (const [key, config] of configs) {
+    suites[key] = runCompileValidityChildren({
+      target: config.target,
+      env: config.env,
+      sourceMap: false,
+      entrypoints: [...config.entrypoints],
+    });
+  }
+
+  for (const row of results) {
+    const task = taskById.get(row.id);
+    const entrypoint = task ? compileValidityEntrypoint(task) : null;
+    if (!entrypoint || row.status === "error" || row.status === "skipped") continue;
+    const target = task.id.includes("-vapor-") ? "vapor" : "vdom";
+    const env = task.id.endsWith("-prod") ? "production" : "development";
+    const key = compileValidityConfigKey({ target, env, sourceMap: false });
+    const verdict = suites[key]?.results?.[entrypoint];
+    row.semanticValidity = verdict ?? {
+      status: "UNKNOWN",
+      reason: "no exact-entrypoint compile semantic verdict was produced",
+    };
+    if (row.semanticValidity.status === "FAIL") row.status = "invalid";
+    else if (row.semanticValidity.status !== "PASS" && row.status !== "invalid") {
+      row.status = "unverified";
+    }
+    row.validity = {
+      ...(row.validity ?? {}),
+      semanticStatus: row.semanticValidity.status,
+      semanticDetail: semanticVerdictDetail(row.semanticValidity),
+    };
+  }
+  return suites;
 }
 
 function main() {
@@ -258,6 +393,7 @@ only if machine load is acceptable; prefer sequential for cleaner numbers.
         label: task.label,
         package: task.package,
         surface: task.surface,
+        comparisonClass: task.comparisonClass,
         status: "skipped",
         skip: task.skip,
       });
@@ -274,16 +410,28 @@ only if machine load is acceptable; prefer sequential for cleaner numbers.
       label: task.label,
       package: task.package,
       surface: task.surface,
+      comparisonClass: task.comparisonClass,
       ...agg,
     };
     results.push(row);
-    if (row.status === "ok") {
+    if (["ok", "invalid", "unverified"].includes(row.status)) {
       console.log(
-        `ok  RSS avg=${row.avgMb} MiB  alloc avg=${Number.isFinite(row.allocAvgMb) ? row.allocAvgMb : "n/a"} MiB  CPU=${Number.isFinite(row.cpuTotalMs) ? row.cpuTotalMs + "ms" : "n/a"} (${Number.isFinite(row.cpuPercent) ? row.cpuPercent + "%" : "n/a"})`,
+        `${row.status}  RSS avg=${row.avgMb} MiB  alloc avg=${Number.isFinite(row.allocAvgMb) ? row.allocAvgMb : "n/a"} MiB  CPU=${Number.isFinite(row.cpuTotalMs) ? row.cpuTotalMs + "ms" : "n/a"} (${Number.isFinite(row.cpuPercent) ? row.cpuPercent + "%" : "n/a"})`,
       );
     } else {
       console.log(row.status, row.error || row.skip || "");
     }
+  }
+
+  // Semantic plants run only after every resource sample. Each plant uses a
+  // separate child process, so native/JIT/thread/allocator state cannot affect
+  // the already-recorded memory figures.
+  const compileSemanticValidation = applyCompileSemanticValidity(results, tasks);
+  for (const row of results) {
+    if (!row.semanticValidity || row.semanticValidity.status === "PASS") continue;
+    console.log(
+      `  validation ${row.id}: ${row.status} — ${row.validity?.semanticDetail ?? "no detail"}`,
+    );
   }
 
   const data = {
@@ -299,6 +447,7 @@ only if machine load is acceptable; prefer sequential for cleaner numbers.
       compileEnvs: args.compileEnvs,
     },
     versions: collectVersions(),
+    validation: { compileSemantics: compileSemanticValidation },
     results,
   };
 

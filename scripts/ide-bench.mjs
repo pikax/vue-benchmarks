@@ -190,10 +190,8 @@ async function runSuiteSessions({ suite, server, workRoot, verbose, keepWork, wa
     initializeSamples: [full.initializeMs, ...extras.map((e) => e.initializeMs)].filter(
       Number.isFinite,
     ),
-    peakRssBytes: Math.max(
-      0,
-      ...[full, ...extras].map((s) => s.peakRssBytes).filter(Number.isFinite),
-    ) || null,
+    peakRssBytes:
+      Math.max(0, ...[full, ...extras].map((s) => s.peakRssBytes).filter(Number.isFinite)) || null,
     stderr: [full.stderr, ...extras.map((e) => e.stderr)].filter(Boolean).join("\n"),
   };
 }
@@ -233,8 +231,9 @@ async function main() {
   for (const suite of suites) {
     console.log(`\n=== ${suite.label} (${suite.id}) ===`);
     for (const server of servers) {
-      // Warmups are discarded, as everywhere else in this repo: an unwarmed
-      // first run measures JIT warmup for JS servers and nothing for native.
+      // Warmups are discarded, as everywhere else in this repo: this suite
+      // ranks steady-state requests, while an unwarmed request also includes
+      // process/JIT/native/pool/allocator initialization.
       // Isolated-cold ops get their own discarded spawn too — they are a
       // separate process, and skipping that warmup would put V8 JIT into their
       // published cold number.
@@ -319,7 +318,9 @@ async function main() {
         // which of their operations will not carry a ranking.
         const rank = op.ranked === false ? "  (not ranked)" : "";
         const cold = Number.isFinite(op.coldMedianMs) ? `  cold ${fmt(op.coldMedianMs)}` : "";
-        console.log(`    ${mark} ${op.label.padEnd(34)} ${fmt(op.medianMs).padStart(10)}${cold}${art}${rank}`);
+        console.log(
+          `    ${mark} ${op.label.padEnd(34)} ${fmt(op.medianMs).padStart(10)}${cold}${art}${rank}`,
+        );
         if (op.valid === false) {
           console.log(`        reason: ${op.reason}`);
           if (op.sample) console.log(`        sample: ${JSON.stringify(op.sample.slice(0, 120))}`);

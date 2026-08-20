@@ -3,7 +3,8 @@
  *
  * Same compact-table contract the timing report adopted in `report.mjs`:
  *
- *   - NO `Status` column. Status is a marker on the NAME (❌ error, ⏭ skipped),
+ *   - NO `Status` column. Status is a marker on the NAME (❌ error, ⏭ skipped,
+ *     ⚠ invalid, ❔ unverified),
  *     so a table whose rows are all `ok` spends no width on a column that says
  *     so thirteen times.
  *   - NO `Notes` column. The probe emits the SAME note for every row of an
@@ -12,8 +13,8 @@
  *     least information per row. Notes now sit in a collapsible below the table,
  *     grouped by text: a note shared by every row is written once.
  *   - min/max/avg collapse into ONE cell per metric (`12.91 / 79.50 / 72.59`).
- *     Six numeric columns become two; the `Metrics` legend above the tables
- *     already names them as one concept each.
+ *     Peak RSS remains a separate value because the README chart must use the
+ *     highest observation across every sample, not the median sample's max.
  *   - The `Samples` column is rendered HERE. It used to be string-appended onto
  *     every row by `update-memory-readme.mjs`, which re-parsed this markdown and
  *     matched rows by their `Tool` cell — a coupling that broke the moment a
@@ -30,7 +31,13 @@
 function statusMark(status) {
   if (status === "error") return " ❌";
   if (status === "skipped") return " ⏭";
+  if (status === "invalid") return " ⚠ INVALID";
+  if (status === "unverified") return " ❔ UNVERIFIED";
   return "";
+}
+
+function hasMeasurements(row) {
+  return ["ok", "invalid", "unverified"].includes(row.status);
 }
 
 function displayName(row) {
@@ -76,10 +83,27 @@ function noteText(text) {
 function renderNotes(rows) {
   const byText = new Map();
   for (const r of rows) {
-    const text = noteText(r.status === "ok" ? r.note : r.status === "skipped" ? r.skip : r.error);
-    if (!text) continue;
-    if (!byText.has(text)) byText.set(text, []);
-    byText.get(text).push(displayName(r));
+    const texts = [];
+    if (hasMeasurements(r)) {
+      if (r.note) texts.push(r.note);
+      if (r.status === "invalid" || r.status === "unverified") {
+        const verdict = r.status === "invalid" ? "INVALID" : "UNVERIFIED";
+        const detail =
+          r.validity?.semanticDetail ??
+          r.semanticValidity?.reason ??
+          r.validity?.detail ??
+          "no correctness detail was recorded";
+        texts.push(`Validation: ${verdict} — ${detail}`);
+      }
+    } else {
+      texts.push(r.status === "skipped" ? r.skip : r.error);
+    }
+    for (const value of texts) {
+      const text = noteText(value);
+      if (!text) continue;
+      if (!byText.has(text)) byText.set(text, []);
+      byText.get(text).push(displayName(r));
+    }
   }
   if (byText.size === 0) return [];
 
@@ -107,9 +131,7 @@ function renderNotes(rows) {
  */
 export function samplesHeadline(data) {
   const declared = Number(data?.settings?.samples);
-  const observed = (data?.results ?? [])
-    .map((r) => r.samples)
-    .filter((n) => Number.isFinite(n));
+  const observed = (data?.results ?? []).map((r) => r.samples).filter((n) => Number.isFinite(n));
   const min = observed.length ? Math.min(...observed) : null;
   const max = observed.length ? Math.max(...observed) : null;
 
@@ -142,7 +164,7 @@ export function renderMemoryMarkdown(data) {
   );
   lines.push("");
   lines.push(
-    "One table per surface. Each metric is one `min / max / avg` cell; status is a marker on the name (❌ error · ⏭ skipped) and per-row detail is under **Notes** below each table. `n/a` = not measurable on this platform; `–` = the row never ran.",
+    "One table per surface and, where work differs, per comparison class. Each metric is one `min / max / avg` cell, with true cross-sample Peak RSS separate; status is a marker on the name (❌ error · ⏭ skipped · ⚠ INVALID · ❔ UNVERIFIED) and per-row detail is under **Notes** below each table. Invalid/unverified resource figures remain visible because the process ran, but are excluded from performance comparison. `n/a` = not measurable on this platform; `–` = the row never ran.",
   );
   lines.push("");
   lines.push("### Metrics");
@@ -151,6 +173,9 @@ export function renderMemoryMarkdown(data) {
   lines.push("| --- | --- |");
   lines.push(
     "| **RSS min/max/avg** | Resident set: CLI = child WorkingSet/RSS; in-process = delta vs GC baseline |",
+  );
+  lines.push(
+    "| **Peak RSS** | Highest tool-attributed RSS observed in any recorded sample; this is the value used by README Peak RSS charts/tables |",
   );
   lines.push(
     "| **Alloc min/max/avg** | In-process: V8 `heapUsed` delta; CLI (Windows): private bytes (`PrivateMemorySize64`) |",
@@ -172,28 +197,49 @@ export function renderMemoryMarkdown(data) {
   for (const [surface, rows] of bySurface) {
     lines.push(`### ${surface}`);
     lines.push("");
-    lines.push("| Tool | RSS min / max / avg | Alloc min / max / avg | CPU ms | CPU % | Wall ms | Samples |");
-    lines.push("| --- | ---: | ---: | ---: | ---: | ---: | ---: |");
-    const sorted = [...rows].sort((a, b) => {
-      if (a.status !== "ok") return 1;
-      if (b.status !== "ok") return -1;
-      return (a.avgMb ?? Infinity) - (b.avgMb ?? Infinity);
-    });
-    for (const r of sorted) {
-      const name = displayName(r);
-      if (r.status === "ok") {
-        lines.push(
-          `| ${name} | ${triple(r.minMb, r.maxMb, r.avgMb)} | ${triple(r.allocMinMb, r.allocMaxMb, r.allocAvgMb)} | ${fmt(r.cpuTotalMs)} | ${fmt(r.cpuPercent, 1)} | ${fmt(r.wallMs)} | ${samplesCell(r, declared)} |`,
-        );
-      } else {
-        lines.push(`| ${name} | – | – | – | – | – | – |`);
-      }
+    const classes = new Map();
+    for (const row of rows) {
+      const key = row.comparisonClass ?? "";
+      if (!classes.has(key)) classes.set(key, []);
+      classes.get(key).push(row);
     }
-    lines.push("");
-    const notes = renderNotes(sorted);
-    if (notes.length) {
-      lines.push(...notes);
+    for (const [comparisonClass, classRows] of classes) {
+      if (comparisonClass) {
+        const classLabel =
+          comparisonClass === "raw-render"
+            ? "Raw SFC compilation — identical style-free inputs"
+            : comparisonClass === "sfc-with-style"
+              ? "SFC compilation with CSS — styles included"
+              : comparisonClass;
+        lines.push(`#### ${classLabel}`);
+        lines.push("");
+      }
+      lines.push(
+        "| Tool | RSS min / max / avg | Peak RSS | Alloc min / max / avg | CPU ms | CPU % | Wall ms | Samples |",
+      );
+      lines.push("| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |");
+      const sorted = [...classRows].sort((a, b) => {
+        const aRank = a.status === "ok" ? 0 : hasMeasurements(a) ? 1 : 2;
+        const bRank = b.status === "ok" ? 0 : hasMeasurements(b) ? 1 : 2;
+        if (aRank !== bRank) return aRank - bRank;
+        return (a.avgMb ?? Infinity) - (b.avgMb ?? Infinity);
+      });
+      for (const r of sorted) {
+        const name = displayName(r);
+        if (hasMeasurements(r)) {
+          lines.push(
+            `| ${name} | ${triple(r.minMb, r.maxMb, r.avgMb)} | ${Number.isFinite(r.peakMaxMb) ? `${fmt(r.peakMaxMb)} MB` : "n/a"} | ${triple(r.allocMinMb, r.allocMaxMb, r.allocAvgMb)} | ${fmt(r.cpuTotalMs)} | ${fmt(r.cpuPercent, 1)} | ${fmt(r.wallMs)} | ${samplesCell(r, declared)} |`,
+          );
+        } else {
+          lines.push(`| ${name} | – | – | – | – | – | – | – |`);
+        }
+      }
       lines.push("");
+      const notes = renderNotes(sorted);
+      if (notes.length) {
+        lines.push(...notes);
+        lines.push("");
+      }
     }
   }
 

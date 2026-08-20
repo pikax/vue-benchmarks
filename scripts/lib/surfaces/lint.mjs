@@ -1,19 +1,13 @@
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { Worker } from "node:worker_threads";
 import os from "node:os";
 import { createRequire } from "node:module";
 import { collectVueFiles, prepareLintDir, totalBytes } from "../fixtures.mjs";
 import { measureVariants, resolveBin, runCommand, timedAsync, timedSync } from "../timing.mjs";
-import {
-  applyFileCoverageGate,
-  applyWorkGate,
-  cliReportsPlantedIssue,
-  countCoveredFiles,
-  eslintReportsPlant,
-  plantForCoverage,
-  prepareLintPlant,
-} from "../work-gate.mjs";
+import { applyFileCoverageGate, countCoveredFiles, plantForCoverage } from "../work-gate.mjs";
+import { runEslintWorkers } from "../lint-eslint-workers.mjs";
+import { lintCliCommand } from "../lint-row-specs.mjs";
+import { applyLintValidityGates, runLintValidityChildren } from "../lint-validity-gates.mjs";
 
 const require = createRequire(import.meta.url);
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../../..");
@@ -31,58 +25,8 @@ function isWinShell(bin) {
   return process.platform === "win32" && bin.endsWith(".cmd");
 }
 
-async function runEslintWorkers(cwd, files, eslintPath) {
-  const workerCount = Math.min(cpuCount, files.length);
-  const chunkSize = Math.ceil(files.length / workerCount);
-  const configFile = join(cwd, "eslint.config.mjs");
-  const workerCode = `
-    const { parentPort, workerData } = require("worker_threads");
-    const { ESLint } = require(workerData.eslintPath);
-    (async () => {
-      const eslint = new ESLint({
-        overrideConfigFile: workerData.configFile,
-        cwd: workerData.cwd,
-      });
-      await eslint.lintFiles(workerData.files);
-      parentPort.postMessage("done");
-    })().catch((error) => {
-      parentPort.postMessage({ error: error && error.stack ? error.stack : String(error) });
-    });
-  `;
-
-  const workers = [];
-  for (let i = 0; i < workerCount; i++) {
-    const chunk = files
-      .slice(i * chunkSize, Math.min((i + 1) * chunkSize, files.length))
-      .map((f) => join(cwd, f));
-    if (chunk.length === 0) continue;
-    const worker = new Worker(workerCode, {
-      eval: true,
-      workerData: {
-        cwd,
-        configFile,
-        files: chunk,
-        eslintPath,
-      },
-    });
-    workers.push(
-      new Promise((resolve, reject) => {
-        worker.on("message", (msg) => {
-          if (msg && msg.error) reject(new Error(msg.error));
-          else resolve(msg);
-        });
-        worker.on("error", reject);
-        worker.on("exit", (code) => {
-          if (code !== 0) reject(new Error(`eslint worker exit ${code}`));
-        });
-      }),
-    );
-  }
-  await Promise.all(workers);
-}
-
 /**
- * Lint surface: eslint-plugin-vue vs Vize lint (1T + max threads).
+ * Lint surface: eslint-plugin-vue vs Vize lint (1T + default threads).
  * Verter: native lint API if present; otherwise skipped.
  */
 export async function runLintSurface(fixtureDir, options) {
@@ -156,11 +100,14 @@ export async function runLintSurface(fixtureDir, options) {
       package: "eslint-plugin-vue",
       threading: "1t",
       invocation: "cli",
-      notes: "eslint CLI over the same corpus — pays Node startup + config load per run, like the native CLIs",
+      notes:
+        "eslint CLI over the same corpus — pays Node startup + config load per run, like the native CLIs",
       measure: () => {
-        const { ms } = runCommand(eslintBin, ["."], {
+        const command = lintCliCommand("eslint-plugin-vue-cli");
+        const { ms } = runCommand(eslintBin, command.args, {
           cwd: lintDir,
           allowNonZeroExit: true,
+          env: command.env,
           shell: isWinShell(eslintBin),
         });
         return ms;
@@ -176,12 +123,13 @@ export async function runLintSurface(fixtureDir, options) {
       package: "vize",
       threading: "1t",
       invocation: "cli",
-      notes: "vize lint . with RAYON_NUM_THREADS=1",
+      notes: "vize lint . with RAYON_NUM_THREADS=1; diagnostics are not suppressed",
       measure: () => {
-        const { ms } = runCommand(vize, ["lint", ".", "--quiet"], {
+        const command = lintCliCommand("vize-lint-1t");
+        const { ms } = runCommand(vize, command.args, {
           cwd: lintDir,
           allowNonZeroExit: true,
-          env: { RAYON_NUM_THREADS: "1" },
+          env: command.env,
           shell: process.platform === "win32" && vize.endsWith(".cmd"),
         });
         return ms;
@@ -189,15 +137,17 @@ export async function runLintSurface(fixtureDir, options) {
     });
     variants.push({
       id: "vize-lint-max",
-      label: "Vize lint (max threads)",
+      label: "Vize lint (default threads)",
       package: "vize",
-      threading: "max",
+      threading: "default",
       invocation: "cli",
-      notes: "vize lint . using default Rayon pool (all cores)",
+      notes: "vize lint . using default Rayon pool; diagnostics are not suppressed",
       measure: () => {
-        const { ms } = runCommand(vize, ["lint", ".", "--quiet"], {
+        const command = lintCliCommand("vize-lint-max");
+        const { ms } = runCommand(vize, command.args, {
           cwd: lintDir,
           allowNonZeroExit: true,
+          env: command.env,
           shell: process.platform === "win32" && vize.endsWith(".cmd"),
         });
         return ms;
@@ -226,10 +176,11 @@ export async function runLintSurface(fixtureDir, options) {
       invocation: "cli",
       notes: "biome lint . with RAYON_NUM_THREADS=1 · script block only, no template rules",
       measure: () => {
-        const { ms } = runCommand(biome, ["lint", "."], {
+        const command = lintCliCommand("biome-lint-1t");
+        const { ms } = runCommand(biome, command.args, {
           cwd: lintDir,
           allowNonZeroExit: true,
-          env: { RAYON_NUM_THREADS: "1" },
+          env: command.env,
           shell: isWinShell(biome),
         });
         return ms;
@@ -237,15 +188,17 @@ export async function runLintSurface(fixtureDir, options) {
     });
     variants.push({
       id: "biome-lint-max",
-      label: "Biome lint (max threads)",
+      label: "Biome lint (default threads)",
       package: "@biomejs/biome",
-      threading: "max",
+      threading: "default",
       invocation: "cli",
-      notes: "biome lint . using the default Rayon pool (all cores) · script block only",
+      notes: "biome lint . using its undocumented default pool size · script block only",
       measure: () => {
-        const { ms } = runCommand(biome, ["lint", "."], {
+        const command = lintCliCommand("biome-lint-max");
+        const { ms } = runCommand(biome, command.args, {
           cwd: lintDir,
           allowNonZeroExit: true,
+          env: command.env,
           shell: isWinShell(biome),
         });
         return ms;
@@ -275,9 +228,11 @@ export async function runLintSurface(fixtureDir, options) {
       notes:
         "oxlint . --threads=1, vue plugin enabled via .oxlintrc.json · script block only, no template rules",
       measure: () => {
-        const { ms } = runCommand(oxlint, [".", "--threads=1"], {
+        const command = lintCliCommand("oxlint-1t");
+        const { ms } = runCommand(oxlint, command.args, {
           cwd: lintDir,
           allowNonZeroExit: true,
+          env: command.env,
           shell: isWinShell(oxlint),
         });
         return ms;
@@ -285,16 +240,17 @@ export async function runLintSurface(fixtureDir, options) {
     });
     variants.push({
       id: "oxlint-max",
-      label: "Oxlint (max threads)",
+      label: "Oxlint (default threads)",
       package: "oxlint",
-      threading: "max",
+      threading: "default",
       invocation: "cli",
-      notes:
-        "oxlint . on the default thread pool (all cores), vue plugin enabled · script block only",
+      notes: "oxlint . on its default thread pool, vue plugin enabled · script block only",
       measure: () => {
-        const { ms } = runCommand(oxlint, ["."], {
+        const command = lintCliCommand("oxlint-max");
+        const { ms } = runCommand(oxlint, command.args, {
           cwd: lintDir,
           allowNonZeroExit: true,
+          env: command.env,
           shell: isWinShell(oxlint),
         });
         return ms;
@@ -361,77 +317,41 @@ export async function runLintSurface(fixtureDir, options) {
     });
   }
 
-  // Work gate: tools must flag planted v-html (or equivalent) or are unranked.
-  const plant = prepareLintPlant(options.workRoot ?? join(rootDir, "work"));
-  try {
-    const eslintOk = eslintPath ? await eslintReportsPlant(plant, eslintPath) : false;
-    applyWorkGate(variants, (v) => {
-      if (
-        v.id === "eslint-plugin-vue-1t" ||
-        v.id === "eslint-plugin-vue-workers" ||
-        v.id === "eslint-plugin-vue-cli"
-      ) {
-        return eslintOk;
-      }
-      if (v.id === "vize-lint-1t" || v.id === "vize-lint-max") {
-        if (!vize) return false;
-        return cliReportsPlantedIssue({
-          bin: vize,
-          args: ["lint", "Dirty.vue"],
-          cwd: plant.dir,
-          shell: isWinShell(vize),
-          expectErrors: true,
-        });
-      }
-      if (v.id === "biome-lint-1t" || v.id === "biome-lint-max") {
-        if (!biome) return false;
-        return cliReportsPlantedIssue({
-          bin: biome,
-          args: ["lint", "Dirty.vue"],
-          cwd: plant.dir,
-          shell: isWinShell(biome),
-          expectErrors: true,
-        });
-      }
-      if (v.id === "oxlint-1t" || v.id === "oxlint-max") {
-        if (!oxlint) return false;
-        return cliReportsPlantedIssue({
-          bin: oxlint,
-          args: ["Dirty.vue"],
-          cwd: plant.dir,
-          shell: isWinShell(oxlint),
-          expectErrors: true,
-        });
-      }
-      if (v.id === "verter-lint-host" && verterNative?.VerterHost) {
-        try {
-          const host = new verterNative.VerterHost({ devMode: false });
-          const path = plant.dirtyFile.replace(/\\/g, "/");
-          const source = require("node:fs").readFileSync(plant.dirtyFile, "utf8");
-          if (typeof host.upsert === "function") {
-            host.upsert({
-              inputId: path,
-              canonicalId: path,
-              source,
-              fileKind: "vue",
-            });
-          }
-          if (typeof host.lint !== "function") return false;
-          const diags = host.lint(path);
-          const n = Array.isArray(diags)
-            ? diags.length
-            : (diags?.diagnostics?.length ?? diags?.length ?? 0);
-          return n > 0;
-        } catch {
-          return false;
-        }
-      }
-      return true;
-    });
-  } finally {
-    plant.cleanup();
+  const inProcessIds = new Set([
+    "eslint-plugin-vue-1t",
+    "eslint-plugin-vue-workers",
+    "verter-lint-host",
+  ]);
+  const cliIds = new Set([
+    "eslint-plugin-vue-cli",
+    "vize-lint-1t",
+    "vize-lint-max",
+    "biome-lint-1t",
+    "biome-lint-max",
+    "oxlint-1t",
+    "oxlint-max",
+  ]);
+  for (const variant of variants) {
+    if (inProcessIds.has(variant.id)) {
+      variant.comparisonClass = "lint-in-process-api";
+      variant.comparisonClassLabel = "Vue SFC lint — in-process APIs";
+      variant.baseline = variant.id === "eslint-plugin-vue-1t";
+      variant.baselineLabel = "eslint-plugin-vue in-process reference";
+    } else if (cliIds.has(variant.id)) {
+      variant.comparisonClass = "lint-cli";
+      variant.comparisonClassLabel = "Vue SFC lint — fresh CLI process";
+      variant.baseline = variant.id === "eslint-plugin-vue-cli";
+      variant.baselineLabel = "eslint-plugin-vue CLI reference";
+    }
   }
 
+  const results = await measureVariants(variants, {
+    runs: options.runs,
+    warmups: options.warmups,
+    fileCount: files.length,
+  });
+
+  // Everything below is validation and deliberately follows every timing.
   // File-coverage census, untimed, one pass per directory-WALK tool: a plant
   // dir where every corpus file carries a guaranteed-reportable issue, each
   // tool run once with its timed invocation (enumeration-only flag changes
@@ -445,7 +365,12 @@ export async function runLintSurface(fixtureDir, options) {
   const coverage = new Map();
   {
     const { readFileSync, writeFileSync } = require("node:fs");
-    const coverageDir = prepareLintDir(fixtureDir, files, options.workRoot, `n${files.length}-coverage`);
+    const coverageDir = prepareLintDir(
+      fixtureDir,
+      files,
+      options.workRoot,
+      `n${files.length}-coverage`,
+    );
     for (const f of files) {
       const p = join(coverageDir, f);
       writeFileSync(p, plantForCoverage(readFileSync(p, "utf8")));
@@ -465,31 +390,41 @@ export async function runLintSurface(fixtureDir, options) {
         for (const id of ids) coverage.set(id, { covered, corpus: files.length });
       } catch (error) {
         for (const id of ids)
-          coverage.set(id, { covered: null, corpus: files.length, error: String(error?.message ?? error) });
+          coverage.set(id, {
+            covered: null,
+            corpus: files.length,
+            error: String(error?.message ?? error),
+          });
       }
     };
     // eslint CLI: the JSON reporter prints every linted file (absolute paths),
     // problems or none — presence in the report IS coverage.
     walkCensus(["eslint-plugin-vue-cli"], eslintBin, [".", "--format", "json"]);
-    // vize: --quiet suppresses the per-file output the census counts; dropped
-    // for the census ONLY (it changes what is printed, not what is linted).
-    walkCensus(["vize-lint-1t", "vize-lint-max"], vize, ["lint", "."]);
+    // Vize's exact timed command emits attributable diagnostics; only the
+    // thread environment differs between these two census passes.
+    walkCensus(["vize-lint-1t"], vize, lintCliCommand("vize-lint-1t").args, {
+      env: lintCliCommand("vize-lint-1t").env,
+    });
+    walkCensus(["vize-lint-max"], vize, lintCliCommand("vize-lint-max").args);
     // biome: the default reporter caps diagnostics well below corpus size;
     // lifted for the census ONLY.
-    walkCensus(["biome-lint-1t", "biome-lint-max"], biome, ["lint", ".", "--max-diagnostics=none"]);
-    walkCensus(["oxlint-1t", "oxlint-max"], oxlint, ["."]);
+    walkCensus(["biome-lint-1t"], biome, ["lint", ".", "--max-diagnostics=none"], {
+      env: lintCliCommand("biome-lint-1t").env,
+    });
+    walkCensus(["biome-lint-max"], biome, ["lint", ".", "--max-diagnostics=none"]);
+    walkCensus(["oxlint-1t"], oxlint, lintCliCommand("oxlint-1t").args);
+    walkCensus(["oxlint-max"], oxlint, lintCliCommand("oxlint-max").args);
     for (const id of ["eslint-plugin-vue-1t", "eslint-plugin-vue-workers", "verter-lint-host"]) {
       coverage.set(id, { covered: files.length, corpus: files.length, byConstruction: true });
     }
   }
 
-  const results = await measureVariants(variants, {
-    runs: options.runs,
-    warmups: options.warmups,
-    fileCount: files.length,
-  });
-
   applyFileCoverageGate(results, coverage, { verb: "named", what: "planted corpus files" });
+  const lintSemantics = runLintValidityChildren({
+    configRoot: lintDir,
+    entrypoints: results.filter((row) => row.status !== "skipped").map((row) => row.id),
+  });
+  applyLintValidityGates(results, lintSemantics);
 
   // Fix label typo if any
   for (const r of results) {
@@ -502,14 +437,15 @@ export async function runLintSurface(fixtureDir, options) {
     files: files.length,
     bytes,
     methodology: [
-      "Every tool lints an identical isolated copy of the corpus (work/lint/…). That tools see the SAME FILES is enforced, not assumed: an untimed FILE-COVERAGE census plants a guaranteed-reportable issue in every corpus file (`debugger` in script, `v-html` in template) and runs each directory-walk tool once — a ranked tool that fails to name every corpus file is measured but UNRANKED. Explicit-list invocations (the eslint API rows, VerterHost) are handed exactly the corpus by construction and say so. Census-only output changes (vize without --quiet, biome --max-diagnostics=none) alter what is printed, never what is linted; a walk tool that also lints a config file beside the corpus is disclosed, not gated.",
+      "Every tool lints an identical isolated copy of the corpus (work/lint/…). That tools see the SAME FILES is enforced, not assumed: an untimed post-timing FILE-COVERAGE census plants a guaranteed-reportable issue in every corpus file and runs each directory-walk tool once — a ranked tool that fails to name every corpus file is measured but UNRANKED. Explicit-list invocations (the eslint API rows, VerterHost) are handed exactly the corpus by construction and say so. Census-only reporter changes (eslint JSON, biome unlimited diagnostics) alter what is printed, never what is linted; Vize and Oxlint use their exact timed commands and thread settings. A walk tool that also lints a config file beside the corpus is disclosed, not gated.",
       "Every work copy and gate plant carries an empty .git dir as a repo-boundary marker: walk tools that honour ancestor .gitignore rules (oxlint; oxfmt 0.63+ on the format surface) otherwise inherit THIS repo's exclusion of the work/ dir the copies live in and walk zero files. A real project root has the boundary; the marker changes no tool's invocation.",
-      "In-process and CLI rows share the table; the row label says which mode ran. A CLI pays process startup on every run (~85ms measured for a native CLI); an in-process API pays it once — read same-mode rows against each other. eslint runs in BOTH modes and is the reference point between them.",
+      "In-process APIs and fresh CLI processes are separate comparison tables because a CLI pays process startup and config loading on every run while an in-process API amortises them. eslint-plugin-vue runs in both modes and is the explicit reference denominator in each table.",
+      "Ranking is split into explicit in-process-API and fresh-CLI comparison classes. eslint-plugin-vue is the declared denominator in both; ratios never compare Verter's in-process host with native CLI startup or let the fastest candidate redefine the reference.",
       "No single invocation mode covers every tool — vize lint is CLI-only, VerterHost.lint is in-process-only — which is why the mode is on the row instead of one mode being dropped.",
       "eslint-plugin-vue uses flat recommended config generated with fixtures.",
-      "Vize, Biome and Oxlint each get separate 1T and max-threads rows — a thread-count gap is not a linter gap.",
-      "Planted-bug work gate: each tool must report vue/no-v-html (or equivalent) or is unranked. Biome and Oxlint both fail it — each lints the <script> block only and has no template rules, so nothing in <template> is examined.",
-      "Oxlint runs with its vue plugin ON (.oxlintrc.json travels with the corpus and with the gate plant): 31 extra rules over its stock 111, all of them <script> rules for SFC option/macro shape. Template syntax is still never parsed, which is why the plant is missed with the plugin's full rule set active.",
+      "Vize, Biome and Oxlint each get separate 1T and default-thread rows — a thread-count gap is not a linter gap. The benchmark does not rename an undocumented default pool size as 'all cores'.",
+      `VUE TEMPLATE-LINT SEMANTIC GATE (untimed, post-timing): suite ${lintSemantics.suiteVersion} runs ${lintSemantics.plantCount} dirty/clean differential plants through every exact row separately, including main-thread/worker/CLI ESLint, thread-limited/default native CLIs, and fresh VerterHost. A pass must name the planted file, overlap its line, identify the rule or narrow concept, and disappear for the clean twin. Exit status or an unrelated diagnostic never passes. Every result and suite hash is retained in validation.lintSemantics; FAIL/UNKNOWN is measured but UNRANKED.`,
+      "Oxlint runs with its vue plugin ON (.oxlintrc.json travels with the corpus and with the gate plant). The exact pinned row still misses every mandatory Vue template diagnostic plant, so it remains contextual/unranked; no hard-coded rule-count claim is carried across package upgrades.",
       "Oxlint ships no standalone executable — it is a NAPI addon loaded into a Node process — so its per-run startup is Node's, while vize and biome launch a native binary. All three pay startup every run; it is not the same constant.",
       "Biome's script-only view also produces false positives on this corpus: variables declared in <script setup> and used only in <template> are reported as unused. Oxlint avoids that by disabling no-unused-vars for .vue entirely — it reports neither the false positive nor a genuinely unused declaration. Neither tool's diagnostics are comparable to the Vue-aware linters'.",
       "Allow non-zero exit (style diagnostics do not abort timing).",
@@ -517,5 +453,6 @@ export async function runLintSurface(fixtureDir, options) {
       "Tool order is rotated on every warmup and measured run; ranking metric is the median of warmed runs.",
     ],
     variants: results,
+    validation: { lintSemantics },
   };
 }

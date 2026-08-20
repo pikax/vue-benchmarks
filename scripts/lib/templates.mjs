@@ -1,8 +1,8 @@
 /**
  * Diverse SFC templates + uniquify.
  *
- * Uniquify is critical: Vize (and similar tools) content-hash caches.
- * Identical bodies under different filenames inflate "warm" / batch numbers.
+ * Unique bodies model distinct project files and prevent any compiler-specific
+ * duplicate-body shortcut from changing the primary workload.
  */
 
 /** Replace __BENCH_ID__ or inject a unique token so every file has a unique body. */
@@ -334,7 +334,7 @@ function activate(i: number) { active.value = i }
 
 /**
  * Intentionally NON-unique body (same content every time).
- * Used only for the repeated-content corpus to demonstrate content-hash cache effects.
+ * Used only for the explicitly non-ranking repeated-input corpus.
  */
 export function repeatedBodyTemplate() {
   return `<template>

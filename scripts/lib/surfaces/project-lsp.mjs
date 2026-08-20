@@ -503,7 +503,9 @@ export function applyProjectLspGates(results) {
     const samples = row.metaSamples ?? [];
     if (samples.length === 0) return null;
     return Math.max(
-      ...samples.map((m) => Math.max(m.diagnosticsCount ?? 0, m.firstNonEmptyDiagnosticsCount ?? 0)),
+      ...samples.map((m) =>
+        Math.max(m.diagnosticsCount ?? 0, m.firstNonEmptyDiagnosticsCount ?? 0),
+      ),
     );
   };
   const diagRows = results.filter((r) => r.status === "ok" && opOf(r) === "diagnostics");
@@ -534,6 +536,18 @@ export function applyProjectLspGates(results) {
     }
   }
 
+  // A count/presence census is not a semantic oracle, and these rows do not
+  // even observe the same diagnostic product: Volar's LSP notification omits
+  // diagnostics owned by its separate tsserver half, while the single-process
+  // servers publish Vue and TypeScript diagnostics together. Keep the useful
+  // latency observations, but never rank unequal, unknown-correctness work.
+  for (const row of results) {
+    if (opOf(row) !== "diagnostics") continue;
+    if (row.status === "ok") row.status = "unranked";
+    if (row.status !== "unranked") continue;
+    row.notes = `${row.notes} | ⚠ OBSERVATIONAL ONLY — diagnostics correctness is UNKNOWN on this unplanted third-party document, and Volar's Vue-only LSP publication is not the same product as the native servers' combined Vue+TypeScript publication. Time and counts remain visible; no diagnostics row participates in ranking.`;
+  }
+
   // 3. Degraded backend, reported on ANY row ranked or not — it is the
   // explanation for the number in either direction, and detecting one vendor's
   // and not another's would disclose the condition only for the tool the harness
@@ -551,9 +565,7 @@ export function applyProjectLspGates(results) {
   // budget expiries from request errors — a hand-rolled format here once
   // labelled every error kind an expiry.
   for (const row of results) {
-    const failures = (row.metaSamples ?? [])
-      .flatMap((m) => m.bridgeFailures ?? [])
-      .filter(Boolean);
+    const failures = (row.metaSamples ?? []).flatMap((m) => m.bridgeFailures ?? []).filter(Boolean);
     if (failures.length === 0) continue;
     const summary = summarizeBridgeFailures(failures);
     row.notes = `${row.notes} | ⚠ TSSERVER BRIDGE FAILURES during measurement — ${summary}. An empty answer influenced by these is the harness component stopping, not the server answering emptily. (Only the two-process Volar rows have a bridge; single-process servers have no equivalent harness component to fail.)`;
@@ -599,6 +611,8 @@ export function resolveServers() {
         id: "volar-tnb",
         label: "Volar (TNB / tsgo tsdk)",
         package: "@vue/language-server",
+        baseline: true,
+        baselineLabel: "Vue official layer",
         engine: "tsgo via typescript-native-bridge",
         engineClass: "native",
         notes: `Identical to the Volar row except the TypeScript half runs on typescript-native-bridge (tsgo): same @vue/language-server, same @vue/typescript-plugin, same bridge, tsdk pointed at ${tnb.notes}. Exactly one variable against the baseline — the TypeScript engine — which is why the two are ranked in separate tables.`,
@@ -615,6 +629,8 @@ export function resolveServers() {
         id: "volar-tnb",
         label: "Volar (TNB / tsgo tsdk)",
         package: "@vue/language-server",
+        baseline: true,
+        baselineLabel: "Vue official layer",
         engineClass: "native",
         notes: `Skipped: ${tnb.notes}`,
         unavailable: true,
@@ -719,12 +735,16 @@ async function preflightProbe({ baseline, workspaceDir, candidates, maxFiles = 3
     try {
       source = readFileSync(candidate.abs, "utf8");
     } catch (error) {
-      rejected.push(`${candidate.key}: unreadable (${error instanceof Error ? error.message : error})`);
+      rejected.push(
+        `${candidate.key}: unreadable (${error instanceof Error ? error.message : error})`,
+      );
       continue;
     }
     const positions = hoverCandidates(source);
     if (positions.length === 0) {
-      rejected.push(`${candidate.key}: no const/let/function declaration in its script block to hover`);
+      rejected.push(
+        `${candidate.key}: no const/let/function declaration in its script block to hover`,
+      );
       continue;
     }
     try {
@@ -826,9 +846,7 @@ export async function runProjectLspSurface(resolved, options) {
   // corpus document; among those, the typecheck ranking (most SFCs first)
   // still decides.
   const candidates = discoverTypecheckTargets(resolved.dir);
-  const overlapping = candidates.filter(
-    (c) => documentsUnderTarget(resolved, c.dir).length > 0,
-  );
+  const overlapping = candidates.filter((c) => documentsUnderTarget(resolved, c.dir).length > 0);
   const target = overlapping[0] ?? null;
   if (!target) {
     return {
@@ -868,7 +886,8 @@ export async function runProjectLspSurface(resolved, options) {
     opTimeoutMs,
   });
   const rejectedNotes = rejected.map(
-    (r) => `Pre-flight rejected a candidate document — ${r}. This is a harness gap in choosing a probe, NOT a statement about any server.`,
+    (r) =>
+      `Pre-flight rejected a candidate document — ${r}. This is a harness gap in choosing a probe, NOT a statement about any server.`,
   );
   if (!probe) {
     return {
@@ -905,6 +924,8 @@ export async function runProjectLspSurface(resolved, options) {
         // nothing, so the table would carry four unexplained long names.
         label: server.label,
         package: server.package,
+        baseline: Boolean(server.baseline),
+        baselineLabel: server.baselineLabel ?? (server.baseline ? "Vue official" : undefined),
         engine: server.engine,
         invocation: "language server",
         artifactLabel: op.artifactLabel,
@@ -959,12 +980,30 @@ export async function runProjectLspSurface(resolved, options) {
 
   applyProjectLspGates(results);
 
+  const classOf = new Map(servers.map((s) => [s.id, s.engineClass ?? "native"]));
+  for (const op of OPERATIONS) {
+    for (const cls of ["js", "native"]) {
+      const members = results.filter((row) => {
+        if (!String(row.id).endsWith(`-${op.id}`)) return false;
+        const serverId = String(row.id).slice(0, -`-${op.id}`.length);
+        return classOf.get(serverId) === cls;
+      });
+      if (members.length === 0) continue;
+      const reference = members.find((row) => row.baseline);
+      if (reference?.status === "ok") continue;
+      for (const row of members) {
+        if (row === reference || row.status === "skipped" || row.status === "error") continue;
+        if (row.status === "ok") row.status = "unranked";
+        row.notes = `${row.notes} | ⚠ VUE REFERENCE UNAVAILABLE/INVALID — this operation × engine class has no valid official Vue reference, so candidate timing remains visible but cannot rank.`;
+      }
+    }
+  }
+
   // One group per OPERATION × ENGINE CLASS. Operations are never pooled (they
   // differ by orders of magnitude and answer unrelated questions) and engines are
   // never ranked across (a JS-vs-tsgo ratio measures TypeScript's Go rewrite as
   // much as the Vue layer). Both splits are enforced here, in the surface that
   // knows which row runs what.
-  const classOf = new Map(servers.map((s) => [s.id, s.engineClass ?? "native"]));
   const groups = [];
   for (const op of OPERATIONS) {
     for (const cls of ["js", "native"]) {
@@ -977,9 +1016,11 @@ export async function runProjectLspSurface(resolved, options) {
       groups.push({
         id: `${op.id}-${cls}`,
         label:
-          cls === "js"
-            ? `${op.label} — JavaScript TypeScript engine, ranked alone`
-            : `${op.label} — native tsgo engines, ranked together`,
+          op.id === "diagnostics"
+            ? `${op.label} — ${cls === "js" ? "JavaScript TypeScript engine" : "native tsgo engines"}, observational only`
+            : cls === "js"
+              ? `${op.label} — JavaScript TypeScript engine, ranked alone`
+              : `${op.label} — native tsgo engines, ranked together`,
         variants: rows,
       });
     }
@@ -992,7 +1033,7 @@ export async function runProjectLspSurface(resolved, options) {
     bytes: Buffer.byteLength(probe.source, "utf8"),
     groups,
     groupingNote:
-      "Ranked **per operation** and, within an operation, **per TypeScript engine** — never pooled. The two operations differ by orders of magnitude and answer unrelated questions (cold project load vs a warm request), and a ratio across engines measures TypeScript's own Go rewrite at least as much as the Vue layer on top of it. A row that failed its content gate is shown in brackets and excluded from ranking: latency without an answer is not a comparable measurement.",
+      "Hover is ranked per TypeScript engine; diagnostics is observational and always unranked. The operations differ by orders of magnitude and answer unrelated questions, a ratio across engines measures TypeScript's Go rewrite as much as the Vue layer, and the diagnostics products are unequal (Volar Vue-only LSP publication versus native combined Vue+TypeScript publication) with no known-correct answer in third-party source.",
     variants: results,
     methodology: [
       `Workspace root: ${target.packageName} (${target.relDir}) — the project's own directory, its own tsconfig.json and its own installed dependencies, with ${target.sfcs} SFCs beneath it. Nothing is copied out and nothing is written in.`,
@@ -1007,7 +1048,7 @@ export async function runProjectLspSurface(resolved, options) {
       "Rows are grouped by TypeScript ENGINE as well as by operation. `Volar (JS)` runs the stock JavaScript TypeScript compiler; `Volar (TNB / tsgo tsdk)` is the SAME Volar with its tsserver half on typescript-native-bridge. The pair isolates the engine, and because a JS-vs-native gap is not a Vue-tooling result the two are ranked in separate tables rather than one.",
       "HOVER CONTENT GATE: a row is UNRANKED unless it returned a non-empty hover on EVERY measured run, at the single position the baseline answered at untimed. An empty or absent answer is not a fast answer.",
       "DIAGNOSTIC CONTENT GATE: a run that never published diagnostics for the opened document is an ❌ error, not a fast row — there is no latency to report. The anchor is the maximum ANY ranked row published (not the baseline alone: Volar v3 routes most TypeScript diagnostics over its tsserver half, and where that half is silent a baseline-only anchor never fires, ranking 0-diagnostic rows first against peers publishing dozens). Where any server published at least one diagnostic, a row publishing none on every run is UNRANKED — baseline included; the note names the anchoring server. Where every server published an empty list, the gate cannot fire and each row says so rather than rendering as though it had passed.",
-      "⚠ NOT EQUAL WORK on the diagnostics operation, and the direction is known. `textDocument/publishDiagnostics` from the Volar rows carries what the VUE server computes; Volar v3 delegates TypeScript to a separate tsserver that speaks the tsserver protocol rather than LSP, so TypeScript diagnostics reach a real editor through the extension and are NOT in this notification. A single-process server publishes its Vue and TypeScript diagnostics together in one message. So the Volar diagnostics rows are answering a NARROWER question than the Verter and Vize rows, and answering a narrower question is faster. The diagnostic COUNT is published on every row so the difference is visible rather than inferred, and the gate is deliberately one-directional (it fails a row for publishing nothing, never for publishing fewer) so it cannot punish a server for the broader answer. The hover operation does not have this asymmetry: both Volar halves are asked and the slower is charged.",
+      "⚠ DIAGNOSTICS IS OBSERVATIONAL/UNRANKED. `textDocument/publishDiagnostics` from the Volar rows carries what the VUE server computes; Volar v3 delegates TypeScript to a separate tsserver that speaks the tsserver protocol rather than LSP, so TypeScript diagnostics reach a real editor through the extension and are NOT in this notification. A single-process server publishes Vue and TypeScript diagnostics together. Those are unequal products, and this third-party document has no planted known-correct diagnostic set. Times and counts are retained to expose behaviour, but no ratio is published. Hover does not have this product asymmetry: both Volar halves are asked and the slower is charged.",
       "⚠ CORRECTNESS OF THE CONTENT IS NOT ASSERTED. These are third-party sources with no planted marker, so nobody has written down what the right hover text or the right diagnostic set is for them. This surface establishes that a server ANSWERED where the reference server answered, and nothing more. Content correctness is gated on the generated corpus (`lsp`), against a symbol whose type is known.",
       "The retry budget and per-request timeout are identical for every server, and retry sleeps fall inside the measured window — an asymmetric budget would silently subsidise whichever server got the larger one. Readiness is established the same way for every server, by retrying the operation until it answers, so whoever needs project-load time pays for it in the metric.",
       "A degraded type backend is detected from stderr and reported on any row, ranked or not (Vize logs a failed Corsa spawn, Verter logs verter-only mode). It is reported rather than used to fail a row on its own: the content gates decide ranking, and this is the explanation for the number in either direction.",

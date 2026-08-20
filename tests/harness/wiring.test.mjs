@@ -14,7 +14,12 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { basename, join, relative } from "node:path";
 import { pathToFileURL } from "node:url";
 
-import { collectMjsFiles, makeTempDir, removeDir, repoRoot } from "./helpers.mjs";
+import {
+  collectMjsFiles,
+  makeTempDir,
+  removeDir,
+  repoRoot,
+} from "./helpers.mjs";
 
 const require = createRequire(import.meta.url);
 
@@ -77,10 +82,16 @@ function analyse(files) {
   const brokenRelativeImports = [];
 
   for (const diagnostic of ts.getPreEmitDiagnostics(program)) {
-    const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, " ");
-    const file = diagnostic.file ? relative(repoRoot, diagnostic.file.fileName) : "?";
+    const message = ts.flattenDiagnosticMessageText(
+      diagnostic.messageText,
+      " ",
+    );
+    const file = diagnostic.file
+      ? relative(repoRoot, diagnostic.file.fileName)
+      : "?";
     const line = diagnostic.file
-      ? diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start ?? 0).line + 1
+      ? diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start ?? 0)
+          .line + 1
       : 0;
     const where = `${file}:${line}`;
 
@@ -100,7 +111,8 @@ function analyse(files) {
       // Bare specifiers (node:*, npm packages) cannot resolve without @types;
       // only a broken RELATIVE path is a real wiring bug.
       const specifier = /Cannot find module '([^']+)'/.exec(message)?.[1] ?? "";
-      if (specifier.startsWith(".")) brokenRelativeImports.push(`${where} — ${message}`);
+      if (specifier.startsWith("."))
+        brokenRelativeImports.push(`${where} — ${message}`);
     }
   }
 
@@ -145,7 +157,10 @@ describe("module loading", () => {
 
   test("every surface module exports its run*Surface entry point", async () => {
     const files = collectMjsFiles(join(repoRoot, "scripts", "lib", "surfaces"));
-    assert.ok(files.length >= 7, `expected all surfaces, found ${files.length}`);
+    assert.ok(
+      files.length >= 7,
+      `expected all surfaces, found ${files.length}`,
+    );
 
     for (const file of files) {
       const namespace = await import(pathToFileURL(file).href);
@@ -174,8 +189,14 @@ describe("static wiring check", () => {
         join(dir, "caller.mjs"),
         'import { measureVariantsAlternating } from "./dep.mjs";\nexport function go() { return measureVariants([]); }\nexport const alias = measureVariantsAlternating;\n',
       );
-      writeFileSync(join(dir, "bad-import.mjs"), 'import { neverExported } from "./dep.mjs";\nexport const x = neverExported;\n');
-      writeFileSync(join(dir, "bad-path.mjs"), 'import { nope } from "./does-not-exist.mjs";\nexport const y = nope;\n');
+      writeFileSync(
+        join(dir, "bad-import.mjs"),
+        'import { neverExported } from "./dep.mjs";\nexport const x = neverExported;\n',
+      );
+      writeFileSync(
+        join(dir, "bad-path.mjs"),
+        'import { nope } from "./does-not-exist.mjs";\nexport const y = nope;\n',
+      );
 
       const result = analyse([
         join(dir, "dep.mjs"),
@@ -193,7 +214,9 @@ describe("static wiring check", () => {
         `expected a missing-export finding, got ${JSON.stringify(result.missingExports)}`,
       );
       assert.ok(
-        result.brokenRelativeImports.some((f) => f.includes("does-not-exist.mjs")),
+        result.brokenRelativeImports.some((f) =>
+          f.includes("does-not-exist.mjs"),
+        ),
         `expected a broken relative import finding, got ${JSON.stringify(result.brokenRelativeImports)}`,
       );
     } finally {
@@ -206,7 +229,11 @@ describe("static wiring check", () => {
 
     const { undeclared } = analyseHarness();
 
-    assert.deepEqual(undeclared, [], `undeclared identifiers:\n${undeclared.join("\n")}`);
+    assert.deepEqual(
+      undeclared,
+      [],
+      `undeclared identifiers:\n${undeclared.join("\n")}`,
+    );
   });
 
   test("no module imports a binding its target does not export", (t) => {
@@ -214,7 +241,11 @@ describe("static wiring check", () => {
 
     const { missingExports } = analyseHarness();
 
-    assert.deepEqual(missingExports, [], `missing exports:\n${missingExports.join("\n")}`);
+    assert.deepEqual(
+      missingExports,
+      [],
+      `missing exports:\n${missingExports.join("\n")}`,
+    );
   });
 
   test("every relative import path resolves", (t) => {
@@ -222,21 +253,35 @@ describe("static wiring check", () => {
 
     const { brokenRelativeImports } = analyseHarness();
 
-    assert.deepEqual(brokenRelativeImports, [], `broken relative imports:\n${brokenRelativeImports.join("\n")}`);
+    assert.deepEqual(
+      brokenRelativeImports,
+      [],
+      `broken relative imports:\n${brokenRelativeImports.join("\n")}`,
+    );
   });
 });
 
 describe("surface invariants", () => {
   const surfaceSources = () =>
-    collectMjsFiles(join(repoRoot, "scripts", "lib", "surfaces")).map((file) => ({
-      name: relative(repoRoot, file),
-      source: readFileSync(file, "utf8"),
-    }));
+    collectMjsFiles(join(repoRoot, "scripts", "lib", "surfaces")).map(
+      (file) => ({
+        name: relative(repoRoot, file),
+        source: readFileSync(file, "utf8"),
+      }),
+    );
 
   test("every surface measures through measureVariants — the rotating measurer", () => {
     for (const { name, source } of surfaceSources()) {
-      assert.match(source, /^import \{[^}]*\bmeasureVariants\b/ms, `${name} does not import measureVariants`);
-      assert.match(source, /await measureVariants\(/, `${name} does not call measureVariants`);
+      assert.match(
+        source,
+        /^import \{[^}]*\bmeasureVariants\b/ms,
+        `${name} does not import measureVariants`,
+      );
+      assert.match(
+        source,
+        /await measureVariants\(/,
+        `${name} does not call measureVariants`,
+      );
     }
   });
 
@@ -259,8 +304,16 @@ describe("surface invariants", () => {
     // a bare 0), and only if the surface SAYS SO in its methodology, so the
     // justification travels with the number.
     for (const { name, source } of surfaceSources()) {
-      assert.doesNotMatch(source, /warmups:\s*\d/, `${name} hard-codes a warmup count`);
-      assert.doesNotMatch(source, /\bruns:\s*\d/, `${name} hard-codes a run count`);
+      assert.doesNotMatch(
+        source,
+        /warmups:\s*\d/,
+        `${name} hard-codes a warmup count`,
+      );
+      assert.doesNotMatch(
+        source,
+        /\bruns:\s*\d/,
+        `${name} hard-codes a run count`,
+      );
       if (source.includes("GATE_IS_THE_WARM_PASS")) {
         assert.match(
           source,
@@ -271,25 +324,49 @@ describe("surface invariants", () => {
     }
   });
 
-  test("gated surfaces route their gate through applyWorkGate", () => {
+  test("surfaces importing work-gate apply a work-gate result", () => {
     for (const { name, source } of surfaceSources()) {
       if (!/work-gate\.mjs/.test(source)) continue;
-      assert.match(source, /applyWorkGate\(/, `${name} imports the work gate but never applies it`);
+      assert.match(
+        source,
+        /apply[A-Za-z]+Gates?\(/,
+        `${name} imports the work gate but never applies a work-gate result`,
+      );
     }
   });
 
   test("the typecheck surface requires script, template and corpus plants", () => {
-    const source = readFileSync(join(repoRoot, "scripts", "lib", "surfaces", "typecheck.mjs"), "utf8");
+    const source = readFileSync(
+      join(repoRoot, "scripts", "lib", "surfaces", "typecheck.mjs"),
+      "utf8",
+    );
 
-    assert.match(source, /typecheckGateDetail\(/, "the two-plant gate must stay wired up");
-    assert.match(source, /corpusGateFor\(/, "the full-corpus re-check must stay wired up");
-    assert.match(source, /prepareCorpusPlant\(checkDir\)/, "the corpus plant must be built from the timed project");
-    assert.match(source, /detail\.ok && corpus/, "both gate stages must be required to rank a tool");
+    assert.match(
+      source,
+      /typecheckGateDetail\(/,
+      "the two-plant gate must stay wired up",
+    );
+    assert.match(
+      source,
+      /corpusGateFor\(/,
+      "the full-corpus re-check must stay wired up",
+    );
+    assert.match(
+      source,
+      /prepareCorpusPlant\(checkDir\)/,
+      "the corpus plant must be built from the timed project",
+    );
+    assert.match(
+      source,
+      /detail\.ok && corpus/,
+      "both gate stages must be required to rank a tool",
+    );
   });
 });
 
 describe("bench entry point", () => {
-  const benchSource = () => readFileSync(join(repoRoot, "scripts", "bench.mjs"), "utf8");
+  const benchSource = () =>
+    readFileSync(join(repoRoot, "scripts", "bench.mjs"), "utf8");
 
   test("every surface module is wired into an orchestrator", () => {
     // There are two orchestrators, not one. `bench.mjs` runs the generated
@@ -303,7 +380,9 @@ describe("bench entry point", () => {
     const orchestrators = ["bench.mjs", "bench-real-world.mjs"].map((f) =>
       readFileSync(join(repoRoot, "scripts", f), "utf8"),
     );
-    const surfaces = collectMjsFiles(join(repoRoot, "scripts", "lib", "surfaces"));
+    const surfaces = collectMjsFiles(
+      join(repoRoot, "scripts", "lib", "surfaces"),
+    );
 
     for (const file of surfaces) {
       const expected = expectedSurfaceExport(file);
@@ -317,16 +396,39 @@ describe("bench entry point", () => {
   test("bench.mjs clamps --warmups through effectiveWarmups rather than trusting the CLI", () => {
     const source = benchSource();
 
-    assert.match(source, /import \{ effectiveWarmups \} from "\.\/lib\/timing\.mjs";/);
-    assert.match(source, /effectiveWarmups\(args\.warmups\)/, "the CLI value must be clamped before use");
-    assert.match(source, /warmups,\s*$/m, "the clamped value must be what reaches the surfaces");
+    assert.match(
+      source,
+      /import \{ effectiveWarmups \} from "\.\/lib\/timing\.mjs";/,
+    );
+    assert.match(
+      source,
+      /effectiveWarmups\(args\.warmups\)/,
+      "the CLI value must be clamped before use",
+    );
+    assert.match(
+      source,
+      /warmups,\s*$/m,
+      "the clamped value must be what reaches the surfaces",
+    );
   });
 
   test("--help documents the ranking rules the code actually enforces", () => {
     const source = benchSource();
 
-    assert.match(source, /no cold metric/i, "--help must state that there is no cold column");
-    assert.match(source, /--warmups 0 is clamped to 1/, "--help must state the warmup clamp");
-    assert.match(source, /Median of measured runs/i, "--help must state the primary metric");
+    assert.match(
+      source,
+      /Compiler also reports Fresh child:[\s\S]*first timed row workload in a new[\s\S]*child/i,
+      "--help must define the Compiler fresh-child process boundary",
+    );
+    assert.match(
+      source,
+      /--warmups 0 is clamped to 1/,
+      "--help must state the warmup clamp",
+    );
+    assert.match(
+      source,
+      /Warm median of measured runs/i,
+      "--help must state the primary metric",
+    );
   });
 });

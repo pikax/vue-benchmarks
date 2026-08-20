@@ -18,13 +18,18 @@ describe("tool catalog", () => {
     assert.match(urlFor("vue-tsc"), /github\.com\/vuejs\/language-tools/);
     assert.match(urlFor("@vue/compiler-sfc"), /github\.com\/vuejs\/core/);
     assert.equal(displayName("@vue/compiler-sfc-36"), "@vue/compiler-sfc 3.6");
+    assert.equal(displayName("vue-36"), "Vue 3.6 Vapor runtime");
+    assert.match(urlFor("vue-36"), /github\.com\/vuejs\/core/);
   });
 
   test("Volar (N) and vue-tsc (N) share the native-bridge GitHub link", () => {
     assert.match(githubForLabel("Volar (N)"), /typescript-native-bridge/);
     assert.match(githubForLabel("vue-tsc (N)"), /typescript-native-bridge/);
     assert.match(githubForLabel("Volar (JS)"), /language-tools/);
-    assert.match(linkToolLabel("Volar (N) ⚠"), /\[Volar \(N\)\]\(https:\/\/github.com\/johnsoncodehk\/typescript-native-bridge\) ⚠/);
+    assert.match(
+      linkToolLabel("Volar (N) ⚠"),
+      /\[Volar \(N\)\]\(https:\/\/github.com\/johnsoncodehk\/typescript-native-bridge\) ⚠/,
+    );
   });
 
   test("formatToolTables groups by section, npm-links versions, sorts date desc", () => {
@@ -35,13 +40,20 @@ describe("tool catalog", () => {
         vize: "0.347.7",
         "vue-tsc": "3.3.10",
       },
-      { "@vue/compiler-sfc@3.5.41": "2026-01-15", "vue-tsc@3.3.10": "2026-02-01", "vize@0.347.7": "2026-01-20" },
+      {
+        "@vue/compiler-sfc@3.5.41": "2026-01-15",
+        "vue-tsc@3.3.10": "2026-02-01",
+        "vize@0.347.7": "2026-01-20",
+      },
     );
     assert.match(md, /### Tools/);
-    assert.match(md, /#### SFC compile/);
+    assert.match(md, /#### Compiler/);
     assert.match(md, /#### Typecheck/);
     assert.match(md, /\[@vue\/compiler-sfc\]\(https:\/\/github.com\/vuejs\/core\)/);
-    assert.match(md, /\[3\.5\.41\]\(https:\/\/www.npmjs.com\/package\/@vue\/compiler-sfc\/v\/3.5.41\)/);
+    assert.match(
+      md,
+      /\[3\.5\.41\]\(https:\/\/www.npmjs.com\/package\/@vue\/compiler-sfc\/v\/3.5.41\)/,
+    );
     assert.match(md, /2026-01-15/);
     const typecheck = md.slice(md.indexOf("#### Typecheck"));
     const vueTsc = typecheck.indexOf("vue-tsc");
@@ -51,7 +63,11 @@ describe("tool catalog", () => {
   });
 
   test("formatToolTable is one surface with no Tools heading", () => {
-    const md = formatToolTable("typecheck", { "vue-tsc": "3.3.10" }, { "vue-tsc@3.3.10": "2026-02-01" });
+    const md = formatToolTable(
+      "typecheck",
+      { "vue-tsc": "3.3.10" },
+      { "vue-tsc@3.3.10": "2026-02-01" },
+    );
     assert.match(md, /\| Tool \| Version \|/);
     assert.match(md, /vue-tsc/);
     assert.doesNotMatch(md, /### Tools/);

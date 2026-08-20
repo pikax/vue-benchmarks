@@ -17,6 +17,7 @@ import { existsSync } from "node:fs";
 import { basename } from "node:path";
 import { collectJsxFiles, readSources, totalBytes } from "../fixtures.mjs";
 import { measureVariants, timedSync } from "../timing.mjs";
+import { applyJsxValidityGates, runJsxValidityChildren } from "../jsx-validity-gates.mjs";
 
 const require = createRequire(import.meta.url);
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../../..");
@@ -29,6 +30,14 @@ function loadOptional(name) {
       error: error instanceof Error ? error.message : String(error),
     };
   }
+}
+
+function generatedCode(result) {
+  return typeof result === "string" ? result : typeof result?.code === "string" ? result.code : "";
+}
+
+function codeBytes(code) {
+  return Buffer.byteLength(code, "utf8");
 }
 
 /**
@@ -86,19 +95,27 @@ export async function runJsxCompileSurface(fixtureDir, options) {
       package: "@vue-jsx-vapor/compiler-rs",
       target: "vapor",
       threading: "1t",
+      comparisonClass: "jsx-vapor",
+      comparisonClassLabel: "Vue JSX Vapor transform",
+      baseline: true,
+      baselineLabel: "Vue JSX Vapor compiler-rs",
+      artifactLabel: "Code bytes",
+      artifactPolarity: "informational",
       notes:
         "Rust/Oxc transform; default vapor mode (see vuejs/vue-jsx-vapor). Same unique .jsx corpus as other JSX rows.",
       measure: () =>
         timedSync(() => {
+          let artifact = 0;
           for (const f of sources) {
             const result = transform(f.source);
             if (result?.errors?.length) {
               throw new Error(result.errors.join("; "));
             }
-            if (!result?.code && typeof result !== "string") {
-              throw new Error(`empty code for ${f.filename}`);
-            }
+            const code = generatedCode(result);
+            if (!code) throw new Error(`empty code for ${f.filename}`);
+            artifact += codeBytes(code);
           }
+          return { artifact };
         }),
     });
     variants.push({
@@ -107,18 +124,24 @@ export async function runJsxCompileSurface(fixtureDir, options) {
       package: "@vue-jsx-vapor/compiler-rs",
       target: "vdom",
       threading: "1t",
+      comparisonClass: "jsx-vdom",
+      comparisonClassLabel: "Vue JSX VDOM transform",
+      artifactLabel: "Code bytes",
+      artifactPolarity: "informational",
       notes: "Rust/Oxc transform with interop: true (VDOM createElementBlock path).",
       measure: () =>
         timedSync(() => {
+          let artifact = 0;
           for (const f of sources) {
             const result = transform(f.source, { interop: true });
             if (result?.errors?.length) {
               throw new Error(result.errors.join("; "));
             }
-            if (!result?.code && typeof result !== "string") {
-              throw new Error(`empty code for ${f.filename}`);
-            }
+            const code = generatedCode(result);
+            if (!code) throw new Error(`empty code for ${f.filename}`);
+            artifact += codeBytes(code);
           }
+          return { artifact };
         }),
     });
   } else {
@@ -140,13 +163,21 @@ export async function runJsxCompileSurface(fixtureDir, options) {
       package: "vue-jsx-vapor",
       target: "vapor",
       threading: "1t",
+      comparisonClass: "jsx-vapor",
+      comparisonClassLabel: "Vue JSX Vapor transform",
+      artifactLabel: "Code bytes",
+      artifactPolarity: "informational",
       notes: "transformVueJsxVapor() public API (vapor default).",
       measure: () =>
         timedSync(() => {
+          let artifact = 0;
           for (const f of sources) {
             const result = transformVueJsxVapor(f.source);
-            if (!result?.code) throw new Error(`empty code for ${f.filename}`);
+            const code = generatedCode(result);
+            if (!code) throw new Error(`empty code for ${f.filename}`);
+            artifact += codeBytes(code);
           }
+          return { artifact };
         }),
     });
   } catch (error) {
@@ -171,9 +202,16 @@ export async function runJsxCompileSurface(fixtureDir, options) {
       package: "@vue/babel-plugin-jsx",
       target: "vdom",
       threading: "1t",
+      comparisonClass: "jsx-vdom",
+      comparisonClassLabel: "Vue JSX VDOM transform",
+      baseline: true,
+      baselineLabel: "Vue Babel JSX",
+      artifactLabel: "Code bytes",
+      artifactPolarity: "informational",
       notes: "Official Babel Vue JSX plugin (createVNode). Reference VDOM JSX path; not Vapor.",
       measure: () =>
         timedSync(() => {
+          let artifact = 0;
           for (const f of sources) {
             const result = transformSync(f.source, {
               plugins: [plugin],
@@ -182,8 +220,11 @@ export async function runJsxCompileSurface(fixtureDir, options) {
               babelrc: false,
               configFile: false,
             });
-            if (!result?.code) throw new Error(`empty code for ${f.filename}`);
+            const code = generatedCode(result);
+            if (!code) throw new Error(`empty code for ${f.filename}`);
+            artifact += codeBytes(code);
           }
+          return { artifact };
         }),
     });
   } else {
@@ -202,18 +243,29 @@ export async function runJsxCompileSurface(fixtureDir, options) {
     fileCount: files.length,
   });
 
+  // The plants run after every timed pass and in isolated processes. Loading
+  // jsdom, Vue runtimes or compiler helpers for certification cannot warm the
+  // benchmark process. Vapor remains explicitly UNKNOWN until its exact
+  // generated output can be mounted against a compatible shipped runtime.
+  const jsxSemantics = runJsxValidityChildren();
+  applyJsxValidityGates(results, jsxSemantics);
+
   return {
     id: "jsx-compile",
     label: "JSX compile",
     files: files.length,
     bytes,
     fixtureDir: jsxDir,
+    validation: { jsxSemantics },
     methodology: [
       "Surface is JSX/TSX transform throughput — independent of SFC (.vue) compile.",
       "Corpus: fixtures/jsx-N unique .jsx files (generate.mjs --with-jsx).",
       "vue-jsx-vapor: https://github.com/vuejs/vue-jsx-vapor — Vapor Mode of Vue JSX (Oxc/Rust compiler-rs).",
       "compiler-rs vapor vs interop:true (VDOM) are different codegen targets.",
-      "@vue/babel-plugin-jsx is the classic Babel VDOM JSX path (comparison baseline).",
+      "VDOM and Vapor are separate comparison classes. @vue/babel-plugin-jsx is the Vue VDOM baseline; compiler-rs is the lower-level Vue Vapor baseline for the Vapor API wrapper.",
+      `Each measured row reports generated code bytes. Empty string output is rejected for object and string native return shapes; byte counts are informational and never a correctness threshold.`,
+      `POST-TIMING SEMANTIC GATE: suite ${jsxSemantics.suiteVersion} (${jsxSemantics.plantCount} plants) executes the Babel VDOM and compiler-rs interop VDOM outputs against Vue using each row's exact transform call. It observes DOM, props, updates, keyed lists, fragments, spreads, component props and events; generated text is never compared. compiler-rs's emitted virtual VDOM id is resolved to @vue-jsx-vapor/runtime's shipped VDOM helper. Each entrypoint runs in an isolated child after timing. FAIL, crash, missing verdict and UNKNOWN are measured but UNRANKED, and a failed Vue baseline invalidates its comparison class.`,
+      "Vapor compiler-rs and vue-jsx-vapor/api timings are currently UNKNOWN/unranked: the benchmark's Vue 3.5 runtime cannot execute their Vue 3.6 Vapor output, and neither VDOM behaviour nor generated-code regexes are borrowed as correctness evidence.",
       "Do not compare JSX ms to SFC compile ms; different language and pipeline.",
       "Tool order is ROTATED on every warmup and measured run (not merely alternated), so no tool keeps a fixed position in the sequence.",
     ],

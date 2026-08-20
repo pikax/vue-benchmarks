@@ -58,6 +58,13 @@ import { measureCli } from "../measure-cli.mjs";
 import { resolveTnbVueTsc, tnbActive } from "../tnb.mjs";
 import { stripAnsi } from "../real-world/ansi.mjs";
 import { discoverTypecheckTargets } from "../real-world/test-targets.mjs";
+import {
+  prepareTypecheckPlant,
+  TYPECHECK_PLANT_IDS,
+  TYPECHECK_PLANT_SUITE_HASH,
+  TYPECHECK_PLANT_SUITE_VERSION,
+  typecheckGateDetail,
+} from "../work-gate.mjs";
 
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../../..");
 
@@ -453,7 +460,11 @@ export async function runProjectTypecheckSurface(resolved, options) {
       // the vue-tsc rows alike (NOT verter-tsc, whose CLI rejects it — see
       // tscRowArgs) and both the rows and the methodology say so.
       let retried = false;
-      if (!probe.timedOut && !probe.spawnError && /error TS510[17]\b/.test(stripAnsi(probe.output))) {
+      if (
+        !probe.timedOut &&
+        !probe.spawnError &&
+        /error TS510[17]\b/.test(stripAnsi(probe.output))
+      ) {
         retried = true;
         probe = await runChecker({
           bin: vueTsc,
@@ -472,7 +483,12 @@ export async function runProjectTypecheckSurface(resolved, options) {
         ? `baseline vue-tsc timed out after ${timeoutMs} ms`
         : probe.spawnError
           ? `baseline vue-tsc could not start: ${probe.spawnError}`
-          : `baseline vue-tsc exited ${probe.status} reporting ${probe.diagnostics} diagnostic(s) across ${distinctDiagnosticFiles(probe.output)} file(s)${retried ? ` (retried with --ignoreDeprecations ${IGNORE_DEPRECATIONS_VALUE} after TS5101/TS5107 — still failed)` : ""} — that is program construction failing, not a typecheck. First: ${stripAnsi(probe.output).split("\n").find((l) => /error TS/.test(l))?.trim() ?? "no TS diagnostic"}`;
+          : `baseline vue-tsc exited ${probe.status} reporting ${probe.diagnostics} diagnostic(s) across ${distinctDiagnosticFiles(probe.output)} file(s)${retried ? ` (retried with --ignoreDeprecations ${IGNORE_DEPRECATIONS_VALUE} after TS5101/TS5107 — still failed)` : ""} — that is program construction failing, not a typecheck. First: ${
+              stripAnsi(probe.output)
+                .split("\n")
+                .find((l) => /error TS/.test(l))
+                ?.trim() ?? "no TS diagnostic"
+            }`;
       rejectedTargets.push({ candidate, detail });
     }
   }
@@ -522,6 +538,8 @@ export async function runProjectTypecheckSurface(resolved, options) {
       // as another native checker.
       label: "vue-tsc",
       package: "vue-tsc",
+      baseline: true,
+      baselineLabel: "Vue official",
       engine: "tsc-js",
       engineClass: "js",
       target: "project-typecheck",
@@ -556,6 +574,8 @@ export async function runProjectTypecheckSurface(resolved, options) {
       id: "vue-tsc-js",
       label: "vue-tsc",
       package: "vue-tsc",
+      baseline: true,
+      baselineLabel: "Vue official",
       engine: "tsc-js",
       engineClass: "js",
       target: "project-typecheck",
@@ -576,6 +596,8 @@ export async function runProjectTypecheckSurface(resolved, options) {
       id: "vue-tsc-native",
       label: "vue-tsc (TNB / tsgo)",
       package: "typescript-native-bridge",
+      baseline: true,
+      baselineLabel: "Vue official layer",
       engine: `tsgo ${tnb.tsgoVersion ?? "?"} via TNB ${tnb.tnbVersion ?? "?"}`,
       engineClass: "native",
       target: "project-typecheck",
@@ -601,6 +623,8 @@ export async function runProjectTypecheckSurface(resolved, options) {
       id: "vue-tsc-native",
       label: "vue-tsc (TNB / tsgo)",
       package: "typescript-native-bridge",
+      baseline: true,
+      baselineLabel: "Vue official layer",
       engineClass: "native",
       // classKey fields — see the vue-tsc-js skip row.
       target: "project-typecheck",
@@ -728,6 +752,71 @@ export async function runProjectTypecheckSurface(resolved, options) {
 
   applyTypecheckGates(results);
 
+  // Exact-entrypoint capability plants, deliberately AFTER every project
+  // timing. They prove that the CLI/configuration named by a row can detect
+  // independent script, native-prop and event-handler errors. They do not claim
+  // that two checkers produce equivalent diagnostics on third-party code; the
+  // project census above remains the evidence for the measured project.
+  const projectPlantSpecs = {
+    "vue-tsc-js": vueTsc && {
+      bin: vueTsc,
+      args: ["--noEmit", "-p", "tsconfig.json"],
+    },
+    "vue-tsc-native": tnb?.entry && {
+      bin: process.execPath,
+      args: [tnb.entry, "--noEmit", "-p", "tsconfig.json"],
+    },
+    "verter-tsc": verterTsc && {
+      bin: verterTsc,
+      args: ["--noEmit", "-p", "tsconfig.json"],
+    },
+    "vize-check": vize && {
+      bin: vize,
+      args: ["check", "--tsconfig", "tsconfig.json"],
+    },
+  };
+  const projectPlantResults = {};
+  const plant = prepareTypecheckPlant(options.workRoot);
+  try {
+    for (const row of results) {
+      const spec = projectPlantSpecs[row.id];
+      if (!spec || row.status === "skipped" || row.status === "error") continue;
+      const detail = typecheckGateDetail(spec.bin, spec.args, plant, {
+        shell: isWinShell(spec.bin),
+        env: { NODE_PATH: plant.nodePath },
+      });
+      const status = detail.ok ? "PASS" : "FAIL";
+      projectPlantResults[row.id] = { status, ...detail };
+      row.notes = `${row.notes} | post-timing entrypoint plants: script=${detail.script ? "✓" : "✗"} template-prop=${detail.templateProp ? "✓" : "✗"} template-event=${detail.templateEvent ? "✓" : "✗"}`;
+      if (!detail.ok && row.status === "ok") {
+        row.status = "unranked";
+        row.notes +=
+          " | ⚠ FAILED TYPECHECK CAPABILITY PLANTS — measured time shown but excluded from ranking.";
+      }
+    }
+  } finally {
+    plant.cleanup();
+  }
+
+  // A comparison class cannot remain ranked when its reference failed the same
+  // mandatory capability suite. JS has only the baseline; native comparisons
+  // are anchored to the TNB vue-tsc row.
+  const nativeReference = results.find((row) => row.id === "vue-tsc-native");
+  if (nativeReference && nativeReference.status !== "ok") {
+    for (const row of results) {
+      if (
+        (variants.find((variant) => variant.id === row.id)?.engineClass ?? "native") !== "native"
+      ) {
+        continue;
+      }
+      if (row.status === "skipped" || row.status === "error") continue;
+      if (row.status === "ok") row.status = "unranked";
+      if (row.id !== "vue-tsc-native") {
+        row.notes = `${row.notes} | ⚠ NATIVE REFERENCE INVALID — vue-tsc (TNB / tsgo) did not clear mandatory validation, so no native candidate ratio may rank.`;
+      }
+    }
+  }
+
   // One group per ENGINE CLASS. The JS engine and native tsgo are different
   // comparison classes: a ratio across them measures TypeScript's own Go rewrite
   // at least as much as the Vue layer on top of it, so they are never ranked in
@@ -756,6 +845,16 @@ export async function runProjectTypecheckSurface(resolved, options) {
     groupingNote:
       "Grouped by **TypeScript engine**, ranked within each group. The JS engine and native tsgo are never ranked against each other: that ratio measures TypeScript's own Go rewrite at least as much as the Vue tooling on top of it. Read WITHIN a group for the Vue layer, and across groups only as context on the rewrite.",
     variants: results,
+    validation: {
+      typecheckCapabilityPlants: {
+        suiteVersion: TYPECHECK_PLANT_SUITE_VERSION,
+        suiteHash: TYPECHECK_PLANT_SUITE_HASH,
+        plantIds: TYPECHECK_PLANT_IDS.slice(0, 3),
+        scope:
+          "Exact CLI entrypoint/config capability only; third-party project diagnostic equivalence remains UNKNOWN.",
+        results: projectPlantResults,
+      },
+    },
     methodology: [
       `Target: ${target.packageName} (${target.relDir}) — ${target.sfcs} SFCs, checked with the project's OWN ${target.tsconfig} and its own installed dependencies.`,
       `Corpus pin: ${p.ref} @ ${(resolved.sha ?? "").slice(0, 8)}, ${p.releasedAt ? `released ${p.releasedAt}` : `committed ${p.committedAt}`} (${p.releaseKind}), pinned ${p.pinnedAt}. Pins are updated by hand only.`,
@@ -774,6 +873,7 @@ export async function runProjectTypecheckSurface(resolved, options) {
       "Diagnostic counts are read with one shared set of line patterns covering every output shape on this surface (tsc plain, tsc pretty, and Vize's heading-plus-indented-`error:line:col [TSxxxx]` layout). A per-tool parser is how one tool's formatting ends up flattering it — and under-counting is not neutral here, because the census gate would unrank the tool the harness failed to read.",
       "Vize is invoked with no path pattern so its file set comes from the tsconfig's include/exclude/files, which is the closest analogue of the `-p tsconfig.json` the other three rows use. It still builds its own virtual project rather than a TypeScript program, so identical file sets are NOT asserted; the diagnostic census is what would expose a materially smaller one.",
       "Diagnostic EQUIVALENCE is not asserted. This is a throughput surface with a work census, not a correctness suite; the counts are published so a suspicious row is visible rather than inferred.",
+      `POST-TIMING ENTRYPOINT CAPABILITY PLANTS (suite ${TYPECHECK_PLANT_SUITE_VERSION}, sha256 ${TYPECHECK_PLANT_SUITE_HASH.slice(0, 12)}): each exact CLI row must independently report a script assignment error, a native-template prop mismatch, and a template event-handler mismatch. FAIL is measured but UNRANKED, and a failed native vue-tsc reference invalidates the native comparison class. These plants certify the entrypoint/configuration, not equivalence of diagnostics on the third-party project; that remains UNKNOWN and the project census is retained separately. Running last prevents the plant processes from warming executable/source/dependency pages for measured calls.`,
       "Each measured run is a fresh CLI process, so every row pays process startup equally and none inherits another's incremental cache. Tool order is rotated on every warmup and measured run.",
       "The checkout is never written to by this surface — it only reads.",
     ],

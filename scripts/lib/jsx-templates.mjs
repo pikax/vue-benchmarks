@@ -49,7 +49,7 @@ const PATTERNS = [
 export function jsxTemplateForIndex(i) {
   const id = String(i).padStart(5, "0");
   const fn = PATTERNS[i % PATTERNS.length];
-  // uniquify: salt comment so content-hash caches cannot collapse files
+  // Salt the body so every generated project file remains content-distinct.
   return `${fn(id)}\n// unique:${id}:${i * 2654435761}\n`;
 }
 

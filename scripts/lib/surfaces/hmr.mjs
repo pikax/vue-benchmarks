@@ -27,6 +27,7 @@
  * is told about the change.
  */
 
+import { createHash } from "node:crypto";
 import { readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { GATE_IS_THE_WARM_PASS, measureVariants } from "../timing.mjs";
@@ -234,11 +235,77 @@ async function closeServer(server) {
   }
 }
 
-function editTemplate(source, iteration) {
-  // A comment immediately inside <template> changes the template block's content
-  // without changing what the component renders, so repeated iterations stay
-  // equivalent in cost rather than growing the component.
-  return source.replace("<template>", `<template>\n  <!-- hmr-probe-${iteration} -->`);
+export function hmrRevisionToken(iteration) {
+  // Fixed width, whatever shape `phase`/`iteration` has. Variable-length edits
+  // perturb parser/codegen work and make later samples subtly different jobs.
+  return `h${createHash("sha256").update(String(iteration)).digest("hex").slice(0, 15)}`;
+}
+
+export function editTemplate(source, iteration) {
+  // The old probe inserted a comment. Dropping comments is a legal compiler
+  // choice, so the fetched module could not be checked for the new revision: a
+  // stale cached transform and a correct transform were observationally equal.
+  // This hidden, static child has real render semantics and therefore must
+  // survive compilation, while remaining tiny and identical for every plugin.
+  const token = hmrRevisionToken(iteration);
+  return source.replace(
+    "<template>",
+    `<template>\n  <span hidden data-vue-bench-hmr="${token}"></span>`,
+  );
+}
+
+/**
+ * Inspect only the changed SFC's own transformed module graph for a revision.
+ *
+ * Some integrations announce a template module containing the generated node;
+ * others announce a facade that imports that template module. Following those
+ * already-known graph edges happens AFTER `totalMs` is captured, so an
+ * architecture with a facade is not charged extra validation fetches.
+ */
+async function revisionInOwnTransforms(server, probeUrl, announcedPath, announcedCode, token) {
+  if (announcedCode.includes(token)) {
+    return { observed: true, evidence: announcedPath || "announced module" };
+  }
+
+  const graph = server?.moduleGraph;
+  if (!graph?.getModuleByUrl || !server?.transformRequest) {
+    return {
+      observed: false,
+      evidence: "announced module carried no revision; module graph unavailable",
+    };
+  }
+
+  try {
+    const roots = [];
+    for (const url of [announcedPath, probeUrl]) {
+      if (!url) continue;
+      const mod = await graph.getModuleByUrl(url);
+      if (mod) roots.push(mod);
+    }
+    const seen = new Set();
+    const queue = [...roots];
+    while (queue.length) {
+      const mod = queue.shift();
+      const url = String(mod?.url ?? "");
+      if (!url || seen.has(url)) continue;
+      seen.add(url);
+      const clean = url.split("?")[0].split("\\").join("/");
+      // Containment is deliberately strict: validation must not wander into an
+      // imported child component and find the token by coincidence.
+      if (clean !== probeUrl && !clean.endsWith(probeUrl)) continue;
+      const transformed = await server.transformRequest(url).catch(() => null);
+      if (String(transformed?.code ?? "").includes(token)) {
+        return { observed: true, evidence: url };
+      }
+      for (const child of mod.importedModules ?? []) queue.push(child);
+    }
+  } catch {
+    // Fall through to the evidence-bearing false verdict below.
+  }
+  return {
+    observed: false,
+    evidence: `revision ${token} absent from announced module and own SFC submodules`,
+  };
 }
 
 /**
@@ -295,6 +362,7 @@ export async function warmProbeModule(server, probe) {
  */
 export async function hmrRoundTrip({ server, hmr, appDir, probe, iteration, port }) {
   const abs = join(appDir, probe.rel);
+  const revisionToken = hmrRevisionToken(iteration);
   hmr.drain();
   writeFileSync(abs, editTemplate(probe.original, iteration));
 
@@ -344,6 +412,7 @@ export async function hmrRoundTrip({ server, hmr, appDir, probe, iteration, port
   const notifyMs = performance.now() - started;
 
   let fetchedBytes = 0;
+  let fetchedCode = "";
   // The PROBE's update, not updates[0]: one message can batch several modules'
   // updates and the first entry is not necessarily the probe's.
   const update =
@@ -353,11 +422,34 @@ export async function hmrRoundTrip({ server, hmr, appDir, probe, iteration, port
   if (update?.path) {
     const url = `http://127.0.0.1:${port}${update.path}${update.path.includes("?") ? "&" : "?"}t=${Date.now()}`;
     const response = await withTimeout(fetch(url), HMR_TIMEOUT_MS, "HMR module fetch");
-    fetchedBytes = (await response.text()).length;
+    if (!response.ok) throw new Error(`HMR module fetch returned HTTP ${response.status}`);
+    fetchedCode = await response.text();
+    fetchedBytes = fetchedCode.length;
   }
   const totalMs = performance.now() - started;
+  // Validation begins only after the ranked clock stopped. A facade-following
+  // plugin may need one of its own template submodules inspected; that work must
+  // not lengthen its published update latency.
+  const revision =
+    message.type === "update"
+      ? await revisionInOwnTransforms(
+          server,
+          probeUrl,
+          update?.path ?? "",
+          fetchedCode,
+          revisionToken,
+        )
+      : { observed: false, evidence: `${message.type} carries no updated module` };
 
-  return { notifyMs, totalMs, kind: message.type, fetchedBytes };
+  return {
+    notifyMs,
+    totalMs,
+    kind: message.type,
+    fetchedBytes,
+    revisionToken,
+    revisionObserved: revision.observed,
+    revisionEvidence: revision.evidence,
+  };
 }
 
 async function loadCell(bundler, plugin) {
@@ -372,7 +464,8 @@ async function loadCell(bundler, plugin) {
       };
     }
     const p = await import(plugin.spec);
-    if (typeof p.default !== "function") return { error: `${plugin.spec} exports no default factory` };
+    if (typeof p.default !== "function")
+      return { error: `${plugin.spec} exports no default factory` };
     return { createServer: b.createServer, factory: p.default };
   } catch (error) {
     return { error: error instanceof Error ? error.message : String(error) };
@@ -474,8 +567,20 @@ export async function runHmrSurface(resolved, options) {
       };
 
       if (cell.error) {
-        startVariants.push({ ...base, id: `start__${id}`, label: rowLabel, notes: cell.error, skip: true });
-        hmrVariants.push({ ...base, id: `hmr__${id}`, label: rowLabel, notes: cell.error, skip: true });
+        startVariants.push({
+          ...base,
+          id: `start__${id}`,
+          label: rowLabel,
+          notes: cell.error,
+          skip: true,
+        });
+        hmrVariants.push({
+          ...base,
+          id: `hmr__${id}`,
+          label: rowLabel,
+          notes: cell.error,
+          skip: true,
+        });
         continue;
       }
 
@@ -512,7 +617,13 @@ export async function runHmrSurface(resolved, options) {
             const hmr = await connectHmr(port);
             try {
               const r = await hmrRoundTrip({ server, hmr, appDir, probe, iteration: 0, port });
-              hmrGate = { ok: true, kind: r.kind, fetchedBytes: r.fetchedBytes };
+              hmrGate = {
+                ok: true,
+                kind: r.kind,
+                fetchedBytes: r.fetchedBytes,
+                revisionObserved: r.revisionObserved,
+                revisionEvidence: r.revisionEvidence,
+              };
             } finally {
               hmr.close();
             }
@@ -593,6 +704,7 @@ export async function runHmrSurface(resolved, options) {
         // one that patches a module, so it is measured and left unranked rather
         // than compared against the patchers.
         const patched = hmrGate.kind === "update";
+        const revisionValid = hmrGate.revisionObserved === true;
         // ONE warm server per row, shared across warmup and measured runs.
         // Restarting per run was harness ceremony, not workflow: real HMR only
         // ever happens against a long-lived server, and the restart re-paid a
@@ -648,11 +760,13 @@ export async function runHmrSurface(resolved, options) {
           id: `hmr__${id}`,
           label: rowLabel,
           artifactLabel: "module bytes",
-          unranked: !patched,
+          unranked: !patched || !revisionValid,
           notes: [
             `edit <template> of ${probes.map((p) => p.rel).join(" and ")} → ${hmrGate.kind} · ${plugin.strategy} · one warm server per row (cold start is the other table's question), ms = mean of ${probes.length} round trip(s) per run`,
             patched
-              ? "measured region: change announced → update message → updated module fetched over HTTP"
+              ? revisionValid
+                ? `measured region: change announced → update message → updated module fetched over HTTP | revision plant verified in ${hmrGate.revisionEvidence}`
+                : `⚠ STALE/UNVERIFIED UPDATE — the exact planted revision was not found in the announced module or its own SFC submodules (${hmrGate.revisionEvidence}). Measured but UNRANKED.`
               : "⚠ FULL RELOAD, not a hot update — the server discarded the module instead of patching it, which is much less work. Measured but UNRANKED.",
           ].join(" | "),
           measure: async ({ iteration, phase }) => {
@@ -665,6 +779,7 @@ export async function runHmrSurface(resolved, options) {
               let notifyMs = 0;
               let bytes = 0;
               const kinds = new Set();
+              const revisions = [];
               for (const [pi, p] of probes.entries()) {
                 const r = await hmrRoundTrip({
                   server: session.server,
@@ -678,6 +793,12 @@ export async function runHmrSurface(resolved, options) {
                 notifyMs += r.notifyMs;
                 bytes += r.fetchedBytes;
                 kinds.add(r.kind);
+                revisions.push({
+                  probe: p.rel,
+                  token: r.revisionToken,
+                  observed: r.revisionObserved,
+                  evidence: r.revisionEvidence,
+                });
               }
               return {
                 ms: totalMs / probes.length,
@@ -686,6 +807,8 @@ export async function runHmrSurface(resolved, options) {
                   notifyMs: Number((notifyMs / probes.length).toFixed(3)),
                   kind: [...kinds].join("+"),
                   probeFiles: probes.length,
+                  revisionValid: revisions.every((revision) => revision.observed),
+                  revisions,
                 },
               };
             } finally {
@@ -723,6 +846,19 @@ export async function runHmrSurface(resolved, options) {
   labelBaselinelessTables(startResults, "dev cold start");
   labelBaselinelessTables(hmrResults, "HMR turnaround");
 
+  // The untimed gate establishes the path once, but every measured edit carries
+  // a distinct token. A cache that becomes stale only after the first update is
+  // therefore caught here rather than blessed by the gate's earlier success.
+  for (const row of hmrResults) {
+    if (row.status !== "ok" && row.status !== "unranked") continue;
+    const invalid = (row.metaSamples ?? []).find((sample) => sample.revisionValid === false);
+    if (!invalid) continue;
+    row.status = "unranked";
+    row.throughput = "n/a";
+    const miss = invalid.revisions?.find((revision) => !revision.observed);
+    row.notes = `${row.notes} | ⚠ FAILED REVISION PLANT — ${miss?.probe ?? "an HMR probe"} fetched an update that did not contain its exact changed revision${miss?.evidence ? ` (${miss.evidence})` : ""}. Resource/timing figures remain visible, but stale output is not ranked as a fast update.`;
+  }
+
   rmSync(join(workRoot, "hmr-tmp"), { recursive: true, force: true });
 
   return {
@@ -743,9 +879,10 @@ export async function runHmrSurface(resolved, options) {
         ? `⚠ ${excludedFiles.length} of ${resolved.files.length} corpus SFCs are EXCLUDED from this surface's app for every cell alike (workspace-context prop types, plus transitive relative importers). Judged untimed by @vue/compiler-sfc; challenger compilers were not consulted — a tool that handles these files shows it on the compile surface, which reads the real checkout with no exclusions. First: ${excludedFiles[0].rel} (${excludedFiles[0].reason})`
         : null,
       `The staged copy carries the corpus SFCs' relative import closure (${closureCopied} extra source files) for @vue/compiler-sfc's type resolution; the resolver still externalises them, so the module graph is exactly the corpus.`,
-      `HMR probes: a comment is inserted inside the <template> block of ${probes.map((p) => p.rel).join(" and then ")} — genuine template changes, one round trip per probe per run, ms = the mean. A <script setup> edit would make Vue issue a full page reload instead of a hot update — a different and cheaper server path.`,
+      `HMR probes: a fixed-width hidden element carrying a unique revision token is inserted inside the <template> block of ${probes.map((p) => p.rel).join(" and then ")} — genuine template changes, one round trip per probe per run, ms = the mean. The token must appear in the announced transformed module or that SFC's own template submodule; a missing/stale revision is measured but UNRANKED. A <script setup> edit would make Vue issue a full page reload instead of a hot update — a different and cheaper server path.`,
       "The change is written to disk and then handed to the watcher directly. Waiting for chokidar would fold the OS file-watch debounce (platform-dependent, unrelated to any tool here) into every row.",
       "HMR turnaround is measured from the change being announced to the updated module being fetched over HTTP — the same two steps a browser performs. The WebSocket-notification half is reported separately in the run metadata, because a plugin can be quick to decide what changed and slow to recompile it.",
+      "Revision validation runs AFTER the ranked clock stops. If the announced module is only a facade, the harness follows only that changed SFC's own template-module edges; architecture-dependent validation requests never lengthen the published update time. Generated output is not compared byte-for-byte — only the exact per-edit token is required.",
       "A cell whose edit produces a full reload rather than an update is measured but UNRANKED: discarding a module is much less work than patching one.",
       "Dev cold start is createServer + listen + transformRequest of the generated entry, so it includes the plugin's initialisation. Vize pre-compiles the whole corpus at plugin-init, so its cold-start row carries work the lazy plugins defer to first request — that is the real trade-off, and it is why both tables exist.",
       "Dependency pre-bundling is disabled (optimizeDeps.noDiscovery). Everything outside the corpus is external, so there is nothing to pre-bundle, and leaving discovery on would time a dependency scan this app does not have.",

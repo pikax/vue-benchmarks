@@ -1,21 +1,16 @@
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { existsSync, writeFileSync } from "node:fs";
-import {
-  collectVueFiles,
-  prepareTypecheckDir,
-  totalBytes,
-} from "../fixtures.mjs";
-import {
-  measureVariants,
-  resolveBin,
-  runCommand,
-} from "../timing.mjs";
+import { collectVueFiles, prepareTypecheckDir, totalBytes } from "../fixtures.mjs";
+import { measureVariants, resolveBin, runCommand } from "../timing.mjs";
 import {
   applyWorkGate,
   corpusGateFor,
   prepareCorpusPlant,
   prepareTypecheckPlant,
+  TYPECHECK_PLANT_IDS,
+  TYPECHECK_PLANT_SUITE_HASH,
+  TYPECHECK_PLANT_SUITE_VERSION,
   typecheckGateDetail,
 } from "../work-gate.mjs";
 import { resolveToolEngine, resolveTsgoBin, withTsgoEnv } from "../tsgo.mjs";
@@ -116,18 +111,10 @@ export function countDiagnostics(stdout = "", stderr = "") {
  * These are not bit-identical checkers; timings measure "typecheck this project" throughput.
  */
 export async function runTypecheckSurface(fixtureDir, options) {
-  const files = collectVueFiles(
-    fixtureDir,
-    options.checkFileLimit ?? options.fileLimit,
-  );
+  const files = collectVueFiles(fixtureDir, options.checkFileLimit ?? options.fileLimit);
   const bytes = totalBytes(fixtureDir, files);
   const workRoot = options.workRoot;
-  const checkDir = prepareTypecheckDir(
-    fixtureDir,
-    files,
-    workRoot,
-    `n${files.length}`,
-  );
+  const checkDir = prepareTypecheckDir(fixtureDir, files, workRoot, `n${files.length}`);
 
   const nodePath = [join(rootDir, "node_modules"), process.env.NODE_PATH ?? ""]
     .filter(Boolean)
@@ -151,18 +138,16 @@ export async function runTypecheckSurface(fixtureDir, options) {
       artifactLabel: "Diagnostics",
       artifactPolarity: "informational",
       package: "vue-tsc",
+      baseline: true,
+      baselineLabel: "Vue official",
       notes: "Official Vue Language Tools CLI: vue-tsc --noEmit -p tsconfig.json",
       measure: () => {
-        const { ms, stdout, stderr } = runCommand(
-          vueTsc,
-          ["--noEmit", "-p", "tsconfig.json"],
-          {
-            cwd: checkDir,
-            allowNonZeroExit: true,
-            env: baseEnv,
-            shell: process.platform === "win32" && vueTsc.endsWith(".cmd"),
-          },
-        );
+        const { ms, stdout, stderr } = runCommand(vueTsc, ["--noEmit", "-p", "tsconfig.json"], {
+          cwd: checkDir,
+          allowNonZeroExit: true,
+          env: baseEnv,
+          shell: process.platform === "win32" && vueTsc.endsWith(".cmd"),
+        });
         return { ms, artifact: countDiagnostics(stdout, stderr) };
       },
     });
@@ -173,6 +158,8 @@ export async function runTypecheckSurface(fixtureDir, options) {
       artifactLabel: "Diagnostics",
       artifactPolarity: "informational",
       package: "vue-tsc",
+      baseline: true,
+      baselineLabel: "Vue official",
       notes: "Binary not found",
       skip: true,
     });
@@ -306,16 +293,12 @@ export async function runTypecheckSurface(fixtureDir, options) {
       package: "verter-tsc",
       notes: `verter-tsc --noEmit -p tsconfig.json · tsgo ${tsgo.version ?? "?"} (${tsgo.source})`,
       measure: () => {
-        const { ms, stdout, stderr } = runCommand(
-          verterTsc,
-          ["--noEmit", "-p", "tsconfig.json"],
-          {
-            cwd: checkDir,
-            allowNonZeroExit: true,
-            env: baseEnv,
-            shell: process.platform === "win32" && verterTsc.endsWith(".cmd"),
-          },
-        );
+        const { ms, stdout, stderr } = runCommand(verterTsc, ["--noEmit", "-p", "tsconfig.json"], {
+          cwd: checkDir,
+          allowNonZeroExit: true,
+          env: baseEnv,
+          shell: process.platform === "win32" && verterTsc.endsWith(".cmd"),
+        });
         return { ms, artifact: countDiagnostics(stdout, stderr) };
       },
     });
@@ -384,14 +367,22 @@ export async function runTypecheckSurface(fixtureDir, options) {
     "verter-tsc": verterTsc && { bin: verterTsc, args: ["--noEmit", "-p", "tsconfig.json"] },
   };
 
-  // Work gate, two stages. A tool is ranked only if it reports:
+  const results = await measureVariants(variants, {
+    runs: options.runs,
+    warmups: options.warmups,
+    fileCount: files.length,
+  });
+
+  // Work gate, two stages. Run AFTER every timing so these extra CLI processes
+  // cannot warm executable pages, source files or dependency metadata for the
+  // measurements they qualify. A tool is ranked only if it reports:
   //   1. a script-level AND a template-level planted error (1-file projects), and
   //   2. a planted error in the full timed corpus under the timed tsconfig.
   const plant = prepareTypecheckPlant(workRoot);
   const corpusPlant = prepareCorpusPlant(checkDir);
   const gateReport = {};
   try {
-    applyWorkGate(variants, (v) => {
+    applyWorkGate(results, (v) => {
       const spec = gateSpecs[v.id];
       if (!spec) return true;
       const opts = { shell: isWinShell(spec.bin), env: baseEnv };
@@ -408,7 +399,8 @@ export async function runTypecheckSurface(fixtureDir, options) {
           env: { ...baseEnv, NODE_PATH: plant.nodePath },
         });
         if (!tnbActive(`${probe.stdout || ""}${probe.stderr || ""}`)) {
-          v.gateMissed = "TNB activation banner (bridge did not load — engine label would be wrong)";
+          v.gateMissed =
+            "TNB activation banner (bridge did not load — engine label would be wrong)";
           gateReport[v.id] = {
             script: false,
             templateProp: false,
@@ -453,7 +445,7 @@ export async function runTypecheckSurface(fixtureDir, options) {
     corpusPlant.cleanup();
   }
 
-  for (const v of variants) {
+  for (const v of results) {
     const g = gateReport[v.id];
     if (!g) continue;
     v.notes =
@@ -461,24 +453,35 @@ export async function runTypecheckSurface(fixtureDir, options) {
     if (v.gateMissed) v.notes += ` (missed ${v.gateMissed})`;
   }
 
-  const results = await measureVariants(variants, {
-    runs: options.runs,
-    warmups: options.warmups,
-    fileCount: files.length,
-  });
+  const vueReference = results.find((row) => row.id === "vue-tsc");
+  if (!vueReference || vueReference.status !== "ok") {
+    for (const row of results) {
+      if (row === vueReference || row.status === "skipped" || row.status === "error") continue;
+      if (row.status === "ok") row.status = "unranked";
+      row.notes = `${row.notes} | ⚠ VUE REFERENCE INVALID — the official vue-tsc row did not clear mandatory validation, so candidate timings are retained but cannot rank without the declared baseline.`;
+    }
+  }
 
   return {
     id: "typecheck",
     label: "Typecheck",
     files: files.length,
     bytes,
+    validation: {
+      typecheckPlants: {
+        suiteVersion: TYPECHECK_PLANT_SUITE_VERSION,
+        suiteHash: TYPECHECK_PLANT_SUITE_HASH,
+        plantIds: TYPECHECK_PLANT_IDS,
+        results: gateReport,
+      },
+    },
     methodology: [
       "Same on-disk fixture directory and tsconfig for every tool.",
       "Default check file limit is smaller than compile corpus (typecheck cost scales steeply).",
       "Each measurement is a full CLI process invocation — every tool here is a CLI, so process startup is paid by all of them equally.",
       "Warm runs still benefit from OS page cache of source files and node_modules.",
       "Tool order is rotated on every warmup and measured run; ranking metric is the median of warmed runs.",
-      "Work gate has three parts, all required to be ranked: (1) a script-only planted error, (2) a template-only planted error with strictTemplates — proving the tool actually typechecks templates and does not just run tsc over extracted script blocks, and (3) the same planted bug re-detected in the FULL timed corpus under the timed tsconfig, proving the tool does not degrade at scale.",
+      "POST-TIMING work gate has four independently reported checks, all required to be ranked: (1) a script-only planted error, (2) a native-template prop mismatch, (3) a template event-handler mismatch — proving the tool actually typechecks templates and does not just run tsc over extracted script blocks — and (4) the planted bug re-detected in the FULL timed corpus under the timed tsconfig, proving the tool does not degrade at scale. The gate runs only after every timing, so its extra CLI processes cannot warm executable pages, source files or dependency metadata for the measurements they qualify.",
       "Per-tool gate results are shown in Notes as script/template/corpus ✓✗.",
       "verter-tsc requires stable tsgo (typescript@7.0.x / typescript-go); set via VERTER_TSGO_BIN.",
       "Two engines are measured in ONE table: rows tagged (JS) run the JavaScript TypeScript compiler, untagged rows run native tsgo. `vue-tsc (JS)` and `vue-tsc (N)` are the SAME vue-tsc and the same Vue layer differing only in engine, so the pair isolates how much of any speed gap is TypeScript's Go rewrite rather than the Vue tooling on top of it — and a cross-engine ratio should be read as exactly that.",

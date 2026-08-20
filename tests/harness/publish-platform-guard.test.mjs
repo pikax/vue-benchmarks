@@ -18,6 +18,9 @@
  */
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 
 import {
   collapseAllFailedTables,
@@ -26,6 +29,7 @@ import {
   escapeLooseHtml,
   extractToolLegends,
   filterPublishable,
+  filterReproducibleBenchmarkArtifacts,
   hoistRepeatedLines,
   mergeEngineTables,
   stripParagraphs,
@@ -42,7 +46,11 @@ describe("publish platform guard", () => {
   test("Linux artifacts publish — CI must keep working", () => {
     // The whole point of benchmark.yml. If this ever fails, the guard has
     // broken the only path that is supposed to produce published numbers.
-    const { publish, rejected } = filterPublishable([LINUX_CI, LINUX_LOCAL, UBUNTU]);
+    const { publish, rejected } = filterPublishable([
+      LINUX_CI,
+      LINUX_LOCAL,
+      UBUNTU,
+    ]);
     assert.deepEqual(publish, [LINUX_CI, LINUX_LOCAL, UBUNTU]);
     assert.deepEqual(rejected, []);
   });
@@ -67,12 +75,19 @@ describe("publish platform guard", () => {
   test("the rejection names the file, so the skip is not mysterious", () => {
     const { rejected } = filterPublishable([WINDOWS]);
     assert.equal(rejected[0].file, "bench-win32-50.md");
-    assert.doesNotMatch(rejected[0].file, /[/\\]/, "should be the leaf, not a full path");
+    assert.doesNotMatch(
+      rejected[0].file,
+      /[/\\]/,
+      "should be the leaf, not a full path",
+    );
   });
 
   test("PUBLISH_ANY_PLATFORM=1 publishes everything", () => {
     // Passing `null` is what publishablePlatforms() returns under the override.
-    const { publish, rejected } = filterPublishable([WINDOWS, LINUX_CI, MACOS], null);
+    const { publish, rejected } = filterPublishable(
+      [WINDOWS, LINUX_CI, MACOS],
+      null,
+    );
     assert.deepEqual(publish, [WINDOWS, LINUX_CI, MACOS]);
     assert.deepEqual(rejected, []);
   });
@@ -82,6 +97,25 @@ describe("publish platform guard", () => {
     assert.deepEqual(publish, []);
     assert.deepEqual(rejected, []);
   });
+});
+
+test("dirty-worktree benchmark reports cannot enter the publication set", () => {
+  const dir = mkdtempSync(join(tmpdir(), "vue-bench-publish-"));
+  try {
+    const clean = join(dir, "clean.md");
+    const dirty = join(dir, "dirty.md");
+    writeFileSync(clean, "- **Benchmark commit:** `abc` · clean worktree\n");
+    writeFileSync(
+      dirty,
+      "- **Benchmark commit:** `abc` · **DIRTY WORKTREE** — not attributable\n",
+    );
+    assert.deepEqual(filterReproducibleBenchmarkArtifacts([clean, dirty]), {
+      publish: [clean],
+      rejected: [dirty],
+    });
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
 });
 
 /**
@@ -111,9 +145,15 @@ describe("a rule spliced into one section is stated once", () => {
     assert.ok(!stripped.includes(IDE_RANKING_RULES));
     assert.equal(
       stripped,
-      ["## IDE operation results", "", "- **Runs / warmups:** 3 / 1", "", "### IDE · hover", "", "| Tool | Median |"].join(
-        "\n",
-      ),
+      [
+        "## IDE operation results",
+        "",
+        "- **Runs / warmups:** 3 / 1",
+        "",
+        "### IDE · hover",
+        "",
+        "| Tool | Median |",
+      ].join("\n"),
     );
   });
 
@@ -125,7 +165,10 @@ describe("a rule spliced into one section is stated once", () => {
 
   test("a document that never stated them is unchanged", () => {
     const plain = "## IDE operation results\n\n| Tool | Median |";
-    assert.equal(stripParagraphs(plain, [RANKING_RULES, IDE_RANKING_RULES]), plain);
+    assert.equal(
+      stripParagraphs(plain, [RANKING_RULES, IDE_RANKING_RULES]),
+      plain,
+    );
   });
 });
 
@@ -137,19 +180,31 @@ describe("a rule spliced into one section is stated once", () => {
  */
 describe("escapeLooseHtml", () => {
   test("raw unclosed tags are escaped", () => {
-    const out = escapeLooseHtml("formats the <script> block only, never <template>");
-    assert.equal(out, "formats the &lt;script> block only, never &lt;template>");
+    const out = escapeLooseHtml(
+      "formats the <script> block only, never <template>",
+    );
+    assert.equal(
+      out,
+      "formats the &lt;script> block only, never &lt;template>",
+    );
   });
 
   test("tags inside inline code spans and fences survive verbatim", () => {
-    assert.equal(escapeLooseHtml("formats the `<script>` block"), "formats the `<script>` block");
+    assert.equal(
+      escapeLooseHtml("formats the `<script>` block"),
+      "formats the `<script>` block",
+    );
     const fenced = "```vue\n<template><div/></template>\n```";
     assert.equal(escapeLooseHtml(fenced), fenced);
   });
 
   test("HTML comments and allowlisted tags survive", () => {
-    assert.equal(escapeLooseHtml("<!-- source: x.md -->"), "<!-- source: x.md -->");
-    const details = "<details><summary>Notes</summary>a <MyComp> here</details>";
+    assert.equal(
+      escapeLooseHtml("<!-- source: x.md -->"),
+      "<!-- source: x.md -->",
+    );
+    const details =
+      "<details><summary>Notes</summary>a <MyComp> here</details>";
     assert.equal(
       escapeLooseHtml(details, ["details", "summary"]),
       "<details><summary>Notes</summary>a &lt;MyComp> here</details>",
@@ -181,7 +236,10 @@ describe("extractToolLegends", () => {
 
   test("legend bullets move out, the table stays", () => {
     const { body: out, tools } = extractToolLegends(body);
-    assert.deepEqual(tools, ["- **vue-tsc (JS)** — the official CLI.", "- **Vize** — vize check."]);
+    assert.deepEqual(tools, [
+      "- **vue-tsc (JS)** — the official CLI.",
+      "- **Vize** — vize check.",
+    ]);
     assert.ok(!out.includes("Tools:"));
     assert.ok(out.includes("| Tool | Median |"));
     assert.ok(out.includes("### Typecheck"));
@@ -216,7 +274,10 @@ describe("collapseAllFailedTables", () => {
       "",
       "</details>",
     ].join("\n");
-    const { collapsed, removed } = collapseAllFailedTables(doc, "docs/results/r.md");
+    const { collapsed, removed } = collapseAllFailedTables(
+      doc,
+      "docs/results/r.md",
+    );
     assert.equal(removed, 1);
     assert.ok(!collapsed.includes(HEADER));
     assert.ok(collapsed.includes("All 2 cells in this group were skipped"));
@@ -242,7 +303,10 @@ describe("collapseAllFailedTables", () => {
   });
 
   test("one measured row — even ⚠ unranked — keeps the whole table", () => {
-    for (const live of ["| C | **9.1 ms** | 1.00x |", "| C ⚠ | (9.1 ms) | not ranked |"]) {
+    for (const live of [
+      "| C | **9.1 ms** | 1.00x |",
+      "| C ⚠ | (9.1 ms) | not ranked |",
+    ]) {
       const doc = table(["| A ❌ | error | – |", live]);
       const { collapsed, removed } = collapseAllFailedTables(doc, "r.md");
       assert.equal(removed, 0);
@@ -261,7 +325,10 @@ describe("collapseAllFailedTables", () => {
     const doc = [
       "## Project test suite — nuxt-ui:runtime",
       "",
-      table(["| @nuxt/ui — baseline ❌ | error | – |", "| @nuxt/ui — unplugin-vue ❌ | error | – |"]),
+      table([
+        "| @nuxt/ui — baseline ❌ | error | – |",
+        "| @nuxt/ui — unplugin-vue ❌ | error | – |",
+      ]),
     ].join("\n");
     const { collapsed, removed } = collapseAllFailedTables(doc, "r.md");
     assert.equal(removed, 0);
@@ -335,13 +402,19 @@ describe("mergeEngineTables", () => {
   });
 
   test("a column-count mismatch refuses to merge", () => {
-    const bad = doc.replace("| Tool | **Median (primary)** | vs fastest |\n| --- | ---: | ---: |\n| vue-tsc (N)", "| Tool | Median |\n| --- | ---: |\n| vue-tsc (N)");
+    const bad = doc.replace(
+      "| Tool | **Median (primary)** | vs fastest |\n| --- | ---: | ---: |\n| vue-tsc (N)",
+      "| Tool | Median |\n| --- | ---: |\n| vue-tsc (N)",
+    );
     const out = mergeEngineTables(bad);
     assert.ok(out.includes("JavaScript TypeScript engine — ranked alone"));
   });
 
   test("a document with no engine pair is unchanged", () => {
-    const plain = "#### VITE8 — ranked alone\n\n| Tool | **Median (primary)** | vs fastest |\n" + SEP + "\n| a | **1.0 ms** | 1.00x |";
+    const plain =
+      "#### VITE8 — ranked alone\n\n| Tool | **Median (primary)** | vs fastest |\n" +
+      SEP +
+      "\n| a | **1.0 ms** | 1.00x |";
     assert.equal(mergeEngineTables(plain), plain);
   });
 });
@@ -366,8 +439,13 @@ describe("condenseExclusionBlocks", () => {
 
   test("keeps header and crash line, drops boilerplate, links the rest", () => {
     const out = condenseExclusionBlocks(doc, "docs/results/r.md");
-    assert.ok(out.includes("> **Did not run — excluded from every table below.**"));
-    assert.ok(out.includes("SIGABRT while compiling fixtures/real/x/a.vue"), "runner prefix stripped");
+    assert.ok(
+      out.includes("> **Did not run — excluded from every table below.**"),
+    );
+    assert.ok(
+      out.includes("SIGABRT while compiling fixtures/real/x/a.vue"),
+      "runner prefix stripped",
+    );
     assert.ok(!out.includes("Rust compiler behind NAPI"));
     assert.ok(!out.includes("they have no row"));
     assert.ok(out.includes("[full report](docs/results/r.md)"));
@@ -384,9 +462,12 @@ describe("hoistRepeatedLines family guard", () => {
     // "Target: vdom · production" appears in both artifacts (meets the
     // threshold) but has a sibling variant — hoisting it would strip a group
     // label from above its table and present one variant as global truth.
-    const label = "Target: `vdom` · Environment: `production` · Source map: `off`";
-    const sibling = "Target: `vapor` · Environment: `production` · Source map: `off`";
-    const note = "Primary ranking metric is the median of measured runs, always warmed first.";
+    const label =
+      "Target: `vdom` · Environment: `production` · Source map: `off`";
+    const sibling =
+      "Target: `vapor` · Environment: `production` · Source map: `off`";
+    const note =
+      "Primary ranking metric is the median of measured runs, always warmed first.";
     const a = [note, label, sibling].join("\n");
     const b = [note, label].join("\n");
     const { contents, hoisted } = hoistRepeatedLines([a, b]);

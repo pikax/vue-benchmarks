@@ -1,9 +1,13 @@
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { readFileSync, writeFileSync } from "node:fs";
+import { writeFileSync } from "node:fs";
 import { collectVueFiles, prepareTypecheckDir, totalBytes } from "../fixtures.mjs";
 import { measureVariants, timedAsync, timedSync } from "../timing.mjs";
+import {
+  applyComponentMetaValidityGates,
+  runComponentMetaValidityChildren,
+} from "../component-meta-validity-gates.mjs";
 
 /**
  * Members actually materialised from one component's meta.
@@ -77,17 +81,17 @@ export async function runComponentMetaSurface(fixtureDir, options) {
 
   const variants = [];
   const absFiles = files.map((f) => join(metaDir, f));
-  const sources = absFiles.map((path, i) => ({
-    path: path.replace(/\\/g, "/"),
-    source: readFileSync(path, "utf8"),
-    filename: files[i],
-  }));
+  const normalizedAbsFiles = absFiles.map((path) => path.replace(/\\/g, "/"));
 
   if (!vueMeta.error) {
     variants.push({
       id: "vue-component-meta",
       label: "vue-component-meta",
       package: "vue-component-meta",
+      comparisonClass: "component-public-api",
+      comparisonClassLabel: "Component public-API metadata",
+      baseline: true,
+      baselineLabel: "Vue official",
       notes: "createChecker(tsconfig) + getComponentMeta for each .vue file",
       artifactLabel: "Meta members",
       artifactPolarity: "informational",
@@ -138,7 +142,10 @@ export async function runComponentMetaSurface(fixtureDir, options) {
       id: "verter-component-meta",
       label: "@verter/component-meta",
       package: "@verter/component-meta",
-      notes: "openComponentMetaSession(root, tsconfig) + getComponentMeta for each .vue file",
+      comparisonClass: "component-public-api",
+      comparisonClassLabel: "Component public-API metadata",
+      notes:
+        "openComponentMetaSession(root, tsconfig) + disk-backed getComponentMeta for each .vue file; no updateFile overlay",
       artifactLabel: "Meta members",
       artifactPolarity: "informational",
       measure: async () => {
@@ -150,8 +157,10 @@ export async function runComponentMetaSurface(fixtureDir, options) {
         const { ms } = await timedAsync(async () => {
           const session = await openComponentMetaSession(sessionConfig);
           try {
-            for (const f of sources) {
-              work += countMetaMembers(await session.getComponentMeta(f.path));
+            for (const path of normalizedAbsFiles) {
+              // Disk-backed lifecycle, exactly as the post-timing plants: no
+              // updateFile overlay and no source string preloaded for Verter.
+              work += countMetaMembers(await session.getComponentMeta(path));
             }
           } finally {
             try {
@@ -187,6 +196,8 @@ export async function runComponentMetaSurface(fixtureDir, options) {
       id: "vize-component-meta",
       label: "Vize component-meta",
       package: "@vizejs/native",
+      comparisonClass: "component-public-api",
+      comparisonClassLabel: "Component public-API metadata",
       notes: "vize extractComponentMeta",
       measure: () =>
         timedSync(() => {
@@ -229,16 +240,24 @@ export async function runComponentMetaSurface(fixtureDir, options) {
     fileCount: files.length,
   });
 
+  // Run after timing and in separate children. The validators reproduce each
+  // row's disk-backed lifecycle, so neither TypeScript program construction nor
+  // Verter's pooled native session can warm a measured pass.
+  const componentMetaSemantics = runComponentMetaValidityChildren();
+  applyComponentMetaValidityGates(results, componentMetaSemantics);
+
   return {
     id: "component-meta",
     label: "Component-meta",
     files: files.length,
     bytes,
+    validation: { componentMetaSemantics },
     methodology: [
       "Extract component public API metadata (props/events/slots where supported).",
       "Same subset of .vue files for every available tool.",
       "Schema depth and TypeScript program options may differ by tool — timings are throughput, not equivalence.",
       "Every tool is driven through its own published entry point. No payload is hand-decoded, and no row is measured through an API it does not ship.",
+      `POST-TIMING SEMANTIC GATE: suite ${componentMetaSemantics.suiteVersion} runs ${componentMetaSemantics.plantCount} existing component-meta cases in one isolated child per exact row. Vue creates one checker over a disk-backed tsconfig and calls getComponentMeta for every planted disk file. Verter opens one published session over the same disk-backed project and calls getComponentMeta for every file without updateFile overlays. Named props/events/slots/exposed members, coarse type facts, requiredness, defaults and deliberate absence are scored by one tool-neutral oracle; output objects and type strings are never byte-compared. FAIL, crash, missing verdict and UNKNOWN remain measured but UNRANKED, and a failed official Vue baseline invalidates the class.`,
       "Each row reports the meta members it materialised. The counts are NOT equivalent between tools and no threshold is applied to them: on this corpus most generated SFCs declare no macros, and the tools differ on whether a component with no declared API still has implicit members. Read the member counts alongside the times rather than treating the ratio as like-for-like.",
       "Tool order is ROTATED on every warmup and measured run (not merely alternated), so no tool keeps a fixed position in the sequence.",
       "Tools without a real component-meta API are reported as skipped (no substitute workload).",

@@ -2,12 +2,12 @@
 /**
  * Generate Vue SFC fixtures.
  *
- * Default: UNIQUE content per file (uniquify) — required for compile ranking
- * benches against content-hash caches (e.g. Vize).
+ * Default: UNIQUE content per file (uniquify) — representative of a real
+ * project and safe for tools that happen to special-case duplicate bodies.
  *
  * Also emits:
  *   fixtures/{N}-vapor     — unique + <script setup vapor>
- *   fixtures/{N}-repeated  — IDENTICAL body every file (cache-behavior demo only)
+ *   fixtures/{N}-repeated  — IDENTICAL body every file (repeated-input study only)
  *   fixtures/jsx-{N}       — unique .jsx files for vue-jsx-vapor / babel JSX compile
  */
 
@@ -97,8 +97,8 @@ export default [
         generatedAt: new Date().toISOString(),
         note:
           mode === "repeated"
-            ? "INTENTIONAL identical file bodies (different names) for content-hash cache demos. Do NOT use as primary compile ranking."
-            : "Every .vue body is content-unique (uniquify). Safe against Vize-style content-hash caches.",
+            ? "INTENTIONAL identical file bodies with different names. Repeated-input study only; do not use as the primary compile ranking."
+            : "Every .vue body is content-unique (uniquify), matching distinct project files and preventing duplicate-body shortcuts in any tool.",
       },
       null,
       2,
@@ -139,7 +139,7 @@ function writeRepeatedCorpus(dir, count) {
   mkdirSync(dir, { recursive: true });
   const body = repeatedBodyTemplate();
   for (let i = 0; i < count; i++) {
-    // Same content, different filenames — content-hash caches treat these as one unit
+    // Same content, different filenames: an explicit repeated-input workload.
     writeFileSync(join(dir, `Comp${String(i).padStart(5, "0")}.vue`), body);
   }
   writeSupportFiles(dir, {
@@ -218,7 +218,7 @@ Options:
 Outputs per count N:
   fixtures/N              UNIQUE SFC content (primary ranking corpus)
   fixtures/N-vapor        UNIQUE + <script setup vapor>
-  fixtures/N-repeated     IDENTICAL bodies (cache demo only)
+  fixtures/N-repeated     IDENTICAL bodies (repeated-input study only)
   fixtures/jsx-N          UNIQUE .jsx files (jsx-compile surface)
 `);
     process.exit(0);
@@ -252,7 +252,7 @@ Outputs per count N:
       const repDir = join(outRoot, `${count}-repeated`);
       writeRepeatedCorpus(repDir, count);
       console.log(
-        `Generated ${count} REPEATED-body SFCs (1 distinct SHA) → ${repDir} [cache demo only]`,
+        `Generated ${count} REPEATED-body SFCs (1 distinct SHA) → ${repDir} [repeated-input study only]`,
       );
     }
 

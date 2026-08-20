@@ -6,10 +6,12 @@
  *   - A few fixtures spanning tiny → xlarge
  *   - Same tools, same machine, one file at a time
  *
- * Critical fairness rule:
- *   Every timed iteration compiles a **unique content body** (nonce inject).
- *   Vize content-hash caching otherwise makes repeated identical sources nearly free
- *   while Verter / Vue still pay real compile cost.
+ * Critical fairness rules:
+ *   - every tool receives the same style-free render corpus (Verter's
+ *     runtime-render lane does not compile CSS);
+ *   - every cell/iteration changes fixed-width comments in both script and
+ *     template, preventing cross-cell whole-source reuse;
+ *   - Verter uses a fresh workspace-backed host/project per timed iteration.
  *
  * Usage:
  *   pnpm bench:compile:single
@@ -18,17 +20,17 @@
  */
 
 import { createRequire } from "node:module";
-import {
-  existsSync,
-  mkdirSync,
-  readdirSync,
-  readFileSync,
-  writeFileSync,
-} from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, basename } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
+import { createHash } from "node:crypto";
 import os from "node:os";
 import { Bench } from "tinybench";
+import {
+  compileValidityConfigKey,
+  runCompileValidityMatrix,
+} from "./lib/compile-validity-gates.mjs";
+import { prepareRawRenderCorpus } from "./lib/surfaces/compile.mjs";
 
 const require = createRequire(import.meta.url);
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -47,8 +49,6 @@ function parseArgs(argv) {
     targets: "vdom,vapor",
     env: "production",
     files: "",
-    verterMode: "stateless", // stateless | session | fresh-host
-    mutate: true, // uniquify each iteration (disable with --no-mutate for cache demos)
     json: "",
     out: "",
   };
@@ -62,9 +62,6 @@ function parseArgs(argv) {
     else if (a === "--targets") args.targets = next();
     else if (a === "--env") args.env = next();
     else if (a === "--files") args.files = next();
-    else if (a === "--verter-session") args.verterMode = "session";
-    else if (a === "--verter-fresh-host") args.verterMode = "fresh-host";
-    else if (a === "--no-mutate") args.mutate = false;
     else if (a === "--json") args.json = next();
     else if (a === "--out") args.out = next();
     else if (a === "--help" || a === "-h") args.help = true;
@@ -73,30 +70,26 @@ function parseArgs(argv) {
 }
 
 /**
- * Make source unique per iteration so content-hash / body caches cannot skip work.
- * Touches template (HTML comment) and script (const) when present.
+ * Change script/template source on every iteration with fixed-width comments.
+ * The comments are semantically neutral, but force source/slice invalidation.
  */
-export function uniquifySfc(source, nonce) {
+export function uniquifySfc(source, nonce, cellSalt = "00000000") {
   let out = source;
   const n = Number(nonce) >>> 0;
+  const token = `${cellSalt}-${String(n).padStart(10, "0")}`;
 
-  if (out.includes("</template>")) {
-    out = out.replace("</template>", `<!--bench-n:${n}-->\n</template>`);
-  } else {
-    out = `${out}\n<!--bench-n:${n}-->\n`;
+  const templateClose = out.lastIndexOf("</template>");
+  if (templateClose !== -1) {
+    out = out.slice(0, templateClose) + `<!--bench-n:${token}-->\n` + out.slice(templateClose);
   }
 
-  const scriptClose = out.indexOf("</script>");
-  if (scriptClose !== -1) {
-    // Detect lang=ts on the opening script tag that owns this close
-    const open = out.lastIndexOf("<script", scriptClose);
-    const openTagEnd = out.indexOf(">", open);
-    const openTag = open >= 0 && openTagEnd > open ? out.slice(open, openTagEnd) : "";
-    const isTs = /\blang\s*=\s*["']ts["']/i.test(openTag);
-    const line = isTs
-      ? `\nconst __benchNonce = ${n} as const\n`
-      : `\nconst __benchNonce = ${n}\n`;
-    out = out.slice(0, scriptClose) + line + out.slice(scriptClose);
+  const hadScript = out.includes("</script>");
+  if (hadScript) {
+    out = out.replaceAll("</script>", `\n/*bench-n:${token}*/\n</script>`);
+  }
+
+  if (templateClose === -1 && !hadScript) {
+    out = `${out}\n<!--bench-n:${token}-->\n`;
   }
 
   return out;
@@ -165,9 +158,7 @@ function loadSamples(filter) {
       return ia - ib;
     });
   if (filter) {
-    const want = new Set(
-      filter.split(",").map((s) => s.trim().replace(/\.vue$/i, "")),
-    );
+    const want = new Set(filter.split(",").map((s) => s.trim().replace(/\.vue$/i, "")));
     names = names.filter((f) => want.has(basename(f, ".vue")));
   }
   return names.map((filename) => {
@@ -186,25 +177,28 @@ function loadSamples(filter) {
  * Shared mutable counter so each tool's iterations get distinct nonces
  * (and tools don't share the same sequence mid-run in a way that collides).
  */
-function makeSourceFactory(baseSource, { mutate }) {
+function makeSourceFactory(baseSource, cellSalt) {
   let seq = 0;
   return () => {
     seq += 1;
-    if (!mutate) return { source: baseSource, nonce: 0 };
-    return { source: uniquifySfc(baseSource, seq), nonce: seq };
+    return { source: uniquifySfc(baseSource, seq, cellSalt), nonce: seq };
   };
 }
 
-function buildTools({ isProd, vapor, verterMode }) {
+function buildTools({ isProd, vapor }) {
   const tools = [];
-  const compiler35 = require(require.resolve("@vue/compiler-sfc", {
-    paths: [rootDir],
-  }));
+  const compiler35 = require(
+    require.resolve("@vue/compiler-sfc", {
+      paths: [rootDir],
+    }),
+  );
   let compiler36 = null;
   try {
-    compiler36 = require(require.resolve("@vue/compiler-sfc-36", {
-      paths: [rootDir],
-    }));
+    compiler36 = require(
+      require.resolve("@vue/compiler-sfc-36", {
+        paths: [rootDir],
+      }),
+    );
   } catch {
     compiler36 = null;
   }
@@ -234,14 +228,16 @@ function buildTools({ isProd, vapor, verterMode }) {
   if (!vize.error && typeof vize.mod.compileSfc === "function") {
     tools.push({
       id: "vize",
-      label: "Vize compileSfc",
-      notes: "Per-iter unique source (content-hash cannot skip)",
+      label: "Vize compileSfc (style-free render)",
+      notes: "Changing script/template source every iteration; full parse/compile/codegen",
       compile: (source, filename) => {
         const result = vize.mod.compileSfc(source, {
           filename,
           vapor,
-          sourceMap: !isProd,
+          sourceMap: false,
           isTs: true,
+          templateHoistStatic: isProd,
+          templateCacheHandlers: isProd,
         });
         if (result?.errors?.length) {
           throw new Error(result.errors.join("; "));
@@ -261,62 +257,65 @@ function buildTools({ isProd, vapor, verterMode }) {
       ssr: false,
       forceJs: false, // one TS-passthrough standard for every compiler — see compile.mjs renderProfile
       forceVapor: vapor,
-      sourceMap: !isProd,
+      sourceMap: false,
       hmrStrategy: isProd ? "none" : "vite",
       runtimeModuleName: "vue",
     };
 
-    const runCompile = (host, source, filename, mode) => {
-      // Unique canonical id per body avoids identity-based reuse of prior source
-      const id = `${filename.replace(/\\/g, "/")}#${Buffer.byteLength(source)}:${source.length}`;
-      const results = host.compileMany(
-        [{ canonicalId: id, source, requestedMode: mode }],
-        {
-          target: "runtime-render",
-          defaultMode: mode,
-          priority: "interactive",
-          compileProfile: renderProfile,
-        },
-      );
+    const runCompile = (host, source, filename) => {
+      // Stable identity is retained, but the host/project is fresh for every
+      // call. The timed work is first source admission, not an incremental edit.
+      const id = filename.replace(/\\/g, "/");
+      const results = host.compileMany([{ canonicalId: id, source, requestedMode: "stateless" }], {
+        target: "runtime-render",
+        defaultMode: "stateless",
+        priority: "interactive",
+        compileProfile: renderProfile,
+      });
       if (results[0]?.errors?.length) {
         throw new Error(String(results[0].errors[0]));
       }
       if (!(results[0]?.code?.length > 0)) {
         throw new Error("verter empty code");
       }
+      if (results[0].cacheHit) {
+        throw new Error("runtime-render unexpectedly returned cached generated output");
+      }
+      if (results[0].actualMode !== "stateless") {
+        throw new Error(`verter requested stateless but ran ${results[0].actualMode}`);
+      }
     };
 
-    if (verterMode === "fresh-host") {
-      tools.push({
-        id: "verter-fresh-host",
-        label: "Verter (fresh host)",
-        notes: "New VerterHost every call",
-        compile: (source, filename) => {
-          const host = new VerterHost({ devMode: !isProd });
-          runCompile(host, source, filename, "stateless");
-        },
-      });
-    } else if (verterMode === "session") {
-      const host = new VerterHost({ devMode: !isProd });
-      tools.push({
-        id: "verter-session",
-        label: "Verter (session)",
-        notes: "One host; session mode; unique body/id per iter",
-        compile: (source, filename) => {
-          runCompile(host, source, filename, "session");
-        },
-      });
-    } else {
-      const host = new VerterHost({ devMode: !isProd });
-      tools.push({
-        id: "verter-stateless",
-        label: "Verter (stateless)",
-        notes: "One host; stateless; unique body/id per iter",
-        compile: (source, filename) => {
-          runCompile(host, source, filename, "stateless");
-        },
-      });
-    }
+    let host = null;
+    const prepareFreshHost = () => {
+      const config = { devMode: !isProd, analysisLevel: "full" };
+      if (
+        typeof verter.mod.Workspace === "function" &&
+        typeof VerterHost.withWorkspace === "function"
+      ) {
+        const workspaceRoot = samplesDir.replace(/\\/g, "/");
+        const workspace = new verter.mod.Workspace([workspaceRoot]);
+        workspace.configureProjects([{ root: workspaceRoot, workspaceRoot }]);
+        host = VerterHost.withWorkspace(config, workspace);
+      } else {
+        host = new VerterHost(config);
+      }
+    };
+    tools.push({
+      id: "verter-stateless",
+      label: "Verter runtime-render (first-admission stateless raw render)",
+      notes:
+        "requestedMode=stateless, analysisLevel=full; a fresh workspace-backed host/project is prepared before every timed iteration, so compileMany measures first source admission. Host construction is excluded by tinybench beforeEach",
+      beforeEach: prepareFreshHost,
+      afterEach: () => {
+        host?.close?.();
+        host = null;
+      },
+      compile: (source, filename) => {
+        if (!host) prepareFreshHost();
+        runCompile(host, source, filename);
+      },
+    });
   }
 
   return tools;
@@ -358,45 +357,79 @@ function fmtBytes(n) {
   return `${(n / (1024 * 1024)).toFixed(2)} MB`;
 }
 
-async function runSuite({
-  sample,
-  target,
-  isProd,
-  tools,
-  benchOpts,
-  mutate,
-}) {
+const SINGLE_VALIDITY_ENTRYPOINT = Object.freeze({
+  "vue-3.5": "vue-3.5",
+  "vue-3.6": "vue-3.6",
+  vize: "vize-single",
+  "verter-stateless": "verter-compile-many",
+});
+
+export function applySingleCompileValidity(suites, validity) {
+  for (const suite of suites) {
+    const key = compileValidityConfigKey({
+      target: suite.target,
+      env: suite.env,
+      sourceMap: false,
+    });
+    const entrypoints = validity?.matrix?.[key]?.entrypoints ?? {};
+    const referenceId = suite.target === "vdom" ? "vue-3.5" : "vue-3.6";
+    const referencePass = entrypoints[referenceId]?.status === "PASS";
+    for (const row of suite.rows) {
+      const first = suite.firstCalls.find((call) => call.tool === row.tool);
+      const entrypoint = SINGLE_VALIDITY_ENTRYPOINT[first?.id];
+      const gate = entrypoint ? entrypoints[entrypoint] : null;
+      if (gate?.status !== "PASS" || !referencePass) {
+        row.unranked = true;
+        const why = !referencePass
+          ? `official ${referenceId} reference validity is ${entrypoints[referenceId]?.status ?? "UNKNOWN"}`
+          : `${entrypoint ?? first?.id ?? row.tool} validity is ${gate?.status ?? "UNKNOWN"}`;
+        row.notes = `${row.notes || ""}${row.notes ? " | " : ""}⚠ UNRANKED: ${why}; time remains visible.`;
+      } else {
+        row.validationStatus = "PASS";
+        row.notes = `${row.notes || ""}${row.notes ? " | " : ""}✓ ${gate.passed}/${gate.plantCount} exact-entrypoint runtime plants passed.`;
+      }
+    }
+  }
+  return suites;
+}
+
+async function runSuite({ sample, target, isProd, tools, benchOpts }) {
   const vapor = target === "vapor";
   const filename = sample.filename;
+  const cellSalt = createHash("sha256")
+    .update(`${sample.id}:${target}:${isProd ? "production" : "development"}`)
+    .digest("hex")
+    .slice(0, 8);
 
   // Per-tool source factories so each tool has its own nonce stream
-  const factories = new Map(
-    tools.map((t) => [t.id, makeSourceFactory(sample.source, { mutate })]),
-  );
+  const factories = new Map(tools.map((t) => [t.id, makeSourceFactory(sample.source, cellSalt)]));
 
-  const cold = [];
+  const firstCalls = [];
   for (const tool of tools) {
     if (vapor && tool.id === "vue-3.5") continue;
     const { source } = factories.get(tool.id)();
+    tool.beforeEach?.();
     const t0 = performance.now();
     try {
       tool.compile(source, filename);
-      cold.push({
+      firstCalls.push({
         tool: tool.label,
         id: tool.id,
-        coldMs: performance.now() - t0,
+        firstCallMs: performance.now() - t0,
         ok: true,
         notes: tool.notes || "",
       });
     } catch (e) {
-      cold.push({
+      firstCalls.push({
         tool: tool.label,
         id: tool.id,
-        coldMs: null,
+        firstCallMs: null,
         ok: false,
         error: e instanceof Error ? e.message : String(e),
         notes: tool.notes || "",
       });
+    } finally {
+      tool.afterEach?.();
     }
   }
 
@@ -415,51 +448,55 @@ async function runSuite({
 
   for (const tool of tools) {
     if (vapor && tool.id === "vue-3.5") continue;
-    if (cold.find((c) => c.id === tool.id && !c.ok)) continue;
+    if (firstCalls.find((c) => c.id === tool.id && !c.ok)) continue;
     const next = factories.get(tool.id);
-    bench.add(tool.label, () => {
-      const { source } = next();
-      tool.compile(source, filename);
-    });
+    bench.add(
+      tool.label,
+      () => {
+        const { source } = next();
+        tool.compile(source, filename);
+      },
+      { beforeEach: tool.beforeEach, afterEach: tool.afterEach },
+    );
   }
 
   await bench.run();
 
   const rows = bench.tasks.map((task) => {
     const stats = taskStats(task);
-    const coldRow = cold.find((c) => c.tool === task.name);
+    const firstCallRow = firstCalls.find((c) => c.tool === task.name);
     if (!stats.ok) {
       return {
         tool: task.name,
         status: "error",
-        coldMs: coldRow?.coldMs ?? null,
+        firstCallMs: firstCallRow?.firstCallMs ?? null,
         meanMs: null,
         hz: null,
         samples: null,
         rme: null,
         error: stats.error,
-        notes: coldRow?.notes || "",
+        notes: firstCallRow?.notes || "",
       };
     }
     return {
       tool: task.name,
       status: "ok",
-      coldMs: coldRow?.coldMs ?? null,
+      firstCallMs: firstCallRow?.firstCallMs ?? null,
       meanMs: stats.meanMs,
       hz: stats.hz,
       samples: stats.samples,
       rme: stats.rme,
       error: null,
-      notes: coldRow?.notes || "",
+      notes: firstCallRow?.notes || "",
     };
   });
 
-  for (const c of cold) {
+  for (const c of firstCalls) {
     if (!c.ok && !rows.some((r) => r.tool === c.tool)) {
       rows.push({
         tool: c.tool,
         status: "error",
-        coldMs: null,
+        firstCallMs: null,
         meanMs: null,
         hz: null,
         samples: null,
@@ -476,15 +513,14 @@ async function runSuite({
     bytes: sample.bytes,
     target,
     env: isProd ? "production" : "development",
-    mutate,
-    cold,
+    firstCalls,
     rows,
   };
 }
 
 function renderMarkdown(data) {
   const lines = [];
-  lines.push("## Single-file compile (size ladder · unique bodies)");
+  lines.push("## Single-file raw render compile (size ladder · changed source)");
   lines.push("");
   lines.push(`- **Generated:** ${data.generatedAt}`);
   lines.push(
@@ -501,9 +537,7 @@ function renderMarkdown(data) {
     );
   }
   lines.push(`- **Env:** ${data.settings.env}`);
-  lines.push(
-    `- **Body mutation:** ${data.settings.mutate ? "ON (unique source every iteration)" : "OFF (identical source — cache-demo only)"}`,
-  );
+  lines.push("- **Body mutation:** ON (changed source every iteration)");
   lines.push("");
   lines.push("### Notes");
   lines.push("");
@@ -516,22 +550,26 @@ function renderMarkdown(data) {
     if (!suites.length) continue;
     lines.push(`### Summary · ${target} · ${data.settings.env}`);
     lines.push("");
-    lines.push(
-      "| Fixture | Size | Tool | Cold | Mean | ops/s | ±% |",
-    );
+    lines.push("| Fixture | Size | Tool | First call* | Mean | ops/s | ±% |");
     lines.push("| --- | ---: | --- | ---: | ---: | ---: | ---: |");
     for (const suite of suites) {
       const sorted = [...suite.rows]
         .filter((r) => r.status === "ok")
-        .sort((a, b) => (a.meanMs ?? 1e99) - (b.meanMs ?? 1e99));
+        .sort(
+          (a, b) =>
+            Number(a.unranked) - Number(b.unranked) || (a.meanMs ?? 1e99) - (b.meanMs ?? 1e99),
+        );
       for (const r of sorted) {
-        const rme =
-          r.rme != null && Number.isFinite(r.rme) ? r.rme.toFixed(1) : "n/a";
+        const rme = r.rme != null && Number.isFinite(r.rme) ? r.rme.toFixed(1) : "n/a";
         lines.push(
-          `| \`${suite.file}\` | ${fmtBytes(suite.bytes)} | ${r.tool} | ${fmtMs(r.coldMs)} | ${fmtMs(r.meanMs)} | ${fmtHz(r.hz)} | ${rme} |`,
+          `| \`${suite.file}\` | ${fmtBytes(suite.bytes)} | ${r.unranked ? `[${r.tool}]` : r.tool} | ${fmtMs(r.firstCallMs)} | ${fmtMs(r.meanMs)} | ${fmtHz(r.hz)} | ${rme} |`,
         );
       }
     }
+    lines.push("");
+    lines.push(
+      "\\* First compiler invocation after modules were loaded; Verter's fresh host/project setup is excluded from the timed call. Not a fresh-process cold start.",
+    );
     lines.push("");
   }
 
@@ -540,9 +578,7 @@ function renderMarkdown(data) {
       `### \`${suite.file}.vue\` · ${fmtBytes(suite.bytes)} · ${suite.target} · ${suite.env}`,
     );
     lines.push("");
-    lines.push(
-      "| Tool | Status | Cold (1st unique) | Mean | ops/s | ±% | Notes |",
-    );
+    lines.push("| Tool | Status | First call* | Mean | ops/s | ±% | Notes |");
     lines.push("| --- | --- | ---: | ---: | ---: | ---: | --- |");
 
     const sorted = [...suite.rows].sort((a, b) => {
@@ -553,17 +589,18 @@ function renderMarkdown(data) {
 
     for (const r of sorted) {
       if (r.status === "ok") {
-        const rme =
-          r.rme != null && Number.isFinite(r.rme) ? r.rme.toFixed(1) : "n/a";
+        const rme = r.rme != null && Number.isFinite(r.rme) ? r.rme.toFixed(1) : "n/a";
         lines.push(
-          `| ${r.tool} | ok | ${fmtMs(r.coldMs)} | ${fmtMs(r.meanMs)} | ${fmtHz(r.hz)} | ${rme} | ${r.notes || ""} |`,
+          `| ${r.tool} | ${r.unranked ? "unranked" : "ok"} | ${fmtMs(r.firstCallMs)} | ${fmtMs(r.meanMs)} | ${fmtHz(r.hz)} | ${rme} | ${r.notes || ""} |`,
         );
       } else {
-        lines.push(
-          `| ${r.tool} | error | n/a | n/a | n/a | n/a | ${r.error || r.notes || ""} |`,
-        );
+        lines.push(`| ${r.tool} | error | n/a | n/a | n/a | n/a | ${r.error || r.notes || ""} |`);
       }
     }
+    lines.push("");
+    lines.push(
+      "\\* First compiler invocation after modules were loaded; Verter's fresh host/project setup is excluded from the timed call. Not a fresh-process cold start.",
+    );
     lines.push("");
   }
 
@@ -609,15 +646,20 @@ async function main() {
   --targets vdom,vapor      (default both)
   --env production|development
   --files tiny,small,...    size-tier basenames (default: all)
-  --verter-session          Verter session mode
-  --verter-fresh-host       new VerterHost every call
-  --no-mutate               identical source each iter (cache-demo only; unfair vs Vize)
   --json / --out            output paths
 `);
     process.exit(0);
   }
 
-  const samples = loadSamples(args.files);
+  const loadedSamples = loadSamples(args.files);
+  const normalizationCompiler = require(require.resolve("@vue/compiler-sfc", { paths: [rootDir] }));
+  const samples = prepareRawRenderCorpus(loadedSamples, normalizationCompiler).map(
+    ({ revisionSites: _revisionSites, ...sample }, index) => ({
+      ...sample,
+      originalBytes: loadedSamples[index].bytes,
+      bytes: Buffer.byteLength(sample.source),
+    }),
+  );
   if (samples.length === 0) {
     console.error("No sample .vue files found");
     process.exit(1);
@@ -635,15 +677,11 @@ async function main() {
     warmupIterations: args.warmupIterations,
   };
 
-  console.log("Single-file compile · size ladder · unique bodies each iter");
-  console.log(
-    `  fixtures: ${samples.map((s) => `${s.id}(${fmtBytes(s.bytes)})`).join(" · ")}`,
-  );
-  console.log(`  targets=${targets.join(",")} env=${args.env} mutate=${args.mutate}`);
+  console.log("Single-file raw render compile · style-free · changing source each iter");
+  console.log(`  fixtures: ${samples.map((s) => `${s.id}(${fmtBytes(s.bytes)})`).join(" · ")}`);
+  console.log(`  targets=${targets.join(",")} env=${args.env}`);
   if (benchOpts.time > 0) {
-    console.log(
-      `  tinybench time=${benchOpts.time}ms warmupTime=${benchOpts.warmupTime || 50}ms`,
-    );
+    console.log(`  tinybench time=${benchOpts.time}ms warmupTime=${benchOpts.warmupTime || 50}ms`);
   } else {
     console.log(
       `  tinybench iterations=${benchOpts.iterations} warmupIterations=${benchOpts.warmupIterations}`,
@@ -652,12 +690,10 @@ async function main() {
   console.log("");
 
   // Sanity: uniquify must change bytes
-  if (args.mutate) {
-    const a = uniquifySfc(samples[0].source, 1);
-    const b = uniquifySfc(samples[0].source, 2);
-    if (a === b || a === samples[0].source) {
-      throw new Error("uniquifySfc failed to produce distinct sources");
-    }
+  const a = uniquifySfc(samples[0].source, 1);
+  const b = uniquifySfc(samples[0].source, 2);
+  if (a === b || a === samples[0].source) {
+    throw new Error("uniquifySfc failed to produce distinct sources");
   }
 
   const suites = [];
@@ -666,7 +702,6 @@ async function main() {
       const tools = buildTools({
         isProd,
         vapor: target === "vapor",
-        verterMode: args.verterMode,
       });
       console.log(`→ ${sample.id}.vue (${fmtBytes(sample.bytes)}) · ${target}`);
       const suite = await runSuite({
@@ -675,7 +710,6 @@ async function main() {
         isProd,
         tools,
         benchOpts,
-        mutate: args.mutate,
       });
       suites.push(suite);
       const ranked = [...suite.rows]
@@ -683,7 +717,7 @@ async function main() {
         .sort((a, b) => (a.meanMs ?? 1e99) - (b.meanMs ?? 1e99));
       for (const r of ranked) {
         console.log(
-          `  ${r.tool.padEnd(32)} cold=${fmtMs(r.coldMs).padStart(10)}  mean=${fmtMs(r.meanMs).padStart(10)}  ${fmtHz(r.hz)} ops/s`,
+          `  ${r.tool.padEnd(32)} first=${fmtMs(r.firstCallMs).padStart(10)}  mean=${fmtMs(r.meanMs).padStart(10)}  ${fmtHz(r.hz)} ops/s`,
         );
       }
       for (const r of suite.rows.filter((x) => x.status !== "ok")) {
@@ -692,6 +726,16 @@ async function main() {
       console.log("");
     }
   }
+
+  // Certification is deliberately last and process-isolated. It cannot warm
+  // any tinybench iteration, and VDOM evidence is never borrowed for Vapor.
+  const compileValidity = runCompileValidityMatrix(
+    targets.map((target) => ({ target, env: args.env, sourceMap: false })),
+    {
+      entrypoints: ["vue-3.5", "vue-3.6", "vize-single", "verter-compile-many"],
+    },
+  );
+  applySingleCompileValidity(suites, compileValidity);
 
   const data = {
     generatedAt: new Date().toISOString(),
@@ -706,6 +750,7 @@ async function main() {
       node: process.version,
       "@vue/compiler-sfc": readPkgVersion("@vue/compiler-sfc"),
       "@vue/compiler-sfc-36": readPkgVersion("@vue/compiler-sfc-36"),
+      "vue-36": readPkgVersion("vue-36"),
       "@vizejs/native": readPkgVersion("@vizejs/native"),
       "@verter/native": readPkgVersion("@verter/native"),
       tinybench: readPkgVersion("tinybench"),
@@ -717,19 +762,22 @@ async function main() {
       warmupIterations: benchOpts.warmupIterations,
       env: args.env,
       targets,
-      verterMode: args.verterMode,
-      mutate: args.mutate,
     },
     notes: [
       "Size ladder fixtures: tiny → small → medium → large → xlarge (see fixtures/compile-single/).",
-      "Each timed iteration compiles a **unique** SFC body (nonce in template + script) so Vize content-hash cannot free-ride.",
-      "Verter also gets a unique canonicalId suffix derived from body length/identity.",
-      "Cold = first unique compile before the measured loop.",
-      "Mean ranked ascending (lower latency better) within each fixture × target.",
+      "Every compiler receives the same STYLE-FREE render corpus by definition of this raw-render microbenchmark; style removal happens before timing.",
+      "Each cell and iteration uses fixed-width, semantically neutral comments in every present template and script block, preventing cross-cell whole-source reuse while preserving identical candidate inputs.",
+      "Verter gets a fresh workspace-backed host/project in tinybench beforeEach; the timed compileMany call measures first source admission. requestedMode=stateless, analysisLevel=full and cacheHit=false are asserted.",
+      "Vize receives the same per-iteration revised source as Vue and Verter, so a prior generated artifact cannot satisfy a measured call even if a future release adds caching.",
+      "Source maps are disabled for every tool in this microbenchmark; map generation is a separate bulk-matrix dimension.",
+      "First call is not a fresh-process cold metric: modules are loaded and Verter host/project construction is excluded; use diagnose:compile-warmth for fresh-child comparisons.",
+      "Mean sorted ascending within each fixture × target; bracketed/unranked rows retain measurements but do not support a comparison claim.",
       "Default: 20 warmup + 100 measured iterations (Verter apple-to-apple style).",
-      "Use --no-mutate only to demo cache effects — not for ranking.",
+      "Host/session/identical-source experiments are intentionally excluded; use diagnose:compile-warmth for those diagnostics.",
+      `Post-timing exact-entrypoint runtime validity: suite ${compileValidity.suiteVersion}, ${compileValidity.plantCount} plants. FAIL/UNKNOWN stays visible but unranked. Supported Vapor output executes against the pinned, version-matched Vue 3.6 runtime; unavailable backends remain individually UNKNOWN.`,
       "Vue 3.5 omitted from vapor suites. Not comparable to bulk fixtures/N throughput.",
     ],
+    validation: { compileSemantics: compileValidity },
     suites,
   };
 
@@ -739,10 +787,7 @@ async function main() {
 
   const resultsDir = join(rootDir, "results");
   mkdirSync(resultsDir, { recursive: true });
-  const defaultJson = join(
-    resultsDir,
-    `compile-single-${process.platform}.json`,
-  );
+  const defaultJson = join(resultsDir, `compile-single-${process.platform}.json`);
   const defaultMd = join(resultsDir, `compile-single-${process.platform}.md`);
   const jsonPath = args.json ? join(rootDir, args.json) : defaultJson;
   const mdPath = args.out ? join(rootDir, args.out) : defaultMd;
@@ -752,7 +797,9 @@ async function main() {
   console.log(`Wrote ${mdPath}`);
 }
 
-main().catch((err) => {
-  console.error(err instanceof Error ? err.stack || err.message : String(err));
-  process.exit(1);
-});
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main().catch((err) => {
+    console.error(err instanceof Error ? err.stack || err.message : String(err));
+    process.exit(1);
+  });
+}

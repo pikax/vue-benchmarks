@@ -4,21 +4,11 @@ function okVariants(variants) {
   return variants.filter((v) => v.status === "ok");
 }
 
-/**
- * Primary ranking metric: median of the measured runs (all warmed).
- * There is deliberately no cold column — an unwarmed first run measures JIT
- * warmup for JS tools and nothing for native tools, which is not comparable.
- */
+/** Primary steady-state metric: median of the measured warm runs. */
 function primaryMs(v) {
   if (v.status !== "ok") return Number.POSITIVE_INFINITY;
   if (Number.isFinite(v.medianMs)) return v.medianMs;
   return Number.POSITIVE_INFINITY;
-}
-
-function rankingMs(v) {
-  if (v.status !== "ok") return Number.POSITIVE_INFINITY;
-  if (Number.isFinite(v.coldMedianMs)) return v.coldMedianMs;
-  return primaryMs(v);
 }
 
 function fastestPrimary(variants) {
@@ -27,8 +17,33 @@ function fastestPrimary(variants) {
   return Math.min(...ok.map((v) => primaryMs(v)));
 }
 
+function freshChildIsNoisy(v) {
+  return (
+    Number.isFinite(v.freshChildCvPct) &&
+    v.freshChildCvPct > NOISE_CV_LIMIT_PCT &&
+    Array.isArray(v.freshChildRuns) &&
+    v.freshChildRuns.length >= NOISE_CV_MIN_SAMPLES
+  );
+}
+
+function freshChildIsRanked(v) {
+  return (
+    v.status === "ok" &&
+    Number.isFinite(v.freshChildMedianMs) &&
+    !freshChildIsNoisy(v)
+  );
+}
+
+function fastestFreshChild(variants) {
+  const ok = variants.filter(freshChildIsRanked);
+  if (ok.length === 0) return Number.NaN;
+  return Math.min(...ok.map((v) => v.freshChildMedianMs));
+}
+
 function fastestCold(variants) {
-  const ok = okVariants(variants).filter((v) => Number.isFinite(v.coldMedianMs));
+  const ok = okVariants(variants).filter((v) =>
+    Number.isFinite(v.coldMedianMs),
+  );
   if (ok.length === 0) return Number.NaN;
   return Math.min(...ok.map((v) => v.coldMedianMs));
 }
@@ -44,6 +59,30 @@ function timesSlower(fastest, current) {
   return `${(current / fastest).toFixed(2)}x`;
 }
 
+function referenceRow(variants) {
+  return variants.find((v) => v.baseline) ?? null;
+}
+
+function referenceHeading(reference, cold = false) {
+  if (!reference) return cold ? "vs fastest cold" : "vs fastest";
+  const label = reference.baselineLabel || "baseline";
+  if (label === "baseline") return cold ? "vs baseline cold" : "vs baseline";
+  return cold ? `vs ${label} cold` : `vs ${label} baseline`;
+}
+
+function freshChildReferenceHeading(reference) {
+  if (!reference) return "vs fastest fresh child";
+  const label = reference.baselineLabel || "baseline";
+  return label === "baseline"
+    ? "vs baseline fresh child"
+    : `vs ${label} fresh child`;
+}
+
+function warmReferenceHeading(reference) {
+  if (!reference) return "vs fastest warm";
+  const label = reference.baselineLabel || "baseline";
+  return label === "baseline" ? "vs baseline warm" : `vs ${label} warm`;
+}
 
 /**
  * Display names are SLIMMED at render time, not in the surface definitions,
@@ -125,10 +164,10 @@ const SLIM_RULES = [
   {
     re: /^Biome format$/,
     slim: "Biome format",
-    desc: "biome format --write — multi-threaded, but formats the <script> block only; template and style come back byte-identical, so it is unranked on the format surface.",
+    desc: "biome format --write — multi-threaded; the exact pinned row rewrites none of the planted .vue corpus and is unranked on the full-SFC format surface.",
   },
   // Two rules, not one `/^Biome lint/`: `slim` REPLACES the label everywhere it
-  // is rendered, so a shared rule collapsed the 1T and max-threads rows into two
+  // is rendered, so a shared rule collapsed the 1T and default-thread rows into two
   // identically-named lines in the table, notes and raw runs.
   {
     re: /^Biome lint \(1T\)$/,
@@ -136,21 +175,21 @@ const SLIM_RULES = [
     desc: "biome lint with RAYON_NUM_THREADS=1 — script block only. No template rules, so it misses the planted vue/no-v-html and reports template-only variable uses as unused; unranked.",
   },
   {
-    re: /^Biome lint \(max threads\)$/,
-    slim: "Biome lint (max threads)",
-    desc: "biome lint on all cores — script block only. No template rules, so it misses the planted vue/no-v-html and reports template-only variable uses as unused; unranked.",
+    re: /^Biome lint \(default threads\)$/,
+    slim: "Biome lint (default threads)",
+    desc: "biome lint with its default pool size — script block only. No template rules, so it misses the planted Vue template rules and reports template-only variable uses as unused; unranked.",
   },
   // Same two-rule split as Biome above — one shared /^Oxlint/ rule would rename
   // both rows to the same string in the table, notes and raw runs.
   {
     re: /^Oxlint \(1T\)$/,
     slim: "Oxlint (1T)",
-    desc: "oxlint --threads=1 with its vue plugin enabled — script block only. The plugin's 31 Vue rules all read <script>; <template> is never parsed, so the planted vue/no-v-html is missed; unranked.",
+    desc: "oxlint --threads=1 with its vue plugin enabled — the exact pinned row is script-block-only on the planted Vue template capabilities and remains unranked.",
   },
   {
-    re: /^Oxlint \(max threads\)$/,
-    slim: "Oxlint (max threads)",
-    desc: "oxlint on all cores with its vue plugin enabled — script block only, misses the planted vue/no-v-html; unranked.",
+    re: /^Oxlint \(default threads\)$/,
+    slim: "Oxlint (default threads)",
+    desc: "oxlint with its default pool size and vue plugin enabled — script block only, so it misses the planted Vue template rules; unranked.",
   },
 ];
 
@@ -182,26 +221,35 @@ function displayName(v) {
   return `${rule ? rule.slim : v.label}${engineTag(v)}${statusMark(v.status)}`;
 }
 
-/**
- * Comparison class — reduced to the codegen target only; see classKey.
- */
+/** Comparison class: explicit workload class when supplied, then target. */
 function classKey(v) {
-  // ONE table per surface. Engine, invocation and threading are deliberately
-  // NOT table splits any more — JS-engine rows are tagged (JS) on the name,
-  // and the invocation/threading identity of a row lives in its label, the
-  // Tools legend and its notes entry. The caveats those splits used to carry
-  // (a CLI pays startup every run, a thread pool is not a single thread)
-  // moved to the methodology notes; the reader compares like with like by
-  // reading the row, not by which table it landed in.
+  // Most surfaces deliberately remain one table. A surface may opt into an
+  // explicit work-equivalence split when two rows do materially different
+  // compiler work (compile's raw render vs render+CSS split is the motivating
+  // case). Engine, invocation and threading remain row
+  // properties and never create a class implicitly.
   //
   // Codegen target is the one split that stays. jsx-compile carries vapor and
   // VDOM rows in one flat surface (compile separates them into cells), and
   // they share no runtime helpers — those are different jobs, not the same
   // job invoked differently.
-  return v.target ? `target:${v.target}` : "all";
+  const target = v.target ? `target:${v.target}` : "target:*";
+  return v.comparisonClass
+    ? `comparison:${v.comparisonClass}|${target}`
+    : v.target
+      ? target
+      : "all";
 }
 
-function classLabel(key) {
+function classLabel(key, variants) {
+  if (key.startsWith("comparison:")) {
+    const declared = variants.find(
+      (v) => v.comparisonClassLabel,
+    )?.comparisonClassLabel;
+    if (declared) return declared;
+    const id = key.slice("comparison:".length).split("|", 1)[0];
+    return id.replaceAll("-", " ");
+  }
   const target = key.startsWith("target:") ? key.slice("target:".length) : null;
   return target ? `${target.toUpperCase()} — ranked alone` : "";
 }
@@ -254,22 +302,67 @@ function renderVariantTable(rawVariants, { title } = {}) {
   }
   const artifactLabel =
     variants.find((v) => v.artifactLabel)?.artifactLabel ?? "Artifact";
+  const showFreshChild = variants.some((v) =>
+    Number.isFinite(v.freshChildMedianMs),
+  );
   const showCold = variants.some((v) => Number.isFinite(v.coldMedianMs));
-  if (showCold) {
+  const reference = referenceRow(variants);
+  const primaryHeading = referenceHeading(reference);
+  const coldHeading = referenceHeading(reference, true);
+  const freshChildHeading = freshChildReferenceHeading(reference);
+  const warmHeading = warmReferenceHeading(reference);
+  if (showFreshChild) {
     lines.push(
-      `| Tool | **Cold** | vs fastest cold | **Warm** | Min | Stddev | CV% | vs fastest | ${artifactLabel} | Throughput |`,
+      `| Tool | Fresh child | Fresh min | Fresh stddev | Fresh CV% | ${freshChildHeading} | **Warm (primary)** | Warm min | Warm stddev | Warm CV% | ${warmHeading} | ${artifactLabel} | Throughput |`,
     );
-    lines.push("| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |");
+    lines.push(
+      "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+    );
+  } else if (showCold) {
+    lines.push(
+      `| Tool | **Cold** | ${coldHeading} | **Warm** | Min | Stddev | CV% | ${primaryHeading} | ${artifactLabel} | Throughput |`,
+    );
+    lines.push(
+      "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+    );
   } else {
     lines.push(
-      `| Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | ${artifactLabel} | Throughput |`,
+      `| Tool | **Median (primary)** | Min | Stddev | CV% | ${primaryHeading} | ${artifactLabel} | Throughput |`,
     );
     lines.push("| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |");
   }
 
-  const base = fastestPrimary(variants);
-  const coldBase = fastestCold(variants);
-  const sorted = [...variants].sort((a, b) => rankingMs(a) - rankingMs(b));
+  const base = reference ? primaryMs(reference) : fastestPrimary(variants);
+  const freshChildBase = reference
+    ? freshChildIsRanked(reference)
+      ? reference.freshChildMedianMs
+      : Number.NaN
+    : fastestFreshChild(variants);
+  const coldBase = reference
+    ? reference.status === "ok" && Number.isFinite(reference.coldMedianMs)
+      ? reference.coldMedianMs
+      : Number.NaN
+    : fastestCold(variants);
+  const sorted = [...variants].sort((a, b) => {
+    // A declared reference is the conceptual first row even when a native
+    // candidate is faster. Tables without a reference preserve fastest-first.
+    if (reference) {
+      if (a === reference) return -1;
+      if (b === reference) return 1;
+    }
+    // Warm is the primary compiler throughput metric. Never substitute the
+    // independently sampled fresh-child value when Warm is absent or noisy.
+    // IDE tables have no freshChildMedianMs and retain their own Cold ordering.
+    if (showFreshChild) return primaryMs(a) - primaryMs(b);
+    if (showCold) {
+      const coldMs = (v) =>
+        v.status === "ok" && Number.isFinite(v.coldMedianMs)
+          ? v.coldMedianMs
+          : Number.POSITIVE_INFINITY;
+      return coldMs(a) - coldMs(b);
+    }
+    return primaryMs(a) - primaryMs(b);
+  });
 
   // Reference artifact volume for this class: the largest any tool produced.
   // A tool well below it was measured doing materially less work, so its
@@ -287,9 +380,13 @@ function renderVariantTable(rawVariants, { title } = {}) {
     const name = displayName(v);
     let noteText = v.notes || "";
     if (v.status === "ok") {
-      const cacheNote = Number.isFinite(v.cacheHitsMedian) ? ` cacheHits≈${v.cacheHitsMedian}` : "";
+      const cacheNote = Number.isFinite(v.cacheHitsMedian)
+        ? ` cacheHits≈${v.cacheHitsMedian}`
+        : "";
       // Flag noisy series so a thermally-throttled or contended box is visible.
-      const cv = Number.isFinite(v.cvPct) ? `${v.cvPct.toFixed(1)}%${v.cvPct > 10 ? " ⚠" : ""}` : "n/a";
+      const cv = Number.isFinite(v.cvPct)
+        ? `${v.cvPct.toFixed(1)}%${v.cvPct > 10 ? " ⚠" : ""}`
+        : "n/a";
       let artifact = "n/a";
       let artifactWarn = "";
       if (Number.isFinite(v.artifactMedian)) {
@@ -310,8 +407,29 @@ function renderVariantTable(rawVariants, { title } = {}) {
         }
       }
       if (Number.isFinite(v.medianMs)) {
-        if (showCold) {
-          const cold = Number.isFinite(v.coldMedianMs) ? formatMs(v.coldMedianMs) : "–";
+        if (showFreshChild) {
+          const freshNoisy = freshChildIsNoisy(v);
+          const fresh = Number.isFinite(v.freshChildMedianMs)
+            ? freshNoisy
+              ? `(${formatMs(v.freshChildMedianMs)}) ⚠`
+              : formatMs(v.freshChildMedianMs)
+            : "–";
+          const freshCv = Number.isFinite(v.freshChildCvPct)
+            ? `${v.freshChildCvPct.toFixed(1)}%${v.freshChildCvPct > 10 ? " ⚠" : ""}`
+            : "n/a";
+          const freshRatio = freshChildIsRanked(v)
+            ? timesSlower(freshChildBase, v.freshChildMedianMs)
+            : "not ranked";
+          lines.push(
+            `| ${name} | ${fresh} | ${formatMs(v.freshChildMinMs)} | ${formatMs(v.freshChildStddevMs)} | ${freshCv} | ${freshRatio} | **${formatMs(v.medianMs)}** | ${formatMs(v.minMs)} | ${formatMs(v.stddevMs)} | ${cv} | ${timesSlower(base, v.medianMs)} | ${artifact} | ${v.throughput} |`,
+          );
+          if (freshNoisy) {
+            noteText = `${noteText ? `${noteText} | ` : ""}⚠ FRESH-CHILD SERIES TOO NOISY FOR ITS OWN RATIO — CV ${v.freshChildCvPct.toFixed(1)}% (ceiling ${NOISE_CV_LIMIT_PCT}%). Warm remains independently ranked; raw fresh-child values stay visible.`;
+          }
+        } else if (showCold) {
+          const cold = Number.isFinite(v.coldMedianMs)
+            ? formatMs(v.coldMedianMs)
+            : "–";
           lines.push(
             `| ${name} | **${cold}** | ${timesSlower(coldBase, v.coldMedianMs)} | **${formatMs(v.medianMs)}** | ${formatMs(v.minMs)} | ${formatMs(v.stddevMs)} | ${cv} | ${timesSlower(base, v.medianMs)} | ${artifact} | ${v.throughput} |`,
           );
@@ -324,20 +442,34 @@ function renderVariantTable(rawVariants, { title } = {}) {
         // An ok row with no duration is a ratio or informational row — its
         // value sits in the artifact column (or the notes), never in a
         // fabricated time.
-        const throughput = v.throughput && v.throughput !== "n/a" ? v.throughput : "–";
-        lines.push(`| ${name} | – | – | – | – | – | ${artifact} | ${throughput} |`);
+        const throughput =
+          v.throughput && v.throughput !== "n/a" ? v.throughput : "–";
+        lines.push(
+          `| ${name} | – | – | – | – | – | ${artifact} | ${throughput} |`,
+        );
       }
-      noteText = (v.notes || "") + cacheNote + artifactWarn;
+      noteText = noteText + cacheNote + artifactWarn;
     } else if (v.status === "unranked") {
       // Measured but failed validation: show the time in brackets so the
       // speed/correctness trade is visible, and keep it out of every
       // comparison column — it is not competing on equal terms.
-      const bracketed = Number.isFinite(v.medianMs) ? `(${formatMs(v.medianMs)})` : "–";
+      const bracketed = Number.isFinite(v.medianMs)
+        ? `(${formatMs(v.medianMs)})`
+        : "–";
       const artifact = Number.isFinite(v.artifactMedian)
         ? `(${v.artifactMedian.toLocaleString()})`
         : "–";
-      if (showCold) {
-        const cold = Number.isFinite(v.coldMedianMs) ? `(${formatMs(v.coldMedianMs)})` : "–";
+      if (showFreshChild) {
+        const fresh = Number.isFinite(v.freshChildMedianMs)
+          ? `(${formatMs(v.freshChildMedianMs)})`
+          : "–";
+        lines.push(
+          `| ${name} | ${fresh} | ${Number.isFinite(v.freshChildMinMs) ? `(${formatMs(v.freshChildMinMs)})` : "–"} | ${Number.isFinite(v.freshChildStddevMs) ? `(${formatMs(v.freshChildStddevMs)})` : "n/a"} | ${Number.isFinite(v.freshChildCvPct) ? `(${v.freshChildCvPct.toFixed(1)}%)` : "n/a"} | not ranked | ${bracketed} | ${Number.isFinite(v.minMs) ? `(${formatMs(v.minMs)})` : "–"} | ${Number.isFinite(v.stddevMs) ? `(${formatMs(v.stddevMs)})` : "n/a"} | ${Number.isFinite(v.cvPct) ? `(${v.cvPct.toFixed(1)}%)` : "n/a"} | not ranked | ${artifact} | – |`,
+        );
+      } else if (showCold) {
+        const cold = Number.isFinite(v.coldMedianMs)
+          ? `(${formatMs(v.coldMedianMs)})`
+          : "–";
         lines.push(
           `| ${name} | ${cold} | not ranked | ${bracketed} | ${Number.isFinite(v.minMs) ? `(${formatMs(v.minMs)})` : "–"} | – | – | not ranked | ${artifact} | – |`,
         );
@@ -347,16 +479,27 @@ function renderVariantTable(rawVariants, { title } = {}) {
         );
       }
     } else if (v.status === "skipped") {
-      lines.push(showCold
-        ? `| ${name} | skipped | – | – | – | – | – | – | – | – |`
-        : `| ${name} | skipped | – | – | – | – | – | – |`);
+      lines.push(
+        showFreshChild
+          ? `| ${name} | skipped | – | – | – | – | – | – | – | – | – | – | – |`
+          : showCold
+            ? `| ${name} | skipped | – | – | – | – | – | – | – | – |`
+            : `| ${name} | skipped | – | – | – | – | – | – |`,
+      );
     } else {
-      lines.push(showCold
-        ? `| ${name} | error | – | – | – | – | – | – | – | – |`
-        : `| ${name} | error | – | – | – | – | – | – |`);
+      lines.push(
+        showFreshChild
+          ? `| ${name} | error | – | – | – | – | – | – | – | – | – | – | – |`
+          : showCold
+            ? `| ${name} | error | – | – | – | – | – | – | – | – |`
+            : `| ${name} | error | – | – | – | – | – | – |`,
+      );
       noteText = v.error || v.notes || "";
     }
-    if (noteText) noteRows.push(`- **${displayName(v)}**: ${noteText.replace(/\r?\n/g, " ")}`);
+    if (noteText)
+      noteRows.push(
+        `- **${displayName(v)}**: ${noteText.replace(/\r?\n/g, " ")}`,
+      );
   }
 
   if (noteRows.length) {
@@ -384,7 +527,9 @@ function formatMb(mb) {
  * a speed table (real-world CLIs).
  */
 function renderPeakRssBlock(variants, { heading = true } = {}) {
-  const rows = variants.filter((v) => Number.isFinite(v.rssMaxMb) && v.rssMaxMb > 0);
+  const rows = variants.filter(
+    (v) => Number.isFinite(v.rssMaxMb) && v.rssMaxMb > 0,
+  );
   if (!rows.length) return [];
   const sorted = [...rows].sort((a, b) => a.rssMaxMb - b.rssMaxMb);
   const lines = [];
@@ -399,7 +544,10 @@ function renderPeakRssBlock(variants, { heading = true } = {}) {
   lines.push("| --- | ---: |");
   for (const v of sorted) {
     const name = displayName(v);
-    const cell = v.status === "ok" ? `**${formatMb(v.rssMaxMb)}**` : `(${formatMb(v.rssMaxMb)})`;
+    const cell =
+      v.status === "ok"
+        ? `**${formatMb(v.rssMaxMb)}**`
+        : `(${formatMb(v.rssMaxMb)})`;
     lines.push(`| ${name} | ${cell} |`);
   }
   lines.push("");
@@ -416,8 +564,8 @@ function renderByThreadingClass(variants) {
   }
 
   // Stable order: the untargeted class first, then targets alphabetically.
-  const keys = [...byClass.keys()].sort(
-    (a, b) => (a === "all" ? -1 : b === "all" ? 1 : a.localeCompare(b)),
+  const keys = [...byClass.keys()].sort((a, b) =>
+    a === "all" ? -1 : b === "all" ? 1 : a.localeCompare(b),
   );
 
   const allSorted = [];
@@ -425,7 +573,7 @@ function renderByThreadingClass(variants) {
     const group = byClass.get(k);
     // Only print class heading when multiple classes exist
     const { lines: tableLines, sorted } = renderVariantTable(group, {
-      title: keys.length > 1 ? classLabel(k) : undefined,
+      title: keys.length > 1 ? classLabel(k, group) : undefined,
     });
     lines.push(...tableLines);
     lines.push("");
@@ -437,14 +585,31 @@ function renderByThreadingClass(variants) {
 function renderRawRuns(sorted) {
   const entries = [];
   for (const v of sorted) {
-    if ((v.status === "ok" || v.status === "unranked") && Array.isArray(v.runs)) {
+    if (
+      (v.status === "ok" || v.status === "unranked") &&
+      Array.isArray(v.runs)
+    ) {
       const rule = slimRuleFor(v.label);
-      entries.push(`- **${rule ? rule.slim : v.label}${engineTag(v)}**: ${v.runs.map(formatMs).join(", ")}`);
+      const warm = v.runs.map(formatMs).join(", ");
+      const samples = Array.isArray(v.freshChildRuns)
+        ? `Fresh child (first timed row workload): ${v.freshChildRuns.map(formatMs).join(", ")} · Warm: ${warm}`
+        : Array.isArray(v.coldRuns)
+          ? `Cold: ${v.coldRuns.map(formatMs).join(", ")} · Warm: ${warm}`
+          : warm;
+      entries.push(
+        `- **${rule ? rule.slim : v.label}${engineTag(v)}**: ${samples}`,
+      );
     }
   }
   // A table of ratio rows has no runs — an empty collapsible says nothing.
   if (entries.length === 0) return [];
-  return ["<details><summary>Raw runs</summary>", "", ...entries, "", "</details>"];
+  return [
+    "<details><summary>Raw runs</summary>",
+    "",
+    ...entries,
+    "",
+    "</details>",
+  ];
 }
 
 /**
@@ -493,7 +658,7 @@ export const IDE_RANKING_RULES =
   "Ranked **per operation**, never pooled. These operations differ by orders of magnitude and answer unrelated questions, so one table each. Each request-style operation publishes **Cold** (first request after initialize+didOpen in a **fresh session dedicated to that operation** — later ops do not reuse a warmed server) and **Warm** (the same request immediately after). Ranking uses Cold; vs-fastest-cold sits next to it. A row that failed its content gate on the cold request is shown in brackets and excluded from ranking — latency without a correct answer is not a comparable measurement.";
 
 export const RANKING_RULES =
-  "Ranked on the **median of measured runs** (each after ≥1 discarded warmup; no cold column — it would measure JIT warmup). One table per surface: engine, invocation and threading are row properties, not table splits — rows tagged **(JS)** run the JavaScript TypeScript compiler (a cross-engine ratio measures TypeScript's rewrite as much as the tool), and a row's label/notes say whether it is a CLI (pays process startup every run), an in-process API, single-threaded or a thread pool. Name markers: ⚠ failed validation (time bracketed, unranked) · ❌ error · ⏭ skipped. A row above CV 50% with at least three samples is bracketed as TOO NOISY TO RANK, baseline included (a two-run spread has no third sample to adjudicate, so it is flagged, not bracketed). Per-row detail is under **Notes** below each table.";
+  "Ranked on the **median of measured runs**. Warm series follow ≥1 discarded warmup and are the Compiler surface's primary ordering and ranking metric. Compiler additionally publishes a separately sampled **Fresh child** column: the first timed row workload after excluded process startup, imports and adapter setup. It is not called Cold and its ratio/noise gate never substitutes for Warm. A table with an explicit reference uses that row as its ratio denominator even when another row is faster; otherwise it uses fastest. One table per surface unless that surface declares explicit work-equivalence classes; engine, invocation and threading are row properties, not implicit table splits — rows tagged **(JS)** run the JavaScript TypeScript compiler (a cross-engine ratio measures TypeScript's rewrite as much as the tool), and a row's label/notes say whether it is a CLI (pays process startup every run), an in-process API, single-threaded or a thread pool. Name markers: ⚠ failed validation (time bracketed, unranked) · ❌ error · ⏭ skipped. A row above CV 50% with at least three warm samples is bracketed as TOO NOISY TO RANK, baseline included (a two-run spread has no third sample to adjudicate, so it is flagged, not bracketed). Per-row detail is under **Notes** below each table.";
 
 /**
  * Tools that produced NO measurement, rendered ABOVE the tables.
@@ -519,7 +684,10 @@ function renderExcluded(surface) {
     ">",
   ];
   for (const e of excluded) {
-    const what = e.kind === "process-abort" ? "aborted the benchmark process" : (e.kind ?? "failed");
+    const what =
+      e.kind === "process-abort"
+        ? "aborted the benchmark process"
+        : (e.kind ?? "failed");
     lines.push(`> - **${e.tool}** (\`${e.package}\`) — ${what}: ${e.reason}`);
     if (e.detail) lines.push(`>   ${e.detail}`);
   }
@@ -560,7 +728,9 @@ export function renderSurfaceMarkdown(surface) {
       if (group.metric === "rss") {
         lines.push(...renderPeakRssBlock(group.variants, { heading: false }));
       } else {
-        const { lines: tableLines, sorted } = renderByThreadingClass(group.variants);
+        const { lines: tableLines, sorted } = renderByThreadingClass(
+          group.variants,
+        );
         lines.push(...tableLines);
         lines.push(...renderRawRuns(sorted));
         lines.push(...renderPeakRssBlock(group.variants, { heading: true }));
@@ -580,7 +750,9 @@ export function renderSurfaceMarkdown(surface) {
   }
 
   // Flat surfaces
-  const { lines: tableLines, sorted } = renderByThreadingClass(surface.variants);
+  const { lines: tableLines, sorted } = renderByThreadingClass(
+    surface.variants,
+  );
   lines.push(...tableLines);
   lines.push(...renderPeakRssBlock(surface.variants, { heading: true }));
   lines.push("<details><summary>Methodology</summary>");
@@ -592,9 +764,20 @@ export function renderSurfaceMarkdown(surface) {
   lines.push("Raw runs:");
   lines.push("");
   for (const v of sorted) {
-    if ((v.status === "ok" || v.status === "unranked") && Array.isArray(v.runs)) {
+    if (
+      (v.status === "ok" || v.status === "unranked") &&
+      Array.isArray(v.runs)
+    ) {
       const rule = slimRuleFor(v.label);
-      lines.push(`- **${rule ? rule.slim : v.label}${engineTag(v)}**: ${v.runs.map(formatMs).join(", ")}`);
+      const warm = v.runs.map(formatMs).join(", ");
+      const samples = Array.isArray(v.freshChildRuns)
+        ? `Fresh child (first timed row workload): ${v.freshChildRuns.map(formatMs).join(", ")} · Warm: ${warm}`
+        : Array.isArray(v.coldRuns)
+          ? `Cold: ${v.coldRuns.map(formatMs).join(", ")} · Warm: ${warm}`
+          : warm;
+      lines.push(
+        `- **${rule ? rule.slim : v.label}${engineTag(v)}**: ${samples}`,
+      );
     }
   }
   lines.push("");
@@ -609,11 +792,27 @@ export function renderFullMarkdown(data) {
   lines.push("");
   lines.push(`- **Generated:** ${data.generatedAt}`);
   lines.push(`- **Fixture:** \`${data.fixture}\` (${data.fileCount} SFCs)`);
-  lines.push(`- **Runs / warmups:** ${data.settings.runs} / ${data.settings.warmups}`);
+  lines.push(
+    `- **Runs / warmups:** ${data.settings.runs} / ${data.settings.warmups}`,
+  );
   lines.push(
     `- **Runner:** ${data.runner.label} · ${data.runner.platform}/${data.runner.arch} · ${data.runner.cpuCount} CPUs · ${data.runner.cpuModel}`,
   );
   lines.push(`- **Node:** ${data.versions.node}`);
+  if (data.commit?.sha) {
+    const repository = data.commit.repository;
+    const sha = String(data.commit.sha);
+    const rendered = repository
+      ? `[\`${sha}\`](https://github.com/${repository}/commit/${sha})`
+      : `\`${sha}\``;
+    const state =
+      data.commit.dirty === true
+        ? " · **DIRTY WORKTREE** — this result is not attributable to that commit alone"
+        : data.commit.dirty === false
+          ? " · clean worktree"
+          : " · worktree state unknown";
+    lines.push(`- **Benchmark commit:** ${rendered}${state}`);
+  }
   if (data.commit?.runUrl) {
     lines.push(`- **CI run:** ${data.commit.runUrl}`);
   }
@@ -644,21 +843,23 @@ export function renderFullMarkdown(data) {
 /** Factual run parameters and corpus rules (for reports). */
 export function buildMethodologyNotes() {
   return [
-    "Primary ranking metric is the **median of measured runs**. Every measured run is preceded by at least one discarded warmup pass (enforced — `--warmups 0` is clamped to 1).",
-    "There is **no cold column**. An unwarmed first run costs a JS compiler ~3.2x its steady state and a native compiler nothing, so ranking on it measures V8 warmup rather than the tool.",
+    "This suite publishes two complementary outputs: apples-to-apples performance rankings against each surface's declared reference, and executable compatibility-gap findings for tool maintainers. Failed or incomplete work remains visible with evidence but cannot win a speed ranking.",
+    "Primary ranking metric is the **Warm median of measured runs**. Every warm measured series is preceded by at least one discarded warmup pass (enforced — `--warmups 0` is clamped to 1). Compiler also reports a separately sampled Fresh-child median for the first timed row workload; its surface methodology defines exactly which setup is outside that timer.",
+    "An explicit reference row remains the ratio denominator even when a candidate is faster. On the Compiler surface, the reference is Vue's official compiler-sfc workload; Vize or Verter never becomes the baseline merely by winning a run.",
+    "Warm columns rank steady-state work after a discarded pass. Compiler additionally publishes Fresh child, but that value cannot be interpreted as pure first-use overhead: process startup, package import and adapter setup are excluded and may already change V8/native/thread/allocator state; the OS page cache is not flushed. `pnpm diagnose:compile-warmth` remains the deeper state diagnostic.",
     "Min / stddev / CV% are reported per row. CV% > 10 is flagged ⚠ — treat that row as noisy (thermal drift or a contended runner), not as a result. Above CV 50% a row with at least three samples is TOO NOISY TO RANK: bracketed and excluded exactly like a gate failure, baseline included — an unstable series buys more shots at a lucky median, so ranking it rewards instability. A two-run row is never bracketed by the ceiling (its stddev is |a−b|/√2 and there is no third sample to adjudicate); it keeps the ⚠ flag.",
     "Status is a marker on the tool NAME, not a column: ⚠ failed a validation gate (time in brackets, unranked) · ❌ error · ⏭ skipped. Per-row detail is in the collapsible **Notes** under each table, and each surface carries a **Tools** legend naming what actually ran.",
-    "Each surface is ONE table. Engine, invocation and threading are row properties, not table splits: a CLI pays process startup on every run (~85ms measured for one native CLI) while an in-process API amortises it, and a thread pool is not a single thread — the row's label and notes say which mode it ran, so compare like with like.",
+    "Each surface is one table unless it explicitly declares work-equivalence classes. Engine, invocation and threading remain row properties, not implicit table splits: a CLI pays process startup on every run (~85ms measured for one native CLI) while an in-process API amortises it, and a thread pool is not a single thread — the row's label and notes say which mode it ran, so compare like with like.",
     "Rows tagged **(JS)** run the JavaScript TypeScript compiler, untagged typecheck/LSP rows run native tsgo. A cross-engine ratio measures TypeScript's Go rewrite as much as the Vue layer on top of it.",
     "Surfaces are independent: compile ms is not comparable to jsx-compile/typecheck/lint/format ms.",
-    "jsx-compile uses fixtures/jsx-N (.jsx); SFC compile uses fixtures/N (.vue).",
+    "jsx-compile uses fixtures/jsx-N (.jsx); Compiler uses fixtures/N (.vue).",
     "Compile matrix cells (VDOM/Vapor × production/development × sourcemap on/off) are independent.",
     "Source map is an explicit, independent dimension applied identically to every compiler — it is never folded into the production/development flag for some tools and not others.",
     "Primary compile corpus is unique file contents (fixtures/N).",
-    "Content-hash caches skip work on duplicate bodies — unique fixtures required for ranking.",
-    "Tool order is **rotated** on every warmup and measured run, so no tool is pinned to the expensive first slot.",
+    "Duplicate compile bodies are disclosed as a corpus property. The Vize compileSfcBatchWithResults path does not use the stats-only compileSfcBatch API's duplicate-body grouping and neither raw native row may return cached generated output.",
+    "Tool order is rotated on generic surfaces. Compiler uses paired forward/reverse ordering for Fresh-child samples, warmups and measured Warm runs, balancing positions over any complete pair even when runs < rows; executed order is retained in JSON.",
     "CI does not drop OS page cache; later tools in a job may share a warmer file cache.",
-    "Typecheck/lint/format tools that fail a work gate are unranked (skipped). Typecheck gates require both a script-level and a template-level diagnostic, and are re-verified against the full timed corpus. Lint gates require the planted vue/no-v-html. The format gate requires the tool to actually rewrite the <template> block, so a script-only formatter is not ranked against whole-SFC formatters.",
+    "Typecheck/lint/format rows that fail mandatory validity stay measured but unranked. Typecheck gates require script and template diagnostics and re-check the timed corpus. Lint uses exact-row dirty/clean differential plants with file, line and rule/concept attribution. Format requires idempotent, parseable full-SFC rewriting with preserved descriptor/template/script semantics; script-only tools cannot rank as whole-SFC tools.",
     "Compile measures assert non-empty codegen where applicable.",
     "Vue official compiler is 1T only (worker_threads variants removed).",
     "LSP: every server resolves from its installed npm package and is skipped when absent — no local-build or working-copy discovery, so each row names a version.",
@@ -666,4 +867,3 @@ export function buildMethodologyNotes() {
     "Diagnostic/format identity across tools is not required for throughput rows.",
   ];
 }
-

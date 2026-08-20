@@ -91,8 +91,8 @@ export function collectVueFilesDeep(dir, { limit = Infinity, roots = [], ignore 
   for (const root of searchRoots) walk(root);
 
   // A file reachable from two overlapping roots must be compiled once, not
-  // twice: a duplicated entry would inflate the file count and hand every tool
-  // the same source twice, which content-hash caches serve for free.
+  // twice: a duplicated entry would inflate the file count and make the corpus
+  // claim more distinct project files than it actually contains.
   const unique = [...new Set(out)].sort();
   return Number.isFinite(limit) ? unique.slice(0, limit) : unique;
 }
@@ -166,7 +166,17 @@ export function copyFixtureSubset(inputDir, outputDir, files, extras = []) {
 const IMPORT_SPECIFIER_RE =
   /(?:import|export)\s[^'"()]*?from\s*['"]([^'"]+)['"]|import\s*\(\s*['"]([^'"]+)['"]\s*\)|import\s*['"]([^'"]+)['"]/g;
 
-const CLOSURE_RESOLVE_SUFFIXES = ["", ".ts", ".tsx", ".d.ts", ".mts", ".cts", ".js", ".mjs", ".vue"];
+const CLOSURE_RESOLVE_SUFFIXES = [
+  "",
+  ".ts",
+  ".tsx",
+  ".d.ts",
+  ".mts",
+  ".cts",
+  ".js",
+  ".mjs",
+  ".vue",
+];
 
 /**
  * Copy the RELATIVE import closure of the staged corpus files.

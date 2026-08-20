@@ -10,13 +10,25 @@ import { join } from "node:path";
 import { linkToolLabel, plainToolName } from "./tool-catalog.mjs";
 
 export function slugify(text) {
-  return String(text)
+  const normalized = String(text)
     .toLowerCase()
     .replace(/&lt;/g, " ")
     .replace(/&gt;/g, " ")
     .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "")
-    .slice(0, 72);
+    .replace(/^-|-$/g, "");
+  if (normalized.length <= 72) return normalized;
+
+  // Long nested report paths often share their first 72 characters. Compile's
+  // comparison-class headings are the concrete example: truncating the path
+  // made raw-render and render+CSS overwrite the official-pipeline SVG. Keep a
+  // readable prefix and a deterministic suffix derived from the complete path.
+  let hash = 2166136261;
+  for (let i = 0; i < normalized.length; i++) {
+    hash ^= normalized.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+  const suffix = (hash >>> 0).toString(36).padStart(7, "0");
+  return `${normalized.slice(0, 64)}-${suffix}`;
 }
 
 /** Median cell → { ms, ranked } or null for skip/error. */
@@ -91,7 +103,8 @@ export function colorForTool(name) {
     n.includes("@vitejs/plugin-vue") ||
     n.includes("unplugin-vue") ||
     n.includes("vue-loader") ||
-    /\bvue official\b/.test(n)
+    /\bvue official\b/.test(n) ||
+    n.includes("vue compiler-sfc")
   )
     return TOOL_COLORS.vue;
   if (n.includes("golar")) return TOOL_COLORS.golar;
@@ -130,6 +143,7 @@ function groupBars(usable, lowerIsBetter) {
         ranked: true,
         warm: null,
         cold: null,
+        fresh: null,
         toolRss: null,
         engineRss: null,
         value: null,
@@ -139,20 +153,37 @@ function groupBars(usable, lowerIsBetter) {
     if (b.ranked === false) g.ranked = false;
     if (b.series === "warm") g.warm = b.value;
     else if (b.series === "cold") g.cold = b.value;
+    else if (b.series === "fresh") g.fresh = b.value;
     else if (b.series === "tool") g.toolRss = b.value;
     else if (b.series === "engine") g.engineRss = b.value;
     else g.value = b.value;
   }
   const groups = [...map.values()].map((g) => {
     const stackedRss = Number.isFinite(g.toolRss) && Number.isFinite(g.engineRss);
-    const stacked = Number.isFinite(g.warm) && Number.isFinite(g.cold);
+    const first = Number.isFinite(g.fresh) ? g.fresh : g.cold;
+    const firstLabel = Number.isFinite(g.fresh) ? "fresh child" : "cold";
+    const stacked = Number.isFinite(g.warm) && Number.isFinite(first);
     const sortValue = stackedRss
       ? g.toolRss + g.engineRss
       : stacked
-        ? g.cold
-        : (g.value ?? g.cold ?? g.warm ?? 0);
-    const barValue = stackedRss ? g.toolRss + g.engineRss : stacked ? Math.max(g.cold, g.warm) : sortValue;
-    return { ...g, stacked, stackedRss, sortValue, barValue };
+        ? firstLabel === "fresh child"
+          ? g.warm
+          : first
+        : (g.value ?? first ?? g.warm ?? 0);
+    const barValue = stackedRss
+      ? g.toolRss + g.engineRss
+      : stacked
+        ? Math.max(first, g.warm)
+        : sortValue;
+    return {
+      ...g,
+      first,
+      firstLabel,
+      stacked,
+      stackedRss,
+      sortValue,
+      barValue,
+    };
   });
   groups.sort((a, b) => {
     if (a.ranked !== b.ranked) return a.ranked ? -1 : 1;
@@ -173,7 +204,11 @@ function fitLabel(text, maxPx, fontPx) {
 const SVG_FILL = { label: "#111827", muted: "#6b7280", onbar: "#ffffff" };
 
 function svgText(cls, attrs, content) {
-  const fill = cls.includes("onbar") ? SVG_FILL.onbar : cls.includes("muted") ? SVG_FILL.muted : SVG_FILL.label;
+  const fill = cls.includes("onbar")
+    ? SVG_FILL.onbar
+    : cls.includes("muted")
+      ? SVG_FILL.muted
+      : SVG_FILL.label;
   const extra = attrs.trim() ? ` ${attrs.trim()}` : "";
   return `<text class="${cls}" fill="${fill}"${extra}>${content}</text>`;
 }
@@ -218,7 +253,11 @@ export function barChartSvg({ title, unit = "ms", bars, lowerIsBetter = true, ma
     const v = max * frac;
     axis.push(
       `<line class="grid" x1="${x}" y1="${top - 8}" x2="${x}" y2="${plotBottom}" />`,
-      svgText("muted", `x="${x}" y="${height - 8}" text-anchor="middle" font-size="11"`, escape(formatBarValue(v, unit))),
+      svgText(
+        "muted",
+        `x="${x}" y="${height - 8}" text-anchor="middle" font-size="11"`,
+        escape(formatBarValue(v, unit)),
+      ),
     );
   }
 
@@ -255,18 +294,23 @@ export function barChartSvg({ title, unit = "ms", bars, lowerIsBetter = true, ma
       totalW = Math.max(4, totalStack);
     } else if (g.stacked) {
       const warmW = Math.max(4, (g.warm / max) * plotW);
-      const coldW = Math.max(warmW, (g.cold / max) * plotW);
-      const extra = Math.max(0, coldW - warmW);
-      // Warm sits on the left; cold extra stacks to the right so the full
-      // bar is first-request time and the solid run is cached time.
+      const firstW = Math.max(4, (g.first / max) * plotW);
+      const warmIsLonger = g.warm >= g.first;
+      const longW = warmIsLonger ? warmW : firstW;
+      const shortW = warmIsLonger ? firstW : warmW;
+      const longClass = warmIsLonger ? "warm" : g.firstLabel === "cold" ? "cold" : "fresh";
+      const shortClass = warmIsLonger ? (g.firstLabel === "cold" ? "cold" : "fresh") : "warm";
+      const longOpacity = warmIsLonger ? "1" : "0.38";
+      const shortOpacity = warmIsLonger ? "0.38" : "1";
+      // One combined range bar: the full rectangle ends at the slower value;
+      // the overlaid rectangle ends at the faster value. This preserves both
+      // directions (including first < warm) without adding the measurements.
       segments = `<rect class="track" x="${labelW}" y="${y + 5}" width="${plotW}" height="${barH}" rx="5"/>
-      <rect class="cold" x="${labelW}" y="${y + 5}" width="${coldW.toFixed(1)}" height="${barH}" rx="5" fill="${fill}" fill-opacity="0.38"/>
-      <rect class="warm" x="${labelW}" y="${y + 5}" width="${warmW.toFixed(1)}" height="${barH}" rx="5" fill="${fill}"/>`;
-      if (extra < 1) {
-        // cold ≈ warm: the pale layer is hidden; still label both.
-      }
-      valueLabel = `${formatBarValue(g.warm, unit)} / ${formatBarValue(g.cold, unit)}${unranked}`;
-      totalW = coldW;
+      <rect class="${longClass}" x="${labelW}" y="${y + 5}" width="${longW.toFixed(1)}" height="${barH}" rx="5" fill="${fill}" fill-opacity="${longOpacity}"/>
+      <rect class="${shortClass}" x="${labelW}" y="${y + 5}" width="${shortW.toFixed(1)}" height="${barH}" rx="5" fill="${fill}" fill-opacity="${shortOpacity}"/>
+      <line class="series-boundary" x1="${labelW + shortW}" y1="${y + 4}" x2="${labelW + shortW}" y2="${y + 28}"/>`;
+      valueLabel = `${formatBarValue(g.warm, unit)} warm / ${formatBarValue(g.first, unit)} ${g.firstLabel}${unranked}`;
+      totalW = longW;
     } else {
       totalW = Math.max(4, (g.barValue / max) * plotW);
       segments = `<rect class="track" x="${labelW}" y="${y + 5}" width="${plotW}" height="${barH}" rx="5"/>
@@ -275,8 +319,16 @@ export function barChartSvg({ title, unit = "ms", bars, lowerIsBetter = true, ma
     }
     const valueInside = totalW > 96;
     const valueEl = valueInside
-      ? svgText("onbar", `x="${labelW + 8}" y="${y + 21}" font-size="12" font-weight="600"`, escape(valueLabel))
-      : svgText("label", `x="${labelW + totalW + 8}" y="${y + 21}" font-size="12" font-weight="600"`, escape(valueLabel));
+      ? svgText(
+          "onbar",
+          `x="${labelW + 8}" y="${y + 21}" font-size="12" font-weight="600"`,
+          escape(valueLabel),
+        )
+      : svgText(
+          "label",
+          `x="${labelW + totalW + 8}" y="${y + 21}" font-size="12" font-weight="600"`,
+          escape(valueLabel),
+        );
     const strike =
       g.ranked === false
         ? `<line class="strike" x1="${nameX}" y1="${y + 16}" x2="${labelW - 8}" y2="${y + 16}" />`
@@ -298,7 +350,7 @@ export function barChartSvg({ title, unit = "ms", bars, lowerIsBetter = true, ma
       ? `<rect x="${padL + 130}" y="${legendY - 9}" width="10" height="10" rx="2" fill="#111827"/>
   ${svgText("muted", `x="${padL + 144}" y="${legendY}" font-size="11"`, "warm")}
   <rect x="${padL + 188}" y="${legendY - 9}" width="10" height="10" rx="2" fill="#111827" fill-opacity="0.38"/>
-  ${svgText("muted", `x="${padL + 202}" y="${legendY}" font-size="11"`, "cold")}`
+  ${svgText("muted", `x="${padL + 202}" y="${legendY}" font-size="11"`, groups.find((g) => g.stacked)?.firstLabel ?? "first")}`
       : "";
 
   const better = lowerIsBetter ? "lower is better" : "higher is better";
@@ -315,6 +367,7 @@ export function barChartSvg({ title, unit = "ms", bars, lowerIsBetter = true, ma
     .track { fill: #111827; fill-opacity: 0.06; }
     .grid { stroke: #111827; stroke-opacity: 0.08; }
     .strike { stroke: #111827; stroke-opacity: 0.45; }
+    .series-boundary { stroke: #ffffff; stroke-width: 2; stroke-opacity: 0.9; }
     @media (prefers-color-scheme: dark) {
       .label { fill: #f9fafb; }
       .muted { fill: #9ca3af; }
@@ -344,6 +397,14 @@ function headerIndex(header, re) {
   return header.findIndex((c) => re.test(c.replace(/\*/g, "").trim()));
 }
 
+function ratioColumnIndexes(header) {
+  const cleaned = header.map((c) => c.replace(/\*/g, "").trim());
+  const cold = cleaned.findIndex((c) => /^vs .+ cold$/i.test(c));
+  const fresh = cleaned.findIndex((c) => /^vs .+ fresh child$/i.test(c));
+  const primary = cleaned.findIndex((c, i) => /^vs /i.test(c) && i !== cold && i !== fresh);
+  return { cold, fresh, primary, cleaned };
+}
+
 function rowIsUnranked(cells, medianIdx, vsIdx) {
   if (/[⚠❌⏭]/u.test(cells[0] ?? "")) return true;
   if (vsIdx >= 0 && /not ranked/i.test(cells[vsIdx] ?? "")) return true;
@@ -356,16 +417,28 @@ function rowIsUnranked(cells, medianIdx, vsIdx) {
 export function compactSpeedTable(headerLine, sepLine, rowLines, { rankedOnly = false } = {}) {
   const header = splitRow(headerLine);
   const toolIdx = 0;
+  const freshIdx = headerIndex(header, /^fresh child$/i);
   const coldIdx = headerIndex(header, /^cold$/i);
-  const warmIdx = headerIndex(header, /^warm$/i);
+  const warmIdx = headerIndex(header, /^warm(?: \(primary\))?$/i);
   const medianIdx = headerIndex(header, /median/i) >= 0 ? headerIndex(header, /median/i) : 1;
-  const vsColdIdx = headerIndex(header, /vs fastest cold/i);
-  const vsIdx = header.findIndex((c, i) => /vs fastest/i.test(c.replace(/\*/g, "").trim()) && i !== vsColdIdx);
-  const dual = coldIdx >= 0 && warmIdx >= 0;
+  const ratios = ratioColumnIndexes(header);
+  const vsColdIdx = ratios.cold;
+  const vsFreshIdx = ratios.fresh;
+  const vsIdx = ratios.primary;
+  const firstIdx = freshIdx >= 0 ? freshIdx : coldIdx;
+  const firstLabel = freshIdx >= 0 ? "Fresh child" : "Cold";
+  const vsFirstIdx = freshIdx >= 0 ? vsFreshIdx : vsColdIdx;
+  const dual = firstIdx >= 0 && warmIdx >= 0;
   const cols = dual
-    ? ["Tool", "**Cold**", "vs fastest cold", "**Warm**"]
-    : ["Tool", "**Median**", "vs fastest"];
-  const align = dual ? ["---", "---:", "---:", "---:"] : ["---", "---:", "---:"];
+    ? [
+        "Tool",
+        `**${firstLabel}**`,
+        vsFirstIdx >= 0 ? ratios.cleaned[vsFirstIdx] : `vs fastest ${firstLabel.toLowerCase()}`,
+        freshIdx >= 0 ? "**Warm (primary)**" : "**Warm**",
+        vsIdx >= 0 ? ratios.cleaned[vsIdx] : "vs fastest warm",
+      ]
+    : ["Tool", "**Median**", vsIdx >= 0 ? ratios.cleaned[vsIdx] : "vs fastest"];
+  const align = dual ? ["---", "---:", "---:", "---:", "---:"] : ["---", "---:", "---:"];
   const out = [`| ${cols.join(" | ")} |`, `| ${align.join(" | ")} |`];
   let n = 0;
   for (const line of rowLines) {
@@ -373,11 +446,13 @@ export function compactSpeedTable(headerLine, sepLine, rowLines, { rankedOnly = 
     if (!cells.length) continue;
     if (rankedOnly && rowIsUnranked(cells, dual ? warmIdx : medianIdx, vsIdx)) continue;
     n++;
-    const vs = vsIdx >= 0 ? cells[vsIdx] ?? "–" : "–";
+    const vs = vsIdx >= 0 ? (cells[vsIdx] ?? "–") : "–";
     const tool = linkToolLabel(cells[toolIdx] ?? "");
     if (dual) {
-      const vsCold = vsColdIdx >= 0 ? cells[vsColdIdx] ?? "–" : "–";
-      out.push(`| ${tool} | ${cells[coldIdx] ?? "–"} | ${vsCold} | ${cells[warmIdx] ?? "–"} |`);
+      const vsFirst = vsFirstIdx >= 0 ? (cells[vsFirstIdx] ?? "–") : "–";
+      out.push(
+        `| ${tool} | ${cells[firstIdx] ?? "–"} | ${vsFirst} | ${cells[warmIdx] ?? "–"} | ${vs} |`,
+      );
     } else {
       out.push(`| ${tool} | ${cells[medianIdx] ?? "–"} | ${vs} |`);
     }
@@ -387,11 +462,11 @@ export function compactSpeedTable(headerLine, sepLine, rowLines, { rankedOnly = 
 
 export function barsFromSpeedTable(headerLine, rowLines, { rankedOnly = false } = {}) {
   const header = splitRow(headerLine);
+  const freshIdx = headerIndex(header, /^fresh child$/i);
   const coldIdx = headerIndex(header, /^cold$/i);
-  const warmIdx = headerIndex(header, /^warm$/i);
+  const warmIdx = headerIndex(header, /^warm(?: \(primary\))?$/i);
   const medianIdx = headerIndex(header, /median/i) >= 0 ? headerIndex(header, /median/i) : 1;
-  const vsColdIdx = headerIndex(header, /vs fastest cold/i);
-  const vsIdx = header.findIndex((c, i) => /vs fastest/i.test(c.replace(/\*/g, "").trim()) && i !== vsColdIdx);
+  const { cold: vsColdIdx, primary: vsIdx } = ratioColumnIndexes(header);
   const bars = [];
   for (const line of rowLines) {
     const cells = splitRow(line);
@@ -399,15 +474,16 @@ export function barsFromSpeedTable(headerLine, rowLines, { rankedOnly = false } 
     if (rankedOnly && rowIsUnranked(cells, warmIdx >= 0 ? warmIdx : medianIdx, vsIdx)) continue;
     const label = plainToolName(cells[0]);
     const nameRanked = !/[⚠❌⏭]/u.test(cells[0]);
-    if (coldIdx >= 0 && warmIdx >= 0) {
-      const cold = parseMedianCell(cells[coldIdx]);
+    const firstIdx = freshIdx >= 0 ? freshIdx : coldIdx;
+    if (firstIdx >= 0 && warmIdx >= 0) {
+      const first = parseMedianCell(cells[firstIdx]);
       const warm = parseMedianCell(cells[warmIdx]);
-      if (cold) {
+      if (first) {
         bars.push({
           label,
-          series: "cold",
-          value: cold.ms,
-          ranked: cold.ranked && nameRanked,
+          series: freshIdx >= 0 ? "fresh" : "cold",
+          value: first.ms,
+          ranked: first.ranked && nameRanked,
         });
       }
       if (warm) {
@@ -433,7 +509,8 @@ export function barsFromSpeedTable(headerLine, rowLines, { rankedOnly = false } 
 
 export function barsFromRssTable(headerLine, rowLines) {
   const header = splitRow(headerLine);
-  const rssIdx = header.findIndex((c) => /rss/i.test(c));
+  const peakIdx = header.findIndex((c) => /^peak rss$/i.test(c));
+  const rssIdx = peakIdx >= 0 ? peakIdx : header.findIndex((c) => /rss/i.test(c));
   if (rssIdx < 0) return [];
   const bars = [];
   for (const line of rowLines) {
@@ -530,10 +607,10 @@ function orderIdeHighlightTree(tree) {
   return { ...tree, children };
 }
 
-function isSfcCompilePath(blob) {
-  // Unique-contents is the usual title; duplicate-body corpora warn in the
-  // heading instead (`SFC compile (⚠ 2 duplicate bodies — …)`).
-  return /sfc compile/.test(blob);
+function isCompilerPath(blob) {
+  // `Compiler` is the current surface title. Keep recognizing the historical
+  // `SFC compile (...)` spelling so old reports can still be audited/rendered.
+  return /(?:^| › )(?:compiler\b|sfc compile\b)/.test(blob);
 }
 
 function isKeepHeading(kind, node, ancestors) {
@@ -541,10 +618,14 @@ function isKeepHeading(kind, node, ancestors) {
   const blob = path.toLowerCase();
   const title = node.title.toLowerCase();
 
-  if (kind === "cache-demo" || kind === "ide-scale") return false;
+  if (kind === "repeated-input" || kind === "ide-scale") return false;
 
   if (kind === "bench") {
-    if (isSfcCompilePath(blob)) {
+    if (isCompilerPath(blob)) {
+      // The full report retains the official Vue-version context table. The
+      // README landing is the candidate comparison: raw SFC compilation and
+      // SFC compilation with CSS, each already carrying its Vue denominator.
+      if (/^official render pipeline/.test(title)) return false;
       if (/production|development|sourcemap/i.test(title) || /^vdom|^vapor/i.test(title)) {
         return /production/.test(title) && !/development/.test(title);
       }
@@ -569,14 +650,22 @@ function isKeepHeading(kind, node, ancestors) {
   }
 
   if (kind === "memory") {
-    return (
+    const surface =
       title === "compile" ||
       title === "typecheck" ||
       title === "format" ||
       title === "lint" ||
       title === "component-meta" ||
-      title === "lsp"
-    );
+      title === "lsp";
+    // Memory surfaces can declare explicit work-equivalence classes below the
+    // surface heading (Compiler has raw-render and render+CSS). Retain those
+    // table-bearing children so the landing can publish a Peak RSS table per
+    // fair class instead of dropping the whole surface as "no direct table".
+    const underMemorySurface = ancestors.some((ancestor) => {
+      const value = String(ancestor.title ?? "").toLowerCase();
+      return ["compile", "typecheck", "format", "lint", "component-meta", "lsp"].includes(value);
+    });
+    return surface || underMemorySurface;
   }
 
   return false;
@@ -586,7 +675,13 @@ function pruneTree(node, kind, ancestors = []) {
   const kids = node.children
     .map((child) => pruneTree(child, kind, [...ancestors, node]))
     .filter(Boolean);
-  const want = node.level === 0 || isKeepHeading(kind, node, ancestors.filter((a) => a.level > 0));
+  const want =
+    node.level === 0 ||
+    isKeepHeading(
+      kind,
+      node,
+      ancestors.filter((a) => a.level > 0),
+    );
   if (!want && kids.length === 0) return null;
   if (node.level > 0 && kids.length === 0 && !extractFirstTable(node.lines)) return null;
   return { ...node, children: kids, keepSelf: want };
@@ -625,7 +720,10 @@ function unrankedWhy(note) {
     parts.find((p) => /⚠\s*(UNRANKED|FAILED|TOO NOISY|BACKEND FALLBACK)/i.test(p)) ||
     parts.find((p) => p.includes("⚠"));
   if (!hit) return "";
-  let s = hit.replace(/^⚠\s*/, "").replace(/\s+/g, " ").trim();
+  let s = hit
+    .replace(/^⚠\s*/, "")
+    .replace(/\s+/g, " ")
+    .trim();
   if (s.length > 220) {
     const cut = s.slice(0, 220);
     const dot = cut.lastIndexOf(".");
@@ -636,7 +734,9 @@ function unrankedWhy(note) {
 
 function linesForHeading(sourceLines, title) {
   if (!title) return sourceLines;
-  const needle = String(title).replace(/^#+\s*/, "").slice(0, 48);
+  const needle = String(title)
+    .replace(/^#+\s*/, "")
+    .slice(0, 48);
   let start = -1;
   let level = 6;
   for (let i = 0; i < sourceLines.length; i++) {
@@ -660,8 +760,7 @@ function linesForHeading(sourceLines, title) {
 export function unrankedFootnotes(headerLine, rowLines, extraLines = [], heading = "") {
   const header = splitRow(headerLine);
   const medianIdx = headerIndex(header, /median/i) >= 0 ? headerIndex(header, /median/i) : 1;
-  const vsColdIdx = headerIndex(header, /vs fastest cold/i);
-  const vsIdx = header.findIndex((c, i) => /vs fastest/i.test(c.replace(/\*/g, "").trim()) && i !== vsColdIdx);
+  const { cold: vsColdIdx, primary: vsIdx } = ratioColumnIndexes(header);
   const notes = noteMap(linesForHeading(extraLines, heading));
   const items = [];
   for (const line of rowLines) {
@@ -680,12 +779,17 @@ export function unrankedFootnotes(headerLine, rowLines, extraLines = [], heading
     const why = items[0].why.replace(/^UNRANKED — /i, "");
     return `**Not ranked** — ${why}`;
   }
-  return ["**Not ranked**", "", ...items.map((i) => `- **${linkToolLabel(i.name)}**: ${i.why}`)].join("\n");
+  return [
+    "**Not ranked**",
+    "",
+    ...items.map((i) => `- **${linkToolLabel(i.name)}**: ${i.why}`),
+  ].join("\n");
 }
 
 export function compactRssTable(headerLine, rowLines) {
   const header = splitRow(headerLine);
-  const rssIdx = header.findIndex((c) => /rss/i.test(c));
+  const peakIdx = header.findIndex((c) => /^peak rss$/i.test(c));
+  const rssIdx = peakIdx >= 0 ? peakIdx : header.findIndex((c) => /rss/i.test(c));
   const out = ["| Tool | **Peak RSS** |", "| --- | ---: |"];
   for (const line of rowLines) {
     const cells = splitRow(line);
@@ -704,7 +808,7 @@ export function toolSectionForTitle(kind, title) {
     .replace(/&gt;/g, ">");
   if (kind === "ide") return /^ide · initialize$/.test(t) ? "lsp" : null;
   if (kind !== "bench") return null;
-  if (/sfc compile/.test(t)) return "compile";
+  if (t === "compiler" || /^compiler\s*\(/.test(t) || /sfc compile/.test(t)) return "compile";
   if (t === "typecheck") return "typecheck";
   if (t === "format") return "format";
   if (t === "lint") return "lint";
@@ -717,7 +821,7 @@ export function toolSectionForTitle(kind, title) {
 export function memorySurfaceForTitle(kind, title) {
   const t = String(title ?? "").toLowerCase();
   if (kind !== "bench") return null;
-  if (/sfc compile/.test(t)) return "compile";
+  if (t === "compiler" || /^compiler\s*\(/.test(t) || /sfc compile/.test(t)) return "compile";
   if (t === "typecheck") return "typecheck";
   if (t === "format") return "format";
   if (t === "lint") return "lint";
@@ -739,14 +843,17 @@ export function memorySnippetsFromBody(compacted) {
     const rest = part.replace(/^### .+\n*/, "").trim();
     if (!rest) continue;
     map[key] =
-      `#### Peak RSS\n\n> Isolated from timing. Full probe (min/max/avg, CPU): [MEMORY.md](MEMORY.md).\n\n${rest}`;
+      `#### Peak RSS\n\n> Isolated from timing. In-process rows show tool-attributed RSS delta from the worker's GC baseline; CLI rows show the child/process-tree RSS. Full probe (min/max/avg, CPU): [MEMORY.md](MEMORY.md).\n\n${rest}`;
   }
   return map;
 }
 
 function renderNode(node, ctx, ancestors = []) {
   const out = [];
-  if (node.level > 0 && !/^(IDE operation results|Benchmark Results|Resource probe results)\b/i.test(node.title)) {
+  if (
+    node.level > 0 &&
+    !/^(IDE operation results|Benchmark Results|Resource probe results)\b/i.test(node.title)
+  ) {
     out.push(`${"#".repeat(node.level)} ${node.title}`, "");
   }
 
@@ -768,6 +875,13 @@ function renderNode(node, ctx, ancestors = []) {
     const tools = ctx.toolTable(toolId);
     if (tools) out.push(tools.trimEnd(), "");
   }
+  if (ctx.kind === "bench" && toolId === "compile") {
+    out.push(
+      "> 📄 **[Complete Compiler data →](docs/compiler.md)** — full tables, raw timing samples, validation plants, execution order, adapter-parity evidence, and the isolated resource-probe samples.",
+      "> Fresh and Warm share one combined bar per tool: the internal boundary is the faster measurement and the full endpoint is the slower measurement. The two timings are not added.",
+      "",
+    );
+  }
 
   if (table && table.rows.length) {
     const rankedOnly = ctx.kind === "real-world";
@@ -777,19 +891,20 @@ function renderNode(node, ctx, ancestors = []) {
       metric === "rss"
         ? barsFromRssTable(table.header, table.rows)
         : barsFromSpeedTable(table.header, table.rows, { rankedOnly });
-    const footnotes =
-      rankedOnly
-        ? unrankedFootnotes(
-            table.header,
-            table.rows,
-            String(ctx.notesSource ?? node.lines.join("\n")).split("\n"),
-            node.title,
-          )
-        : "";
+    const footnotes = rankedOnly
+      ? unrankedFootnotes(
+          table.header,
+          table.rows,
+          String(ctx.notesSource ?? node.lines.join("\n")).split("\n"),
+          node.title,
+        )
+      : "";
     if (bars.length === 0 && metric !== "rss") {
       if (footnotes) out.push(footnotes, "");
       else if (/project (typecheck|test|build)/i.test(node.title)) {
-        const tableMd = compactSpeedTable(table.header, table.sep, table.rows, { rankedOnly });
+        const tableMd = compactSpeedTable(table.header, table.sep, table.rows, {
+          rankedOnly,
+        });
         if (tableMd) out.push(tableMd, "");
       }
     } else if (bars.length >= 1 && ctx.writeChart) {
@@ -804,14 +919,18 @@ function renderNode(node, ctx, ancestors = []) {
       if (metric === "rss") {
         out.push(compactRssTable(table.header, table.rows), "");
       } else {
-        const tableMd = compactSpeedTable(table.header, table.sep, table.rows, { rankedOnly });
+        const tableMd = compactSpeedTable(table.header, table.sep, table.rows, {
+          rankedOnly,
+        });
         if (tableMd) out.push(tableMd, "");
       }
       if (footnotes) out.push(footnotes, "");
     } else if (metric === "rss") {
       out.push(compactRssTable(table.header, table.rows), "");
     } else {
-      const tableMd = compactSpeedTable(table.header, table.sep, table.rows, { rankedOnly });
+      const tableMd = compactSpeedTable(table.header, table.sep, table.rows, {
+        rankedOnly,
+      });
       if (tableMd) out.push(tableMd, "");
       if (footnotes) out.push(footnotes, "");
     }
@@ -856,13 +975,15 @@ export function compactHighlightBody(markdown, opts) {
     toolTable,
     memorySnippets,
   } = opts;
-  if (kind === "cache-demo" || kind === "ide-scale") {
+  if (kind === "repeated-input" || kind === "ide-scale") {
     return `> Not a ranking table — [full report](${href}).\n`;
   }
   let tree = pruneTree(parseMarkdownSections(markdown), kind);
   if (kind === "ide" && tree) tree = orderIdeHighlightTree(tree);
   if (!tree || (tree.children.length === 0 && !extractFirstTable(tree.lines))) {
-    return kind === "real-world" ? "" : `> See the [full report](${href}) for every table on this artifact.\n`;
+    return kind === "real-world"
+      ? ""
+      : `> See the [full report](${href}) for every table on this artifact.\n`;
   }
   const body = renderNode(tree, {
     leaf,
@@ -881,7 +1002,7 @@ export function compactHighlightBody(markdown, opts) {
 
 export function artifactKind(sectionId, leaf) {
   const name = String(leaf);
-  if (name.includes("cache-demo") || name.includes("repeated")) return "cache-demo";
+  if (name.includes("cache-demo") || name.includes("repeated")) return "repeated-input";
   if (name.startsWith("ide-scale")) return "ide-scale";
   if (sectionId === "benchmark") return "bench";
   if (sectionId === "ide") return "ide";
@@ -907,7 +1028,9 @@ function mean(values) {
 
 function allPlantTools(rows) {
   return (rows || [])
-    .filter((r) => (r.suite === "typecheck-all" || r.caseId === "all-plants") && r.status !== "skip")
+    .filter(
+      (r) => (r.suite === "typecheck-all" || r.caseId === "all-plants") && r.status !== "skip",
+    )
     .map((r) => {
       const d = r.detail || {};
       const runs = finiteRuns(d);
@@ -916,8 +1039,16 @@ function allPlantTools(rows) {
         label: ALL_PLANT_LABELS[r.tool] || r.tool,
         ms: Number(r.ms ?? d.ms),
         avgMs: Number.isFinite(avgMs) ? avgMs : runs.length ? mean(runs) : Number.NaN,
-        minMs: Number.isFinite(Number(d.minMs)) ? Number(d.minMs) : runs.length ? Math.min(...runs) : Number.NaN,
-        maxMs: Number.isFinite(Number(d.maxMs)) ? Number(d.maxMs) : runs.length ? Math.max(...runs) : Number.NaN,
+        minMs: Number.isFinite(Number(d.minMs))
+          ? Number(d.minMs)
+          : runs.length
+            ? Math.min(...runs)
+            : Number.NaN,
+        maxMs: Number.isFinite(Number(d.maxMs))
+          ? Number(d.maxMs)
+          : runs.length
+            ? Math.max(...runs)
+            : Number.NaN,
         rssMb: Number(r.rssMb ?? d.rssMb),
         rssToolMb: Number(r.rssToolMb ?? d.rssToolMb),
         rssEngineMb: Number(r.rssEngineMb ?? d.rssEngineMb),
@@ -943,7 +1074,14 @@ export function typecheckAllLanding(rows, { writeChart, chartsHref = "docs/resul
     .map((t) => ({ label: t.label, value: t.ms, ranked: true }));
   if (wallBars.length && writeChart) {
     const file = "typecheck-all-wall.svg";
-    writeChart(file, barChartSvg({ title: "All plants · wall (one tsconfig)", unit: "ms", bars: wallBars }));
+    writeChart(
+      file,
+      barChartSvg({
+        title: "All plants · wall (one tsconfig)",
+        unit: "ms",
+        bars: wallBars,
+      }),
+    );
     out.push(`![All plants wall](${chartsHref}/${file})`, "");
   }
   if (wallBars.length) {
@@ -980,7 +1118,14 @@ export function typecheckAllLanding(rows, { writeChart, chartsHref = "docs/resul
   });
   if (rssBars.length && writeChart) {
     const file = "typecheck-all-rss.svg";
-    writeChart(file, barChartSvg({ title: "All plants · peak RSS (one tsconfig)", unit: "MB", bars: rssBars }));
+    writeChart(
+      file,
+      barChartSvg({
+        title: "All plants · peak RSS (one tsconfig)",
+        unit: "MB",
+        bars: rssBars,
+      }),
+    );
     out.push(`![All plants peak RSS](${chartsHref}/${file})`, "");
   }
   if (rssTools.length) {

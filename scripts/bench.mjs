@@ -4,14 +4,15 @@
  *
  * Surfaces: compile | jsx-compile | typecheck | format | lint | component-meta | lsp
  *
- * Ranking metric is the median of the measured runs. There is no cold metric:
- * an unwarmed first run costs a JS compiler ~3.2x its steady state and a native
- * compiler nothing, so `--warmups 0` is clamped to 1.
- * Tool order is rotated on every warmup and measured run.
+ * Ranking metric is the Warm median of measured runs. Warm series always follow
+ * a discarded pass. Compiler additionally reports the first timed row workload
+ * in fresh children; imports/setup are excluded and OS caches are not flushed.
+ * `--warmups 0` is clamped to 1. Tool order is rotated in every phase.
  */
 
 import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import os from "node:os";
+import { spawnSync } from "node:child_process";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { collectVueFiles } from "./lib/fixtures.mjs";
@@ -114,6 +115,29 @@ function githubRunUrl() {
   return `${server}/${repo}/actions/runs/${runId}`;
 }
 
+function benchmarkCommit() {
+  const git = (args) =>
+    spawnSync("git", args, {
+      cwd: rootDir,
+      encoding: "utf8",
+      windowsHide: true,
+    });
+  const resolved = git(["rev-parse", "HEAD"]);
+  const sha =
+    process.env.GITHUB_SHA ||
+    (resolved.status === 0 ? resolved.stdout.trim() : "");
+  const status = git(["status", "--porcelain", "--untracked-files=normal"]);
+  const dirty = status.status === 0 ? status.stdout.trim().length > 0 : null;
+  return {
+    sha,
+    ref: process.env.GITHUB_REF_NAME ?? "",
+    repository: process.env.GITHUB_REPOSITORY ?? "",
+    runUrl: githubRunUrl(),
+    dirty,
+    statusAvailable: status.status === 0,
+  };
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   if (args.help) {
@@ -128,24 +152,27 @@ Options:
   --check-file-limit N     Max SFCs for typecheck (default: 200)
   --meta-file-limit N      Max SFCs for component-meta (default: 100)
   --lint-file-limit N      Max SFCs for lint (default: all)
-  --compile-targets LIST   vdom,vapor (SFC compile only)
-  --compile-envs LIST      production,development (SFC compile only)
-  --compile-sourcemaps L   off (default) or on. Only @vue/compiler-sfc emits a
-                           map from the benchmarked entry point, so "on" does
-                           NOT equalise work — it is opt-in, not published.
+  --compile-targets LIST   vdom,vapor (Compiler surface only)
+  --compile-envs LIST      production,development (Compiler surface only)
+  --compile-sourcemaps L   off (default) or on. Each installed entry point is
+                           capability-probed for returned JS/CSS maps, but map
+                           coordinate validity is still UNKNOWN; "on" remains
+                           opt-in and unranked rather than silently unequal.
   --json FILE              Write JSON
   --out FILE               Write markdown
   --work DIR               Work directory
 
 Ranking:
-  Median of measured runs, each preceded by >= 1 discarded warmup pass.
-  There is no cold metric: an unwarmed first run measures JIT warmup for JS
-  tools and nothing for native tools. --warmups 0 is clamped to 1.
+  Warm median of measured runs. Warm series follow >= 1 discarded pass.
+  Compiler also reports Fresh child: the first timed row workload in a new
+  child per row/sample. Process startup, import and input/host setup are
+  excluded and may already affect runtime/allocator state; OS cache is not flushed.
+  --warmups 0 is clamped to 1.
 
 Corpus notes:
   fixtures/N              UNIQUE SFC contents (primary rankings)
   fixtures/N-vapor        UNIQUE + vapor authoring attribute
-  fixtures/N-repeated     identical bodies (cache demo only — not for ranking)
+  fixtures/N-repeated     identical bodies (repeated-input study; not ranking)
   fixtures/jsx-N          UNIQUE .jsx for jsx-compile (vue-jsx-vapor)
 `);
     process.exit(0);
@@ -160,7 +187,7 @@ Corpus notes:
 
   if (String(args.fixture).includes("repeated")) {
     console.warn(
-      "⚠ Fixture looks like REPEATED-content corpus. Content-hash caches (e.g. Vize) will inflate compile throughput. Use fixtures/N for ranking.",
+      "⚠ Fixture looks like a REPEATED-content corpus. It is a repeated-input study, not a representative scaling corpus. The measured Vize compileSfcBatchWithResults path still recompiles every file; use fixtures/N for primary rankings.",
     );
   }
 
@@ -182,28 +209,41 @@ Corpus notes:
     rmSync(workRoot, { recursive: true, force: true });
   } catch (err) {
     // Windows often keeps file locks (antivirus / prior tools). Fall back to a unique dir.
-    console.warn(`warn: could not wipe ${workRoot} (${err?.code || err}); using unique work dir`);
-    workRoot = resolve(rootDir, `${args.work}-${process.pid}-${Date.now().toString(36)}`);
+    console.warn(
+      `warn: could not wipe ${workRoot} (${err?.code || err}); using unique work dir`,
+    );
+    workRoot = resolve(
+      rootDir,
+      `${args.work}-${process.pid}-${Date.now().toString(36)}`,
+    );
   }
   mkdirSync(workRoot, { recursive: true });
 
   const fileCount = files.length || 0;
-  // Warmup is mandatory. An unwarmed first run costs a JS compiler ~3.2x its
-  // steady state and a native compiler nothing, so a zero-warmup pass ranks
-  // V8 warmup rather than the tools.
+  // Warmup is mandatory because this suite ranks steady-state work. A cold
+  // pass mixes compiler work with process/JIT/native/pool/allocator setup.
   const warmups = effectiveWarmups(args.warmups);
   if (warmups !== args.warmups) {
-    console.warn(`warn: --warmups ${args.warmups} raised to ${warmups} (warmup is mandatory)`);
+    console.warn(
+      `warn: --warmups ${args.warmups} raised to ${warmups} (warmup is mandatory)`,
+    );
   }
   const options = {
     runs: args.runs,
     warmups,
-    fileLimit: Number.isFinite(args.fileLimit) ? args.fileLimit : fileCount || Infinity,
+    fileLimit: Number.isFinite(args.fileLimit)
+      ? args.fileLimit
+      : fileCount || Infinity,
     checkFileLimit: Number.isFinite(args.checkFileLimit)
       ? Math.min(args.checkFileLimit, fileCount || args.checkFileLimit)
       : Math.min(200, fileCount || 200),
-    metaFileLimit: Math.min(args.metaFileLimit, fileCount || args.metaFileLimit),
-    lintFileLimit: Number.isFinite(args.lintFileLimit) ? args.lintFileLimit : fileCount || Infinity,
+    metaFileLimit: Math.min(
+      args.metaFileLimit,
+      fileCount || args.metaFileLimit,
+    ),
+    lintFileLimit: Number.isFinite(args.lintFileLimit)
+      ? args.lintFileLimit
+      : fileCount || Infinity,
     compileTargets: args.compileTargets,
     compileEnvs: args.compileEnvs,
     compileSourceMaps: args.compileSourceMaps,
@@ -224,12 +264,14 @@ Corpus notes:
     console.log(`→ Running surface: ${id}`);
     const started = Date.now();
     let surface;
-    if (id === "compile") surface = await runCompileSurface(fixtureDir, options);
+    if (id === "compile")
+      surface = await runCompileSurface(fixtureDir, options);
     else if (id === "jsx-compile") {
       surface = await runJsxCompileSurface(fixtureDir, options);
     } else if (id === "typecheck") {
       surface = await runTypecheckSurface(fixtureDir, options);
-    } else if (id === "format") surface = await runFormatSurface(fixtureDir, options);
+    } else if (id === "format")
+      surface = await runFormatSurface(fixtureDir, options);
     else if (id === "lint") {
       surface = await runLintSurface(fixtureDir, {
         ...options,
@@ -256,7 +298,8 @@ Corpus notes:
     schemaVersion: 2,
     generatedAt: new Date().toISOString(),
     fixture: args.fixture,
-    fileCount: files.length || surfaces.find((s) => s.id === "jsx-compile")?.files || 0,
+    fileCount:
+      files.length || surfaces.find((s) => s.id === "jsx-compile")?.files || 0,
     settings: {
       phase: process.env.BENCH_PHASE || "local",
       runs: options.runs,
@@ -279,12 +322,7 @@ Corpus notes:
       totalmem: os.totalmem(),
       node: process.version,
     },
-    commit: {
-      sha: process.env.GITHUB_SHA ?? "",
-      ref: process.env.GITHUB_REF_NAME ?? "",
-      repository: process.env.GITHUB_REPOSITORY ?? "",
-      runUrl: githubRunUrl(),
-    },
+    commit: benchmarkCommit(),
     versions: collectVersions(),
     methodology: buildMethodologyNotes(),
     surfaces,
@@ -296,10 +334,19 @@ Corpus notes:
   const resultsDir = join(rootDir, "results");
   mkdirSync(resultsDir, { recursive: true });
 
-  const defaultJson = join(resultsDir, `bench-${process.platform}-${files.length}.json`);
-  const defaultMd = join(resultsDir, `bench-${process.platform}-${files.length}.md`);
+  const defaultJson = join(
+    resultsDir,
+    `bench-${process.platform}-${files.length}.json`,
+  );
+  const defaultMd = join(
+    resultsDir,
+    `bench-${process.platform}-${files.length}.md`,
+  );
 
-  writeFileSync(args.json ? resolve(args.json) : defaultJson, `${JSON.stringify(data, null, 2)}\n`);
+  writeFileSync(
+    args.json ? resolve(args.json) : defaultJson,
+    `${JSON.stringify(data, null, 2)}\n`,
+  );
   writeFileSync(args.out ? resolve(args.out) : defaultMd, markdown);
 
   console.log(`\nWrote ${args.json || defaultJson}`);
@@ -307,6 +354,8 @@ Corpus notes:
 }
 
 main().catch((error) => {
-  console.error(error instanceof Error ? (error.stack ?? error.message) : String(error));
+  console.error(
+    error instanceof Error ? (error.stack ?? error.message) : String(error),
+  );
   process.exit(1);
 });

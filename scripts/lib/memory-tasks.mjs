@@ -6,18 +6,23 @@
 import { createRequire } from "node:module";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import {
   collectJsxFiles,
   collectVueFiles,
+  prepareLintDir,
   prepareTypecheckDir,
   readSources,
-  copyFixtureSubset,
-  OXLINT_CONFIG,
 } from "./fixtures.mjs";
 import { resolveBin } from "./timing.mjs";
 import { resolveJsxFixtureDir } from "./surfaces/jsx-compile.mjs";
 import { resolveVizeLsp, resolveVerterLsp } from "./surfaces/lsp.mjs";
+import {
+  materializeRawRenderCorpus,
+  materializeStyleSfcCorpus,
+  prepareRawRenderCorpus,
+  prepareStyleSfcCorpus,
+} from "./surfaces/compile.mjs";
 import { resolveTsgoBin, withTsgoEnv } from "./tsgo.mjs";
 
 const require = createRequire(import.meta.url);
@@ -114,6 +119,21 @@ export function buildMemoryTasks(fixtureDir, options = {}) {
     path: f.path,
     source: f.source,
   }));
+  const corpusCompiler = require(require.resolve("@vue/compiler-sfc", { paths: [rootDir] }));
+  const rawRenderSources = materializeRawRenderCorpus(
+    prepareRawRenderCorpus(vueSources, corpusCompiler),
+    { phase: "measure", iteration: 0 },
+  ).map(({ filename, path, source }) => ({ filename, path, source }));
+  const styleSources = materializeStyleSfcCorpus(
+    prepareStyleSfcCorpus(vueSources, corpusCompiler),
+    { phase: "measure", iteration: 0 },
+  ).map(({ filename, path, source, componentId, styles }) => ({
+    filename,
+    path,
+    source,
+    componentId,
+    styles,
+  }));
 
   const tasks = [];
 
@@ -133,6 +153,7 @@ export function buildMemoryTasks(fixtureDir, options = {}) {
           label: `@vue/compiler-sfc 3.5 (1T) ${cell}`,
           package: "@vue/compiler-sfc",
           surface: "compile",
+          comparisonClass: "raw-render",
           kind: "inproc",
           inproc: {
             handler: "vue-compile-sfc",
@@ -140,7 +161,7 @@ export function buildMemoryTasks(fixtureDir, options = {}) {
               packageName: "@vue/compiler-sfc",
               vapor: false,
               isProd,
-              sources: vueSources,
+              sources: rawRenderSources,
             },
           },
         });
@@ -149,6 +170,7 @@ export function buildMemoryTasks(fixtureDir, options = {}) {
           label: `@vue/compiler-sfc 3.6 (1T) ${cell}`,
           package: "@vue/compiler-sfc-36",
           surface: "compile",
+          comparisonClass: "raw-render",
           kind: "inproc",
           inproc: {
             handler: "vue-compile-sfc",
@@ -156,7 +178,7 @@ export function buildMemoryTasks(fixtureDir, options = {}) {
               packageName: "@vue/compiler-sfc-36",
               vapor,
               isProd,
-              sources: vueSources,
+              sources: rawRenderSources,
             },
           },
         });
@@ -166,6 +188,7 @@ export function buildMemoryTasks(fixtureDir, options = {}) {
           label: `@vue/compiler-sfc 3.6 vapor (1T) ${cell}`,
           package: "@vue/compiler-sfc-36",
           surface: "compile",
+          comparisonClass: "raw-render",
           kind: "inproc",
           inproc: {
             handler: "vue-compile-sfc",
@@ -173,39 +196,79 @@ export function buildMemoryTasks(fixtureDir, options = {}) {
               packageName: "@vue/compiler-sfc-36",
               vapor: true,
               isProd,
-              sources: vueSources,
+              sources: rawRenderSources,
             },
           },
         });
       }
 
       tasks.push({
-        id: `mem-vize-1t-${cell}`,
-        label: `Vize native loop (1T) ${cell}`,
-        package: "@vizejs/native",
+        id: `mem-vue-style-reference-${cell}`,
+        label: `Vue compiler-sfc ${vapor ? "3.6" : "3.5"} reference (render + CSS, 1T) ${cell}`,
+        package: vapor ? "@vue/compiler-sfc-36" : "@vue/compiler-sfc",
         surface: "compile",
+        comparisonClass: "sfc-with-style",
         kind: "inproc",
         inproc: {
-          handler: "vize-compile-sfc",
+          handler: "vue-compile-sfc",
           payload: {
+            packageName: vapor ? "@vue/compiler-sfc-36" : "@vue/compiler-sfc",
             vapor,
-            sourceMap: !isProd,
-            sources: vueSources,
+            isProd,
+            includeStyles: true,
+            sources: styleSources,
           },
         },
       });
 
       tasks.push({
-        id: `mem-vize-batch-${cell}`,
-        label: `Vize native batch ${cell}`,
+        id: `mem-vize-1t-${cell}`,
+        label: `Vize compileSfc loop (render + CSS, 1T) ${cell}`,
         package: "@vizejs/native",
         surface: "compile",
+        comparisonClass: "sfc-with-style",
+        kind: "inproc",
+        inproc: {
+          handler: "vize-compile-sfc",
+          payload: {
+            vapor,
+            isProd,
+            sourceMap: false,
+            sources: styleSources,
+          },
+        },
+      });
+
+      tasks.push({
+        id: `mem-vize-full-sfc-batch-${cell}`,
+        label: `Vize compileSfcBatchWithResults (render + CSS, Rayon global pool) ${cell}`,
+        package: "@vizejs/native",
+        surface: "compile",
+        comparisonClass: "sfc-with-style",
         kind: "inproc",
         inproc: {
           handler: "vize-compile-batch",
           payload: {
             vapor,
-            sources: vueSources,
+            isProd,
+            sources: styleSources,
+          },
+        },
+      });
+
+      tasks.push({
+        id: `mem-vize-raw-render-batch-${cell}`,
+        label: `Vize compileSfcBatchWithResults (raw style-free render, Rayon global pool) ${cell}`,
+        package: "@vizejs/native",
+        surface: "compile",
+        comparisonClass: "raw-render",
+        kind: "inproc",
+        inproc: {
+          handler: "vize-compile-batch",
+          payload: {
+            vapor,
+            isProd,
+            sources: rawRenderSources,
           },
         },
       });
@@ -217,29 +280,51 @@ export function buildMemoryTasks(fixtureDir, options = {}) {
           label: `fervid compileSync (1T) ${cell}`,
           package: "@fervid/napi",
           surface: "compile",
+          comparisonClass: "sfc-with-style",
           kind: "inproc",
           inproc: {
             handler: "fervid-compile-sfc",
             payload: {
               isProd,
-              sources: vueSources,
+              sources: styleSources,
             },
           },
         });
       }
 
       tasks.push({
-        id: `mem-verter-stateless-${cell}`,
-        label: `Verter compileMany (stateless) ${cell}`,
+        id: `mem-verter-raw-render-${cell}`,
+        label: `Verter compileMany (stateless raw render) ${cell}`,
         package: "@verter/native",
         surface: "compile",
+        comparisonClass: "raw-render",
         kind: "inproc",
         inproc: {
           handler: "verter-compile-many",
           payload: {
             vapor,
             isProd,
-            sources: vueSources,
+            workspaceRoot: fixtureDir,
+            sources: rawRenderSources,
+          },
+        },
+      });
+
+      tasks.push({
+        id: `mem-verter-render-style-${cell}`,
+        label: `Verter compileMany + processStyle (render + CSS) ${cell}`,
+        package: "@verter/native",
+        surface: "compile",
+        comparisonClass: "sfc-with-style",
+        kind: "inproc",
+        inproc: {
+          handler: "verter-compile-many",
+          payload: {
+            vapor,
+            isProd,
+            includeStyles: true,
+            workspaceRoot: fixtureDir,
+            sources: styleSources,
           },
         },
       });
@@ -309,12 +394,11 @@ export function buildMemoryTasks(fixtureDir, options = {}) {
     ]) {
       const cli = tryCli(binName);
       const needsTsgo = binName === "verter-tsc";
-      const skip =
-        !cli
-          ? `${binName} not found`
-          : needsTsgo && !tsgo.bin
-            ? `tsgo not found (${tsgo.notes})`
-            : undefined;
+      const skip = !cli
+        ? `${binName} not found`
+        : needsTsgo && !tsgo.bin
+          ? `tsgo not found (${tsgo.notes})`
+          : undefined;
       tasks.push({
         id,
         label,
@@ -330,26 +414,25 @@ export function buildMemoryTasks(fixtureDir, options = {}) {
                 cwd: checkDir,
                 env: withTsgoEnv({ NODE_PATH: np }, rootDir),
                 shell: cli.shell,
+                // prepareTypecheckDir builds the same clean corpus used by the
+                // timing row. Diagnostics are not an expected-success exit.
+                validation: { kind: "typecheck-clean" },
               }
             : undefined,
       });
     }
   }
 
-  // --- Format CLIs on a throwaway copy (prepared here so worker only runs the tool) ---
+  // --- Format CLIs on a fresh throwaway copy for every resource sample ---
   for (const [id, label, binName, args] of [
-    ["mem-prettier", "Prettier", "prettier", ["--write", "**/*.vue"]],
-    ["mem-oxfmt", "Oxfmt", "oxfmt", ["--write", "."]],
-    ["mem-vize-fmt", "Vize fmt", "vize", ["fmt", "--write"]],
+    ["mem-prettier", "Prettier", "prettier", ["--write", "**/*.vue", "--log-level", "error"]],
+    ["mem-oxfmt", "Oxfmt", "oxfmt", [".", "--write"]],
+    ["mem-vize-fmt", "Vize fmt", "vize", ["fmt", "--write", "."]],
     // Script block only — its footprint is not comparable to a whole-SFC
     // formatter's, for the same reason the format surface leaves it unranked.
     ["mem-biome-fmt", "Biome format", "biome", ["format", "--write", "."]],
   ]) {
     const cli = tryCli(binName);
-    const fmtDir = join(workRoot, "fmt-src", id);
-    if (cli && vueFiles.length) {
-      copyFixtureSubset(fixtureDir, fmtDir, vueFiles, ["package.json", "tsconfig.json"]);
-    }
     tasks.push({
       id,
       label,
@@ -361,14 +444,31 @@ export function buildMemoryTasks(fixtureDir, options = {}) {
         ? {
             bin: cli.bin,
             args: [...cli.argsPrefix, ...args],
-            cwd: fmtDir,
+            // Each sample gets a pristine copy inside memory-worker. Reusing one
+            // directory made sample 1 format dirty files and samples 2/3 measure
+            // already-formatted inputs.
+            cwd: fixtureDir,
             shell: cli.shell,
+            validation: { kind: "exit-zero" },
+            freshCopy: {
+              id,
+              fixtureDir,
+              files: vueFiles,
+              extraFiles: [".prettierrc.json", "biome.json", "package.json"],
+              workRoot: join(workRoot, "fmt-samples"),
+            },
           }
         : undefined,
     });
   }
 
   // --- Lint ---
+  // Match the timing surface's isolated, repo-bounded corpus and configs. The
+  // old CLI rows walked fixtureDir directly: at --file-limit=2 Vize processed
+  // all 20 fixture SFCs, while Biome processed zero because its project/config
+  // discovery rejected the directory. Those were not resource measurements of
+  // the named two-file workload.
+  const lintDir = prepareLintDir(fixtureDir, vueFiles, workRoot, `mem-n${vueFiles.length}`);
   tasks.push({
     id: "mem-eslint-vue",
     label: "eslint-plugin-vue (1T)",
@@ -378,8 +478,8 @@ export function buildMemoryTasks(fixtureDir, options = {}) {
     inproc: {
       handler: "eslint-vue",
       payload: {
-        fixtureDir,
-        files: vueFiles.map((f) => join(fixtureDir, f)),
+        fixtureDir: lintDir,
+        files: vueFiles.map((f) => join(lintDir, f)),
       },
     },
   });
@@ -387,7 +487,7 @@ export function buildMemoryTasks(fixtureDir, options = {}) {
   const vizeCli = tryCli("vize");
   tasks.push({
     id: "mem-vize-lint",
-    label: "Vize lint",
+    label: "Vize lint (default threads)",
     package: "vize",
     surface: "lint",
     kind: "cli",
@@ -395,9 +495,14 @@ export function buildMemoryTasks(fixtureDir, options = {}) {
     cli: vizeCli
       ? {
           bin: vizeCli.bin,
-          args: [...vizeCli.argsPrefix, "lint", ".", "--quiet"],
-          cwd: fixtureDir,
+          args: [...vizeCli.argsPrefix, "lint", "."],
+          cwd: lintDir,
           shell: vizeCli.shell,
+          validation: {
+            kind: "lint-scan",
+            findingExitCodes: [1],
+            expectedMinimumFiles: vueFiles.length,
+          },
         }
       : undefined,
   });
@@ -405,7 +510,7 @@ export function buildMemoryTasks(fixtureDir, options = {}) {
   const biomeCli = tryCli("biome");
   tasks.push({
     id: "mem-biome-lint",
-    label: "Biome lint",
+    label: "Biome lint (default threads)",
     package: "@biomejs/biome",
     surface: "lint",
     kind: "cli",
@@ -414,23 +519,21 @@ export function buildMemoryTasks(fixtureDir, options = {}) {
       ? {
           bin: biomeCli.bin,
           args: [...biomeCli.argsPrefix, "lint", "."],
-          cwd: fixtureDir,
+          cwd: lintDir,
           shell: biomeCli.shell,
+          validation: {
+            kind: "lint-scan",
+            findingExitCodes: [1],
+            expectedMinimumFiles: vueFiles.length,
+          },
         }
       : undefined,
   });
 
-  // Oxlint gets its own prepared dir rather than sharing `fixtureDir` with the
-  // linters above: it resolves .oxlintrc.json by walking up from the file, and
-  // without that config the vue plugin is off. Sampling the footprint of a
-  // 111-rule run while the timed surface measures a 142-rule one would put two
-  // different configurations under the same tool name.
+  // prepareLintDir places .oxlintrc.json beside this shared isolated corpus.
+  // Without it the Vue plugin is off and the resource row measures fewer rules
+  // than the timing row with the same name.
   const oxlintCli = tryCli("oxlint");
-  const oxlintDir = join(workRoot, "lint-src", "mem-oxlint");
-  if (oxlintCli && vueFiles.length) {
-    copyFixtureSubset(fixtureDir, oxlintDir, vueFiles, []);
-    writeFileSync(join(oxlintDir, ".oxlintrc.json"), OXLINT_CONFIG);
-  }
   tasks.push({
     id: "mem-oxlint",
     // The entry point is in the label for the same reason the LSP rows carry
@@ -439,7 +542,7 @@ export function buildMemoryTasks(fixtureDir, options = {}) {
     // the Biome row above, a native executable, does not. Measured on 20 SFCs:
     // 73 MiB against Biome's 8 MiB. That IS what running `oxlint` costs, but a
     // row labelled plain "Oxlint" would read as a linter being 9x heavier.
-    label: "Oxlint (Node host + NAPI addon)",
+    label: "Oxlint (default threads; Node host + NAPI addon)",
     package: "oxlint",
     surface: "lint",
     kind: "cli",
@@ -448,8 +551,13 @@ export function buildMemoryTasks(fixtureDir, options = {}) {
       ? {
           bin: oxlintCli.bin,
           args: [...oxlintCli.argsPrefix, "."],
-          cwd: oxlintDir,
+          cwd: lintDir,
           shell: oxlintCli.shell,
+          validation: {
+            kind: "lint-scan",
+            findingExitCodes: [1],
+            silentExitZero: "unknown",
+          },
         }
       : undefined,
   });
@@ -468,7 +576,6 @@ export function buildMemoryTasks(fixtureDir, options = {}) {
 
   // --- Component-meta ---
   const metaFiles = vueFiles.slice(0, metaLimit);
-  const metaSources = readSources(fixtureDir, metaFiles);
   const metaDir = prepareTypecheckDir(fixtureDir, metaFiles, workRoot, `mem-meta-${metaLimit}`);
 
   tasks.push({
@@ -488,17 +595,16 @@ export function buildMemoryTasks(fixtureDir, options = {}) {
 
   tasks.push({
     id: "mem-verter-component-meta",
-    label: "Verter ComponentMetaHost",
-    package: "@verter/native",
+    label: "@verter/component-meta",
+    package: "@verter/component-meta",
     surface: "component-meta",
     kind: "inproc",
     inproc: {
       handler: "verter-component-meta",
       payload: {
-        sources: metaSources.map((f) => ({
-          path: f.path.replace(/\\/g, "/"),
-          source: f.source,
-        })),
+        root: metaDir,
+        tsconfig: join(metaDir, "tsconfig.json"),
+        files: metaFiles.map((f) => join(metaDir, f)),
       },
     },
   });
@@ -520,7 +626,10 @@ export function buildMemoryTasks(fixtureDir, options = {}) {
     const extra = lspEntryLabel[server]?.()?.labelExtra ?? null;
     tasks.push({
       id: `mem-lsp-${server}`,
-      label: `LSP ${server} (server process${extra ? `, ${extra}` : ""})`,
+      label:
+        server === "volar"
+          ? "LSP Volar — Vue server process only (TypeScript half not sampled)"
+          : `LSP ${server} (server process${extra ? `, ${extra}` : ""})`,
       package: server,
       surface: "lsp",
       kind: "inproc",
