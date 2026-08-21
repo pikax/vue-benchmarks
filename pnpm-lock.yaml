@@ -27,11 +27,11 @@ importers:
         specifier: 0.0.1-beta.3
         version: 0.0.1-beta.3
       '@vizejs/musea-mcp-server':
-        specifier: 0.352.0
-        version: 0.352.0(zod@3.25.76)
+        specifier: 0.353.0
+        version: 0.353.0(zod@3.25.76)
       '@vizejs/native':
-        specifier: 0.352.0
-        version: 0.352.0
+        specifier: 0.353.0
+        version: 0.353.0
       '@vscode/test-electron':
         specifier: 3.1.0
         version: 3.1.0
@@ -90,8 +90,8 @@ importers:
         specifier: 0.0.1-beta.3
         version: 0.0.1-beta.3
       vize:
-        specifier: 0.352.0
-        version: 0.352.0(vue@3.5.41(typescript@6.0.3))
+        specifier: 0.353.0
+        version: 0.353.0(vue@3.5.41(typescript@6.0.3))
       vue:
         specifier: 3.5.41
         version: 3.5.41(typescript@6.0.3)
@@ -124,11 +124,11 @@ importers:
         specifier: 6.0.8
         version: 6.0.8(vite@8.2.1(@types/node@26.1.2)(esbuild@0.28.1)(sass@1.102.0)(terser@5.49.0))(vue@3.5.41(typescript@6.0.3))
       '@vizejs/rspack-plugin':
-        specifier: 0.352.0
-        version: 0.352.0(@rspack/core@2.1.10)
+        specifier: 0.353.0
+        version: 0.353.0(@rspack/core@2.1.10)
       '@vizejs/vite-plugin':
-        specifier: 0.352.0
-        version: 0.352.0(vite@8.2.1(@types/node@26.1.2)(esbuild@0.28.1)(sass@1.102.0)(terser@5.49.0))(vue@3.5.41(typescript@6.0.3))
+        specifier: 0.353.0
+        version: 0.353.0(vite@8.2.1(@types/node@26.1.2)(esbuild@0.28.1)(sass@1.102.0)(terser@5.49.0))(vue@3.5.41(typescript@6.0.3))
       '@vue/test-utils':
         specifier: 2.4.11
         version: 2.4.11(@vue/compiler-dom@3.6.0-rc.4)(@vue/server-renderer@3.5.41)(vue@3.5.41(typescript@6.0.3))
@@ -2184,71 +2184,71 @@ packages:
       vite: ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
       vue: ^3.2.25
 
-  '@vizejs/musea-mcp-server@0.352.0':
-    resolution: {integrity: sha512-/nS+Kt4X3Ogia8MTfCFw7ZjNvkyP7RNK1TpVAuEmr0auX0sXtL0wnkc8pAOcd21Jj/vsn2kl2KsG+kNCoVoluQ==}
+  '@vizejs/musea-mcp-server@0.353.0':
+    resolution: {integrity: sha512-ewWlS8gsz9u9H8mJIV/3LlaIR9MwurAU/YSo7kaGzML7aJLiQ8tuy6qFtdbqpWHUVDYUlp3hZW0aGNktP8n7Pg==}
     engines: {node: '>=22'}
     hasBin: true
 
-  '@vizejs/native-darwin-arm64@0.352.0':
-    resolution: {integrity: sha512-+Z8ZmEuwrJlfaXvxwb9+chxYmd1I7LvDxV7y7YKbtwL4W6MnAq3pWVoHNZohGaPwuqZ5ary9Eru8XnBuQqYwDg==}
+  '@vizejs/native-darwin-arm64@0.353.0':
+    resolution: {integrity: sha512-uYmkIC1RAHUfghhENHCQxdvnNCQkgDkdmsAoisrmdyU46xhC6oT3svPoPvs0QKd5EHM0aTHWWNS9nQ9MQVL4Ew==}
     engines: {node: '>=22'}
     cpu: [arm64]
     os: [darwin]
 
-  '@vizejs/native-darwin-x64@0.352.0':
-    resolution: {integrity: sha512-5Rjn2gZxAWd16bYAPQVlii7+kNBAGkzijxCZUkvAp9DWcbc7mjDsiY76cMJ3eJELpE2tb0qAezYO/omtVJG3Ag==}
+  '@vizejs/native-darwin-x64@0.353.0':
+    resolution: {integrity: sha512-HzwyT9ZS+MY6k8tKN2SKTnkW6AcllxbG1UrmF3c6mTVGav/bRFP/8nfRdFk/ySKULmVrYW7m8seXhtiVJPmBXA==}
     engines: {node: '>=22'}
     cpu: [x64]
     os: [darwin]
 
-  '@vizejs/native-linux-arm64-gnu@0.352.0':
-    resolution: {integrity: sha512-9D5u1uETnkeDpXlB1cjj/KYzoMw8VQ/kSmn7W+DTUM2ZhUlUBMxTKYL2THIymkx0hy3v7/SeDTHOiYWm9YJRaw==}
+  '@vizejs/native-linux-arm64-gnu@0.353.0':
+    resolution: {integrity: sha512-HjNOVDruCB+N0RrEz2OR+xZu9FynpTArttF0HswRZq/Bw1oVDD7/nes97P0YflJCmK8lg+ShsIBsxoPhNHy8qg==}
     engines: {node: '>=22'}
     cpu: [arm64]
     os: [linux]
 
-  '@vizejs/native-linux-arm64-musl@0.352.0':
-    resolution: {integrity: sha512-u5lENgOQiaqlAd/SOpOd50lgJ6Zz5b+p8IJcPFEde6l5UOZDz6GCIvK9HEl9lvQX0ZeVDAFfCLeA7juk9iwvtQ==}
+  '@vizejs/native-linux-arm64-musl@0.353.0':
+    resolution: {integrity: sha512-GarWDZOFImDgJDhSa+SW8Jg6WysshJ7mkUWQu7cUGOjSAXS/oIQ1w/ykpU6zzjCRpJGoXh9ClBqAiGVoO45MuQ==}
     engines: {node: '>=22'}
     cpu: [arm64]
     os: [linux]
 
-  '@vizejs/native-linux-x64-gnu@0.352.0':
-    resolution: {integrity: sha512-9CGBCweOy43O2OqKD8E/hggMR1KeRJ+9uWBaO0P1MsDMYCTA2Dc9tM7K8yKu8Z7Oo/StNucNUDkGEO11TBqMFw==}
+  '@vizejs/native-linux-x64-gnu@0.353.0':
+    resolution: {integrity: sha512-yChI/vClIH3lj8QVzGKhYWNEFnkxrjRgk6s5duhpYdWco8io6b5wiIiO0/QrObumLeEYMYxDP0KSmT9Bll3JjA==}
     engines: {node: '>=22'}
     cpu: [x64]
     os: [linux]
 
-  '@vizejs/native-linux-x64-musl@0.352.0':
-    resolution: {integrity: sha512-efJ1wkZ5dcZPfCrO/b7pLSaaHGCo4VCF4zQk580pzzPD5QuClAUGegaWiAn+mR1IBjPK8v31JjB7afb//FBjpg==}
+  '@vizejs/native-linux-x64-musl@0.353.0':
+    resolution: {integrity: sha512-Se3ZmMViVYzFNtZFP7XTM7rQl13Gy+2NGZRQuii57n91f/fDxfbBMhRGbb5z+MMGaIyCNhl3LfDdg01SCA9cLw==}
     engines: {node: '>=22'}
     cpu: [x64]
     os: [linux]
 
-  '@vizejs/native-win32-arm64-msvc@0.352.0':
-    resolution: {integrity: sha512-/zfIbd/c4zZe22yIeR/kbgCGSY3Jrj/uMmDO6E8zPK57a9XR4w0YKTFavH8JT+LuSEivYFcLX8mMWWgtoWUvQA==}
+  '@vizejs/native-win32-arm64-msvc@0.353.0':
+    resolution: {integrity: sha512-9Lkd9nLcOeZ7X07sTJtoJNaQNDK3aKW4EOwnLWVginEV7rDOsFF7kCYTqAuitq9E3vWMfmV5IUuIEMHVF/Zc4w==}
     engines: {node: '>=22'}
     cpu: [arm64]
     os: [win32]
 
-  '@vizejs/native-win32-x64-msvc@0.352.0':
-    resolution: {integrity: sha512-i/ILYvdgMJoZ+4YLvHD5vJWG6ULsWpQ6686uQJqtQ+d/hcFD2gRdYi6HKUSoD1qedhJp5JZPUjGMBbER9RToFg==}
+  '@vizejs/native-win32-x64-msvc@0.353.0':
+    resolution: {integrity: sha512-fnKt/BUAIGxwkC4UmZRTfUR3+uk8bY24LX5uECYSfgjJ6yjGTihZQl2rLQCBruQnaeOR3CnsIAVTTGkAu4Jcew==}
     engines: {node: '>=22'}
     cpu: [x64]
     os: [win32]
 
-  '@vizejs/native@0.352.0':
-    resolution: {integrity: sha512-aM53z0RCOz2ZdL09vFu0QuZ5EnPjFwytUqDtOSiVyVoOul54HtkKKgbzCN4JyoUx9ok6bgO+5yEB9n/pNuJ13Q==}
+  '@vizejs/native@0.353.0':
+    resolution: {integrity: sha512-5ZYB+pfD3VAOP4D06BJGEyYkcMVlRfLE6zfIpgbV74iPORDe1QEsce0KRviFeO1Boocj0EXo6MNZz9oJCqDhpg==}
     engines: {node: '>=22'}
 
-  '@vizejs/rspack-plugin@0.352.0':
-    resolution: {integrity: sha512-e6/VCez9DOJbLLWQTVi4ISVktKZIp3EgUOmwfgzv3fk2TYhjuQKk0YgZ7u9HcJdJhrbU88f6/AlWtWENWgjS8A==}
+  '@vizejs/rspack-plugin@0.353.0':
+    resolution: {integrity: sha512-/W9msekLoA5kTBCGjDOwZnAUGUfoOms8mnFBvYqcHb/QsFpTxSFo2I3eOxd4bJKVADrkAR1YJ8Z1DjGr/MsXjw==}
     engines: {node: '>=22'}
     peerDependencies:
       '@rspack/core': ^1.0.0 || ^2.0.0
 
-  '@vizejs/vite-plugin@0.352.0':
-    resolution: {integrity: sha512-nwzYia3/d3hzpwMI4NE6yeK6CnmJSaKjFhhlnhNVYabVFk6xnIuVKQXUvZZ1PwzwMo6GIFEq0nQrRqYZ2gMJtg==}
+  '@vizejs/vite-plugin@0.353.0':
+    resolution: {integrity: sha512-qa+Rx9UNrAL/ImjRtF/vVfFUlvDeXYYMjoMzoScYx7cRUumisUy8Dp7Aw2DQafjQAxG3C8WnVxgIFQrVunVxpg==}
     engines: {node: '>=22'}
     peerDependencies:
       vite: ^7.3.0 || ^8.0.0
@@ -4149,8 +4149,8 @@ packages:
       yaml:
         optional: true
 
-  vize@0.352.0:
-    resolution: {integrity: sha512-Gt2A5gfm0vaqPpCCpdMsfc2c7RkMhFOC2bYTGOxOOjNkeRsp7uek27AyK1X05h1w1KONZDXTxFrpCVH5NLKUIw==}
+  vize@0.353.0:
+    resolution: {integrity: sha512-E7th+AFP++Ho8GzSR8yRH+tfZzvh+73R0A+A1FU9IY4c/4a/md/vr686bseY9wWikV866j+99X+0/ej50m0eiA==}
     engines: {node: '>=22'}
     hasBin: true
     peerDependencies:
@@ -5820,10 +5820,10 @@ snapshots:
       vite: 8.2.1(@types/node@26.1.2)(esbuild@0.28.1)(sass@1.102.0)(terser@5.49.0)
       vue: 3.5.41(typescript@6.0.3)
 
-  '@vizejs/musea-mcp-server@0.352.0(zod@3.25.76)':
+  '@vizejs/musea-mcp-server@0.353.0(zod@3.25.76)':
     dependencies:
       '@modelcontextprotocol/sdk': 1.30.0(zod@3.25.76)
-      '@vizejs/native': 0.352.0
+      '@vizejs/native': 0.353.0
       '@vue/compiler-dom': 3.5.35
       typescript: 6.0.3
     transitivePeerDependencies:
@@ -5831,54 +5831,54 @@ snapshots:
       - supports-color
       - zod
 
-  '@vizejs/native-darwin-arm64@0.352.0':
+  '@vizejs/native-darwin-arm64@0.353.0':
     optional: true
 
-  '@vizejs/native-darwin-x64@0.352.0':
+  '@vizejs/native-darwin-x64@0.353.0':
     optional: true
 
-  '@vizejs/native-linux-arm64-gnu@0.352.0':
+  '@vizejs/native-linux-arm64-gnu@0.353.0':
     optional: true
 
-  '@vizejs/native-linux-arm64-musl@0.352.0':
+  '@vizejs/native-linux-arm64-musl@0.353.0':
     optional: true
 
-  '@vizejs/native-linux-x64-gnu@0.352.0':
+  '@vizejs/native-linux-x64-gnu@0.353.0':
     optional: true
 
-  '@vizejs/native-linux-x64-musl@0.352.0':
+  '@vizejs/native-linux-x64-musl@0.353.0':
     optional: true
 
-  '@vizejs/native-win32-arm64-msvc@0.352.0':
+  '@vizejs/native-win32-arm64-msvc@0.353.0':
     optional: true
 
-  '@vizejs/native-win32-x64-msvc@0.352.0':
+  '@vizejs/native-win32-x64-msvc@0.353.0':
     optional: true
 
-  '@vizejs/native@0.352.0':
+  '@vizejs/native@0.353.0':
     optionalDependencies:
-      '@vizejs/native-darwin-arm64': 0.352.0
-      '@vizejs/native-darwin-x64': 0.352.0
-      '@vizejs/native-linux-arm64-gnu': 0.352.0
-      '@vizejs/native-linux-arm64-musl': 0.352.0
-      '@vizejs/native-linux-x64-gnu': 0.352.0
-      '@vizejs/native-linux-x64-musl': 0.352.0
-      '@vizejs/native-win32-arm64-msvc': 0.352.0
-      '@vizejs/native-win32-x64-msvc': 0.352.0
+      '@vizejs/native-darwin-arm64': 0.353.0
+      '@vizejs/native-darwin-x64': 0.353.0
+      '@vizejs/native-linux-arm64-gnu': 0.353.0
+      '@vizejs/native-linux-arm64-musl': 0.353.0
+      '@vizejs/native-linux-x64-gnu': 0.353.0
+      '@vizejs/native-linux-x64-musl': 0.353.0
+      '@vizejs/native-win32-arm64-msvc': 0.353.0
+      '@vizejs/native-win32-x64-msvc': 0.353.0
 
-  '@vizejs/rspack-plugin@0.352.0(@rspack/core@2.1.10)':
+  '@vizejs/rspack-plugin@0.353.0(@rspack/core@2.1.10)':
     dependencies:
       '@rspack/core': 2.1.10
-      '@vizejs/native': 0.352.0
+      '@vizejs/native': 0.353.0
       oxc-parser: 0.144.0
 
-  '@vizejs/vite-plugin@0.352.0(vite@8.2.1(@types/node@26.1.2)(esbuild@0.28.1)(sass@1.102.0)(terser@5.49.0))(vue@3.5.41(typescript@6.0.3))':
+  '@vizejs/vite-plugin@0.353.0(vite@8.2.1(@types/node@26.1.2)(esbuild@0.28.1)(sass@1.102.0)(terser@5.49.0))(vue@3.5.41(typescript@6.0.3))':
     dependencies:
-      '@vizejs/native': 0.352.0
+      '@vizejs/native': 0.353.0
       oxc-parser: 0.144.0
       tinyglobby: 0.2.17
       vite: 8.2.1(@types/node@26.1.2)(esbuild@0.28.1)(sass@1.102.0)(terser@5.49.0)
-      vize: 0.352.0(vue@3.5.41(typescript@6.0.3))
+      vize: 0.353.0(vue@3.5.41(typescript@6.0.3))
     transitivePeerDependencies:
       - '@pkl-community/pkl'
       - vue
@@ -6144,7 +6144,7 @@ snapshots:
   '@vue/language-core@3.3.10':
     dependencies:
       '@volar/language-core': 2.4.28
-      '@vue/compiler-dom': 3.5.40
+      '@vue/compiler-dom': 3.5.41
       '@vue/shared': 3.5.40
       alien-signals: 3.2.1
       muggle-string: 0.4.1
@@ -6154,7 +6154,7 @@ snapshots:
   '@vue/language-core@3.3.5':
     dependencies:
       '@volar/language-core': 2.4.28
-      '@vue/compiler-dom': 3.5.40
+      '@vue/compiler-dom': 3.5.41
       '@vue/shared': 3.5.40
       alien-signals: 3.2.1
       muggle-string: 0.4.1
@@ -7983,9 +7983,9 @@ snapshots:
       sass: 1.102.0
       terser: 5.49.0
 
-  vize@0.352.0(vue@3.5.41(typescript@6.0.3)):
+  vize@0.353.0(vue@3.5.41(typescript@6.0.3)):
     dependencies:
-      '@vizejs/native': 0.352.0
+      '@vizejs/native': 0.353.0
       oxc-transform: 0.144.0
     optionalDependencies:
       '@typescript/native-preview': 7.0.0-dev.20260603.1
