@@ -19,23 +19,23 @@
   <line x1="650" y1="48" x2="650" y2="200" stroke="#d0d7de" stroke-opacity="0.55" />
   <text fill="#59636e" x="650" y="220" text-anchor="middle" font-size="11">100%</text>
   <text fill="#59636e" x="16" y="77" font-size="11">1</text>
-      <text fill="#1f2328" x="36" y="77" font-size="13">vue-tsc</text>
+      <text fill="#1f2328" x="36" y="77" font-size="13">vize</text>
       
       <rect x="248" y="61" width="402" height="22" rx="5" fill="#afb8c133"/>
-      <rect x="248" y="61" width="383.2" height="22" rx="5" fill="#42b883"/>
-      <text fill="#ffffff" x="256" y="77" font-size="12" font-weight="600">95%</text>
+      <rect x="248" y="61" width="385.9" height="22" rx="5" fill="#2563eb"/>
+      <text fill="#ffffff" x="256" y="77" font-size="12" font-weight="600">96%</text>
   <text fill="#59636e" x="16" y="113" font-size="11">2</text>
-      <text fill="#1f2328" x="36" y="113" font-size="13">golar</text>
+      <text fill="#1f2328" x="36" y="113" font-size="13">vue-tsc</text>
       
       <rect x="248" y="97" width="402" height="22" rx="5" fill="#afb8c133"/>
-      <rect x="248" y="97" width="377.9" height="22" rx="5" fill="#c9842a"/>
-      <text fill="#ffffff" x="256" y="113" font-size="12" font-weight="600">94%</text>
+      <rect x="248" y="97" width="383.2" height="22" rx="5" fill="#42b883"/>
+      <text fill="#ffffff" x="256" y="113" font-size="12" font-weight="600">95%</text>
   <text fill="#59636e" x="16" y="149" font-size="11">3</text>
-      <text fill="#1f2328" x="36" y="149" font-size="13">vize</text>
+      <text fill="#1f2328" x="36" y="149" font-size="13">golar</text>
       
       <rect x="248" y="133" width="402" height="22" rx="5" fill="#afb8c133"/>
-      <rect x="248" y="133" width="348.4" height="22" rx="5" fill="#2563eb"/>
-      <text fill="#ffffff" x="256" y="149" font-size="12" font-weight="600">87%</text>
+      <rect x="248" y="133" width="377.9" height="22" rx="5" fill="#c9842a"/>
+      <text fill="#ffffff" x="256" y="149" font-size="12" font-weight="600">94%</text>
   <text fill="#59636e" x="16" y="185" font-size="11">4</text>
       <text fill="#1f2328" x="36" y="185" font-size="13">verter-tsc</text>
       

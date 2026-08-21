@@ -2,12 +2,12 @@
 
 > Auto-generated from the JSON snapshots in [`results/benchmarks/`](../results/benchmarks/) and [`results/real_world/`](../results/real_world/) by `pnpm docs`. Do not edit by hand.
 
-- **Generated:** 2026-08-20T14:33:30.648Z
+- **Generated:** 2026-08-21T09:58:23.715Z
 - **Fixture:** `fixtures/200` (200 files)
 - **Runs / warmups:** 5 / 1
 - **Runner:** Linux · linux/x64 · 4 CPUs · AMD EPYC 9V74 80-Core Processor · 15.6 GB · Node v22.23.2
-- **Commit:** [`523d7bf`](https://github.com/pikax/vue-benchmarks/commit/523d7bfad95408f88bd6db210f9a0b106f8662e2)
-- **CI run:** https://github.com/pikax/vue-benchmarks/actions/runs/32379826142
+- **Commit:** [`64b460c`](https://github.com/pikax/vue-benchmarks/commit/64b460c3b8cafbc9efba895cd716d5ef41920124)
+- **CI run:** https://github.com/pikax/vue-benchmarks/actions/runs/32469697609
 - **Source:** `results/benchmarks/bench-Linux-200-bench.json`
 
 ## Results
@@ -35,8 +35,8 @@ Target: `vdom` · Environment: `production` · Source map: `off`
 
 | Tool | Fresh child | Fresh min | Fresh stddev | Fresh CV% | vs fastest fresh child | **Warm (primary)** | Warm min | Warm stddev | Warm CV% | vs fastest warm | Code bytes | Throughput | Peak RSS |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| @vue/compiler-sfc 3.5 (1T) | 486.2 ms | 483.7 ms | 11.7 ms | 2.4% | 1.00x | **219.1 ms** | 198.9 ms | 20.7 ms | 9.4% | 1.00x | 735,261 | 913 files/s | 64.6 MB |
-| @vue/compiler-sfc 3.6 (1T) | 502.7 ms | 499.7 ms | 29.3 ms | 5.8% | 1.03x | **255.9 ms** | 238.3 ms | 15.0 ms | 5.8% | 1.17x | 735,261 | 782 files/s | 62.1 MB |
+| @vue/compiler-sfc 3.5 (1T) | 410.6 ms | 393.0 ms | 41.8 ms | 10.2% ⚠ | 1.00x | **199.0 ms** | 165.2 ms | 19.6 ms | 9.9% | 1.00x | 735,261 | 1.0k files/s | 62.8 MB |
+| @vue/compiler-sfc 3.6 (1T) | 431.8 ms | 417.9 ms | 20.4 ms | 4.7% | 1.05x | **223.0 ms** | 201.3 ms | 12.7 ms | 5.7% | 1.12x | 735,261 | 897 files/s | 61.9 MB |
 
 <details><summary>Notes</summary>
 
@@ -54,9 +54,9 @@ Target: `vdom` · Environment: `production` · Source map: `off`
 
 | Tool | Fresh child | Fresh min | Fresh stddev | Fresh CV% | vs fastest fresh child | **Warm (primary)** | Warm min | Warm stddev | Warm CV% | vs fastest warm | Generated JS bytes | Throughput | Peak RSS |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vue compiler-sfc 3.5 reference (raw render, 1T) | 490.9 ms | 476.4 ms | 26.3 ms | 5.4% | 1.00x | **228.4 ms** | 200.9 ms | 14.7 ms | 6.5% | 1.00x | 735,061 | 876 files/s | – |
-| Vize compileSfcBatchWithResults (raw render) ⚠ | (21.0 ms) | (20.7 ms) | (1.4 ms) | (6.8%) | not ranked | (19.4 ms) | (18.7 ms) | (0.3 ms) | (1.7%) | not ranked | (617,550) | – | (18.3 MB) |
-| Verter compileMany (first-admission stateless raw render) ⚠ | (119.5 ms) | (116.4 ms) | (3.9 ms) | (3.2%) | not ranked | (115.3 ms) | (114.4 ms) | (2.6 ms) | (2.2%) | not ranked | (528,623) | – | (35.8 MB) |
+| Vue compiler-sfc 3.5 reference (raw render, 1T) | 410.0 ms | 386.7 ms | 42.3 ms | 10.3% ⚠ | 1.00x | **195.5 ms** | 168.7 ms | 21.0 ms | 10.8% ⚠ | 1.00x | 735,061 | 1.0k files/s | – |
+| Vize compileSfcBatchWithResults (raw render) ⚠ | (18.4 ms) | (18.0 ms) | (0.3 ms) | (1.8%) | not ranked | (16.6 ms) | (16.4 ms) | (0.3 ms) | (1.9%) | not ranked | (673,914) | – | (17.9 MB) |
+| Verter compileMany (first-admission stateless raw render) ⚠ | (111.3 ms) | (105.0 ms) | (4.2 ms) | (3.8%) | not ranked | (101.2 ms) | (97.0 ms) | (2.7 ms) | (2.7%) | not ranked | (528,623) | – | (36.1 MB) |
 
 <details><summary>Notes</summary>
 
@@ -75,12 +75,12 @@ Target: `vdom` · Environment: `production` · Source map: `off`
 
 | Tool | Fresh child | Fresh min | Fresh stddev | Fresh CV% | vs fastest fresh child | **Warm (primary)** | Warm min | Warm stddev | Warm CV% | vs fastest warm | Generated JS + CSS bytes | Throughput | Peak RSS |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vue compiler-sfc 3.5 reference (render + CSS, 1T) | 568.2 ms | 552.1 ms | 36.3 ms | 6.4% | 1.00x | **288.6 ms** | 244.5 ms | 23.6 ms | 8.2% | 1.00x | 769,363 | 693 files/s | 66.4 MB |
-| Vize compileSfc loop (full SFC, 1T) ⚠ | (60.1 ms) | (59.5 ms) | (0.4 ms) | (0.7%) | not ranked | (56.9 ms) | (56.7 ms) | (0.6 ms) | (1.1%) | not ranked | (650,832) | – | (16.8 MB) |
-| Vize compileSfcBatchWithResults (render + CSS, Rayon batch) ⚠ | (22.1 ms) | (21.9 ms) | (1.5 ms) | (6.9%) | not ranked | (19.7 ms) | (19.6 ms) | (0.3 ms) | (1.4%) | not ranked | (650,832) | – | (18.1 MB) |
-| fervid compileSync (1T) ⚠ | (62.9 ms) | (62.6 ms) | (0.2 ms) | (0.4%) | not ranked | (60.8 ms) | (60.5 ms) | (0.3 ms) | (0.4%) | not ranked | (886,876) | – | (15.9 MB) |
-| fervid compileAsync (4-thread libuv pool) ⚠ | (25.4 ms) | (25.4 ms) | (2.8 ms) | (10.8%) | not ranked | (27.2 ms) | (24.1 ms) | (2.1 ms) | (7.7%) | not ranked | (886,876) | – | – |
-| Verter compileMany + processStyle (render + CSS) ⚠ | (130.8 ms) | (127.9 ms) | (3.4 ms) | (2.6%) | not ranked | (120.4 ms) | (119.9 ms) | (2.5 ms) | (2.0%) | not ranked | (592,613) | – | (38.0 MB) |
+| Vue compiler-sfc 3.5 reference (render + CSS, 1T) | 492.2 ms | 451.7 ms | 23.4 ms | 4.7% | 1.00x | **255.1 ms** | 206.6 ms | 28.3 ms | 11.1% ⚠ | 1.00x | 769,363 | 784 files/s | 65.7 MB |
+| Vize compileSfc loop (full SFC, 1T) ⚠ | (52.8 ms) | (52.5 ms) | (0.1 ms) | (0.2%) | not ranked | (50.9 ms) | (50.5 ms) | (0.4 ms) | (0.7%) | not ranked | (707,196) | – | (16.5 MB) |
+| Vize compileSfcBatchWithResults (render + CSS, Rayon batch) ⚠ | (19.4 ms) | (19.1 ms) | (0.7 ms) | (3.4%) | not ranked | (17.1 ms) | (17.0 ms) | (0.1 ms) | (0.5%) | not ranked | (707,196) | – | (18.0 MB) |
+| fervid compileSync (1T) ⚠ | (49.2 ms) | (48.9 ms) | (0.2 ms) | (0.4%) | not ranked | (47.3 ms) | (46.7 ms) | (0.6 ms) | (1.3%) | not ranked | (886,876) | – | (16.3 MB) |
+| fervid compileAsync (4-thread libuv pool) ⚠ | (19.8 ms) | (19.8 ms) | (0.3 ms) | (1.4%) | not ranked | (20.1 ms) | (19.4 ms) | (1.7 ms) | (8.3%) | not ranked | (886,876) | – | – |
+| Verter compileMany + processStyle (render + CSS) ⚠ | (114.2 ms) | (108.5 ms) | (3.0 ms) | (2.6%) | not ranked | (106.5 ms) | (105.5 ms) | (2.7 ms) | (2.5%) | not ranked | (592,613) | – | (38.2 MB) |
 
 <details><summary>Notes</summary>
 
@@ -95,17 +95,17 @@ Target: `vdom` · Environment: `production` · Source map: `off`
 
 <details><summary>Raw runs</summary>
 
-- **@vue/compiler-sfc 3.5 (1T)**: Fresh child (first timed row workload): 511.8 ms, 492.9 ms, 484.6 ms, 483.7 ms, 486.2 ms · Warm: 255.0 ms, 221.7 ms, 219.1 ms, 212.8 ms, 198.9 ms
-- **@vue/compiler-sfc 3.6 (1T)**: Fresh child (first timed row workload): 568.2 ms, 508.0 ms, 502.7 ms, 501.9 ms, 499.7 ms · Warm: 276.5 ms, 263.3 ms, 255.9 ms, 245.6 ms, 238.3 ms
-- **Vue compiler-sfc 3.5 reference (raw render, 1T)**: Fresh child (first timed row workload): 544.1 ms, 499.1 ms, 486.6 ms, 476.4 ms, 490.9 ms · Warm: 231.8 ms, 228.4 ms, 229.6 ms, 205.8 ms, 200.9 ms
-- **Vize compileSfcBatchWithResults (raw render)**: Fresh child (first timed row workload): 20.7 ms, 21.0 ms, 21.9 ms, 24.1 ms, 20.7 ms · Warm: 19.2 ms, 19.4 ms, 18.7 ms, 19.4 ms, 19.4 ms
-- **Verter compileMany (first-admission stateless raw render)**: Fresh child (first timed row workload): 119.5 ms, 117.0 ms, 125.5 ms, 122.9 ms, 116.4 ms · Warm: 120.7 ms, 114.4 ms, 115.5 ms, 115.3 ms, 114.7 ms
-- **Vue compiler-sfc 3.5 reference (render + CSS, 1T)**: Fresh child (first timed row workload): 640.1 ms, 573.7 ms, 552.1 ms, 568.2 ms, 552.8 ms · Warm: 288.6 ms, 297.2 ms, 278.0 ms, 305.1 ms, 244.5 ms
-- **Vize compileSfc loop (full SFC, 1T)**: Fresh child (first timed row workload): 60.1 ms, 60.6 ms, 59.9 ms, 60.2 ms, 59.5 ms · Warm: 58.0 ms, 57.7 ms, 56.7 ms, 56.7 ms, 56.9 ms
-- **Vize compileSfcBatchWithResults (render + CSS, Rayon batch)**: Fresh child (first timed row workload): 21.9 ms, 25.4 ms, 22.3 ms, 22.1 ms, 21.9 ms · Warm: 20.0 ms, 19.7 ms, 20.2 ms, 19.6 ms, 19.7 ms
-- **fervid compileSync (1T)**: Fresh child (first timed row workload): 62.8 ms, 62.9 ms, 63.2 ms, 63.1 ms, 62.6 ms · Warm: 60.8 ms, 60.5 ms, 61.1 ms, 60.8 ms, 61.1 ms
-- **fervid compileAsync (4-thread libuv pool)**: Fresh child (first timed row workload): 25.4 ms, 25.4 ms, 25.8 ms, 31.6 ms, 25.4 ms · Warm: 27.5 ms, 24.1 ms, 27.2 ms, 28.8 ms, 24.1 ms
-- **Verter compileMany + processStyle (render + CSS)**: Fresh child (first timed row workload): 136.8 ms, 132.5 ms, 130.8 ms, 129.7 ms, 127.9 ms · Warm: 119.9 ms, 120.4 ms, 119.9 ms, 125.5 ms, 123.1 ms
+- **@vue/compiler-sfc 3.5 (1T)**: Fresh child (first timed row workload): 497.9 ms, 430.5 ms, 393.0 ms, 410.6 ms, 403.9 ms · Warm: 200.3 ms, 199.0 ms, 216.2 ms, 181.1 ms, 165.2 ms
+- **@vue/compiler-sfc 3.6 (1T)**: Fresh child (first timed row workload): 470.1 ms, 417.9 ms, 431.8 ms, 423.1 ms, 435.1 ms · Warm: 236.4 ms, 220.2 ms, 223.0 ms, 201.3 ms, 224.6 ms
+- **Vue compiler-sfc 3.5 reference (raw render, 1T)**: Fresh child (first timed row workload): 495.3 ms, 410.0 ms, 386.7 ms, 426.7 ms, 402.5 ms · Warm: 195.5 ms, 204.5 ms, 215.3 ms, 168.7 ms, 169.2 ms
+- **Vize compileSfcBatchWithResults (raw render)**: Fresh child (first timed row workload): 18.0 ms, 18.7 ms, 18.0 ms, 18.4 ms, 18.6 ms · Warm: 16.5 ms, 16.6 ms, 17.2 ms, 16.8 ms, 16.4 ms
+- **Verter compileMany (first-admission stateless raw render)**: Fresh child (first timed row workload): 112.2 ms, 114.9 ms, 106.1 ms, 111.3 ms, 105.0 ms · Warm: 103.3 ms, 101.2 ms, 99.4 ms, 103.5 ms, 97.0 ms
+- **Vue compiler-sfc 3.5 reference (render + CSS, 1T)**: Fresh child (first timed row workload): 509.4 ms, 488.9 ms, 451.7 ms, 508.4 ms, 492.2 ms · Warm: 265.4 ms, 259.9 ms, 255.1 ms, 211.5 ms, 206.6 ms
+- **Vize compileSfc loop (full SFC, 1T)**: Fresh child (first timed row workload): 52.8 ms, 52.5 ms, 52.9 ms, 52.8 ms, 52.8 ms · Warm: 50.9 ms, 50.7 ms, 51.4 ms, 50.5 ms, 51.2 ms
+- **Vize compileSfcBatchWithResults (render + CSS, Rayon batch)**: Fresh child (first timed row workload): 19.2 ms, 20.5 ms, 20.3 ms, 19.1 ms, 19.4 ms · Warm: 17.1 ms, 17.0 ms, 17.2 ms, 17.1 ms, 17.2 ms
+- **fervid compileSync (1T)**: Fresh child (first timed row workload): 49.2 ms, 49.3 ms, 49.3 ms, 49.2 ms, 48.9 ms · Warm: 47.2 ms, 47.3 ms, 48.3 ms, 46.7 ms, 47.8 ms
+- **fervid compileAsync (4-thread libuv pool)**: Fresh child (first timed row workload): 19.8 ms, 19.8 ms, 19.8 ms, 19.8 ms, 20.5 ms · Warm: 20.1 ms, 23.5 ms, 19.4 ms, 21.2 ms, 19.6 ms
+- **Verter compileMany + processStyle (render + CSS)**: Fresh child (first timed row workload): 114.2 ms, 114.4 ms, 112.4 ms, 116.5 ms, 108.5 ms · Warm: 106.8 ms, 106.5 ms, 105.5 ms, 112.0 ms, 105.6 ms
 
 </details>
 
@@ -122,8 +122,8 @@ Target: `vdom` · Environment: `development` · Source map: `off`
 
 | Tool | Fresh child | Fresh min | Fresh stddev | Fresh CV% | vs fastest fresh child | **Warm (primary)** | Warm min | Warm stddev | Warm CV% | vs fastest warm | Code bytes | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| @vue/compiler-sfc 3.5 (1T) | 477.8 ms | 471.1 ms | 6.3 ms | 1.3% | 1.00x | **198.0 ms** | 196.2 ms | 2.4 ms | 1.2% | 1.00x | 721,735 | 1.0k files/s |
-| @vue/compiler-sfc 3.6 (1T) | 493.8 ms | 474.9 ms | 9.8 ms | 2.0% | 1.03x | **226.1 ms** | 225.3 ms | 26.7 ms | 11.8% ⚠ | 1.14x | 721,735 | 885 files/s |
+| @vue/compiler-sfc 3.5 (1T) | 407.3 ms | 400.1 ms | 7.4 ms | 1.8% | 1.00x | **199.8 ms** | 189.6 ms | 6.2 ms | 3.1% | 1.00x | 721,735 | 1.0k files/s |
+| @vue/compiler-sfc 3.6 (1T) | 424.3 ms | 399.0 ms | 15.2 ms | 3.6% | 1.04x | **225.2 ms** | 221.7 ms | 4.4 ms | 1.9% | 1.13x | 721,735 | 888 files/s |
 
 <details><summary>Notes</summary>
 
@@ -141,9 +141,9 @@ Target: `vdom` · Environment: `development` · Source map: `off`
 
 | Tool | Fresh child | Fresh min | Fresh stddev | Fresh CV% | vs fastest fresh child | **Warm (primary)** | Warm min | Warm stddev | Warm CV% | vs fastest warm | Generated JS bytes | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vue compiler-sfc 3.5 reference (raw render, 1T) | 472.3 ms | 467.1 ms | 10.8 ms | 2.3% | 1.00x | **206.2 ms** | 193.7 ms | 6.9 ms | 3.4% | 1.00x | 721,535 | 970 files/s |
-| Vize compileSfcBatchWithResults (raw render) ⚠ | (20.2 ms) | (19.9 ms) | (0.2 ms) | (1.1%) | not ranked | (18.7 ms) | (18.4 ms) | (0.3 ms) | (1.5%) | not ranked | (616,270) | – |
-| Verter compileMany (first-admission stateless raw render) ⚠ | (118.8 ms) | (116.9 ms) | (3.7 ms) | (3.2%) | not ranked | (117.6 ms) | (114.1 ms) | (5.0 ms) | (4.3%) | not ranked | (691,121) | – |
+| Vue compiler-sfc 3.5 reference (raw render, 1T) | 416.4 ms | 411.2 ms | 3.7 ms | 0.9% | 1.00x | **196.4 ms** | 194.9 ms | 9.0 ms | 4.6% | 1.00x | 721,535 | 1.0k files/s |
+| Vize compileSfcBatchWithResults (raw render) ⚠ | (17.7 ms) | (17.3 ms) | (0.5 ms) | (2.6%) | not ranked | (16.9 ms) | (16.1 ms) | (4.7 ms) | (27.9%) | not ranked | (668,102) | – |
+| Verter compileMany (first-admission stateless raw render) ⚠ | (113.3 ms) | (103.6 ms) | (4.8 ms) | (4.2%) | not ranked | (104.7 ms) | (102.1 ms) | (4.0 ms) | (3.8%) | not ranked | (691,121) | – |
 
 <details><summary>Notes</summary>
 
@@ -162,12 +162,12 @@ Target: `vdom` · Environment: `development` · Source map: `off`
 
 | Tool | Fresh child | Fresh min | Fresh stddev | Fresh CV% | vs fastest fresh child | **Warm (primary)** | Warm min | Warm stddev | Warm CV% | vs fastest warm | Generated JS + CSS bytes | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vue compiler-sfc 3.5 reference (render + CSS, 1T) | 549.3 ms | 542.8 ms | 4.7 ms | 0.9% | 1.00x | **237.7 ms** | 227.3 ms | 8.9 ms | 3.7% | 1.00x | 755,837 | 841 files/s |
-| Vize compileSfc loop (full SFC, 1T) ⚠ | (58.5 ms) | (58.0 ms) | (0.3 ms) | (0.6%) | not ranked | (55.6 ms) | (55.5 ms) | (0.7 ms) | (1.3%) | not ranked | (649,552) | – |
-| Vize compileSfcBatchWithResults (render + CSS, Rayon batch) ⚠ | (21.7 ms) | (21.4 ms) | (0.2 ms) | (1.0%) | not ranked | (19.5 ms) | (19.3 ms) | (0.2 ms) | (0.8%) | not ranked | (649,552) | – |
-| fervid compileSync (1T) ⚠ | (63.6 ms) | (63.4 ms) | (0.1 ms) | (0.2%) | not ranked | (61.5 ms) | (61.2 ms) | (0.4 ms) | (0.6%) | not ranked | (897,281) | – |
-| fervid compileAsync (4-thread libuv pool) ⚠ | (25.5 ms) | (25.2 ms) | (0.2 ms) | (0.6%) | not ranked | (26.6 ms) | (25.6 ms) | (1.7 ms) | (6.2%) | not ranked | (897,281) | – |
-| Verter compileMany + processStyle (render + CSS) ⚠ | (130.0 ms) | (125.8 ms) | (4.2 ms) | (3.3%) | not ranked | (123.0 ms) | (118.7 ms) | (3.1 ms) | (2.5%) | not ranked | (755,511) | – |
+| Vue compiler-sfc 3.5 reference (render + CSS, 1T) | 488.1 ms | 484.3 ms | 8.3 ms | 1.7% | 1.00x | **245.5 ms** | 221.9 ms | 19.1 ms | 7.8% | 1.00x | 755,837 | 815 files/s |
+| Vize compileSfc loop (full SFC, 1T) ⚠ | (51.7 ms) | (51.2 ms) | (0.4 ms) | (0.7%) | not ranked | (51.3 ms) | (50.9 ms) | (0.8 ms) | (1.6%) | not ranked | (701,384) | – |
+| Vize compileSfcBatchWithResults (render + CSS, Rayon batch) ⚠ | (18.9 ms) | (18.7 ms) | (0.5 ms) | (2.7%) | not ranked | (18.0 ms) | (17.1 ms) | (5.2 ms) | (28.9%) | not ranked | (701,384) | – |
+| fervid compileSync (1T) ⚠ | (49.7 ms) | (49.5 ms) | (1.5 ms) | (3.1%) | not ranked | (50.0 ms) | (48.9 ms) | (3.7 ms) | (7.4%) | not ranked | (897,281) | – |
+| fervid compileAsync (4-thread libuv pool) ⚠ | (20.2 ms) | (20.1 ms) | (0.1 ms) | (0.5%) | not ranked | (21.6 ms) | (21.2 ms) | (4.5 ms) | (21.0%) | not ranked | (897,281) | – |
+| Verter compileMany + processStyle (render + CSS) ⚠ | (116.0 ms) | (111.7 ms) | (3.3 ms) | (2.9%) | not ranked | (108.2 ms) | (106.7 ms) | (1.9 ms) | (1.8%) | not ranked | (755,511) | – |
 
 <details><summary>Notes</summary>
 
@@ -182,17 +182,17 @@ Target: `vdom` · Environment: `development` · Source map: `off`
 
 <details><summary>Raw runs</summary>
 
-- **@vue/compiler-sfc 3.5 (1T)**: Fresh child (first timed row workload): 477.8 ms, 485.4 ms, 476.7 ms, 471.1 ms, 486.2 ms · Warm: 199.1 ms, 196.2 ms, 197.2 ms, 198.0 ms, 202.4 ms
-- **@vue/compiler-sfc 3.6 (1T)**: Fresh child (first timed row workload): 493.8 ms, 494.2 ms, 501.3 ms, 474.9 ms, 491.9 ms · Warm: 225.3 ms, 227.1 ms, 226.1 ms, 285.7 ms, 225.6 ms
-- **Vue compiler-sfc 3.5 reference (raw render, 1T)**: Fresh child (first timed row workload): 467.1 ms, 478.0 ms, 471.2 ms, 472.3 ms, 494.7 ms · Warm: 206.2 ms, 193.7 ms, 194.9 ms, 206.3 ms, 208.1 ms
-- **Vize compileSfcBatchWithResults (raw render)**: Fresh child (first timed row workload): 19.9 ms, 20.4 ms, 20.2 ms, 20.0 ms, 20.4 ms · Warm: 18.4 ms, 18.7 ms, 18.7 ms, 18.9 ms, 19.1 ms
-- **Verter compileMany (first-admission stateless raw render)**: Fresh child (first timed row workload): 118.3 ms, 118.8 ms, 120.0 ms, 126.5 ms, 116.9 ms · Warm: 118.9 ms, 114.1 ms, 115.2 ms, 126.9 ms, 117.6 ms
-- **Vue compiler-sfc 3.5 reference (render + CSS, 1T)**: Fresh child (first timed row workload): 549.3 ms, 542.8 ms, 549.3 ms, 547.3 ms, 555.8 ms · Warm: 238.4 ms, 227.3 ms, 235.7 ms, 237.7 ms, 251.9 ms
-- **Vize compileSfc loop (full SFC, 1T)**: Fresh child (first timed row workload): 58.1 ms, 58.8 ms, 58.5 ms, 58.6 ms, 58.0 ms · Warm: 57.0 ms, 55.5 ms, 55.5 ms, 55.6 ms, 56.8 ms
-- **Vize compileSfcBatchWithResults (render + CSS, Rayon batch)**: Fresh child (first timed row workload): 21.9 ms, 21.4 ms, 21.5 ms, 21.7 ms, 21.8 ms · Warm: 19.3 ms, 19.5 ms, 19.5 ms, 19.8 ms, 19.6 ms
-- **fervid compileSync (1T)**: Fresh child (first timed row workload): 63.7 ms, 63.4 ms, 63.6 ms, 63.6 ms, 63.6 ms · Warm: 62.2 ms, 61.7 ms, 61.2 ms, 61.4 ms, 61.5 ms
-- **fervid compileAsync (4-thread libuv pool)**: Fresh child (first timed row workload): 25.5 ms, 25.4 ms, 25.2 ms, 25.7 ms, 25.5 ms · Warm: 27.0 ms, 29.9 ms, 25.6 ms, 26.6 ms, 26.2 ms
-- **Verter compileMany + processStyle (render + CSS)**: Fresh child (first timed row workload): 132.9 ms, 130.0 ms, 125.8 ms, 128.7 ms, 136.9 ms · Warm: 123.0 ms, 118.7 ms, 120.2 ms, 124.3 ms, 126.4 ms
+- **@vue/compiler-sfc 3.5 (1T)**: Fresh child (first timed row workload): 400.1 ms, 410.8 ms, 407.3 ms, 403.1 ms, 419.2 ms · Warm: 190.2 ms, 199.8 ms, 199.9 ms, 203.0 ms, 189.6 ms
+- **@vue/compiler-sfc 3.6 (1T)**: Fresh child (first timed row workload): 410.7 ms, 399.0 ms, 424.3 ms, 433.9 ms, 433.7 ms · Warm: 223.2 ms, 227.2 ms, 221.7 ms, 232.9 ms, 225.2 ms
+- **Vue compiler-sfc 3.5 reference (raw render, 1T)**: Fresh child (first timed row workload): 416.4 ms, 421.4 ms, 417.2 ms, 411.2 ms, 415.2 ms · Warm: 203.7 ms, 195.3 ms, 196.4 ms, 216.1 ms, 194.9 ms
+- **Vize compileSfcBatchWithResults (raw render)**: Fresh child (first timed row workload): 18.5 ms, 17.3 ms, 17.5 ms, 17.7 ms, 17.7 ms · Warm: 16.9 ms, 16.5 ms, 25.9 ms, 24.0 ms, 16.1 ms
+- **Verter compileMany (first-admission stateless raw render)**: Fresh child (first timed row workload): 114.2 ms, 109.5 ms, 115.2 ms, 113.3 ms, 103.6 ms · Warm: 104.7 ms, 107.7 ms, 102.1 ms, 102.9 ms, 111.9 ms
+- **Vue compiler-sfc 3.5 reference (render + CSS, 1T)**: Fresh child (first timed row workload): 484.3 ms, 487.4 ms, 505.4 ms, 492.4 ms, 488.1 ms · Warm: 245.5 ms, 226.2 ms, 269.1 ms, 249.8 ms, 221.9 ms
+- **Vize compileSfc loop (full SFC, 1T)**: Fresh child (first timed row workload): 51.2 ms, 51.6 ms, 52.2 ms, 51.7 ms, 51.8 ms · Warm: 52.0 ms, 51.3 ms, 52.8 ms, 50.9 ms, 51.0 ms
+- **Vize compileSfcBatchWithResults (render + CSS, Rayon batch)**: Fresh child (first timed row workload): 18.8 ms, 18.9 ms, 18.7 ms, 19.7 ms, 19.8 ms · Warm: 17.2 ms, 18.0 ms, 28.4 ms, 24.7 ms, 17.1 ms
+- **fervid compileSync (1T)**: Fresh child (first timed row workload): 49.6 ms, 49.5 ms, 53.1 ms, 49.7 ms, 50.2 ms · Warm: 50.0 ms, 48.9 ms, 49.6 ms, 57.9 ms, 53.2 ms
+- **fervid compileAsync (4-thread libuv pool)**: Fresh child (first timed row workload): 20.3 ms, 20.2 ms, 20.2 ms, 20.1 ms, 20.1 ms · Warm: 21.6 ms, 21.6 ms, 21.6 ms, 31.6 ms, 21.2 ms
+- **Verter compileMany + processStyle (render + CSS)**: Fresh child (first timed row workload): 118.4 ms, 111.7 ms, 113.9 ms, 116.0 ms, 119.9 ms · Warm: 109.7 ms, 108.1 ms, 108.2 ms, 106.7 ms, 111.7 ms
 
 </details>
 
@@ -210,7 +210,7 @@ Target: `vapor` · Environment: `production` · Source map: `off`
 | Tool | Fresh child | Fresh min | Fresh stddev | Fresh CV% | vs fastest fresh child | **Warm (primary)** | Warm min | Warm stddev | Warm CV% | vs fastest warm | Code bytes | Throughput | Peak RSS |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | @vue/compiler-sfc 3.5 (vapor) ⏭ | skipped | – | – | – | – | – | – | – | – | – | – | – | – |
-| @vue/compiler-sfc 3.6 (1T) ⚠ | (792.5 ms) | (776.1 ms) | (14.3 ms) | (1.8%) | not ranked | (399.2 ms) | (386.3 ms) | (15.1 ms) | (3.8%) | not ranked | (711,809) | – | (71.9 MB) |
+| @vue/compiler-sfc 3.6 (1T) ⚠ | (677.0 ms) | (673.3 ms) | (21.1 ms) | (3.1%) | not ranked | (369.8 ms) | (361.5 ms) | (25.8 ms) | (7.0%) | not ranked | (711,809) | – | (72.6 MB) |
 
 <details><summary>Notes</summary>
 
@@ -228,9 +228,9 @@ Target: `vapor` · Environment: `production` · Source map: `off`
 
 | Tool | Fresh child | Fresh min | Fresh stddev | Fresh CV% | vs fastest fresh child | **Warm (primary)** | Warm min | Warm stddev | Warm CV% | vs fastest warm | Generated JS bytes | Throughput | Peak RSS |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vue compiler-sfc 3.6 reference (raw render, 1T) ⚠ | (788.9 ms) | (779.9 ms) | (12.5 ms) | (1.6%) | not ranked | (393.5 ms) | (385.2 ms) | (10.0 ms) | (2.5%) | not ranked | (711,609) | – | – |
-| Vize compileSfcBatchWithResults (raw render) ⚠ | (21.7 ms) | (21.5 ms) | (0.2 ms) | (0.9%) | not ranked | (20.3 ms) | (19.7 ms) | (0.4 ms) | (2.1%) | not ranked | (751,416) | – | (17.4 MB) |
-| Verter compileMany (first-admission stateless raw render) ⚠ | (119.7 ms) | (117.1 ms) | (1.9 ms) | (1.6%) | not ranked | (119.6 ms) | (114.7 ms) | (4.7 ms) | (3.9%) | not ranked | (564,944) | – | (36.1 MB) |
+| Vue compiler-sfc 3.6 reference (raw render, 1T) ⚠ | (684.0 ms) | (669.4 ms) | (10.4 ms) | (1.5%) | not ranked | (360.6 ms) | (351.5 ms) | (10.7 ms) | (3.0%) | not ranked | (711,609) | – | – |
+| Vize compileSfcBatchWithResults (raw render) ⚠ | (18.4 ms) | (18.4 ms) | (0.7 ms) | (3.9%) | not ranked | (17.9 ms) | (16.4 ms) | (0.8 ms) | (4.5%) | not ranked | (751,196) | – | (18.6 MB) |
+| Verter compileMany (first-admission stateless raw render) ⚠ | (110.3 ms) | (108.3 ms) | (2.2 ms) | (2.0%) | not ranked | (103.2 ms) | (99.6 ms) | (2.6 ms) | (2.6%) | not ranked | (564,944) | – | (36.0 MB) |
 
 <details><summary>Notes</summary>
 
@@ -249,11 +249,11 @@ Target: `vapor` · Environment: `production` · Source map: `off`
 
 | Tool | Fresh child | Fresh min | Fresh stddev | Fresh CV% | vs fastest fresh child | **Warm (primary)** | Warm min | Warm stddev | Warm CV% | vs fastest warm | Generated JS + CSS bytes | Throughput | Peak RSS |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vue compiler-sfc 3.6 reference (render + CSS, 1T) ⚠ | (890.6 ms) | (872.0 ms) | (12.4 ms) | (1.4%) | not ranked | (467.7 ms) | (445.5 ms) | (27.2 ms) | (5.8%) | not ranked | (791,235) | – | (76.2 MB) |
-| Vize compileSfc loop (full SFC, 1T) ⚠ | (63.5 ms) | (63.3 ms) | (0.2 ms) | (0.4%) | not ranked | (61.7 ms) | (61.2 ms) | (0.2 ms) | (0.4%) | not ranked | (795,274) | – | (15.4 MB) |
-| Vize compileSfcBatchWithResults (render + CSS, Rayon batch) ⚠ | (23.6 ms) | (23.1 ms) | (0.4 ms) | (1.8%) | not ranked | (21.1 ms) | (20.8 ms) | (1.7 ms) | (8.0%) | not ranked | (795,274) | – | (17.5 MB) |
+| Vue compiler-sfc 3.6 reference (render + CSS, 1T) ⚠ | (777.7 ms) | (768.8 ms) | (15.8 ms) | (2.0%) | not ranked | (426.0 ms) | (415.1 ms) | (10.2 ms) | (2.4%) | not ranked | (791,235) | – | (78.3 MB) |
+| Vize compileSfc loop (full SFC, 1T) ⚠ | (53.5 ms) | (53.0 ms) | (0.5 ms) | (0.9%) | not ranked | (52.1 ms) | (51.9 ms) | (1.8 ms) | (3.4%) | not ranked | (795,054) | – | (16.4 MB) |
+| Vize compileSfcBatchWithResults (render + CSS, Rayon batch) ⚠ | (19.6 ms) | (19.5 ms) | (0.2 ms) | (1.2%) | not ranked | (17.6 ms) | (17.3 ms) | (0.3 ms) | (1.5%) | not ranked | (795,054) | – | (18.6 MB) |
 | fervid (vapor) ⏭ | skipped | – | – | – | – | – | – | – | – | – | – | – | – |
-| Verter compileMany + processStyle (render + CSS) ⚠ | (129.1 ms) | (125.4 ms) | (2.8 ms) | (2.2%) | not ranked | (123.8 ms) | (123.7 ms) | (3.1 ms) | (2.5%) | not ranked | (628,934) | – | (38.1 MB) |
+| Verter compileMany + processStyle (render + CSS) ⚠ | (114.3 ms) | (110.3 ms) | (3.1 ms) | (2.7%) | not ranked | (108.9 ms) | (105.5 ms) | (3.5 ms) | (3.2%) | not ranked | (628,934) | – | (38.4 MB) |
 
 <details><summary>Notes</summary>
 
@@ -267,14 +267,14 @@ Target: `vapor` · Environment: `production` · Source map: `off`
 
 <details><summary>Raw runs</summary>
 
-- **@vue/compiler-sfc 3.6 (1T)**: Fresh child (first timed row workload): 815.2 ms, 776.1 ms, 792.3 ms, 801.3 ms, 792.5 ms · Warm: 421.3 ms, 391.2 ms, 414.8 ms, 399.2 ms, 386.3 ms
-- **Vue compiler-sfc 3.6 reference (raw render, 1T)**: Fresh child (first timed row workload): 788.9 ms, 806.7 ms, 788.0 ms, 779.9 ms, 808.4 ms · Warm: 410.1 ms, 393.5 ms, 399.8 ms, 387.9 ms, 385.2 ms
-- **Vize compileSfcBatchWithResults (raw render)**: Fresh child (first timed row workload): 21.5 ms, 21.8 ms, 21.7 ms, 22.1 ms, 21.6 ms · Warm: 19.7 ms, 20.3 ms, 20.7 ms, 20.1 ms, 20.7 ms
-- **Verter compileMany (first-admission stateless raw render)**: Fresh child (first timed row workload): 122.1 ms, 117.1 ms, 119.7 ms, 119.0 ms, 121.0 ms · Warm: 114.7 ms, 125.9 ms, 115.9 ms, 119.6 ms, 122.9 ms
-- **Vue compiler-sfc 3.6 reference (render + CSS, 1T)**: Fresh child (first timed row workload): 890.4 ms, 890.6 ms, 890.6 ms, 872.0 ms, 907.0 ms · Warm: 476.5 ms, 467.7 ms, 511.8 ms, 446.1 ms, 445.5 ms
-- **Vize compileSfc loop (full SFC, 1T)**: Fresh child (first timed row workload): 63.5 ms, 63.5 ms, 63.6 ms, 63.3 ms, 63.9 ms · Warm: 61.8 ms, 61.8 ms, 61.7 ms, 61.2 ms, 61.6 ms
-- **Vize compileSfcBatchWithResults (render + CSS, Rayon batch)**: Fresh child (first timed row workload): 23.6 ms, 24.1 ms, 23.1 ms, 23.4 ms, 24.1 ms · Warm: 20.8 ms, 20.8 ms, 21.1 ms, 24.8 ms, 22.1 ms
-- **Verter compileMany + processStyle (render + CSS)**: Fresh child (first timed row workload): 132.3 ms, 125.4 ms, 129.1 ms, 130.1 ms, 126.2 ms · Warm: 123.8 ms, 123.7 ms, 123.7 ms, 130.8 ms, 124.3 ms
+- **@vue/compiler-sfc 3.6 (1T)**: Fresh child (first timed row workload): 675.4 ms, 677.0 ms, 707.8 ms, 718.3 ms, 673.3 ms · Warm: 372.8 ms, 361.5 ms, 369.8 ms, 423.2 ms, 362.2 ms
+- **Vue compiler-sfc 3.6 reference (raw render, 1T)**: Fresh child (first timed row workload): 684.0 ms, 698.1 ms, 669.4 ms, 684.7 ms, 679.6 ms · Warm: 351.5 ms, 359.7 ms, 368.2 ms, 380.0 ms, 360.6 ms
+- **Vize compileSfcBatchWithResults (raw render)**: Fresh child (first timed row workload): 18.4 ms, 18.5 ms, 18.4 ms, 20.0 ms, 18.4 ms · Warm: 16.4 ms, 17.9 ms, 18.4 ms, 18.0 ms, 17.0 ms
+- **Verter compileMany (first-admission stateless raw render)**: Fresh child (first timed row workload): 108.3 ms, 110.3 ms, 113.5 ms, 108.5 ms, 111.5 ms · Warm: 106.1 ms, 99.6 ms, 100.4 ms, 103.2 ms, 103.8 ms
+- **Vue compiler-sfc 3.6 reference (render + CSS, 1T)**: Fresh child (first timed row workload): 776.3 ms, 809.5 ms, 768.8 ms, 777.7 ms, 788.5 ms · Warm: 423.9 ms, 415.1 ms, 426.0 ms, 438.0 ms, 439.5 ms
+- **Vize compileSfc loop (full SFC, 1T)**: Fresh child (first timed row workload): 53.3 ms, 53.5 ms, 53.6 ms, 53.0 ms, 54.3 ms · Warm: 51.9 ms, 52.1 ms, 52.0 ms, 55.9 ms, 53.9 ms
+- **Vize compileSfcBatchWithResults (render + CSS, Rayon batch)**: Fresh child (first timed row workload): 20.0 ms, 19.5 ms, 19.6 ms, 19.6 ms, 19.5 ms · Warm: 17.5 ms, 17.6 ms, 17.7 ms, 17.3 ms, 18.0 ms
+- **Verter compileMany + processStyle (render + CSS)**: Fresh child (first timed row workload): 113.0 ms, 116.5 ms, 118.3 ms, 114.3 ms, 110.3 ms · Warm: 106.7 ms, 113.9 ms, 105.5 ms, 108.9 ms, 112.1 ms
 
 </details>
 
@@ -292,7 +292,7 @@ Target: `vapor` · Environment: `development` · Source map: `off`
 | Tool | Fresh child | Fresh min | Fresh stddev | Fresh CV% | vs fastest fresh child | **Warm (primary)** | Warm min | Warm stddev | Warm CV% | vs fastest warm | Code bytes | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | @vue/compiler-sfc 3.5 (vapor) ⏭ | skipped | – | – | – | – | – | – | – | – | – | – | – |
-| @vue/compiler-sfc 3.6 (1T) ⚠ | (800.1 ms) | (793.1 ms) | (6.3 ms) | (0.8%) | not ranked | (396.7 ms) | (376.2 ms) | (18.2 ms) | (4.6%) | not ranked | (713,547) | – |
+| @vue/compiler-sfc 3.6 (1T) ⚠ | (694.7 ms) | (669.5 ms) | (17.1 ms) | (2.5%) | not ranked | (348.9 ms) | (316.1 ms) | (34.2 ms) | (9.8%) | not ranked | (713,547) | – |
 
 <details><summary>Notes</summary>
 
@@ -310,9 +310,9 @@ Target: `vapor` · Environment: `development` · Source map: `off`
 
 | Tool | Fresh child | Fresh min | Fresh stddev | Fresh CV% | vs fastest fresh child | **Warm (primary)** | Warm min | Warm stddev | Warm CV% | vs fastest warm | Generated JS bytes | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vue compiler-sfc 3.6 reference (raw render, 1T) ⚠ | (796.9 ms) | (782.4 ms) | (11.6 ms) | (1.5%) | not ranked | (385.6 ms) | (378.4 ms) | (4.6 ms) | (1.2%) | not ranked | (713,347) | – |
-| Vize compileSfcBatchWithResults (raw render) ⚠ | (21.7 ms) | (21.4 ms) | (0.5 ms) | (2.5%) | not ranked | (20.2 ms) | (19.6 ms) | (1.1 ms) | (5.4%) | not ranked | (751,416) | – |
-| Verter compileMany (first-admission stateless raw render) ⚠ | (122.7 ms) | (116.9 ms) | (3.2 ms) | (2.6%) | not ranked | (123.0 ms) | (118.0 ms) | (2.8 ms) | (2.3%) | not ranked | (600,682) | – |
+| Vue compiler-sfc 3.6 reference (raw render, 1T) ⚠ | (688.6 ms) | (672.9 ms) | (14.4 ms) | (2.1%) | not ranked | (337.0 ms) | (318.9 ms) | (12.5 ms) | (3.7%) | not ranked | (713,347) | – |
+| Vize compileSfcBatchWithResults (raw render) ⚠ | (18.6 ms) | (18.0 ms) | (0.7 ms) | (3.6%) | not ranked | (17.0 ms) | (16.5 ms) | (0.6 ms) | (3.7%) | not ranked | (751,196) | – |
+| Verter compileMany (first-admission stateless raw render) ⚠ | (110.3 ms) | (106.9 ms) | (2.0 ms) | (1.8%) | not ranked | (109.0 ms) | (106.1 ms) | (2.6 ms) | (2.4%) | not ranked | (600,682) | – |
 
 <details><summary>Notes</summary>
 
@@ -331,11 +331,11 @@ Target: `vapor` · Environment: `development` · Source map: `off`
 
 | Tool | Fresh child | Fresh min | Fresh stddev | Fresh CV% | vs fastest fresh child | **Warm (primary)** | Warm min | Warm stddev | Warm CV% | vs fastest warm | Generated JS + CSS bytes | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vue compiler-sfc 3.6 reference (render + CSS, 1T) ⚠ | (892.4 ms) | (889.5 ms) | (6.9 ms) | (0.8%) | not ranked | (424.3 ms) | (422.6 ms) | (5.2 ms) | (1.2%) | not ranked | (792,973) | – |
-| Vize compileSfc loop (full SFC, 1T) ⚠ | (63.7 ms) | (63.4 ms) | (0.2 ms) | (0.4%) | not ranked | (61.0 ms) | (60.4 ms) | (0.7 ms) | (1.2%) | not ranked | (795,274) | – |
-| Vize compileSfcBatchWithResults (render + CSS, Rayon batch) ⚠ | (23.3 ms) | (23.0 ms) | (0.6 ms) | (2.6%) | not ranked | (20.8 ms) | (20.7 ms) | (0.5 ms) | (2.5%) | not ranked | (795,274) | – |
+| Vue compiler-sfc 3.6 reference (render + CSS, 1T) ⚠ | (781.8 ms) | (750.6 ms) | (25.5 ms) | (3.3%) | not ranked | (385.4 ms) | (372.1 ms) | (7.2 ms) | (1.9%) | not ranked | (792,973) | – |
+| Vize compileSfc loop (full SFC, 1T) ⚠ | (53.3 ms) | (53.2 ms) | (0.3 ms) | (0.5%) | not ranked | (53.0 ms) | (51.1 ms) | (5.6 ms) | (10.5%) | not ranked | (795,054) | – |
+| Vize compileSfcBatchWithResults (render + CSS, Rayon batch) ⚠ | (19.5 ms) | (19.3 ms) | (0.1 ms) | (0.7%) | not ranked | (18.4 ms) | (17.6 ms) | (1.3 ms) | (7.3%) | not ranked | (795,054) | – |
 | fervid (vapor) ⏭ | skipped | – | – | – | – | – | – | – | – | – | – | – |
-| Verter compileMany + processStyle (render + CSS) ⚠ | (127.1 ms) | (125.7 ms) | (2.4 ms) | (1.9%) | not ranked | (127.2 ms) | (125.6 ms) | (2.4 ms) | (1.9%) | not ranked | (664,672) | – |
+| Verter compileMany + processStyle (render + CSS) ⚠ | (115.2 ms) | (112.2 ms) | (1.9 ms) | (1.7%) | not ranked | (115.8 ms) | (108.7 ms) | (3.7 ms) | (3.2%) | not ranked | (664,672) | – |
 
 <details><summary>Notes</summary>
 
@@ -349,14 +349,14 @@ Target: `vapor` · Environment: `development` · Source map: `off`
 
 <details><summary>Raw runs</summary>
 
-- **@vue/compiler-sfc 3.6 (1T)**: Fresh child (first timed row workload): 806.5 ms, 807.2 ms, 800.1 ms, 795.6 ms, 793.1 ms · Warm: 396.7 ms, 400.9 ms, 421.9 ms, 376.2 ms, 380.7 ms
-- **Vue compiler-sfc 3.6 reference (raw render, 1T)**: Fresh child (first timed row workload): 812.9 ms, 800.7 ms, 788.9 ms, 796.9 ms, 782.4 ms · Warm: 390.7 ms, 385.6 ms, 383.3 ms, 378.4 ms, 386.9 ms
-- **Vize compileSfcBatchWithResults (raw render)**: Fresh child (first timed row workload): 21.4 ms, 22.6 ms, 21.7 ms, 22.5 ms, 21.7 ms · Warm: 22.4 ms, 20.2 ms, 20.9 ms, 20.1 ms, 19.6 ms
-- **Verter compileMany (first-admission stateless raw render)**: Fresh child (first timed row workload): 122.7 ms, 116.9 ms, 121.6 ms, 122.8 ms, 125.7 ms · Warm: 123.0 ms, 125.9 ms, 118.0 ms, 122.1 ms, 123.0 ms
-- **Vue compiler-sfc 3.6 reference (render + CSS, 1T)**: Fresh child (first timed row workload): 889.5 ms, 892.3 ms, 907.1 ms, 896.0 ms, 892.4 ms · Warm: 435.4 ms, 422.6 ms, 423.3 ms, 424.3 ms, 426.3 ms
-- **Vize compileSfc loop (full SFC, 1T)**: Fresh child (first timed row workload): 63.8 ms, 63.4 ms, 63.7 ms, 63.7 ms, 64.0 ms · Warm: 61.2 ms, 60.7 ms, 61.0 ms, 62.3 ms, 60.4 ms
-- **Vize compileSfcBatchWithResults (render + CSS, Rayon batch)**: Fresh child (first timed row workload): 23.0 ms, 24.5 ms, 23.2 ms, 23.4 ms, 23.3 ms · Warm: 21.3 ms, 20.7 ms, 20.8 ms, 20.8 ms, 22.0 ms
-- **Verter compileMany + processStyle (render + CSS)**: Fresh child (first timed row workload): 125.7 ms, 130.6 ms, 127.0 ms, 127.1 ms, 131.0 ms · Warm: 125.7 ms, 127.5 ms, 127.2 ms, 131.6 ms, 125.6 ms
+- **@vue/compiler-sfc 3.6 (1T)**: Fresh child (first timed row workload): 694.7 ms, 669.5 ms, 697.7 ms, 669.6 ms, 706.7 ms · Warm: 348.9 ms, 320.4 ms, 401.0 ms, 358.4 ms, 316.1 ms
+- **Vue compiler-sfc 3.6 reference (raw render, 1T)**: Fresh child (first timed row workload): 673.2 ms, 688.6 ms, 699.5 ms, 703.9 ms, 672.9 ms · Warm: 346.6 ms, 323.5 ms, 337.0 ms, 344.7 ms, 318.9 ms
+- **Vize compileSfcBatchWithResults (raw render)**: Fresh child (first timed row workload): 18.0 ms, 18.4 ms, 19.8 ms, 18.6 ms, 18.8 ms · Warm: 18.2 ms, 16.9 ms, 17.2 ms, 17.0 ms, 16.5 ms
+- **Verter compileMany (first-admission stateless raw render)**: Fresh child (first timed row workload): 109.7 ms, 110.3 ms, 106.9 ms, 111.9 ms, 111.7 ms · Warm: 108.2 ms, 106.1 ms, 109.0 ms, 112.3 ms, 111.7 ms
+- **Vue compiler-sfc 3.6 reference (render + CSS, 1T)**: Fresh child (first timed row workload): 773.6 ms, 821.0 ms, 781.8 ms, 750.6 ms, 787.6 ms · Warm: 385.7 ms, 385.4 ms, 372.1 ms, 392.0 ms, 384.0 ms
+- **Vize compileSfc loop (full SFC, 1T)**: Fresh child (first timed row workload): 53.3 ms, 53.2 ms, 53.2 ms, 53.9 ms, 53.4 ms · Warm: 53.0 ms, 64.9 ms, 51.1 ms, 53.1 ms, 52.9 ms
+- **Vize compileSfcBatchWithResults (render + CSS, Rayon batch)**: Fresh child (first timed row workload): 19.5 ms, 19.7 ms, 19.5 ms, 19.3 ms, 19.6 ms · Warm: 18.9 ms, 17.6 ms, 18.4 ms, 20.9 ms, 17.7 ms
+- **Verter compileMany + processStyle (render + CSS)**: Fresh child (first timed row workload): 116.7 ms, 112.2 ms, 113.1 ms, 116.1 ms, 115.2 ms · Warm: 108.7 ms, 117.8 ms, 111.6 ms, 116.0 ms, 115.8 ms
 
 </details>
 
@@ -413,8 +413,8 @@ Files: **200** · Bytes: **38,804**
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Code bytes | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| @vue-jsx-vapor/compiler-rs (vapor) ⚠ | (3.7 ms) | (3.1 ms) | – | – | not ranked | (96,804) | – |
-| vue-jsx-vapor/api ⚠ | (3.9 ms) | (3.5 ms) | – | – | not ranked | (96,804) | – |
+| @vue-jsx-vapor/compiler-rs (vapor) ⚠ | (3.0 ms) | (2.8 ms) | – | – | not ranked | (96,804) | – |
+| vue-jsx-vapor/api ⚠ | (2.9 ms) | (2.8 ms) | – | – | not ranked | (96,804) | – |
 
 <details><summary>Notes</summary>
 
@@ -432,8 +432,8 @@ Files: **200** · Bytes: **38,804**
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Code bytes | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| @vue-jsx-vapor/compiler-rs (interop VDOM) | **2.7 ms** | 2.6 ms | 0.8 ms | 31.0% ⚠ | 1.00x | 94,084 | 75.4k files/s |
-| @vue/babel-plugin-jsx (Babel VDOM) | **132.4 ms** | 115.7 ms | 14.4 ms | 10.9% ⚠ | 49.94x | 57,284 | 1.5k files/s |
+| @vue-jsx-vapor/compiler-rs (interop VDOM) | **2.3 ms** | 2.0 ms | 0.6 ms | 26.5% ⚠ | 1.00x | 94,084 | 85.6k files/s |
+| @vue/babel-plugin-jsx (Babel VDOM) | **114.7 ms** | 96.7 ms | 11.3 ms | 9.9% | 49.09x | 57,284 | 1.7k files/s |
 
 <details><summary>Notes</summary>
 
@@ -457,10 +457,10 @@ Files: **200** · Bytes: **38,804**
 
 Raw runs:
 
-- **@vue-jsx-vapor/compiler-rs (vapor)**: 3.7 ms, 3.9 ms, 12.3 ms, 3.7 ms, 3.1 ms
-- **vue-jsx-vapor/api**: 3.9 ms, 3.9 ms, 3.8 ms, 3.9 ms, 3.5 ms
-- **@vue-jsx-vapor/compiler-rs (interop VDOM)**: 2.7 ms, 3.1 ms, 4.5 ms, 2.6 ms, 2.6 ms
-- **@vue/babel-plugin-jsx (Babel VDOM)**: 132.4 ms, 148.9 ms, 120.9 ms, 144.5 ms, 115.7 ms
+- **@vue-jsx-vapor/compiler-rs (vapor)**: 2.9 ms, 2.8 ms, 3.8 ms, 4.4 ms, 3.0 ms
+- **vue-jsx-vapor/api**: 2.9 ms, 3.0 ms, 2.9 ms, 4.9 ms, 2.8 ms
+- **@vue-jsx-vapor/compiler-rs (interop VDOM)**: 2.1 ms, 2.3 ms, 3.2 ms, 3.3 ms, 2.0 ms
+- **@vue/babel-plugin-jsx (Babel VDOM)**: 109.4 ms, 118.6 ms, 114.7 ms, 127.3 ms, 96.7 ms
 
 </details>
 
@@ -482,8 +482,8 @@ Target: `vdom` · Environment: `production` · Source map: `off`
 
 | Tool | Fresh child | Fresh min | Fresh stddev | Fresh CV% | vs fastest fresh child | **Warm (primary)** | Warm min | Warm stddev | Warm CV% | vs fastest warm | Code bytes | Throughput | Peak RSS |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| @vue/compiler-sfc 3.5 (1T) | 127.5 ms | 123.6 ms | 5.5 ms | 4.3% | 1.01x | **55.9 ms** | 49.5 ms | 9.0 ms | 16.1% ⚠ | 1.00x | 214,800 | 3.6k files/s | 64.6 MB |
-| @vue/compiler-sfc 3.6 (1T) | 126.3 ms | 124.4 ms | 2.8 ms | 2.2% | 1.00x | **65.8 ms** | 56.2 ms | 13.6 ms | 20.7% ⚠ | 1.18x | 214,800 | 3.0k files/s | 62.1 MB |
+| @vue/compiler-sfc 3.5 (1T) | 99.3 ms | 96.0 ms | 4.7 ms | 4.7% | 1.00x | **46.9 ms** | 43.7 ms | 4.6 ms | 9.7% | 1.00x | 214,800 | 4.3k files/s | 62.8 MB |
+| @vue/compiler-sfc 3.6 (1T) | 103.0 ms | 102.5 ms | 0.6 ms | 0.6% | 1.04x | **55.6 ms** | 48.1 ms | 10.7 ms | 19.2% ⚠ | 1.19x | 214,800 | 3.6k files/s | 61.9 MB |
 
 <details><summary>Notes</summary>
 
@@ -496,9 +496,9 @@ Target: `vdom` · Environment: `production` · Source map: `off`
 
 | Tool | Fresh child | Fresh min | Fresh stddev | Fresh CV% | vs fastest fresh child | **Warm (primary)** | Warm min | Warm stddev | Warm CV% | vs fastest warm | Generated JS bytes | Throughput | Peak RSS |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vue compiler-sfc 3.5 reference (raw render, 1T) | 121.8 ms | 119.6 ms | 3.0 ms | 2.5% | 1.00x | **52.9 ms** | 51.9 ms | 1.5 ms | 2.8% | 1.00x | 214,600 | 3.8k files/s | – |
-| Vize compileSfcBatchWithResults (raw render) ⚠ | (7.3 ms) | (7.3 ms) | (0.0 ms) | (0.0%) | not ranked | (5.7 ms) | (5.7 ms) | (0.0 ms) | (0.7%) | not ranked | (115,600) | – | (18.3 MB) |
-| Verter compileMany (first-admission stateless raw render) ⚠ | (107.3 ms) | (104.3 ms) | (4.3 ms) | (4.0%) | not ranked | (99.8 ms) | (99.4 ms) | (0.6 ms) | (0.6%) | not ranked | (114,800) | – | (35.8 MB) |
+| Vue compiler-sfc 3.5 reference (raw render, 1T) | 102.4 ms | 102.0 ms | 0.6 ms | 0.6% | 1.00x | **42.6 ms** | 40.1 ms | 3.5 ms | 8.2% | 1.00x | 214,600 | 4.7k files/s | – |
+| Vize compileSfcBatchWithResults (raw render) ⚠ | (6.6 ms) | (6.6 ms) | (0.1 ms) | (1.0%) | not ranked | (5.6 ms) | (5.5 ms) | (0.2 ms) | (3.5%) | not ranked | (156,600) | – | (17.9 MB) |
+| Verter compileMany (first-admission stateless raw render) ⚠ | (93.9 ms) | (93.0 ms) | (1.3 ms) | (1.3%) | not ranked | (87.4 ms) | (84.3 ms) | (4.4 ms) | (5.0%) | not ranked | (114,800) | – | (36.1 MB) |
 
 <details><summary>Notes</summary>
 
@@ -512,12 +512,12 @@ Target: `vdom` · Environment: `production` · Source map: `off`
 
 | Tool | Fresh child | Fresh min | Fresh stddev | Fresh CV% | vs fastest fresh child | **Warm (primary)** | Warm min | Warm stddev | Warm CV% | vs fastest warm | Generated JS + CSS bytes | Throughput | Peak RSS |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vue compiler-sfc 3.5 reference (render + CSS, 1T) | 190.4 ms | 187.0 ms | 4.8 ms | 2.5% | 1.00x | **105.4 ms** | 102.6 ms | 3.9 ms | 3.7% | 1.00x | 242,000 | 1.9k files/s | 66.4 MB |
-| Vize compileSfc loop (full SFC, 1T) ⚠ | (18.4 ms) | (17.6 ms) | (1.1 ms) | (6.2%) | not ranked | (17.7 ms) | (17.5 ms) | (0.3 ms) | (1.4%) | not ranked | (142,200) | – | (16.8 MB) |
-| Vize compileSfcBatchWithResults (render + CSS, Rayon batch) ⚠ | (8.4 ms) | (8.3 ms) | (0.1 ms) | (1.0%) | not ranked | (6.6 ms) | (6.3 ms) | (0.3 ms) | (4.9%) | not ranked | (142,200) | – | (18.1 MB) |
-| fervid compileSync (1T) ⚠ | (13.2 ms) | (13.0 ms) | (0.3 ms) | (2.2%) | not ranked | (12.5 ms) | (12.5 ms) | (0.0 ms) | (0.1%) | not ranked | (199,361) | – | (15.9 MB) |
-| fervid compileAsync (4-thread libuv pool) ⚠ | (7.4 ms) | (6.8 ms) | (0.9 ms) | (12.2%) | not ranked | (8.6 ms) | (7.8 ms) | (1.2 ms) | (14.1%) | not ranked | (199,361) | – | – |
-| Verter compileMany + processStyle (render + CSS) ⚠ | (108.1 ms) | (106.1 ms) | (2.9 ms) | (2.6%) | not ranked | (106.0 ms) | (102.3 ms) | (5.4 ms) | (5.1%) | not ranked | (176,800) | – | (38.0 MB) |
+| Vue compiler-sfc 3.5 reference (render + CSS, 1T) | 152.3 ms | 149.9 ms | 3.3 ms | 2.2% | 1.00x | **87.4 ms** | 82.9 ms | 6.3 ms | 7.3% | 1.00x | 242,000 | 2.3k files/s | 65.7 MB |
+| Vize compileSfc loop (full SFC, 1T) ⚠ | (17.0 ms) | (16.6 ms) | (0.5 ms) | (2.7%) | not ranked | (16.3 ms) | (16.1 ms) | (0.3 ms) | (1.5%) | not ranked | (183,200) | – | (16.5 MB) |
+| Vize compileSfcBatchWithResults (render + CSS, Rayon batch) ⚠ | (7.4 ms) | (7.1 ms) | (0.4 ms) | (5.1%) | not ranked | (6.2 ms) | (6.2 ms) | (0.0 ms) | (0.0%) | not ranked | (183,200) | – | (18.0 MB) |
+| fervid compileSync (1T) ⚠ | (10.5 ms) | (10.4 ms) | (0.3 ms) | (2.5%) | not ranked | (10.0 ms) | (9.7 ms) | (0.4 ms) | (3.9%) | not ranked | (199,361) | – | (16.3 MB) |
+| fervid compileAsync (4-thread libuv pool) ⚠ | (6.3 ms) | (5.5 ms) | (1.1 ms) | (17.2%) | not ranked | (5.8 ms) | (4.8 ms) | (1.5 ms) | (25.2%) | not ranked | (199,361) | – | – |
+| Verter compileMany + processStyle (render + CSS) ⚠ | (98.7 ms) | (98.6 ms) | (0.2 ms) | (0.2%) | not ranked | (91.6 ms) | (89.9 ms) | (2.5 ms) | (2.7%) | not ranked | (176,800) | – | (38.2 MB) |
 
 <details><summary>Notes</summary>
 
@@ -532,17 +532,17 @@ Target: `vdom` · Environment: `production` · Source map: `off`
 
 <details><summary>Raw runs</summary>
 
-- **@vue/compiler-sfc 3.5 (1T)**: Fresh child (first timed row workload): 131.3 ms, 123.6 ms · Warm: 62.2 ms, 49.5 ms
-- **@vue/compiler-sfc 3.6 (1T)**: Fresh child (first timed row workload): 124.4 ms, 128.3 ms · Warm: 75.4 ms, 56.2 ms
-- **Vue compiler-sfc 3.5 reference (raw render, 1T)**: Fresh child (first timed row workload): 123.9 ms, 119.6 ms · Warm: 54.0 ms, 51.9 ms
-- **Vize compileSfcBatchWithResults (raw render)**: Fresh child (first timed row workload): 7.3 ms, 7.3 ms · Warm: 5.7 ms, 5.8 ms
-- **Verter compileMany (first-admission stateless raw render)**: Fresh child (first timed row workload): 110.3 ms, 104.3 ms · Warm: 99.4 ms, 100.2 ms
-- **Vue compiler-sfc 3.5 reference (render + CSS, 1T)**: Fresh child (first timed row workload): 187.0 ms, 193.8 ms · Warm: 108.2 ms, 102.6 ms
-- **Vize compileSfc loop (full SFC, 1T)**: Fresh child (first timed row workload): 19.2 ms, 17.6 ms · Warm: 17.5 ms, 17.9 ms
-- **Vize compileSfcBatchWithResults (render + CSS, Rayon batch)**: Fresh child (first timed row workload): 8.3 ms, 8.4 ms · Warm: 6.8 ms, 6.3 ms
-- **fervid compileSync (1T)**: Fresh child (first timed row workload): 13.0 ms, 13.4 ms · Warm: 12.5 ms, 12.5 ms
-- **fervid compileAsync (4-thread libuv pool)**: Fresh child (first timed row workload): 8.1 ms, 6.8 ms · Warm: 9.5 ms, 7.8 ms
-- **Verter compileMany + processStyle (render + CSS)**: Fresh child (first timed row workload): 106.1 ms, 110.1 ms · Warm: 102.3 ms, 109.8 ms
+- **@vue/compiler-sfc 3.5 (1T)**: Fresh child (first timed row workload): 96.0 ms, 102.6 ms · Warm: 50.1 ms, 43.7 ms
+- **@vue/compiler-sfc 3.6 (1T)**: Fresh child (first timed row workload): 102.5 ms, 103.4 ms · Warm: 63.1 ms, 48.1 ms
+- **Vue compiler-sfc 3.5 reference (raw render, 1T)**: Fresh child (first timed row workload): 102.0 ms, 102.8 ms · Warm: 40.1 ms, 45.1 ms
+- **Vize compileSfcBatchWithResults (raw render)**: Fresh child (first timed row workload): 6.6 ms, 6.7 ms · Warm: 5.5 ms, 5.8 ms
+- **Verter compileMany (first-admission stateless raw render)**: Fresh child (first timed row workload): 94.8 ms, 93.0 ms · Warm: 84.3 ms, 90.5 ms
+- **Vue compiler-sfc 3.5 reference (render + CSS, 1T)**: Fresh child (first timed row workload): 154.6 ms, 149.9 ms · Warm: 91.9 ms, 82.9 ms
+- **Vize compileSfc loop (full SFC, 1T)**: Fresh child (first timed row workload): 17.3 ms, 16.6 ms · Warm: 16.4 ms, 16.1 ms
+- **Vize compileSfcBatchWithResults (render + CSS, Rayon batch)**: Fresh child (first timed row workload): 7.6 ms, 7.1 ms · Warm: 6.2 ms, 6.2 ms
+- **fervid compileSync (1T)**: Fresh child (first timed row workload): 10.4 ms, 10.7 ms · Warm: 10.3 ms, 9.7 ms
+- **fervid compileAsync (4-thread libuv pool)**: Fresh child (first timed row workload): 5.5 ms, 7.0 ms · Warm: 6.8 ms, 4.8 ms
+- **Verter compileMany + processStyle (render + CSS)**: Fresh child (first timed row workload): 98.8 ms, 98.6 ms · Warm: 89.9 ms, 93.3 ms
 
 </details>
 
@@ -590,7 +590,7 @@ Target: `vdom` · Environment: `production` · Source map: `off`
 
 Executable correctness checks — planted errors that must be reported, clean fixtures that must stay clean. A fast tool that misses plants cannot rank as a correct one; gate failures surface as ⚠ in the timing tables.
 
-pass **174** · fail **25** · warn **0** · skip **0**
+pass **176** · fail **23** · warn **0** · skip **0**
 
 | Case | vue-3.5 | vue-3.6 | vize | fervid | verter | compiler-rs-vapor | compiler-rs-vdom | babel-vue-jsx | vue-jsx-vapor-api |
 | --- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -606,7 +606,7 @@ pass **174** · fail **25** · warn **0** · skip **0**
 | `define-model-modifiers` | ✓ | ✓ | ✓ | ✓ | **✗** | – | – | – | – |
 | `dynamic-arg` | ✓ | ✓ | **✗** | **✗** | **✗** | – | – | – | – |
 | `dynamic-component-is` | ✓ | ✓ | ✓ | **✗** | ✓ | – | – | – | – |
-| `dynamic-slot-name` | ✓ | ✓ | **✗** | **✗** | ✓ | – | – | – | – |
+| `dynamic-slot-name` | ✓ | ✓ | ✓ | **✗** | ✓ | – | – | – | – |
 | `event-handler` | – | – | – | – | – | ✓ | ✓ | ✓ | ✓ |
 | `event-handler (runtime)` | – | – | – | – | – | – | – | ✓ | – |
 | `event-modifiers` | ✓ | ✓ | ✓ | **✗** | ✓ | – | – | – | – |
@@ -637,7 +637,7 @@ pass **174** · fail **25** · warn **0** · skip **0**
 | `v-model-component` | ✓ | ✓ | ✓ | ✓ | ✓ | – | – | – | – |
 | `v-model-modifiers` | ✓ | ✓ | ✓ | ✓ | ✓ | – | – | – | – |
 | `v-model-native-input` | ✓ | ✓ | ✓ | ✓ | ✓ | – | – | – | – |
-| `v-once` | ✓ | ✓ | **✗** | ✓ | **✗** | – | – | – | – |
+| `v-once` | ✓ | ✓ | ✓ | ✓ | **✗** | – | – | – | – |
 | `v-pre` | ✓ | ✓ | ✓ | ✓ | ✓ | – | – | – | – |
 | `v-show` | ✓ | ✓ | ✓ | **✗** | **✗** | – | – | – | – |
 | `v-show-directive` | – | – | – | – | – | ✓ | ✓ | ✓ | ✓ |
@@ -649,14 +649,12 @@ pass **174** · fail **25** · warn **0** · skip **0**
 - `v-for-list` · **fervid** — Invalid destructuring assignment target
 - `slot-fallback` · **fervid** — fallback is not a function
 - `dynamic-component-is` · **fervid** — &lt;component :is> did not render initial component
-- `v-once` · **vize** — Unexpected token '-'
 - `v-once` · **verter** — expected text "0", got "1"
 - `v-text-v-html` · **verter** — expected text "compiled", got ""
 - `keep-alive` · **fervid** — Unable to get [data-testid=count] within: &lt;div class="keep-alive-host">   &lt;component is="[object Object]">&lt;/component>&lt;button type="button" data-testid="toggle">t&lt;/button> &lt;/div>
-- `custom-directive` · **vize** — directive updated hook did not receive the new value
+- `custom-directive` · **vize** — vHighlight is not defined
 - `custom-directive` · **fervid** — directive updated hook did not receive the new value
 - `custom-directive` · **verter** — directive value not delivered: data-hit=undefined
-- `dynamic-slot-name` · **vize** — expected text "dyn-1", got "none"
 - `dynamic-slot-name` · **fervid** — expected text "none", got "dyn-1"
 - `event-modifiers` · **fervid** — expected text "0", got "1"
 - `css-v-bind` · **fervid** — &lt;style> v-bind() did not inject useCssVars into setup()
@@ -684,34 +682,34 @@ Each tool in its own process so RSS, allocation proxies and CPU are not mixed wi
 
 | Tool | RSS min / max / avg | Alloc min / max / avg | CPU ms | CPU % | Wall ms | Samples |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize compileSfc loop (render + CSS, 1T) vapor-prod | 15.40 / 15.40 / 15.40 | 0.98 / 0.98 / 0.98 | 41 | 110.5 | 37 | 3 |
-| fervid compileSync (1T) vdom-prod | 15.81 / 15.81 / 15.81 | 0.83 / 0.83 / 0.83 | 43 | 110.1 | 39 | 3 |
-| Vize compileSfc loop (render + CSS, 1T) vdom-prod | 16.70 / 16.70 / 16.70 | 0.90 / 0.90 / 0.90 | 38 | 109.3 | 35 | 3 |
-| Vize compileSfcBatchWithResults (raw style-free render, Rayon global pool) vapor-prod | 17.34 / 17.34 / 17.34 | 0.84 / 0.84 / 0.84 | n/a | n/a | 17 | 3 |
-| Vize compileSfcBatchWithResults (render + CSS, Rayon global pool) vapor-prod | 17.46 / 17.46 / 17.46 | 0.89 / 0.89 / 0.89 | n/a | n/a | 17 | 3 |
-| Vize compileSfcBatchWithResults (render + CSS, Rayon global pool) vdom-prod | 18.01 / 18.01 / 18.01 | 0.82 / 0.82 / 0.82 | n/a | n/a | 17 | 3 |
-| Vize compileSfcBatchWithResults (raw style-free render, Rayon global pool) vdom-prod | 18.01 / 18.01 / 18.01 | 0.78 / 0.78 / 0.78 | n/a | n/a | 16 | 3 |
-| Verter compileMany (stateless raw render) vdom-prod | 35.64 / 35.64 / 35.64 | 0.80 / 0.80 / 0.80 | 98 | 148.2 | 66 | 3 |
-| Verter compileMany (stateless raw render) vapor-prod | 35.86 / 35.86 / 35.86 | 0.82 / 0.82 / 0.82 | 97 | 154.0 | 63 | 3 |
-| Verter compileMany + processStyle (render + CSS) vdom-prod | 38.01 / 38.01 / 38.01 | 1.00 / 1.00 / 1.00 | 109 | 155.2 | 71 | 3 |
-| Verter compileMany + processStyle (render + CSS) vapor-prod | 37.98 / 37.98 / 37.98 | 1.02 / 1.02 / 1.02 | 108 | 153.7 | 71 | 3 |
-| @vue/compiler-sfc 3.6 (1T) vdom-prod | 59.77 / 61.96 / 60.87 | 19.48 / 19.48 / 19.48 | 1015 | 194.0 | 523 | 3 |
-| @vue/compiler-sfc 3.5 (1T) vdom-prod | 61.34 / 63.21 / 62.28 | 19.69 / 19.69 / 19.69 | 1004 | 198.0 | 510 | 3 |
-| Vue compiler-sfc 3.5 reference (render + CSS, 1T) vdom-prod | 64.52 / 65.65 / 65.09 | 31.89 / 31.89 / 31.89 | 1091 | 196.8 | 568 | 3 |
-| @vue/compiler-sfc 3.6 vapor (1T) vapor-prod | 69.75 / 69.75 / 69.75 | 39.60 / 39.60 / 39.60 | 1364 | 193.9 | 705 | 3 |
-| Vue compiler-sfc 3.6 reference (render + CSS, 1T) vapor-prod | 75.29 / 75.43 / 75.36 | 42.40 / 42.40 / 42.40 | 1499 | 194.9 | 766 | 3 |
+| fervid compileSync (1T) vdom-prod | 15.89 / 15.89 / 15.89 | 0.83 / 0.83 / 0.83 | 40 | 108.7 | 37 | 3 |
+| Vize compileSfc loop (render + CSS, 1T) vapor-prod | 16.37 / 16.37 / 16.37 | 0.98 / 0.98 / 0.98 | 43 | 109.8 | 40 | 3 |
+| Vize compileSfc loop (render + CSS, 1T) vdom-prod | 16.45 / 16.45 / 16.45 | 0.93 / 0.93 / 0.93 | 42 | 107.9 | 39 | 3 |
+| Vize compileSfcBatchWithResults (raw style-free render, Rayon global pool) vdom-prod | 17.89 / 17.89 / 17.89 | 0.81 / 0.81 / 0.81 | n/a | n/a | 17 | 3 |
+| Vize compileSfcBatchWithResults (render + CSS, Rayon global pool) vdom-prod | 18.01 / 18.01 / 18.01 | 0.84 / 0.84 / 0.84 | n/a | n/a | 18 | 3 |
+| Vize compileSfcBatchWithResults (render + CSS, Rayon global pool) vapor-prod | 18.59 / 18.59 / 18.59 | 0.89 / 0.89 / 0.89 | n/a | n/a | 18 | 3 |
+| Vize compileSfcBatchWithResults (raw style-free render, Rayon global pool) vapor-prod | 18.59 / 18.59 / 18.59 | 0.84 / 0.84 / 0.84 | n/a | n/a | 17 | 3 |
+| Verter compileMany (stateless raw render) vapor-prod | 35.99 / 35.99 / 35.99 | 0.82 / 0.82 / 0.82 | 99 | 152.6 | 65 | 3 |
+| Verter compileMany (stateless raw render) vdom-prod | 35.71 / 35.71 / 35.71 | 0.80 / 0.80 / 0.80 | 96 | 155.4 | 63 | 3 |
+| Verter compileMany + processStyle (render + CSS) vdom-prod | 38.03 / 38.03 / 38.03 | 1.00 / 1.00 / 1.00 | 107 | 154.7 | 69 | 3 |
+| Verter compileMany + processStyle (render + CSS) vapor-prod | 38.00 / 38.00 / 38.00 | 1.02 / 1.02 / 1.02 | 105 | 154.3 | 68 | 3 |
+| @vue/compiler-sfc 3.6 (1T) vdom-prod | 59.70 / 61.65 / 60.67 | 19.53 / 19.53 / 19.53 | 1008 | 198.1 | 507 | 3 |
+| @vue/compiler-sfc 3.5 (1T) vdom-prod | 61.06 / 62.34 / 61.70 | 19.90 / 19.90 / 19.90 | 999 | 199.1 | 502 | 3 |
+| Vue compiler-sfc 3.5 reference (render + CSS, 1T) vdom-prod | 64.48 / 65.37 / 65.03 | 31.90 / 31.90 / 31.90 | 1095 | 196.4 | 558 | 3 |
+| @vue/compiler-sfc 3.6 vapor (1T) vapor-prod | 72.09 / 72.09 / 72.09 | 39.54 / 39.54 / 39.54 | 1335 | 195.2 | 684 | 3 |
+| Vue compiler-sfc 3.6 reference (render + CSS, 1T) vapor-prod | 76.50 / 77.77 / 77.42 | 42.75 / 42.75 / 42.75 | 1459 | 194.6 | 747 | 3 |
 
 <details><summary>Notes</summary>
 
-- **Vize compileSfc loop (render + CSS, 1T) vapor-prod** — RSS/heap deltas vs baseline after GC; CPU via process.cpuUsage() in isolated worker
 - **fervid compileSync (1T) vdom-prod** — RSS/heap deltas vs baseline after GC; CPU via process.cpuUsage() in isolated worker
+- **Vize compileSfc loop (render + CSS, 1T) vapor-prod** — RSS/heap deltas vs baseline after GC; CPU via process.cpuUsage() in isolated worker
 - **Vize compileSfc loop (render + CSS, 1T) vdom-prod** — RSS/heap deltas vs baseline after GC; CPU via process.cpuUsage() in isolated worker
-- **Vize compileSfcBatchWithResults (raw style-free render, Rayon global pool) vapor-prod** — RSS/heap deltas vs baseline after GC; CPU via process.cpuUsage() in isolated worker
-- **Vize compileSfcBatchWithResults (render + CSS, Rayon global pool) vapor-prod** — RSS/heap deltas vs baseline after GC; CPU via process.cpuUsage() in isolated worker
-- **Vize compileSfcBatchWithResults (render + CSS, Rayon global pool) vdom-prod** — RSS/heap deltas vs baseline after GC; CPU via process.cpuUsage() in isolated worker
 - **Vize compileSfcBatchWithResults (raw style-free render, Rayon global pool) vdom-prod** — RSS/heap deltas vs baseline after GC; CPU via process.cpuUsage() in isolated worker
-- **Verter compileMany (stateless raw render) vdom-prod** — RSS/heap deltas vs baseline after GC; CPU via process.cpuUsage() in isolated worker
+- **Vize compileSfcBatchWithResults (render + CSS, Rayon global pool) vdom-prod** — RSS/heap deltas vs baseline after GC; CPU via process.cpuUsage() in isolated worker
+- **Vize compileSfcBatchWithResults (render + CSS, Rayon global pool) vapor-prod** — RSS/heap deltas vs baseline after GC; CPU via process.cpuUsage() in isolated worker
+- **Vize compileSfcBatchWithResults (raw style-free render, Rayon global pool) vapor-prod** — RSS/heap deltas vs baseline after GC; CPU via process.cpuUsage() in isolated worker
 - **Verter compileMany (stateless raw render) vapor-prod** — RSS/heap deltas vs baseline after GC; CPU via process.cpuUsage() in isolated worker
+- **Verter compileMany (stateless raw render) vdom-prod** — RSS/heap deltas vs baseline after GC; CPU via process.cpuUsage() in isolated worker
 - **Verter compileMany + processStyle (render + CSS) vdom-prod** — RSS/heap deltas vs baseline after GC; CPU via process.cpuUsage() in isolated worker
 - **Verter compileMany + processStyle (render + CSS) vapor-prod** — RSS/heap deltas vs baseline after GC; CPU via process.cpuUsage() in isolated worker
 - **@vue/compiler-sfc 3.6 (1T) vdom-prod** — RSS/heap deltas vs baseline after GC; CPU via process.cpuUsage() in isolated worker
@@ -726,9 +724,9 @@ Each tool in its own process so RSS, allocation proxies and CPU are not mixed wi
 
 | Tool | RSS min / max / avg | Alloc min / max / avg | CPU ms | CPU % | Wall ms | Samples |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| @vue-jsx-vapor/compiler-rs (interop VDOM) | 10.66 / 10.66 / 10.66 | 0.35 / 0.35 / 0.35 | n/a | n/a | 7 | 3 |
-| @vue-jsx-vapor/compiler-rs (vapor) | 10.84 / 10.84 / 10.84 | 0.35 / 0.35 / 0.35 | n/a | n/a | 6 | 3 |
-| @vue/babel-plugin-jsx | 70.89 / 70.89 / 70.89 | 29.99 / 29.99 / 29.99 | 782 | 171.4 | 459 | 3 |
+| @vue-jsx-vapor/compiler-rs (interop VDOM) | 10.66 / 10.66 / 10.66 | 0.35 / 0.35 / 0.35 | n/a | n/a | 6 | 3 |
+| @vue-jsx-vapor/compiler-rs (vapor) | 10.79 / 10.79 / 10.79 | 0.35 / 0.35 / 0.35 | n/a | n/a | 7 | 3 |
+| @vue/babel-plugin-jsx | 70.27 / 70.40 / 70.34 | 24.66 / 24.66 / 24.66 | 767 | 170.3 | 452 | 3 |
 
 <details><summary>Notes</summary>
 
@@ -749,8 +747,8 @@ Each tool in its own process so RSS, allocation proxies and CPU are not mixed wi
 | vue-36 | 3.6.0-rc.4 |
 | @vue/compiler-sfc | 3.5.41 |
 | @vue/compiler-sfc-36 | 3.6.0-rc.4 |
-| vize | 0.350.2 |
-| @vizejs/native | 0.350.2 |
+| vize | 0.354.0 |
+| @vizejs/native | 0.354.0 |
 | @verter/native | 0.0.1-beta.3 |
 | @fervid/napi | 0.4.1 |
 | verter-tsc | 0.0.1-beta.3 |
@@ -770,7 +768,7 @@ Each tool in its own process so RSS, allocation proxies and CPU are not mixed wi
 | eslint-plugin-vue | 10.10.0 |
 | @biomejs/biome | 2.5.9 |
 | typescript | 6.0.3 |
-| cli:vize | 0.350.2 |
+| cli:vize | 0.354.0 |
 | cli:vue-tsc | 6.0.3 |
 | cli:verter-tsc | 0.0.1-beta.3 |
 | cli:golar | 0.1.10 |

@@ -2,12 +2,12 @@
 
 > Auto-generated from the JSON snapshots in [`results/benchmarks/`](../results/benchmarks/) and [`results/real_world/`](../results/real_world/) by `pnpm docs`. Do not edit by hand.
 
-- **Generated:** 2026-08-20T14:33:30.648Z
+- **Generated:** 2026-08-21T09:58:23.715Z
 - **Fixture:** `fixtures/200` (200 files)
 - **Runs / warmups:** 5 / 1
 - **Runner:** Linux · linux/x64 · 4 CPUs · AMD EPYC 9V74 80-Core Processor · 15.6 GB · Node v22.23.2
-- **Commit:** [`523d7bf`](https://github.com/pikax/vue-benchmarks/commit/523d7bfad95408f88bd6db210f9a0b106f8662e2)
-- **CI run:** https://github.com/pikax/vue-benchmarks/actions/runs/32379826142
+- **Commit:** [`64b460c`](https://github.com/pikax/vue-benchmarks/commit/64b460c3b8cafbc9efba895cd716d5ef41920124)
+- **CI run:** https://github.com/pikax/vue-benchmarks/actions/runs/32469697609
 - **Source:** `results/benchmarks/bench-Linux-200-bench.json`
 
 ## Results
@@ -36,19 +36,19 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Diagnostics | Throughput | Peak RSS |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| verter-tsc | **1.11 s** | 1.10 s | 50.8 ms | 4.6% | 1.00x | 420 | 180 files/s | 218.5 MB |
-| Golar (lint+check) | **1.56 s** | 1.55 s | 32.3 ms | 2.1% | 1.40x | 0 | 128 files/s | – |
-| Golar typecheck | **1.58 s** | 1.56 s | 13.2 ms | 0.8% | 1.42x | 0 | 126 files/s | 385.0 MB |
-| Vize | **1.64 s** | 1.64 s | 12.7 ms | 0.8% | 1.47x | 0 | 122 files/s | 215.8 MB |
-| vue-tsc (N) | **2.31 s** | 2.29 s | 18.7 ms | 0.8% | 2.08x | 0 | 86 files/s | – |
-| vue-tsc (JS) | **4.93 s** | 4.87 s | 28.2 ms | 0.6% | 4.43x | 0 | 41 files/s | 354.9 MB |
+| verter-tsc | **956.9 ms** | 931.1 ms | 15.9 ms | 1.7% | 1.00x | 420 | 209 files/s | 216.8 MB |
+| Vize | **1.34 s** | 1.31 s | 26.4 ms | 2.0% | 1.40x | 0 | 149 files/s | 213.9 MB |
+| Golar (lint+check) | **1.37 s** | 1.27 s | 71.3 ms | 5.2% | 1.44x | 0 | 146 files/s | – |
+| Golar typecheck | **1.38 s** | 1.31 s | 32.7 ms | 2.4% | 1.44x | 0 | 145 files/s | 387.1 MB |
+| vue-tsc (N) | **2.04 s** | 1.95 s | 53.7 ms | 2.6% | 2.13x | 0 | 98 files/s | – |
+| vue-tsc (JS) | **4.34 s** | 4.22 s | 85.8 ms | 2.0% | 4.54x | 0 | 46 files/s | 351.5 MB |
 
 <details><summary>Notes</summary>
 
 - **verter-tsc**: verter-tsc --noEmit -p tsconfig.json · tsgo 7.0.2 (typescript-go@7.0.2 → @typescript/typescript-linux-x64) | engine: tsgo 7.0.2 (typescript-go@7.0.2 → @typescript/typescript-linux-x64) | gate: script=✓ tmpl-prop=✓ tmpl-event=✓ corpus=✓
+- **Vize**: vize check . --tsconfig tsconfig.json (native + Corsa when available) | engine: tsgo 7.0.0-dev.20260603.1 (nightly) | gate: script=✓ tmpl-prop=✓ tmpl-event=✓ corpus=✓
 - **Golar (lint+check)**: golar default mode runs lint then typecheck — not a pure typecheck | engine: typescript-go 7.0.2 | gate: script=✓ tmpl-prop=✓ tmpl-event=✓ corpus=✓
 - **Golar typecheck**: golar typecheck (typescript-go + @golar/vue plugin) | engine: typescript-go 7.0.2 | gate: script=✓ tmpl-prop=✓ tmpl-event=✓ corpus=✓
-- **Vize**: vize check . --tsconfig tsconfig.json (native + Corsa when available) | engine: tsgo 7.0.0-dev.20260603.1 (nightly) | gate: script=✓ tmpl-prop=✓ tmpl-event=✓ corpus=✓
 - **vue-tsc (N)**: vue-tsc 3.3.10 with typescript aliased to typescript-native-bridge 6.0.3-bridge.13.tsgo.7.0.2 (TS API 6.0.3 on tsgo 7.0.2, in-process NAPI/FFI) | engine: tsgo 7.0.2 via TNB 6.0.3-bridge.13.tsgo.7.0.2 | gate: script=✓ tmpl-prop=✓ tmpl-event=✓ corpus=✓
 - **vue-tsc (JS)**: Official Vue Language Tools CLI: vue-tsc --noEmit -p tsconfig.json | engine: TypeScript 6.0.3 (JS) | gate: script=✓ tmpl-prop=✓ tmpl-event=✓ corpus=✓
 
@@ -72,12 +72,12 @@ Tools:
 
 Raw runs:
 
-- **verter-tsc**: 1.10 s, 1.11 s, 1.12 s, 1.11 s, 1.22 s
-- **Golar (lint+check)**: 1.55 s, 1.63 s, 1.59 s, 1.56 s, 1.56 s
-- **Golar typecheck**: 1.58 s, 1.59 s, 1.56 s, 1.59 s, 1.57 s
-- **Vize**: 1.66 s, 1.64 s, 1.66 s, 1.64 s, 1.64 s
-- **vue-tsc (N)**: 2.30 s, 2.29 s, 2.31 s, 2.33 s, 2.33 s
-- **vue-tsc (JS)**: 4.87 s, 4.94 s, 4.94 s, 4.90 s, 4.93 s
+- **verter-tsc**: 967.5 ms, 956.9 ms, 964.2 ms, 939.4 ms, 931.1 ms
+- **Vize**: 1.34 s, 1.35 s, 1.34 s, 1.31 s, 1.39 s
+- **Golar (lint+check)**: 1.37 s, 1.46 s, 1.41 s, 1.33 s, 1.27 s
+- **Golar typecheck**: 1.38 s, 1.38 s, 1.39 s, 1.36 s, 1.31 s
+- **vue-tsc (N)**: 2.05 s, 2.07 s, 2.04 s, 1.95 s, 1.96 s
+- **vue-tsc (JS)**: 4.39 s, 4.42 s, 4.34 s, 4.22 s, 4.27 s
 
 </details>
 
@@ -96,10 +96,10 @@ One spawn per tool over every plant with the shared `strictTemplates` tsconfig �
 
 | Tool | **Median** | Avg | vs fastest | Peak RSS |
 | --- | ---: | ---: | ---: | ---: |
-| vize | **493 ms** | 491 ms | 1.00x | 72.7 + 317.8 = **390.5 MB** |
-| verter-tsc | **589 ms** | 582 ms | 1.20x | 84.6 + 141.7 = **226.3 MB** |
-| golar | **772 ms** | 783 ms | 1.57x | **365.5 MB** |
-| vue-tsc | **2.66 s** | 2.67 s | 5.40x | **343.3 MB** |
+| vize | **449 ms** | 453 ms | 1.00x | 73.3 + 356.1 = **429.4 MB** |
+| verter-tsc | **529 ms** | 572 ms | 1.18x | 84.9 + 151.6 = **236.5 MB** |
+| golar | **704 ms** | 708 ms | 1.57x | **366.8 MB** |
+| vue-tsc | **2.39 s** | 2.39 s | 5.31x | **342.8 MB** |
 
 Peak RSS is the separate memory pass, split `tool + tsgo/tsc = total` when the checker spawns a TypeScript engine; in-process engines cannot be split.
 
@@ -110,9 +110,9 @@ Peak RSS is the separate memory pass, split `tool + tsgo/tsc = total` when the c
 
 | Tool | **Pass rate** | pass / plants | ⚠ needed opt-in |
 | --- | ---: | ---: | ---: |
+| vize | **96%** | 144 / 150 | – |
 | vue-tsc | **95%** | 143 / 150 | 5 |
 | golar | **94%** | 141 / 150 | 5 |
-| vize | **87%** | 130 / 150 | – |
 | verter-tsc | **81%** | 121 / 150 | – |
 
 An unclaimed capability is a **gap and counts as a fail** — every tool is scored over the same full plant set, on what it actually reported. Skip is reserved for a missing binary/engine. **⚠ needed opt-in** counts the inheritAttrs/root-shape plants a tool only scored with `vueCompilerOptions.fallthroughAttributes`: not a pass, and still in the denominator.
@@ -171,7 +171,7 @@ Static resolution (`v-if="true"`, `alwaysOn: true`) is the hard edge. A tool tha
 ### Summary
 
 - plants: **150**
-- pass: **535** · fail: **55** · skip: **0** · warn: **10**
+- pass: **549** · fail: **41** · skip: **0** · warn: **10**
 - one-spawn combined run: [All plants (one tsconfig)](#all-plants-one-tsconfig)
 
 ### Template narrowing
@@ -203,15 +203,15 @@ Static resolution (`v-if="true"`, `alwaysOn: true`) is the hard edge. A tool tha
 
 | Case | Expect | vue-tsc | vize | verter-tsc | golar | What it checks |
 | --- | --- | --- | --- | --- | --- | --- |
-| [`fallthrough-mono-false-bad`](../tests/confirm/fixtures/typecheck/cases/fallthrough-mono-false-bad/) | error | ✓ | **✗**† | ✓ | ✓ | inheritAttrs:false + single root: undeclared id must still error under fallthroughAttributes · *may warn if fallthroughAttributes is required* |
+| [`fallthrough-mono-false-bad`](../tests/confirm/fixtures/typecheck/cases/fallthrough-mono-false-bad/) | error | ✓ | ✓ | ✓ | ✓ | inheritAttrs:false + single root: undeclared id must still error under fallthroughAttributes · *may warn if fallthroughAttributes is required* |
 | [`fallthrough-mono-ok`](../tests/confirm/fixtures/typecheck/cases/fallthrough-mono-ok/) | clean | ⚠ | ✓ | **✗**† | ⚠ | inheritAttrs default + single root: native id falls through (fallthroughAttributes) · *may warn if fallthroughAttributes is required* |
-| [`fallthrough-multi-bad`](../tests/confirm/fixtures/typecheck/cases/fallthrough-multi-bad/) | error | ✓ | **✗**† | ✓ | ✓ | inheritAttrs default + multi-root fragment: undeclared id must error (no single target) · *may warn if fallthroughAttributes is required* |
-| [`fallthrough-multi-false-bad`](../tests/confirm/fixtures/typecheck/cases/fallthrough-multi-false-bad/) | error | ✓ | **✗**† | ✓ | ✓ | inheritAttrs:false + multi-root: undeclared id must error · *may warn if fallthroughAttributes is required* |
-| [`fallthrough-native-type-bad`](../tests/confirm/fixtures/typecheck/cases/fallthrough-native-type-bad/) | error | ✓ | **✗**† | **✗**† | ✓ | inheritAttrs default + single &lt;button&gt; root: fallthrough :disabled="string" must error · *may warn if fallthroughAttributes is required* |
-| [`fallthrough-vif-both-mono-false-bad`](../tests/confirm/fixtures/typecheck/cases/fallthrough-vif-both-mono-false-bad/) | error | ✓ | **✗**† | ✓ | ✓ | inheritAttrs:false + v-if/v-else both single-root: undeclared id must still error · *may warn if fallthroughAttributes is required* |
+| [`fallthrough-multi-bad`](../tests/confirm/fixtures/typecheck/cases/fallthrough-multi-bad/) | error | ✓ | ✓ | ✓ | ✓ | inheritAttrs default + multi-root fragment: undeclared id must error (no single target) · *may warn if fallthroughAttributes is required* |
+| [`fallthrough-multi-false-bad`](../tests/confirm/fixtures/typecheck/cases/fallthrough-multi-false-bad/) | error | ✓ | ✓ | ✓ | ✓ | inheritAttrs:false + multi-root: undeclared id must error · *may warn if fallthroughAttributes is required* |
+| [`fallthrough-native-type-bad`](../tests/confirm/fixtures/typecheck/cases/fallthrough-native-type-bad/) | error | ✓ | ✓ | **✗**† | ✓ | inheritAttrs default + single &lt;button&gt; root: fallthrough :disabled="string" must error · *may warn if fallthroughAttributes is required* |
+| [`fallthrough-vif-both-mono-false-bad`](../tests/confirm/fixtures/typecheck/cases/fallthrough-vif-both-mono-false-bad/) | error | ✓ | ✓ | ✓ | ✓ | inheritAttrs:false + v-if/v-else both single-root: undeclared id must still error · *may warn if fallthroughAttributes is required* |
 | [`fallthrough-vif-both-mono-ok`](../tests/confirm/fixtures/typecheck/cases/fallthrough-vif-both-mono-ok/) | clean | ⚠ | ✓ | **✗**† | ⚠ | inheritAttrs default + v-if/v-else both single-root: id may fall through (always one root) · *may warn if fallthroughAttributes is required* |
-| [`fallthrough-vif-mono-multi-bad`](../tests/confirm/fixtures/typecheck/cases/fallthrough-vif-mono-multi-bad/) | error | **✗**† | **✗**† | ✓ | **✗**† | inheritAttrs default + v-if mono / v-else multi-root: undeclared id must error · *may warn if fallthroughAttributes is required* |
-| [`fallthrough-vif-static-multi-bad`](../tests/confirm/fixtures/typecheck/cases/fallthrough-vif-static-multi-bad/) | error | ✓ | **✗**† | ✓ | ✓ | inheritAttrs default + v-if="true" whose branch is multi-root: undeclared id must error · *may warn if fallthroughAttributes is required* |
+| [`fallthrough-vif-mono-multi-bad`](../tests/confirm/fixtures/typecheck/cases/fallthrough-vif-mono-multi-bad/) | error | **✗**† | ✓ | ✓ | **✗**† | inheritAttrs default + v-if mono / v-else multi-root: undeclared id must error · *may warn if fallthroughAttributes is required* |
+| [`fallthrough-vif-static-multi-bad`](../tests/confirm/fixtures/typecheck/cases/fallthrough-vif-static-multi-bad/) | error | ✓ | ✓ | ✓ | ✓ | inheritAttrs default + v-if="true" whose branch is multi-root: undeclared id must error · *may warn if fallthroughAttributes is required* |
 | [`fallthrough-vif-static-ok`](../tests/confirm/fixtures/typecheck/cases/fallthrough-vif-static-ok/) | clean | ⚠ | ✓ | **✗**† | ⚠ | inheritAttrs default + v-if="true" (statically single root): id may fall through · *may warn if fallthroughAttributes is required* |
 | [`fallthrough-vif-static-prop-ok`](../tests/confirm/fixtures/typecheck/cases/fallthrough-vif-static-prop-ok/) | clean | ⚠ | ✓ | **✗**† | ⚠ | inheritAttrs default + v-if on a literal-true prop: statically single root, id may fall through · *may warn if fallthroughAttributes is required* |
 
@@ -283,11 +283,11 @@ Static resolution (`v-if="true"`, `alwaysOn: true`) is the hard edge. A tool tha
 | --- | --- | --- | --- | --- | --- | --- |
 | [`define-model-default-ok`](../tests/confirm/fixtures/typecheck/cases/define-model-default-ok/) | clean | ✓ | ✓ | ✓ | ✓ | Unnamed defineModel&lt;string&gt; accepts v-model on a string ref (clean) |
 | [`define-model-get-set-ok`](../tests/confirm/fixtures/typecheck/cases/define-model-get-set-ok/) | clean | ✓ | ✓ | ✓ | ✓ | defineModel get/set transformers whose in/out types match T stay clean |
-| [`define-model-modifiers-ok`](../tests/confirm/fixtures/typecheck/cases/define-model-modifiers-ok/) | clean | ✓ | **✗**† | **✗**† | ✓ | defineModel&lt;string, 'trim' \| 'capitalize'&gt; + v-model.trim; child reads modifiers.trim (clean) |
-| [`define-model-modifiers-read-bad`](../tests/confirm/fixtures/typecheck/cases/define-model-modifiers-read-bad/) | error | ✓ | **✗**† | **✗**† | ✓ | Reading modifiers.nope must error when the union is 'trim' \| 'capitalize' |
-| [`define-model-modifiers-unknown-bad`](../tests/confirm/fixtures/typecheck/cases/define-model-modifiers-unknown-bad/) | error | ✓ | **✗**† | **✗**† | ✓ | v-model.nope must error when defineModel only declares 'trim' \| 'capitalize' |
+| [`define-model-modifiers-ok`](../tests/confirm/fixtures/typecheck/cases/define-model-modifiers-ok/) | clean | ✓ | ✓ | **✗**† | ✓ | defineModel&lt;string, 'trim' \| 'capitalize'&gt; + v-model.trim; child reads modifiers.trim (clean) |
+| [`define-model-modifiers-read-bad`](../tests/confirm/fixtures/typecheck/cases/define-model-modifiers-read-bad/) | error | ✓ | ✓ | **✗**† | ✓ | Reading modifiers.nope must error when the union is 'trim' \| 'capitalize' |
+| [`define-model-modifiers-unknown-bad`](../tests/confirm/fixtures/typecheck/cases/define-model-modifiers-unknown-bad/) | error | ✓ | ✓ | **✗**† | ✓ | v-model.nope must error when defineModel only declares 'trim' \| 'capitalize' |
 | [`define-model-named`](../tests/confirm/fixtures/typecheck/cases/define-model-named/) | error | ✓ | ✓ | ✓ | ✓ | Named defineModel: v-model:title must be typechecked against the declared model type |
-| [`define-model-named-modifiers-ok`](../tests/confirm/fixtures/typecheck/cases/define-model-named-modifiers-ok/) | clean | ✓ | **✗**† | **✗**† | ✓ | Named defineModel + v-model:title.trim matches the declared modifier (clean) |
+| [`define-model-named-modifiers-ok`](../tests/confirm/fixtures/typecheck/cases/define-model-named-modifiers-ok/) | clean | ✓ | ✓ | **✗**† | ✓ | Named defineModel + v-model:title.trim matches the declared modifier (clean) |
 | [`define-model-ok`](../tests/confirm/fixtures/typecheck/cases/define-model-ok/) | clean | ✓ | ✓ | ✓ | ✓ | Named defineModel bindings with matching ref types stay clean |
 | [`define-model-set-bad`](../tests/confirm/fixtures/typecheck/cases/define-model-set-bad/) | error | ✓ | ✓ | ✓ | ✓ | defineModel&lt;number&gt; set() must not call string-only methods on the value |
 | [`discriminated-union-v-model-bad`](../tests/confirm/fixtures/typecheck/cases/discriminated-union-v-model-bad/) | error | ✓ | ✓ | ✓ | ✓ | Discriminated union child: kind='num' must reject a bound s field |
@@ -313,7 +313,7 @@ Static resolution (`v-if="true"`, `alwaysOn: true`) is the hard edge. A tool tha
 | [`slot-provide-type-ok`](../tests/confirm/fixtures/typecheck/cases/slot-provide-type-ok/) | clean | ✓ | ✓ | ✓ | ✓ | Child &lt;slot :msg&gt; matches defineSlots default payload (clean) |
 | [`slot-scope-ok`](../tests/confirm/fixtures/typecheck/cases/slot-scope-ok/) | clean | ✓ | ✓ | ✓ | ✓ | Scoped slot payload destructured and used at its declared type (clean) |
 | [`slot-scope-payload`](../tests/confirm/fixtures/typecheck/cases/slot-scope-payload/) | error | ✓ | ✓ | ✓ | ✓ | Scoped slot payload type must flow into the parent's v-slot destructuring |
-| [`slot-unknown-prop-bad`](../tests/confirm/fixtures/typecheck/cases/slot-unknown-prop-bad/) | error | ✓ | **✗**† | ✓ | ✓ | Scoped slot destructure must reject a property that is not on the payload |
+| [`slot-unknown-prop-bad`](../tests/confirm/fixtures/typecheck/cases/slot-unknown-prop-bad/) | error | ✓ | ✓ | ✓ | ✓ | Scoped slot destructure must reject a property that is not on the payload |
 | [`slot-v-bind-bad`](../tests/confirm/fixtures/typecheck/cases/slot-v-bind-bad/) | error | ✓ | ✓ | **✗**† | ✓ | Child &lt;slot v-bind&gt; with item.id: string must not satisfy id: number |
 | [`slot-v-bind-ok`](../tests/confirm/fixtures/typecheck/cases/slot-v-bind-ok/) | clean | ✓ | ✓ | **✗**† | ✓ | Child slot v-bind object whose fields match defineSlots stays clean |
 
@@ -333,7 +333,7 @@ Static resolution (`v-if="true"`, `alwaysOn: true`) is the hard edge. A tool tha
 | --- | --- | --- | --- | --- | --- | --- |
 | [`async-component-prop-bad`](../tests/confirm/fixtures/typecheck/cases/async-component-prop-bad/) | error | ✓ | ✓ | ✓ | ✓ | defineAsyncComponent child must reject a string where count expects number |
 | [`async-component-prop-ok`](../tests/confirm/fixtures/typecheck/cases/async-component-prop-ok/) | clean | ✓ | ✓ | ✓ | ✓ | defineAsyncComponent(() =&gt; import('./Child.vue')) with a matching number prop stays clean |
-| [`dynamic-component-prop-bad`](../tests/confirm/fixtures/typecheck/cases/dynamic-component-prop-bad/) | error | ✓ | **✗**† | ✓ | ✓ | &lt;component :is&gt; must reject a string where the resolved SFC expects count: number |
+| [`dynamic-component-prop-bad`](../tests/confirm/fixtures/typecheck/cases/dynamic-component-prop-bad/) | error | ✓ | ✓ | ✓ | ✓ | &lt;component :is&gt; must reject a string where the resolved SFC expects count: number |
 | [`dynamic-component-prop-ok`](../tests/confirm/fixtures/typecheck/cases/dynamic-component-prop-ok/) | clean | ✓ | ✓ | ✓ | ✓ | &lt;component :is&gt; with a typed SFC and a matching number prop stays clean |
 | [`global-component-prop-bad`](../tests/confirm/fixtures/typecheck/cases/global-component-prop-bad/) | error | ✓ | ✓ | **✗**† | ✓ | GlobalComponents Fancy must reject a number where title expects string |
 | [`global-component-prop-ok`](../tests/confirm/fixtures/typecheck/cases/global-component-prop-ok/) | clean | ✓ | ✓ | **✗**† | ✓ | GlobalComponents Fancy with title: string accepts a string attribute (clean) |
@@ -367,7 +367,7 @@ Static resolution (`v-if="true"`, `alwaysOn: true`) is the hard edge. A tool tha
 
 | Case | Expect | vue-tsc | vize | verter-tsc | golar | What it checks |
 | --- | --- | --- | --- | --- | --- | --- |
-| [`component-ref-expose-bad`](../tests/confirm/fixtures/typecheck/cases/component-ref-expose-bad/) | error | ✓ | **✗**† | ✓ | ✓ | Calling a method that was not defineExpose'd on a component template ref must error |
+| [`component-ref-expose-bad`](../tests/confirm/fixtures/typecheck/cases/component-ref-expose-bad/) | error | ✓ | ✓ | ✓ | ✓ | Calling a method that was not defineExpose'd on a component template ref must error |
 | [`component-ref-expose-ok`](../tests/confirm/fixtures/typecheck/cases/component-ref-expose-ok/) | clean | ✓ | ✓ | ✓ | ✓ | useTemplateRef on a child can call a method declared in defineExpose |
 | [`computed-unwrap-ok`](../tests/confirm/fixtures/typecheck/cases/computed-unwrap-ok/) | clean | ✓ | ✓ | ✓ | ✓ | Template auto-unwraps a computed number so toFixed is valid |
 | [`ref-unwrap-bad`](../tests/confirm/fixtures/typecheck/cases/ref-unwrap-bad/) | error | ✓ | ✓ | ✓ | ✓ | Auto-unwrapped number ref must reject string methods in the template |
@@ -411,31 +411,18 @@ These fails are real. They are allow-listed only so the PR gate stays a useful s
 - `typecheck/attrs-aria-data-unknown/verter-tsc` — expected ≥1 error(s), got 0
 - `typecheck/attrs-aria-data-unknown/vize-check` — capability gap — tool does not claim: strict-component-attrs (scored: expected ≥1 error(s), got 0)
 - `typecheck/attrs-unknown-fallthrough/vize-check` — capability gap — tool does not claim: strict-component-attrs (scored: expected ≥1 error(s), got 0)
-- `typecheck/component-ref-expose-bad/vize-check` — expected ≥1 error(s), got 0
 - `typecheck/custom-directive-value-bad/golar-typecheck` — expected ≥1 error(s), got 0
 - `typecheck/define-model-modifiers-ok/verter-tsc` — expected clean (0 errors), got 2
-- `typecheck/define-model-modifiers-ok/vize-check` — expected clean (0 errors), got 2
 - `typecheck/define-model-modifiers-read-bad/verter-tsc` — no diagnostic at App.vue:6 (@plant-error)
-- `typecheck/define-model-modifiers-read-bad/vize-check` — no diagnostic at App.vue:6 (@plant-error)
 - `typecheck/define-model-modifiers-unknown-bad/verter-tsc` — no diagnostic at App.vue:11 (@plant-error)
-- `typecheck/define-model-modifiers-unknown-bad/vize-check` — no diagnostic at App.vue:11 (@plant-error)
 - `typecheck/define-model-named-modifiers-ok/verter-tsc` — expected clean (0 errors), got 2
-- `typecheck/define-model-named-modifiers-ok/vize-check` — expected clean (0 errors), got 2
-- `typecheck/dynamic-component-prop-bad/vize-check` — expected ≥1 error(s), got 0
 - `typecheck/event-mod-click-prevent-dollar-bad/golar-typecheck` — plant at App.vue:7 did not mention key
 - `typecheck/event-mod-click-prevent-dollar-bad/vue-tsc` — plant at App.vue:7 did not mention key
-- `typecheck/fallthrough-mono-false-bad/vize-check` — EXTRA VUE COMPILER OPTION — vueCompilerOptions.fallthroughAttributes is not default and is not on the shared tsconfig. A fully compatible checker types inheritAttrs fallthrough without this opt-in. Failed on the shared tsconfig and still failed after enabling it: expected ≥1 error(s), got 0.
 - `typecheck/fallthrough-mono-ok/verter-tsc` — EXTRA VUE COMPILER OPTION — vueCompilerOptions.fallthroughAttributes is not default and is not on the shared tsconfig. A fully compatible checker types inheritAttrs fallthrough without this opt-in. Failed on the shared tsconfig and still failed after enabling it: expected clean (0 errors), got 1.
-- `typecheck/fallthrough-multi-bad/vize-check` — EXTRA VUE COMPILER OPTION — vueCompilerOptions.fallthroughAttributes is not default and is not on the shared tsconfig. A fully compatible checker types inheritAttrs fallthrough without this opt-in. Failed on the shared tsconfig and still failed after enabling it: expected ≥1 error(s), got 0.
-- `typecheck/fallthrough-multi-false-bad/vize-check` — EXTRA VUE COMPILER OPTION — vueCompilerOptions.fallthroughAttributes is not default and is not on the shared tsconfig. A fully compatible checker types inheritAttrs fallthrough without this opt-in. Failed on the shared tsconfig and still failed after enabling it: expected ≥1 error(s), got 0.
 - `typecheck/fallthrough-native-type-bad/verter-tsc` — EXTRA VUE COMPILER OPTION — vueCompilerOptions.fallthroughAttributes is not default and is not on the shared tsconfig. A fully compatible checker types inheritAttrs fallthrough without this opt-in. Failed on the shared tsconfig and still failed after enabling it: plant at App.vue:8 did not mention one of: 'disabled' \| Booleanish.
-- `typecheck/fallthrough-native-type-bad/vize-check` — EXTRA VUE COMPILER OPTION — vueCompilerOptions.fallthroughAttributes is not default and is not on the shared tsconfig. A fully compatible checker types inheritAttrs fallthrough without this opt-in. Failed on the shared tsconfig and still failed after enabling it: expected ≥1 error(s), got 0.
-- `typecheck/fallthrough-vif-both-mono-false-bad/vize-check` — EXTRA VUE COMPILER OPTION — vueCompilerOptions.fallthroughAttributes is not default and is not on the shared tsconfig. A fully compatible checker types inheritAttrs fallthrough without this opt-in. Failed on the shared tsconfig and still failed after enabling it: expected ≥1 error(s), got 0.
 - `typecheck/fallthrough-vif-both-mono-ok/verter-tsc` — EXTRA VUE COMPILER OPTION — vueCompilerOptions.fallthroughAttributes is not default and is not on the shared tsconfig. A fully compatible checker types inheritAttrs fallthrough without this opt-in. Failed on the shared tsconfig and still failed after enabling it: expected clean (0 errors), got 1.
 - `typecheck/fallthrough-vif-mono-multi-bad/golar-typecheck` — EXTRA VUE COMPILER OPTION — vueCompilerOptions.fallthroughAttributes is not default and is not on the shared tsconfig. A fully compatible checker types inheritAttrs fallthrough without this opt-in. On the shared tsconfig the plant appeared to pass (undeclared attrs always error under default strictTemplates). With fallthroughAttributes the plant was missed: expected ≥1 error(s), got 0.
-- `typecheck/fallthrough-vif-mono-multi-bad/vize-check` — EXTRA VUE COMPILER OPTION — vueCompilerOptions.fallthroughAttributes is not default and is not on the shared tsconfig. A fully compatible checker types inheritAttrs fallthrough without this opt-in. Failed on the shared tsconfig and still failed after enabling it: expected ≥1 error(s), got 0.
 - `typecheck/fallthrough-vif-mono-multi-bad/vue-tsc` — EXTRA VUE COMPILER OPTION — vueCompilerOptions.fallthroughAttributes is not default and is not on the shared tsconfig. A fully compatible checker types inheritAttrs fallthrough without this opt-in. On the shared tsconfig the plant appeared to pass (undeclared attrs always error under default strictTemplates). With fallthroughAttributes the plant was missed: expected ≥1 error(s), got 0.
-- `typecheck/fallthrough-vif-static-multi-bad/vize-check` — EXTRA VUE COMPILER OPTION — vueCompilerOptions.fallthroughAttributes is not default and is not on the shared tsconfig. A fully compatible checker types inheritAttrs fallthrough without this opt-in. Failed on the shared tsconfig and still failed after enabling it: expected ≥1 error(s), got 0.
 - `typecheck/fallthrough-vif-static-ok/verter-tsc` — EXTRA VUE COMPILER OPTION — vueCompilerOptions.fallthroughAttributes is not default and is not on the shared tsconfig. A fully compatible checker types inheritAttrs fallthrough without this opt-in. Failed on the shared tsconfig and still failed after enabling it: expected clean (0 errors), got 1.
 - `typecheck/fallthrough-vif-static-prop-ok/verter-tsc` — EXTRA VUE COMPILER OPTION — vueCompilerOptions.fallthroughAttributes is not default and is not on the shared tsconfig. A fully compatible checker types inheritAttrs fallthrough without this opt-in. Failed on the shared tsconfig and still failed after enabling it: expected clean (0 errors), got 1.
 - `typecheck/generic-component-ok/verter-tsc` — clean fixture: diagnostic describes the tool's own generated code — /home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/cases/generic-component-ok/Child.vue(1,1): error TS2314: Generic type '___VERTER___Attrs' requires 1 type argument(s).
@@ -453,10 +440,9 @@ These fails are real. They are allow-listed only so the PR gate stays a useful s
 - `typecheck/global-component-prop-ok/verter-tsc` — expected clean (0 errors), got 2
 - `typecheck/inherit-attrs-default-unknown/vize-check` — capability gap — tool does not claim: strict-component-attrs (scored: expected ≥1 error(s), got 0)
 - `typecheck/inherit-attrs-false-unknown/verter-tsc` — expected ≥1 error(s), got 0
-- `typecheck/inherit-attrs-false-unknown/vize-check` — capability gap — tool does not claim: strict-component-attrs (scored: expected ≥1 error(s), got 0)
+- `typecheck/inherit-attrs-false-unknown/vize-check` — capability gap — tool does not claim: strict-component-attrs (scored: plant at App.vue:8 did not mention dataX)
 - `typecheck/missing-required-prop/golar-typecheck` — expected ≥1 error(s), got 0
 - `typecheck/slot-default-implicit-ok/verter-tsc` — expected clean (0 errors), got 1
-- `typecheck/slot-unknown-prop-bad/vize-check` — expected ≥1 error(s), got 0
 - `typecheck/slot-v-bind-bad/verter-tsc` — plant at App.vue:13 did not mention one of: TS2322 \| TS2345 \| number \| string \| not assignable
 - `typecheck/slot-v-bind-ok/verter-tsc` — expected clean (0 errors), got 1
 - `typecheck/unknown-prop-strict/vize-check` — capability gap — tool does not claim: strict-component-attrs (scored: expected ≥1 error(s), got 0)
@@ -485,10 +471,10 @@ Each tool in its own process so RSS, allocation proxies and CPU are not mixed wi
 
 | Tool | RSS min / max / avg | Alloc min / max / avg | CPU ms | CPU % | Wall ms | Samples |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize check | 14.85 / 215.56 / 114.49 | n/a | 400 | 54.0 | 740 | 3 |
-| verter-tsc | 14.81 / 216.56 / 132.72 | n/a | 20 | 2.5 | 758 | 3 |
-| vue-tsc | 14.12 / 353.60 / 267.23 | n/a | 7920 | 211.5 | 3763 | 3 |
-| Golar typecheck | 14.87 / 378.65 / 222.20 | n/a | 3130 | 246.2 | 1281 | 3 |
+| Vize check | 15.18 / 213.82 / 114.50 | n/a | 410 | 51.1 | 799 | 3 |
+| verter-tsc | 17.14 / 216.57 / 132.51 | n/a | 20 | 2.7 | 749 | 3 |
+| vue-tsc | 17.00 / 350.48 / 265.11 | n/a | 7870 | 210.6 | 3737 | 3 |
+| Golar typecheck | 17.24 / 383.47 / 226.44 | n/a | 3060 | 244.2 | 1249 | 3 |
 
 <details><summary>Notes</summary>
 
@@ -510,8 +496,8 @@ Each tool in its own process so RSS, allocation proxies and CPU are not mixed wi
 | vue-36 | 3.6.0-rc.4 |
 | @vue/compiler-sfc | 3.5.41 |
 | @vue/compiler-sfc-36 | 3.6.0-rc.4 |
-| vize | 0.350.2 |
-| @vizejs/native | 0.350.2 |
+| vize | 0.354.0 |
+| @vizejs/native | 0.354.0 |
 | @verter/native | 0.0.1-beta.3 |
 | @fervid/napi | 0.4.1 |
 | verter-tsc | 0.0.1-beta.3 |
@@ -531,7 +517,7 @@ Each tool in its own process so RSS, allocation proxies and CPU are not mixed wi
 | eslint-plugin-vue | 10.10.0 |
 | @biomejs/biome | 2.5.9 |
 | typescript | 6.0.3 |
-| cli:vize | 0.350.2 |
+| cli:vize | 0.354.0 |
 | cli:vue-tsc | 6.0.3 |
 | cli:verter-tsc | 0.0.1-beta.3 |
 | cli:golar | 0.1.10 |

@@ -2,12 +2,12 @@
 
 > Auto-generated from the JSON snapshots in [`results/benchmarks/`](../results/benchmarks/) and [`results/real_world/`](../results/real_world/) by `pnpm docs`. Do not edit by hand.
 
-- **Generated:** 2026-08-20T14:33:30.648Z
+- **Generated:** 2026-08-21T09:58:23.715Z
 - **Fixture:** `fixtures/200` (200 files)
 - **Runs / warmups:** 5 / 1
 - **Runner:** Linux · linux/x64 · 4 CPUs · AMD EPYC 9V74 80-Core Processor · 15.6 GB · Node v22.23.2
-- **Commit:** [`523d7bf`](https://github.com/pikax/vue-benchmarks/commit/523d7bfad95408f88bd6db210f9a0b106f8662e2)
-- **CI run:** https://github.com/pikax/vue-benchmarks/actions/runs/32379826142
+- **Commit:** [`64b460c`](https://github.com/pikax/vue-benchmarks/commit/64b460c3b8cafbc9efba895cd716d5ef41920124)
+- **CI run:** https://github.com/pikax/vue-benchmarks/actions/runs/32469697609
 - **Source:** `results/benchmarks/bench-Linux-200-bench.json`
 
 ## Results
@@ -34,16 +34,16 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput | Peak RSS |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize | **122.6 ms** | 119.1 ms | 1.9 ms | 1.6% | 1.00x | n/a | 1.6k files/s | 68.3 MB |
-| Oxfmt | **3.21 s** | 3.13 s | 66.8 ms | 2.1% | 26.20x | n/a | 62 files/s | 689.0 MB |
-| Prettier | **3.66 s** | 3.58 s | 38.9 ms | 1.1% | 29.82x | n/a | 55 files/s | 187.9 MB |
-| Biome format ⚠ | (116.2 ms) | (112.9 ms) | – | – | not ranked | – | – | (95.6 MB) |
+| Oxfmt | **2.63 s** | 2.56 s | 60.7 ms | 2.3% | 1.00x | n/a | 76 files/s | 683.1 MB |
+| Prettier | **3.13 s** | 3.01 s | 99.8 ms | 3.2% | 1.19x | n/a | 64 files/s | 188.4 MB |
+| Vize ⚠ | (584.3 ms) | (121.2 ms) | – | – | not ranked | – | – | (68.3 MB) |
+| Biome format ⚠ | (91.6 ms) | (86.0 ms) | – | – | not ranked | – | – | (96.9 MB) |
 
 <details><summary>Notes</summary>
 
-- **Vize**: vize fmt --write (fresh copy each run) · does not report thread usage — not assumed single-threaded | ⓘ file coverage verified: rewrote 200/200 planted corpus files. | ✓ format validity 3/3: parseable, descriptor/template/script semantics preserved and exact invocation idempotent.
 - **Oxfmt**: oxfmt --write (fresh copy each run) · pinned 0.64.0 routes a full .vue file through its bundled Prettier formatFile callback in worker threads; the native binding orchestrates the call, but Vue parsing/printing is the bundled Prettier path. Re-audit this package path after upgrades. | ⓘ file coverage verified: rewrote 200/200 planted corpus files. | ✓ format validity 3/3: parseable, descriptor/template/script semantics preserved and exact invocation idempotent.
 - **Prettier**: prettier --write **/*.vue (fresh copy each run) · single-threaded by design | ⓘ file coverage verified: rewrote 200/200 planted corpus files. | ✓ format validity 3/3: parseable, descriptor/template/script semantics preserved and exact invocation idempotent.
+- **Vize ⚠**: vize fmt --write (fresh copy each run) · does not report thread usage — not assumed single-threaded | ⓘ file coverage verified: rewrote 200/200 planted corpus files. | ✓ format validity 3/3: parseable, descriptor/template/script semantics preserved and exact invocation idempotent. | ⚠ TOO NOISY TO RANK — CV 116.4% (ceiling 50%). The median of a series this unstable is a draw from noise, not a result; the time is bracketed and excluded from ranking exactly like a failed gate. Raw runs below.
 - **Biome format ⚠**: biome format --write . (fresh copy each run) · multi-threaded (Rayon; honours RAYON_NUM_THREADS) · exact pinned row currently rewrites none of the planted .vue corpus | ⚠ FAILED FILE-COVERAGE GATE — rewrote 0 of 200 planted corpus files. A tool covering fewer files finishes sooner; that is a different job, not a faster one. Measured but UNRANKED. | ⚠ FORMAT SEMANTIC VALIDITY FAIL — template-behaviour: messy template block was not rewritten; descriptor-attributes: messy template block was not rewritten. Full per-plant evidence is retained in validation.formatSemantics.
 
 </details>
@@ -64,10 +64,10 @@ Tools:
 
 Raw runs:
 
-- **Vize**: 119.1 ms, 121.4 ms, 123.2 ms, 122.6 ms, 124.0 ms
-- **Oxfmt**: 3.29 s, 3.21 s, 3.22 s, 3.13 s, 3.13 s
-- **Prettier**: 3.58 s, 3.66 s, 3.67 s, 3.67 s, 3.62 s
-- **Biome format**: 112.9 ms, 118.3 ms, 114.4 ms, 117.7 ms, 116.2 ms
+- **Oxfmt**: 2.68 s, 2.69 s, 2.58 s, 2.63 s, 2.56 s
+- **Prettier**: 3.13 s, 3.26 s, 3.13 s, 3.01 s, 3.04 s
+- **Vize**: 779.5 ms, 1.82 s, 121.2 ms, 584.3 ms, 212.9 ms
+- **Biome format**: 112.2 ms, 93.4 ms, 91.6 ms, 86.9 ms, 86.0 ms
 
 </details>
 
@@ -108,10 +108,10 @@ Each tool in its own process so RSS, allocation proxies and CPU are not mixed wi
 
 | Tool | RSS min / max / avg | Alloc min / max / avg | CPU ms | CPU % | Wall ms | Samples |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize fmt | 14.32 / 68.23 / 53.69 | n/a | 100 | 115.3 | 87 | 3 |
-| Biome format | 0.74 / 95.44 / 58.16 | n/a | 20 | 24.1 | 84 | 3 |
-| Prettier | 14.48 / 186.40 / 139.64 | n/a | 3950 | 171.3 | 2306 | 3 |
-| Oxfmt | 14.26 / 684.70 / 488.86 | n/a | 130 | 5.2 | 2496 | 3 |
+| Vize fmt | 15.30 / 68.27 / 54.32 | n/a | 90 | 112.3 | 80 | 3 |
+| Biome format | 2.19 / 95.77 / 59.14 | n/a | 20 | 24.7 | 81 | 3 |
+| Prettier | 15.27 / 186.70 / 139.57 | n/a | 3880 | 171.6 | 2261 | 3 |
+| Oxfmt | 15.34 / 678.58 / 498.99 | n/a | 120 | 5.1 | 2376 | 3 |
 
 <details><summary>Notes</summary>
 
@@ -133,8 +133,8 @@ Each tool in its own process so RSS, allocation proxies and CPU are not mixed wi
 | vue-36 | 3.6.0-rc.4 |
 | @vue/compiler-sfc | 3.5.41 |
 | @vue/compiler-sfc-36 | 3.6.0-rc.4 |
-| vize | 0.350.2 |
-| @vizejs/native | 0.350.2 |
+| vize | 0.354.0 |
+| @vizejs/native | 0.354.0 |
 | @verter/native | 0.0.1-beta.3 |
 | @fervid/napi | 0.4.1 |
 | verter-tsc | 0.0.1-beta.3 |
@@ -154,7 +154,7 @@ Each tool in its own process so RSS, allocation proxies and CPU are not mixed wi
 | eslint-plugin-vue | 10.10.0 |
 | @biomejs/biome | 2.5.9 |
 | typescript | 6.0.3 |
-| cli:vize | 0.350.2 |
+| cli:vize | 0.354.0 |
 | cli:vue-tsc | 6.0.3 |
 | cli:verter-tsc | 0.0.1-beta.3 |
 | cli:golar | 0.1.10 |

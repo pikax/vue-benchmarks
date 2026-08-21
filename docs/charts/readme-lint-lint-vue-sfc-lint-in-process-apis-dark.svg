@@ -11,29 +11,29 @@
   <line x1="248" y1="48" x2="248" y2="164" stroke="#3d444d" stroke-opacity="0.55" />
   <text fill="#9198a1" x="248" y="184" text-anchor="middle" font-size="11">0.0 ms</text>
   <line x1="348.5" y1="48" x2="348.5" y2="164" stroke="#3d444d" stroke-opacity="0.55" />
-  <text fill="#9198a1" x="348.5" y="184" text-anchor="middle" font-size="11">868 ms</text>
+  <text fill="#9198a1" x="348.5" y="184" text-anchor="middle" font-size="11">754 ms</text>
   <line x1="449" y1="48" x2="449" y2="164" stroke="#3d444d" stroke-opacity="0.55" />
-  <text fill="#9198a1" x="449" y="184" text-anchor="middle" font-size="11">1.74 s</text>
+  <text fill="#9198a1" x="449" y="184" text-anchor="middle" font-size="11">1.51 s</text>
   <line x1="549.5" y1="48" x2="549.5" y2="164" stroke="#3d444d" stroke-opacity="0.55" />
-  <text fill="#9198a1" x="549.5" y="184" text-anchor="middle" font-size="11">2.60 s</text>
+  <text fill="#9198a1" x="549.5" y="184" text-anchor="middle" font-size="11">2.26 s</text>
   <line x1="650" y1="48" x2="650" y2="164" stroke="#3d444d" stroke-opacity="0.55" />
-  <text fill="#9198a1" x="650" y="184" text-anchor="middle" font-size="11">3.47 s</text>
+  <text fill="#9198a1" x="650" y="184" text-anchor="middle" font-size="11">3.02 s</text>
   <text fill="#9198a1" x="16" y="77" font-size="11">1</text>
       <text fill="#e6edf3" x="36" y="77" font-size="13">eslint-plugin-vue (1T)</text>
       
       <rect x="248" y="61" width="402" height="22" rx="5" fill="#6e768166"/>
       <rect x="248" y="61" width="209.5" height="22" rx="5" fill="#4b32c3"/>
-      <text fill="#ffffff" x="256" y="77" font-size="12" font-weight="600">1.81 s</text>
+      <text fill="#ffffff" x="256" y="77" font-size="12" font-weight="600">1.57 s</text>
   <text fill="#9198a1" x="16" y="113" font-size="11">2</text>
       <text fill="#e6edf3" x="36" y="113" font-size="13">eslint-plugin-vue (4 wor…</text>
       
       <rect x="248" y="97" width="402" height="22" rx="5" fill="#6e768166"/>
       <rect x="248" y="97" width="402.0" height="22" rx="5" fill="#4b32c3"/>
-      <text fill="#ffffff" x="256" y="113" font-size="12" font-weight="600">3.47 s</text>
+      <text fill="#ffffff" x="256" y="113" font-size="12" font-weight="600">3.02 s</text>
   <text fill="#9198a1" x="16" y="149" font-size="11">3</text>
       <text fill="#e6edf3" x="36" y="149" font-size="13" fill-opacity="0.62">Verter host lint</text>
       <line x1="36" y1="144" x2="240" y2="144" stroke="#e6edf3" stroke-opacity="0.45" />
       <rect x="248" y="133" width="402" height="22" rx="5" fill="#6e768166"/>
-      <rect x="248" y="133" width="17.8" height="22" rx="5" fill="url(#hatch-2)"/>
-      <text fill="#e6edf3" x="273.84372409987805" y="149" font-size="12" font-weight="600">154 ms · unranked</text>
+      <rect x="248" y="133" width="16.1" height="22" rx="5" fill="url(#hatch-2)"/>
+      <text fill="#e6edf3" x="272.0837376451676" y="149" font-size="12" font-weight="600">121 ms · unranked</text>
 </svg>

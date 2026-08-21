@@ -1,20 +1,20 @@
 {
   "kind": "confirmation",
-  "generatedAt": "2026-08-20T14:25:52.946Z",
+  "generatedAt": "2026-08-21T09:51:50.422Z",
   "runner": {
     "label": "Linux",
     "platform": "linux",
     "arch": "x64",
     "cpuCount": 4,
-    "cpuModel": "INTEL(R) XEON(R) PLATINUM 8573C",
-    "totalmem": 16765378560,
+    "cpuModel": "Intel(R) Xeon(R) 6973P-C",
+    "totalmem": 16765374464,
     "node": "v22.23.2",
     "ci": true,
-    "runUrl": "https://github.com/pikax/vue-benchmarks/actions/runs/32379826142"
+    "runUrl": "https://github.com/pikax/vue-benchmarks/actions/runs/32469697609"
   },
   "summary": {
-    "pass": 369,
-    "fail": 61,
+    "pass": 378,
+    "fail": 52,
     "skip": 0,
     "warn": 0,
     "total": 430
@@ -493,8 +493,8 @@
       "suite": "compile",
       "caseId": "v-once",
       "tool": "vize",
-      "status": "fail",
-      "message": "Unexpected token '-'"
+      "status": "pass",
+      "message": ""
     },
     {
       "suite": "compile",
@@ -704,7 +704,7 @@
       "caseId": "custom-directive",
       "tool": "vize",
       "status": "fail",
-      "message": "directive updated hook did not receive the new value"
+      "message": "vHighlight is not defined"
     },
     {
       "suite": "compile",
@@ -738,8 +738,8 @@
       "suite": "compile",
       "caseId": "dynamic-slot-name",
       "tool": "vize",
-      "status": "fail",
-      "message": "expected text \"dyn-1\", got \"none\""
+      "status": "pass",
+      "message": ""
     },
     {
       "suite": "compile",
@@ -1613,11 +1613,8 @@
       "suite": "lint",
       "caseId": "mutating-props",
       "tool": "vize-lint",
-      "status": "fail",
-      "message": "expected ≥1 issues, got 0",
-      "detail": {
-        "snippet": "\nNo problems found in 1 file(s)\nLinted 1 files in 673.9750µs\n"
-      }
+      "status": "pass",
+      "message": "issues=1"
     },
     {
       "suite": "lint",
@@ -1637,11 +1634,8 @@
       "suite": "lint",
       "caseId": "deprecated-slot-attr",
       "tool": "vize-lint",
-      "status": "fail",
-      "message": "expected ≥1 issues, got 0",
-      "detail": {
-        "snippet": "\nNo problems found in 1 file(s)\nLinted 1 files in 551.4450µs\n"
-      }
+      "status": "pass",
+      "message": "issues=1"
     },
     {
       "suite": "lint",
@@ -1734,7 +1728,7 @@
       "status": "fail",
       "message": "expected ≥1 issues, got 0",
       "detail": {
-        "snippet": "\nNo problems found in 1 file(s)\nLinted 1 files in 584.4210µs\n"
+        "snippet": "\nNo problems found in 1 file(s)\nLinted 1 files in 738.7870µs\n"
       }
     },
     {
@@ -1758,7 +1752,7 @@
       "status": "fail",
       "message": "expected ≥1 issues, got 0",
       "detail": {
-        "snippet": "\nNo problems found in 1 file(s)\nLinted 1 files in 605.1110µs\n"
+        "snippet": "\nNo problems found in 1 file(s)\nLinted 1 files in 705.2070µs\n"
       }
     },
     {
@@ -1782,7 +1776,7 @@
       "status": "fail",
       "message": "expected ≥1 issues, got 0",
       "detail": {
-        "snippet": "\nNo problems found in 1 file(s)\nLinted 1 files in 545.4370µs\n"
+        "snippet": "\nNo problems found in 1 file(s)\nLinted 1 files in 719.5210µs\n"
       }
     },
     {
@@ -1806,7 +1800,7 @@
       "status": "fail",
       "message": "expected ≥1 issues, got 0",
       "detail": {
-        "snippet": "\nNo problems found in 1 file(s)\nLinted 1 files in 681.8710µs\n"
+        "snippet": "\nNo problems found in 1 file(s)\nLinted 1 files in 703.5460µs\n"
       }
     },
     {
@@ -1830,7 +1824,7 @@
       "status": "fail",
       "message": "expected ≥1 issues, got 0",
       "detail": {
-        "snippet": "\nNo problems found in 1 file(s)\nLinted 1 files in 640.8100µs\n"
+        "snippet": "\nNo problems found in 1 file(s)\nLinted 1 files in 726.7780µs\n"
       }
     },
     {
@@ -1854,7 +1848,7 @@
       "status": "fail",
       "message": "expected ≥1 issues, got 0",
       "detail": {
-        "snippet": "\n1 warning in 1 file\nLinted 1 files in 642.9910µs\n"
+        "snippet": "\n1 warning in 1 file\nLinted 1 files in 800.1060µs\n"
       }
     },
     {
@@ -1869,20 +1863,20 @@
       "caseId": "all-plants",
       "tool": "vue-tsc",
       "status": "pass",
-      "message": "95% (143/150) · 5 ⚠ (needed fallthroughAttributes) · median 2.66s · avg 2.67s of 5 after 1 warmup(s)",
+      "message": "95% (143/150) · 5 ⚠ (needed fallthroughAttributes) · median 2.39s · avg 2.39s of 5 after 1 warmup(s)",
       "detail": {
-        "ms": 2661.3,
-        "avgMs": 2668.6,
-        "minMs": 2626.5,
-        "maxMs": 2717.3,
-        "rssMb": 343.3,
-        "rssToolMb": 343.3,
+        "ms": 2386.8,
+        "avgMs": 2394.6,
+        "minMs": 2356.7,
+        "maxMs": 2437,
+        "rssMb": 342.8,
+        "rssToolMb": 342.8,
         "runs": [
-          2626.5,
-          2661.3,
-          2680.3,
-          2657.5,
-          2717.3
+          2437,
+          2408.2,
+          2384,
+          2386.8,
+          2356.7
         ],
         "warmups": 1,
         "runCount": 5,
@@ -2947,39 +2941,39 @@
         "unattributed": 0,
         "unattributedFiles": []
       },
-      "ms": 2661.3,
-      "rssMb": 343.3,
-      "rssToolMb": 343.3
+      "ms": 2386.8,
+      "rssMb": 342.8,
+      "rssToolMb": 342.8
     },
     {
       "suite": "typecheck-all",
       "caseId": "all-plants",
       "tool": "vize-check",
       "status": "pass",
-      "message": "87% (130/150) · median 0.49s · avg 0.49s of 5 after 1 warmup(s)",
+      "message": "96% (144/150) · median 0.45s · avg 0.45s of 5 after 1 warmup(s)",
       "detail": {
-        "ms": 492.6,
-        "avgMs": 490.8,
-        "minMs": 457.9,
-        "maxMs": 526.1,
-        "rssMb": 390.5,
-        "rssToolMb": 72.7,
-        "rssEngineMb": 317.8,
+        "ms": 449.2,
+        "avgMs": 453.2,
+        "minMs": 436.6,
+        "maxMs": 471.4,
+        "rssMb": 429.4,
+        "rssToolMb": 73.3,
+        "rssEngineMb": 356.1,
         "runs": [
-          511.5,
-          526.1,
-          492.6,
-          466,
-          457.9
+          471.4,
+          436.6,
+          449.2,
+          463.1,
+          445.8
         ],
         "warmups": 1,
         "runCount": 5,
-        "pass": 130,
-        "fail": 20,
+        "pass": 144,
+        "fail": 6,
         "warn": 0,
         "skip": 0,
         "scored": 150,
-        "passPct": 86.66666666666667,
+        "passPct": 96,
         "plants": [
           {
             "caseId": "async-component-prop-bad",
@@ -3047,9 +3041,9 @@
           {
             "caseId": "component-ref-expose-bad",
             "skip": false,
-            "status": "fail",
-            "ok": false,
-            "message": "expected ≥1 error(s), got 0"
+            "status": "pass",
+            "ok": true,
+            "message": "caught 1 error(s)"
           },
           {
             "caseId": "component-ref-expose-ok",
@@ -3096,23 +3090,23 @@
           {
             "caseId": "define-model-modifiers-ok",
             "skip": false,
-            "status": "fail",
-            "ok": false,
-            "message": "expected clean (0 errors), got 2"
+            "status": "pass",
+            "ok": true,
+            "message": "clean"
           },
           {
             "caseId": "define-model-modifiers-read-bad",
             "skip": false,
-            "status": "fail",
-            "ok": false,
-            "message": "no diagnostic at App.vue:6 (@plant-error)"
+            "status": "pass",
+            "ok": true,
+            "message": "caught 1 error(s)"
           },
           {
             "caseId": "define-model-modifiers-unknown-bad",
             "skip": false,
-            "status": "fail",
-            "ok": false,
-            "message": "no diagnostic at App.vue:11 (@plant-error)"
+            "status": "pass",
+            "ok": true,
+            "message": "caught 1 error(s)"
           },
           {
             "caseId": "define-model-named",
@@ -3124,9 +3118,9 @@
           {
             "caseId": "define-model-named-modifiers-ok",
             "skip": false,
-            "status": "fail",
-            "ok": false,
-            "message": "expected clean (0 errors), got 2"
+            "status": "pass",
+            "ok": true,
+            "message": "clean"
           },
           {
             "caseId": "define-model-ok",
@@ -3201,9 +3195,9 @@
           {
             "caseId": "dynamic-component-prop-bad",
             "skip": false,
-            "status": "fail",
-            "ok": false,
-            "message": "expected ≥1 error(s), got 0"
+            "status": "pass",
+            "ok": true,
+            "message": "caught 1 error(s)"
           },
           {
             "caseId": "dynamic-component-prop-ok",
@@ -3320,9 +3314,9 @@
           {
             "caseId": "fallthrough-mono-false-bad",
             "skip": false,
-            "status": "fail",
-            "ok": false,
-            "message": "EXTRA VUE COMPILER OPTION — vueCompilerOptions.fallthroughAttributes is not default and is not on the shared tsconfig. A fully compatible checker types inheritAttrs fallthrough without this opt-in. Failed on the shared tsconfig and still failed after enabling it: expected ≥1 error(s), got 0."
+            "status": "pass",
+            "ok": true,
+            "message": "caught 1 error(s)"
           },
           {
             "caseId": "fallthrough-mono-ok",
@@ -3334,30 +3328,30 @@
           {
             "caseId": "fallthrough-multi-bad",
             "skip": false,
-            "status": "fail",
-            "ok": false,
-            "message": "EXTRA VUE COMPILER OPTION — vueCompilerOptions.fallthroughAttributes is not default and is not on the shared tsconfig. A fully compatible checker types inheritAttrs fallthrough without this opt-in. Failed on the shared tsconfig and still failed after enabling it: expected ≥1 error(s), got 0."
+            "status": "pass",
+            "ok": true,
+            "message": "caught 1 error(s)"
           },
           {
             "caseId": "fallthrough-multi-false-bad",
             "skip": false,
-            "status": "fail",
-            "ok": false,
-            "message": "EXTRA VUE COMPILER OPTION — vueCompilerOptions.fallthroughAttributes is not default and is not on the shared tsconfig. A fully compatible checker types inheritAttrs fallthrough without this opt-in. Failed on the shared tsconfig and still failed after enabling it: expected ≥1 error(s), got 0."
+            "status": "pass",
+            "ok": true,
+            "message": "caught 1 error(s)"
           },
           {
             "caseId": "fallthrough-native-type-bad",
             "skip": false,
-            "status": "fail",
-            "ok": false,
-            "message": "EXTRA VUE COMPILER OPTION — vueCompilerOptions.fallthroughAttributes is not default and is not on the shared tsconfig. A fully compatible checker types inheritAttrs fallthrough without this opt-in. Failed on the shared tsconfig and still failed after enabling it: expected ≥1 error(s), got 0."
+            "status": "pass",
+            "ok": true,
+            "message": "caught 1 error(s)"
           },
           {
             "caseId": "fallthrough-vif-both-mono-false-bad",
             "skip": false,
-            "status": "fail",
-            "ok": false,
-            "message": "EXTRA VUE COMPILER OPTION — vueCompilerOptions.fallthroughAttributes is not default and is not on the shared tsconfig. A fully compatible checker types inheritAttrs fallthrough without this opt-in. Failed on the shared tsconfig and still failed after enabling it: expected ≥1 error(s), got 0."
+            "status": "pass",
+            "ok": true,
+            "message": "caught 1 error(s)"
           },
           {
             "caseId": "fallthrough-vif-both-mono-ok",
@@ -3369,16 +3363,16 @@
           {
             "caseId": "fallthrough-vif-mono-multi-bad",
             "skip": false,
-            "status": "fail",
-            "ok": false,
-            "message": "EXTRA VUE COMPILER OPTION — vueCompilerOptions.fallthroughAttributes is not default and is not on the shared tsconfig. A fully compatible checker types inheritAttrs fallthrough without this opt-in. Failed on the shared tsconfig and still failed after enabling it: expected ≥1 error(s), got 0."
+            "status": "pass",
+            "ok": true,
+            "message": "caught 1 error(s)"
           },
           {
             "caseId": "fallthrough-vif-static-multi-bad",
             "skip": false,
-            "status": "fail",
-            "ok": false,
-            "message": "EXTRA VUE COMPILER OPTION — vueCompilerOptions.fallthroughAttributes is not default and is not on the shared tsconfig. A fully compatible checker types inheritAttrs fallthrough without this opt-in. Failed on the shared tsconfig and still failed after enabling it: expected ≥1 error(s), got 0."
+            "status": "pass",
+            "ok": true,
+            "message": "caught 1 error(s)"
           },
           {
             "caseId": "fallthrough-vif-static-ok",
@@ -3546,7 +3540,7 @@
             "skip": false,
             "status": "fail",
             "ok": false,
-            "message": "capability gap — tool does not claim: strict-component-attrs (scored: expected ≥1 error(s), got 0)"
+            "message": "capability gap — tool does not claim: strict-component-attrs (scored: plant at App.vue:8 did not mention dataX)"
           },
           {
             "caseId": "inject-key-type",
@@ -3726,9 +3720,9 @@
           {
             "caseId": "slot-unknown-prop-bad",
             "skip": false,
-            "status": "fail",
-            "ok": false,
-            "message": "expected ≥1 error(s), got 0"
+            "status": "pass",
+            "ok": true,
+            "message": "caught 1 error(s)"
           },
           {
             "caseId": "slot-v-bind-bad",
@@ -4035,31 +4029,31 @@
         "unattributed": 0,
         "unattributedFiles": []
       },
-      "ms": 492.6,
-      "rssMb": 390.5,
-      "rssToolMb": 72.7,
-      "rssEngineMb": 317.8
+      "ms": 449.2,
+      "rssMb": 429.4,
+      "rssToolMb": 73.3,
+      "rssEngineMb": 356.1
     },
     {
       "suite": "typecheck-all",
       "caseId": "all-plants",
       "tool": "verter-tsc",
       "status": "pass",
-      "message": "81% (121/150) · median 0.59s · avg 0.58s of 5 after 1 warmup(s) · 1 diagnostic(s) not attributable to a plant (/home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/App_aead458673bec6c8.vue.ts)",
+      "message": "81% (121/150) · median 0.53s · avg 0.57s of 5 after 1 warmup(s) · 1 diagnostic(s) not attributable to a plant (/home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/App_aead458673bec6c8.vue.ts)",
       "detail": {
-        "ms": 589,
-        "avgMs": 581.5,
-        "minMs": 554.1,
-        "maxMs": 592.8,
-        "rssMb": 226.3,
-        "rssToolMb": 84.6,
-        "rssEngineMb": 141.7,
+        "ms": 528.6,
+        "avgMs": 571.7,
+        "minMs": 521.9,
+        "maxMs": 726.3,
+        "rssMb": 236.5,
+        "rssToolMb": 84.9,
+        "rssEngineMb": 151.6,
         "runs": [
-          581.3,
-          590.2,
-          589,
-          554.1,
-          592.8
+          526.6,
+          521.9,
+          726.3,
+          528.6,
+          555.2
         ],
         "warmups": 1,
         "runCount": 5,
@@ -5126,30 +5120,30 @@
           "/home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/App_aead458673bec6c8.vue.ts"
         ]
       },
-      "ms": 589,
-      "rssMb": 226.3,
-      "rssToolMb": 84.6,
-      "rssEngineMb": 141.7
+      "ms": 528.6,
+      "rssMb": 236.5,
+      "rssToolMb": 84.9,
+      "rssEngineMb": 151.6
     },
     {
       "suite": "typecheck-all",
       "caseId": "all-plants",
       "tool": "golar-typecheck",
       "status": "pass",
-      "message": "94% (141/150) · 5 ⚠ (needed fallthroughAttributes) · median 0.77s · avg 0.78s of 5 after 1 warmup(s)",
+      "message": "94% (141/150) · 5 ⚠ (needed fallthroughAttributes) · median 0.70s · avg 0.71s of 5 after 1 warmup(s)",
       "detail": {
-        "ms": 772.1,
-        "avgMs": 783.3,
-        "minMs": 761.8,
-        "maxMs": 820.6,
-        "rssMb": 365.5,
-        "rssToolMb": 365.5,
+        "ms": 703.5,
+        "avgMs": 708.4,
+        "minMs": 690.8,
+        "maxMs": 746.1,
+        "rssMb": 366.8,
+        "rssToolMb": 366.8,
         "runs": [
-          772.1,
-          766.7,
-          795.4,
-          820.6,
-          761.8
+          706.4,
+          690.8,
+          746.1,
+          703.5,
+          694.9
         ],
         "warmups": 1,
         "runCount": 5,
@@ -6214,9 +6208,9 @@
         "unattributed": 0,
         "unattributedFiles": []
       },
-      "ms": 772.1,
-      "rssMb": 365.5,
-      "rssToolMb": 365.5
+      "ms": 703.5,
+      "rssMb": 366.8,
+      "rssToolMb": 366.8
     },
     {
       "suite": "component-meta",
@@ -6366,8 +6360,19 @@
       "suite": "component-meta",
       "caseId": "complex-defaults",
       "tool": "vize-declaration-meta",
-      "status": "fail",
-      "message": "generateDeclaration emitted unparseable TypeScript: '>' expected. (near \"export type Props = <{ items?: string[]; config?: { r\"); ';' expected. (near \"rmatter?: (value: number) => string; }>; export type Emits = {}; export type S\"); Expression expected. (near \"matter?: (value: number) => string; }>; export type Emits = {}; export type Sl\")"
+      "status": "pass",
+      "message": "props=3 · events=0 · slots=0 · exposed=0",
+      "detail": {
+        "source": "vize-declaration",
+        "props": [
+          "items",
+          "config",
+          "formatter"
+        ],
+        "events": [],
+        "slots": [],
+        "exposed": []
+      }
     },
     {
       "suite": "component-meta",
@@ -7129,8 +7134,21 @@
       "suite": "component-meta",
       "caseId": "generic-props",
       "tool": "vize-declaration-meta",
-      "status": "fail",
-      "message": "generateDeclaration emitted unparseable TypeScript: '>' expected. (near \"rops<T extends { id: number } = any> = <{ items: T[]; selected?: T; keyOf:\"); ';' expected. (near \"cted?: T; keyOf: (row: T) => string; }>; export type Emits<T extends { id: num\"); Expression expected. (near \"ted?: T; keyOf: (row: T) => string; }>; export type Emits<T extends { id: numb\")"
+      "status": "pass",
+      "message": "props=3 · events=1 · slots=0 · exposed=0",
+      "detail": {
+        "source": "vize-declaration",
+        "props": [
+          "items",
+          "selected",
+          "keyOf"
+        ],
+        "events": [
+          "pick"
+        ],
+        "slots": [],
+        "exposed": []
+      }
     },
     {
       "suite": "component-meta",
@@ -7819,9 +7837,11 @@
       "message": "template hover mentions a type (```typescript (property) greeting: \"confirm-lsp\" ```)",
       "detail": {
         "snippet": "```typescript\n(property) greeting: \"confirm-lsp\"\n```",
-        "ms": 1282.6
+        "ms": 1201.4,
+        "readyMs": 808.1,
+        "readySignalMs": null
       },
-      "ms": 1282.6
+      "ms": 1201.4
     },
     {
       "suite": "lsp",
@@ -7911,9 +7931,11 @@
       "message": "template hover mentions a type (```typescript const greeting: \"confirm-lsp\" ```)",
       "detail": {
         "snippet": "```typescript\nconst greeting: \"confirm-lsp\"\n```",
-        "ms": 640.9
+        "ms": 255.1,
+        "readyMs": 212.7,
+        "readySignalMs": null
       },
-      "ms": 640.9
+      "ms": 255.1
     },
     {
       "suite": "lsp",
@@ -7959,20 +7981,20 @@
       "suite": "lsp",
       "caseId": "references-prop-template",
       "tool": "vize",
-      "status": "fail",
-      "message": "references missing App.vue — only found child.vue",
+      "status": "pass",
+      "message": "references from the title declaration reach App.vue's template",
       "detail": {
-        "snippet": "child.vue@2:2 child.vue@10:9"
+        "snippet": "app.vue@3:12 child.vue@2:2 child.vue@10:9"
       }
     },
     {
       "suite": "lsp",
       "caseId": "rename-prop-template",
       "tool": "vize",
-      "status": "fail",
-      "message": "BROKEN REFACTOR: edited child.vue:2 but produced no edit in App.vue — the template usage is left behind",
+      "status": "pass",
+      "message": "rename of title edits App.vue's template usage (app.vue:1, child.vue:2 :: [\"renamedTitle\"])",
       "detail": {
-        "snippet": "child.vue:2 :: []"
+        "snippet": "app.vue:1, child.vue:2 :: [\"renamedTitle\"]"
       }
     },
     {
@@ -7999,13 +8021,15 @@
       "suite": "lsp",
       "caseId": "hover-template-binding",
       "tool": "verter",
-      "status": "fail",
-      "message": "empty hover payload at {{ greeting }}",
+      "status": "pass",
+      "message": "template hover mentions a type (```typescript const greeting: \"confirm-lsp\" ```)",
       "detail": {
-        "snippet": "",
-        "ms": 2220.1
+        "snippet": "```typescript\nconst greeting: \"confirm-lsp\"\n```",
+        "ms": 764.9,
+        "readyMs": 756.8,
+        "readySignalMs": null
       },
-      "ms": 2220.1
+      "ms": 764.9
     },
     {
       "suite": "lsp",
@@ -8094,9 +8118,9 @@
       "status": "pass",
       "message": "487→487B idempotent rewrote",
       "detail": {
-        "ms": 411.0912410000019
+        "ms": 165.4402859999973
       },
-      "ms": 411.0912410000019
+      "ms": 165.4402859999973
     },
     {
       "suite": "format",
@@ -8105,9 +8129,9 @@
       "status": "pass",
       "message": "487→487B idempotent rewrote",
       "detail": {
-        "ms": 268.5512500000041
+        "ms": 244.9944749999995
       },
-      "ms": 268.5512500000041
+      "ms": 244.9944749999995
     },
     {
       "suite": "format",
@@ -8116,9 +8140,9 @@
       "status": "pass",
       "message": "487→488B idempotent rewrote",
       "detail": {
-        "ms": 38.87661300000036
+        "ms": 51.04466700000921
       },
-      "ms": 38.87661300000036
+      "ms": 51.04466700000921
     },
     {
       "suite": "format",
@@ -8127,9 +8151,9 @@
       "status": "pass",
       "message": "487→497B idempotent rewrote",
       "detail": {
-        "ms": 43.61216499999864
+        "ms": 85.42022300000826
       },
-      "ms": 43.61216499999864
+      "ms": 85.42022300000826
     },
     {
       "suite": "format",
@@ -8138,9 +8162,9 @@
       "status": "pass",
       "message": "337→337B unchanged",
       "detail": {
-        "ms": 143.81723400000192
+        "ms": 127.47274800000014
       },
-      "ms": 143.81723400000192
+      "ms": 127.47274800000014
     },
     {
       "suite": "format",
@@ -8149,9 +8173,9 @@
       "status": "pass",
       "message": "337→337B unchanged",
       "detail": {
-        "ms": 253.3850250000105
+        "ms": 234.10231999999087
       },
-      "ms": 253.3850250000105
+      "ms": 234.10231999999087
     },
     {
       "suite": "format",
@@ -8160,9 +8184,9 @@
       "status": "pass",
       "message": "337→337B unchanged",
       "detail": {
-        "ms": 38.387140000006184
+        "ms": 36.949966999993194
       },
-      "ms": 38.387140000006184
+      "ms": 36.949966999993194
     },
     {
       "suite": "format",
@@ -8171,9 +8195,9 @@
       "status": "pass",
       "message": "337→337B unchanged",
       "detail": {
-        "ms": 41.61808099999325
+        "ms": 39.06180000001041
       },
-      "ms": 41.61808099999325
+      "ms": 39.06180000001041
     },
     {
       "suite": "format",
@@ -8182,9 +8206,9 @@
       "status": "pass",
       "message": "216→216B unchanged",
       "detail": {
-        "ms": 129.41168900000048
+        "ms": 114.42893999999797
       },
-      "ms": 129.41168900000048
+      "ms": 114.42893999999797
     },
     {
       "suite": "format",
@@ -8193,9 +8217,9 @@
       "status": "pass",
       "message": "216→216B unchanged",
       "detail": {
-        "ms": 223.61198600000353
+        "ms": 214.06958400001167
       },
-      "ms": 223.61198600000353
+      "ms": 214.06958400001167
     },
     {
       "suite": "format",
@@ -8204,9 +8228,9 @@
       "status": "pass",
       "message": "216→216B rewrote",
       "detail": {
-        "ms": 38.0837770000071
+        "ms": 310.78755900000397
       },
-      "ms": 38.0837770000071
+      "ms": 310.78755900000397
     },
     {
       "suite": "format",
@@ -8215,9 +8239,9 @@
       "status": "pass",
       "message": "216→216B unchanged",
       "detail": {
-        "ms": 39.4869319999998
+        "ms": 43.902356000005966
       },
-      "ms": 39.4869319999998
+      "ms": 43.902356000005966
     },
     {
       "suite": "format",
@@ -8226,9 +8250,9 @@
       "status": "pass",
       "message": "204→204B unchanged",
       "detail": {
-        "ms": 118.84060399999726
+        "ms": 115.75999299999967
       },
-      "ms": 118.84060399999726
+      "ms": 115.75999299999967
     },
     {
       "suite": "format",
@@ -8237,9 +8261,9 @@
       "status": "pass",
       "message": "204→204B unchanged",
       "detail": {
-        "ms": 232.4341310000018
+        "ms": 222.28613600000972
       },
-      "ms": 232.4341310000018
+      "ms": 222.28613600000972
     },
     {
       "suite": "format",
@@ -8248,9 +8272,9 @@
       "status": "pass",
       "message": "204→204B unchanged",
       "detail": {
-        "ms": 37.98275199999625
+        "ms": 36.289967999997316
       },
-      "ms": 37.98275199999625
+      "ms": 36.289967999997316
     },
     {
       "suite": "format",
@@ -8259,9 +8283,9 @@
       "status": "pass",
       "message": "204→203B rewrote",
       "detail": {
-        "ms": 41.87722599999688
+        "ms": 39.22492900000361
       },
-      "ms": 41.87722599999688
+      "ms": 39.22492900000361
     },
     {
       "suite": "format",
@@ -8270,9 +8294,9 @@
       "status": "pass",
       "message": "153→153B unchanged",
       "detail": {
-        "ms": 164.13426599999366
+        "ms": 150.08984800000326
       },
-      "ms": 164.13426599999366
+      "ms": 150.08984800000326
     },
     {
       "suite": "format",
@@ -8281,9 +8305,9 @@
       "status": "pass",
       "message": "153→153B unchanged",
       "detail": {
-        "ms": 241.87834100000327
+        "ms": 226.9440259999974
       },
-      "ms": 241.87834100000327
+      "ms": 226.9440259999974
     },
     {
       "suite": "format",
@@ -8292,9 +8316,9 @@
       "status": "pass",
       "message": "153→153B unchanged",
       "detail": {
-        "ms": 36.72663600000669
+        "ms": 37.13501300000644
       },
-      "ms": 36.72663600000669
+      "ms": 37.13501300000644
     },
     {
       "suite": "format",
@@ -8303,9 +8327,9 @@
       "status": "pass",
       "message": "153→151B rewrote",
       "detail": {
-        "ms": 38.64868600000045
+        "ms": 40.78167399999802
       },
-      "ms": 38.64868600000045
+      "ms": 40.78167399999802
     },
     {
       "suite": "format",
@@ -8314,9 +8338,9 @@
       "status": "pass",
       "message": "298→299B idempotent rewrote",
       "detail": {
-        "ms": 118.19295699999202
+        "ms": 110.00896399999328
       },
-      "ms": 118.19295699999202
+      "ms": 110.00896399999328
     },
     {
       "suite": "format",
@@ -8325,9 +8349,9 @@
       "status": "pass",
       "message": "298→299B idempotent rewrote",
       "detail": {
-        "ms": 202.80431999999564
+        "ms": 202.6254740000004
       },
-      "ms": 202.80431999999564
+      "ms": 202.6254740000004
     },
     {
       "suite": "format",
@@ -8336,9 +8360,9 @@
       "status": "pass",
       "message": "298→298B idempotent rewrote",
       "detail": {
-        "ms": 36.29780699999537
+        "ms": 36.38637399999425
       },
-      "ms": 36.29780699999537
+      "ms": 36.38637399999425
     },
     {
       "suite": "format",
@@ -8347,9 +8371,9 @@
       "status": "pass",
       "message": "298→298B idempotent unchanged",
       "detail": {
-        "ms": 39.18589300000167
+        "ms": 40.01594800000021
       },
-      "ms": 39.18589300000167
+      "ms": 40.01594800000021
     },
     {
       "suite": "format",
@@ -8358,9 +8382,9 @@
       "status": "pass",
       "message": "228→228B unchanged",
       "detail": {
-        "ms": 112.12844600000244
+        "ms": 106.24429499999678
       },
-      "ms": 112.12844600000244
+      "ms": 106.24429499999678
     },
     {
       "suite": "format",
@@ -8369,9 +8393,9 @@
       "status": "pass",
       "message": "228→228B unchanged",
       "detail": {
-        "ms": 230.2124380000023
+        "ms": 215.98956200000248
       },
-      "ms": 230.2124380000023
+      "ms": 215.98956200000248
     },
     {
       "suite": "format",
@@ -8380,9 +8404,9 @@
       "status": "pass",
       "message": "228→228B rewrote",
       "detail": {
-        "ms": 37.172279999998864
+        "ms": 106.08321200001228
       },
-      "ms": 37.172279999998864
+      "ms": 106.08321200001228
     },
     {
       "suite": "format",
@@ -8391,9 +8415,9 @@
       "status": "pass",
       "message": "228→228B unchanged",
       "detail": {
-        "ms": 38.76401899999473
+        "ms": 39.28889899999194
       },
-      "ms": 38.76401899999473
+      "ms": 39.28889899999194
     },
     {
       "suite": "format",
@@ -8402,9 +8426,9 @@
       "status": "pass",
       "message": "356→356B rewrote",
       "detail": {
-        "ms": 138.63708300000872
+        "ms": 124.18056200000865
       },
-      "ms": 138.63708300000872
+      "ms": 124.18056200000865
     },
     {
       "suite": "format",
@@ -8413,9 +8437,9 @@
       "status": "pass",
       "message": "356→356B rewrote",
       "detail": {
-        "ms": 229.4137929999997
+        "ms": 213.65201800000796
       },
-      "ms": 229.4137929999997
+      "ms": 213.65201800000796
     },
     {
       "suite": "format",
@@ -8424,9 +8448,9 @@
       "status": "pass",
       "message": "356→356B rewrote",
       "detail": {
-        "ms": 37.02903099999821
+        "ms": 40.82940499999677
       },
-      "ms": 37.02903099999821
+      "ms": 40.82940499999677
     },
     {
       "suite": "format",
@@ -8435,9 +8459,9 @@
       "status": "pass",
       "message": "356→356B unchanged",
       "detail": {
-        "ms": 38.63199999999779
+        "ms": 42.32284100000106
       },
-      "ms": 38.63199999999779
+      "ms": 42.32284100000106
     },
     {
       "suite": "format",
@@ -8446,9 +8470,9 @@
       "status": "pass",
       "message": "179→182B rewrote",
       "detail": {
-        "ms": 111.1654709999857
+        "ms": 108.93005999999878
       },
-      "ms": 111.1654709999857
+      "ms": 108.93005999999878
     },
     {
       "suite": "format",
@@ -8457,9 +8481,9 @@
       "status": "pass",
       "message": "179→182B rewrote",
       "detail": {
-        "ms": 225.98019200000272
+        "ms": 219.9446159999934
       },
-      "ms": 225.98019200000272
+      "ms": 219.9446159999934
     },
     {
       "suite": "format",
@@ -8468,9 +8492,9 @@
       "status": "pass",
       "message": "179→179B unchanged",
       "detail": {
-        "ms": 38.019229000012274
+        "ms": 35.805059999998775
       },
-      "ms": 38.019229000012274
+      "ms": 35.805059999998775
     },
     {
       "suite": "format",
@@ -8479,9 +8503,9 @@
       "status": "pass",
       "message": "179→179B unchanged",
       "detail": {
-        "ms": 38.68828000000212
+        "ms": 41.508328000010806
       },
-      "ms": 38.68828000000212
+      "ms": 41.508328000010806
     },
     {
       "suite": "format",
@@ -8490,9 +8514,9 @@
       "status": "pass",
       "message": "182→182B unchanged",
       "detail": {
-        "ms": 113.06802500000049
+        "ms": 102.10036700000637
       },
-      "ms": 113.06802500000049
+      "ms": 102.10036700000637
     },
     {
       "suite": "format",
@@ -8501,9 +8525,9 @@
       "status": "pass",
       "message": "182→182B unchanged",
       "detail": {
-        "ms": 225.0127819999907
+        "ms": 216.13131100000464
       },
-      "ms": 225.0127819999907
+      "ms": 216.13131100000464
     },
     {
       "suite": "format",
@@ -8513,10 +8537,10 @@
       "message": "formatted output does not match /(^|[\\r\\n])\\.wrapper\\r?\\n {2}h1\\.title CONFIRM_PUG_TITLE\\r?\\n {2}ul\\r?\\n {4}li\\(v-for=\"item in items\" :key=\"item\"\\) \\{\\{ item \\}\\}/",
       "detail": {
         "formatted": "<script setup>\nconst items = [\"a\", \"b\"];\n</script>\n\n<template lang=\"pug\">\n  .wrapper\n    h1.title CONFIRM_PUG_TITLE\n    ul\n      li(v-for=\"item in items\" :key=\"item\") {{ item }}\n</template>\n",
-        "ms": 37.77468199998839,
+        "ms": 87.06971799999883,
         "snippet": "Found 1 file(s)\nReformatted: format-pug-template.vue\n\nFormatted 1 file(s)\n  1 file(s) reformatted\n"
       },
-      "ms": 37.77468199998839
+      "ms": 87.06971799999883
     },
     {
       "suite": "format",
@@ -8525,9 +8549,9 @@
       "status": "pass",
       "message": "182→182B unchanged",
       "detail": {
-        "ms": 40.210221999994246
+        "ms": 39.939509000003454
       },
-      "ms": 40.210221999994246
+      "ms": 39.939509000003454
     },
     {
       "suite": "format",
@@ -8536,9 +8560,9 @@
       "status": "pass",
       "message": "675→763B idempotent rewrote",
       "detail": {
-        "ms": 125.55829099999391
+        "ms": 121.64563100000669
       },
-      "ms": 125.55829099999391
+      "ms": 121.64563100000669
     },
     {
       "suite": "format",
@@ -8547,9 +8571,9 @@
       "status": "pass",
       "message": "675→740B idempotent rewrote",
       "detail": {
-        "ms": 245.21953800000483
+        "ms": 307.96882199999527
       },
-      "ms": 245.21953800000483
+      "ms": 307.96882199999527
     },
     {
       "suite": "format",
@@ -8558,9 +8582,9 @@
       "status": "pass",
       "message": "675→721B idempotent rewrote",
       "detail": {
-        "ms": 46.24844499999017
+        "ms": 43.083425000004354
       },
-      "ms": 46.24844499999017
+      "ms": 43.083425000004354
     },
     {
       "suite": "format",
@@ -8569,9 +8593,9 @@
       "status": "pass",
       "message": "675→674B idempotent rewrote",
       "detail": {
-        "ms": 43.020372999992105
+        "ms": 40.507503000000725
       },
-      "ms": 43.020372999992105
+      "ms": 40.507503000000725
     },
     {
       "suite": "format",
@@ -8580,9 +8604,9 @@
       "status": "pass",
       "message": "336→342B idempotent rewrote",
       "detail": {
-        "ms": 135.88248800000292
+        "ms": 115.14781700000458
       },
-      "ms": 135.88248800000292
+      "ms": 115.14781700000458
     },
     {
       "suite": "format",
@@ -8591,9 +8615,9 @@
       "status": "pass",
       "message": "336→342B idempotent rewrote",
       "detail": {
-        "ms": 261.9540200000047
+        "ms": 221.47336099999666
       },
-      "ms": 261.9540200000047
+      "ms": 221.47336099999666
     },
     {
       "suite": "format",
@@ -8602,9 +8626,9 @@
       "status": "pass",
       "message": "336→336B idempotent unchanged",
       "detail": {
-        "ms": 40.80573199999344
+        "ms": 36.84487599998829
       },
-      "ms": 40.80573199999344
+      "ms": 36.84487599998829
     },
     {
       "suite": "format",
@@ -8613,9 +8637,9 @@
       "status": "pass",
       "message": "336→336B idempotent unchanged",
       "detail": {
-        "ms": 42.225399999995716
+        "ms": 40.27907499999856
       },
-      "ms": 42.225399999995716
+      "ms": 40.27907499999856
     },
     {
       "suite": "format",
@@ -8624,9 +8648,9 @@
       "status": "pass",
       "message": "208→208B unchanged",
       "detail": {
-        "ms": 110.43098499999905
+        "ms": 103.14259600000514
       },
-      "ms": 110.43098499999905
+      "ms": 103.14259600000514
     },
     {
       "suite": "format",
@@ -8635,9 +8659,9 @@
       "status": "pass",
       "message": "208→208B unchanged",
       "detail": {
-        "ms": 199.39652399999613
+        "ms": 194.4797120000003
       },
-      "ms": 199.39652399999613
+      "ms": 194.4797120000003
     },
     {
       "suite": "format",
@@ -8647,10 +8671,10 @@
       "message": "formatted output missing \"CONFIRM_TOP_BETWEEN_BLOCKS\"",
       "detail": {
         "formatted": "<!-- CONFIRM_TOP_BEFORE_TEMPLATE -->\n\n<script setup>\nconst planted = 1;\n</script>\n\n<template>\n  <p>top-level comments</p>\n</template>\n",
-        "ms": 36.54178200000024,
+        "ms": 106.95487899999716,
         "snippet": "Found 1 file(s)\nReformatted: format-top-level-comments.vue\n\nFormatted 1 file(s)\n  1 file(s) reformatted\n"
       },
-      "ms": 36.54178200000024
+      "ms": 106.95487899999716
     },
     {
       "suite": "format",
@@ -8659,9 +8683,9 @@
       "status": "pass",
       "message": "208→208B unchanged",
       "detail": {
-        "ms": 39.9472839999944
+        "ms": 41.78268699999899
       },
-      "ms": 39.9472839999944
+      "ms": 41.78268699999899
     }
   ]
 }

@@ -11,35 +11,35 @@
   <line x1="248" y1="48" x2="248" y2="200" stroke="#d0d7de" stroke-opacity="0.55" />
   <text fill="#59636e" x="248" y="220" text-anchor="middle" font-size="11">0.0 ms</text>
   <line x1="348.5" y1="48" x2="348.5" y2="200" stroke="#d0d7de" stroke-opacity="0.55" />
-  <text fill="#59636e" x="348.5" y="220" text-anchor="middle" font-size="11">71.5 ms</text>
+  <text fill="#59636e" x="348.5" y="220" text-anchor="middle" font-size="11">56.7 ms</text>
   <line x1="449" y1="48" x2="449" y2="200" stroke="#d0d7de" stroke-opacity="0.55" />
-  <text fill="#59636e" x="449" y="220" text-anchor="middle" font-size="11">143 ms</text>
+  <text fill="#59636e" x="449" y="220" text-anchor="middle" font-size="11">113 ms</text>
   <line x1="549.5" y1="48" x2="549.5" y2="200" stroke="#d0d7de" stroke-opacity="0.55" />
-  <text fill="#59636e" x="549.5" y="220" text-anchor="middle" font-size="11">214 ms</text>
+  <text fill="#59636e" x="549.5" y="220" text-anchor="middle" font-size="11">170 ms</text>
   <line x1="650" y1="48" x2="650" y2="200" stroke="#d0d7de" stroke-opacity="0.55" />
-  <text fill="#59636e" x="650" y="220" text-anchor="middle" font-size="11">286 ms</text>
+  <text fill="#59636e" x="650" y="220" text-anchor="middle" font-size="11">227 ms</text>
   <text fill="#59636e" x="16" y="77" font-size="11">1</text>
       <text fill="#1f2328" x="36" y="77" font-size="13">Volar (JS)</text>
       
       <rect x="248" y="61" width="402" height="22" rx="5" fill="#afb8c133"/>
-      <rect x="248" y="61" width="10.4" height="22" rx="5" fill="#42b883"/>
-      <text fill="#1f2328" x="266.3562922935977" y="77" font-size="12" font-weight="600">7.4 ms</text>
+      <rect x="248" y="61" width="10.0" height="22" rx="5" fill="#42b883"/>
+      <text fill="#1f2328" x="265.9602651719808" y="77" font-size="12" font-weight="600">5.6 ms</text>
   <text fill="#59636e" x="16" y="113" font-size="11">2</text>
       <text fill="#1f2328" x="36" y="113" font-size="13">Volar (N)</text>
       
       <rect x="248" y="97" width="402" height="22" rx="5" fill="#afb8c133"/>
-      <rect x="248" y="97" width="69.2" height="22" rx="5" fill="#42b883"/>
-      <text fill="#1f2328" x="325.1602955236522" y="113" font-size="12" font-weight="600">49.2 ms</text>
+      <rect x="248" y="97" width="73.8" height="22" rx="5" fill="#42b883"/>
+      <text fill="#1f2328" x="329.80879435190604" y="113" font-size="12" font-weight="600">41.7 ms</text>
   <text fill="#59636e" x="16" y="149" font-size="11">3</text>
       <text fill="#1f2328" x="36" y="149" font-size="13">Vize</text>
       
       <rect x="248" y="133" width="402" height="22" rx="5" fill="#afb8c133"/>
-      <rect x="248" y="133" width="92.8" height="22" rx="5" fill="#2563eb"/>
-      <text fill="#1f2328" x="348.8167305849066" y="149" font-size="12" font-weight="600">66.0 ms</text>
+      <rect x="248" y="133" width="293.3" height="22" rx="5" fill="#2563eb"/>
+      <text fill="#ffffff" x="256" y="149" font-size="12" font-weight="600">166 ms</text>
   <text fill="#59636e" x="16" y="185" font-size="11">4</text>
       <text fill="#1f2328" x="36" y="185" font-size="13">Verter</text>
       
       <rect x="248" y="169" width="402" height="22" rx="5" fill="#afb8c133"/>
       <rect x="248" y="169" width="402.0" height="22" rx="5" fill="#e11d48"/>
-      <text fill="#ffffff" x="256" y="185" font-size="12" font-weight="600">286 ms</text>
+      <text fill="#ffffff" x="256" y="185" font-size="12" font-weight="600">227 ms</text>
 </svg>

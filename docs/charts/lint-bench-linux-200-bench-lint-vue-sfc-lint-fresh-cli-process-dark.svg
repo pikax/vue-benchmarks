@@ -4,60 +4,60 @@
   <style><![CDATA[
     text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
   ]]></style>
-  <defs><pattern id="hatch-1" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="8" height="8" fill="#ca8a04"/><line x1="0" y1="0" x2="0" y2="8" stroke="#fff" stroke-width="3" opacity="0.35"/></pattern><pattern id="hatch-2" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="8" height="8" fill="#2563eb"/><line x1="0" y1="0" x2="0" y2="8" stroke="#fff" stroke-width="3" opacity="0.35"/></pattern><pattern id="hatch-3" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="8" height="8" fill="#ca8a04"/><line x1="0" y1="0" x2="0" y2="8" stroke="#fff" stroke-width="3" opacity="0.35"/></pattern><pattern id="hatch-4" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="8" height="8" fill="#2563eb"/><line x1="0" y1="0" x2="0" y2="8" stroke="#fff" stroke-width="3" opacity="0.35"/></pattern><pattern id="hatch-5" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="8" height="8" fill="#0ea5e9"/><line x1="0" y1="0" x2="0" y2="8" stroke="#fff" stroke-width="3" opacity="0.35"/></pattern><pattern id="hatch-6" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="8" height="8" fill="#0ea5e9"/><line x1="0" y1="0" x2="0" y2="8" stroke="#fff" stroke-width="3" opacity="0.35"/></pattern></defs>
+  <defs><pattern id="hatch-3" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="8" height="8" fill="#ca8a04"/><line x1="0" y1="0" x2="0" y2="8" stroke="#fff" stroke-width="3" opacity="0.35"/></pattern><pattern id="hatch-4" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="8" height="8" fill="#ca8a04"/><line x1="0" y1="0" x2="0" y2="8" stroke="#fff" stroke-width="3" opacity="0.35"/></pattern><pattern id="hatch-5" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="8" height="8" fill="#0ea5e9"/><line x1="0" y1="0" x2="0" y2="8" stroke="#fff" stroke-width="3" opacity="0.35"/></pattern><pattern id="hatch-6" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="8" height="8" fill="#0ea5e9"/><line x1="0" y1="0" x2="0" y2="8" stroke="#fff" stroke-width="3" opacity="0.35"/></pattern></defs>
   <text fill="#e6edf3" x="16" y="20" font-size="15" font-weight="600">Lint — Vue SFC lint — fresh CLI process</text>
   <text fill="#9198a1" x="16" y="36" font-size="11">lower is better</text>
   
   <line x1="248" y1="48" x2="248" y2="308" stroke="#3d444d" stroke-opacity="0.55" />
   <text fill="#9198a1" x="248" y="328" text-anchor="middle" font-size="11">0.0 ms</text>
   <line x1="348.5" y1="48" x2="348.5" y2="308" stroke="#3d444d" stroke-opacity="0.55" />
-  <text fill="#9198a1" x="348.5" y="328" text-anchor="middle" font-size="11">773 ms</text>
+  <text fill="#9198a1" x="348.5" y="328" text-anchor="middle" font-size="11">690 ms</text>
   <line x1="449" y1="48" x2="449" y2="308" stroke="#3d444d" stroke-opacity="0.55" />
-  <text fill="#9198a1" x="449" y="328" text-anchor="middle" font-size="11">1.55 s</text>
+  <text fill="#9198a1" x="449" y="328" text-anchor="middle" font-size="11">1.38 s</text>
   <line x1="549.5" y1="48" x2="549.5" y2="308" stroke="#3d444d" stroke-opacity="0.55" />
-  <text fill="#9198a1" x="549.5" y="328" text-anchor="middle" font-size="11">2.32 s</text>
+  <text fill="#9198a1" x="549.5" y="328" text-anchor="middle" font-size="11">2.07 s</text>
   <line x1="650" y1="48" x2="650" y2="308" stroke="#3d444d" stroke-opacity="0.55" />
-  <text fill="#9198a1" x="650" y="328" text-anchor="middle" font-size="11">3.09 s</text>
+  <text fill="#9198a1" x="650" y="328" text-anchor="middle" font-size="11">2.76 s</text>
   <text fill="#9198a1" x="16" y="77" font-size="11">1</text>
-      <text fill="#e6edf3" x="36" y="77" font-size="13">eslint-plugin-vue (CLI)</text>
+      <text fill="#e6edf3" x="36" y="77" font-size="13">Vize lint (default threa…</text>
       
       <rect x="248" y="61" width="402" height="22" rx="5" fill="#6e768166"/>
-      <rect x="248" y="61" width="402.0" height="22" rx="5" fill="#4b32c3"/>
-      <text fill="#ffffff" x="256" y="77" font-size="12" font-weight="600">3.09 s</text>
+      <rect x="248" y="61" width="10.2" height="22" rx="5" fill="#2563eb"/>
+      <text fill="#e6edf3" x="266.15952209053165" y="77" font-size="12" font-weight="600">69.8 ms</text>
   <text fill="#9198a1" x="16" y="113" font-size="11">2</text>
-      <text fill="#e6edf3" x="36" y="113" font-size="13" fill-opacity="0.62">Oxlint (default threads)</text>
-      <line x1="36" y1="108" x2="240" y2="108" stroke="#e6edf3" stroke-opacity="0.45" />
+      <text fill="#e6edf3" x="36" y="113" font-size="13">Vize lint (1T)</text>
+      
       <rect x="248" y="97" width="402" height="22" rx="5" fill="#6e768166"/>
-      <rect x="248" y="97" width="10.0" height="22" rx="5" fill="url(#hatch-1)"/>
-      <text fill="#e6edf3" x="265.9773561924268" y="113" font-size="12" font-weight="600">76.8 ms · unranked</text>
+      <rect x="248" y="97" width="12.8" height="22" rx="5" fill="#2563eb"/>
+      <text fill="#e6edf3" x="268.785752510444" y="113" font-size="12" font-weight="600">87.8 ms</text>
   <text fill="#9198a1" x="16" y="149" font-size="11">3</text>
-      <text fill="#e6edf3" x="36" y="149" font-size="13" fill-opacity="0.62">Vize lint (default threa…</text>
-      <line x1="36" y1="144" x2="240" y2="144" stroke="#e6edf3" stroke-opacity="0.45" />
+      <text fill="#e6edf3" x="36" y="149" font-size="13">eslint-plugin-vue (CLI)</text>
+      
       <rect x="248" y="133" width="402" height="22" rx="5" fill="#6e768166"/>
-      <rect x="248" y="133" width="10.9" height="22" rx="5" fill="url(#hatch-2)"/>
-      <text fill="#e6edf3" x="266.9246722466439" y="149" font-size="12" font-weight="600">84.1 ms · unranked</text>
+      <rect x="248" y="133" width="402.0" height="22" rx="5" fill="#4b32c3"/>
+      <text fill="#ffffff" x="256" y="149" font-size="12" font-weight="600">2.76 s</text>
   <text fill="#9198a1" x="16" y="185" font-size="11">4</text>
-      <text fill="#e6edf3" x="36" y="185" font-size="13" fill-opacity="0.62">Oxlint (1T)</text>
+      <text fill="#e6edf3" x="36" y="185" font-size="13" fill-opacity="0.62">Oxlint (default threads)</text>
       <line x1="36" y1="180" x2="240" y2="180" stroke="#e6edf3" stroke-opacity="0.45" />
       <rect x="248" y="169" width="402" height="22" rx="5" fill="#6e768166"/>
-      <rect x="248" y="169" width="11.0" height="22" rx="5" fill="url(#hatch-3)"/>
-      <text fill="#e6edf3" x="266.9532606598027" y="185" font-size="12" font-weight="600">84.3 ms · unranked</text>
+      <rect x="248" y="169" width="8.8" height="22" rx="5" fill="url(#hatch-3)"/>
+      <text fill="#e6edf3" x="264.8488085212078" y="185" font-size="12" font-weight="600">60.8 ms · unranked</text>
   <text fill="#9198a1" x="16" y="221" font-size="11">5</text>
-      <text fill="#e6edf3" x="36" y="221" font-size="13" fill-opacity="0.62">Vize lint (1T)</text>
+      <text fill="#e6edf3" x="36" y="221" font-size="13" fill-opacity="0.62">Oxlint (1T)</text>
       <line x1="36" y1="216" x2="240" y2="216" stroke="#e6edf3" stroke-opacity="0.45" />
       <rect x="248" y="205" width="402" height="22" rx="5" fill="#6e768166"/>
-      <rect x="248" y="205" width="13.9" height="22" rx="5" fill="url(#hatch-4)"/>
-      <text fill="#e6edf3" x="269.888770901883" y="221" font-size="12" font-weight="600">107 ms · unranked</text>
+      <rect x="248" y="205" width="9.6" height="22" rx="5" fill="url(#hatch-4)"/>
+      <text fill="#e6edf3" x="265.6167513076323" y="221" font-size="12" font-weight="600">66.1 ms · unranked</text>
   <text fill="#9198a1" x="16" y="257" font-size="11">6</text>
       <text fill="#e6edf3" x="36" y="257" font-size="13" fill-opacity="0.62">Biome lint (default thre…</text>
       <line x1="36" y1="252" x2="240" y2="252" stroke="#e6edf3" stroke-opacity="0.45" />
       <rect x="248" y="241" width="402" height="22" rx="5" fill="#6e768166"/>
-      <rect x="248" y="241" width="23.6" height="22" rx="5" fill="url(#hatch-5)"/>
-      <text fill="#e6edf3" x="279.6276737390987" y="257" font-size="12" font-weight="600">182 ms · unranked</text>
+      <rect x="248" y="241" width="21.4" height="22" rx="5" fill="url(#hatch-5)"/>
+      <text fill="#e6edf3" x="277.3894481331797" y="257" font-size="12" font-weight="600">147 ms · unranked</text>
   <text fill="#9198a1" x="16" y="293" font-size="11">7</text>
       <text fill="#e6edf3" x="36" y="293" font-size="13" fill-opacity="0.62">Biome lint (1T)</text>
       <line x1="36" y1="288" x2="240" y2="288" stroke="#e6edf3" stroke-opacity="0.45" />
       <rect x="248" y="277" width="402" height="22" rx="5" fill="#6e768166"/>
-      <rect x="248" y="277" width="47.4" height="22" rx="5" fill="url(#hatch-6)"/>
-      <text fill="#e6edf3" x="303.40413717395586" y="293" font-size="12" font-weight="600">365 ms · unranked</text>
+      <rect x="248" y="277" width="43.0" height="22" rx="5" fill="url(#hatch-6)"/>
+      <text fill="#e6edf3" x="299.03376128133846" y="293" font-size="12" font-weight="600">296 ms · unranked</text>
 </svg>

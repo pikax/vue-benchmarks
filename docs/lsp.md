@@ -2,12 +2,12 @@
 
 > Auto-generated from the JSON snapshots in [`results/benchmarks/`](../results/benchmarks/) and [`results/real_world/`](../results/real_world/) by `pnpm docs`. Do not edit by hand.
 
-- **Generated:** 2026-08-20T14:33:30.648Z
+- **Generated:** 2026-08-21T09:58:23.715Z
 - **Fixture:** `fixtures/200` (200 files)
 - **Runs / warmups:** 5 / 1
 - **Runner:** Linux · linux/x64 · 4 CPUs · AMD EPYC 9V74 80-Core Processor · 15.6 GB · Node v22.23.2
-- **Commit:** [`523d7bf`](https://github.com/pikax/vue-benchmarks/commit/523d7bfad95408f88bd6db210f9a0b106f8662e2)
-- **CI run:** https://github.com/pikax/vue-benchmarks/actions/runs/32379826142
+- **Commit:** [`64b460c`](https://github.com/pikax/vue-benchmarks/commit/64b460c3b8cafbc9efba895cd716d5ef41920124)
+- **CI run:** https://github.com/pikax/vue-benchmarks/actions/runs/32469697609
 - **Source:** `results/benchmarks/bench-Linux-200-bench.json`
 
 ## Results
@@ -34,17 +34,17 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Hover bytes | Throughput | Peak RSS |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Verter | **282.2 ms** | 277.1 ms | 7.2 ms | 2.5% | 1.00x | 113 | 4 files/s | 111.7 + 121.3 = 232.9 MB |
-| Vize | **323.8 ms** | 312.4 ms | 7.6 ms | 2.3% | 1.15x | 113 | 3 files/s | 73.5 + 210.6 = 284.1 MB |
-| Volar (N) | **426.0 ms** | 413.9 ms | 11.7 ms | 2.7% | 1.51x | 114 | 2 files/s | – |
-| Volar (JS) | **1.12 s** | 1.11 s | 10.1 ms | 0.9% | 3.97x | 114 | 1 files/s | 292.0 + 264.6 = 556.6 MB |
+| Vize | **278.1 ms** | 259.3 ms | 21.7 ms | 7.8% | 1.00x | 113 | 4 files/s | 73.9 + 179.5 = 253.4 MB |
+| Verter | **320.9 ms** | 296.7 ms | 48.9 ms | 15.2% ⚠ | 1.15x | 113 | 3 files/s | 122.2 + 110.8 = 233.0 MB |
+| Volar (N) | **354.1 ms** | 342.1 ms | 13.8 ms | 3.9% | 1.27x | 114 | 3 files/s | – |
+| Volar (JS) | **967.5 ms** | 923.4 ms | 45.8 ms | 4.7% | 3.48x | 114 | 1 files/s | 292.7 + 263.4 = 556.1 MB |
 
 <details><summary>Notes</summary>
 
-- **Verter**: verter-lsp stdio, the native server from the published npm package. $/verter/ready is OBSERVED, never waited for — its workspace load is inside the timed open→hover window like every other server's. | engine: tsgo 7.0.2 (typescript-go@7.0.2 → @typescript/typescript-linux-x64) | init=5ms · ready=35ms · open→hover=282ms · hoverCold=1ms · hoverWarm=1ms · completion=1ms · definition=1ms | hover verified: returns a TypeScript type for `benchMarker` in &lt;script setup> AND the auto-unwrapped `string` inside {{ }} (template is really typechecked)
-- **Vize**: vize lsp --stdio, launched from the npm package's NODE entry (bin/vize → NAPI addon under Node) because no version-matched native server was found; this costs ~35ms of Node bootstrap per spawn, inside initialize (/opt/hostedtoolcache/node/22.23.2/x64/bin/node). Set VIZE_LSP_BIN to pin a specific binary. Same workspace/file/position as Volar. Ready signal: none standardized → workspaceReady = n/a. | engine: tsgo 7.0.0-dev.20260603.1 (nightly) | init=39ms · ready=n/a · open→hover=324ms · hoverCold=47ms · hoverWarm=3ms · completion=22ms · definition=4ms | hover verified: returns a TypeScript type for `benchMarker` in &lt;script setup> AND the auto-unwrapped `string` inside {{ }} (template is really typechecked)
-- **Volar (N)**: Identical to the Volar row above except the TypeScript half runs on typescript-native-bridge (tsgo) instead of the JavaScript TypeScript: same @vue/language-server, same @vue/typescript-plugin, same bridge, tsdk pointed at TNB 6.0.3-bridge.13.tsgo.7.0.2 tsdk. Isolates how much of Volar's latency is TypeScript's engine rather than the Vue layer. | engine: tsgo 7.0.2 via TNB 6.0.3-bridge.13.tsgo.7.0.2 | init=560ms · ready=n/a · open→hover=414ms · hoverCold=17ms · hoverWarm=2ms · completion=6ms · definition=4ms | hover verified: returns a TypeScript type for `benchMarker` in &lt;script setup> AND the auto-unwrapped `string` inside {{ }} (template is really typechecked)
-- **Volar (JS)**: Official Vue language server v3, hybrid (two-process) mode — the only mode v3 has. Measured unit is the pair: @vue/language-server plus typescript-language-server with @vue/typescript-plugin, joined by the tsserver/request↔tsserver/response bridge (the VS Code/Neovim client contract). The .vue buffer is synced to both and both are asked for each feature, in parallel, with the slower one charged — a script-block hover is answered by the TypeScript half, since v3 ships no semantic TS provider in the Vue server. Startup and project load of BOTH processes are inside the timings. If hybrid wiring fails, row is error — not ranked as slow. Primary metric: didOpen→hover. | engine: TypeScript 6.0.3 (JS) | init=571ms · ready=n/a · open→hover=1110ms · hoverCold=52ms · hoverWarm=2ms · completion=18ms · definition=8ms | hover verified: returns a TypeScript type for `benchMarker` in &lt;script setup> AND the auto-unwrapped `string` inside {{ }} (template is really typechecked)
+- **Vize**: vize lsp --stdio, launched from the npm package's NODE entry (bin/vize → NAPI addon under Node) because no version-matched native server was found; this costs ~35ms of Node bootstrap per spawn, inside initialize (/opt/hostedtoolcache/node/22.23.2/x64/bin/node). Set VIZE_LSP_BIN to pin a specific binary. Same workspace/file/position as Volar. Ready signal: none standardized → workspaceReady = n/a. | engine: tsgo 7.0.0-dev.20260603.1 (nightly) | init=32ms · ready=n/a · open→hover=259ms · hoverCold=3ms · hoverWarm=7ms · completion=16ms · definition=3ms | hover verified: returns a TypeScript type for `benchMarker` in &lt;script setup> AND the auto-unwrapped `string` inside {{ }} (template is really typechecked)
+- **Verter**: verter-lsp stdio, the native server from the published npm package. $/verter/ready is OBSERVED, never waited for — its workspace load is inside the timed open→hover window like every other server's. | engine: tsgo 7.0.2 (typescript-go@7.0.2 → @typescript/typescript-linux-x64) | init=4ms · ready=28ms · open→hover=321ms · hoverCold=16ms · hoverWarm=1ms · completion=2ms · definition=1ms | hover verified: returns a TypeScript type for `benchMarker` in &lt;script setup> AND the auto-unwrapped `string` inside {{ }} (template is really typechecked)
+- **Volar (N)**: Identical to the Volar row above except the TypeScript half runs on typescript-native-bridge (tsgo) instead of the JavaScript TypeScript: same @vue/language-server, same @vue/typescript-plugin, same bridge, tsdk pointed at TNB 6.0.3-bridge.13.tsgo.7.0.2 tsdk. Isolates how much of Volar's latency is TypeScript's engine rather than the Vue layer. | engine: tsgo 7.0.2 via TNB 6.0.3-bridge.13.tsgo.7.0.2 | init=467ms · ready=n/a · open→hover=346ms · hoverCold=6ms · hoverWarm=3ms · completion=4ms · definition=3ms | hover verified: returns a TypeScript type for `benchMarker` in &lt;script setup> AND the auto-unwrapped `string` inside {{ }} (template is really typechecked)
+- **Volar (JS)**: Official Vue language server v3, hybrid (two-process) mode — the only mode v3 has. Measured unit is the pair: @vue/language-server plus typescript-language-server with @vue/typescript-plugin, joined by the tsserver/request↔tsserver/response bridge (the VS Code/Neovim client contract). The .vue buffer is synced to both and both are asked for each feature, in parallel, with the slower one charged — a script-block hover is answered by the TypeScript half, since v3 ships no semantic TS provider in the Vue server. Startup and project load of BOTH processes are inside the timings. If hybrid wiring fails, row is error — not ranked as slow. Primary metric: didOpen→hover. | engine: TypeScript 6.0.3 (JS) | init=460ms · ready=n/a · open→hover=952ms · hoverCold=34ms · hoverWarm=2ms · completion=21ms · definition=4ms | hover verified: returns a TypeScript type for `benchMarker` in &lt;script setup> AND the auto-unwrapped `string` inside {{ }} (template is really typechecked)
 
 </details>
 
@@ -72,10 +72,10 @@ Tools:
 
 Raw runs:
 
-- **Verter**: 277.1 ms, 281.4 ms, 296.0 ms, 286.8 ms, 282.2 ms
-- **Vize**: 314.1 ms, 312.4 ms, 325.4 ms, 330.1 ms, 323.8 ms
-- **Volar (N)**: 441.8 ms, 426.0 ms, 432.1 ms, 415.4 ms, 413.9 ms
-- **Volar (JS)**: 1.14 s, 1.12 s, 1.12 s, 1.12 s, 1.11 s
+- **Vize**: 318.1 ms, 274.5 ms, 278.1 ms, 284.4 ms, 259.3 ms
+- **Verter**: 296.7 ms, 308.6 ms, 383.1 ms, 407.3 ms, 320.9 ms
+- **Volar (N)**: 368.4 ms, 373.9 ms, 342.1 ms, 354.1 ms, 346.3 ms
+- **Volar (JS)**: 1.05 s, 967.5 ms, 972.3 ms, 923.4 ms, 951.8 ms
 
 </details>
 
@@ -103,10 +103,10 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Verter | **6.1 ms** | 5.1 ms | 1.8 ms | 27.3% ⚠ | 1.00x | n/a | n/a |
-| Vize | **40.1 ms** | 37.2 ms | 4.3 ms | 10.3% ⚠ | 6.55x | n/a | n/a |
-| Volar (N) | **547.5 ms** | 537.9 ms | 7.2 ms | 1.3% | 89.44x | n/a | n/a |
-| Volar (JS) | **548.8 ms** | 536.5 ms | 7.6 ms | 1.4% | 89.64x | n/a | n/a |
+| Verter | **3.6 ms** | 3.3 ms | 0.9 ms | 21.9% ⚠ | 1.00x | n/a | n/a |
+| Vize | **31.9 ms** | 30.8 ms | 1.2 ms | 3.7% | 8.76x | n/a | n/a |
+| Volar (N) | **398.8 ms** | 387.4 ms | 6.8 ms | 1.7% | 109.42x | n/a | n/a |
+| Volar (JS) | **403.8 ms** | 391.6 ms | 17.6 ms | 4.3% | 110.81x | n/a | n/a |
 
 <details><summary>Notes</summary>
 
@@ -119,10 +119,10 @@ Tools:
 
 <details><summary>Raw runs</summary>
 
-- **Verter**: 5.3 ms, 6.2 ms, 5.4 ms, 5.1 ms, 5.4 ms, 5.7 ms, 6.5 ms, 5.2 ms, 5.2 ms, 5.5 ms, 7.8 ms, 5.1 ms, 6.1 ms, 5.4 ms, 10.5 ms, 7.4 ms, 6.6 ms, 12.0 ms, 6.4 ms, 7.4 ms, 6.2 ms
-- **Vize**: 39.2 ms, 37.8 ms, 39.1 ms, 39.0 ms, 39.4 ms, 51.5 ms, 39.0 ms, 39.1 ms, 39.4 ms, 53.4 ms, 42.8 ms, 44.1 ms, 44.3 ms, 42.8 ms, 47.1 ms, 39.4 ms, 40.2 ms, 41.3 ms, 40.1 ms, 40.2 ms, 37.2 ms
-- **Volar (N)**: 547.5 ms, 556.9 ms, 553.4 ms, 544.9 ms, 571.1 ms, 541.3 ms, 550.7 ms, 549.5 ms, 546.1 ms, 543.5 ms, 547.6 ms, 539.2 ms, 537.9 ms, 548.1 ms, 543.4 ms, 544.8 ms, 544.5 ms, 553.5 ms, 552.3 ms, 541.9 ms, 548.4 ms
-- **Volar (JS)**: 543.2 ms, 559.4 ms, 548.8 ms, 541.2 ms, 553.0 ms, 560.3 ms, 543.4 ms, 552.7 ms, 551.9 ms, 540.4 ms, 561.7 ms, 543.9 ms, 558.7 ms, 550.2 ms, 541.7 ms, 549.3 ms, 554.4 ms, 536.5 ms, 538.0 ms, 542.4 ms, 547.8 ms
+- **Verter**: 3.7 ms, 4.4 ms, 4.2 ms, 3.7 ms, 6.6 ms, 3.3 ms, 3.6 ms, 3.6 ms, 3.5 ms, 3.5 ms, 4.2 ms, 3.4 ms, 3.5 ms, 3.4 ms, 3.5 ms, 5.5 ms, 3.9 ms, 3.6 ms, 5.7 ms, 3.8 ms, 3.4 ms
+- **Vize**: 34.5 ms, 31.8 ms, 31.6 ms, 30.9 ms, 32.6 ms, 31.9 ms, 30.8 ms, 32.6 ms, 33.8 ms, 31.6 ms, 32.3 ms, 31.8 ms, 31.1 ms, 31.3 ms, 32.2 ms, 31.8 ms, 35.2 ms, 32.0 ms, 33.1 ms, 31.5 ms, 33.9 ms
+- **Volar (N)**: 414.7 ms, 407.8 ms, 396.4 ms, 400.5 ms, 396.6 ms, 395.5 ms, 392.9 ms, 404.9 ms, 397.4 ms, 395.8 ms, 401.9 ms, 409.3 ms, 398.1 ms, 412.5 ms, 401.8 ms, 401.4 ms, 392.1 ms, 398.8 ms, 397.7 ms, 387.4 ms, 403.6 ms
+- **Volar (JS)**: 391.6 ms, 448.3 ms, 403.8 ms, 401.3 ms, 413.5 ms, 402.9 ms, 404.0 ms, 401.5 ms, 421.3 ms, 401.8 ms, 393.3 ms, 408.4 ms, 421.5 ms, 397.9 ms, 398.2 ms, 411.0 ms, 426.8 ms, 459.1 ms, 392.7 ms, 395.4 ms, 407.2 ms
 
 </details>
 
@@ -152,10 +152,10 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize | **0.6 ms** | 0.5 ms | 0.1 ms | 8.5% | 1.00x | 15 | n/a |
-| Volar (N) | **347.4 ms** | 328.4 ms | 12.5 ms | 3.6% | 548.87x | 48 | n/a |
-| Volar (JS) | **791.4 ms** | 750.2 ms | 31.2 ms | 4.0% | 1250.45x | 48 | n/a |
-| Verter ⚠ | (27.4 ms) | (27.2 ms) | – | – | not ranked | – | – |
+| Vize | **0.5 ms** | 0.5 ms | 0.0 ms | 4.0% | 1.00x | 15 | n/a |
+| Volar (N) | **260.2 ms** | 254.5 ms | 11.7 ms | 4.4% | 480.50x | 48 | n/a |
+| Volar (JS) | **471.9 ms** | 468.8 ms | 9.9 ms | 2.1% | 871.25x | 48 | n/a |
+| Verter ⚠ | (35.3 ms) | (24.1 ms) | – | – | not ranked | – | – |
 
 <details><summary>Notes</summary>
 
@@ -168,10 +168,10 @@ Tools:
 
 <details><summary>Raw runs</summary>
 
-- **Vize**: 0.6 ms, 0.6 ms, 0.5 ms
-- **Volar (N)**: 328.4 ms, 352.0 ms, 347.4 ms
-- **Volar (JS)**: 811.5 ms, 791.4 ms, 750.2 ms
-- **Verter**: 33.2 ms, 27.2 ms, 27.4 ms
+- **Vize**: 0.5 ms, 0.5 ms, 0.5 ms
+- **Volar (N)**: 254.5 ms, 277.0 ms, 260.2 ms
+- **Volar (JS)**: 487.3 ms, 471.9 ms, 468.8 ms
+- **Verter**: 141.6 ms, 35.3 ms, 24.1 ms
 
 </details>
 
@@ -184,15 +184,15 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (JS) ⚠ | (1.1 ms) | (1.0 ms) | – | – | not ranked | – | – |
+| Volar (JS) ⚠ | (1.0 ms) | (0.9 ms) | – | – | not ranked | – | – |
 | Volar (N) ⚠ | (1.0 ms) | (1.0 ms) | – | – | not ranked | – | – |
-| Vize ⚠ | (0.6 ms) | (0.5 ms) | – | – | not ranked | – | – |
-| Verter ⚠ | (0.5 ms) | (0.5 ms) | – | – | not ranked | – | – |
+| Vize ⚠ | (12.8 ms) | (0.3 ms) | – | – | not ranked | – | – |
+| Verter ⚠ | (0.5 ms) | (0.4 ms) | – | – | not ranked | – | – |
 
 <details><summary>Notes</summary>
 
-- **Volar (JS) ⚠**: ⚠ FAILED VALIDATION — not implemented (JSON-RPC -32601: Unhandled method textDocument/semanticTokens/full/delta); the full request DID return resultId "1787235865795", which invites a delta | Sample: "{\"code\":-32601,\"message\":\"Unhandled method textDocument/semanticTokens/full/delta\"}" | engine: TypeScript ? (JS)
-- **Volar (N) ⚠**: ⚠ FAILED VALIDATION — not implemented (JSON-RPC -32601: Unhandled method textDocument/semanticTokens/full/delta); the full request DID return resultId "1787235874895", which invites a delta | Sample: "{\"code\":-32601,\"message\":\"Unhandled method textDocument/semanticTokens/full/delta\"}" | engine: tsgo ? via TNB ?
+- **Volar (JS) ⚠**: ⚠ FAILED VALIDATION — not implemented (JSON-RPC -32601: Unhandled method textDocument/semanticTokens/full/delta); the full request DID return resultId "1787305817601", which invites a delta | Sample: "{\"code\":-32601,\"message\":\"Unhandled method textDocument/semanticTokens/full/delta\"}" | engine: TypeScript ? (JS)
+- **Volar (N) ⚠**: ⚠ FAILED VALIDATION — not implemented (JSON-RPC -32601: Unhandled method textDocument/semanticTokens/full/delta); the full request DID return resultId "1787305824847", which invites a delta | Sample: "{\"code\":-32601,\"message\":\"Unhandled method textDocument/semanticTokens/full/delta\"}" | engine: tsgo ? via TNB ?
 - **Vize ⚠**: ⚠ FAILED VALIDATION — not implemented (JSON-RPC -32601: Method not found); the full request returned no resultId | Sample: "{\"code\":-32601,\"message\":\"Method not found\"}" | engine: tsgo (bundled)
 - **Verter ⚠**: ⚠ FAILED VALIDATION — not implemented (JSON-RPC -32601: Method not found); the full request returned no resultId | Sample: "{\"code\":-32601,\"message\":\"Method not found\"}" | engine: tsgo ? (none)
 
@@ -200,10 +200,10 @@ Tools:
 
 <details><summary>Raw runs</summary>
 
-- **Volar (JS)**: 1.1 ms, 1.0 ms, 1.1 ms
+- **Volar (JS)**: 0.9 ms, 1.1 ms, 1.0 ms
 - **Volar (N)**: 1.1 ms, 1.0 ms, 1.0 ms
-- **Vize**: 0.5 ms, 0.6 ms, 0.6 ms
-- **Verter**: 0.5 ms, 0.5 ms, 0.5 ms
+- **Vize**: 12.8 ms, 0.3 ms, 13.7 ms
+- **Verter**: 0.5 ms, 0.4 ms, 0.5 ms
 
 </details>
 
@@ -216,10 +216,10 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Verter | **0.4 ms** | 0.4 ms | 0.1 ms | 11.8% ⚠ | 1.00x | 12 | n/a |
-| Volar (N) | **17.1 ms** | 16.8 ms | 3.9 ms | 20.5% ⚠ | 39.34x | 25 | n/a |
-| Volar (JS) | **18.4 ms** | 17.5 ms | 2.3 ms | 11.8% ⚠ | 42.36x | 25 | n/a |
-| Vize ⚠ | (0.3 ms) | (0.3 ms) | – | – | not ranked | (2) | – |
+| Verter | **0.4 ms** | 0.3 ms | 0.1 ms | 26.0% ⚠ | 1.00x | 12 | n/a |
+| Volar (N) | **14.2 ms** | 14.1 ms | 3.3 ms | 20.8% ⚠ | 38.95x | 25 | n/a |
+| Volar (JS) | **14.4 ms** | 13.8 ms | 0.4 ms | 2.7% | 39.56x | 25 | n/a |
+| Vize ⚠ | (0.2 ms) | (0.2 ms) | – | – | not ranked | (2) | – |
 
 <details><summary>Notes</summary>
 
@@ -232,10 +232,10 @@ Tools:
 
 <details><summary>Raw runs</summary>
 
-- **Verter**: 0.5 ms, 0.4 ms, 0.4 ms
-- **Volar (N)**: 17.1 ms, 23.8 ms, 16.8 ms
-- **Volar (JS)**: 18.4 ms, 21.8 ms, 17.5 ms
-- **Vize**: 0.3 ms, 0.3 ms, 0.3 ms
+- **Verter**: 0.3 ms, 0.4 ms, 0.5 ms
+- **Volar (N)**: 14.1 ms, 14.2 ms, 19.9 ms
+- **Volar (JS)**: 14.4 ms, 14.5 ms, 13.8 ms
+- **Vize**: 0.2 ms, 0.2 ms, 0.3 ms
 
 </details>
 
@@ -248,10 +248,10 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize | **0.2 ms** | 0.2 ms | 0.0 ms | 8.1% | 1.00x | 4 | n/a |
-| Verter | **0.3 ms** | 0.2 ms | 0.0 ms | 13.3% ⚠ | 1.28x | 4 | n/a |
-| Volar (JS) | **19.8 ms** | 19.2 ms | 0.5 ms | 2.6% | 85.74x | 5 | n/a |
-| Volar (N) | **29.8 ms** | 29.3 ms | 0.7 ms | 2.5% | 128.81x | 5 | n/a |
+| Vize | **0.2 ms** | 0.1 ms | 0.0 ms | 15.2% ⚠ | 1.00x | 4 | n/a |
+| Verter | **0.2 ms** | 0.2 ms | 0.0 ms | 11.4% ⚠ | 1.48x | 4 | n/a |
+| Volar (JS) | **15.9 ms** | 15.2 ms | 0.4 ms | 2.7% | 95.23x | 5 | n/a |
+| Volar (N) | **28.1 ms** | 28.0 ms | 0.2 ms | 0.6% | 168.59x | 5 | n/a |
 
 <details><summary>Notes</summary>
 
@@ -264,10 +264,10 @@ Tools:
 
 <details><summary>Raw runs</summary>
 
-- **Vize**: 0.2 ms, 0.2 ms, 0.2 ms
-- **Verter**: 0.3 ms, 0.3 ms, 0.2 ms
-- **Volar (JS)**: 20.2 ms, 19.8 ms, 19.2 ms
-- **Volar (N)**: 29.3 ms, 30.8 ms, 29.8 ms
+- **Vize**: 0.2 ms, 0.1 ms, 0.2 ms
+- **Verter**: 0.2 ms, 0.2 ms, 0.3 ms
+- **Volar (JS)**: 15.9 ms, 15.9 ms, 15.2 ms
+- **Volar (N)**: 28.0 ms, 28.1 ms, 28.3 ms
 
 </details>
 
@@ -280,9 +280,9 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize | **0.5 ms** | 0.4 ms | 0.0 ms | 7.3% | 1.00x | 2 | n/a |
-| Volar (JS) | **79.9 ms** | 77.4 ms | 1.6 ms | 2.0% | 175.83x | 14 | n/a |
-| Volar (N) | **174.5 ms** | 167.0 ms | 4.9 ms | 2.9% | 383.99x | 14 | n/a |
+| Vize | **0.3 ms** | 0.3 ms | 0.0 ms | 6.2% | 1.00x | 2 | n/a |
+| Volar (JS) | **59.2 ms** | 57.0 ms | 1.7 ms | 2.9% | 172.96x | 14 | n/a |
+| Volar (N) | **133.7 ms** | 132.8 ms | 1.8 ms | 1.4% | 390.57x | 14 | n/a |
 | Verter ⚠ | (0.2 ms) | (0.2 ms) | – | – | not ranked | – | – |
 
 <details><summary>Notes</summary>
@@ -296,10 +296,10 @@ Tools:
 
 <details><summary>Raw runs</summary>
 
-- **Vize**: 0.5 ms, 0.5 ms, 0.4 ms
-- **Volar (JS)**: 77.4 ms, 79.9 ms, 80.4 ms
-- **Volar (N)**: 174.5 ms, 176.3 ms, 167.0 ms
-- **Verter**: 0.3 ms, 0.2 ms, 0.2 ms
+- **Vize**: 0.4 ms, 0.3 ms, 0.3 ms
+- **Volar (JS)**: 59.2 ms, 57.0 ms, 60.4 ms
+- **Volar (N)**: 136.3 ms, 133.7 ms, 132.8 ms
+- **Verter**: 0.2 ms, 0.2 ms, 0.2 ms
 
 </details>
 
@@ -312,26 +312,26 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize | **0.2 ms** | 0.2 ms | 0.0 ms | 12.1% ⚠ | 1.00x | 9 | n/a |
-| Verter | **0.3 ms** | 0.2 ms | 0.0 ms | 14.4% ⚠ | 1.10x | 7 | n/a |
-| Volar (N) | **7.0 ms** | 7.0 ms | 0.6 ms | 8.6% | 29.49x | 13 | n/a |
-| Volar (JS) ⚠ | (116.5 ms) | (9.7 ms) | – | – | not ranked | (13) | – |
+| Vize | **0.2 ms** | 0.1 ms | 0.0 ms | 19.9% ⚠ | 1.00x | 9 | n/a |
+| Verter | **0.3 ms** | 0.2 ms | 0.0 ms | 17.4% ⚠ | 1.55x | 7 | n/a |
+| Volar (N) | **5.3 ms** | 5.2 ms | 0.7 ms | 12.3% ⚠ | 31.65x | 13 | n/a |
+| Volar (JS) | **6.5 ms** | 6.4 ms | 2.6 ms | 33.0% ⚠ | 38.79x | 13 | n/a |
 
 <details><summary>Notes</summary>
 
 - **Vize**: content verified | engine: tsgo (bundled)
 - **Verter**: content verified | engine: tsgo ? (none)
 - **Volar (N)**: content verified | engine: tsgo ? via TNB ?
-- **Volar (JS) ⚠**: content verified | engine: TypeScript ? (JS) | ⚠ TOO NOISY TO RANK — CV 76.3% (ceiling 50%). The median of a series this unstable is a draw from noise, not a result; the time is bracketed and excluded from ranking exactly like a failed gate. Raw runs below.
+- **Volar (JS)**: content verified | engine: TypeScript ? (JS)
 
 </details>
 
 <details><summary>Raw runs</summary>
 
-- **Vize**: 0.2 ms, 0.2 ms, 0.2 ms
-- **Verter**: 0.3 ms, 0.3 ms, 0.2 ms
-- **Volar (N)**: 7.0 ms, 8.1 ms, 7.0 ms
-- **Volar (JS)**: 116.5 ms, 117.1 ms, 9.7 ms
+- **Vize**: 0.2 ms, 0.1 ms, 0.2 ms
+- **Verter**: 0.3 ms, 0.2 ms, 0.3 ms
+- **Volar (N)**: 6.4 ms, 5.2 ms, 5.3 ms
+- **Volar (JS)**: 6.5 ms, 11.0 ms, 6.4 ms
 
 </details>
 
@@ -339,10 +339,10 @@ Tools:
 
 | Tool | Tool | tsgo / tsserver | **Total** |
 | --- | ---: | ---: | ---: |
-| Verter | 133.0 MB | 103.8 MB | **236.8 MB** |
-| Vize | 73.1 MB | 229.8 MB | **302.9 MB** |
-| Volar (JS) | 281.7 MB | 255.1 MB | **536.8 MB** |
-| Volar (N) | 293.5 MB | 405.7 MB | **699.2 MB** |
+| Verter | 131.7 MB | 101.7 MB | **233.4 MB** |
+| Vize | 73.3 MB | 166.1 MB | **239.4 MB** |
+| Volar (JS) | 275.5 MB | 254.1 MB | **529.6 MB** |
+| Volar (N) | 292.8 MB | 404.6 MB | **697.5 MB** |
 
 Engine is a **child** `tsgo` / sibling `tsserver` process — the same attribution the typecheck surface uses. `—` = the server hosts its checker in-process.
 
@@ -379,26 +379,26 @@ Tools:
 
 | Tool | **Cold** | vs fastest cold | **Warm** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Verter | **291.4 ms** | 1.00x | **26.8 ms** | 23.3 ms | 3.0 ms | 11.3% ⚠ | 1.30x | 3 | n/a |
-| Volar (N) | **440.5 ms** | 1.51x | **20.7 ms** | 20.2 ms | 1.6 ms | 7.3% | 1.00x | 3 | n/a |
-| Volar (JS) | **1.12 s** | 3.85x | **27.3 ms** | 20.9 ms | 4.2 ms | 16.4% ⚠ | 1.32x | 3 | n/a |
-| Vize ⚠ | (257.6 ms) | not ranked | (45.9 ms) | (1.5 ms) | – | – | not ranked | (3) | – |
+| Vize | **0.6 ms** | 1.00x | **0.2 ms** | 0.2 ms | 0.1 ms | 31.0% ⚠ | 1.00x | 3 | n/a |
+| Volar (N) | **327.6 ms** | 574.58x | **17.1 ms** | 13.8 ms | 2.6 ms | 15.4% ⚠ | 80.18x | 3 | n/a |
+| Volar (JS) | **831.7 ms** | 1458.69x | **22.1 ms** | 17.4 ms | 4.2 ms | 19.1% ⚠ | 103.98x | 3 | n/a |
+| Verter ⚠ | (231.4 ms) | not ranked | (3.1 ms) | (1.9 ms) | – | – | not ranked | (3) | – |
 
 <details><summary>Notes</summary>
 
-- **Verter**: content verified | engine: tsgo ? (none)
+- **Vize**: content verified | engine: tsgo (bundled)
 - **Volar (N)**: content verified | engine: tsgo ? via TNB ?
 - **Volar (JS)**: content verified | engine: TypeScript ? (JS)
-- **Vize ⚠**: content verified | engine: tsgo (bundled) | ⚠ TOO NOISY TO RANK — CV 82.5% (ceiling 50%). The median of a series this unstable is a draw from noise, not a result; the time is bracketed and excluded from ranking exactly like a failed gate. Raw runs below.
+- **Verter ⚠**: content verified | engine: tsgo ? (none) | ⚠ TOO NOISY TO RANK — CV 92.0% (ceiling 50%). The median of a series this unstable is a draw from noise, not a result; the time is bracketed and excluded from ranking exactly like a failed gate. Raw runs below.
 
 </details>
 
 <details><summary>Raw runs</summary>
 
-- **Verter**: 26.8 ms, 23.3 ms, 29.3 ms
-- **Volar (N)**: 20.2 ms, 23.1 ms, 20.7 ms
-- **Volar (JS)**: 28.8 ms, 20.9 ms, 27.3 ms
-- **Vize**: 45.9 ms, 1.5 ms, 46.5 ms
+- **Vize**: 0.3 ms, 0.2 ms, 0.2 ms
+- **Volar (N)**: 18.9 ms, 17.1 ms, 13.8 ms
+- **Volar (JS)**: 22.1 ms, 25.7 ms, 17.4 ms
+- **Verter**: 10.8 ms, 1.9 ms, 3.1 ms
 
 </details>
 
@@ -411,15 +411,15 @@ Tools:
 
 | Tool | **Cold** | vs fastest cold | **Warm** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (N) | **129.7 ms** | 1.00x | **39.8 ms** | 39.4 ms | 0.4 ms | 0.9% | 1.17x | 192 | n/a |
-| Volar (JS) | **131.2 ms** | 1.01x | **37.1 ms** | 35.7 ms | 1.6 ms | 4.3% | 1.09x | 192 | n/a |
-| Verter | **175.7 ms** | 1.36x | **33.9 ms** | 30.9 ms | 1.8 ms | 5.3% | 1.00x | 1,193 | n/a |
-| Vize ⚠ | (0.7 ms) | not ranked | (0.5 ms) | (0.5 ms) | – | – | not ranked | (42) | – |
+| Volar (JS) | **97.4 ms** | 1.00x | **28.0 ms** | 27.0 ms | 0.8 ms | 2.8% | 1.00x | 192 | n/a |
+| Volar (N) | **111.2 ms** | 1.14x | **30.6 ms** | 30.0 ms | 0.6 ms | 2.1% | 1.09x | 192 | n/a |
+| Verter | **146.5 ms** | 1.50x | **161.9 ms** | 70.1 ms | 59.8 ms | 43.3% ⚠ | 5.78x | 1,193 | n/a |
+| Vize ⚠ | (61.6 ms) | not ranked | (0.5 ms) | (0.4 ms) | – | – | not ranked | (42) | – |
 
 <details><summary>Notes</summary>
 
-- **Volar (N)**: content verified | engine: tsgo ? via TNB ?
 - **Volar (JS)**: content verified | engine: TypeScript ? (JS)
+- **Volar (N)**: content verified | engine: tsgo ? via TNB ?
 - **Verter**: content verified | engine: tsgo ? (none)
 - **Vize ⚠**: ⚠ FAILED VALIDATION — cold: no `ChildCard` component tag in 42 items | Sample: "[v-if, v-else-if, v-else, v-for, v-on, v-bind, v-model, v-slot, v-show, v-pre, v-once, v-memo, …+30]" | engine: tsgo (bundled)
 
@@ -427,10 +427,10 @@ Tools:
 
 <details><summary>Raw runs</summary>
 
-- **Volar (N)**: 40.1 ms, 39.8 ms, 39.4 ms
-- **Volar (JS)**: 38.9 ms, 35.7 ms, 37.1 ms
-- **Verter**: 30.9 ms, 34.0 ms, 33.9 ms
-- **Vize**: 0.5 ms, 0.7 ms, 0.5 ms
+- **Volar (JS)**: 28.5 ms, 27.0 ms, 28.0 ms
+- **Volar (N)**: 30.0 ms, 30.6 ms, 31.3 ms
+- **Verter**: 70.1 ms, 182.5 ms, 161.9 ms
+- **Vize**: 0.6 ms, 0.5 ms, 0.4 ms
 
 </details>
 
@@ -443,26 +443,26 @@ Tools:
 
 | Tool | **Cold** | vs fastest cold | **Warm** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize | **0.4 ms** | 1.00x | **0.3 ms** | 0.3 ms | 0.0 ms | 14.5% ⚠ | 1.00x | 4 | n/a |
-| Verter | **1.8 ms** | 4.92x | **1.2 ms** | 1.0 ms | 0.3 ms | 25.1% ⚠ | 3.68x | 16 | n/a |
-| Volar (N) | **63.4 ms** | 177.72x | **7.6 ms** | 7.5 ms | 0.1 ms | 0.9% | 23.02x | 26 | n/a |
-| Volar (JS) ⚠ | (194.4 ms) | not ranked | (157.1 ms) | (8.8 ms) | – | – | not ranked | (26) | – |
+| Vize | **0.3 ms** | 1.00x | **0.2 ms** | 0.2 ms | 0.0 ms | 10.5% ⚠ | 1.00x | 4 | n/a |
+| Verter | **18.6 ms** | 60.71x | **1.1 ms** | 1.0 ms | 0.1 ms | 4.9% | 5.07x | 16 | n/a |
+| Volar (N) | **53.9 ms** | 175.75x | **5.8 ms** | 5.7 ms | 0.3 ms | 5.5% | 27.86x | 26 | n/a |
+| Volar (JS) | **155.3 ms** | 506.33x | **163.7 ms** | 119.9 ms | 26.3 ms | 17.5% ⚠ | 785.10x | 26 | n/a |
 
 <details><summary>Notes</summary>
 
 - **Vize**: content verified | engine: tsgo (bundled)
 - **Verter**: content verified | engine: tsgo ? (none)
 - **Volar (N)**: content verified | engine: tsgo ? via TNB ?
-- **Volar (JS) ⚠**: content verified | engine: TypeScript ? (JS) | ⚠ TOO NOISY TO RANK — CV 79.6% (ceiling 50%). The median of a series this unstable is a draw from noise, not a result; the time is bracketed and excluded from ranking exactly like a failed gate. Raw runs below.
+- **Volar (JS)**: content verified | engine: TypeScript ? (JS)
 
 </details>
 
 <details><summary>Raw runs</summary>
 
-- **Vize**: 0.3 ms, 0.4 ms, 0.3 ms
-- **Verter**: 1.7 ms, 1.2 ms, 1.0 ms
-- **Volar (N)**: 7.5 ms, 7.6 ms, 7.6 ms
-- **Volar (JS)**: 8.8 ms, 157.1 ms, 159.6 ms
+- **Vize**: 0.2 ms, 0.2 ms, 0.2 ms
+- **Verter**: 1.1 ms, 1.1 ms, 1.0 ms
+- **Volar (N)**: 5.8 ms, 6.3 ms, 5.7 ms
+- **Volar (JS)**: 167.0 ms, 119.9 ms, 163.7 ms
 
 </details>
 
@@ -475,10 +475,10 @@ Tools:
 
 | Tool | **Cold** | vs fastest cold | **Warm** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (N) | **6.7 ms** | 1.00x | **6.6 ms** | 6.4 ms | 0.3 ms | 4.0% | 1.00x | 25 | n/a |
-| Volar (JS) | **12.4 ms** | 1.86x | **7.2 ms** | 7.0 ms | 0.1 ms | 1.5% | 1.08x | 25 | n/a |
-| Vize ⚠ | (0.3 ms) | not ranked | (0.3 ms) | (0.3 ms) | – | – | not ranked | (12) | – |
-| Verter ⚠ | (0.3 ms) | not ranked | (0.3 ms) | (0.2 ms) | – | – | not ranked | (0) | – |
+| Volar (N) | **6.3 ms** | 1.00x | **5.4 ms** | 5.3 ms | 0.1 ms | 2.8% | 1.00x | 25 | n/a |
+| Volar (JS) | **10.0 ms** | 1.60x | **6.5 ms** | 5.4 ms | 1.3 ms | 19.9% ⚠ | 1.21x | 25 | n/a |
+| Vize ⚠ | (0.2 ms) | not ranked | (0.2 ms) | (0.2 ms) | – | – | not ranked | (12) | – |
+| Verter ⚠ | (0.3 ms) | not ranked | (0.2 ms) | (0.2 ms) | – | – | not ranked | (0) | – |
 
 <details><summary>Notes</summary>
 
@@ -491,10 +491,10 @@ Tools:
 
 <details><summary>Raw runs</summary>
 
-- **Volar (N)**: 6.9 ms, 6.6 ms, 6.4 ms
-- **Volar (JS)**: 7.2 ms, 7.2 ms, 7.0 ms
-- **Vize**: 0.3 ms, 0.4 ms, 0.3 ms
-- **Verter**: 0.3 ms, 0.3 ms, 0.2 ms
+- **Volar (N)**: 5.3 ms, 5.4 ms, 5.6 ms
+- **Volar (JS)**: 8.0 ms, 5.4 ms, 6.5 ms
+- **Vize**: 0.2 ms, 0.2 ms, 0.2 ms
+- **Verter**: 0.2 ms, 0.2 ms, 0.2 ms
 
 </details>
 
@@ -507,26 +507,26 @@ Tools:
 
 | Tool | **Cold** | vs fastest cold | **Warm** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize | **0.4 ms** | 1.00x | **0.3 ms** | 0.3 ms | 0.1 ms | 14.1% ⚠ | 1.00x | 15 | n/a |
-| Volar (N) | **30.4 ms** | 85.39x | **14.2 ms** | 13.7 ms | 0.4 ms | 2.7% | 43.18x | 498 | n/a |
-| Volar (JS) | **32.6 ms** | 91.65x | **47.7 ms** | 19.6 ms | 18.1 ms | 45.0% ⚠ | 144.83x | 498 | n/a |
-| Verter ⚠ | (0.3 ms) | not ranked | (0.3 ms) | (0.3 ms) | – | – | not ranked | (3) | – |
+| Vize | **0.2 ms** | 1.00x | **0.2 ms** | 0.2 ms | 0.0 ms | 2.8% | 1.00x | 15 | n/a |
+| Volar (N) | **23.0 ms** | 94.92x | **10.5 ms** | 10.3 ms | 0.7 ms | 6.4% | 46.30x | 498 | n/a |
+| Volar (JS) ⚠ | (29.7 ms) | not ranked | (21.8 ms) | (10.9 ms) | – | – | not ranked | (498) | – |
+| Verter ⚠ | (0.3 ms) | not ranked | (0.2 ms) | (0.2 ms) | – | – | not ranked | (3) | – |
 
 <details><summary>Notes</summary>
 
 - **Vize**: content verified | engine: tsgo (bundled)
 - **Volar (N)**: content verified | engine: tsgo ? via TNB ?
-- **Volar (JS)**: content verified | engine: TypeScript ? (JS)
+- **Volar (JS) ⚠**: content verified | engine: TypeScript ? (JS) | ⚠ TOO NOISY TO RANK — CV 53.8% (ceiling 50%). The median of a series this unstable is a draw from noise, not a result; the time is bracketed and excluded from ranking exactly like a failed gate. Raw runs below.
 - **Verter ⚠**: ⚠ FAILED VALIDATION — cold: no `v-if` directive in 3 items | Sample: "[style scoped, style, i18n]" | engine: tsgo ? (none)
 
 </details>
 
 <details><summary>Raw runs</summary>
 
-- **Vize**: 0.3 ms, 0.4 ms, 0.3 ms
-- **Volar (N)**: 14.2 ms, 13.7 ms, 14.4 ms
-- **Volar (JS)**: 19.6 ms, 53.5 ms, 47.7 ms
-- **Verter**: 0.4 ms, 0.3 ms, 0.3 ms
+- **Vize**: 0.2 ms, 0.2 ms, 0.2 ms
+- **Volar (N)**: 10.5 ms, 11.6 ms, 10.3 ms
+- **Volar (JS)**: 35.2 ms, 10.9 ms, 21.8 ms
+- **Verter**: 0.2 ms, 0.2 ms, 0.2 ms
 
 </details>
 
@@ -539,10 +539,10 @@ Tools:
 
 | Tool | **Cold** | vs fastest cold | **Warm** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Verter | **0.3 ms** | 1.00x | **0.4 ms** | 0.2 ms | 0.1 ms | 22.4% ⚠ | 1.00x | 2 | n/a |
-| Vize | **0.5 ms** | 1.55x | **0.5 ms** | 0.5 ms | 0.0 ms | 4.8% | 1.47x | 30 | n/a |
-| Volar (N) | **16.8 ms** | 51.06x | **15.6 ms** | 13.7 ms | 2.0 ms | 12.6% ⚠ | 44.46x | 500 | n/a |
-| Volar (JS) | **133.4 ms** | 404.27x | **17.4 ms** | 15.5 ms | 1.8 ms | 10.3% ⚠ | 49.58x | 500 | n/a |
+| Verter | **0.2 ms** | 1.00x | **0.2 ms** | 0.2 ms | 0.0 ms | 5.1% | 1.00x | 2 | n/a |
+| Vize | **0.3 ms** | 1.69x | **0.3 ms** | 0.3 ms | 0.0 ms | 1.3% | 1.78x | 30 | n/a |
+| Volar (N) | **12.5 ms** | 61.08x | **16.3 ms** | 12.3 ms | 2.8 ms | 18.2% ⚠ | 90.36x | 500 | n/a |
+| Volar (JS) | **98.1 ms** | 478.21x | **13.1 ms** | 11.0 ms | 1.4 ms | 10.8% ⚠ | 72.74x | 500 | n/a |
 
 <details><summary>Notes</summary>
 
@@ -555,10 +555,10 @@ Tools:
 
 <details><summary>Raw runs</summary>
 
-- **Verter**: 0.4 ms, 0.4 ms, 0.2 ms
-- **Vize**: 0.5 ms, 0.5 ms, 0.5 ms
-- **Volar (N)**: 15.6 ms, 17.7 ms, 13.7 ms
-- **Volar (JS)**: 15.5 ms, 19.1 ms, 17.4 ms
+- **Verter**: 0.2 ms, 0.2 ms, 0.2 ms
+- **Vize**: 0.3 ms, 0.3 ms, 0.3 ms
+- **Volar (N)**: 16.3 ms, 12.3 ms, 17.7 ms
+- **Volar (JS)**: 13.5 ms, 11.0 ms, 13.1 ms
 
 </details>
 
@@ -571,10 +571,10 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (JS) | **37.4 ms** | 33.9 ms | 13.0 ms | 30.2% ⚠ | 1.00x | 1,073 | n/a |
-| Volar (N) | **69.8 ms** | 67.9 ms | 3.3 ms | 4.7% | 1.87x | 1,073 | n/a |
-| Vize ⚠ | (91.3 ms) | (90.4 ms) | – | – | not ranked | (1,103) | – |
-| Verter ⚠ | (0.4 ms) | (0.3 ms) | – | – | not ranked | (9) | – |
+| Volar (JS) | **25.5 ms** | 25.1 ms | 0.9 ms | 3.6% | 1.00x | 1,073 | n/a |
+| Volar (N) | **31.6 ms** | 30.0 ms | 14.5 ms | 37.1% ⚠ | 1.24x | 1,073 | n/a |
+| Vize ⚠ | (197.2 ms) | (189.8 ms) | – | – | not ranked | (1,103) | – |
+| Verter ⚠ | (0.3 ms) | (0.3 ms) | – | – | not ranked | (9) | – |
 
 <details><summary>Notes</summary>
 
@@ -587,10 +587,10 @@ Tools:
 
 <details><summary>Raw runs</summary>
 
-- **Volar (JS)**: 33.9 ms, 57.9 ms, 37.4 ms
-- **Volar (N)**: 74.3 ms, 69.8 ms, 67.9 ms
-- **Vize**: 91.3 ms, 119.8 ms, 90.4 ms
-- **Verter**: 0.4 ms, 0.4 ms, 0.3 ms
+- **Volar (JS)**: 25.5 ms, 25.1 ms, 26.8 ms
+- **Volar (N)**: 30.0 ms, 55.9 ms, 31.6 ms
+- **Vize**: 197.2 ms, 201.1 ms, 189.8 ms
+- **Verter**: 0.3 ms, 0.3 ms, 0.3 ms
 
 </details>
 
@@ -603,8 +603,8 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (JS) | **48.5 ms** | 37.1 ms | 7.3 ms | 16.1% ⚠ | 1.00x | 241 | n/a |
-| Volar (N) | **153.6 ms** | 151.3 ms | 2.1 ms | 1.4% | 3.17x | 241 | n/a |
+| Volar (JS) | **41.5 ms** | 41.3 ms | 1.3 ms | 3.0% | 1.00x | 241 | n/a |
+| Volar (N) | **117.2 ms** | 115.1 ms | 2.7 ms | 2.3% | 2.82x | 241 | n/a |
 | Vize ⚠ | (0.3 ms) | (0.3 ms) | – | – | not ranked | (0) | – |
 | Verter ⚠ | (0.0 ms) | (0.0 ms) | – | – | not ranked | – | – |
 
@@ -619,9 +619,9 @@ Tools:
 
 <details><summary>Raw runs</summary>
 
-- **Volar (JS)**: 37.1 ms, 50.8 ms, 48.5 ms
-- **Volar (N)**: 153.6 ms, 151.3 ms, 155.5 ms
-- **Vize**: 0.3 ms, 0.4 ms, 0.3 ms
+- **Volar (JS)**: 41.5 ms, 43.6 ms, 41.3 ms
+- **Volar (N)**: 115.1 ms, 120.5 ms, 117.2 ms
+- **Vize**: 0.3 ms, 1.2 ms, 0.3 ms
 - **Verter**: 0.0 ms, 0.0 ms, 0.0 ms
 
 </details>
@@ -635,26 +635,26 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (JS) | **3.4 ms** | 3.0 ms | 0.6 ms | 15.9% ⚠ | 1.00x | 25 | n/a |
-| Verter | **5.4 ms** | 4.3 ms | 1.2 ms | 21.5% ⚠ | 1.57x | 25 | n/a |
-| Volar (N) | **8.1 ms** | 8.0 ms | 0.9 ms | 10.4% ⚠ | 2.38x | 25 | n/a |
-| Vize ⚠ | (0.2 ms) | (0.2 ms) | – | – | not ranked | (0) | – |
+| Vize | **0.1 ms** | 0.1 ms | 0.1 ms | 36.6% ⚠ | 1.00x | 75 | n/a |
+| Volar (JS) | **2.7 ms** | 2.5 ms | 0.2 ms | 8.1% | 22.58x | 25 | n/a |
+| Verter | **3.5 ms** | 3.3 ms | 0.4 ms | 10.6% ⚠ | 28.77x | 25 | n/a |
+| Volar (N) | **6.4 ms** | 6.3 ms | 0.2 ms | 3.1% | 52.67x | 25 | n/a |
 
 <details><summary>Notes</summary>
 
+- **Vize**: content verified | engine: tsgo (bundled)
 - **Volar (JS)**: content verified | engine: TypeScript ? (JS)
 - **Verter**: content verified | engine: tsgo ? (none)
 - **Volar (N)**: content verified | engine: tsgo ? via TNB ?
-- **Vize ⚠**: ⚠ FAILED VALIDATION — resolve returned no detail and no documentation | Sample: "\"quaver\" kind=5" | engine: tsgo (bundled)
 
 </details>
 
 <details><summary>Raw runs</summary>
 
-- **Volar (JS)**: 3.0 ms, 4.1 ms, 3.4 ms
-- **Verter**: 5.4 ms, 6.7 ms, 4.3 ms
-- **Volar (N)**: 8.1 ms, 8.0 ms, 9.6 ms
-- **Vize**: 0.2 ms, 0.2 ms, 0.2 ms
+- **Vize**: 0.1 ms, 0.2 ms, 0.1 ms
+- **Volar (JS)**: 2.5 ms, 3.0 ms, 2.7 ms
+- **Verter**: 4.1 ms, 3.5 ms, 3.3 ms
+- **Volar (N)**: 6.3 ms, 6.4 ms, 6.7 ms
 
 </details>
 
@@ -662,10 +662,10 @@ Tools:
 
 | Tool | Tool | tsgo / tsserver | **Total** |
 | --- | ---: | ---: | ---: |
-| Verter | 133.3 MB | 176.3 MB | **309.6 MB** |
-| Vize | 78.9 MB | 241.6 MB | **320.5 MB** |
-| Volar (JS) | 295.4 MB | 287.5 MB | **582.9 MB** |
-| Volar (N) | 307.4 MB | 414.9 MB | **722.3 MB** |
+| Vize | 77.1 MB | 228.6 MB | **305.7 MB** |
+| Verter | 138.2 MB | 239.4 MB | **377.6 MB** |
+| Volar (JS) | 295.7 MB | 288.6 MB | **584.3 MB** |
+| Volar (N) | 306.8 MB | 429.0 MB | **735.8 MB** |
 
 Engine is a **child** `tsgo` / sibling `tsserver` process — the same attribution the typecheck surface uses. `—` = the server hosts its checker in-process.
 
@@ -704,19 +704,19 @@ Tools:
 
 <details><summary>Notes</summary>
 
-- **Volar (JS)**: content verified | NOT RANKED (informational) — measured 1.16 s, min 1.11 s, CV 2.3%: the fixture is a valid file, so the correct payload is empty and no gate can tell an analysed empty report from a server that publishes `[]` on open and analyses afterwards — the fastest number here can be the least work done. Read `Edit plants type error -> reported` and `Edit fixes it -> diagnostic clears`, which demand specific content, as the comparable diagnostics figures. | engine: TypeScript ? (JS)
-- **Volar (N)**: content verified | NOT RANKED (informational) — measured 502.4 ms, min 502.4 ms, CV 0.9%: the fixture is a valid file, so the correct payload is empty and no gate can tell an analysed empty report from a server that publishes `[]` on open and analyses afterwards — the fastest number here can be the least work done. Read `Edit plants type error -> reported` and `Edit fixes it -> diagnostic clears`, which demand specific content, as the comparable diagnostics figures. | engine: tsgo ? via TNB ?
-- **Vize**: content verified | NOT RANKED (informational) — measured 243.2 ms, min 238.1 ms, CV 1.5%: the fixture is a valid file, so the correct payload is empty and no gate can tell an analysed empty report from a server that publishes `[]` on open and analyses afterwards — the fastest number here can be the least work done. Read `Edit plants type error -> reported` and `Edit fixes it -> diagnostic clears`, which demand specific content, as the comparable diagnostics figures. | engine: tsgo (bundled)
-- **Verter**: content verified | NOT RANKED (informational) — measured 313.2 ms, min 312.2 ms, CV 0.5%: the fixture is a valid file, so the correct payload is empty and no gate can tell an analysed empty report from a server that publishes `[]` on open and analyses afterwards — the fastest number here can be the least work done. Read `Edit plants type error -> reported` and `Edit fixes it -> diagnostic clears`, which demand specific content, as the comparable diagnostics figures. | engine: tsgo ? (none)
+- **Volar (JS)**: content verified | NOT RANKED (informational) — measured 900.1 ms, min 896.5 ms, CV 0.6%: the fixture is a valid file, so the correct payload is empty and no gate can tell an analysed empty report from a server that publishes `[]` on open and analyses afterwards — the fastest number here can be the least work done. Read `Edit plants type error -> reported` and `Edit fixes it -> diagnostic clears`, which demand specific content, as the comparable diagnostics figures. | engine: TypeScript ? (JS)
+- **Volar (N)**: content verified | NOT RANKED (informational) — measured 400.4 ms, min 395.7 ms, CV 2.6%: the fixture is a valid file, so the correct payload is empty and no gate can tell an analysed empty report from a server that publishes `[]` on open and analyses afterwards — the fastest number here can be the least work done. Read `Edit plants type error -> reported` and `Edit fixes it -> diagnostic clears`, which demand specific content, as the comparable diagnostics figures. | engine: tsgo ? via TNB ?
+- **Vize**: content verified | NOT RANKED (informational) — measured 1.21 s, min 1.21 s, CV 1.9%: the fixture is a valid file, so the correct payload is empty and no gate can tell an analysed empty report from a server that publishes `[]` on open and analyses afterwards — the fastest number here can be the least work done. Read `Edit plants type error -> reported` and `Edit fixes it -> diagnostic clears`, which demand specific content, as the comparable diagnostics figures. | engine: tsgo (bundled)
+- **Verter**: content verified | NOT RANKED (informational) — measured 369.4 ms, min 327.4 ms, CV 8.6%: the fixture is a valid file, so the correct payload is empty and no gate can tell an analysed empty report from a server that publishes `[]` on open and analyses afterwards — the fastest number here can be the least work done. Read `Edit plants type error -> reported` and `Edit fixes it -> diagnostic clears`, which demand specific content, as the comparable diagnostics figures. | engine: tsgo ? (none)
 
 </details>
 
 <details><summary>Raw runs</summary>
 
-- **Volar (JS)**: 1.11 s, 1.16 s, 1.16 s
-- **Volar (N)**: 502.4 ms, 502.4 ms, 510.0 ms
-- **Vize**: 245.0 ms, 238.1 ms, 243.2 ms
-- **Verter**: 315.2 ms, 312.2 ms, 313.2 ms
+- **Volar (JS)**: 906.8 ms, 900.1 ms, 896.5 ms
+- **Volar (N)**: 400.4 ms, 416.0 ms, 395.7 ms
+- **Vize**: 1.21 s, 1.25 s, 1.21 s
+- **Verter**: 327.4 ms, 369.4 ms, 387.8 ms
 
 </details>
 
@@ -729,10 +729,10 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize | **75.1 ms** | 71.9 ms | 16.7 ms | 20.1% ⚠ | 1.00x | 1 | n/a |
-| Volar (JS) | **403.7 ms** | 390.7 ms | 9.1 ms | 2.3% | 5.38x | 1 | n/a |
-| Volar (N) | **457.7 ms** | 451.7 ms | 4.3 ms | 0.9% | 6.10x | 1 | n/a |
-| Verter | **498.8 ms** | 493.0 ms | 6.4 ms | 1.3% | 6.64x | 1 | n/a |
+| Vize | **62.1 ms** | 40.9 ms | 12.6 ms | 22.7% ⚠ | 1.00x | 1 | n/a |
+| Volar (JS) | **354.3 ms** | 354.0 ms | 0.2 ms | 0.1% | 5.70x | 1 | n/a |
+| Volar (N) | **446.6 ms** | 446.3 ms | 0.5 ms | 0.1% | 7.19x | 1 | n/a |
+| Verter | **697.5 ms** | 477.4 ms | 188.8 ms | 27.9% ⚠ | 11.22x | 1 | n/a |
 
 <details><summary>Notes</summary>
 
@@ -745,10 +745,10 @@ Tools:
 
 <details><summary>Raw runs</summary>
 
-- **Vize**: 102.3 ms, 71.9 ms, 75.1 ms
-- **Volar (JS)**: 403.7 ms, 390.7 ms, 408.1 ms
-- **Volar (N)**: 460.1 ms, 451.7 ms, 457.7 ms
-- **Verter**: 498.8 ms, 505.9 ms, 493.0 ms
+- **Vize**: 62.1 ms, 63.3 ms, 40.9 ms
+- **Volar (JS)**: 354.0 ms, 354.3 ms, 354.4 ms
+- **Volar (N)**: 446.6 ms, 447.2 ms, 446.3 ms
+- **Verter**: 853.2 ms, 477.4 ms, 697.5 ms
 
 </details>
 
@@ -761,10 +761,10 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize | **20.3 ms** | 18.5 ms | 1.1 ms | 5.8% | 1.00x | 0 | n/a |
-| Volar (N) | **382.8 ms** | 381.1 ms | 1.0 ms | 0.3% | 18.89x | 0 | n/a |
-| Volar (JS) | **457.5 ms** | 453.7 ms | 2.3 ms | 0.5% | 22.58x | 0 | n/a |
-| Verter | **658.6 ms** | 645.5 ms | 8.1 ms | 1.2% | 32.51x | 0 | n/a |
+| Vize | **16.8 ms** | 15.8 ms | 1.0 ms | 6.0% | 1.00x | 0 | n/a |
+| Volar (N) | **384.6 ms** | 379.4 ms | 3.3 ms | 0.9% | 22.91x | 0 | n/a |
+| Volar (JS) | **442.2 ms** | 441.8 ms | 2.2 ms | 0.5% | 26.34x | 0 | n/a |
+| Verter | **657.2 ms** | 466.5 ms | 111.5 ms | 18.7% ⚠ | 39.15x | 0 | n/a |
 
 <details><summary>Notes</summary>
 
@@ -777,10 +777,10 @@ Tools:
 
 <details><summary>Raw runs</summary>
 
-- **Vize**: 18.5 ms, 20.3 ms, 20.7 ms
-- **Volar (N)**: 382.8 ms, 381.1 ms, 383.0 ms
-- **Volar (JS)**: 458.1 ms, 453.7 ms, 457.5 ms
-- **Verter**: 645.5 ms, 660.5 ms, 658.6 ms
+- **Vize**: 16.8 ms, 15.8 ms, 17.9 ms
+- **Volar (N)**: 384.6 ms, 385.7 ms, 379.4 ms
+- **Volar (JS)**: 441.8 ms, 445.9 ms, 442.2 ms
+- **Verter**: 466.5 ms, 661.9 ms, 657.2 ms
 
 </details>
 
@@ -793,26 +793,26 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (N) | **18.5 ms** | 18.5 ms | 0.5 ms | 2.4% | 1.00x | 47 | n/a |
-| Volar (JS) | **54.2 ms** | 49.8 ms | 4.1 ms | 7.5% | 2.93x | 47 | n/a |
-| Vize | **55.2 ms** | 44.1 ms | 6.8 ms | 13.1% ⚠ | 2.99x | 40 | n/a |
-| Verter ⚠ | (82.1 ms) | (74.6 ms) | – | – | not ranked | (40) | – |
+| Volar (N) | **16.1 ms** | 15.3 ms | 0.5 ms | 3.1% | 1.00x | 47 | n/a |
+| Volar (JS) | **43.2 ms** | 42.5 ms | 2.0 ms | 4.5% | 2.69x | 47 | n/a |
+| Vize | **43.6 ms** | 33.2 ms | 14.6 ms | 31.6% ⚠ | 2.71x | 40 | n/a |
+| Verter ⚠ | (133.0 ms) | (78.3 ms) | – | – | not ranked | (40) | – |
 
 <details><summary>Notes</summary>
 
 - **Volar (N)**: content verified | engine: tsgo ? via TNB ?
 - **Volar (JS)**: content verified | engine: TypeScript ? (JS)
 - **Vize**: content verified | engine: tsgo (bundled)
-- **Verter ⚠**: content verified | engine: tsgo ? (none) | ⚠ TOO NOISY TO RANK — CV 61.0% (ceiling 50%). The median of a series this unstable is a draw from noise, not a result; the time is bracketed and excluded from ranking exactly like a failed gate. Raw runs below.
+- **Verter ⚠**: content verified | engine: tsgo ? (none) | ⚠ TOO NOISY TO RANK — CV 122.8% (ceiling 50%). The median of a series this unstable is a draw from noise, not a result; the time is bracketed and excluded from ranking exactly like a failed gate. Raw runs below.
 
 </details>
 
 <details><summary>Raw runs</summary>
 
-- **Volar (N)**: 19.3 ms, 18.5 ms, 18.5 ms
-- **Volar (JS)**: 57.9 ms, 54.2 ms, 49.8 ms
-- **Vize**: 56.3 ms, 44.1 ms, 55.2 ms
-- **Verter**: 205.7 ms, 74.6 ms, 82.1 ms
+- **Volar (N)**: 16.2 ms, 15.3 ms, 16.1 ms
+- **Volar (JS)**: 43.2 ms, 46.2 ms, 42.5 ms
+- **Vize**: 43.6 ms, 62.1 ms, 33.2 ms
+- **Verter**: 872.4 ms, 133.0 ms, 78.3 ms
 
 </details>
 
@@ -825,26 +825,26 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (N) | **18.5 ms** | 18.5 ms | 0.5 ms | 2.4% | 1.00x | 1 | n/a |
-| Volar (JS) | **54.2 ms** | 49.8 ms | 4.1 ms | 7.5% | 2.93x | 1 | n/a |
-| Vize | **55.2 ms** | 44.1 ms | 6.8 ms | 13.1% ⚠ | 2.99x | 1 | n/a |
-| Verter ⚠ | (82.1 ms) | (74.6 ms) | – | – | not ranked | (1) | – |
+| Volar (N) | **16.1 ms** | 15.3 ms | 0.5 ms | 3.1% | 1.00x | 1 | n/a |
+| Volar (JS) | **43.2 ms** | 42.5 ms | 2.0 ms | 4.5% | 2.69x | 1 | n/a |
+| Vize | **43.6 ms** | 33.2 ms | 14.6 ms | 31.6% ⚠ | 2.71x | 1 | n/a |
+| Verter ⚠ | (133.0 ms) | (78.3 ms) | – | – | not ranked | (1) | – |
 
 <details><summary>Notes</summary>
 
 - **Volar (N)**: content verified | engine: tsgo ? via TNB ?
 - **Volar (JS)**: content verified | engine: TypeScript ? (JS)
 - **Vize**: content verified | engine: tsgo (bundled)
-- **Verter ⚠**: content verified | engine: tsgo ? (none) | ⚠ TOO NOISY TO RANK — CV 61.0% (ceiling 50%). The median of a series this unstable is a draw from noise, not a result; the time is bracketed and excluded from ranking exactly like a failed gate. Raw runs below.
+- **Verter ⚠**: content verified | engine: tsgo ? (none) | ⚠ TOO NOISY TO RANK — CV 122.8% (ceiling 50%). The median of a series this unstable is a draw from noise, not a result; the time is bracketed and excluded from ranking exactly like a failed gate. Raw runs below.
 
 </details>
 
 <details><summary>Raw runs</summary>
 
-- **Volar (N)**: 19.3 ms, 18.5 ms, 18.5 ms
-- **Volar (JS)**: 57.9 ms, 54.2 ms, 49.8 ms
-- **Vize**: 56.3 ms, 44.1 ms, 55.2 ms
-- **Verter**: 205.7 ms, 74.6 ms, 82.1 ms
+- **Volar (N)**: 16.2 ms, 15.3 ms, 16.1 ms
+- **Volar (JS)**: 43.2 ms, 46.2 ms, 42.5 ms
+- **Vize**: 43.6 ms, 62.1 ms, 33.2 ms
+- **Verter**: 872.4 ms, 133.0 ms, 78.3 ms
 
 </details>
 
@@ -857,26 +857,26 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (N) | **18.0 ms** | 17.7 ms | 0.6 ms | 3.3% | 1.00x | n/a | n/a |
-| Volar (JS) | **43.1 ms** | 42.8 ms | 0.4 ms | 1.0% | 2.39x | n/a | n/a |
-| Vize | **53.6 ms** | 43.6 ms | 6.5 ms | 12.7% ⚠ | 2.98x | n/a | n/a |
-| Verter | **94.6 ms** | 53.5 ms | 25.7 ms | 31.0% ⚠ | 5.26x | n/a | n/a |
+| Volar (N) | **13.7 ms** | 12.8 ms | 0.8 ms | 5.6% | 1.00x | n/a | n/a |
+| Vize | **33.2 ms** | 31.3 ms | 4.9 ms | 14.0% ⚠ | 2.43x | n/a | n/a |
+| Volar (JS) | **34.7 ms** | 33.1 ms | 1.2 ms | 3.4% | 2.54x | n/a | n/a |
+| Verter ⚠ | (64.8 ms) | (50.0 ms) | – | – | not ranked | – | – |
 
 <details><summary>Notes</summary>
 
 - **Volar (N)**: content verified | engine: tsgo ? via TNB ?
-- **Volar (JS)**: content verified | engine: TypeScript ? (JS)
 - **Vize**: content verified | engine: tsgo (bundled)
-- **Verter**: content verified | engine: tsgo ? (none)
+- **Volar (JS)**: content verified | engine: TypeScript ? (JS)
+- **Verter ⚠**: ⚠ FAILED VALIDATION — edit #4: empty hover payload for `probeValue` | engine: tsgo ? (none)
 
 </details>
 
 <details><summary>Raw runs</summary>
 
-- **Volar (N)**: 18.8 ms, 18.0 ms, 17.7 ms
-- **Volar (JS)**: 43.7 ms, 43.1 ms, 42.8 ms
-- **Vize**: 55.7 ms, 53.6 ms, 43.6 ms
-- **Verter**: 53.5 ms, 94.6 ms, 100.9 ms
+- **Volar (N)**: 12.8 ms, 14.3 ms, 13.7 ms
+- **Vize**: 40.5 ms, 31.3 ms, 33.2 ms
+- **Volar (JS)**: 33.1 ms, 35.5 ms, 34.7 ms
+- **Verter**: 100.8 ms, 64.8 ms, 50.0 ms
 
 </details>
 
@@ -889,26 +889,26 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (N) | **18.3 ms** | 18.3 ms | 0.1 ms | 0.4% | 1.00x | -1 | n/a |
-| Volar (JS) | **37.1 ms** | 35.0 ms | 1.5 ms | 4.0% | 2.03x | -7 | n/a |
-| Vize | **46.1 ms** | 43.9 ms | 2.4 ms | 5.3% | 2.52x | -7 | n/a |
-| Verter | **55.7 ms** | 53.8 ms | 21.3 ms | 31.8% ⚠ | 3.05x | 0 | n/a |
+| Volar (N) | **11.9 ms** | 11.9 ms | 0.8 ms | 6.8% | 1.00x | 1 | n/a |
+| Volar (JS) | **26.9 ms** | 25.8 ms | 1.5 ms | 5.4% | 2.26x | -6 | n/a |
+| Vize | **31.4 ms** | 30.6 ms | 0.9 ms | 2.9% | 2.64x | -9 | n/a |
+| Verter ⚠ | (52.7 ms) | (49.6 ms) | – | – | not ranked | (29) | – |
 
 <details><summary>Notes</summary>
 
 - **Volar (N)**: content verified | engine: tsgo ? via TNB ?
 - **Volar (JS)**: content verified | engine: TypeScript ? (JS)
 - **Vize**: content verified | engine: tsgo (bundled)
-- **Verter**: content verified | engine: tsgo ? (none)
+- **Verter ⚠**: content verified | engine: tsgo ? (none) | ⚠ TOO NOISY TO RANK — CV 58.8% (ceiling 50%). The median of a series this unstable is a draw from noise, not a result; the time is bracketed and excluded from ranking exactly like a failed gate. Raw runs below.
 
 </details>
 
 <details><summary>Raw runs</summary>
 
-- **Volar (N)**: 18.3 ms, 18.4 ms, 18.3 ms
-- **Volar (JS)**: 37.1 ms, 37.8 ms, 35.0 ms
-- **Vize**: 48.7 ms, 46.1 ms, 43.9 ms
-- **Verter**: 53.8 ms, 91.6 ms, 55.7 ms
+- **Volar (N)**: 13.4 ms, 11.9 ms, 11.9 ms
+- **Volar (JS)**: 26.9 ms, 25.8 ms, 28.7 ms
+- **Vize**: 31.4 ms, 32.5 ms, 30.6 ms
+- **Verter**: 129.9 ms, 49.6 ms, 52.7 ms
 
 </details>
 
@@ -921,9 +921,9 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize | **191.0 ms** | 80.1 ms | 65.3 ms | 42.0% ⚠ | 1.00x | 1 | n/a |
-| Volar (JS) | **379.0 ms** | 377.7 ms | 1.2 ms | 0.3% | 1.98x | 1 | n/a |
-| Volar (N) | **385.6 ms** | 385.1 ms | 0.3 ms | 0.1% | 2.02x | 1 | n/a |
+| Vize | **149.5 ms** | 58.7 ms | 55.8 ms | 45.4% ⚠ | 1.00x | 1 | n/a |
+| Volar (JS) | **374.9 ms** | 373.6 ms | 1.5 ms | 0.4% | 2.51x | 1 | n/a |
+| Volar (N) | **380.7 ms** | 379.8 ms | 1.2 ms | 0.3% | 2.55x | 1 | n/a |
 | Verter ⚠ | (4.00 s) | (4.00 s) | – | – | not ranked | (0) | – |
 
 <details><summary>Notes</summary>
@@ -937,9 +937,9 @@ Tools:
 
 <details><summary>Raw runs</summary>
 
-- **Vize**: 80.1 ms, 191.0 ms, 195.2 ms
-- **Volar (JS)**: 379.0 ms, 380.1 ms, 377.7 ms
-- **Volar (N)**: 385.6 ms, 385.6 ms, 385.1 ms
+- **Vize**: 149.5 ms, 58.7 ms, 160.4 ms
+- **Volar (JS)**: 374.9 ms, 373.6 ms, 376.5 ms
+- **Volar (N)**: 379.8 ms, 382.1 ms, 380.7 ms
 - **Verter**: 4.00 s, 4.00 s, 4.00 s
 
 </details>
@@ -953,26 +953,26 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (N) | **64.8 ms** | 64.6 ms | 6.6 ms | 9.6% | 1.00x | 42 | n/a |
-| Volar (JS) | **109.2 ms** | 100.2 ms | 5.6 ms | 5.3% | 1.68x | 42 | n/a |
-| Vize | **191.0 ms** | 152.5 ms | 23.6 ms | 13.1% ⚠ | 2.95x | 42 | n/a |
-| Verter ⚠ | (4.9 ms) | (4.9 ms) | – | – | not ranked | (42) | – |
+| Volar (N) | **61.8 ms** | 55.6 ms | 9.8 ms | 15.3% ⚠ | 1.00x | 42 | n/a |
+| Volar (JS) | **88.6 ms** | 87.3 ms | 1.1 ms | 1.2% | 1.43x | 42 | n/a |
+| Vize | **149.5 ms** | 133.1 ms | 13.8 ms | 9.3% | 2.42x | 42 | n/a |
+| Verter ⚠ | (4.6 ms) | (4.4 ms) | – | – | not ranked | (42) | – |
 
 <details><summary>Notes</summary>
 
 - **Volar (N)**: content verified | engine: tsgo ? via TNB ?
 - **Volar (JS)**: content verified | engine: TypeScript ? (JS)
 - **Vize**: content verified | engine: tsgo (bundled)
-- **Verter ⚠**: ⚠ FAILED VALIDATION — STALE: still reports `label: string` after the edit changed it to `number` (the same position answered `string` before the edit, so the feature works here — this is the edit loop; caught up after 455ms) | Sample: "```typescript\n(property) label: string\n```" | engine: tsgo ? (none)
+- **Verter ⚠**: ⚠ FAILED VALIDATION — STALE: still reports `label: string` after the edit changed it to `number` (the same position answered `string` before the edit, so the feature works here — this is the edit loop; caught up after 941ms) | Sample: "```typescript\n(property) label: string\n```" | engine: tsgo ? (none)
 
 </details>
 
 <details><summary>Raw runs</summary>
 
-- **Volar (N)**: 64.6 ms, 64.8 ms, 76.1 ms
-- **Volar (JS)**: 100.2 ms, 109.2 ms, 110.6 ms
-- **Vize**: 152.5 ms, 191.0 ms, 195.2 ms
-- **Verter**: 4.9 ms, 4.9 ms, 4.9 ms
+- **Volar (N)**: 74.8 ms, 55.6 ms, 61.8 ms
+- **Volar (JS)**: 89.5 ms, 88.6 ms, 87.3 ms
+- **Vize**: 149.5 ms, 133.1 ms, 160.5 ms
+- **Verter**: 4.6 ms, 4.4 ms, 4.8 ms
 
 </details>
 
@@ -985,10 +985,10 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (N) | **64.8 ms** | 64.6 ms | 6.6 ms | 9.6% | 1.00x | 1 | n/a |
-| Volar (JS) | **109.2 ms** | 100.2 ms | 5.6 ms | 5.3% | 1.68x | 1 | n/a |
-| Vize | **191.0 ms** | 152.5 ms | 23.6 ms | 13.1% ⚠ | 2.95x | 1 | n/a |
-| Verter | **455.4 ms** | 455.3 ms | 28.3 ms | 6.0% | 7.03x | 3 | n/a |
+| Volar (N) | **61.8 ms** | 55.6 ms | 9.8 ms | 15.3% ⚠ | 1.00x | 1 | n/a |
+| Volar (JS) | **88.6 ms** | 87.3 ms | 1.1 ms | 1.2% | 1.43x | 1 | n/a |
+| Vize | **149.5 ms** | 133.1 ms | 13.8 ms | 9.3% | 2.42x | 1 | n/a |
+| Verter | **642.9 ms** | 459.8 ms | 243.1 ms | 35.7% ⚠ | 10.40x | 5 | n/a |
 
 <details><summary>Notes</summary>
 
@@ -1001,10 +1001,10 @@ Tools:
 
 <details><summary>Raw runs</summary>
 
-- **Volar (N)**: 64.6 ms, 64.8 ms, 76.1 ms
-- **Volar (JS)**: 100.2 ms, 109.2 ms, 110.6 ms
-- **Vize**: 152.5 ms, 191.0 ms, 195.2 ms
-- **Verter**: 455.4 ms, 455.3 ms, 504.3 ms
+- **Volar (N)**: 74.8 ms, 55.6 ms, 61.8 ms
+- **Volar (JS)**: 89.5 ms, 88.6 ms, 87.3 ms
+- **Vize**: 149.5 ms, 133.1 ms, 160.5 ms
+- **Verter**: 941.4 ms, 642.9 ms, 459.8 ms
 
 </details>
 
@@ -1012,10 +1012,10 @@ Tools:
 
 | Tool | Tool | tsgo / tsserver | **Total** |
 | --- | ---: | ---: | ---: |
-| Vize | 72.9 MB | 272.3 MB | **345.2 MB** |
-| Volar (JS) | 290.7 MB | 311.5 MB | **602.2 MB** |
-| Volar (N) | 302.8 MB | 410.3 MB | **713.2 MB** |
-| Verter | 41.4 MB | 801.4 MB | **842.8 MB** |
+| Vize | 74.2 MB | 277.8 MB | **352.0 MB** |
+| Volar (JS) | 291.6 MB | 309.9 MB | **601.5 MB** |
+| Verter | 42.3 MB | 600.7 MB | **643.0 MB** |
+| Volar (N) | 302.3 MB | 403.3 MB | **705.7 MB** |
 
 Engine is a **child** `tsgo` / sibling `tsserver` process — the same attribution the typecheck surface uses. `—` = the server hosts its checker in-process.
 
@@ -1053,10 +1053,10 @@ Tools:
 
 | Tool | **Cold** | vs fastest cold | **Warm** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Verter | **0.5 ms** | 1.00x | **0.3 ms** | 0.3 ms | 0.1 ms | 32.8% ⚠ | 1.18x | 1 | n/a |
-| Vize | **358.3 ms** | 712.63x | **0.3 ms** | 0.2 ms | 0.0 ms | 13.5% ⚠ | 1.00x | 1 | n/a |
-| Volar (N) | **465.3 ms** | 925.42x | **24.5 ms** | 18.6 ms | 5.8 ms | 23.7% ⚠ | 92.25x | 1 | n/a |
-| Volar (JS) | **1.10 s** | 2190.58x | **171.3 ms** | 171.1 ms | 5.7 ms | 3.2% | 646.28x | 1 | n/a |
+| Verter | **0.4 ms** | 1.00x | **0.4 ms** | 0.3 ms | 0.1 ms | 24.5% ⚠ | 2.04x | 1 | n/a |
+| Vize | **64.3 ms** | 143.81x | **0.2 ms** | 0.2 ms | 0.0 ms | 15.0% ⚠ | 1.00x | 1 | n/a |
+| Volar (N) | **353.7 ms** | 791.59x | **15.3 ms** | 13.1 ms | 1.7 ms | 11.4% ⚠ | 75.65x | 1 | n/a |
+| Volar (JS) | **837.1 ms** | 1873.69x | **146.2 ms** | 135.9 ms | 6.4 ms | 4.5% | 722.16x | 1 | n/a |
 
 <details><summary>Notes</summary>
 
@@ -1069,10 +1069,10 @@ Tools:
 
 <details><summary>Raw runs</summary>
 
-- **Verter**: 0.5 ms, 0.3 ms, 0.3 ms
-- **Vize**: 0.3 ms, 0.3 ms, 0.2 ms
-- **Volar (N)**: 18.6 ms, 24.5 ms, 30.1 ms
-- **Volar (JS)**: 171.1 ms, 181.0 ms, 171.3 ms
+- **Verter**: 0.4 ms, 0.3 ms, 0.5 ms
+- **Vize**: 0.2 ms, 0.2 ms, 0.2 ms
+- **Volar (N)**: 15.3 ms, 13.1 ms, 16.4 ms
+- **Volar (JS)**: 146.2 ms, 135.9 ms, 147.7 ms
 
 </details>
 
@@ -1085,26 +1085,26 @@ Tools:
 
 | Tool | **Cold** | vs fastest cold | **Warm** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Verter | **0.5 ms** | 1.00x | **0.3 ms** | 0.3 ms | 0.0 ms | 2.4% | 1.00x | 1 | n/a |
-| Volar (N) | **459.6 ms** | 865.44x | **18.8 ms** | 18.3 ms | 0.3 ms | 1.6% | 58.15x | 1 | n/a |
-| Volar (JS) | **1.11 s** | 2093.92x | **168.2 ms** | 165.2 ms | 1.8 ms | 1.1% | 521.25x | 1 | n/a |
-| Vize ⚠ | (382.0 ms) | not ranked | (5.7 ms) | (4.5 ms) | – | – | not ranked | (1) | – |
+| Verter | **0.4 ms** | 1.00x | **0.3 ms** | 0.2 ms | 0.0 ms | 11.9% ⚠ | 1.00x | 1 | n/a |
+| Volar (N) | **372.1 ms** | 1009.44x | **17.1 ms** | 12.6 ms | 2.7 ms | 17.4% ⚠ | 63.98x | 1 | n/a |
+| Volar (JS) | **866.2 ms** | 2349.81x | **138.4 ms** | 135.7 ms | 2.5 ms | 1.8% | 516.98x | 1 | n/a |
+| Vize ⚠ | (250.7 ms) | not ranked | (3.6 ms) | (3.5 ms) | – | – | not ranked | (1) | – |
 
 <details><summary>Notes</summary>
 
 - **Verter**: content verified | engine: tsgo ? (none)
 - **Volar (N)**: content verified | engine: tsgo ? via TNB ?
 - **Volar (JS)**: content verified | engine: TypeScript ? (JS)
-- **Vize ⚠**: ⚠ FAILED VALIDATION — cold: every provider rejected textDocument/definition: vize: textDocument/definition timed out after 5000ms | Sample: "vize: textDocument/definition timed out after 5000ms" | engine: tsgo (bundled)
+- **Vize ⚠**: content verified | engine: tsgo (bundled) | ⚠ TOO NOISY TO RANK — CV 142.2% (ceiling 50%). The median of a series this unstable is a draw from noise, not a result; the time is bracketed and excluded from ranking exactly like a failed gate. Raw runs below.
 
 </details>
 
 <details><summary>Raw runs</summary>
 
-- **Verter**: 0.3 ms, 0.3 ms, 0.3 ms
-- **Volar (N)**: 18.8 ms, 18.3 ms, 18.9 ms
-- **Volar (JS)**: 168.2 ms, 168.2 ms, 165.2 ms
-- **Vize**: 4.5 ms, 5.7 ms, 110.3 ms
+- **Verter**: 0.3 ms, 0.2 ms, 0.3 ms
+- **Volar (N)**: 17.6 ms, 12.6 ms, 17.1 ms
+- **Volar (JS)**: 138.4 ms, 135.7 ms, 140.6 ms
+- **Vize**: 3.6 ms, 3.5 ms, 52.5 ms
 
 </details>
 
@@ -1117,10 +1117,10 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (JS) | **7.4 ms** | 7.1 ms | 0.2 ms | 3.4% | 1.00x | 1 | n/a |
-| Volar (N) | **49.2 ms** | 48.4 ms | 7.8 ms | 14.7% ⚠ | 6.68x | 1 | n/a |
-| Vize | **66.0 ms** | 60.0 ms | 8.2 ms | 12.2% ⚠ | 8.96x | 1 | n/a |
-| Verter | **285.9 ms** | 274.1 ms | 24.4 ms | 8.3% | 38.82x | 1 | n/a |
+| Volar (JS) | **5.6 ms** | 5.5 ms | 0.2 ms | 3.8% | 1.00x | 1 | n/a |
+| Volar (N) | **41.7 ms** | 38.4 ms | 9.0 ms | 20.0% ⚠ | 7.41x | 1 | n/a |
+| Vize | **165.6 ms** | 150.4 ms | 9.9 ms | 6.1% | 29.45x | 1 | n/a |
+| Verter | **226.9 ms** | 185.1 ms | 35.0 ms | 15.8% ⚠ | 40.36x | 1 | n/a |
 
 <details><summary>Notes</summary>
 
@@ -1133,10 +1133,10 @@ Tools:
 
 <details><summary>Raw runs</summary>
 
-- **Volar (JS)**: 7.1 ms, 7.4 ms, 7.6 ms
-- **Volar (N)**: 48.4 ms, 62.3 ms, 49.2 ms
-- **Vize**: 60.0 ms, 76.2 ms, 66.0 ms
-- **Verter**: 321.1 ms, 285.9 ms, 274.1 ms
+- **Volar (JS)**: 5.5 ms, 5.6 ms, 5.9 ms
+- **Volar (N)**: 55.4 ms, 38.4 ms, 41.7 ms
+- **Vize**: 150.4 ms, 165.6 ms, 169.1 ms
+- **Verter**: 226.9 ms, 254.7 ms, 185.1 ms
 
 </details>
 
@@ -1149,26 +1149,26 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (N) | **99.2 ms** | 80.7 ms | 15.2 ms | 15.7% ⚠ | 1.00x | 4 | n/a |
-| Volar (JS) | **139.2 ms** | 136.1 ms | 5.4 ms | 3.8% | 1.40x | 4 | n/a |
-| Vize ⚠ | (10.5 ms) | (8.3 ms) | – | – | not ranked | (2) | – |
-| Verter ⚠ | (136.3 ms) | (127.1 ms) | – | – | not ranked | (3) | – |
+| Volar (N) | **78.6 ms** | 61.7 ms | 13.7 ms | 17.9% ⚠ | 1.00x | 4 | n/a |
+| Volar (JS) | **105.4 ms** | 100.8 ms | 3.1 ms | 2.9% | 1.34x | 4 | n/a |
+| Vize ⚠ | (161.7 ms) | (54.7 ms) | – | – | not ranked | (3) | – |
+| Verter ⚠ | (173.5 ms) | (72.4 ms) | – | – | not ranked | (3) | – |
 
 <details><summary>Notes</summary>
 
 - **Volar (N)**: content verified | engine: tsgo ? via TNB ?
 - **Volar (JS)**: content verified | engine: TypeScript ? (JS)
-- **Vize ⚠**: ⚠ FAILED VALIDATION — references missing Parent.vue — only found childcard.vue | Sample: "childcard.vue@2:11 childcard.vue@11:2" | engine: tsgo (bundled)
+- **Vize ⚠**: content verified | engine: tsgo (bundled) | ⚠ TOO NOISY TO RANK — CV 62.8% (ceiling 50%). The median of a series this unstable is a draw from noise, not a result; the time is bracketed and excluded from ranking exactly like a failed gate. Raw runs below.
 - **Verter ⚠**: ⚠ FAILED VALIDATION — references missing Parent.vue — only found childcard.vue | Sample: "childcard.vue@11:2 childcard.vue@15:38 childcard.vue@2:11" | engine: tsgo ? (none)
 
 </details>
 
 <details><summary>Raw runs</summary>
 
-- **Volar (N)**: 110.8 ms, 99.2 ms, 80.7 ms
-- **Volar (JS)**: 139.2 ms, 136.1 ms, 146.6 ms
-- **Vize**: 10.5 ms, 8.3 ms, 12.2 ms
-- **Verter**: 136.3 ms, 153.9 ms, 127.1 ms
+- **Volar (N)**: 78.6 ms, 88.9 ms, 61.7 ms
+- **Volar (JS)**: 100.8 ms, 106.6 ms, 105.4 ms
+- **Vize**: 161.7 ms, 249.2 ms, 54.7 ms
+- **Verter**: 184.0 ms, 72.4 ms, 173.5 ms
 
 </details>
 
@@ -1181,26 +1181,26 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize | **2.5 ms** | 1.9 ms | 0.4 ms | 18.5% ⚠ | 1.00x | n/a | n/a |
-| Volar (JS) | **6.3 ms** | 6.1 ms | 0.3 ms | 5.0% | 2.47x | n/a | n/a |
-| Volar (N) ⚠ | (5.7 ms) | (5.2 ms) | – | – | not ranked | – | – |
+| Vize | **2.0 ms** | 1.8 ms | 0.3 ms | 16.0% ⚠ | 1.00x | n/a | n/a |
+| Volar (JS) | **5.5 ms** | 4.3 ms | 1.6 ms | 27.4% ⚠ | 2.77x | n/a | n/a |
+| Volar (N) ⚠ | (5.0 ms) | (4.4 ms) | – | – | not ranked | – | – |
 | Verter ⚠ | (0.3 ms) | (0.3 ms) | – | – | not ranked | – | – |
 
 <details><summary>Notes</summary>
 
 - **Vize**: content verified | engine: tsgo (bundled)
 - **Volar (JS)**: content verified | engine: TypeScript ? (JS)
-- **Volar (N) ⚠**: content verified | engine: tsgo ? via TNB ? | ⚠ TOO NOISY TO RANK — CV 65.4% (ceiling 50%). The median of a series this unstable is a draw from noise, not a result; the time is bracketed and excluded from ranking exactly like a failed gate. Raw runs below.
+- **Volar (N) ⚠**: content verified | engine: tsgo ? via TNB ? | ⚠ TOO NOISY TO RANK — CV 53.1% (ceiling 50%). The median of a series this unstable is a draw from noise, not a result; the time is bracketed and excluded from ranking exactly like a failed gate. Raw runs below.
 - **Verter ⚠**: ⚠ FAILED VALIDATION — prepareRename returned null — server declines to rename at this position | Sample: "null" | engine: tsgo ? (none)
 
 </details>
 
 <details><summary>Raw runs</summary>
 
-- **Vize**: 2.5 ms, 1.9 ms, 2.7 ms
-- **Volar (JS)**: 6.3 ms, 6.7 ms, 6.1 ms
-- **Volar (N)**: 5.2 ms, 5.7 ms, 15.5 ms
-- **Verter**: 1.9 ms, 0.3 ms, 0.3 ms
+- **Vize**: 2.5 ms, 2.0 ms, 1.8 ms
+- **Volar (JS)**: 7.4 ms, 4.3 ms, 5.5 ms
+- **Volar (N)**: 4.4 ms, 5.0 ms, 10.9 ms
+- **Verter**: 0.3 ms, 0.3 ms, 0.4 ms
 
 </details>
 
@@ -1213,26 +1213,26 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (N) | **4.1 ms** | 3.9 ms | 0.5 ms | 11.4% ⚠ | 1.00x | 4 | n/a |
-| Volar (JS) | **4.3 ms** | 4.3 ms | 0.0 ms | 1.0% | 1.06x | 4 | n/a |
-| Vize ⚠ | (6.7 ms) | (6.7 ms) | – | – | not ranked | (2) | – |
-| Verter ⚠ | (1.4 ms) | (1.4 ms) | – | – | not ranked | (3) | – |
+| Volar (JS) | **3.4 ms** | 3.2 ms | 0.1 ms | 3.4% | 1.00x | 4 | n/a |
+| Volar (N) | **3.7 ms** | 3.7 ms | 0.0 ms | 0.8% | 1.09x | 4 | n/a |
+| Vize ⚠ | (36.4 ms) | (6.1 ms) | – | – | not ranked | (3) | – |
+| Verter ⚠ | (1.3 ms) | (1.1 ms) | – | – | not ranked | (3) | – |
 
 <details><summary>Notes</summary>
 
-- **Volar (N)**: content verified | engine: tsgo ? via TNB ?
 - **Volar (JS)**: content verified | engine: TypeScript ? (JS)
-- **Vize ⚠**: ⚠ FAILED VALIDATION — BROKEN REFACTOR: edited childcard.vue:2 but produced no edit in Parent.vue — the template usage is left behind | Sample: "childcard.vue:2 :: []" | engine: tsgo (bundled)
+- **Volar (N)**: content verified | engine: tsgo ? via TNB ?
+- **Vize ⚠**: content verified | engine: tsgo (bundled) | ⚠ TOO NOISY TO RANK — CV 80.9% (ceiling 50%). The median of a series this unstable is a draw from noise, not a result; the time is bracketed and excluded from ranking exactly like a failed gate. Raw runs below.
 - **Verter ⚠**: ⚠ FAILED VALIDATION — BROKEN REFACTOR: edited childcard.vue:3 but produced no edit in Parent.vue — the template usage is left behind | Sample: "childcard.vue:3 :: []" | engine: tsgo ? (none)
 
 </details>
 
 <details><summary>Raw runs</summary>
 
-- **Volar (N)**: 4.1 ms, 3.9 ms, 4.8 ms
-- **Volar (JS)**: 4.3 ms, 4.4 ms, 4.3 ms
-- **Vize**: 6.7 ms, 7.1 ms, 6.7 ms
-- **Verter**: 2.8 ms, 1.4 ms, 1.4 ms
+- **Volar (JS)**: 3.5 ms, 3.4 ms, 3.2 ms
+- **Volar (N)**: 3.7 ms, 3.7 ms, 3.7 ms
+- **Vize**: 6.1 ms, 36.4 ms, 63.1 ms
+- **Verter**: 1.3 ms, 1.3 ms, 1.1 ms
 
 </details>
 
@@ -1245,10 +1245,10 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (JS) | **37.4 ms** | 33.2 ms | 2.5 ms | 7.0% | 1.00x | 2 | n/a |
-| Volar (N) | **703.4 ms** | 695.5 ms | 11.2 ms | 1.6% | 18.79x | 2 | n/a |
-| Vize ⚠ | (0.5 ms) | (0.5 ms) | – | – | not ranked | (0) | – |
-| Verter ⚠ | (0.7 ms) | (0.7 ms) | – | – | not ranked | (0) | – |
+| Volar (JS) | **26.2 ms** | 25.2 ms | 0.7 ms | 2.6% | 1.00x | 2 | n/a |
+| Volar (N) | **560.2 ms** | 545.4 ms | 13.1 ms | 2.3% | 21.35x | 2 | n/a |
+| Vize ⚠ | (0.4 ms) | (0.4 ms) | – | – | not ranked | (0) | – |
+| Verter ⚠ | (0.7 ms) | (0.5 ms) | – | – | not ranked | (0) | – |
 
 <details><summary>Notes</summary>
 
@@ -1261,10 +1261,10 @@ Tools:
 
 <details><summary>Raw runs</summary>
 
-- **Volar (JS)**: 37.4 ms, 33.2 ms, 37.6 ms
-- **Volar (N)**: 695.5 ms, 703.4 ms, 717.6 ms
-- **Vize**: 0.5 ms, 0.5 ms, 0.6 ms
-- **Verter**: 0.8 ms, 0.7 ms, 0.7 ms
+- **Volar (JS)**: 25.2 ms, 26.2 ms, 26.5 ms
+- **Volar (N)**: 560.2 ms, 545.4 ms, 571.4 ms
+- **Vize**: 0.4 ms, 0.4 ms, 0.4 ms
+- **Verter**: 0.7 ms, 0.7 ms, 0.5 ms
 
 </details>
 
@@ -1277,10 +1277,10 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (JS) | **20.3 ms** | 18.7 ms | 1.0 ms | 4.9% | 1.00x | 1 | n/a |
-| Volar (N) | **25.6 ms** | 23.7 ms | 2.6 ms | 10.2% ⚠ | 1.26x | 1 | n/a |
-| Vize | **140.2 ms** | 136.7 ms | 5.3 ms | 3.7% | 6.91x | 1 | n/a |
-| Verter ⚠ | (6.9 ms) | (4.9 ms) | – | – | not ranked | (0) | – |
+| Volar (JS) | **15.4 ms** | 15.0 ms | 0.4 ms | 2.6% | 1.00x | 1 | n/a |
+| Volar (N) | **24.1 ms** | 21.2 ms | 2.2 ms | 9.2% | 1.56x | 1 | n/a |
+| Vize | **113.7 ms** | 112.3 ms | 2.0 ms | 1.8% | 7.37x | 1 | n/a |
+| Verter ⚠ | (4.3 ms) | (3.4 ms) | – | – | not ranked | (0) | – |
 
 <details><summary>Notes</summary>
 
@@ -1293,10 +1293,10 @@ Tools:
 
 <details><summary>Raw runs</summary>
 
-- **Volar (JS)**: 18.7 ms, 20.3 ms, 20.5 ms
-- **Volar (N)**: 28.9 ms, 23.7 ms, 25.6 ms
-- **Vize**: 136.7 ms, 147.0 ms, 140.2 ms
-- **Verter**: 7.1 ms, 4.9 ms, 6.9 ms
+- **Volar (JS)**: 15.0 ms, 15.7 ms, 15.4 ms
+- **Volar (N)**: 21.2 ms, 25.5 ms, 24.1 ms
+- **Vize**: 116.2 ms, 112.3 ms, 113.7 ms
+- **Verter**: 4.9 ms, 3.4 ms, 4.3 ms
 
 </details>
 
@@ -1309,10 +1309,10 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize | **0.6 ms** | 0.6 ms | 0.0 ms | 6.1% | 1.00x | 1 | n/a |
-| Volar (JS) | **63.3 ms** | 63.2 ms | 2.5 ms | 3.9% | 98.33x | 1 | n/a |
-| Volar (N) | **127.9 ms** | 117.0 ms | 17.6 ms | 13.3% ⚠ | 198.52x | 1 | n/a |
-| Verter ⚠ | (0.2 ms) | (0.2 ms) | – | – | not ranked | (0) | – |
+| Vize | **0.4 ms** | 0.4 ms | 0.0 ms | 8.3% | 1.00x | 1 | n/a |
+| Volar (JS) | **47.9 ms** | 47.6 ms | 2.8 ms | 5.6% | 126.84x | 1 | n/a |
+| Volar (N) | **94.8 ms** | 85.3 ms | 7.7 ms | 8.2% | 250.96x | 1 | n/a |
+| Verter ⚠ | (0.3 ms) | (0.2 ms) | – | – | not ranked | (0) | – |
 
 <details><summary>Notes</summary>
 
@@ -1325,10 +1325,10 @@ Tools:
 
 <details><summary>Raw runs</summary>
 
-- **Vize**: 0.6 ms, 0.6 ms, 0.7 ms
-- **Volar (JS)**: 63.3 ms, 67.7 ms, 63.2 ms
-- **Volar (N)**: 151.4 ms, 127.9 ms, 117.0 ms
-- **Verter**: 0.4 ms, 0.2 ms, 0.2 ms
+- **Vize**: 0.4 ms, 0.4 ms, 0.4 ms
+- **Volar (JS)**: 47.6 ms, 52.5 ms, 47.9 ms
+- **Volar (N)**: 100.5 ms, 85.3 ms, 94.8 ms
+- **Verter**: 0.3 ms, 0.3 ms, 0.2 ms
 
 </details>
 
@@ -1336,10 +1336,10 @@ Tools:
 
 | Tool | Tool | tsgo / tsserver | **Total** |
 | --- | ---: | ---: | ---: |
-| Verter | 126.6 MB | 127.1 MB | **253.7 MB** |
-| Vize | 151.2 MB | 227.5 MB | **378.6 MB** |
-| Volar (JS) | 292.9 MB | 255.9 MB | **548.8 MB** |
-| Volar (N) | 304.6 MB | 524.1 MB | **828.7 MB** |
+| Verter | 125.1 MB | 137.3 MB | **262.4 MB** |
+| Vize | 76.5 MB | 265.6 MB | **342.1 MB** |
+| Volar (JS) | 293.3 MB | 254.4 MB | **547.6 MB** |
+| Volar (N) | 301.3 MB | 536.3 MB | **837.6 MB** |
 
 Engine is a **child** `tsgo` / sibling `tsserver` process — the same attribution the typecheck surface uses. `—` = the server hosts its checker in-process.
 
@@ -1376,26 +1376,26 @@ Tools:
 
 | Tool | **Cold** | vs fastest cold | **Warm** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize | **231.7 ms** | 1.00x | **25.9 ms** | 25.3 ms | 5.4 ms | 18.9% ⚠ | 1.00x | 89 | n/a |
-| Volar (JS) ⚠ | (1.11 s) | not ranked | (173.3 ms) | (4.1 ms) | – | – | not ranked | (90) | – |
-| Volar (N) ⚠ | (504.3 ms) | not ranked | (23.7 ms) | (2.8 ms) | – | – | not ranked | (90) | – |
-| Verter ⚠ | (262.9 ms) | not ranked | (1.6 ms) | (0.8 ms) | – | – | not ranked | (89) | – |
+| Vize | **214.5 ms** | 1.00x | **1.9 ms** | 1.9 ms | 0.1 ms | 6.3% | 1.00x | 89 | n/a |
+| Volar (N) | **381.6 ms** | 1.78x | **18.9 ms** | 18.2 ms | 0.6 ms | 3.1% | 9.93x | 90 | n/a |
+| Volar (JS) | **866.0 ms** | 4.04x | **142.3 ms** | 136.5 ms | 3.4 ms | 2.4% | 74.84x | 90 | n/a |
+| Verter ⚠ | (197.4 ms) | not ranked | (27.6 ms) | (0.7 ms) | – | – | not ranked | (89) | – |
 
 <details><summary>Notes</summary>
 
 - **Vize**: content verified | engine: tsgo (bundled)
-- **Volar (JS) ⚠**: content verified | engine: TypeScript ? (JS) | ⚠ TOO NOISY TO RANK — CV 83.7% (ceiling 50%). The median of a series this unstable is a draw from noise, not a result; the time is bracketed and excluded from ranking exactly like a failed gate. Raw runs below.
-- **Volar (N) ⚠**: content verified | engine: tsgo ? via TNB ? | ⚠ TOO NOISY TO RANK — CV 72.2% (ceiling 50%). The median of a series this unstable is a draw from noise, not a result; the time is bracketed and excluded from ranking exactly like a failed gate. Raw runs below.
-- **Verter ⚠**: content verified | engine: tsgo ? (none) | ⚠ TOO NOISY TO RANK — CV 149.0% (ceiling 50%). The median of a series this unstable is a draw from noise, not a result; the time is bracketed and excluded from ranking exactly like a failed gate. Raw runs below.
+- **Volar (N)**: content verified | engine: tsgo ? via TNB ?
+- **Volar (JS)**: content verified | engine: TypeScript ? (JS)
+- **Verter ⚠**: content verified | engine: tsgo ? (none) | ⚠ TOO NOISY TO RANK — CV 88.7% (ceiling 50%). The median of a series this unstable is a draw from noise, not a result; the time is bracketed and excluded from ranking exactly like a failed gate. Raw runs below.
 
 </details>
 
 <details><summary>Raw runs</summary>
 
-- **Vize**: 25.9 ms, 25.3 ms, 35.0 ms
-- **Volar (JS)**: 181.2 ms, 173.3 ms, 4.1 ms
-- **Volar (N)**: 23.7 ms, 23.7 ms, 2.8 ms
-- **Verter**: 0.8 ms, 23.2 ms, 1.6 ms
+- **Vize**: 1.9 ms, 1.9 ms, 2.1 ms
+- **Volar (N)**: 18.2 ms, 18.9 ms, 19.4 ms
+- **Volar (JS)**: 142.4 ms, 136.5 ms, 142.3 ms
+- **Verter**: 0.7 ms, 40.9 ms, 27.6 ms
 
 </details>
 
@@ -1408,26 +1408,26 @@ Tools:
 
 | Tool | **Cold** | vs fastest cold | **Warm** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize | **234.5 ms** | 1.00x | **21.1 ms** | 21.0 ms | 0.5 ms | 2.3% | 10.61x | 38 | n/a |
-| Verter | **241.3 ms** | 1.03x | **2.0 ms** | 0.9 ms | 0.9 ms | 47.9% ⚠ | 1.00x | 74 | n/a |
-| Volar (N) | **499.1 ms** | 2.13x | **19.9 ms** | 19.1 ms | 1.6 ms | 8.0% | 9.97x | 43 | n/a |
-| Volar (JS) ⚠ | (1.17 s) | not ranked | (8.7 ms) | (4.9 ms) | – | – | not ranked | (43) | – |
+| Vize | **200.7 ms** | 1.00x | **1.8 ms** | 1.8 ms | 0.0 ms | 1.8% | 1.00x | 38 | n/a |
+| Volar (N) | **389.5 ms** | 1.94x | **16.7 ms** | 14.8 ms | 2.0 ms | 11.9% ⚠ | 9.06x | 43 | n/a |
+| Volar (JS) ⚠ | (895.4 ms) | not ranked | (119.9 ms) | (5.9 ms) | – | – | not ranked | (43) | – |
+| Verter ⚠ | (162.0 ms) | not ranked | (8.3 ms) | (0.6 ms) | – | – | not ranked | (74) | – |
 
 <details><summary>Notes</summary>
 
 - **Vize**: content verified | engine: tsgo (bundled)
-- **Verter**: content verified | engine: tsgo ? (none)
 - **Volar (N)**: content verified | engine: tsgo ? via TNB ?
-- **Volar (JS) ⚠**: content verified | engine: TypeScript ? (JS) | ⚠ TOO NOISY TO RANK — CV 151.2% (ceiling 50%). The median of a series this unstable is a draw from noise, not a result; the time is bracketed and excluded from ranking exactly like a failed gate. Raw runs below.
+- **Volar (JS) ⚠**: content verified | engine: TypeScript ? (JS) | ⚠ TOO NOISY TO RANK — CV 82.2% (ceiling 50%). The median of a series this unstable is a draw from noise, not a result; the time is bracketed and excluded from ranking exactly like a failed gate. Raw runs below.
+- **Verter ⚠**: content verified | engine: tsgo ? (none) | ⚠ TOO NOISY TO RANK — CV 113.4% (ceiling 50%). The median of a series this unstable is a draw from noise, not a result; the time is bracketed and excluded from ranking exactly like a failed gate. Raw runs below.
 
 </details>
 
 <details><summary>Raw runs</summary>
 
-- **Vize**: 21.9 ms, 21.1 ms, 21.0 ms
-- **Verter**: 2.0 ms, 2.6 ms, 0.9 ms
-- **Volar (N)**: 22.2 ms, 19.9 ms, 19.1 ms
-- **Volar (JS)**: 4.9 ms, 8.7 ms, 146.1 ms
+- **Vize**: 1.8 ms, 1.8 ms, 1.9 ms
+- **Volar (N)**: 18.8 ms, 14.8 ms, 16.7 ms
+- **Volar (JS)**: 119.9 ms, 5.9 ms, 145.5 ms
+- **Verter**: 26.7 ms, 0.6 ms, 8.3 ms
 
 </details>
 
@@ -1435,10 +1435,10 @@ Tools:
 
 | Tool | Tool | tsgo / tsserver | **Total** |
 | --- | ---: | ---: | ---: |
-| Verter | 84.3 MB | 98.3 MB | **182.5 MB** |
-| Vize | 72.8 MB | 189.3 MB | **262.1 MB** |
-| Volar (JS) | 275.6 MB | 248.4 MB | **524.0 MB** |
-| Volar (N) | 288.4 MB | 332.2 MB | **620.6 MB** |
+| Verter | 80.0 MB | 100.0 MB | **180.0 MB** |
+| Vize | 72.9 MB | 170.8 MB | **243.7 MB** |
+| Volar (JS) | 276.1 MB | 248.6 MB | **524.6 MB** |
+| Volar (N) | 287.7 MB | 337.4 MB | **625.1 MB** |
 
 Engine is a **child** `tsgo` / sibling `tsserver` process — the same attribution the typecheck surface uses. `—` = the server hosts its checker in-process.
 
@@ -1473,17 +1473,17 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize | **176.2 ms** | 176.2 ms | n/a | n/a | 1.00x | n/a | n/a |
-| Volar (JS) | **485.3 ms** | 485.3 ms | n/a | n/a | 2.75x | n/a | n/a |
-| Volar (N) | **496.9 ms** | 496.9 ms | n/a | n/a | 2.82x | n/a | n/a |
-| Verter | **607.7 ms** | 607.7 ms | n/a | n/a | 3.45x | n/a | n/a |
+| Vize | **105.9 ms** | 105.9 ms | n/a | n/a | 1.00x | n/a | n/a |
+| Volar (JS) | **419.7 ms** | 419.7 ms | n/a | n/a | 3.96x | n/a | n/a |
+| Volar (N) | **479.8 ms** | 479.8 ms | n/a | n/a | 4.53x | n/a | n/a |
+| Verter | **833.6 ms** | 833.6 ms | n/a | n/a | 7.87x | n/a | n/a |
 
 <details><summary>Notes</summary>
 
-- **Vize**: all components verified · edit → diagnostic=75ms · hover after edit=55ms · completion=46ms
-- **Volar (JS)**: all components verified · edit → diagnostic=404ms · hover after edit=54ms · completion=27ms
-- **Volar (N)**: all components verified · edit → diagnostic=458ms · hover after edit=18ms · completion=21ms
-- **Verter**: all components verified · edit → diagnostic=499ms · hover after edit=82ms · completion=27ms
+- **Vize**: all components verified · edit → diagnostic=62ms · hover after edit=44ms · completion=0ms
+- **Volar (JS)**: all components verified · edit → diagnostic=354ms · hover after edit=43ms · completion=22ms
+- **Volar (N)**: all components verified · edit → diagnostic=447ms · hover after edit=16ms · completion=17ms
+- **Verter**: all components verified · edit → diagnostic=697ms · hover after edit=133ms · completion=3ms
 
 </details>
 
@@ -1505,28 +1505,28 @@ Operation latency as the workspace grows — one table, one column per workspace
 
 | Operation | Tool | @20 files | @100 files | @500 files | growth | Peak RSS |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| **Time-to-usable** | Verter LSP (npm 0.0.1-beta.3) | 223 ms | 251 ms | 244 ms | ×1.19 | 45.1 MB |
-|  | Vize LSP (Node shim) | 343 ms | 340 ms | 345 ms | ×1 | 63.4 MB |
-|  | Volar (TNB / tsgo tsdk) | 1.12 s | 1.27 s | 1.97 s | ×1.75 | 268.5 + 138.7 = 407.3 MB |
-|  | Volar (@vue/language-server) | 1.77 s | 1.93 s | 2.86 s | ×1.62 | 253.4 + 76.0 = 329.4 MB |
-| **Completion** | Vize LSP (Node shim) | 0.4 ms | 0.4 ms | 0.5 ms | ×1.22 | 63.4 MB |
-|  | Verter LSP (npm 0.0.1-beta.3) | 160 ms | 200 ms | 192 ms | ×0.6 | 45.1 MB |
-|  | Volar (TNB / tsgo tsdk) | 166 ms | 186 ms | 235 ms | ×1.43 | 268.5 + 138.7 = 407.3 MB |
-|  | Volar (@vue/language-server) | 197 ms | 204 ms | 236 ms | ×1.16 | 253.4 + 76.0 = 329.4 MB |
-| **References** | Volar (TNB / tsgo tsdk) | 163 ms | 687 ms | 11.3 s | ×73.38 | 268.5 + 138.7 = 407.3 MB |
-|  | Volar (@vue/language-server) | 285 ms | 1.03 s | 14.7 s | ×51.05 | 253.4 + 76.0 = 329.4 MB |
-|  | Vize LSP (Node shim) | (23.0 ms) ⚠ | (24.9 ms) ⚠ | (29.8 ms) ⚠ | – | 63.4 MB |
-|  | Verter LSP (npm 0.0.1-beta.3) | (37.0 ms) ⚠ | (32.8 ms) ⚠ | (38.4 ms) ⚠ | – | 45.1 MB |
-| **Hover warm** | Verter LSP (npm 0.0.1-beta.3) | 0.6 ms | 0.8 ms | 0.7 ms | ×0.94 | 45.1 MB |
-|  | Volar (@vue/language-server) | 1.5 ms | 2.4 ms | 1.3 ms | ×0.9 | 253.4 + 76.0 = 329.4 MB |
-|  | Vize LSP (Node shim) | 2.0 ms | 2.0 ms | 2.0 ms | ×1.03 | 63.4 MB |
-|  | Volar (TNB / tsgo tsdk) | 1.4 ms | 1.8 ms | 3.4 ms | ×2.24 | 268.5 + 138.7 = 407.3 MB |
+| **Time-to-usable** | Verter LSP (npm 0.0.1-beta.3) | 226 ms | 281 ms | 300 ms | ×1.6 | 46.0 MB |
+|  | Vize LSP (Node shim) | 577 ms | 588 ms | 595 ms | ×1.03 | 63.6 MB |
+|  | Volar (TNB / tsgo tsdk) | 1.19 s | 1.38 s | 2.09 s | ×1.73 | 268.9 + 137.3 = 406.2 MB |
+|  | Volar (@vue/language-server) | 1.93 s | 2.08 s | 3.09 s | ×1.58 | 253.5 + 76.5 = 330.0 MB |
+| **Completion** | Vize LSP (Node shim) | 0.4 ms | 0.4 ms | 0.4 ms | ×1.31 | 63.6 MB |
+|  | Verter LSP (npm 0.0.1-beta.3) | 156 ms | 179 ms | 177 ms | ×1.13 | 46.0 MB |
+|  | Volar (TNB / tsgo tsdk) | 182 ms | 190 ms | 251 ms | ×1.38 | 268.9 + 137.3 = 406.2 MB |
+|  | Volar (@vue/language-server) | 215 ms | 194 ms | 275 ms | ×1.31 | 253.5 + 76.5 = 330.0 MB |
+| **References** | Volar (TNB / tsgo tsdk) | 165 ms | 681 ms | 10.8 s | ×65.69 | 268.9 + 137.3 = 406.2 MB |
+|  | Volar (@vue/language-server) | 451 ms | 1.05 s | 15.1 s | ×33.55 | 253.5 + 76.5 = 330.0 MB |
+|  | Vize LSP (Node shim) | 424 ms | (3.20 s) ⚠ | (16.4 s) ⚠ | – | 63.6 MB |
+|  | Verter LSP (npm 0.0.1-beta.3) | (29.4 ms) ⚠ | (39.7 ms) ⚠ | (37.1 ms) ⚠ | – | 46.0 MB |
+| **Hover warm** | Verter LSP (npm 0.0.1-beta.3) | 0.7 ms | 0.9 ms | 1.1 ms | ×1.57 | 46.0 MB |
+|  | Volar (@vue/language-server) | 1.4 ms | 2.1 ms | 1.5 ms | ×1.1 | 253.5 + 76.5 = 330.0 MB |
+|  | Volar (TNB / tsgo tsdk) | 1.6 ms | 1.9 ms | 4.5 ms | ×2.76 | 268.9 + 137.3 = 406.2 MB |
+|  | Vize LSP (Node shim) | 3.0 ms | 5.5 ms | (1.1 ms) ⚠ | – | 63.6 MB |
 
 ## Validation (plants)
 
 Executable correctness checks — planted errors that must be reported, clean fixtures that must stay clean. A fast tool that misses plants cannot rank as a correct one; gate failures surface as ⚠ in the timing tables.
 
-pass **19** · fail **8** · warn **0** · skip **0**
+pass **22** · fail **5** · warn **0** · skip **0**
 
 | Case | volar | vize | verter |
 | --- | :---: | :---: | :---: |
@@ -1536,18 +1536,15 @@ pass **19** · fail **8** · warn **0** · skip **0**
 | `diagnostics-clear-after-fix` | ✓ | **✗** | ✓ |
 | `diagnostics-template` | ✓ | **✗** | ✓ |
 | `document-symbol-structure` | ✓ | **✗** | ✓ |
-| `hover-template-binding` | ✓ | ✓ | **✗** |
-| `references-prop-template` | ✓ | **✗** | **✗** |
-| `rename-prop-template` | ✓ | **✗** | **✗** |
+| `hover-template-binding` | ✓ | ✓ | ✓ |
+| `references-prop-template` | ✓ | ✓ | **✗** |
+| `rename-prop-template` | ✓ | ✓ | **✗** |
 
 <details><summary>Failure detail</summary>
 
 - `document-symbol-structure` · **vize** — documentSymbol never names greeting — saw: template, script setup
-- `references-prop-template` · **vize** — references missing App.vue — only found child.vue
-- `rename-prop-template` · **vize** — BROKEN REFACTOR: edited child.vue:2 but produced no edit in App.vue — the template usage is left behind
 - `diagnostics-template` · **vize** — no diagnostic mentioning plantedBadProp within 20000ms — no diagnostics published
 - `diagnostics-clear-after-fix` · **vize** — cannot confirm clear: planted plantedBadProp never appeared
-- `hover-template-binding` · **verter** — empty hover payload at {{ greeting }}
 - `references-prop-template` · **verter** — references missing App.vue — only found child.vue
 - `rename-prop-template` · **verter** — BROKEN REFACTOR: edited child.vue:2 but produced no edit in App.vue — the template usage is left behind
 
@@ -1561,9 +1558,9 @@ Each tool in its own process so RSS, allocation proxies and CPU are not mixed wi
 
 | Tool | RSS min / max / avg | Alloc min / max / avg | CPU ms | CPU % | Wall ms | Samples |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| LSP verter (server process, npm 0.0.1-beta.3) | 100.50 / 221.05 / 100.50 | 1.12 / 2.74 / 1.71 | 60 | 14.2 | 682 | 3 |
-| LSP vize (server process, Node shim) | 196.74 / 280.02 / 196.74 | 0.87 / 1.78 / 1.27 | 90 | 13.1 | 495 | 3 |
-| LSP Volar — Vue server process only (TypeScript half not sampled) | 395.37 / 535.04 / 395.37 | 0.93 / 2.69 / 1.74 | 760 | 10.4 | 1935 | 3 |
+| LSP verter (server process, npm 0.0.1-beta.3) | 98.33 / 219.58 / 98.33 | 1.13 / 2.80 / 1.66 | 40 | 14.1 | 583 | 3 |
+| LSP vize (server process, Node shim) | 167.17 / 253.36 / 167.17 | 0.88 / 1.73 / 1.25 | 80 | 13.2 | 423 | 3 |
+| LSP Volar — Vue server process only (TypeScript half not sampled) | 395.57 / 536.12 / 395.57 | 0.92 / 2.65 / 1.72 | 760 | 10.3 | 1917 | 3 |
 
 <details><summary>Notes</summary>
 
@@ -1584,8 +1581,8 @@ Each tool in its own process so RSS, allocation proxies and CPU are not mixed wi
 | vue-36 | 3.6.0-rc.4 |
 | @vue/compiler-sfc | 3.5.41 |
 | @vue/compiler-sfc-36 | 3.6.0-rc.4 |
-| vize | 0.350.2 |
-| @vizejs/native | 0.350.2 |
+| vize | 0.354.0 |
+| @vizejs/native | 0.354.0 |
 | @verter/native | 0.0.1-beta.3 |
 | @fervid/napi | 0.4.1 |
 | verter-tsc | 0.0.1-beta.3 |
@@ -1605,7 +1602,7 @@ Each tool in its own process so RSS, allocation proxies and CPU are not mixed wi
 | eslint-plugin-vue | 10.10.0 |
 | @biomejs/biome | 2.5.9 |
 | typescript | 6.0.3 |
-| cli:vize | 0.350.2 |
+| cli:vize | 0.354.0 |
 | cli:vue-tsc | 6.0.3 |
 | cli:verter-tsc | 0.0.1-beta.3 |
 | cli:golar | 0.1.10 |
