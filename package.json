@@ -87,8 +87,8 @@
     "@vue/babel-plugin-jsx": "3.0.0",
     "@vue/compiler-sfc": "3.5.41",
     "@vue/compiler-sfc-36": "npm:@vue/compiler-sfc@3.6.0-rc.4",
-    "@vue/language-server": "3.3.10",
-    "@vue/typescript-plugin": "3.3.10",
+    "@vue/language-server": "3.3.11",
+    "@vue/typescript-plugin": "3.3.11",
     "eslint": "10.8.1",
     "eslint-plugin-vue": "10.10.0",
     "golar": "0.1.10",
@@ -103,9 +103,9 @@
     "vize": "0.354.0",
     "vue": "3.5.41",
     "vue-36": "npm:vue@3.6.0-rc.4",
-    "vue-component-meta": "3.3.10",
+    "vue-component-meta": "3.3.11",
     "vue-jsx-vapor": "3.2.21",
-    "vue-tsc": "3.3.10"
+    "vue-tsc": "3.3.11"
   },
   "devDependencies": {
     "@rspack/core": "2.1.10",
