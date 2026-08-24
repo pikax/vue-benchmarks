@@ -96,7 +96,7 @@
     "oxfmt": "0.64.0",
     "oxlint": "1.79.0",
     "prettier": "3.9.6",
-    "typescript-language-server": "5.3.0",
+    "typescript-language-server": "6.0.0",
     "verter-lsp": "0.0.1-beta.3",
     "verter-mcp": "0.0.1-beta.3",
     "verter-tsc": "0.0.1-beta.3",
