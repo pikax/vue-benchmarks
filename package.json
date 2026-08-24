@@ -114,7 +114,7 @@
     "@verter/unplugin": "0.0.1-beta.3",
     "@vitejs/plugin-vue": "6.0.8",
     "@vizejs/rspack-plugin": "0.354.0",
-    "@vizejs/vite-plugin": "0.354.0",
+    "@vizejs/vite-plugin": "0.357.0",
     "@vue/test-utils": "2.4.11",
     "jsdom": "30.0.1",
     "rolldown": "1.2.5",
