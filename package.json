@@ -89,7 +89,7 @@
     "@vue/compiler-sfc-36": "npm:@vue/compiler-sfc@3.6.0-rc.4",
     "@vue/language-server": "3.3.10",
     "@vue/typescript-plugin": "3.3.10",
-    "eslint": "10.8.1",
+    "eslint": "10.9.0",
     "eslint-plugin-vue": "10.10.0",
     "golar": "0.1.10",
     "mocha": "11.8.0",
