@@ -640,8 +640,10 @@ async function runServerCases(suite, server, ws) {
       const text = contentText(hover);
       const typed = hoverMentionsType(text);
       // Corsa-down is a degraded backend, not a hover-content bug. Linux CI
-      // reaches Corsa and 0.350.2 now answers with a type; Windows often
-      // publishes "Type checking is unavailable" and the generic binding prose.
+      // reaches Corsa and typed hovers; Windows often publishes
+      // "Type checking is unavailable" and the generic binding prose. vize
+      // 0.387 can also emit that prose with Corsa up — that is a content
+      // miss, allowlisted in known-failures.json.
       if (!typed) {
         const until = performance.now() + 2_000;
         while (

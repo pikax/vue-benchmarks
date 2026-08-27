@@ -338,13 +338,13 @@ The harness sets `VERTER_TSGO_BIN` to the platform native binary (`tsc.exe` / `t
 | Tool     | Package          | Notes                                                                                         |
 | -------- | ---------------- | --------------------------------------------------------------------------------------------- |
 | Prettier | `prettier`       | Built-in Vue SFC support                                                                      |
-| Oxfmt    | `oxfmt`          | 0.64.0 hybrid: native orchestration, bundled Prettier `formatFile(parser=vue)` for whole SFCs |
+| Oxfmt    | `oxfmt`          | 0.65.0 hybrid: native orchestration, bundled Prettier `formatFile(parser=vue)` for whole SFCs |
 | Vize     | `vize`           | `vize fmt --write`                                                                            |
 | Biome    | `@biomejs/biome` | `biome format --write`; exact pinned row rewrites no planted `.vue` files; unranked           |
 
 Each format run uses a **fresh copy** of the corpus (write is destructive).
 
-The pinned oxfmt 0.64.0 package was re-audited from its shipped code: the native
+The pinned oxfmt 0.65.0 package was re-audited from its shipped code: the native
 binding receives callback functions from `dist/index.js` / `dist/cli-worker.js`,
 and a whole `.vue` file reaches `formatFile` in `dist/apis-*.js`, which calls the
 bundled Prettier formatter with `parser=vue`. Worker scheduling and native

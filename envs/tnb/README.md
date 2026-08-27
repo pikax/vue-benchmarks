@@ -47,8 +47,8 @@ so the root `node_modules` is untouched. Engine selection is **bin-relative**:
 from `cwd`, so invoking this directory's binary against a fixture elsewhere
 still uses TNB. Verified, not assumed.
 
-Versions are pinned to match the root install exactly (`vue-tsc@3.3.10`,
-`vue@3.5.41`). If you bump one, bump both — otherwise the comparison silently
+Versions are pinned to match the root install exactly (`vue-tsc@3.3.11`,
+`vue@3.5.42`). If you bump one, bump both — otherwise the comparison silently
 acquires a second variable.
 
 ## Install

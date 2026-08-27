@@ -175,7 +175,7 @@ declare module '*.vue' {
         type: "module",
         name: "vue-bench-lsp-workspace",
         dependencies: {
-          vue: "3.5.40",
+          vue: "3.5.42",
         },
       },
       null,

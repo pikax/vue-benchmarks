@@ -53,7 +53,7 @@ test("Vapor validity executes against the exact pinned Vue 3.6 runtime", () => {
   assert.equal(result.unknown, 0);
   assert.equal(result.plantCount, COMPILE_VALIDITY_PLANTS.length);
   assert.ok(result.results.every((plant) => ["PASS", "FAIL"].includes(plant.status)));
-  assert.equal(result.entrypointMetadata.vaporRuntime.version, "3.6.0-rc.4");
+  assert.equal(result.entrypointMetadata.vaporRuntime.version, "3.6.0-rc.5");
   assert.equal(
     result.entrypointMetadata.vaporRuntime.compilerVersion,
     result.entrypointMetadata.vaporRuntime.version,
