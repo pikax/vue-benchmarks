@@ -66,7 +66,25 @@ export function parseDiagnostics(text) {
     }
 
     const asPath = t.replace(/\\/g, "/");
-    if (/\.(vue|ts|tsx|js|mts|cts)$/i.test(asPath)) lastFile = asPath;
+    if (/\.(vue|ts|tsx|js|mts|cts)$/i.test(asPath)) {
+      lastFile = asPath;
+      continue;
+    }
+
+    // Pretty-print related info belongs to the previous diagnostic. vue-tsc
+    // indents `Property 'title' is missing…`; vize prints the same sentence
+    // unindented on the next line, hiding the prop name behind
+    // `__VizeComponentCheckProps` on the header. Dropping it made the pin
+    // gate fail plants whose first line never mentioned `title`.
+    if (
+      out.length &&
+      !/^\d+\s+error/i.test(t) &&
+      !/^Found\s+\d+/i.test(t)
+    ) {
+      const prev = out[out.length - 1];
+      prev.message = `${prev.message} ${t}`;
+      prev.raw = `${prev.raw}\n${t}`;
+    }
   }
   return out;
 }

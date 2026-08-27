@@ -298,6 +298,25 @@ describe("scoreDiagnostics oracle", () => {
     assert.match(d[0].file, /App\.vue$/);
   });
 
+  test("parseDiagnostics keeps vize related-info that names the missing prop", () => {
+    const d = parseDiagnostics(
+      [
+        "/work/cases/missing-required-prop/App.vue",
+        "  error:7:4 [TS2345] Argument of type '{}' is not assignable to parameter of type '__VizeComponentCheckProps<Props, __VizePublicComponentAttrs>'.",
+        "Property 'title' is missing in type '{}' but required in type '{ readonly title: string; }'. (source: <Child />)",
+        "",
+        "/work/cases/native-keyup-bad/App.vue",
+        "  error:9:18 [TS2345] Argument of type '(e: MouseEvent) => void' is not assignable.",
+      ].join("\n"),
+    );
+    assert.equal(d.length, 2);
+    assert.match(d[0].message, /title/);
+    assert.match(d[0].message, /missing/);
+    assert.equal(d[0].code, "TS2345");
+    assert.equal(d[1].line, 9);
+    assert.doesNotMatch(d[0].message, /native-keyup-bad/);
+  });
+
   test("countErrors prefers parsed diagnostics over a lying summary", () => {
     assert.equal(countErrors(`${dirty}Found 99 errors\n`), 1);
   });
