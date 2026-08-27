@@ -11,35 +11,35 @@
   <line x1="248" y1="48" x2="248" y2="200" stroke="#d0d7de" stroke-opacity="0.55" />
   <text fill="#59636e" x="248" y="220" text-anchor="middle" font-size="11">0.0 ms</text>
   <line x1="348.5" y1="48" x2="348.5" y2="200" stroke="#d0d7de" stroke-opacity="0.55" />
-  <text fill="#59636e" x="348.5" y="220" text-anchor="middle" font-size="11">16.7 s</text>
+  <text fill="#59636e" x="348.5" y="220" text-anchor="middle" font-size="11">20.7 s</text>
   <line x1="449" y1="48" x2="449" y2="200" stroke="#d0d7de" stroke-opacity="0.55" />
-  <text fill="#59636e" x="449" y="220" text-anchor="middle" font-size="11">33.4 s</text>
+  <text fill="#59636e" x="449" y="220" text-anchor="middle" font-size="11">41.5 s</text>
   <line x1="549.5" y1="48" x2="549.5" y2="200" stroke="#d0d7de" stroke-opacity="0.55" />
-  <text fill="#59636e" x="549.5" y="220" text-anchor="middle" font-size="11">50.1 s</text>
+  <text fill="#59636e" x="549.5" y="220" text-anchor="middle" font-size="11">62.2 s</text>
   <line x1="650" y1="48" x2="650" y2="200" stroke="#d0d7de" stroke-opacity="0.55" />
-  <text fill="#59636e" x="650" y="220" text-anchor="middle" font-size="11">66.8 s</text>
+  <text fill="#59636e" x="650" y="220" text-anchor="middle" font-size="11">82.9 s</text>
   <text fill="#59636e" x="16" y="77" font-size="11">1</text>
       <text fill="#1f2328" x="36" y="77" font-size="13">vue-tsc (N)</text>
       
       <rect x="248" y="61" width="402" height="22" rx="5" fill="#afb8c133"/>
-      <rect x="248" y="61" width="61.7" height="22" rx="5" fill="#42b883"/>
-      <text fill="#1f2328" x="317.73911314890404" y="77" font-size="12" font-weight="600">10.3 s</text>
+      <rect x="248" y="61" width="49.0" height="22" rx="5" fill="#42b883"/>
+      <text fill="#1f2328" x="304.9758226251656" y="77" font-size="12" font-weight="600">10.1 s</text>
   <text fill="#59636e" x="16" y="113" font-size="11">2</text>
       <text fill="#1f2328" x="36" y="113" font-size="13">vue-tsc (JS)</text>
       
       <rect x="248" y="97" width="402" height="22" rx="5" fill="#afb8c133"/>
-      <rect x="248" y="97" width="127.2" height="22" rx="5" fill="#42b883"/>
-      <text fill="#ffffff" x="256" y="113" font-size="12" font-weight="600">21.1 s</text>
+      <rect x="248" y="97" width="101.5" height="22" rx="5" fill="#42b883"/>
+      <text fill="#ffffff" x="256" y="113" font-size="12" font-weight="600">20.9 s</text>
   <text fill="#59636e" x="16" y="149" font-size="11">3</text>
       <text fill="#1f2328" x="36" y="149" font-size="13" fill-opacity="0.62">verter-tsc</text>
       <line x1="36" y1="144" x2="240" y2="144" stroke="#1f2328" stroke-opacity="0.45" />
       <rect x="248" y="133" width="402" height="22" rx="5" fill="#afb8c133"/>
-      <rect x="248" y="133" width="22.6" height="22" rx="5" fill="url(#hatch-2)"/>
-      <text fill="#1f2328" x="278.56653098790207" y="149" font-size="12" font-weight="600">3.75 s · unranked</text>
+      <rect x="248" y="133" width="17.8" height="22" rx="5" fill="url(#hatch-2)"/>
+      <text fill="#1f2328" x="273.8263647523833" y="149" font-size="12" font-weight="600">3.68 s · unranked</text>
   <text fill="#59636e" x="16" y="185" font-size="11">4</text>
       <text fill="#1f2328" x="36" y="185" font-size="13" fill-opacity="0.62">Vize</text>
       <line x1="36" y1="180" x2="240" y2="180" stroke="#1f2328" stroke-opacity="0.45" />
       <rect x="248" y="169" width="402" height="22" rx="5" fill="#afb8c133"/>
       <rect x="248" y="169" width="402.0" height="22" rx="5" fill="url(#hatch-3)"/>
-      <text fill="#ffffff" x="256" y="185" font-size="12" font-weight="600">66.8 s · unranked</text>
+      <text fill="#ffffff" x="256" y="185" font-size="12" font-weight="600">82.9 s · unranked</text>
 </svg>

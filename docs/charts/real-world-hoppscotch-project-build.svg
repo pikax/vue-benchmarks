@@ -11,35 +11,35 @@
   <line x1="248" y1="48" x2="248" y2="200" stroke="#d0d7de" stroke-opacity="0.55" />
   <text fill="#59636e" x="248" y="220" text-anchor="middle" font-size="11">0.0 ms</text>
   <line x1="348.5" y1="48" x2="348.5" y2="200" stroke="#d0d7de" stroke-opacity="0.55" />
-  <text fill="#59636e" x="348.5" y="220" text-anchor="middle" font-size="11">315 ms</text>
+  <text fill="#59636e" x="348.5" y="220" text-anchor="middle" font-size="11">443 ms</text>
   <line x1="449" y1="48" x2="449" y2="200" stroke="#d0d7de" stroke-opacity="0.55" />
-  <text fill="#59636e" x="449" y="220" text-anchor="middle" font-size="11">630 ms</text>
+  <text fill="#59636e" x="449" y="220" text-anchor="middle" font-size="11">886 ms</text>
   <line x1="549.5" y1="48" x2="549.5" y2="200" stroke="#d0d7de" stroke-opacity="0.55" />
-  <text fill="#59636e" x="549.5" y="220" text-anchor="middle" font-size="11">945 ms</text>
+  <text fill="#59636e" x="549.5" y="220" text-anchor="middle" font-size="11">1.33 s</text>
   <line x1="650" y1="48" x2="650" y2="200" stroke="#d0d7de" stroke-opacity="0.55" />
-  <text fill="#59636e" x="650" y="220" text-anchor="middle" font-size="11">1.26 s</text>
+  <text fill="#59636e" x="650" y="220" text-anchor="middle" font-size="11">1.77 s</text>
   <text fill="#59636e" x="16" y="77" font-size="11">1</text>
-      <text fill="#1f2328" x="36" y="77" font-size="13">hoppscotch-agent — proje…</text>
+      <text fill="#1f2328" x="36" y="77" font-size="13">hoppscotch-agent — @vize…</text>
       
       <rect x="248" y="61" width="402" height="22" rx="5" fill="#afb8c133"/>
-      <rect x="248" y="61" width="371.4" height="22" rx="5" fill="#64748b"/>
-      <text fill="#ffffff" x="256" y="77" font-size="12" font-weight="600">1.16 s</text>
+      <rect x="248" y="61" width="359.2" height="22" rx="5" fill="#2563eb"/>
+      <text fill="#ffffff" x="256" y="77" font-size="12" font-weight="600">1.58 s</text>
   <text fill="#59636e" x="16" y="113" font-size="11">2</text>
       <text fill="#1f2328" x="36" y="113" font-size="13">hoppscotch-agent — unplu…</text>
       
       <rect x="248" y="97" width="402" height="22" rx="5" fill="#afb8c133"/>
-      <rect x="248" y="97" width="384.4" height="22" rx="5" fill="#42b883"/>
-      <text fill="#ffffff" x="256" y="113" font-size="12" font-weight="600">1.20 s</text>
+      <rect x="248" y="97" width="382.0" height="22" rx="5" fill="#42b883"/>
+      <text fill="#ffffff" x="256" y="113" font-size="12" font-weight="600">1.68 s</text>
   <text fill="#59636e" x="16" y="149" font-size="11">3</text>
-      <text fill="#1f2328" x="36" y="149" font-size="13">hoppscotch-agent — @vert…</text>
+      <text fill="#1f2328" x="36" y="149" font-size="13">hoppscotch-agent — proje…</text>
       
       <rect x="248" y="133" width="402" height="22" rx="5" fill="#afb8c133"/>
-      <rect x="248" y="133" width="391.4" height="22" rx="5" fill="#e11d48"/>
-      <text fill="#ffffff" x="256" y="149" font-size="12" font-weight="600">1.23 s</text>
+      <rect x="248" y="133" width="391.3" height="22" rx="5" fill="#64748b"/>
+      <text fill="#ffffff" x="256" y="149" font-size="12" font-weight="600">1.72 s</text>
   <text fill="#59636e" x="16" y="185" font-size="11">4</text>
-      <text fill="#1f2328" x="36" y="185" font-size="13">hoppscotch-agent — @vize…</text>
+      <text fill="#1f2328" x="36" y="185" font-size="13">hoppscotch-agent — @vert…</text>
       
       <rect x="248" y="169" width="402" height="22" rx="5" fill="#afb8c133"/>
-      <rect x="248" y="169" width="402.0" height="22" rx="5" fill="#2563eb"/>
-      <text fill="#ffffff" x="256" y="185" font-size="12" font-weight="600">1.26 s</text>
+      <rect x="248" y="169" width="402.0" height="22" rx="5" fill="#e11d48"/>
+      <text fill="#ffffff" x="256" y="185" font-size="12" font-weight="600">1.77 s</text>
 </svg>
