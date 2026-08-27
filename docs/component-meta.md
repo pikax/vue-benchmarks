@@ -2,12 +2,12 @@
 
 > Auto-generated from the JSON snapshots in [`results/benchmarks/`](../results/benchmarks/) and [`results/real_world/`](../results/real_world/) by `pnpm docs`. Do not edit by hand.
 
-- **Generated:** 2026-08-21T09:58:23.715Z
+- **Generated:** 2026-08-27T10:24:48.274Z
 - **Fixture:** `fixtures/200` (200 files)
 - **Runs / warmups:** 5 / 1
-- **Runner:** Linux · linux/x64 · 4 CPUs · AMD EPYC 9V74 80-Core Processor · 15.6 GB · Node v22.23.2
-- **Commit:** [`64b460c`](https://github.com/pikax/vue-benchmarks/commit/64b460c3b8cafbc9efba895cd716d5ef41920124)
-- **CI run:** https://github.com/pikax/vue-benchmarks/actions/runs/32469697609
+- **Runner:** Linux · linux/x64 · 4 CPUs · Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz · 15.6 GB · Node v22.23.2
+- **Commit:** [`abafafd`](https://github.com/pikax/vue-benchmarks/commit/abafafd07c14f26c07f1d0ed9da818102fdc97e1)
+- **CI run:** https://github.com/pikax/vue-benchmarks/actions/runs/33062210774
 - **Source:** `results/benchmarks/bench-Linux-200-bench.json`
 
 ## Results
@@ -39,9 +39,9 @@ Files: **100** · Bytes: **142,771**
 
 | Tool | Fresh child | Fresh min | Fresh stddev | Fresh CV% | vs fastest fresh child | **Warm (primary)** | Warm min | Warm stddev | Warm CV% | vs fastest warm | Meta members | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| vue-component-meta (Promise.all) ⚠ | (2.00 s) | (1.96 s) | (20.9 ms) | (1.0%) | not ranked | (777.5 ms) | (719.2 ms) | (178.9 ms) | (23.0%) | not ranked | (1,343) | – |
-| @verter/component-meta (Promise.all) ⚠ | (471.9 ms) | (467.3 ms) | (6.8 ms) | (1.4%) | not ranked | (469.9 ms) | (383.3 ms) | (56.5 ms) | (12.0%) | not ranked | (88) | – |
-| @verter/component-meta (getComponentMetaBatch) ⚠ | (276.6 ms) | (274.3 ms) | (3.4 ms) | (1.2%) | not ranked | (232.0 ms) | (216.7 ms) | (12.9 ms) | (5.6%) | not ranked | (88) | – |
+| vue-component-meta (Promise.all) ⚠ | (2.18 s) | (2.17 s) | (12.6 ms) | (0.6%) | not ranked | (870.6 ms) | (814.4 ms) | (190.0 ms) | (21.8%) | not ranked | (1,343) | – |
+| @verter/component-meta (Promise.all) ⚠ | (490.8 ms) | (486.7 ms) | (22.1 ms) | (4.5%) | not ranked | (560.0 ms) | (524.7 ms) | (19.4 ms) | (3.5%) | not ranked | (88) | – |
+| @verter/component-meta (getComponentMetaBatch) ⚠ | (326.5 ms) | (325.0 ms) | (3.6 ms) | (1.1%) | not ranked | (328.9 ms) | (315.1 ms) | (14.2 ms) | (4.3%) | not ranked | (88) | – |
 
 <details><summary>Notes</summary>
 
@@ -60,8 +60,8 @@ Files: **100** · Bytes: **142,771**
 
 | Tool | Fresh child | Fresh min | Fresh stddev | Fresh CV% | vs fastest fresh child | **Warm (primary)** | Warm min | Warm stddev | Warm CV% | vs fastest warm | Meta members | Throughput | Peak RSS |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| vue-component-meta ⚠ | (1.98 s) | (1.94 s) | (55.1 ms) | (2.8%) | not ranked | (822.4 ms) | (774.6 ms) | (40.4 ms) | (4.9%) | not ranked | (1,343) | – | (247.1 MB) |
-| @verter/component-meta ⚠ | (474.6 ms) | (449.0 ms) | (16.9 ms) | (3.6%) | not ranked | (396.5 ms) | (389.5 ms) | (35.7 ms) | (9.0%) | not ranked | (88) | – | (90.8 MB) |
+| vue-component-meta ⚠ | (2.17 s) | (2.16 s) | (17.9 ms) | (0.8%) | not ranked | (911.9 ms) | (858.0 ms) | (78.1 ms) | (8.6%) | not ranked | (1,343) | – | (248.3 MB) |
+| @verter/component-meta ⚠ | (498.1 ms) | (491.7 ms) | (9.0 ms) | (1.8%) | not ranked | (554.7 ms) | (533.7 ms) | (11.4 ms) | (2.1%) | not ranked | (88) | – | (90.0 MB) |
 
 <details><summary>Notes</summary>
 
@@ -91,11 +91,11 @@ Files: **100** · Bytes: **142,771**
 
 Raw runs:
 
-- **vue-component-meta (Promise.all)**: Fresh child (first timed row workload): 1.96 s, 2.01 s, 2.02 s, 2.00 s, 2.00 s · Warm: 1.15 s, 776.2 ms, 777.5 ms, 971.1 ms, 719.2 ms
-- **@verter/component-meta (Promise.all)**: Fresh child (first timed row workload): 471.9 ms, 485.3 ms, 471.0 ms, 467.3 ms, 474.4 ms · Warm: 486.4 ms, 383.3 ms, 525.7 ms, 469.9 ms, 417.1 ms
-- **@verter/component-meta (getComponentMetaBatch)**: Fresh child (first timed row workload): 274.3 ms, 275.1 ms, 276.6 ms, 282.7 ms, 279.1 ms · Warm: 225.3 ms, 216.7 ms, 249.0 ms, 242.4 ms, 232.0 ms
-- **vue-component-meta**: Fresh child (first timed row workload): 1.96 s, 2.05 s, 1.98 s, 2.07 s, 1.94 s · Warm: 876.7 ms, 774.6 ms, 822.4 ms, 843.3 ms, 792.9 ms
-- **@verter/component-meta**: Fresh child (first timed row workload): 487.9 ms, 449.0 ms, 453.1 ms, 474.6 ms, 479.2 ms · Warm: 389.5 ms, 395.8 ms, 457.9 ms, 459.8 ms, 396.5 ms
+- **vue-component-meta (Promise.all)**: Fresh child (first timed row workload): 2.18 s, 2.19 s, 2.17 s, 2.20 s, 2.17 s · Warm: 1.28 s, 882.9 ms, 870.6 ms, 853.0 ms, 814.4 ms
+- **@verter/component-meta (Promise.all)**: Fresh child (first timed row workload): 488.9 ms, 486.7 ms, 490.8 ms, 539.6 ms, 501.7 ms · Warm: 560.0 ms, 524.7 ms, 564.2 ms, 572.7 ms, 541.4 ms
+- **@verter/component-meta (getComponentMetaBatch)**: Fresh child (first timed row workload): 326.3 ms, 325.0 ms, 329.4 ms, 334.1 ms, 326.5 ms · Warm: 317.9 ms, 315.1 ms, 350.1 ms, 335.5 ms, 328.9 ms
+- **vue-component-meta**: Fresh child (first timed row workload): 2.16 s, 2.17 s, 2.16 s, 2.20 s, 2.19 s · Warm: 968.8 ms, 858.0 ms, 911.9 ms, 1.04 s, 860.5 ms
+- **@verter/component-meta**: Fresh child (first timed row workload): 497.4 ms, 498.1 ms, 510.8 ms, 512.1 ms, 491.7 ms · Warm: 533.7 ms, 552.8 ms, 554.7 ms, 561.4 ms, 561.6 ms
 
 </details>
 
@@ -159,8 +159,8 @@ Each tool in its own process so RSS, allocation proxies and CPU are not mixed wi
 
 | Tool | RSS min / max / avg | Alloc min / max / avg | CPU ms | CPU % | Wall ms | Samples |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| @verter/component-meta | 31.93 / 90.41 / 70.81 | 7.87 / 23.65 / 15.76 | 604 | 154.6 | 391 | 3 |
-| vue-component-meta | 246.98 / 246.98 / 246.98 | 170.19 / 170.19 / 170.19 | 4001 | 218.3 | 1829 | 3 |
+| @verter/component-meta | 32.21 / 89.94 / 70.60 | 7.82 / 23.52 / 15.66 | 630 | 154.0 | 409 | 3 |
+| vue-component-meta | 247.73 / 247.73 / 247.73 | 167.64 / 167.64 / 167.64 | 4050 | 217.5 | 1868 | 3 |
 
 <details><summary>Notes</summary>
 
@@ -176,41 +176,41 @@ Each tool in its own process so RSS, allocation proxies and CPU are not mixed wi
 | Package | Version |
 | --- | --- |
 | node | v22.23.2 |
-| vue | 3.5.41 |
-| vue-36 | 3.6.0-rc.4 |
-| @vue/compiler-sfc | 3.5.41 |
-| @vue/compiler-sfc-36 | 3.6.0-rc.4 |
-| vize | 0.354.0 |
-| @vizejs/native | 0.354.0 |
+| vue | 3.5.42 |
+| vue-36 | 3.6.0-rc.5 |
+| @vue/compiler-sfc | 3.5.42 |
+| @vue/compiler-sfc-36 | 3.6.0-rc.5 |
+| vize | 0.387.0 |
+| @vizejs/native | 0.387.0 |
 | @verter/native | 0.0.1-beta.3 |
 | @fervid/napi | 0.4.1 |
 | verter-tsc | 0.0.1-beta.3 |
 | @verter/component-meta | 0.0.1-beta.3 |
 | verter-lsp | 0.0.1-beta.3 |
 | verter-mcp | 0.0.1-beta.3 |
-| @vue/language-server | 3.3.10 |
-| @vue/typescript-plugin | 3.3.10 |
-| typescript-language-server | 5.3.0 |
-| vue-tsc | 3.3.10 |
-| vue-component-meta | 3.3.10 |
+| @vue/language-server | 3.3.11 |
+| @vue/typescript-plugin | 3.3.11 |
+| typescript-language-server | 6.0.0 |
+| vue-tsc | 3.3.11 |
+| vue-component-meta | 3.3.11 |
 | golar | 0.1.10 |
 | @golar/vue | 0.1.10 |
 | prettier | 3.9.6 |
-| oxfmt | 0.64.0 |
-| oxlint | 1.79.0 |
+| oxfmt | 0.65.0 |
+| oxlint | 1.80.0 |
 | eslint-plugin-vue | 10.10.0 |
-| @biomejs/biome | 2.5.9 |
+| @biomejs/biome | 2.5.10 |
 | typescript | 6.0.3 |
-| cli:vize | 0.354.0 |
+| cli:vize | 0.387.0 |
 | cli:vue-tsc | 6.0.3 |
 | cli:verter-tsc | 0.0.1-beta.3 |
 | cli:golar | 0.1.10 |
 | cli:prettier | 3.9.6 |
-| cli:oxfmt | 0.64.0 |
-| cli:oxlint | 1.79.0 |
-| cli:biome | 2.5.9 |
-| vue-jsx-vapor | 3.2.21 |
-| @vue-jsx-vapor/compiler-rs | 3.2.21 |
+| cli:oxfmt | 0.65.0 |
+| cli:oxlint | 1.80.0 |
+| cli:biome | 2.5.10 |
+| vue-jsx-vapor | 3.2.22 |
+| @vue-jsx-vapor/compiler-rs | 3.2.22 |
 | @vue/babel-plugin-jsx | 3.0.0 |
 | @babel/core | 8.0.1 |
 

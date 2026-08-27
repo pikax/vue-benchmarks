@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-08-21T09:58:48.150Z",
+  "generatedAt": "2026-08-27T10:25:28.874Z",
   "fixture": "fixtures/200-repeated",
   "fileCount": 200,
   "settings": {
@@ -23,55 +23,55 @@
     "platform": "linux",
     "arch": "x64",
     "cpuCount": 4,
-    "cpuModel": "AMD EPYC 9V74 80-Core Processor",
-    "totalmem": 16766414848,
+    "cpuModel": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
+    "totalmem": 16765374464,
     "node": "v22.23.2"
   },
   "commit": {
-    "sha": "64b460c3b8cafbc9efba895cd716d5ef41920124",
+    "sha": "abafafd07c14f26c07f1d0ed9da818102fdc97e1",
     "ref": "main",
     "repository": "pikax/vue-benchmarks",
-    "runUrl": "https://github.com/pikax/vue-benchmarks/actions/runs/32469697609",
+    "runUrl": "https://github.com/pikax/vue-benchmarks/actions/runs/33062210774",
     "dirty": false,
     "statusAvailable": true
   },
   "versions": {
     "node": "v22.23.2",
-    "vue": "3.5.41",
-    "vue-36": "3.6.0-rc.4",
-    "@vue/compiler-sfc": "3.5.41",
-    "@vue/compiler-sfc-36": "3.6.0-rc.4",
-    "vize": "0.354.0",
-    "@vizejs/native": "0.354.0",
+    "vue": "3.5.42",
+    "vue-36": "3.6.0-rc.5",
+    "@vue/compiler-sfc": "3.5.42",
+    "@vue/compiler-sfc-36": "3.6.0-rc.5",
+    "vize": "0.387.0",
+    "@vizejs/native": "0.387.0",
     "@verter/native": "0.0.1-beta.3",
     "@fervid/napi": "0.4.1",
     "verter-tsc": "0.0.1-beta.3",
     "@verter/component-meta": "0.0.1-beta.3",
     "verter-lsp": "0.0.1-beta.3",
     "verter-mcp": "0.0.1-beta.3",
-    "@vue/language-server": "3.3.10",
-    "@vue/typescript-plugin": "3.3.10",
-    "typescript-language-server": "5.3.0",
-    "vue-tsc": "3.3.10",
-    "vue-component-meta": "3.3.10",
+    "@vue/language-server": "3.3.11",
+    "@vue/typescript-plugin": "3.3.11",
+    "typescript-language-server": "6.0.0",
+    "vue-tsc": "3.3.11",
+    "vue-component-meta": "3.3.11",
     "golar": "0.1.10",
     "@golar/vue": "0.1.10",
     "prettier": "3.9.6",
-    "oxfmt": "0.64.0",
-    "oxlint": "1.79.0",
+    "oxfmt": "0.65.0",
+    "oxlint": "1.80.0",
     "eslint-plugin-vue": "10.10.0",
-    "@biomejs/biome": "2.5.9",
+    "@biomejs/biome": "2.5.10",
     "typescript": "6.0.3",
-    "cli:vize": "0.354.0",
+    "cli:vize": "0.387.0",
     "cli:vue-tsc": "6.0.3",
     "cli:verter-tsc": "0.0.1-beta.3",
     "cli:golar": "0.1.10",
     "cli:prettier": "3.9.6",
-    "cli:oxfmt": "0.64.0",
-    "cli:oxlint": "1.79.0",
-    "cli:biome": "2.5.9",
-    "vue-jsx-vapor": "3.2.21",
-    "@vue-jsx-vapor/compiler-rs": "3.2.21",
+    "cli:oxfmt": "0.65.0",
+    "cli:oxlint": "1.80.0",
+    "cli:biome": "2.5.10",
+    "vue-jsx-vapor": "3.2.22",
+    "@vue-jsx-vapor/compiler-rs": "3.2.22",
     "@vue/babel-plugin-jsx": "3.0.0",
     "@babel/core": "8.0.1"
   },
@@ -616,7 +616,7 @@
             "sass-v-bind-scoped",
             "sass-css-modules"
           ],
-          "sassVersion": "1.102.0",
+          "sassVersion": "1.103.1",
           "options": {
             "implementation": "sass",
             "syntax": {
@@ -4757,15 +4757,15 @@
               "files": 200,
               "status": "ok",
               "runs": [
-                50.122,
-                43.66
+                59.37,
+                45.488
               ],
-              "medianMs": 46.891,
-              "minMs": 43.66,
-              "maxMs": 50.122,
-              "meanMs": 46.891,
-              "stddevMs": 4.569,
-              "cvPct": 9.7,
+              "medianMs": 52.429,
+              "minMs": 45.488,
+              "maxMs": 59.37,
+              "meanMs": 52.429,
+              "stddevMs": 9.816,
+              "cvPct": 18.7,
               "metaSamples": [
                 {
                   "adapterOptionsHash": "f4306d2b3e7250b5951534e5d7fe84851d37daad31d62b0cc4d309ee6863cae3",
@@ -4788,16 +4788,16 @@
               ],
               "artifactMedian": 214800,
               "warmupPasses": 1,
-              "throughput": "4.3k files/s",
+              "throughput": "3.8k files/s",
               "freshChildRuns": [
-                96.009,
-                102.605
+                113.95,
+                113.09
               ],
-              "freshChildMedianMs": 99.307,
-              "freshChildMinMs": 96.009,
-              "freshChildMeanMs": 99.307,
-              "freshChildStddevMs": 4.664,
-              "freshChildCvPct": 4.7,
+              "freshChildMedianMs": 113.52,
+              "freshChildMinMs": 113.09,
+              "freshChildMeanMs": 113.52,
+              "freshChildStddevMs": 0.608,
+              "freshChildCvPct": 0.5,
               "freshChildMetaSamples": [
                 {
                   "adapterOptionsHash": "f4306d2b3e7250b5951534e5d7fe84851d37daad31d62b0cc4d309ee6863cae3",
@@ -4855,15 +4855,15 @@
               "files": 200,
               "status": "ok",
               "runs": [
-                63.147,
-                48.06
+                80.634,
+                50.84
               ],
-              "medianMs": 55.603,
-              "minMs": 48.06,
-              "maxMs": 63.147,
-              "meanMs": 55.603,
-              "stddevMs": 10.668,
-              "cvPct": 19.2,
+              "medianMs": 65.737,
+              "minMs": 50.84,
+              "maxMs": 80.634,
+              "meanMs": 65.737,
+              "stddevMs": 21.068,
+              "cvPct": 32,
               "metaSamples": [
                 {
                   "adapterOptionsHash": "43a62ac5ad5d1861b9f78520deea2f6731e3ead3b4dfbebfb95a8e19cfc1c2ec",
@@ -4886,15 +4886,15 @@
               ],
               "artifactMedian": 214800,
               "warmupPasses": 1,
-              "throughput": "3.6k files/s",
+              "throughput": "3.0k files/s",
               "freshChildRuns": [
-                102.515,
-                103.4
+                119.164,
+                120.242
               ],
-              "freshChildMedianMs": 102.958,
-              "freshChildMinMs": 102.515,
-              "freshChildMeanMs": 102.958,
-              "freshChildStddevMs": 0.626,
+              "freshChildMedianMs": 119.703,
+              "freshChildMinMs": 119.164,
+              "freshChildMeanMs": 119.703,
+              "freshChildStddevMs": 0.762,
               "freshChildCvPct": 0.6,
               "freshChildMetaSamples": [
                 {
@@ -4954,15 +4954,15 @@
               "files": 200,
               "status": "ok",
               "runs": [
-                40.123,
-                45.088
+                46.796,
+                47.116
               ],
-              "medianMs": 42.605,
-              "minMs": 40.123,
-              "maxMs": 45.088,
-              "meanMs": 42.605,
-              "stddevMs": 3.511,
-              "cvPct": 8.2,
+              "medianMs": 46.956,
+              "minMs": 46.796,
+              "maxMs": 47.116,
+              "meanMs": 46.956,
+              "stddevMs": 0.226,
+              "cvPct": 0.5,
               "metaSamples": [
                 {
                   "adapterOptionsHash": "27325e801a255676e6eebb5fcf6ef1c7c04083b4d635aa241d7dcb2e7bf1cf06",
@@ -4989,16 +4989,16 @@
               ],
               "artifactMedian": 214600,
               "warmupPasses": 1,
-              "throughput": "4.7k files/s",
+              "throughput": "4.3k files/s",
               "freshChildRuns": [
-                101.968,
-                102.795
+                113.42,
+                115.956
               ],
-              "freshChildMedianMs": 102.382,
-              "freshChildMinMs": 101.968,
-              "freshChildMeanMs": 102.382,
-              "freshChildStddevMs": 0.585,
-              "freshChildCvPct": 0.6,
+              "freshChildMedianMs": 114.688,
+              "freshChildMinMs": 113.42,
+              "freshChildMeanMs": 114.688,
+              "freshChildStddevMs": 1.793,
+              "freshChildCvPct": 1.6,
               "freshChildMetaSamples": [
                 {
                   "adapterOptionsHash": "27325e801a255676e6eebb5fcf6ef1c7c04083b4d635aa241d7dcb2e7bf1cf06",
@@ -5061,15 +5061,15 @@
               "files": 200,
               "status": "ok",
               "runs": [
-                91.909,
-                82.934
+                113.09,
+                105.087
               ],
-              "medianMs": 87.422,
-              "minMs": 82.934,
-              "maxMs": 91.909,
-              "meanMs": 87.422,
-              "stddevMs": 6.346,
-              "cvPct": 7.3,
+              "medianMs": 109.089,
+              "minMs": 105.087,
+              "maxMs": 113.09,
+              "meanMs": 109.089,
+              "stddevMs": 5.659,
+              "cvPct": 5.2,
               "metaSamples": [
                 {
                   "adapterOptionsHash": "bd14c200b2cf2aed5b6cd61a998a00444b56a8673d831cc49612ce5bff35126d",
@@ -5104,16 +5104,16 @@
               ],
               "artifactMedian": 242000,
               "warmupPasses": 1,
-              "throughput": "2.3k files/s",
+              "throughput": "1.8k files/s",
               "freshChildRuns": [
-                154.579,
-                149.932
+                185.059,
+                182.399
               ],
-              "freshChildMedianMs": 152.255,
-              "freshChildMinMs": 149.932,
-              "freshChildMeanMs": 152.255,
-              "freshChildStddevMs": 3.286,
-              "freshChildCvPct": 2.2,
+              "freshChildMedianMs": 183.729,
+              "freshChildMinMs": 182.399,
+              "freshChildMeanMs": 183.729,
+              "freshChildStddevMs": 1.881,
+              "freshChildCvPct": 1,
               "freshChildMetaSamples": [
                 {
                   "adapterOptionsHash": "bd14c200b2cf2aed5b6cd61a998a00444b56a8673d831cc49612ce5bff35126d",
@@ -5183,15 +5183,15 @@
               "files": 200,
               "status": "unranked",
               "runs": [
-                16.431,
-                16.077
+                19.445,
+                19.31
               ],
-              "medianMs": 16.254,
-              "minMs": 16.077,
-              "maxMs": 16.431,
-              "meanMs": 16.254,
-              "stddevMs": 0.25,
-              "cvPct": 1.5,
+              "medianMs": 19.377,
+              "minMs": 19.31,
+              "maxMs": 19.445,
+              "meanMs": 19.377,
+              "stddevMs": 0.095,
+              "cvPct": 0.5,
               "metaSamples": [
                 {
                   "adapterOptionsHash": "646d56b2fd7a66b5b492b3e2f7d2a9bb75b1f4b40c71aab9b254187517a5226a",
@@ -5228,14 +5228,14 @@
               "warmupPasses": 1,
               "throughput": "n/a",
               "freshChildRuns": [
-                17.284,
-                16.627
+                20.368,
+                20.841
               ],
-              "freshChildMedianMs": 16.956,
-              "freshChildMinMs": 16.627,
-              "freshChildMeanMs": 16.956,
-              "freshChildStddevMs": 0.465,
-              "freshChildCvPct": 2.7,
+              "freshChildMedianMs": 20.605,
+              "freshChildMinMs": 20.368,
+              "freshChildMeanMs": 20.605,
+              "freshChildStddevMs": 0.334,
+              "freshChildCvPct": 1.6,
               "freshChildMetaSamples": [
                 {
                   "adapterOptionsHash": "646d56b2fd7a66b5b492b3e2f7d2a9bb75b1f4b40c71aab9b254187517a5226a",
@@ -5306,15 +5306,15 @@
               "files": 200,
               "status": "unranked",
               "runs": [
-                6.173,
-                6.176
+                7.178,
+                6.836
               ],
-              "medianMs": 6.175,
-              "minMs": 6.173,
-              "maxMs": 6.176,
-              "meanMs": 6.175,
-              "stddevMs": 0.002,
-              "cvPct": 0,
+              "medianMs": 7.007,
+              "minMs": 6.836,
+              "maxMs": 7.178,
+              "meanMs": 7.007,
+              "stddevMs": 0.242,
+              "cvPct": 3.5,
               "metaSamples": [
                 {
                   "adapterOptionsHash": "73d124ddbcc13a252f1096b9df42e827640ea15928d1886d4adbfbe6c1f35a53",
@@ -5351,14 +5351,14 @@
               "warmupPasses": 1,
               "throughput": "n/a",
               "freshChildRuns": [
-                7.64,
-                7.112
+                8.295,
+                8.18
               ],
-              "freshChildMedianMs": 7.376,
-              "freshChildMinMs": 7.112,
-              "freshChildMeanMs": 7.376,
-              "freshChildStddevMs": 0.373,
-              "freshChildCvPct": 5.1,
+              "freshChildMedianMs": 8.238,
+              "freshChildMinMs": 8.18,
+              "freshChildMeanMs": 8.238,
+              "freshChildStddevMs": 0.081,
+              "freshChildCvPct": 1,
               "freshChildMetaSamples": [
                 {
                   "adapterOptionsHash": "73d124ddbcc13a252f1096b9df42e827640ea15928d1886d4adbfbe6c1f35a53",
@@ -5429,15 +5429,15 @@
               "files": 200,
               "status": "unranked",
               "runs": [
-                5.486,
-                5.765
+                5.931,
+                6.292
               ],
-              "medianMs": 5.625,
-              "minMs": 5.486,
-              "maxMs": 5.765,
-              "meanMs": 5.625,
-              "stddevMs": 0.197,
-              "cvPct": 3.5,
+              "medianMs": 6.111,
+              "minMs": 5.931,
+              "maxMs": 6.292,
+              "meanMs": 6.111,
+              "stddevMs": 0.255,
+              "cvPct": 4.2,
               "metaSamples": [
                 {
                   "adapterOptionsHash": "672454a2f3535e17790ad506dac398198989dc211a4d41f28ba051d0d1fb0078",
@@ -5462,14 +5462,14 @@
               "warmupPasses": 1,
               "throughput": "n/a",
               "freshChildRuns": [
-                6.592,
-                6.69
+                7.238,
+                7.984
               ],
-              "freshChildMedianMs": 6.641,
-              "freshChildMinMs": 6.592,
-              "freshChildMeanMs": 6.641,
-              "freshChildStddevMs": 0.069,
-              "freshChildCvPct": 1,
+              "freshChildMedianMs": 7.611,
+              "freshChildMinMs": 7.238,
+              "freshChildMeanMs": 7.611,
+              "freshChildStddevMs": 0.528,
+              "freshChildCvPct": 6.9,
               "freshChildMetaSamples": [
                 {
                   "adapterOptionsHash": "672454a2f3535e17790ad506dac398198989dc211a4d41f28ba051d0d1fb0078",
@@ -5528,15 +5528,15 @@
               "files": 200,
               "status": "unranked",
               "runs": [
-                10.292,
-                9.738
+                12.487,
+                12.068
               ],
-              "medianMs": 10.015,
-              "minMs": 9.738,
-              "maxMs": 10.292,
-              "meanMs": 10.015,
-              "stddevMs": 0.392,
-              "cvPct": 3.9,
+              "medianMs": 12.277,
+              "minMs": 12.068,
+              "maxMs": 12.487,
+              "meanMs": 12.277,
+              "stddevMs": 0.296,
+              "cvPct": 2.4,
               "metaSamples": [
                 {
                   "adapterOptionsHash": "5cbd06a0206d53197b015fd136478cc90b72f22d6886955b56dae38994e262a3",
@@ -5575,14 +5575,14 @@
               "warmupPasses": 1,
               "throughput": "n/a",
               "freshChildRuns": [
-                10.351,
-                10.729
+                13.061,
+                12.935
               ],
-              "freshChildMedianMs": 10.54,
-              "freshChildMinMs": 10.351,
-              "freshChildMeanMs": 10.54,
-              "freshChildStddevMs": 0.267,
-              "freshChildCvPct": 2.5,
+              "freshChildMedianMs": 12.998,
+              "freshChildMinMs": 12.935,
+              "freshChildMeanMs": 12.998,
+              "freshChildStddevMs": 0.089,
+              "freshChildCvPct": 0.7,
               "freshChildMetaSamples": [
                 {
                   "adapterOptionsHash": "5cbd06a0206d53197b015fd136478cc90b72f22d6886955b56dae38994e262a3",
@@ -5655,15 +5655,15 @@
               "files": 200,
               "status": "unranked",
               "runs": [
-                6.844,
-                4.773
+                7.402,
+                5.754
               ],
-              "medianMs": 5.809,
-              "minMs": 4.773,
-              "maxMs": 6.844,
-              "meanMs": 5.809,
-              "stddevMs": 1.464,
-              "cvPct": 25.2,
+              "medianMs": 6.578,
+              "minMs": 5.754,
+              "maxMs": 7.402,
+              "meanMs": 6.578,
+              "stddevMs": 1.165,
+              "cvPct": 17.7,
               "metaSamples": [
                 {
                   "adapterOptionsHash": "d28660da738599195553e0d18b60ce267efe8f985280c0120451839f0ef59bc2",
@@ -5702,14 +5702,14 @@
               "warmupPasses": 1,
               "throughput": "n/a",
               "freshChildRuns": [
-                5.521,
-                7.045
+                6.891,
+                6.754
               ],
-              "freshChildMedianMs": 6.283,
-              "freshChildMinMs": 5.521,
-              "freshChildMeanMs": 6.283,
-              "freshChildStddevMs": 1.078,
-              "freshChildCvPct": 17.2,
+              "freshChildMedianMs": 6.822,
+              "freshChildMinMs": 6.754,
+              "freshChildMeanMs": 6.822,
+              "freshChildStddevMs": 0.097,
+              "freshChildCvPct": 1.4,
               "freshChildMetaSamples": [
                 {
                   "adapterOptionsHash": "d28660da738599195553e0d18b60ce267efe8f985280c0120451839f0ef59bc2",
@@ -5782,15 +5782,15 @@
               "files": 200,
               "status": "unranked",
               "runs": [
-                89.859,
-                93.344
+                99.008,
+                112.019
               ],
-              "medianMs": 91.601,
-              "minMs": 89.859,
-              "maxMs": 93.344,
-              "meanMs": 91.601,
-              "stddevMs": 2.464,
-              "cvPct": 2.7,
+              "medianMs": 105.513,
+              "minMs": 99.008,
+              "maxMs": 112.019,
+              "meanMs": 105.513,
+              "stddevMs": 9.2,
+              "cvPct": 8.7,
               "metaSamples": [
                 {
                   "adapterOptionsHash": "3cb3b66c74f949d0c2d8748eddc80212c8f21743d958aa103bb5e04c3e459b98",
@@ -5835,14 +5835,14 @@
               "warmupPasses": 1,
               "throughput": "n/a",
               "freshChildRuns": [
-                98.808,
-                98.554
+                110.926,
+                108.245
               ],
-              "freshChildMedianMs": 98.681,
-              "freshChildMinMs": 98.554,
-              "freshChildMeanMs": 98.681,
-              "freshChildStddevMs": 0.18,
-              "freshChildCvPct": 0.2,
+              "freshChildMedianMs": 109.585,
+              "freshChildMinMs": 108.245,
+              "freshChildMeanMs": 109.585,
+              "freshChildStddevMs": 1.896,
+              "freshChildCvPct": 1.7,
               "freshChildMetaSamples": [
                 {
                   "adapterOptionsHash": "3cb3b66c74f949d0c2d8748eddc80212c8f21743d958aa103bb5e04c3e459b98",
@@ -5921,15 +5921,15 @@
               "files": 200,
               "status": "unranked",
               "runs": [
-                84.288,
-                90.47
+                102.791,
+                104.275
               ],
-              "medianMs": 87.379,
-              "minMs": 84.288,
-              "maxMs": 90.47,
-              "meanMs": 87.379,
-              "stddevMs": 4.371,
-              "cvPct": 5,
+              "medianMs": 103.533,
+              "minMs": 102.791,
+              "maxMs": 104.275,
+              "meanMs": 103.533,
+              "stddevMs": 1.049,
+              "cvPct": 1,
               "metaSamples": [
                 {
                   "adapterOptionsHash": "f42e7e128703a93be7e9a6f7aec4a5ba5b2f321d058363c4634c8f8ba3051b0a",
@@ -5964,14 +5964,14 @@
               "warmupPasses": 1,
               "throughput": "n/a",
               "freshChildRuns": [
-                94.763,
-                92.977
+                101.926,
+                104.122
               ],
-              "freshChildMedianMs": 93.87,
-              "freshChildMinMs": 92.977,
-              "freshChildMeanMs": 93.87,
-              "freshChildStddevMs": 1.263,
-              "freshChildCvPct": 1.3,
+              "freshChildMedianMs": 103.024,
+              "freshChildMinMs": 101.926,
+              "freshChildMeanMs": 103.024,
+              "freshChildStddevMs": 1.553,
+              "freshChildCvPct": 1.5,
               "freshChildMetaSamples": [
                 {
                   "adapterOptionsHash": "f42e7e128703a93be7e9a6f7aec4a5ba5b2f321d058363c4634c8f8ba3051b0a",
@@ -6044,15 +6044,15 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            50.122,
-            43.66
+            59.37,
+            45.488
           ],
-          "medianMs": 46.891,
-          "minMs": 43.66,
-          "maxMs": 50.122,
-          "meanMs": 46.891,
-          "stddevMs": 4.569,
-          "cvPct": 9.7,
+          "medianMs": 52.429,
+          "minMs": 45.488,
+          "maxMs": 59.37,
+          "meanMs": 52.429,
+          "stddevMs": 9.816,
+          "cvPct": 18.7,
           "metaSamples": [
             {
               "adapterOptionsHash": "f4306d2b3e7250b5951534e5d7fe84851d37daad31d62b0cc4d309ee6863cae3",
@@ -6075,16 +6075,16 @@
           ],
           "artifactMedian": 214800,
           "warmupPasses": 1,
-          "throughput": "4.3k files/s",
+          "throughput": "3.8k files/s",
           "freshChildRuns": [
-            96.009,
-            102.605
+            113.95,
+            113.09
           ],
-          "freshChildMedianMs": 99.307,
-          "freshChildMinMs": 96.009,
-          "freshChildMeanMs": 99.307,
-          "freshChildStddevMs": 4.664,
-          "freshChildCvPct": 4.7,
+          "freshChildMedianMs": 113.52,
+          "freshChildMinMs": 113.09,
+          "freshChildMeanMs": 113.52,
+          "freshChildStddevMs": 0.608,
+          "freshChildCvPct": 0.5,
           "freshChildMetaSamples": [
             {
               "adapterOptionsHash": "f4306d2b3e7250b5951534e5d7fe84851d37daad31d62b0cc4d309ee6863cae3",
@@ -6142,15 +6142,15 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            63.147,
-            48.06
+            80.634,
+            50.84
           ],
-          "medianMs": 55.603,
-          "minMs": 48.06,
-          "maxMs": 63.147,
-          "meanMs": 55.603,
-          "stddevMs": 10.668,
-          "cvPct": 19.2,
+          "medianMs": 65.737,
+          "minMs": 50.84,
+          "maxMs": 80.634,
+          "meanMs": 65.737,
+          "stddevMs": 21.068,
+          "cvPct": 32,
           "metaSamples": [
             {
               "adapterOptionsHash": "43a62ac5ad5d1861b9f78520deea2f6731e3ead3b4dfbebfb95a8e19cfc1c2ec",
@@ -6173,15 +6173,15 @@
           ],
           "artifactMedian": 214800,
           "warmupPasses": 1,
-          "throughput": "3.6k files/s",
+          "throughput": "3.0k files/s",
           "freshChildRuns": [
-            102.515,
-            103.4
+            119.164,
+            120.242
           ],
-          "freshChildMedianMs": 102.958,
-          "freshChildMinMs": 102.515,
-          "freshChildMeanMs": 102.958,
-          "freshChildStddevMs": 0.626,
+          "freshChildMedianMs": 119.703,
+          "freshChildMinMs": 119.164,
+          "freshChildMeanMs": 119.703,
+          "freshChildStddevMs": 0.762,
           "freshChildCvPct": 0.6,
           "freshChildMetaSamples": [
             {
@@ -6241,15 +6241,15 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            40.123,
-            45.088
+            46.796,
+            47.116
           ],
-          "medianMs": 42.605,
-          "minMs": 40.123,
-          "maxMs": 45.088,
-          "meanMs": 42.605,
-          "stddevMs": 3.511,
-          "cvPct": 8.2,
+          "medianMs": 46.956,
+          "minMs": 46.796,
+          "maxMs": 47.116,
+          "meanMs": 46.956,
+          "stddevMs": 0.226,
+          "cvPct": 0.5,
           "metaSamples": [
             {
               "adapterOptionsHash": "27325e801a255676e6eebb5fcf6ef1c7c04083b4d635aa241d7dcb2e7bf1cf06",
@@ -6276,16 +6276,16 @@
           ],
           "artifactMedian": 214600,
           "warmupPasses": 1,
-          "throughput": "4.7k files/s",
+          "throughput": "4.3k files/s",
           "freshChildRuns": [
-            101.968,
-            102.795
+            113.42,
+            115.956
           ],
-          "freshChildMedianMs": 102.382,
-          "freshChildMinMs": 101.968,
-          "freshChildMeanMs": 102.382,
-          "freshChildStddevMs": 0.585,
-          "freshChildCvPct": 0.6,
+          "freshChildMedianMs": 114.688,
+          "freshChildMinMs": 113.42,
+          "freshChildMeanMs": 114.688,
+          "freshChildStddevMs": 1.793,
+          "freshChildCvPct": 1.6,
           "freshChildMetaSamples": [
             {
               "adapterOptionsHash": "27325e801a255676e6eebb5fcf6ef1c7c04083b4d635aa241d7dcb2e7bf1cf06",
@@ -6348,15 +6348,15 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            91.909,
-            82.934
+            113.09,
+            105.087
           ],
-          "medianMs": 87.422,
-          "minMs": 82.934,
-          "maxMs": 91.909,
-          "meanMs": 87.422,
-          "stddevMs": 6.346,
-          "cvPct": 7.3,
+          "medianMs": 109.089,
+          "minMs": 105.087,
+          "maxMs": 113.09,
+          "meanMs": 109.089,
+          "stddevMs": 5.659,
+          "cvPct": 5.2,
           "metaSamples": [
             {
               "adapterOptionsHash": "bd14c200b2cf2aed5b6cd61a998a00444b56a8673d831cc49612ce5bff35126d",
@@ -6391,16 +6391,16 @@
           ],
           "artifactMedian": 242000,
           "warmupPasses": 1,
-          "throughput": "2.3k files/s",
+          "throughput": "1.8k files/s",
           "freshChildRuns": [
-            154.579,
-            149.932
+            185.059,
+            182.399
           ],
-          "freshChildMedianMs": 152.255,
-          "freshChildMinMs": 149.932,
-          "freshChildMeanMs": 152.255,
-          "freshChildStddevMs": 3.286,
-          "freshChildCvPct": 2.2,
+          "freshChildMedianMs": 183.729,
+          "freshChildMinMs": 182.399,
+          "freshChildMeanMs": 183.729,
+          "freshChildStddevMs": 1.881,
+          "freshChildCvPct": 1,
           "freshChildMetaSamples": [
             {
               "adapterOptionsHash": "bd14c200b2cf2aed5b6cd61a998a00444b56a8673d831cc49612ce5bff35126d",
@@ -6470,15 +6470,15 @@
           "files": 200,
           "status": "unranked",
           "runs": [
-            16.431,
-            16.077
+            19.445,
+            19.31
           ],
-          "medianMs": 16.254,
-          "minMs": 16.077,
-          "maxMs": 16.431,
-          "meanMs": 16.254,
-          "stddevMs": 0.25,
-          "cvPct": 1.5,
+          "medianMs": 19.377,
+          "minMs": 19.31,
+          "maxMs": 19.445,
+          "meanMs": 19.377,
+          "stddevMs": 0.095,
+          "cvPct": 0.5,
           "metaSamples": [
             {
               "adapterOptionsHash": "646d56b2fd7a66b5b492b3e2f7d2a9bb75b1f4b40c71aab9b254187517a5226a",
@@ -6515,14 +6515,14 @@
           "warmupPasses": 1,
           "throughput": "n/a",
           "freshChildRuns": [
-            17.284,
-            16.627
+            20.368,
+            20.841
           ],
-          "freshChildMedianMs": 16.956,
-          "freshChildMinMs": 16.627,
-          "freshChildMeanMs": 16.956,
-          "freshChildStddevMs": 0.465,
-          "freshChildCvPct": 2.7,
+          "freshChildMedianMs": 20.605,
+          "freshChildMinMs": 20.368,
+          "freshChildMeanMs": 20.605,
+          "freshChildStddevMs": 0.334,
+          "freshChildCvPct": 1.6,
           "freshChildMetaSamples": [
             {
               "adapterOptionsHash": "646d56b2fd7a66b5b492b3e2f7d2a9bb75b1f4b40c71aab9b254187517a5226a",
@@ -6593,15 +6593,15 @@
           "files": 200,
           "status": "unranked",
           "runs": [
-            6.173,
-            6.176
+            7.178,
+            6.836
           ],
-          "medianMs": 6.175,
-          "minMs": 6.173,
-          "maxMs": 6.176,
-          "meanMs": 6.175,
-          "stddevMs": 0.002,
-          "cvPct": 0,
+          "medianMs": 7.007,
+          "minMs": 6.836,
+          "maxMs": 7.178,
+          "meanMs": 7.007,
+          "stddevMs": 0.242,
+          "cvPct": 3.5,
           "metaSamples": [
             {
               "adapterOptionsHash": "73d124ddbcc13a252f1096b9df42e827640ea15928d1886d4adbfbe6c1f35a53",
@@ -6638,14 +6638,14 @@
           "warmupPasses": 1,
           "throughput": "n/a",
           "freshChildRuns": [
-            7.64,
-            7.112
+            8.295,
+            8.18
           ],
-          "freshChildMedianMs": 7.376,
-          "freshChildMinMs": 7.112,
-          "freshChildMeanMs": 7.376,
-          "freshChildStddevMs": 0.373,
-          "freshChildCvPct": 5.1,
+          "freshChildMedianMs": 8.238,
+          "freshChildMinMs": 8.18,
+          "freshChildMeanMs": 8.238,
+          "freshChildStddevMs": 0.081,
+          "freshChildCvPct": 1,
           "freshChildMetaSamples": [
             {
               "adapterOptionsHash": "73d124ddbcc13a252f1096b9df42e827640ea15928d1886d4adbfbe6c1f35a53",
@@ -6716,15 +6716,15 @@
           "files": 200,
           "status": "unranked",
           "runs": [
-            5.486,
-            5.765
+            5.931,
+            6.292
           ],
-          "medianMs": 5.625,
-          "minMs": 5.486,
-          "maxMs": 5.765,
-          "meanMs": 5.625,
-          "stddevMs": 0.197,
-          "cvPct": 3.5,
+          "medianMs": 6.111,
+          "minMs": 5.931,
+          "maxMs": 6.292,
+          "meanMs": 6.111,
+          "stddevMs": 0.255,
+          "cvPct": 4.2,
           "metaSamples": [
             {
               "adapterOptionsHash": "672454a2f3535e17790ad506dac398198989dc211a4d41f28ba051d0d1fb0078",
@@ -6749,14 +6749,14 @@
           "warmupPasses": 1,
           "throughput": "n/a",
           "freshChildRuns": [
-            6.592,
-            6.69
+            7.238,
+            7.984
           ],
-          "freshChildMedianMs": 6.641,
-          "freshChildMinMs": 6.592,
-          "freshChildMeanMs": 6.641,
-          "freshChildStddevMs": 0.069,
-          "freshChildCvPct": 1,
+          "freshChildMedianMs": 7.611,
+          "freshChildMinMs": 7.238,
+          "freshChildMeanMs": 7.611,
+          "freshChildStddevMs": 0.528,
+          "freshChildCvPct": 6.9,
           "freshChildMetaSamples": [
             {
               "adapterOptionsHash": "672454a2f3535e17790ad506dac398198989dc211a4d41f28ba051d0d1fb0078",
@@ -6815,15 +6815,15 @@
           "files": 200,
           "status": "unranked",
           "runs": [
-            10.292,
-            9.738
+            12.487,
+            12.068
           ],
-          "medianMs": 10.015,
-          "minMs": 9.738,
-          "maxMs": 10.292,
-          "meanMs": 10.015,
-          "stddevMs": 0.392,
-          "cvPct": 3.9,
+          "medianMs": 12.277,
+          "minMs": 12.068,
+          "maxMs": 12.487,
+          "meanMs": 12.277,
+          "stddevMs": 0.296,
+          "cvPct": 2.4,
           "metaSamples": [
             {
               "adapterOptionsHash": "5cbd06a0206d53197b015fd136478cc90b72f22d6886955b56dae38994e262a3",
@@ -6862,14 +6862,14 @@
           "warmupPasses": 1,
           "throughput": "n/a",
           "freshChildRuns": [
-            10.351,
-            10.729
+            13.061,
+            12.935
           ],
-          "freshChildMedianMs": 10.54,
-          "freshChildMinMs": 10.351,
-          "freshChildMeanMs": 10.54,
-          "freshChildStddevMs": 0.267,
-          "freshChildCvPct": 2.5,
+          "freshChildMedianMs": 12.998,
+          "freshChildMinMs": 12.935,
+          "freshChildMeanMs": 12.998,
+          "freshChildStddevMs": 0.089,
+          "freshChildCvPct": 0.7,
           "freshChildMetaSamples": [
             {
               "adapterOptionsHash": "5cbd06a0206d53197b015fd136478cc90b72f22d6886955b56dae38994e262a3",
@@ -6942,15 +6942,15 @@
           "files": 200,
           "status": "unranked",
           "runs": [
-            6.844,
-            4.773
+            7.402,
+            5.754
           ],
-          "medianMs": 5.809,
-          "minMs": 4.773,
-          "maxMs": 6.844,
-          "meanMs": 5.809,
-          "stddevMs": 1.464,
-          "cvPct": 25.2,
+          "medianMs": 6.578,
+          "minMs": 5.754,
+          "maxMs": 7.402,
+          "meanMs": 6.578,
+          "stddevMs": 1.165,
+          "cvPct": 17.7,
           "metaSamples": [
             {
               "adapterOptionsHash": "d28660da738599195553e0d18b60ce267efe8f985280c0120451839f0ef59bc2",
@@ -6989,14 +6989,14 @@
           "warmupPasses": 1,
           "throughput": "n/a",
           "freshChildRuns": [
-            5.521,
-            7.045
+            6.891,
+            6.754
           ],
-          "freshChildMedianMs": 6.283,
-          "freshChildMinMs": 5.521,
-          "freshChildMeanMs": 6.283,
-          "freshChildStddevMs": 1.078,
-          "freshChildCvPct": 17.2,
+          "freshChildMedianMs": 6.822,
+          "freshChildMinMs": 6.754,
+          "freshChildMeanMs": 6.822,
+          "freshChildStddevMs": 0.097,
+          "freshChildCvPct": 1.4,
           "freshChildMetaSamples": [
             {
               "adapterOptionsHash": "d28660da738599195553e0d18b60ce267efe8f985280c0120451839f0ef59bc2",
@@ -7069,15 +7069,15 @@
           "files": 200,
           "status": "unranked",
           "runs": [
-            89.859,
-            93.344
+            99.008,
+            112.019
           ],
-          "medianMs": 91.601,
-          "minMs": 89.859,
-          "maxMs": 93.344,
-          "meanMs": 91.601,
-          "stddevMs": 2.464,
-          "cvPct": 2.7,
+          "medianMs": 105.513,
+          "minMs": 99.008,
+          "maxMs": 112.019,
+          "meanMs": 105.513,
+          "stddevMs": 9.2,
+          "cvPct": 8.7,
           "metaSamples": [
             {
               "adapterOptionsHash": "3cb3b66c74f949d0c2d8748eddc80212c8f21743d958aa103bb5e04c3e459b98",
@@ -7122,14 +7122,14 @@
           "warmupPasses": 1,
           "throughput": "n/a",
           "freshChildRuns": [
-            98.808,
-            98.554
+            110.926,
+            108.245
           ],
-          "freshChildMedianMs": 98.681,
-          "freshChildMinMs": 98.554,
-          "freshChildMeanMs": 98.681,
-          "freshChildStddevMs": 0.18,
-          "freshChildCvPct": 0.2,
+          "freshChildMedianMs": 109.585,
+          "freshChildMinMs": 108.245,
+          "freshChildMeanMs": 109.585,
+          "freshChildStddevMs": 1.896,
+          "freshChildCvPct": 1.7,
           "freshChildMetaSamples": [
             {
               "adapterOptionsHash": "3cb3b66c74f949d0c2d8748eddc80212c8f21743d958aa103bb5e04c3e459b98",
@@ -7208,15 +7208,15 @@
           "files": 200,
           "status": "unranked",
           "runs": [
-            84.288,
-            90.47
+            102.791,
+            104.275
           ],
-          "medianMs": 87.379,
-          "minMs": 84.288,
-          "maxMs": 90.47,
-          "meanMs": 87.379,
-          "stddevMs": 4.371,
-          "cvPct": 5,
+          "medianMs": 103.533,
+          "minMs": 102.791,
+          "maxMs": 104.275,
+          "meanMs": 103.533,
+          "stddevMs": 1.049,
+          "cvPct": 1,
           "metaSamples": [
             {
               "adapterOptionsHash": "f42e7e128703a93be7e9a6f7aec4a5ba5b2f321d058363c4634c8f8ba3051b0a",
@@ -7251,14 +7251,14 @@
           "warmupPasses": 1,
           "throughput": "n/a",
           "freshChildRuns": [
-            94.763,
-            92.977
+            101.926,
+            104.122
           ],
-          "freshChildMedianMs": 93.87,
-          "freshChildMinMs": 92.977,
-          "freshChildMeanMs": 93.87,
-          "freshChildStddevMs": 1.263,
-          "freshChildCvPct": 1.3,
+          "freshChildMedianMs": 103.024,
+          "freshChildMinMs": 101.926,
+          "freshChildMeanMs": 103.024,
+          "freshChildStddevMs": 1.553,
+          "freshChildCvPct": 1.5,
           "freshChildMetaSamples": [
             {
               "adapterOptionsHash": "f42e7e128703a93be7e9a6f7aec4a5ba5b2f321d058363c4634c8f8ba3051b0a",

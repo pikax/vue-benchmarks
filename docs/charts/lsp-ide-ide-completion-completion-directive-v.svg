@@ -14,37 +14,37 @@
   <line x1="248" y1="56" x2="248" y2="208" stroke="#d0d7de" stroke-opacity="0.55" />
   <text fill="#59636e" x="248" y="228" text-anchor="middle" font-size="11">0.0 ms</text>
   <line x1="348.5" y1="56" x2="348.5" y2="208" stroke="#d0d7de" stroke-opacity="0.55" />
-  <text fill="#59636e" x="348.5" y="228" text-anchor="middle" font-size="11">7.4 ms</text>
+  <text fill="#59636e" x="348.5" y="228" text-anchor="middle" font-size="11">11.2 ms</text>
   <line x1="449" y1="56" x2="449" y2="208" stroke="#d0d7de" stroke-opacity="0.55" />
-  <text fill="#59636e" x="449" y="228" text-anchor="middle" font-size="11">14.9 ms</text>
+  <text fill="#59636e" x="449" y="228" text-anchor="middle" font-size="11">22.4 ms</text>
   <line x1="549.5" y1="56" x2="549.5" y2="208" stroke="#d0d7de" stroke-opacity="0.55" />
-  <text fill="#59636e" x="549.5" y="228" text-anchor="middle" font-size="11">22.3 ms</text>
+  <text fill="#59636e" x="549.5" y="228" text-anchor="middle" font-size="11">33.6 ms</text>
   <line x1="650" y1="56" x2="650" y2="208" stroke="#d0d7de" stroke-opacity="0.55" />
-  <text fill="#59636e" x="650" y="228" text-anchor="middle" font-size="11">29.7 ms</text>
+  <text fill="#59636e" x="650" y="228" text-anchor="middle" font-size="11">44.8 ms</text>
   <text fill="#59636e" x="16" y="85" font-size="11">1</text>
       <text fill="#1f2328" x="36" y="85" font-size="13">Vize</text>
       
       <rect x="248" y="69" width="402" height="22" rx="5" fill="#afb8c133"/>
-      <rect x="248" y="69" width="4.0" height="22" rx="5" fill="#2563eb" fill-opacity="0.38"/>
       <rect x="248" y="69" width="4.0" height="22" rx="5" fill="#2563eb" fill-opacity="1"/>
+      <rect x="248" y="69" width="4.0" height="22" rx="5" fill="#2563eb" fill-opacity="0.38"/>
       <line x1="252" y1="68" x2="252" y2="92" stroke="#ffffff" stroke-width="2" stroke-opacity="0.9"/>
-      <text fill="#1f2328" x="260" y="85" font-size="12" font-weight="600">0.2 ms warm / 0.2 ms cold</text>
+      <text fill="#1f2328" x="260" y="85" font-size="12" font-weight="600">0.4 ms warm / 0.3 ms cold</text>
   <text fill="#59636e" x="16" y="121" font-size="11">2</text>
       <text fill="#1f2328" x="36" y="121" font-size="13">Volar (N)</text>
       
       <rect x="248" y="105" width="402" height="22" rx="5" fill="#afb8c133"/>
-      <rect x="248" y="105" width="311.0" height="22" rx="5" fill="#42b883" fill-opacity="0.38"/>
-      <rect x="248" y="105" width="141.6" height="22" rx="5" fill="#42b883" fill-opacity="1"/>
-      <line x1="389.5531128851512" y1="104" x2="389.5531128851512" y2="128" stroke="#ffffff" stroke-width="2" stroke-opacity="0.9"/>
-      <text fill="#ffffff" x="256" y="121" font-size="12" font-weight="600">10.5 ms warm / 23.0 ms cold</text>
+      <rect x="248" y="105" width="255.2" height="22" rx="5" fill="#42b883" fill-opacity="0.38"/>
+      <rect x="248" y="105" width="109.2" height="22" rx="5" fill="#42b883" fill-opacity="1"/>
+      <line x1="357.17936090311616" y1="104" x2="357.17936090311616" y2="128" stroke="#ffffff" stroke-width="2" stroke-opacity="0.9"/>
+      <text fill="#ffffff" x="256" y="121" font-size="12" font-weight="600">12.2 ms warm / 28.5 ms cold</text>
   <text fill="#59636e" x="16" y="157" font-size="11">3</text>
       <text fill="#1f2328" x="36" y="157" font-size="13">Volar (JS)</text>
       
       <rect x="248" y="141" width="402" height="22" rx="5" fill="#afb8c133"/>
-      <rect x="248" y="141" width="402.0" height="22" rx="5" fill="#42b883" fill-opacity="0.38"/>
-      <rect x="248" y="141" width="294.3" height="22" rx="5" fill="#42b883" fill-opacity="1"/>
-      <line x1="542.3285271585087" y1="140" x2="542.3285271585087" y2="164" stroke="#ffffff" stroke-width="2" stroke-opacity="0.9"/>
-      <text fill="#ffffff" x="256" y="157" font-size="12" font-weight="600">21.8 ms warm / 29.7 ms cold</text>
+      <rect x="248" y="141" width="402.0" height="22" rx="5" fill="#42b883" fill-opacity="1"/>
+      <rect x="248" y="141" width="292.7" height="22" rx="5" fill="#42b883" fill-opacity="0.38"/>
+      <line x1="540.7392975123817" y1="140" x2="540.7392975123817" y2="164" stroke="#ffffff" stroke-width="2" stroke-opacity="0.9"/>
+      <text fill="#ffffff" x="256" y="157" font-size="12" font-weight="600">44.8 ms warm / 32.6 ms cold</text>
   <text fill="#59636e" x="16" y="193" font-size="11">4</text>
       <text fill="#1f2328" x="36" y="193" font-size="13" fill-opacity="0.62">Verter</text>
       <line x1="36" y1="188" x2="240" y2="188" stroke="#1f2328" stroke-opacity="0.45" />
@@ -52,5 +52,5 @@
       <rect x="248" y="177" width="4.0" height="22" rx="5" fill="url(#hatch-3)" fill-opacity="0.38"/>
       <rect x="248" y="177" width="4.0" height="22" rx="5" fill="url(#hatch-3)" fill-opacity="1"/>
       <line x1="252" y1="176" x2="252" y2="200" stroke="#ffffff" stroke-width="2" stroke-opacity="0.9"/>
-      <text fill="#1f2328" x="260" y="193" font-size="12" font-weight="600">0.2 ms warm / 0.3 ms cold · unranked</text>
+      <text fill="#1f2328" x="260" y="193" font-size="12" font-weight="600">0.3 ms warm / 0.3 ms cold · unranked</text>
 </svg>

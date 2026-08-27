@@ -14,13 +14,13 @@
   <line x1="248" y1="56" x2="248" y2="208" stroke="#3d444d" stroke-opacity="0.55" />
   <text fill="#9198a1" x="248" y="228" text-anchor="middle" font-size="11">0.0 ms</text>
   <line x1="348.5" y1="56" x2="348.5" y2="208" stroke="#3d444d" stroke-opacity="0.55" />
-  <text fill="#9198a1" x="348.5" y="228" text-anchor="middle" font-size="11">208 ms</text>
+  <text fill="#9198a1" x="348.5" y="228" text-anchor="middle" font-size="11">275 ms</text>
   <line x1="449" y1="56" x2="449" y2="208" stroke="#3d444d" stroke-opacity="0.55" />
-  <text fill="#9198a1" x="449" y="228" text-anchor="middle" font-size="11">416 ms</text>
+  <text fill="#9198a1" x="449" y="228" text-anchor="middle" font-size="11">549 ms</text>
   <line x1="549.5" y1="56" x2="549.5" y2="208" stroke="#3d444d" stroke-opacity="0.55" />
-  <text fill="#9198a1" x="549.5" y="228" text-anchor="middle" font-size="11">624 ms</text>
+  <text fill="#9198a1" x="549.5" y="228" text-anchor="middle" font-size="11">824 ms</text>
   <line x1="650" y1="56" x2="650" y2="208" stroke="#3d444d" stroke-opacity="0.55" />
-  <text fill="#9198a1" x="650" y="228" text-anchor="middle" font-size="11">832 ms</text>
+  <text fill="#9198a1" x="650" y="228" text-anchor="middle" font-size="11">1.10 s</text>
   <text fill="#9198a1" x="16" y="85" font-size="11">1</text>
       <text fill="#e6edf3" x="36" y="85" font-size="13">Vize</text>
       
@@ -28,29 +28,29 @@
       <rect x="248" y="69" width="4.0" height="22" rx="5" fill="#2563eb" fill-opacity="0.38"/>
       <rect x="248" y="69" width="4.0" height="22" rx="5" fill="#2563eb" fill-opacity="1"/>
       <line x1="252" y1="68" x2="252" y2="92" stroke="#0d1117" stroke-width="2" stroke-opacity="0.9"/>
-      <text fill="#e6edf3" x="260" y="85" font-size="12" font-weight="600">0.2 ms warm / 0.6 ms cold</text>
+      <text fill="#e6edf3" x="260" y="85" font-size="12" font-weight="600">0.3 ms warm / 0.4 ms cold</text>
   <text fill="#9198a1" x="16" y="121" font-size="11">2</text>
       <text fill="#e6edf3" x="36" y="121" font-size="13">Verter</text>
       
       <rect x="248" y="105" width="402" height="22" rx="5" fill="#6e768166"/>
-      <rect x="248" y="105" width="111.9" height="22" rx="5" fill="#e11d48" fill-opacity="0.38"/>
-      <rect x="248" y="105" width="4.0" height="22" rx="5" fill="#e11d48" fill-opacity="1"/>
-      <line x1="252" y1="104" x2="252" y2="128" stroke="#0d1117" stroke-width="2" stroke-opacity="0.9"/>
-      <text fill="#ffffff" x="256" y="121" font-size="12" font-weight="600">3.1 ms warm / 231 ms cold</text>
+      <rect x="248" y="105" width="124.5" height="22" rx="5" fill="#e11d48" fill-opacity="0.38"/>
+      <rect x="248" y="105" width="11.6" height="22" rx="5" fill="#e11d48" fill-opacity="1"/>
+      <line x1="259.5711170329965" y1="104" x2="259.5711170329965" y2="128" stroke="#0d1117" stroke-width="2" stroke-opacity="0.9"/>
+      <text fill="#ffffff" x="256" y="121" font-size="12" font-weight="600">31.6 ms warm / 340 ms cold</text>
   <text fill="#9198a1" x="16" y="157" font-size="11">3</text>
       <text fill="#e6edf3" x="36" y="157" font-size="13">Volar (N)</text>
       
       <rect x="248" y="141" width="402" height="22" rx="5" fill="#6e768166"/>
-      <rect x="248" y="141" width="158.3" height="22" rx="5" fill="#42b883" fill-opacity="0.38"/>
-      <rect x="248" y="141" width="8.3" height="22" rx="5" fill="#42b883" fill-opacity="1"/>
-      <line x1="256.2544001259289" y1="140" x2="256.2544001259289" y2="164" stroke="#0d1117" stroke-width="2" stroke-opacity="0.9"/>
-      <text fill="#ffffff" x="256" y="157" font-size="12" font-weight="600">17.1 ms warm / 328 ms cold</text>
+      <rect x="248" y="141" width="146.2" height="22" rx="5" fill="#42b883" fill-opacity="0.38"/>
+      <rect x="248" y="141" width="9.2" height="22" rx="5" fill="#42b883" fill-opacity="1"/>
+      <line x1="257.1906851399991" y1="140" x2="257.1906851399991" y2="164" stroke="#0d1117" stroke-width="2" stroke-opacity="0.9"/>
+      <text fill="#ffffff" x="256" y="157" font-size="12" font-weight="600">25.1 ms warm / 400 ms cold</text>
   <text fill="#9198a1" x="16" y="193" font-size="11">4</text>
       <text fill="#e6edf3" x="36" y="193" font-size="13">Volar (JS)</text>
       
       <rect x="248" y="177" width="402" height="22" rx="5" fill="#6e768166"/>
       <rect x="248" y="177" width="402.0" height="22" rx="5" fill="#42b883" fill-opacity="0.38"/>
-      <rect x="248" y="177" width="10.7" height="22" rx="5" fill="#42b883" fill-opacity="1"/>
-      <line x1="258.7034974343336" y1="176" x2="258.7034974343336" y2="200" stroke="#0d1117" stroke-width="2" stroke-opacity="0.9"/>
-      <text fill="#ffffff" x="256" y="193" font-size="12" font-weight="600">22.1 ms warm / 832 ms cold</text>
+      <rect x="248" y="177" width="9.1" height="22" rx="5" fill="#42b883" fill-opacity="1"/>
+      <line x1="257.0583861975051" y1="176" x2="257.0583861975051" y2="200" stroke="#0d1117" stroke-width="2" stroke-opacity="0.9"/>
+      <text fill="#ffffff" x="256" y="193" font-size="12" font-weight="600">24.8 ms warm / 1.10 s cold</text>
 </svg>

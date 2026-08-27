@@ -2,12 +2,12 @@
 
 > Auto-generated from the JSON snapshots in [`results/benchmarks/`](../results/benchmarks/) and [`results/real_world/`](../results/real_world/) by `pnpm docs`. Do not edit by hand.
 
-- **Generated:** 2026-08-21T09:58:23.715Z
+- **Generated:** 2026-08-27T10:24:48.274Z
 - **Fixture:** `fixtures/200` (200 files)
 - **Runs / warmups:** 5 / 1
-- **Runner:** Linux · linux/x64 · 4 CPUs · AMD EPYC 9V74 80-Core Processor · 15.6 GB · Node v22.23.2
-- **Commit:** [`64b460c`](https://github.com/pikax/vue-benchmarks/commit/64b460c3b8cafbc9efba895cd716d5ef41920124)
-- **CI run:** https://github.com/pikax/vue-benchmarks/actions/runs/32469697609
+- **Runner:** Linux · linux/x64 · 4 CPUs · Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz · 15.6 GB · Node v22.23.2
+- **Commit:** [`abafafd`](https://github.com/pikax/vue-benchmarks/commit/abafafd07c14f26c07f1d0ed9da818102fdc97e1)
+- **CI run:** https://github.com/pikax/vue-benchmarks/actions/runs/33062210774
 - **Source:** `results/benchmarks/bench-Linux-200-bench.json`
 
 ## Results
@@ -36,20 +36,20 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Diagnostics | Throughput | Peak RSS |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| verter-tsc | **956.9 ms** | 931.1 ms | 15.9 ms | 1.7% | 1.00x | 420 | 209 files/s | 216.8 MB |
-| Vize | **1.34 s** | 1.31 s | 26.4 ms | 2.0% | 1.40x | 0 | 149 files/s | 213.9 MB |
-| Golar (lint+check) | **1.37 s** | 1.27 s | 71.3 ms | 5.2% | 1.44x | 0 | 146 files/s | – |
-| Golar typecheck | **1.38 s** | 1.31 s | 32.7 ms | 2.4% | 1.44x | 0 | 145 files/s | 387.1 MB |
-| vue-tsc (N) | **2.04 s** | 1.95 s | 53.7 ms | 2.6% | 2.13x | 0 | 98 files/s | – |
-| vue-tsc (JS) | **4.34 s** | 4.22 s | 85.8 ms | 2.0% | 4.54x | 0 | 46 files/s | 351.5 MB |
+| Vize | **1.04 s** | 1.03 s | 11.4 ms | 1.1% | 1.00x | 0 | 193 files/s | 213.4 MB |
+| verter-tsc | **1.09 s** | 1.06 s | 14.4 ms | 1.3% | 1.05x | 420 | 184 files/s | 217.3 MB |
+| Golar (lint+check) | **1.57 s** | 1.56 s | 15.7 ms | 1.0% | 1.51x | 0 | 128 files/s | – |
+| Golar typecheck | **1.58 s** | 1.58 s | 4.1 ms | 0.3% | 1.52x | 0 | 126 files/s | 379.7 MB |
+| vue-tsc (N) | **2.29 s** | 2.27 s | 28.7 ms | 1.3% | 2.21x | 0 | 87 files/s | – |
+| vue-tsc (JS) | **4.86 s** | 4.81 s | 57.3 ms | 1.2% | 4.68x | 0 | 41 files/s | 351.8 MB |
 
 <details><summary>Notes</summary>
 
+- **Vize**: vize check . --tsconfig tsconfig.json (native + Corsa when available) | engine: tsgo (bundled) | gate: script=✓ tmpl-prop=✓ tmpl-event=✓ corpus=✓
 - **verter-tsc**: verter-tsc --noEmit -p tsconfig.json · tsgo 7.0.2 (typescript-go@7.0.2 → @typescript/typescript-linux-x64) | engine: tsgo 7.0.2 (typescript-go@7.0.2 → @typescript/typescript-linux-x64) | gate: script=✓ tmpl-prop=✓ tmpl-event=✓ corpus=✓
-- **Vize**: vize check . --tsconfig tsconfig.json (native + Corsa when available) | engine: tsgo 7.0.0-dev.20260603.1 (nightly) | gate: script=✓ tmpl-prop=✓ tmpl-event=✓ corpus=✓
 - **Golar (lint+check)**: golar default mode runs lint then typecheck — not a pure typecheck | engine: typescript-go 7.0.2 | gate: script=✓ tmpl-prop=✓ tmpl-event=✓ corpus=✓
 - **Golar typecheck**: golar typecheck (typescript-go + @golar/vue plugin) | engine: typescript-go 7.0.2 | gate: script=✓ tmpl-prop=✓ tmpl-event=✓ corpus=✓
-- **vue-tsc (N)**: vue-tsc 3.3.10 with typescript aliased to typescript-native-bridge 6.0.3-bridge.13.tsgo.7.0.2 (TS API 6.0.3 on tsgo 7.0.2, in-process NAPI/FFI) | engine: tsgo 7.0.2 via TNB 6.0.3-bridge.13.tsgo.7.0.2 | gate: script=✓ tmpl-prop=✓ tmpl-event=✓ corpus=✓
+- **vue-tsc (N)**: vue-tsc 3.3.11 with typescript aliased to typescript-native-bridge 6.0.3-bridge.15.tsgo.7.0.2 (TS API 6.0.3 on tsgo 7.0.2, in-process NAPI/FFI) | engine: tsgo 7.0.2 via TNB 6.0.3-bridge.15.tsgo.7.0.2 | gate: script=✓ tmpl-prop=✓ tmpl-event=✓ corpus=✓
 - **vue-tsc (JS)**: Official Vue Language Tools CLI: vue-tsc --noEmit -p tsconfig.json | engine: TypeScript 6.0.3 (JS) | gate: script=✓ tmpl-prop=✓ tmpl-event=✓ corpus=✓
 
 </details>
@@ -72,12 +72,12 @@ Tools:
 
 Raw runs:
 
-- **verter-tsc**: 967.5 ms, 956.9 ms, 964.2 ms, 939.4 ms, 931.1 ms
-- **Vize**: 1.34 s, 1.35 s, 1.34 s, 1.31 s, 1.39 s
-- **Golar (lint+check)**: 1.37 s, 1.46 s, 1.41 s, 1.33 s, 1.27 s
-- **Golar typecheck**: 1.38 s, 1.38 s, 1.39 s, 1.36 s, 1.31 s
-- **vue-tsc (N)**: 2.05 s, 2.07 s, 2.04 s, 1.95 s, 1.96 s
-- **vue-tsc (JS)**: 4.39 s, 4.42 s, 4.34 s, 4.22 s, 4.27 s
+- **Vize**: 1.03 s, 1.06 s, 1.04 s, 1.04 s, 1.03 s
+- **verter-tsc**: 1.08 s, 1.09 s, 1.09 s, 1.09 s, 1.06 s
+- **Golar (lint+check)**: 1.56 s, 1.60 s, 1.58 s, 1.56 s, 1.57 s
+- **Golar typecheck**: 1.59 s, 1.59 s, 1.58 s, 1.58 s, 1.58 s
+- **vue-tsc (N)**: 2.34 s, 2.28 s, 2.32 s, 2.29 s, 2.27 s
+- **vue-tsc (JS)**: 4.95 s, 4.87 s, 4.82 s, 4.86 s, 4.81 s
 
 </details>
 
@@ -96,10 +96,10 @@ One spawn per tool over every plant with the shared `strictTemplates` tsconfig �
 
 | Tool | **Median** | Avg | vs fastest | Peak RSS |
 | --- | ---: | ---: | ---: | ---: |
-| vize | **449 ms** | 453 ms | 1.00x | 73.3 + 356.1 = **429.4 MB** |
-| verter-tsc | **529 ms** | 572 ms | 1.18x | 84.9 + 151.6 = **236.5 MB** |
-| golar | **704 ms** | 708 ms | 1.57x | **366.8 MB** |
-| vue-tsc | **2.39 s** | 2.39 s | 5.31x | **342.8 MB** |
+| verter-tsc | **762 ms** | 767 ms | 1.00x | 84.7 + 149.8 = **234.5 MB** |
+| vize | **832 ms** | 827 ms | 1.09x | 72.9 + 413.0 = **485.8 MB** |
+| golar | **950 ms** | 943 ms | 1.25x | **356.9 MB** |
+| vue-tsc | **3.30 s** | 3.36 s | 4.33x | **342.5 MB** |
 
 Peak RSS is the separate memory pass, split `tool + tsgo/tsc = total` when the checker spawns a TypeScript engine; in-process engines cannot be split.
 
@@ -110,7 +110,7 @@ Peak RSS is the separate memory pass, split `tool + tsgo/tsc = total` when the c
 
 | Tool | **Pass rate** | pass / plants | ⚠ needed opt-in |
 | --- | ---: | ---: | ---: |
-| vize | **96%** | 144 / 150 | – |
+| vize | **99%** | 148 / 150 | – |
 | vue-tsc | **95%** | 143 / 150 | 5 |
 | golar | **94%** | 141 / 150 | 5 |
 | verter-tsc | **81%** | 121 / 150 | – |
@@ -171,7 +171,7 @@ Static resolution (`v-if="true"`, `alwaysOn: true`) is the hard edge. A tool tha
 ### Summary
 
 - plants: **150**
-- pass: **549** · fail: **41** · skip: **0** · warn: **10**
+- pass: **553** · fail: **37** · skip: **0** · warn: **10**
 - one-spawn combined run: [All plants (one tsconfig)](#all-plants-one-tsconfig)
 
 ### Template narrowing
@@ -219,14 +219,14 @@ Static resolution (`v-if="true"`, `alwaysOn: true`) is the hard edge. A tool tha
 
 | Case | Expect | vue-tsc | vize | verter-tsc | golar | What it checks |
 | --- | --- | --- | --- | --- | --- | --- |
-| [`attrs-aria-data-unknown`](../tests/confirm/fixtures/typecheck/cases/attrs-aria-data-unknown/) | error | ✓ | **✗**† | **✗**† | ✓ | Undeclared aria-*/data-* attributes on a component are not exempt from strictTemplates (isolates the root cause of inherit-attrs-false-unknown: the exemption is prefix-based, not inheritAttrs-based) |
+| [`attrs-aria-data-unknown`](../tests/confirm/fixtures/typecheck/cases/attrs-aria-data-unknown/) | error | ✓ | ✓ | **✗**† | ✓ | Undeclared aria-*/data-* attributes on a component are not exempt from strictTemplates (isolates the root cause of inherit-attrs-false-unknown: the exemption is prefix-based, not inheritAttrs-based) |
 | [`attrs-class-style-ok`](../tests/confirm/fixtures/typecheck/cases/attrs-class-style-ok/) | clean | ✓ | ✓ | ✓ | ✓ | class/style on component are AllowedComponentProps (clean under strictTemplates) |
 | [`attrs-unknown-fallthrough`](../tests/confirm/fixtures/typecheck/cases/attrs-unknown-fallthrough/) | error | ✓ | **✗**† | ✓ | ✓ | Non-declared attribute (id) on component errors under strictTemplates regardless of inheritAttrs |
 | [`inherit-attrs-default-class-style-ok`](../tests/confirm/fixtures/typecheck/cases/inherit-attrs-default-class-style-ok/) | clean | ✓ | ✓ | ✓ | ✓ | Default inheritAttrs still allows class and style (AllowedComponentProps) |
 | [`inherit-attrs-default-unknown`](../tests/confirm/fixtures/typecheck/cases/inherit-attrs-default-unknown/) | error | ✓ | **✗**† | ✓ | ✓ | Default inheritAttrs (no defineOptions) still errors on undeclared attrs under strictTemplates |
 | [`inherit-attrs-false-class-style-ok`](../tests/confirm/fixtures/typecheck/cases/inherit-attrs-false-class-style-ok/) | clean | ✓ | ✓ | ✓ | ✓ | inheritAttrs: false still allows class and style on the component |
-| [`inherit-attrs-false-unknown`](../tests/confirm/fixtures/typecheck/cases/inherit-attrs-false-unknown/) | error | ✓ | **✗**† | **✗**† | ✓ | inheritAttrs:false still rejects unknown attrs at the call site under strictTemplates |
-| [`unknown-prop-strict`](../tests/confirm/fixtures/typecheck/cases/unknown-prop-strict/) | error | ✓ | **✗**† | ✓ | ✓ | strictTemplates: undeclared prop on child component |
+| [`inherit-attrs-false-unknown`](../tests/confirm/fixtures/typecheck/cases/inherit-attrs-false-unknown/) | error | ✓ | ✓ | **✗**† | ✓ | inheritAttrs:false still rejects unknown attrs at the call site under strictTemplates |
+| [`unknown-prop-strict`](../tests/confirm/fixtures/typecheck/cases/unknown-prop-strict/) | error | ✓ | ✓ | ✓ | ✓ | strictTemplates: undeclared prop on child component |
 
 ### Generics
 
@@ -242,7 +242,7 @@ Static resolution (`v-if="true"`, `alwaysOn: true`) is the hard edge. A tool tha
 | [`generic-emit-ok`](../tests/confirm/fixtures/typecheck/cases/generic-emit-ok/) | clean | ✓ | ✓ | **✗**† | ✓ | Generic emit payload matches the inferred T from the value prop |
 | [`generic-fallthrough-mono-ok`](../tests/confirm/fixtures/typecheck/cases/generic-fallthrough-mono-ok/) | clean | ⚠ | ✓ | **✗**† | ⚠ | Generic + inheritAttrs default + single root: native id falls through · *may warn if fallthroughAttributes is required* |
 | [`generic-inherit-false-class-ok`](../tests/confirm/fixtures/typecheck/cases/generic-inherit-false-class-ok/) | clean | ✓ | ✓ | **✗**† | ✓ | Generic + inheritAttrs:false still allows class |
-| [`generic-inherit-false-unknown`](../tests/confirm/fixtures/typecheck/cases/generic-inherit-false-unknown/) | error | ✓ | **✗**† | ✓ | ✓ | Generic + inheritAttrs:false: undeclared extra attr must error |
+| [`generic-inherit-false-unknown`](../tests/confirm/fixtures/typecheck/cases/generic-inherit-false-unknown/) | error | ✓ | ✓ | ✓ | ✓ | Generic + inheritAttrs:false: undeclared extra attr must error |
 | [`generic-multi-root-ok`](../tests/confirm/fixtures/typecheck/cases/generic-multi-root-ok/) | clean | ✓ | ✓ | **✗**† | ✓ | Generic multi-root SFC with correct props stays clean (no extra attrs) |
 | [`generic-slot-bad`](../tests/confirm/fixtures/typecheck/cases/generic-slot-bad/) | error | ✓ | ✓ | ✓ | ✓ | Generic scoped slot: item.id (number) must reject a string-only consumer |
 | [`generic-slot-ok`](../tests/confirm/fixtures/typecheck/cases/generic-slot-ok/) | clean | ✓ | ✓ | **✗**† | ✓ | Generic scoped slot exposes T so item.label is a string |
@@ -409,7 +409,6 @@ Static resolution (`v-if="true"`, `alwaysOn: true`) is the hard edge. A tool tha
 These fails are real. They are allow-listed only so the PR gate stays a useful signal; the cell still shows **✗**.
 
 - `typecheck/attrs-aria-data-unknown/verter-tsc` — expected ≥1 error(s), got 0
-- `typecheck/attrs-aria-data-unknown/vize-check` — capability gap — tool does not claim: strict-component-attrs (scored: expected ≥1 error(s), got 0)
 - `typecheck/attrs-unknown-fallthrough/vize-check` — capability gap — tool does not claim: strict-component-attrs (scored: expected ≥1 error(s), got 0)
 - `typecheck/custom-directive-value-bad/golar-typecheck` — expected ≥1 error(s), got 0
 - `typecheck/define-model-modifiers-ok/verter-tsc` — expected clean (0 errors), got 2
@@ -432,7 +431,6 @@ These fails are real. They are allow-listed only so the PR gate stays a useful s
 - `typecheck/generic-emit-ok/verter-tsc` — clean fixture: diagnostic describes the tool's own generated code — /home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/cases/generic-emit-ok/Child.vue(1,1): error TS2314: Generic type '___VERTER___Attrs' requires 1 type argument(s).
 - `typecheck/generic-fallthrough-mono-ok/verter-tsc` — EXTRA VUE COMPILER OPTION — vueCompilerOptions.fallthroughAttributes is not default and is not on the shared tsconfig. A fully compatible checker types inheritAttrs fallthrough without this opt-in. Failed on the shared tsconfig and still failed after enabling it: clean fixture: diagnostic describes the tool's own generated code — /home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/cases/generic-fallthrough-mono-ok/Child.vue(1,1): error TS2314: Generic type '___VERTER___Attrs' requires 1 type argument(s)..
 - `typecheck/generic-inherit-false-class-ok/verter-tsc` — clean fixture: diagnostic describes the tool's own generated code — /home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/cases/generic-inherit-false-class-ok/Child.vue(1,1): error TS2314: Generic type '___VERTER___Attrs' requires 1 type argument(
-- `typecheck/generic-inherit-false-unknown/vize-check` — capability gap — tool does not claim: strict-component-attrs (scored: expected ≥1 error(s), got 0)
 - `typecheck/generic-multi-root-ok/verter-tsc` — clean fixture: diagnostic describes the tool's own generated code — /home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/cases/generic-multi-root-ok/Child.vue(1,1): error TS2314: Generic type '___VERTER___Attrs' requires 1 type argument(s).
 - `typecheck/generic-slot-ok/verter-tsc` — clean fixture: diagnostic describes the tool's own generated code — /home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/cases/generic-slot-ok/Child.vue(1,1): error TS2314: Generic type '___VERTER___Attrs' requires 1 type argument(s).
 - `typecheck/generic-two-params-ok/verter-tsc` — clean fixture: diagnostic describes the tool's own generated code — /home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/cases/generic-two-params-ok/Child.vue(1,1): error TS2314: Generic type '___VERTER___Attrs' requires 2 type argument(s).
@@ -440,12 +438,10 @@ These fails are real. They are allow-listed only so the PR gate stays a useful s
 - `typecheck/global-component-prop-ok/verter-tsc` — expected clean (0 errors), got 2
 - `typecheck/inherit-attrs-default-unknown/vize-check` — capability gap — tool does not claim: strict-component-attrs (scored: expected ≥1 error(s), got 0)
 - `typecheck/inherit-attrs-false-unknown/verter-tsc` — expected ≥1 error(s), got 0
-- `typecheck/inherit-attrs-false-unknown/vize-check` — capability gap — tool does not claim: strict-component-attrs (scored: plant at App.vue:8 did not mention dataX)
 - `typecheck/missing-required-prop/golar-typecheck` — expected ≥1 error(s), got 0
 - `typecheck/slot-default-implicit-ok/verter-tsc` — expected clean (0 errors), got 1
 - `typecheck/slot-v-bind-bad/verter-tsc` — plant at App.vue:13 did not mention one of: TS2322 \| TS2345 \| number \| string \| not assignable
 - `typecheck/slot-v-bind-ok/verter-tsc` — expected clean (0 errors), got 1
-- `typecheck/unknown-prop-strict/vize-check` — capability gap — tool does not claim: strict-component-attrs (scored: expected ≥1 error(s), got 0)
 - `typecheck/v-if-discriminant-ok/verter-tsc` — expected clean (0 errors), got 2
 - `typecheck/v-if-optional-prop-bad/verter-tsc` — no diagnostic at App.vue:10 (@plant-error)
 - `typecheck/v-model-type/verter-tsc` — no diagnostic at App.vue:11 (@plant-error)
@@ -471,10 +467,10 @@ Each tool in its own process so RSS, allocation proxies and CPU are not mixed wi
 
 | Tool | RSS min / max / avg | Alloc min / max / avg | CPU ms | CPU % | Wall ms | Samples |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize check | 15.18 / 213.82 / 114.50 | n/a | 410 | 51.1 | 799 | 3 |
-| verter-tsc | 17.14 / 216.57 / 132.51 | n/a | 20 | 2.7 | 749 | 3 |
-| vue-tsc | 17.00 / 350.48 / 265.11 | n/a | 7870 | 210.6 | 3737 | 3 |
-| Golar typecheck | 17.24 / 383.47 / 226.44 | n/a | 3060 | 244.2 | 1249 | 3 |
+| Vize check | 14.31 / 209.88 / 111.17 | n/a | 400 | 53.8 | 726 | 3 |
+| verter-tsc | 14.35 / 217.08 / 132.41 | n/a | 20 | 2.5 | 794 | 3 |
+| vue-tsc | 14.37 / 351.59 / 262.23 | n/a | 7980 | 210.0 | 3802 | 3 |
+| Golar typecheck | 14.36 / 379.34 / 220.01 | n/a | 3180 | 236.4 | 1324 | 3 |
 
 <details><summary>Notes</summary>
 
@@ -492,41 +488,41 @@ Each tool in its own process so RSS, allocation proxies and CPU are not mixed wi
 | Package | Version |
 | --- | --- |
 | node | v22.23.2 |
-| vue | 3.5.41 |
-| vue-36 | 3.6.0-rc.4 |
-| @vue/compiler-sfc | 3.5.41 |
-| @vue/compiler-sfc-36 | 3.6.0-rc.4 |
-| vize | 0.354.0 |
-| @vizejs/native | 0.354.0 |
+| vue | 3.5.42 |
+| vue-36 | 3.6.0-rc.5 |
+| @vue/compiler-sfc | 3.5.42 |
+| @vue/compiler-sfc-36 | 3.6.0-rc.5 |
+| vize | 0.387.0 |
+| @vizejs/native | 0.387.0 |
 | @verter/native | 0.0.1-beta.3 |
 | @fervid/napi | 0.4.1 |
 | verter-tsc | 0.0.1-beta.3 |
 | @verter/component-meta | 0.0.1-beta.3 |
 | verter-lsp | 0.0.1-beta.3 |
 | verter-mcp | 0.0.1-beta.3 |
-| @vue/language-server | 3.3.10 |
-| @vue/typescript-plugin | 3.3.10 |
-| typescript-language-server | 5.3.0 |
-| vue-tsc | 3.3.10 |
-| vue-component-meta | 3.3.10 |
+| @vue/language-server | 3.3.11 |
+| @vue/typescript-plugin | 3.3.11 |
+| typescript-language-server | 6.0.0 |
+| vue-tsc | 3.3.11 |
+| vue-component-meta | 3.3.11 |
 | golar | 0.1.10 |
 | @golar/vue | 0.1.10 |
 | prettier | 3.9.6 |
-| oxfmt | 0.64.0 |
-| oxlint | 1.79.0 |
+| oxfmt | 0.65.0 |
+| oxlint | 1.80.0 |
 | eslint-plugin-vue | 10.10.0 |
-| @biomejs/biome | 2.5.9 |
+| @biomejs/biome | 2.5.10 |
 | typescript | 6.0.3 |
-| cli:vize | 0.354.0 |
+| cli:vize | 0.387.0 |
 | cli:vue-tsc | 6.0.3 |
 | cli:verter-tsc | 0.0.1-beta.3 |
 | cli:golar | 0.1.10 |
 | cli:prettier | 3.9.6 |
-| cli:oxfmt | 0.64.0 |
-| cli:oxlint | 1.79.0 |
-| cli:biome | 2.5.9 |
-| vue-jsx-vapor | 3.2.21 |
-| @vue-jsx-vapor/compiler-rs | 3.2.21 |
+| cli:oxfmt | 0.65.0 |
+| cli:oxlint | 1.80.0 |
+| cli:biome | 2.5.10 |
+| vue-jsx-vapor | 3.2.22 |
+| @vue-jsx-vapor/compiler-rs | 3.2.22 |
 | @vue/babel-plugin-jsx | 3.0.0 |
 | @babel/core | 8.0.1 |
 
