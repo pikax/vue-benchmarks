@@ -108,7 +108,7 @@
     "vue-tsc": "3.3.11"
   },
   "devDependencies": {
-    "@rspack/core": "2.2.0",
+    "@rspack/core": "2.2.1",
     "@swc/core": "1.16.1",
     "@typescript-eslint/parser": "8.68.0",
     "@verter/unplugin": "0.0.1-beta.3",
