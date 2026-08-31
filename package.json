@@ -115,7 +115,7 @@
     "@vitejs/plugin-vue": "6.0.8",
     "@vizejs/rspack-plugin": "0.387.0",
     "@vizejs/vite-plugin": "0.387.0",
-    "@vue/test-utils": "2.4.11",
+    "@vue/test-utils": "2.5.0",
     "jsdom": "30.0.1",
     "rolldown": "1.2.6",
     "sass": "1.103.1",
