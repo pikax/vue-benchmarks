@@ -93,7 +93,7 @@
     "eslint-plugin-vue": "10.10.0",
     "golar": "0.1.10",
     "mocha": "11.8.0",
-    "oxfmt": "0.65.0",
+    "oxfmt": "0.66.0",
     "oxlint": "1.80.0",
     "prettier": "3.9.6",
     "typescript-language-server": "6.0.0",
