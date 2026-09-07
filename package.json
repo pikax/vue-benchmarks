@@ -110,7 +110,7 @@
   "devDependencies": {
     "@rspack/core": "2.2.0",
     "@swc/core": "1.16.1",
-    "@typescript-eslint/parser": "8.68.0",
+    "@typescript-eslint/parser": "8.69.0",
     "@verter/unplugin": "0.0.1-beta.3",
     "@vitejs/plugin-vue": "6.0.8",
     "@vizejs/rspack-plugin": "0.387.0",
