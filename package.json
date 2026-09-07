@@ -117,7 +117,7 @@
     "@vizejs/vite-plugin": "0.387.0",
     "@vue/test-utils": "2.4.11",
     "jsdom": "30.0.1",
-    "rolldown": "1.2.6",
+    "rolldown": "1.2.7",
     "sass": "1.103.1",
     "swc-loader": "0.2.7",
     "tinybench": "6.1.3",
