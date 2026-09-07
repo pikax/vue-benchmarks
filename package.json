@@ -94,7 +94,7 @@
     "golar": "0.1.10",
     "mocha": "11.8.0",
     "oxfmt": "0.65.0",
-    "oxlint": "1.80.0",
+    "oxlint": "1.81.0",
     "prettier": "3.9.6",
     "typescript-language-server": "6.0.0",
     "verter-lsp": "0.0.1-beta.3",
