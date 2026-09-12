@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 
-export const SOURCE_MAP_SUITE_VERSION = "2026-09-12.1";
+export const SOURCE_MAP_SUITE_VERSION = "2026-09-12.2";
 const body = `<script setup lang="ts">
 /* 🧪 */ const mapScriptToken = 7;
 </script>

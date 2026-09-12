@@ -3,7 +3,28 @@ import assert from "node:assert/strict";
 import { parse, compileScript } from "@vue/compiler-sfc";
 import { encodedMap, TraceMap } from "@jridgewell/trace-mapping";
 import { judgeSourceMapArtifact } from "../../scripts/lib/source-map-validity-oracle.mjs";
-import { runSourceMapValidityChild } from "../../scripts/lib/source-map-validity-child.mjs";
+import { nativeArtifacts, runSourceMapValidityChild } from "../../scripts/lib/source-map-validity-child.mjs";
+
+test("native map capture uses emitted CSS when styles contains parsed input descriptors", () => {
+  const result = {
+    code: "export default {}", map: "js-map", css: ".target[data-v-test]{color:red}", cssMap: "css-map",
+    styles: [{ content: ".target{color:red}", scoped: true, index: 0 }],
+  };
+  assert.deepEqual(nativeArtifacts(result), [
+    { kind: "js", code: result.code, map: "js-map" },
+    { kind: "css", code: result.css, map: "css-map" },
+  ]);
+  const { css, cssMap, ...withoutOutput } = result;
+  assert.deepEqual(nativeArtifacts(withoutOutput), [{ kind: "js", code: result.code, map: "js-map" }]);
+});
+
+test("native map capture preserves separate emitted style artifacts and their maps", () => {
+  const styles = [{ code: ".a{color:red}", map: "first-map" }, { code: ".b{padding:0}", sourceMap: "second-map" }];
+  assert.deepEqual(nativeArtifacts({ code: "export default {}", styles, css: "unused aggregate" }).slice(1), [
+    { kind: "css", styleIndex: 0, code: styles[0].code, map: "first-map" },
+    { kind: "css", styleIndex: 1, code: styles[1].code, map: "second-map" },
+  ]);
+});
 
 const source = '<script setup>\r\n/* 🧪 */ const mapScriptToken = 7\r\n</script>\r\n<template>{{ Math.max(mapScriptToken, 0) }}</template>\r\n<style>/* 🧪 */ .mapTarget { color: red; }</style>\r\n';
 const code = 'const mapScriptToken = 7;\nfunction render() { return Math.max(mapScriptToken, 0) }\n/* 🧪 */ .mapTarget { color: red; }';

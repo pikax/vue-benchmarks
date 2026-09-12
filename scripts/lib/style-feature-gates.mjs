@@ -10,7 +10,7 @@ import { createHash } from "node:crypto";
 import { isDeepStrictEqual } from "node:util";
 import { cssProjection } from "./css-semantics.mjs";
 
-export const STYLE_FEATURE_SUITE_VERSION = "2026-09-12.2";
+export const STYLE_FEATURE_SUITE_VERSION = "2026-09-12.3";
 
 export const STYLE_FEATURE_CASES = Object.freeze([
   Object.freeze({
@@ -161,7 +161,7 @@ export function assertStyleFeature(feature, { css, js = "", modules = null, decl
   const plant = STYLE_FEATURE_CASES.find((plant) => plant.id === feature);
   if (!plant) throw new Error(`unknown style feature ${feature}`);
   // Scope rewriting may change selectors but cannot silently rewrite/drop the
-  // declarations or their enclosing rule/at-rule order. v-bind and keyframe
+  // declaration semantics or their enclosing rule/at-rule order. v-bind and keyframe
   // names have deliberate value transforms validated separately below.
   const assertDeclarations = () => {
     if (feature.startsWith("v-bind") || declarationSource === null) return;

@@ -7,7 +7,7 @@ import { customBlockProjection } from "./custom-block-semantics.mjs";
 const require = createRequire(import.meta.url);
 const ts = require("typescript");
 
-export const FORMAT_VALIDITY_SUITE_VERSION = "2026-09-12.2";
+export const FORMAT_VALIDITY_SUITE_VERSION = "2026-09-12.3";
 
 export const FORMAT_VALIDITY_PLANTS = Object.freeze([
   {

@@ -27,12 +27,18 @@ function assertErrors(result) {
     throw new Error(`compiler errors: ${JSON.stringify(result.errors ?? result.failedCount)}`);
 }
 
-function nativeArtifacts(result, { fervid = false } = {}) {
+export function nativeArtifacts(result, { fervid = false } = {}) {
   if (fervid) assertOnlyAllowedFervidDiagnostics(result, "source-map probe");
   else assertErrors(result);
   const artifacts = [{ kind: "js", code: result?.code, map: result?.map ?? result?.sourceMap }];
-  if (Array.isArray(result?.styles) && result.styles.length) {
-    for (const [styleIndex, style] of result.styles.entries())
+  // Vize's styles are parsed input descriptors (`content`), while Fervid's
+  // are emitted artifacts (`code`). Never use input CSS as compiler output.
+  const compiledStyles = Array.isArray(result?.styles)
+    ? result.styles.map((style, styleIndex) => ({ style, styleIndex }))
+      .filter(({ style }) => typeof style.code === "string")
+    : [];
+  if (compiledStyles.length) {
+    for (const { styleIndex, style } of compiledStyles)
       artifacts.push({
         kind: "css",
         styleIndex,
