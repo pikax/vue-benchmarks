@@ -1,4 +1,5 @@
 import { parseSync } from "@babel/core";
+import sourceMapJs from "source-map-js";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -22,6 +23,7 @@ import {
   STYLE_FEATURE_SUITE_VERSION,
   assertStyleFeature,
   cssModuleMapping,
+  compileVueStyleFeature,
 } from "../style-feature-gates.mjs";
 import {
   STYLE_PREPROCESSOR_CASES,
@@ -34,6 +36,7 @@ import {
   runCompileValidityMatrix,
 } from "../compile-validity-gates.mjs";
 import { measureCompileFreshChildVariants } from "../compile-cold-runs.mjs";
+import { runSourceMapValidityMatrix, sourceMapVerdict } from "../source-map-validity-gates.mjs";
 
 export { STYLE_FEATURE_CASES } from "../style-feature-gates.mjs";
 export { STYLE_PREPROCESSOR_CASES } from "../style-preprocessor-gates.mjs";
@@ -261,11 +264,11 @@ function timedVerterHost(host, compile) {
  * codegen actually being produced instead; that difference is disclosed on every
  * fervid row and in the surface methodology rather than being silently applied.
  */
-function vueCompileSfc(
+export function vueCompileSfc(
   compiler,
   source,
   filename,
-  { vapor, isProd, sourceMap, styles = false, componentId = null },
+  { vapor, isProd, sourceMap, styles = false, componentId = null, captureArtifacts = false },
 ) {
   const { descriptor, errors: parseErrors } = compiler.parse(source, {
     filename,
@@ -281,6 +284,7 @@ function vueCompileSfc(
   let jsBytes = 0;
   let jsMapBytes = 0;
   let cssMapBytes = 0;
+  const artifacts = captureArtifacts ? [] : null;
   const scriptOpts = {
     id: styles ? componentId : filename,
     inlineTemplate: false,
@@ -315,6 +319,7 @@ function vueCompileSfc(
     work += scriptBytes || 1;
     jsBytes += scriptBytes;
     jsMapBytes += serializedMapBytes(scriptResult.map);
+    artifacts?.push({ kind: "script", code: scriptResult.content, map: scriptResult.map });
   }
   if (descriptor.template) {
     const templateOpts = {
@@ -343,6 +348,24 @@ function vueCompileSfc(
       templateOpts.vapor = true;
     }
     const tpl = compiler.compileTemplate(templateOpts);
+    if (sourceMap && tpl?.map) {
+      // Vue's descriptor map and inMap path omit the opening <template>
+      // column for same-line content. Translate the block-relative map with
+      // the parser's full-source location in the timed adapter itself.
+      const consumer = new sourceMapJs.SourceMapConsumer(tpl.map);
+      const generated = new sourceMapJs.SourceMapGenerator({ file: filename });
+      const start = descriptor.template.loc.start;
+      consumer.eachMapping((mapping) => generated.addMapping({
+        generated: { line: mapping.generatedLine, column: mapping.generatedColumn },
+        ...(mapping.originalLine == null ? {} : {
+          original: { line: mapping.originalLine + start.line - 1, column: mapping.originalColumn + (mapping.originalLine === 1 ? start.column - 1 : 0) },
+          source: filename,
+          ...(mapping.name == null ? {} : { name: mapping.name }),
+        }),
+      }));
+      generated.setSourceContent(filename, source);
+      tpl.map = generated.toJSON();
+    }
     if (tpl?.errors?.length) {
       throw new Error(
         `vue template error in ${filename} (${tpl.errors.length}): ${firstCompileError(tpl.errors)}`,
@@ -352,6 +375,7 @@ function vueCompileSfc(
     work += templateBytes || descriptor.template.content.length;
     jsBytes += templateBytes;
     jsMapBytes += serializedMapBytes(tpl?.map);
+    artifacts?.push({ kind: "template", code: tpl?.code, map: tpl?.map });
   }
   let cssBytes = 0;
   let styleBlocks = 0;
@@ -381,6 +405,7 @@ function vueCompileSfc(
       }
       cssBytes += result.code?.length ?? 0;
       cssMapBytes += serializedMapBytes(result.map);
+      artifacts?.push({ kind: "css", styleIndex: index, code: result.code, map: result.map });
       styleBlocks++;
     }
     work += cssBytes;
@@ -393,6 +418,7 @@ function vueCompileSfc(
     jsMapBytes,
     cssMapBytes,
     mapBytes: jsMapBytes + cssMapBytes,
+    ...(artifacts ? { artifacts } : {}),
   };
 }
 
@@ -2648,7 +2674,7 @@ function semanticFailureSummary(gate) {
  * also invalidates its entire comparison class: candidate timings do not become
  * meaningful merely because the reference could not be certified.
  */
-export function applyCompileSemanticGates(rows, validity, configuration) {
+export function applyCompileSemanticGates(rows, validity, configuration, sourceMaps = null) {
   const config = validity?.matrix?.[compileValidityConfigKey(configuration)];
   for (const row of rows) {
     if (row.status === "skipped" || row.skip) continue;
@@ -2671,8 +2697,15 @@ export function applyCompileSemanticGates(rows, validity, configuration) {
     for (const row of rows) {
       if (row.status === "skipped" || row.status === "error" || row.skip)
         continue;
-      markCompileRowUnranked(row);
-      row.notes = `${row.notes} ⚠ SOURCE-MAP MAPPING VALIDITY UNKNOWN — this release checks that the requested JS/CSS map artifacts are present, but it does not yet trace planted generated positions back to the correct SFC block, filename and source coordinates. Map-on timing remains visible but cannot rank until that semantic oracle exists.`;
+      const workload = row.comparisonClass === "sfc-with-style" ? "styles" : "raw";
+      const gate = sourceMapVerdict(sourceMaps, configuration, semanticEntrypointForRow(row), workload);
+      if (gate?.status === "PASS") {
+        row.notes = `${row.notes} ✓ SOURCE-MAP MAPPING VALIDITY: ${gate.passed}/${gate.plantCount} ${workload} plants traced script/template${workload === "styles" ? "/both CSS blocks" : ""} positions to exact SFC filename, content and UTF-16 coordinates with LF and CRLF.`;
+      } else {
+        markCompileRowUnranked(row);
+        const failures = gate?.results?.flatMap((result) => result.failures ?? []).slice(0, 2).join("; ") ?? "no exact-entrypoint coordinate verdict";
+        row.notes = `${row.notes} ⚠ SOURCE-MAP MAPPING VALIDITY ${gate?.status ?? "UNKNOWN"} — ${failures}. Full trace evidence is retained in validation.sourceMaps.`;
+      }
     }
   }
 
@@ -2753,42 +2786,7 @@ export async function computeStyleCorrectnessGates({
   };
 
   const gateVueFeature = async (compiler, feature) => {
-    const filename = `/style-gate/${feature.id}.vue`;
-    const parsed = compiler.parse(feature.source, { filename });
-    if (parsed.errors?.length) {
-      throw new Error(
-        `${feature.id}: parse failed: ${firstCompileError(parsed.errors)}`,
-      );
-    }
-    const style = parsed.descriptor.styles[0];
-    const options = {
-      source: style.content,
-      filename,
-      id: "data-v-abc12345",
-      scoped: style.scoped,
-      isProd: true,
-    };
-    const result = style.module
-      ? await compiler.compileStyleAsync({ ...options, modules: true })
-      : compiler.compileStyle(options);
-    if (result.errors?.length) {
-      throw new Error(
-        `${feature.id}: compileStyle failed: ${firstCompileError(result.errors)}`,
-      );
-    }
-    let js = "";
-    if (parsed.descriptor.script || parsed.descriptor.scriptSetup) {
-      js = compiler.compileScript(parsed.descriptor, {
-        id: "abc12345",
-        inlineTemplate: false,
-        isProd: true,
-      }).content;
-    }
-    assertStyleFeature(feature.id, {
-      css: result.code,
-      js,
-      modules: result.modules ?? null,
-    });
+    assertStyleFeature(feature.id, await compileVueStyleFeature(compiler, feature));
   };
 
   await recordFeatures("@vue/compiler-sfc", (feature) =>
@@ -2972,21 +2970,24 @@ export async function computeStyleCorrectnessGates({
                 `expected first-admission stateless result; cacheHit=${Boolean(render?.cacheHit)}, actualMode=${String(render?.actualMode)}`,
               );
             }
-            const style = compiler35.parse(feature.source, {
+            const styles = compiler35.parse(feature.source, {
               filename: input.canonicalId,
-            }).descriptor.styles[0];
-            const result = verterNative.processStyle(style.content, {
+            }).descriptor.styles;
+            const results = styles.map((style) => verterNative.processStyle(style.content, {
               scopeId: input.componentId,
               scoped: style.scoped,
               isModule: Boolean(style.module),
               moduleName:
                 typeof style.module === "string" ? style.module : undefined,
               filename: input.canonicalId,
-            });
+            }));
+            for (const result of results) {
+              if (result.errors?.length) throw new Error(`processStyle errors: ${firstCompileError(result.errors)}`);
+            }
             assertStyleFeature(feature.id, {
-              css: result.code,
+              css: results.map((result) => result.code).join("\n"),
               js: render.code,
-              modules: result.moduleClasses,
+              modules: results.find((result) => result.moduleClasses)?.moduleClasses,
             });
             passed.push(feature.id);
           } catch (error) {
@@ -3898,12 +3899,13 @@ export async function runCompileSurface(fixtureDir, options) {
   const compileSemantics = runCompileValidityMatrix(
     groups.map(({ target, env, sourceMap }) => ({ target, env, sourceMap })),
   );
+  const sourceMaps = runSourceMapValidityMatrix(groups.map(({ target, env, sourceMap }) => ({ target, env, sourceMap })));
   for (const group of groups) {
     applyCompileSemanticGates(group.variants, compileSemantics, {
       target: group.target,
       env: group.env,
       sourceMap: group.sourceMap,
-    });
+    }, sourceMaps);
   }
 
   // One entry per (tool, reason): the same abort is hit once per matrix cell, and
@@ -3965,6 +3967,7 @@ export async function runCompileSurface(fixtureDir, options) {
         plantIds: STYLE_PREPROCESSOR_CASES.map((plant) => plant.id),
       },
       compileSemantics,
+      sourceMaps,
     },
     // Why this surface is split into sub-tables. Stated by the surface that
     // does the splitting rather than defaulted in the renderer, so a grouped
@@ -3990,7 +3993,7 @@ export async function runCompileSurface(fixtureDir, options) {
       "The TypeScript registered for @vue/compiler-sfc is THE HARNESS'S OWN (the declared JS arm), the same version for every corpus — not each project's pinned TS. Uniform resolution behaviour across corpora was chosen over per-project fidelity; the tsconfig consulted is still the project's own.",
       "⚠ Imported-type resolution DEPTH differs by tool: @vue/compiler-sfc THROWS on an unresolvable prop type, Verter reports an error, Vize resolves what it can and silently emits a smaller runtime props object, and fervid emits NO props object at all while reporting a resolve diagnostic this harness otherwise tolerates. This is GATED for every compiler alike, not just disclosed: a baseline-anchored PROP-RESOLUTION CENSUS samples the corpus's type-only defineProps files, compares each compiler's emitted prop keys (Vize, fervid, Verter) with the prop names the baseline resolves, and unranks on any drop — fervid's missing props count as dropped when its own resolve diagnostic attributes them. Annotates instead when a compiler's emission shape cannot be read. Re-run every benchmark; self-clearing on a fixed release.",
       "VDOM = classic Virtual DOM render functions. Vapor = direct DOM codegen (Vue 3.6+ / native tool vapor flags).",
-      `Source map is an INDEPENDENT dimension, requested from every compiler in a cell (Vue and Vize single-file: sourceMap; Vize batch: includeSourceMap; Verter: compileProfile.sourceMap/processStyle sourcemap; fervid: FervidJsCompilerOptions.sourceMap). Raw render requires a JS map. Style-inclusive rows emit two artifacts and therefore require both JS and CSS maps. Timed paths assert returned bytes whenever the installed capability exists. Current executable presence probe: Vize single JS=${compileCapabilities.vize.singleSourceMap.ok ? "YES" : "NO"}/CSS=${compileCapabilities.vize.singleStyleSourceMap.ok ? "YES" : "NO"}, Vize batch JS=${compileCapabilities.vize.batchSourceMap.ok ? "YES" : "NO"}/CSS=${compileCapabilities.vize.batchStyleSourceMap.ok ? "YES" : "NO"}, Verter runtime-render JS=${compileCapabilities.verter.runtimeSourceMap.ok ? "YES" : "NO"}/processStyle CSS=${compileCapabilities.verter.styleSourceMap.ok ? "YES" : "NO"}, fervid JS=${compileCapabilities.fervid.sourceMap.ok ? "YES" : "NO"}/CSS=${compileCapabilities.fervid.styleSourceMap.ok ? "YES" : "NO"}. Presence is not mapping correctness: all map-on timings remain UNRANKED until planted script/template/CSS positions are traced back to the correct input coordinates.`,
+      `Source map is an INDEPENDENT dimension, requested from every compiler in a cell (Vue and Vize single-file: sourceMap; Vize batch: includeSourceMap; Verter: compileProfile.sourceMap/processStyle sourcemap; fervid: FervidJsCompilerOptions.sourceMap). Raw render requires a JS map. Style-inclusive rows emit two artifacts and therefore require both JS and CSS maps. Timed paths assert returned bytes whenever the installed capability exists. Current executable presence probe: Vize single JS=${compileCapabilities.vize.singleSourceMap.ok ? "YES" : "NO"}/CSS=${compileCapabilities.vize.singleStyleSourceMap.ok ? "YES" : "NO"}, Vize batch JS=${compileCapabilities.vize.batchSourceMap.ok ? "YES" : "NO"}/CSS=${compileCapabilities.vize.batchStyleSourceMap.ok ? "YES" : "NO"}, Verter runtime-render JS=${compileCapabilities.verter.runtimeSourceMap.ok ? "YES" : "NO"}/processStyle CSS=${compileCapabilities.verter.styleSourceMap.ok ? "YES" : "NO"}, fervid JS=${compileCapabilities.fervid.sourceMap.ok ? "YES" : "NO"}/CSS=${compileCapabilities.fervid.styleSourceMap.ok ? "YES" : "NO"}. Presence is not mapping correctness: a separate post-timing child traces selected script/template/CSS AST positions to the exact filename, full SFC content and UTF-16 coordinates for LF and CRLF plants. Each exact entrypoint and raw/style workload needs its own PASS in validation.sourceMaps; missing, failed or unknown evidence keeps that row UNRANKED. Vue template maps are translated to full SFC coordinates inside its timed composed adapter, including the first-line block column.`,
       "TypeScript handling is ONE benchmark standard for the whole cell: PASSTHROUGH, requested identically from every compiler (Vue and fervid preserve annotations by their API behaviour; Vize via isTs:true; Verter via forceJs:false). The report describes the exact benchmark call rather than inferring behaviour from a separate Vite integration.",
       `Verter analysisLevel=${VERTER_ANALYSIS_LEVEL} for every timed and validation call. The default benchmark setting is full; VERTER_ANALYSIS_LEVEL remains an explicit diagnostic override, and every Verter row prints the effective value so a tuned run cannot masquerade as the default. devMode follows the cell's isProduction value.`,
       "Production vs development uses each tool's real semantic knobs: Vue isProd (hoistStatic + cacheHandlers); Vize templateHoistStatic + templateCacheHandlers; Verter isProduction + hmrStrategy; fervid isProduction.",

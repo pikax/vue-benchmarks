@@ -13,6 +13,8 @@ import { loadCompiledComponent } from "../lib/compile-to-component.mjs";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { JSX_VALIDITY_PLANTS } from "../../../scripts/lib/jsx-validity-plants.mjs";
+import { transformCompilerRs } from "../../../scripts/lib/jsx-validity-child.mjs";
 
 const require = createRequire(import.meta.url);
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "../../..");
@@ -277,6 +279,7 @@ function loadTransformers() {
       });
       tools.push({
         id: "compiler-rs-vdom",
+        runtimeTransform: transformCompilerRs,
         expectKey: "vdomInterop",
         transform: (src) => rs.transform(src, { interop: true })?.code ?? "",
       });
@@ -339,13 +342,23 @@ export async function runJsxCompileConfirmSuite() {
     );
   }
 
-  for (const plant of PLANTS) {
+  const shared = JSX_VALIDITY_PLANTS.filter((plant) => plant.confirmation).map((plant) => ({
+    ...plant,
+    expect: {},
+    runtimeOnly: true,
+    runtime: (mount, component) => plant.assert({ mount, component }),
+  }));
+  for (const plant of [...PLANTS, ...shared]) {
     for (const tool of tools) {
       if (tool.skip) {
         suite.skip(plant.id, tool.id, tool.skip);
         continue;
       }
-      await suite.run(plant.id, tool.id, () => {
+      if (plant.runtimeOnly && !tool.mountable && !tool.runtimeTransform) {
+        suite.skip(plant.id, tool.id, "compatible Vapor runtime unavailable for behavioural confirmation");
+        continue;
+      }
+      if (!plant.runtimeOnly) await suite.run(plant.id, tool.id, () => {
         const code = tool.transform(plant.source);
         if (!code || typeof code !== "string") {
           throw new Error("empty transform output");
@@ -359,9 +372,9 @@ export async function runJsxCompileConfirmSuite() {
       });
 
       // Behavioural confirmation for the mountable transform
-      if (!tool.mountable || !plant.runtime) continue;
+      if ((!tool.mountable && !tool.runtimeTransform) || !plant.runtime) continue;
       await suite.run(`${plant.id} (runtime)`, tool.id, async () => {
-        const code = tool.transform(plant.source);
+        const code = (tool.runtimeTransform ?? tool.transform)(plant.source);
         const { component, cleanup } = await loadCompiledComponent(code, tool.id);
         try {
           await plant.runtime(mount, component);

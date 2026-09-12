@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
 import { createSuite } from "../lib/harness.mjs";
 import { resolveBin, runCli, rootDir } from "../lib/run-cli.mjs";
+import { runLintValidityChildren } from "../../../scripts/lib/lint-validity-gates.mjs";
 
 const require = createRequire(import.meta.url);
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -358,5 +359,15 @@ export async function runLintSuite() {
 
   verterLinter.dispose?.();
 
+  const shared = runLintValidityChildren({
+    configRoot: fixtureRoot,
+    entrypoints: ["eslint-plugin-vue-1t", "vize-lint-1t", "verter-lint-host"],
+  });
+  for (const [tool, verdict] of Object.entries(shared.results)) {
+    const result = verdict.results?.find((plant) => plant.id === "mutating-props-shadowing");
+    if (result?.status === "PASS") suite.pass("mutating-props-shadowing", tool, result.detail);
+    else if (result?.status === "UNKNOWN") suite.skip("mutating-props-shadowing", tool, result.detail);
+    else suite.fail("mutating-props-shadowing", tool, result?.detail ?? verdict.reason ?? "no differential result");
+  }
   return suite.results;
 }

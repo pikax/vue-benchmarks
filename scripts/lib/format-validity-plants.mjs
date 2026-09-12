@@ -1,13 +1,26 @@
 import { createHash } from "node:crypto";
 import { createRequire } from "node:module";
 import { isDeepStrictEqual } from "node:util";
+import { cssProjection } from "./css-semantics.mjs";
+import { customBlockProjection } from "./custom-block-semantics.mjs";
 
 const require = createRequire(import.meta.url);
 const ts = require("typescript");
 
-export const FORMAT_VALIDITY_SUITE_VERSION = "2026-08-20.1";
+export const FORMAT_VALIDITY_SUITE_VERSION = "2026-09-12.2";
 
 export const FORMAT_VALIDITY_PLANTS = Object.freeze([
+  {
+    id: "css-and-custom-block-semantics",
+    coverage: ["CSS declarations", "duplicate cascade", "multiple style blocks", "JSON payload", "opaque payload"],
+    source: `<template><section><span>preserve</span><span>styles</span></section></template>
+<style scoped>.card{color:red;color:blue!important;--label:"keep  two spaces";padding:1px 2px}@media(min-width:1px){.card:hover{opacity:.8}}</style>
+<style>.card{border:1px solid green}.card::before{content:'literal ; : {}'}</style>
+<i18n lang="json">{"en":{"greeting":"Hello  {name}","items":["one","two"]},"count":2}</i18n>
+<docs lang="probe">KEEP  OPAQUE
+  second line</docs>
+`,
+  },
   {
     id: "template-behaviour",
     coverage: ["v-if", "v-for", "key", "v-model", "events", "class-style", "expressions"],
@@ -44,6 +57,17 @@ const props=defineProps<{items:T[]}>()
 <docs lang="md" kind="plant">FORMAT_CUSTOM_BLOCK_MARKER</docs>
 `,
     mustPreserve: ["v-bind(", ":deep(", ":slotted(", ":global(", "FORMAT_CUSTOM_BLOCK_MARKER"],
+  },
+  {
+    id: "significant-whitespace-and-regexp",
+    coverage: ["pre whitespace", "inline text separation", "regexp pattern and flags", "v-pre"],
+    source: `<script setup>
+const pattern=/alpha+/gi
+const matched=pattern.test('ALPHA')
+</script>
+<template><section :data-match="matched"><pre>  alpha
+    beta  </pre><span>left</span> <span>right</span><code v-pre>{{ literal }}</code></section></template>
+`,
   },
   {
     id: "comments-and-svg",
@@ -102,7 +126,12 @@ function tsProjection(source, scriptKind = ts.ScriptKind.TS) {
   const visit = (node) => {
     let value;
     if (ts.isIdentifier(node)) value = node.text;
-    else if (ts.isStringLiteralLike(node) || ts.isNumericLiteral(node)) value = node.text;
+    else if (
+      ts.isStringLiteralLike(node) ||
+      ts.isNumericLiteral(node) ||
+      ts.isRegularExpressionLiteral(node)
+    )
+      value = node.text;
     const children = [];
     ts.forEachChild(node, (child) => {
       children.push(visit(child));
@@ -143,8 +172,9 @@ function templateProjectionNode(node) {
     ];
   }
   if (node.type === 2) {
-    const content = node.content.replaceAll(/\s+/g, " ").trim();
-    return content ? [2, content] : null;
+    // Vue's parser already condenses insignificant template whitespace. Further
+    // trimming loses spaces between inline elements and indentation inside pre.
+    return [2, node.content];
   }
   if (node.type === 3) return [3, node.content.trim()];
   if (node.type === 5) return [5, expressionProjection(node.content.content)];
@@ -163,6 +193,8 @@ export function semanticProjection(descriptor) {
   return {
     template: descriptor.template?.ast ? templateProjectionNode(descriptor.template.ast) : null,
     script,
+    styles: descriptor.styles.map((block) => cssProjection(block.content)),
+    customBlocks: descriptor.customBlocks.map(customBlockProjection),
   };
 }
 
@@ -183,13 +215,16 @@ export function judgeFormattedPlant({ plant, original, first, second, parse }) {
   if (!isDeepStrictEqual(descriptorProjection(before), descriptorProjection(after))) {
     failures.push("SFC block/attribute/custom-block projection changed");
   }
-  const beforeSemantic = semanticProjection(before);
-  const afterSemantic = semanticProjection(after);
-  if (!isDeepStrictEqual(beforeSemantic.template, afterSemantic.template)) {
-    failures.push("template semantic AST projection changed");
-  }
-  if (!isDeepStrictEqual(beforeSemantic.script, afterSemantic.script)) {
-    failures.push("script semantic AST projection changed");
+  try {
+    const beforeSemantic = semanticProjection(before);
+    const afterSemantic = semanticProjection(after);
+    for (const section of ["template", "script", "styles", "customBlocks"]) {
+      if (!isDeepStrictEqual(beforeSemantic[section], afterSemantic[section])) {
+        failures.push(`${section} semantic AST projection changed`);
+      }
+    }
+  } catch (error) {
+    failures.push(`semantic payload parse failed: ${error.message}`);
   }
   for (const marker of plant.mustPreserve ?? []) {
     if (!first.includes(marker))

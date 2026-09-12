@@ -3,7 +3,10 @@
  * Exit 0 is not enough — output must still parse, stay idempotent when
  * required, and keep planted comments / v-for bindings / generic=.
  */
-import { cpSync, mkdirSync, readFileSync, rmSync } from "node:fs";
+import { cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { isDeepStrictEqual } from "node:util";
+import { FORMAT_VALIDITY_PLANTS, judgeFormattedPlant } from "../../../scripts/lib/format-validity-plants.mjs";
+import { customBlockProjection } from "../../../scripts/lib/custom-block-semantics.mjs";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -172,19 +175,6 @@ function hasVForBindings(source) {
   return /\bitem\b/.test(source) && /\bindex\b/.test(source);
 }
 
-/** JSON with object keys sorted, so key order never affects equality. */
-function canonicalJson(value) {
-  if (Array.isArray(value)) return `[${value.map(canonicalJson).join(",")}]`;
-  if (value && typeof value === "object") {
-    const body = Object.keys(value)
-      .sort()
-      .map((k) => `${JSON.stringify(k)}:${canonicalJson(value[k])}`)
-      .join(",");
-    return `{${body}}`;
-  }
-  return JSON.stringify(value);
-}
-
 /**
  * The <i18n> block may be reformatted, but must still exist, keep lang=json,
  * parse as JSON, and carry deep-equal messages.
@@ -205,22 +195,22 @@ function verifyI18nBlock(formatted, original, plant) {
   let origJson;
   let fmtJson;
   try {
-    origJson = JSON.parse(origBlock.content);
+    origJson = customBlockProjection(origBlock);
   } catch (error) {
     return `fixture bug: original i18n JSON invalid: ${error.message}`;
   }
   try {
-    fmtJson = JSON.parse(fmtBlock.content);
+    fmtJson = customBlockProjection(fmtBlock);
   } catch (error) {
     return `<i18n> JSON no longer parses: ${error.message}`;
   }
-  if (canonicalJson(origJson) !== canonicalJson(fmtJson)) {
+  if (!isDeepStrictEqual(origJson, fmtJson)) {
     return "<i18n> messages changed after formatting";
   }
   return null;
 }
 
-function prepareWork(caseId, toolId, srcFile) {
+function prepareWork(caseId, toolId, srcFile, source) {
   const dest = join(workRoot, caseId, toolId);
   rmSync(dest, { recursive: true, force: true });
   mkdirSync(dest, { recursive: true });
@@ -228,7 +218,8 @@ function prepareWork(caseId, toolId, srcFile) {
   // (oxfmt 0.63+) do not inherit this repo's exclusion of work/.
   mkdirSync(join(dest, ".git"));
   const destFile = join(dest, srcFile);
-  cpSync(join(fixtureRoot, srcFile), destFile);
+  if (source !== undefined) writeFileSync(destFile, source, "utf8");
+  else cpSync(join(fixtureRoot, srcFile), destFile);
   return { dest, destFile, relFile: srcFile };
 }
 
@@ -296,6 +287,11 @@ function judge(plant, original, formatted, firstRun, second = null) {
     if (message) return message;
   }
 
+  if (plant.sharedValidity) {
+    const result = judgeFormattedPlant({ plant, original, first: formatted, second: second?.formatted, parse: parseSfc });
+    if (!result.ok) return result.failures.join("; ");
+  }
+
   return null;
 }
 
@@ -308,8 +304,11 @@ export async function runFormatSuite() {
     spec: resolveSpawnable(tool.bin),
   }));
 
-  for (const plant of PLANTS) {
-    const original = readFileSync(join(fixtureRoot, plant.file), "utf8");
+  const shared = FORMAT_VALIDITY_PLANTS.map((plant) => ({
+    ...plant, id: `shared-${plant.id}`, file: `${plant.id}.vue`, sharedValidity: true, idempotent: true,
+  }));
+  for (const plant of [...PLANTS, ...shared]) {
+    const original = plant.source ?? readFileSync(join(fixtureRoot, plant.file), "utf8");
 
     for (const tool of resolved) {
       if (!tool.spec) {
@@ -317,7 +316,7 @@ export async function runFormatSuite() {
         continue;
       }
 
-      const { dest, destFile, relFile } = prepareWork(plant.id, tool.id, plant.file);
+      const { dest, destFile, relFile } = prepareWork(plant.id, tool.id, plant.file, plant.source);
       const first = formatOnce(tool.spec, tool.args(relFile), dest);
       const formatted = readFileSync(destFile, "utf8");
 

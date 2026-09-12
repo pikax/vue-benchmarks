@@ -39,6 +39,7 @@ import assert from "node:assert/strict";
 import {
   FIXTURES,
   applyTextEdits,
+  executeDisposableCommand,
   gateCodeActions,
   gateDefinition,
   gateFormatting,
@@ -55,6 +56,7 @@ import {
   toLocations,
   uriMatchesPath,
 } from "../../scripts/lib/ide-ops/suites/navigation.mjs";
+import { declarationTarget, propRanges, rangeOf, typoDiagnostic } from "../../scripts/lib/ide-ops/navigation-validation.mjs";
 
 /** Workspace roots the payloads were captured against, in native form. */
 const ROOT = "D:\\dev\\personal\\vue-benchmarks\\work-ide";
@@ -348,6 +350,8 @@ const LEGAL = {
             newText: "renamedCaption",
             annotationId: "rename",
           },
+          { range: { start: { line: 2, character: 11 }, end: { line: 2, character: 22 } }, newText: "renamedCaption" },
+          { range: { start: { line: 15, character: 38 }, end: { line: 15, character: 49 } }, newText: "renamedCaption" },
         ],
       },
       {
@@ -445,6 +449,8 @@ describe("gateDefinition", () => {
       targetPath: `${VOLAR}\\ChildCard.vue`,
       currentPath: `${VOLAR}\\Parent.vue`,
       what: "tag definition",
+      targetSource: FIXTURES.CHILD_SOURCE,
+      fileDefinition: true,
     });
     assert.equal(r.valid, true, r.reason);
     assert.equal(r.artifact, 1);
@@ -454,6 +460,8 @@ describe("gateDefinition", () => {
     const r = gateDefinition(REAL.verterDefTag_SingleLocation, {
       targetPath: `${VERTER}\\ChildCard.vue`,
       currentPath: `${VERTER}\\Parent.vue`,
+      targetSource: FIXTURES.CHILD_SOURCE,
+      fileDefinition: true,
     });
     assert.equal(r.valid, true, r.reason);
   });
@@ -490,6 +498,9 @@ describe("gateDefinition", () => {
       targetPath: `${VOLAR}\\types.ts`,
       currentPath: `${VIZE}\\Parent.vue`,
       what: "typeDefinition",
+      targetSource: FIXTURES.TYPES_SOURCE,
+      expectedRange: declarationTarget(FIXTURES.TYPES_SOURCE, "CaptionOptions").range,
+      allowedRange: declarationTarget(FIXTURES.TYPES_SOURCE, "CaptionOptions").container,
     });
     assert.equal(r.valid, true, r.reason);
     assert.equal(r.artifact, 2);
@@ -512,7 +523,7 @@ describe("gateReferences", () => {
       usePath: `${VIZE}\\Parent.vue`,
     });
     assert.equal(r.valid, false);
-    assert.match(r.reason, /missing Parent\.vue/);
+    assert.match(r.reason, /missing .*Parent\.vue/);
     // The count is still recorded: three real references were found.
     assert.equal(r.artifact, 3);
   });
@@ -549,7 +560,7 @@ describe("WorkspaceEdit normalisation — both shapes", () => {
     const files = normalizeWorkspaceEdit(LEGAL.renameDocumentChanges);
     assert.equal(
       files.reduce((n, f) => n + f.edits.length, 0),
-      2,
+      4,
     );
   });
 
@@ -581,6 +592,8 @@ describe("WorkspaceEdit normalisation — both shapes", () => {
     const total = normalizeWorkspaceEdit(merged).reduce((n, f) => n + f.edits.length, 0);
     assert.equal(total, 4);
     assert.equal(mergeWorkspaceEdits(null, null), null);
+    assert.equal(mergeWorkspaceEdits({}, {}), null);
+    assert.equal(normalizeWorkspaceEdit(mergeWorkspaceEdits({}, REAL.volarRename_Changes)).length, 2);
     // One leg silent must not erase the other's answer.
     assert.equal(
       normalizeWorkspaceEdit(mergeWorkspaceEdits(null, REAL.vizeRename_Changes)).length,
@@ -628,7 +641,7 @@ describe("gateRename — the killer gate", () => {
   test("a documentChanges rename is graded like a changes rename", () => {
     const r = gateRename(LEGAL.renameDocumentChanges, targets(VIZE));
     assert.equal(r.valid, true, r.reason);
-    assert.equal(r.artifact, 2);
+    assert.equal(r.artifact, 4);
   });
 
   test("a kebab-cased template edit is accepted", () => {
@@ -637,6 +650,8 @@ describe("gateRename — the killer gate", () => {
     // false-fail it.
     const kebab = {
       changes: {
+        [`file:///d:/dev/personal/vue-benchmarks/work-ide/capture-vize/ChildCard.vue`]:
+          normalizeWorkspaceEdit(REAL.volarRename_Changes).find((file) => file.uri.endsWith("ChildCard.vue")).edits,
         [`file:///d:/dev/personal/vue-benchmarks/work-ide/capture-vize/Parent.vue`]: [
           {
             range: { start: { line: 2, character: 16 }, end: { line: 2, character: 27 } },
@@ -661,7 +676,7 @@ describe("gateRename — the killer gate", () => {
     };
     const r = gateRename(wrong, targets(VIZE));
     assert.equal(r.valid, false);
-    assert.match(r.reason, /does not write renamedCaption/);
+    assert.match(r.reason, /BROKEN REFACTOR/);
   });
 
   test("null and empty edits are invalid", () => {
@@ -712,8 +727,8 @@ describe("gatePrepareRename — four legal answers", () => {
 });
 
 describe("gateCodeActions", () => {
-  test("Volar's CodeAction[] passes and the quick fix is named in the sample", () => {
-    const r = gateCodeActions(REAL.volarCodeActions);
+  test("Volar's CodeAction[] passes and the quick fix is named in the sample", async () => {
+    const r = await gateCodeActions(REAL.volarCodeActions, { filePath: `${VOLAR}\\Parent.vue` });
     assert.equal(r.valid, true, r.reason);
     assert.equal(r.artifact, 2);
     assert.match(r.sample, /Change spelling to 'fixtureLabel'/);
@@ -721,21 +736,23 @@ describe("gateCodeActions", () => {
     assert.match(r.sample, /^2\/2 actionable/);
   });
 
-  test("a bare Command[] is just as valid as a CodeAction[]", () => {
-    const r = gateCodeActions(LEGAL.commandArray);
+  test("a bare Command[] is valid when executing it produces the intended edit", async () => {
+    const r = await gateCodeActions(LEGAL.commandArray, {
+      filePath: `${VOLAR}\\Parent.vue`, execute: async () => REAL.volarCodeActions[0].edit,
+    });
     assert.equal(r.valid, true, r.reason);
     assert.equal(r.artifact, 1);
   });
 
-  test("null is invalid", () => {
-    const r = gateCodeActions(null);
+  test("null is invalid", async () => {
+    const r = await gateCodeActions(null);
     assert.equal(r.valid, false);
     assert.match(r.reason, /returned nothing/);
     assert.equal(r.artifact, 0);
   });
 
-  test("untitled entries do not count", () => {
-    const r = gateCodeActions([{ kind: "quickfix" }, { title: "   " }]);
+  test("untitled entries do not count", async () => {
+    const r = await gateCodeActions([{ kind: "quickfix" }, { title: "   " }]);
     assert.equal(r.valid, false);
     assert.match(r.reason, /without a title/);
   });
@@ -839,11 +856,10 @@ describe("formatting", () => {
     assert.equal(out, "AAA\nbeta\nZZZZZZZ\n");
   });
 
-  test("out-of-range positions are clamped rather than throwing", () => {
-    const out = applyTextEdits("abc\n", [
+  test("out-of-range edits are rejected instead of silently applied elsewhere", () => {
+    assert.throws(() => applyTextEdits("abc\n", [
       { range: { start: { line: 99, character: 99 }, end: { line: 99, character: 200 } }, newText: "!" },
-    ]);
-    assert.equal(out, "abc\n!");
+    ]), /out-of-bounds/);
   });
 });
 
@@ -874,5 +890,148 @@ describe("fixture integrity", () => {
   test("Parent.vue really consumes the prop ChildCard.vue declares", () => {
     assert.match(FIXTURES.PARENT_SOURCE, new RegExp(`:${FIXTURES.PROP_NAME}="heading"`));
     assert.match(FIXTURES.CHILD_SOURCE, new RegExp(`${FIXTURES.PROP_NAME}: string`));
+  });
+});
+
+describe("applied navigation mutation controls", () => {
+  const parentPath = `${VOLAR}\\Parent.vue`;
+  const childPath = `${VOLAR}\\ChildCard.vue`;
+  const renameOptions = { templatePath: parentPath, declPath: childPath, newName: FIXTURES.NEW_NAME };
+  const whole = (source, newText) => ({ range: rangeOf(source, 0, source.length), newText });
+  const rename = () => structuredClone(REAL.volarRename_Changes);
+  const fileKey = (edit, name) => Object.keys(edit.changes).find((key) => key.endsWith(name));
+
+  test("a parent comment containing the new name cannot satisfy rename", () => {
+    const edit = rename();
+    edit.changes[fileKey(edit, "Parent.vue")] = [{ range: rangeOf(FIXTURES.PARENT_SOURCE, 0, 0), newText: "<!-- renamedCaption -->\n" }];
+    assert.equal(gateRename(edit, renameOptions).valid, false);
+  });
+
+  test("every intended use and the declaration must be renamed", () => {
+    const edit = rename();
+    edit.changes[fileKey(edit, "ChildCard.vue")].pop();
+    assert.equal(gateRename(edit, renameOptions).valid, false);
+  });
+
+  test("string and comment decoys cannot be renamed", () => {
+    for (const marker of ["'captionText'", "// captionText"]) {
+      const edit = rename();
+      const start = FIXTURES.PARENT_SOURCE.indexOf(marker) + marker.indexOf("captionText");
+      edit.changes[fileKey(edit, "Parent.vue")].push({ range: rangeOf(FIXTURES.PARENT_SOURCE, start, start + 11), newText: FIXTURES.NEW_NAME });
+      assert.equal(gateRename(edit, renameOptions).valid, false, marker);
+    }
+  });
+
+  test("whole-document replacement is a legal rename layout when semantics match", () => {
+    const edit = rename();
+    for (const [name, source] of [["Parent.vue", FIXTURES.PARENT_SOURCE], ["ChildCard.vue", FIXTURES.CHILD_SOURCE]]) {
+      const key = fileKey(edit, name);
+      edit.changes[key] = [whole(source, applyTextEdits(source, edit.changes[key]))];
+    }
+    assert.equal(gateRename(edit, renameOptions).valid, true);
+  });
+
+  test("malformed edits and overlapping ranges cannot be silently discarded", () => {
+    const malformed = rename();
+    malformed.changes[fileKey(malformed, "Parent.vue")].push({ newText: "bad" });
+    assert.equal(gateRename(malformed, renameOptions).valid, false);
+    const overlap = rename();
+    overlap.changes[fileKey(overlap, "Parent.vue")].push(overlap.changes[fileKey(overlap, "Parent.vue")][0]);
+    assert.equal(gateRename(overlap, renameOptions).valid, false);
+  });
+
+  test("resource operations survive provider merging and invalidate a prop rename", () => {
+    const edit = mergeWorkspaceEdits(REAL.volarRename_Changes, { documentChanges: [{ kind: "delete", uri: "file:///d:/fixture/Other.vue" }] });
+    assert.equal(gateRename(edit, renameOptions).valid, false);
+  });
+
+  test("named definitions require the right source range, not just the filename", () => {
+    const target = declarationTarget(FIXTURES.HELPERS_SOURCE, "formatCaption");
+    const options = {
+      targetPath: `${VOLAR}\\helpers.ts`, currentPath: parentPath, targetSource: FIXTURES.HELPERS_SOURCE,
+      expectedRange: target.range, allowedRange: target.container,
+    };
+    const uri = `file:///d%3A/dev/personal/vue-benchmarks/work-ide/capture-volar/helpers.ts`;
+    assert.equal(gateDefinition({ uri, range: target.range }, options).valid, true);
+    assert.equal(gateDefinition([{ targetUri: uri, targetRange: target.container, targetSelectionRange: target.range }], options).valid, true);
+    assert.equal(gateDefinition({ uri, range: target.container }, options).valid, true);
+    for (const range of [null, rangeOf(FIXTURES.HELPERS_SOURCE, 0, 0), rangeOf(FIXTURES.HELPERS_SOURCE, 0, FIXTURES.HELPERS_SOURCE.length)]) {
+      assert.equal(gateDefinition({ uri, range }, options).valid, false);
+    }
+    assert.equal(gateDefinition({ uri: `${uri}.ts`, range: target.range }, options).valid, false);
+    assert.equal(gateDefinition({ uri: parentPath, range: rangeOf(FIXTURES.PARENT_SOURCE, 1, 2) }, {
+      targetPath: parentPath, currentPath: childPath, targetSource: FIXTURES.PARENT_SOURCE, fileDefinition: true,
+    }).valid, false);
+  });
+
+  test("reference ranges must identify all intended uses and no decoys", () => {
+    const options = { declPath: childPath, usePath: parentPath };
+    const missing = structuredClone(REAL.volarRefs);
+    missing[3].range = rangeOf(FIXTURES.PARENT_SOURCE, 0, 0);
+    assert.equal(gateReferences(missing, options).valid, false);
+    const extra = [...REAL.volarRefs, { uri: REAL.volarRefs[3].uri, range: rangeOf(FIXTURES.PARENT_SOURCE, 0, 0) }];
+    assert.equal(gateReferences(extra, options).valid, false);
+  });
+
+  test("formatting cannot delete the SFC, change literals or change behavior", () => {
+    for (const replacement of ["", FIXTURES.MESSY_SOURCE.replace("'messy'", "'different'"), FIXTURES.MESSY_SOURCE.replace("msg.value,3", "msg.value,4")]) {
+      assert.equal(gateFormatting(FIXTURES.MESSY_SOURCE, [whole(FIXTURES.MESSY_SOURCE, replacement)]).valid, false);
+    }
+  });
+
+  test("UTF-16 ranges preserve CRLF and astral characters around the edit", () => {
+    const source = "🧪 alpha\r\nbeta\r\n";
+    assert.equal(applyTextEdits(source, [{ range: { start: { line: 0, character: 3 }, end: { line: 0, character: 8 } }, newText: "A" }]), "🧪 A\r\nbeta\r\n");
+    assert.equal(textInRange(source, { start: { line: 0, character: 8 }, end: { line: 0, character: 9 } }), "");
+  });
+
+  test("resolved actions must apply the intended fix and remove its TypeScript diagnostic", async () => {
+    const options = { filePath: parentPath };
+    assert.ok(typoDiagnostic(FIXTURES.PARENT_SOURCE, FIXTURES.TYPO).length);
+    const resolved = await gateCodeActions([{ title: "Fix spelling", kind: "quickfix", data: { id: 1 } }], {
+      ...options, resolve: async () => REAL.volarCodeActions[0],
+    });
+    assert.equal(resolved.valid, true, resolved.reason);
+    const unrelated = { title: "Fix spelling", kind: "quickfix", edit: { changes: { [parentPath]: [{ range: rangeOf(FIXTURES.PARENT_SOURCE, 0, 0), newText: "<!-- fixtureLabel -->\n" }] } } };
+    assert.equal((await gateCodeActions([unrelated], options)).valid, false);
+    const invalid = structuredClone(REAL.volarCodeActions[0]);
+    invalid.edit.documentChanges[0].edits[0].newText = "anotherMissingName";
+    assert.equal((await gateCodeActions([invalid], options)).valid, false);
+    assert.equal((await gateCodeActions(LEGAL.commandArray, options)).valid, false);
+  });
+
+  test("command-backed fixes acknowledge disposable edits and restore the request handler", async () => {
+    let handler;
+    let restored = false;
+    const provider = {
+      setServerRequestHandler(method, next) {
+        assert.equal(method, "workspace/applyEdit");
+        handler = next;
+        return () => { restored = true; handler = null; };
+      },
+      async sendRequest(method, params) {
+        assert.equal(method, "workspace/executeCommand");
+        assert.equal(params.command, "editor.action.applyFix");
+        assert.deepEqual(await handler({ edit: REAL.volarCodeActions[0].edit }), { applied: true });
+        return null;
+      },
+    };
+    const result = await gateCodeActions(LEGAL.commandArray, {
+      filePath: parentPath,
+      execute: (command, action) => executeDisposableCommand(provider, command, action, { filePath: parentPath, source: FIXTURES.PARENT_SOURCE, timeoutMs: 100 }),
+    });
+    assert.equal(result.valid, true, result.reason);
+    assert.equal(restored, true);
+    assert.equal(handler, null);
+  });
+
+  test("command failures still restore the request handler", async () => {
+    let restored = false;
+    const provider = {
+      setServerRequestHandler: () => () => { restored = true; },
+      sendRequest: async () => { throw new Error("command failed"); },
+    };
+    await assert.rejects(() => executeDisposableCommand(provider, "fix", {}, { filePath: parentPath, source: FIXTURES.PARENT_SOURCE, timeoutMs: 100 }), /command failed/);
+    assert.equal(restored, true);
   });
 });

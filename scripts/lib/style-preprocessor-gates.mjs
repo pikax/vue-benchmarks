@@ -404,7 +404,8 @@ export function assertStylePreprocessorPlant(plant, { css, js = "", modules = nu
   }
 
   if (plant.oracle === "css-modules") {
-    assertStyleFeature("css-modules", { css, modules });
+    // The authored Sass plant has its own declaration-value oracle below.
+    assertStyleFeature("css-modules", { css, modules, declarationSource: null });
     const mapped = modules?.foo ?? modules?.find?.(([name]) => name === "foo")?.[1];
     const rules = rulesContaining(css, mapped);
     const baseRule = rules.find(({ selector }) => !/:hover/i.test(selector));

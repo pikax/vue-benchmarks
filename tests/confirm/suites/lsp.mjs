@@ -2,7 +2,7 @@
  * LSP confirmation plants — protocol answers, not latency.
  *
  * One small workspace, one session per server:
- *   hover-template-binding      hover {{ greeting }} mentions a type
+ *   hover-template-binding      hover {{ greeting }} has its expected string/literal type
  *   definition-component        go-to-definition on <Child /> lands in Child.vue
  *   document-symbol-structure   documentSymbol on App.vue names the `greeting` binding
  *   completion-prop-template    completion inside <Child …> offers the epilogueText prop
@@ -42,6 +42,7 @@ import {
   removeWorkspace,
 } from "../../../scripts/lib/ide-ops/context.mjs";
 import {
+  gateDefinition,
   gateReferences,
   gateRename,
   mergeLocations,
@@ -51,6 +52,7 @@ import {
   toLocations,
   uriMatchesPath,
 } from "../../../scripts/lib/ide-ops/suites/navigation.mjs";
+import { findAllExpected } from "../../../scripts/lib/ide-ops/suites/completion.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const fixturesDir = join(__dirname, "../fixtures/lsp");
@@ -145,10 +147,13 @@ function templateBindingProbe(source, symbol) {
   throw new Error(`Could not locate {{ ${symbol} }} in fixture`);
 }
 
-function hoverMentionsType(text) {
+export function hoverMentionsType(text) {
   if (!text) return false;
-  if (/\bstring\b/i.test(text) || /\bnumber\b/i.test(text)) return true;
-  return new RegExp(`['"]${BINDING_VALUE}['"]`).test(text);
+  // Match this binding's annotation, not a type word or literal in prose.
+  // A widened string and the exact literal are both correct for this fixture.
+  return new RegExp(
+    `\\b${BINDING}\\s*:\\s*(?:string|(["'])${BINDING_VALUE}\\1)[ \\t]*(?=$|\\r?\\n|\x60)`,
+  ).test(text);
 }
 
 function diagnosticText(d) {
@@ -183,10 +188,10 @@ function sampleDiags(diags) {
 }
 
 function pullItems(report) {
-  if (!report || typeof report !== "object") return [];
+  if (!report || typeof report !== "object") return null;
   if (Array.isArray(report.items)) return report.items;
   if (Array.isArray(report)) return report;
-  return [];
+  return null;
 }
 
 /** Case/punctuation-insensitive identity, so `epilogue-text` matches `epilogueText`. */
@@ -389,18 +394,22 @@ function resolveServers() {
   return out;
 }
 
-function createDiagStore(appFile) {
+export function createDiagStore(appFile) {
   const latest = new Map();
+  let version = 1;
 
   const onPublish = (half, params) => {
     if (!params?.uri || !uriMatchesPath(params.uri, appFile)) return;
-    latest.set(half, Array.isArray(params.diagnostics) ? params.diagnostics : []);
+    if (params.version != null && params.version !== version) return;
+    if (!Array.isArray(params.diagnostics)) return;
+    latest.set(half, params.diagnostics);
   };
 
   const ingestPull = (half, report) => {
     const items = pullItems(report);
-    // An "unchanged" pull has no items — keep whatever push already stored.
-    if (report?.kind === "unchanged") return;
+    // A null/unsupported response is not evidence that diagnostics cleared.
+    // An "unchanged" report also retains the prior state.
+    if (report?.kind === "unchanged" || items === null) return;
     latest.set(half, items);
   };
 
@@ -410,7 +419,15 @@ function createDiagStore(appFile) {
     return out;
   };
 
-  return { onPublish, ingestPull, merged, latest };
+  return {
+    onPublish,
+    ingestPull,
+    merged,
+    latest,
+    advanceVersion(next) {
+      version = next;
+    },
+  };
 }
 
 async function openSession(server, ws) {
@@ -491,6 +508,7 @@ async function openSession(server, ws) {
     };
 
     const changeDoc = (uri, text, version) => {
+      if (uri === appUri) diags.advanceVersion(version);
       const params = {
         textDocument: { uri, version },
         contentChanges: [{ text }],
@@ -666,9 +684,9 @@ async function runServerCases(suite, server, ws) {
           server.id,
           typed,
           typed
-            ? `template hover mentions a type (${text.replace(/\s+/g, " ").trim().slice(0, 120)})`
+            ? `template hover has the expected string type (${text.replace(/\s+/g, " ").trim().slice(0, 120)})`
             : text
-              ? `template hover has no type (string/number): ${text.replace(/\s+/g, " ").trim().slice(0, 160)}`
+              ? `template hover lacks greeting: string or the expected literal: ${text.replace(/\s+/g, " ").trim().slice(0, 160)}`
               : `empty hover payload at {{ greeting }} after ${session.readyMs}ms of readiness retries`,
           {
             snippet: text.slice(0, 400),
@@ -691,7 +709,9 @@ async function runServerCases(suite, server, ws) {
         mergeLocations,
       );
       const locs = toLocations(result);
-      const hit = locs.some((l) => uriMatchesPath(l.uri, ws.childFile));
+      const hit = gateDefinition(result, {
+        targetPath: ws.childFile, currentPath: ws.appFile, targetSource: ws.childSource, fileDefinition: true,
+      }).valid;
       const seen = [...new Set(locs.map((l) => l.uri.split("/").pop()))].join(", ");
       record(
         suite,
@@ -724,7 +744,7 @@ async function runServerCases(suite, server, ws) {
         mergeSymbolLists,
       );
       const names = collectSymbolNames(result);
-      const hit = names.some((n) => squash(n).includes(squash(BINDING)));
+      const hit = names.some((n) => n.trim() === BINDING);
       const seen = [...new Set(names)].slice(0, 8).join(", ");
       record(
         suite,
@@ -759,9 +779,7 @@ async function runServerCases(suite, server, ws) {
         mergeCompletions,
       );
       const items = completionItemsOf(result);
-      const matches = items.filter((i) =>
-        completionLabelBits(i).some((b) => squash(b).includes(squash(COMPLETION_PROP))),
-      );
+      const matches = findAllExpected(items, [COMPLETION_PROP]);
       const hit = matches.length > 0;
       if (!hit && corsaDown()) {
         suite.skip("completion-prop-template", server.id, CORSA_SKIP);
@@ -805,15 +823,15 @@ async function runServerCases(suite, server, ws) {
       );
       const locs = toLocations(result);
       const inChild = locs.filter((l) => uriMatchesPath(l.uri, ws.childFile));
-      // A location in the REAL Child.vue must cover the prop identifier; a
-      // generated twin (Child.vue.ts) has ranges in virtual code we cannot
-      // check against the fixture, so the file-level hit stands for it.
       const exact = inChild.filter((l) => normalizeUri(l.uri) === normalizeUri(ws.childFile));
       const covered = exact.map((l) => textInRange(ws.childSource, l.range));
-      const exactOk = exact.length
-        ? covered.some((t) => squash(t).includes(squash(PROP_NAME)))
-        : inChild.length > 0;
-      const hit = inChild.length > 0 && exactOk;
+      const hit = gateDefinition(result, {
+        targetPath: ws.childFile, currentPath: ws.appFile, targetSource: ws.childSource,
+        expectedRange: {
+          start: ws.propDeclProbe,
+          end: { line: ws.propDeclProbe.line, character: ws.propDeclProbe.character + PROP_NAME.length },
+        },
+      }).valid;
       const seen = [...new Set(locs.map((l) => l.uri.split("/").pop()))].join(", ");
       if (!hit && corsaDown()) {
         suite.skip("definition-prop-attr", server.id, CORSA_SKIP);
@@ -855,7 +873,10 @@ async function runServerCases(suite, server, ws) {
         REQUEST_TIMEOUT_MS,
         mergeLocations,
       );
-      const gate = gateReferences(result, { declPath: ws.childFile, usePath: ws.appFile });
+      const gate = gateReferences(result, {
+        declPath: ws.childFile, usePath: ws.appFile,
+        declSource: ws.childSource, useSource: ws.appSource, name: PROP_NAME,
+      });
       if (!gate.valid && corsaDown()) {
         suite.skip("references-prop-template", server.id, CORSA_SKIP);
       } else {
@@ -896,6 +917,9 @@ async function runServerCases(suite, server, ws) {
         templatePath: ws.appFile,
         declPath: ws.childFile,
         newName: RENAME_NEW_NAME,
+        oldName: PROP_NAME,
+        templateSource: ws.appSource,
+        declSource: ws.childSource,
       });
       if (!gate.valid && corsaDown()) {
         suite.skip("rename-prop-template", server.id, CORSA_SKIP);

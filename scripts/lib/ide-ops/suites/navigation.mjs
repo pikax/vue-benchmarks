@@ -23,7 +23,7 @@
  *                    module so the typeDefinition gate is distinguishable from
  *                    the definition gate.
  *   Messy.vue      — syntactically valid, atrociously formatted. Formatting
- *                    target. Its edits are INSPECTED, never written.
+ *                    target. Its edits are applied to disposable source strings.
  *
  * The gate that matters most is the rename. Renaming `captionText` must produce
  * a WorkspaceEdit touching Parent.vue's TEMPLATE as well as ChildCard.vue's
@@ -41,7 +41,8 @@
  *   - URIs are compared by normalised path, never by string equality. On
  *     Windows the same file legitimately arrives as `file:///D:/…`,
  *     `file:///d%3A/…` and `file:///d:/…`; and a Vue file may legitimately be
- *     reported as its generated `…/ChildCard.vue.ts` twin.
+ *     reported as its generated `…/ChildCard.vue.ts` twin. A twin's range needs
+ *     an actual source mapping before it can satisfy a precise location gate.
  *   - Identical timeouts, positions, payloads and merge policy for every
  *     server. No per-server branches exist in this file.
  */
@@ -51,6 +52,15 @@ import { join } from "node:path";
 import { budgetOf } from "../budget.mjs";
 import { mergeHover, shouldMeasure, timed, timedColdWarm } from "../context.mjs";
 import { positionAfter, positionOf, scaffold } from "../workspace.mjs";
+import {
+  applyCheckedTextEdits,
+  assertSameSemantics,
+  declarationTarget,
+  propRanges,
+  rangeOf,
+  rangeOffsets,
+  typoDiagnostic,
+} from "../navigation-validation.mjs";
 
 /**
  * Budgets come from `ctx.budget` (budget.mjs), scaled by workspace size, and
@@ -92,6 +102,8 @@ const captionProbe = formatCaption(heading, repeatTimes)
 const fixtureLabel = 'navigation-fixture'
 // Deliberate typo below: TS2552, "Did you mean 'fixtureLabel'?" — quick-fix site.
 const spellingProbe = ${TYPO}
+// captionText is a literal decoy, not a prop reference.
+const captionTextDecoy = 'captionText'
 </script>
 `;
 
@@ -120,6 +132,8 @@ const props = defineProps<{
 }>()
 
 const repeated = computed(() => props.${PROP_NAME}.repeat(props.repeatCount))
+// captionText is a literal decoy, not a prop reference.
+const captionTextDecoy = 'captionText'
 </script>
 `;
 
@@ -332,6 +346,28 @@ export function normalizeWorkspaceEdit(edit) {
   return [...byUri.values()];
 }
 
+function assertWorkspaceEditShape(edit) {
+  // Both collections are optional in WorkspaceEdit. An empty provider reply
+  // must not erase another provider's valid edits in a hybrid product.
+  if (!edit || typeof edit !== "object" || Array.isArray(edit)) {
+    throw new Error("no usable WorkspaceEdit");
+  }
+  const check = (edits) => {
+    if (!Array.isArray(edits) || edits.some((item) => !item?.range || typeof item.newText !== "string")) {
+      throw new Error("malformed TextEdit in WorkspaceEdit");
+    }
+  };
+  if (edit.changes) for (const edits of Object.values(edit.changes)) check(edits);
+  if (edit.documentChanges) {
+    if (!Array.isArray(edit.documentChanges)) throw new Error("malformed documentChanges");
+    for (const change of edit.documentChanges) {
+      if (change?.kind) continue;
+      if (typeof change?.textDocument?.uri !== "string") throw new Error("missing edited document URI");
+      check(change.edits);
+    }
+  }
+}
+
 function textEditKey(e) {
   const r = e.range ?? {};
   return `${r.start?.line}:${r.start?.character}-${r.end?.line}:${r.end?.character}=>${e.newText}`;
@@ -346,7 +382,10 @@ function textEditKey(e) {
  */
 export function mergeWorkspaceEdits(...edits) {
   const byUri = new Map();
+  const operations = [];
   for (const edit of edits) {
+    if (edit != null) assertWorkspaceEditShape(edit);
+    operations.push(...(edit?.documentChanges ?? []).filter((change) => change.kind));
     for (const file of normalizeWorkspaceEdit(edit)) {
       const key = normalizeUri(file.uri);
       if (!byUri.has(key)) byUri.set(key, { uri: file.uri, seen: new Set(), edits: [] });
@@ -362,7 +401,7 @@ export function mergeWorkspaceEdits(...edits) {
   if (!byUri.size) return null;
   const changes = {};
   for (const slot of byUri.values()) changes[slot.uri] = slot.edits;
-  return { changes };
+  return { changes, ...(operations.length ? { documentChanges: operations } : {}) };
 }
 
 /** CodeAction[] | Command[] | null, merged and deduplicated by title+kind. */
@@ -422,53 +461,15 @@ export function pickPrepareRename(...results) {
 /* Text-edit application (inspection only — nothing is written to disk)        */
 /* -------------------------------------------------------------------------- */
 
-function lineStartsOf(text) {
-  const starts = [0];
-  for (let i = 0; i < text.length; i++) if (text[i] === "\n") starts.push(i + 1);
-  return starts;
-}
-
-function offsetAt(text, starts, pos) {
-  if (!pos || typeof pos.line !== "number" || typeof pos.character !== "number") return null;
-  const line = Math.max(0, Math.min(pos.line, starts.length - 1));
-  const lineStart = starts[line];
-  const lineEnd = line + 1 < starts.length ? starts[line + 1] : text.length;
-  return Math.min(lineStart + Math.max(0, pos.character), lineEnd);
-}
-
 /** Apply TextEdit[] to a string, in memory. Used to prove edits change something. */
 export function applyTextEdits(text, edits) {
-  const list = (Array.isArray(edits) ? edits : []).filter(
-    (e) => e && e.range && typeof e.newText === "string",
-  );
-  if (!list.length) return text;
-  const starts = lineStartsOf(text);
-  const resolved = [];
-  for (let i = 0; i < list.length; i++) {
-    const e = list[i];
-    const start = offsetAt(text, starts, e.range.start);
-    const end = offsetAt(text, starts, e.range.end);
-    if (start == null || end == null) continue;
-    resolved.push({ i, start: Math.min(start, end), end: Math.max(start, end), newText: e.newText });
-  }
-  resolved.sort((a, b) => b.start - a.start || b.end - a.end || b.i - a.i);
-  let out = text;
-  for (const e of resolved) {
-    const s = Math.max(0, Math.min(e.start, out.length));
-    const t = Math.max(s, Math.min(e.end, out.length));
-    out = out.slice(0, s) + e.newText + out.slice(t);
-  }
-  return out;
+  return applyCheckedTextEdits(text, edits);
 }
 
 /** Substring covered by an LSP range, or "" if the range is unusable. */
 export function textInRange(text, range) {
-  if (!range) return "";
-  const starts = lineStartsOf(text);
-  const s = offsetAt(text, starts, range.start);
-  const e = offsetAt(text, starts, range.end);
-  if (s == null || e == null) return "";
-  return text.slice(Math.min(s, e), Math.max(s, e));
+  const span = rangeOffsets(text, range);
+  return span ? text.slice(span.start, span.end) : "";
 }
 
 /** Case/punctuation-insensitive identity, so `renamed-caption` matches `renamedCaption`. */
@@ -492,7 +493,8 @@ function describeLocations(locs) {
 }
 
 /**
- * definition / typeDefinition: at least one location must land in `targetPath`.
+ * Named definitions must cover the planted identifier within its declaration;
+ * component-file definitions may legitimately point at the start of the SFC.
  *
  * Accepting "at least one" rather than "exactly one" is deliberate: a server
  * that returns both the local import binding and the real declaration has still
@@ -500,9 +502,28 @@ function describeLocations(locs) {
  * fail. Returning ONLY locations inside the current file is the failure this
  * gate exists to catch.
  */
-export function gateDefinition(result, { targetPath, currentPath, what = "definition" }) {
+export function gateDefinition(result, {
+  targetPath,
+  currentPath,
+  what = "definition",
+  targetSource,
+  expectedRange,
+  allowedRange = expectedRange,
+  fileDefinition = false,
+}) {
   const locs = toLocations(result);
-  const hit = locs.some((l) => uriMatchesPath(l.uri, targetPath));
+  const hit = locs.some((location) => {
+    // A generated-file suffix is not a source-map operation. Without a map
+    // its coordinates cannot establish a correct source navigation.
+    if (normalizeUri(location.uri) !== normalizeUri(targetPath)) return false;
+    const span = rangeOffsets(targetSource ?? "", location.range);
+    if (!span) return false;
+    if (fileDefinition) return span.start === 0; // SFC default exports legitimately resolve to 0:0.
+    const expected = rangeOffsets(targetSource ?? "", expectedRange);
+    const allowed = rangeOffsets(targetSource ?? "", allowedRange);
+    return expected && allowed && span.start <= expected.start && span.end >= expected.end &&
+      span.start >= allowed.start && span.end <= allowed.end;
+  });
   const onlyCurrent =
     !hit && locs.length > 0 && locs.every((l) => uriMatchesPath(l.uri, currentPath));
   const seen = [...new Set(locs.map((l) => basename(normalizeUri(l.uri))))];
@@ -514,35 +535,53 @@ export function gateDefinition(result, { targetPath, currentPath, what = "defini
         ? `${what} returned no location`
         : onlyCurrent
           ? `${what} stayed inside ${basename(currentPath)} — never crossed into ${basename(targetPath)}`
-          : `${what} resolved to ${seen.join(", ")} — expected ${basename(targetPath)}`,
+          : `${what} resolved to ${seen.join(", ")} but did not cover the expected source range in ${basename(targetPath)}`,
     sample: locs.length ? describeLocations(locs) : JSON.stringify(result ?? null),
     artifact: locs.length,
   };
 }
 
 /**
- * references: both the declaration file and the consuming file must appear.
+ * References must cover all planted declaration/use ranges, without decoys.
  *
  * The declaration alone is what a server produces when it searches the current
  * document only; the point of the operation is the use site in another file's
  * template.
  */
-export function gateReferences(result, { declPath, usePath }) {
+export function gateReferences(result, {
+  declPath,
+  usePath,
+  declSource = CHILD_SOURCE,
+  useSource = PARENT_SOURCE,
+  name = PROP_NAME,
+}) {
   const locs = toLocations(result);
-  const hasDecl = locs.some((l) => uriMatchesPath(l.uri, declPath));
-  const hasUse = locs.some((l) => uriMatchesPath(l.uri, usePath));
+  const covers = (path, source) => propRanges(source, name).length > 0 && propRanges(source, name).every((expected) =>
+    locs.some((location) => normalizeUri(location.uri) === normalizeUri(path) &&
+      JSON.stringify(rangeOffsets(source, location.range)) === JSON.stringify(rangeOffsets(source, expected))),
+  );
+  const hasDecl = covers(declPath, declSource);
+  const hasUse = covers(usePath, useSource);
+  const unexpected = locs.some((location) => {
+    const source = normalizeUri(location.uri) === normalizeUri(declPath) ? declSource
+      : normalizeUri(location.uri) === normalizeUri(usePath) ? useSource : null;
+    return source === null || !propRanges(source, name).some((expected) =>
+      JSON.stringify(rangeOffsets(source, location.range)) === JSON.stringify(rangeOffsets(source, expected)),
+    );
+  });
   const seen = [...new Set(locs.map((l) => basename(normalizeUri(l.uri))))];
   const missing = [];
   if (!hasDecl) missing.push(basename(declPath));
   if (!hasUse) missing.push(basename(usePath));
   return {
-    valid: hasDecl && hasUse,
+    valid: hasDecl && hasUse && !unexpected,
     reason:
-      hasDecl && hasUse
+      hasDecl && hasUse && !unexpected
         ? ""
+        : hasDecl && hasUse ? "references included an unrelated or unmapped source range"
         : locs.length === 0
           ? "references returned nothing"
-          : `references missing ${missing.join(" + ")} — only found ${seen.join(", ")}`,
+          : `references missing ${missing.join(" + ")} symbol ranges — found files ${seen.join(", ")}`,
     sample: locs.length ? describeLocations(locs) : JSON.stringify(result ?? null),
     artifact: locs.length,
   };
@@ -607,7 +646,14 @@ export function gatePrepareRename(result, { source, expected }) {
  * that leaves `:captionText="heading"` bound to a prop that no longer exists —
  * broken code, delivered fast. That is `valid:false`, not a caveat.
  */
-export function gateRename(edit, { templatePath, declPath, newName }) {
+export function gateRename(edit, {
+  templatePath,
+  declPath,
+  newName,
+  oldName = PROP_NAME,
+  templateSource = PARENT_SOURCE,
+  declSource = CHILD_SOURCE,
+}) {
   const files = normalizeWorkspaceEdit(edit);
   const total = files.reduce((n, f) => n + f.edits.length, 0);
   const template = files.find((f) => uriMatchesPath(f.uri, templatePath));
@@ -626,33 +672,41 @@ export function gateRename(edit, { templatePath, declPath, newName }) {
     };
   }
 
-  const templateEdits = template?.edits ?? [];
-  const carriesNewName = templateEdits.some((e) => squash(e.newText).includes(squash(newName)));
-  const valid = templateEdits.length > 0 && carriesNewName;
-
   let reason = "";
-  if (!template || templateEdits.length === 0) {
-    reason = `BROKEN REFACTOR: edited ${seen.join(", ")} but produced no edit in ${basename(
-      templatePath,
-    )} — the template usage is left behind`;
-  } else if (!carriesNewName) {
-    reason = `edit in ${basename(templatePath)} does not write ${newName}: ${JSON.stringify(
-      templateEdits.map((e) => e.newText).slice(0, 3),
-    )}`;
+  try {
+    assertWorkspaceEditShape(edit);
+    if (!template?.edits.length || !decl?.edits.length) {
+      throw new Error(`must edit both ${basename(templatePath)} and ${basename(declPath)}`);
+    }
+    for (const file of files) {
+      if (![templatePath, declPath].some((path) => normalizeUri(path) === normalizeUri(file.uri))) {
+        throw new Error(`unexpected or unmapped edit target ${basename(file.uri)}`);
+      }
+    }
+    if (edit?.documentChanges?.some((change) => change.kind)) {
+      throw new Error("a prop rename unexpectedly changes workspace files");
+    }
+    for (const [source, edits] of [[templateSource, template.edits], [declSource, decl.edits]]) {
+      const ranges = propRanges(source, oldName);
+      if (!ranges.length) throw new Error("fixture has no intended prop references");
+      const expected = applyTextEdits(source, ranges.map((range) => ({ range, newText: newName })));
+      const actual = applyTextEdits(source, edits);
+      assertSameSemantics(expected, actual, { canonicalProps: true });
+    }
+  } catch (error) {
+    reason = `BROKEN REFACTOR: ${error.message}`;
   }
-
   return {
-    valid,
+    valid: !reason,
     reason,
-    sample: `${seen.join(", ")}${decl ? "" : ` (no edit in ${basename(declPath)})`} :: ${JSON.stringify(
-      templateEdits.map((e) => e.newText).slice(0, 3),
-    )}`,
+    sample: `${seen.join(", ")} :: applied rename of ${oldName} to ${newName}; declaration, uses and decoys checked`,
     artifact: total,
   };
 }
 
 /**
- * codeAction: CodeAction[] and Command[] are both legal; both need a title.
+ * CodeAction[] and Command[] are both legal. Resolve/execute lazy actions and
+ * validate their applied result, including the planted TypeScript diagnostic.
  *
  * The operation is "offer a quick fix for THIS diagnostic" — the diagnostic is
  * handed to every server as request input (see QUICK_FIX_DIAGNOSTIC). So a
@@ -678,15 +732,22 @@ export function gateRename(edit, { templatePath, declPath, newName }) {
  */
 const NON_FIX_KIND = /^(refactor|source)\b/;
 
-export function gateCodeActions(result) {
+export async function gateCodeActions(result, {
+  filePath,
+  source = PARENT_SOURCE,
+  typo = TYPO,
+  replacement = "fixtureLabel",
+  resolve,
+  execute,
+} = {}) {
   const items = Array.isArray(result) ? result : result ? [result] : [];
   const titled = items.filter(
     (a) => a && typeof a === "object" && typeof a.title === "string" && a.title.trim() !== "",
   );
   // A CodeAction carries `edit` and/or a Command object; a bare Command carries
   // `command` as a string. Either one is actionable.
-  const actionable = titled.filter((a) => a.edit != null || a.command != null);
-  const fixes = actionable.filter((a) => !NON_FIX_KIND.test(String(a.kind ?? "")));
+  const actionable = titled.filter((a) => a.edit != null || a.command != null || a.data != null || resolve);
+  const fixes = titled.filter((a) => !a.disabled && !NON_FIX_KIND.test(String(a.kind ?? "")));
 
   const kinds = titled.map((a) => a.kind ?? "(no kind)");
   let reason = "";
@@ -701,14 +762,44 @@ export function gateCodeActions(result) {
       ", ",
     )}) — no quick fix for the diagnostic it was handed`;
 
+  const failures = [];
+  let valid = false;
+  for (const offered of fixes) {
+    try {
+      let action = offered;
+      if (!action.edit && resolve && typeof action.command !== "string") {
+        try { action = await resolve(offered) ?? offered; } catch { /* A command may still be executable. */ }
+      }
+      if (action.disabled || NON_FIX_KIND.test(String(action.kind ?? ""))) throw new Error("resolved action is not an enabled quick fix");
+      let edit = action.edit;
+      if (!edit && action.command && execute) edit = await execute(action.command, action);
+      if (!edit) throw new Error("quick fix produced no applicable edits after resolution/execution");
+      assertWorkspaceEditShape(edit);
+      const files = normalizeWorkspaceEdit(edit);
+      if (!filePath || files.length !== 1 || normalizeUri(files[0].uri) !== normalizeUri(filePath)) {
+        throw new Error("quick fix did not exclusively edit the planted source file");
+      }
+      if (edit.documentChanges?.some((change) => change.kind)) throw new Error("unexpected file operation in spelling fix");
+      const ranges = propRanges(source, typo);
+      if (ranges.length !== 1) throw new Error("fixture typo must identify one binding use");
+      const expected = applyTextEdits(source, [{ range: ranges[0], newText: replacement }]);
+      const actual = applyTextEdits(source, files[0].edits);
+      assertSameSemantics(expected, actual);
+      if (!typoDiagnostic(source, typo).length || typoDiagnostic(actual, typo).length) {
+        throw new Error("the planted TypeScript name diagnostic was not demonstrably removed");
+      }
+      valid = true;
+      break;
+    } catch (error) { failures.push(error.message); }
+  }
   return {
-    valid: fixes.length > 0,
-    reason,
+    valid,
+    reason: valid ? "" : reason || failures.join("; ") || "no usable quick fix",
     sample: titled.length
       ? `${actionable.length}/${titled.length} actionable, ${fixes.length} quick fix :: ${titled
           .slice(0, 3)
           .map((a) => a.title)
-          .join(" | ")}`
+          .join(" | ")}${valid ? " :: applied fix, preserved semantics, TypeScript diagnostic removed" : ""}`
       : JSON.stringify(result ?? null),
     artifact: titled.length,
   };
@@ -767,7 +858,7 @@ export function gateSignatureHelp(result, expectedParam) {
 }
 
 /**
- * formatting: a non-empty TextEdit[] that actually changes the document.
+ * Formatting must change the document while preserving its parsed semantics.
  *
  * The fixture is deliberately unformatted, so "no edits" is a real failure and
  * a set of edits that reproduce the input byte for byte is a real failure too —
@@ -788,7 +879,13 @@ export function gateFormatting(source, result) {
       artifact: 0,
     };
   }
-  const next = applyTextEdits(source, edits);
+  let next;
+  try {
+    next = applyTextEdits(source, result);
+    assertSameSemantics(source, next);
+  } catch (error) {
+    return { valid: false, reason: `invalid formatting: ${error.message}`, sample: "", artifact: edits.length };
+  }
   const changed = next !== source;
   let at = 0;
   while (at < next.length && at < source.length && next[at] === source[at]) at++;
@@ -840,12 +937,81 @@ async function askAll(ctx, method, params, timeoutMs, merge) {
   const settled = await Promise.allSettled(legs);
   const values = [];
   const errors = [];
-  for (const s of settled) {
-    if (s.status === "fulfilled") values.push(s.value);
+  const providers = [];
+  for (let index = 0; index < settled.length; index++) {
+    const s = settled[index];
+    if (s.status === "fulfilled") {
+      values.push(s.value);
+      providers.push({ value: s.value, client: index === 0 ? ctx.client : ctx.hybrid });
+    }
     else errors.push(String(s.reason?.message ?? s.reason));
   }
   if (!values.length) return { value: undefined, errors };
-  return { value: merge(...values), errors };
+  return { value: merge(...values), errors, providers };
+}
+
+/** The wire request is timed; applying/parsing/typechecking its edits is deferred. */
+async function deferredEditProbe(ctx, pending, id, label, method, params, merge, gate, timeoutMs = budgetOf(ctx).warmMs) {
+  let reply;
+  const op = await timed(id, label, async () => {
+    reply = await askAll(ctx, method, params, timeoutMs, merge);
+    if (reply.value === undefined) throw new Error(reply.errors.join(" | "));
+    return { valid: null };
+  });
+  if (reply?.value !== undefined) {
+    pending.push(async () => {
+      try {
+        const verdict = await gate(reply.value, reply.providers);
+        Object.assign(op, { ...verdict, sample: String(verdict.sample ?? "").slice(0, 200) });
+      } catch (error) {
+        Object.assign(op, { valid: false, reason: `edit validation failed: ${error.message}` });
+      }
+    });
+  }
+  return op;
+}
+
+function requestProvider(provider, method, params, timeoutMs) {
+  return provider.sendRequest ? provider.sendRequest(method, params, timeoutMs) : provider.request(method, params, timeoutMs);
+}
+
+/** Execute a command on its owning provider, acknowledging only validated in-memory edits. */
+export async function executeDisposableCommand(provider, command, action, { filePath, source, timeoutMs }) {
+  const payload = typeof command === "string"
+    ? { command, arguments: action.arguments ?? [] }
+    : { command: command.command, arguments: command.arguments ?? [] };
+  if (typeof payload.command !== "string") throw new Error("malformed quick-fix command");
+  if (!provider.setServerRequestHandler) throw new Error("provider cannot acknowledge workspace/applyEdit");
+  const edits = [];
+  let working = source;
+  const restore = provider.setServerRequestHandler("workspace/applyEdit", ({ edit }) => {
+    try {
+      assertWorkspaceEditShape(edit);
+      const files = normalizeWorkspaceEdit(edit);
+      if (files.length !== 1 || normalizeUri(files[0].uri) !== normalizeUri(filePath) ||
+          edit.documentChanges?.some((change) => change.kind)) {
+        throw new Error("command attempted to edit outside the planted document");
+      }
+      // Validate range safety before acknowledging application. The final
+      // semantic oracle checks the full collected edit against the typo fix.
+      working = applyTextEdits(working, files[0].edits);
+      edits.push(edit);
+      return { applied: true };
+    } catch (error) { return { applied: false, failureReason: error.message }; }
+  });
+  try {
+    const result = await requestProvider(provider, "workspace/executeCommand", payload, timeoutMs);
+    if ((result?.changes || result?.documentChanges) && !edits.some((edit) => JSON.stringify(edit) === JSON.stringify(result))) {
+      assertWorkspaceEditShape(result);
+      const files = normalizeWorkspaceEdit(result);
+      if (files.length !== 1 || normalizeUri(files[0].uri) !== normalizeUri(filePath) || result.documentChanges?.some((change) => change.kind)) {
+        throw new Error("command returned changes outside the planted document");
+      }
+      working = applyTextEdits(working, files[0].edits);
+      edits.push(result);
+    }
+    return edits.length ? { changes: { [filePath]: [{ range: rangeOf(source, 0, source.length), newText: working }] } } : null;
+  } finally { restore(); }
 }
 
 /**
@@ -954,6 +1120,9 @@ export const SUITE = {
     // already warmed.
 
     const ops = [];
+    const pendingEditChecks = [];
+    const helperTarget = declarationTarget(ws.helpersSource, "formatCaption");
+    const typeTarget = declarationTarget(ws.typesSource, "CaptionOptions");
 
     /* 1 — the Vue-specific one: a component TAG must resolve into its SFC. */
     if (shouldMeasure(ctx, "def-component-tag")) {
@@ -969,6 +1138,8 @@ export const SUITE = {
                 targetPath: ws.childFile,
                 currentPath: ws.parentFile,
                 what: "tag definition",
+                targetSource: ws.childSource,
+                fileDefinition: true,
               }),
           ),
         ),
@@ -989,6 +1160,9 @@ export const SUITE = {
                 targetPath: ws.helpersFile,
                 currentPath: ws.parentFile,
                 what: "definition",
+                targetSource: ws.helpersSource,
+                expectedRange: helperTarget.range,
+                allowedRange: helperTarget.container,
               }),
           ),
         ),
@@ -1012,6 +1186,9 @@ export const SUITE = {
               targetPath: ws.typesFile,
               currentPath: ws.parentFile,
               what: "typeDefinition",
+              targetSource: ws.typesSource,
+              expectedRange: typeTarget.range,
+              allowedRange: typeTarget.container,
             }),
         ),
       ),
@@ -1029,7 +1206,7 @@ export const SUITE = {
             context: { includeDeclaration: true },
           },
           mergeLocations,
-          (res) => gateReferences(res, { declPath: ws.childFile, usePath: ws.parentFile }),
+          (res) => gateReferences(res, { declPath: ws.childFile, usePath: ws.parentFile, declSource: ws.childSource, useSource: ws.parentSource }),
           // Project-wide: walks every file on every call. See the header.
           budgetOf(ctx).projectMs,
         ),
@@ -1051,9 +1228,8 @@ export const SUITE = {
 
     /* 5b — the rename itself. Edits are INSPECTED, never applied to disk. */
     ops.push(
-      await timed("rename-prop", "Rename prop (cross-file edit)", () =>
-        probe(
-          ctx,
+      await deferredEditProbe(
+          ctx, pendingEditChecks, "rename-prop", "Rename prop (cross-file edit)",
           "textDocument/rename",
           {
             textDocument: { uri: childUri },
@@ -1066,11 +1242,12 @@ export const SUITE = {
               templatePath: ws.parentFile,
               declPath: ws.childFile,
               newName: ws.newName,
+              templateSource: ws.parentSource,
+              declSource: ws.childSource,
             }),
           // Project-wide: a cross-file rename edits every use site. Same class
           // as references — see the header.
           budgetOf(ctx).projectMs,
-        ),
       ),
     );
 
@@ -1080,9 +1257,8 @@ export const SUITE = {
     const contextDiagnostics = [{ ...QUICK_FIX_DIAGNOSTIC, range: ws.typoRange }];
 
     ops.push(
-      await timed("code-action", "Code action at diagnostic", () =>
-        probe(
-          ctx,
+      await deferredEditProbe(
+          ctx, pendingEditChecks, "code-action", "Code action at diagnostic",
           "textDocument/codeAction",
           {
             textDocument: { uri: parentUri },
@@ -1090,35 +1266,36 @@ export const SUITE = {
             context: { diagnostics: contextDiagnostics, triggerKind: 1 },
           },
           mergeCodeActions,
-          (res) => gateCodeActions(res),
-        ),
-      ),
-    );
-
-    /* 7 — signature help right after the `(` an editor just auto-closed. */
-    changeDoc(parentUri, ws.parentTypingSource, 2);
-    ops.push(
-      await timed("signature-help", "Signature help after `(`", () =>
-        probe(
-          ctx,
-          "textDocument/signatureHelp",
-          {
-            textDocument: { uri: parentUri },
-            position: ws.signatureProbe,
-            context: { triggerKind: 2, triggerCharacter: "(", isRetrigger: false },
+          (res, providers) => {
+            const owners = new WeakMap();
+            for (const provider of providers) {
+              for (const action of Array.isArray(provider.value) ? provider.value : [provider.value]) {
+                if (action && typeof action === "object") owners.set(action, provider.client);
+              }
+            }
+            return gateCodeActions(res, {
+              filePath: ws.parentFile,
+              source: ws.parentSource,
+              resolve: async (action) => {
+                const owner = owners.get(action);
+                if (!owner) throw new Error("quick-fix provider is unknown");
+                const resolved = await requestProvider(owner, "codeAction/resolve", action, budgetOf(ctx).warmMs);
+                if (resolved && typeof resolved === "object") owners.set(resolved, owner);
+                return resolved;
+              },
+              execute: (command, action) => executeDisposableCommand(owners.get(action), command, action, {
+                filePath: ws.parentFile, source: ws.parentSource, timeoutMs: budgetOf(ctx).warmMs,
+              }),
+            });
           },
-          mergeSignatureHelp,
-          (res) => gateSignatureHelp(res, ws.paramName),
-        ),
       ),
     );
 
     /* 8 — formatting a deliberately unformatted document. Result inspected in
        memory; nothing is written back. */
     ops.push(
-      await timed("formatting", "Format unformatted SFC", () =>
-        probe(
-          ctx,
+      await deferredEditProbe(
+          ctx, pendingEditChecks, "formatting", "Format unformatted SFC",
           "textDocument/formatting",
           {
             textDocument: { uri: messyUri },
@@ -1126,10 +1303,30 @@ export const SUITE = {
           },
           pickFormatting,
           (res) => gateFormatting(ws.messySource, res),
-        ),
       ),
     );
 
+    // Validate edits after their request timers have stopped, while the open
+    // document still has the revision on which code actions were requested.
+    for (const check of pendingEditChecks) await check();
+
+    /* Signature help owns a changed buffer; perform it after resolving edits
+       so a legal lazy CodeAction does not become stale because of our probe. */
+    changeDoc(parentUri, ws.parentTypingSource, 2);
+    const signature = await timed("signature-help", "Signature help after `(`", () =>
+      probe(
+        ctx,
+        "textDocument/signatureHelp",
+        {
+          textDocument: { uri: parentUri },
+          position: ws.signatureProbe,
+          context: { triggerKind: 2, triggerCharacter: "(", isRetrigger: false },
+        },
+        mergeSignatureHelp,
+        (res) => gateSignatureHelp(res, ws.paramName),
+      ),
+    );
+    ops.splice(ops.length - 1, 0, signature);
     return ops;
   },
 };

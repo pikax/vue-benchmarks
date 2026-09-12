@@ -8,6 +8,8 @@ import { fileURLToPath } from "node:url";
 import { createSuite } from "../lib/harness.mjs";
 import { ensureDom } from "../lib/dom.mjs";
 import { getCompilers, loadCompiledComponent } from "../lib/compile-to-component.mjs";
+import { COMPILE_VALIDITY_PLANTS } from "../../../scripts/lib/compile-validity-plants.mjs";
+import { confirmStyleFeatures, confirmSourceMaps } from "../lib/style-confirm.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const fixturesDir = join(__dirname, "../fixtures/compile");
@@ -644,6 +646,21 @@ export async function runCompileSuite() {
     }
   }
 
+  for (const plant of COMPILE_VALIDITY_PLANTS.filter((plant) => plant.confirmation)) {
+    for (const compiler of compilers) {
+      if (compiler.skip) {
+        suite.skip(plant.id, compiler.id, compiler.skip);
+        continue;
+      }
+      await suite.run(plant.id, compiler.id, () =>
+        withComponent(compiler, plant.source, `${plant.id}.vue`, (component) =>
+          plant.assert({ mount, component }),
+        ),
+      );
+    }
+  }
+  await confirmStyleFeatures(suite);
+  confirmSourceMaps(suite);
   return suite.results;
 }
 

@@ -629,6 +629,10 @@ export async function attachVolarHybridBridge(
         },
       );
     },
+    /** Scoped workspace/applyEdit support for disposable refactoring validation. */
+    setServerRequestHandler(method, handler) {
+      return tsClient.setServerRequestHandler(method, handler);
+    },
     async close() {
       await tsClient.shutdown();
     },

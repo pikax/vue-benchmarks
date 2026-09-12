@@ -20,14 +20,14 @@ const require = createRequire(import.meta.url);
 const { parse } = require("@vue/compiler-sfc");
 
 test("format plants are versioned, extensive and independently identified", () => {
-  assert.equal(FORMAT_VALIDITY_PLANTS.length, 3);
-  assert.equal(new Set(FORMAT_VALIDITY_PLANTS.map((plant) => plant.id)).size, 3);
+  assert.equal(FORMAT_VALIDITY_PLANTS.length, 5);
+  assert.equal(new Set(FORMAT_VALIDITY_PLANTS.map((plant) => plant.id)).size, 5);
   assert.match(FORMAT_VALIDITY_SUITE_HASH, /^[a-f0-9]{64}$/);
   assert.ok(FORMAT_VALIDITY_PLANTS.every((plant) => plant.coverage.length >= 3));
 });
 
 test("format semantic judge rejects a changed template expression without comparing tool outputs", () => {
-  const plant = FORMAT_VALIDITY_PLANTS[0];
+  const plant = FORMAT_VALIDITY_PLANTS.find((plant) => plant.id === "template-behaviour");
   const changed = plant.source
     .replace("{{row.label}}", "{{row.id}}")
     .replace("<section", "<section ");
@@ -43,7 +43,7 @@ test("format semantic judge rejects a changed template expression without compar
 });
 
 test("format semantic judge requires exact-pass idempotence and descriptor preservation", () => {
-  const plant = FORMAT_VALIDITY_PLANTS[1];
+  const plant = FORMAT_VALIDITY_PLANTS.find((plant) => plant.id === "descriptor-attributes");
   const first = plant.source.replace("<ol>", "<ol >");
   const second = first.replace('module="theme"', 'module="other"');
   const result = judgeFormattedPlant({ plant, original: plant.source, first, second, parse });
@@ -51,9 +51,9 @@ test("format semantic judge requires exact-pass idempotence and descriptor prese
   assert.ok(result.failures.some((failure) => failure.includes("idempotent")));
 });
 
-test("lint manifest uses ten dirty/clean differential plants", () => {
-  assert.equal(LINT_VALIDITY_PLANTS.length, 10);
-  assert.equal(new Set(LINT_VALIDITY_PLANTS.map((plant) => plant.id)).size, 10);
+test("lint manifest uses eleven dirty/clean differential plants", () => {
+  assert.equal(LINT_VALIDITY_PLANTS.length, 11);
+  assert.equal(new Set(LINT_VALIDITY_PLANTS.map((plant) => plant.id)).size, 11);
   assert.match(LINT_VALIDITY_SUITE_HASH, /^[a-f0-9]{64}$/);
   for (const plant of LINT_VALIDITY_PLANTS) {
     assert.notEqual(plant.dirty, plant.clean);

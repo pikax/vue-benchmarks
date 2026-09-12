@@ -23,12 +23,16 @@ function truthy(value, context) {
   if (!value) throw new Error(context);
 }
 
-function mountPlant(mount, component, options, run) {
+async function mountPlant(mount, component, options, run) {
   const wrapper = mount(component, options);
-  return Promise.resolve(run(wrapper)).finally(() => wrapper.unmount());
+  try {
+    return await run(wrapper);
+  } finally {
+    wrapper.unmount();
+  }
 }
 
-export const COMPILE_VALIDITY_SUITE_VERSION = "2026-08-20.2";
+export const COMPILE_VALIDITY_SUITE_VERSION = "2026-09-12.2";
 
 export const COMPILE_VALIDITY_PLANTS = Object.freeze([
   {
@@ -48,6 +52,50 @@ const summary = computed(() => props.label + ':' + props.count)
         equal(wrapper.get('[data-plant="summary"]').text(), "fallback:2", "prop defaults");
         await wrapper.setProps({ label: "updated", count: 7 });
         equal(wrapper.get('[data-plant="summary"]').text(), "updated:7", "reactive props");
+      });
+    },
+  },
+  {
+    id: "reactive-props-destructure-shadowing",
+    confirmation: true,
+    coverage: ["reactive destructure", "function parameter scope", "arrow parameter scope", "prop update"],
+    source: `<script setup>
+const { label = 'outer' } = defineProps(['label'])
+function local(label) { return label }
+const inner = ['arrow'].map(label => label).join(',')
+</script>
+<template><output data-plant="shadow">{{ label }}|{{ local('parameter') }}|{{ inner }}</output></template>`,
+    assert({ mount, component }) {
+      return mountPlant(mount, component, undefined, async (wrapper) => {
+        equal(wrapper.get('[data-plant="shadow"]').text(), "outer|parameter|arrow", "lexical shadowing");
+        await wrapper.setProps({ label: "updated" });
+        equal(wrapper.get('[data-plant="shadow"]').text(), "updated|parameter|arrow", "shadowing after prop update");
+      });
+    },
+  },
+  {
+    id: "reactive-props-destructure-alias-default",
+    coverage: [
+      "defineProps destructure",
+      "alias",
+      "destructure default",
+      "computed",
+      "prop update",
+    ],
+    source: `<script setup>
+import { computed } from 'vue'
+const { label: caption = 'fallback', count = 2 } = defineProps(['label', 'count'])
+const summary = computed(() => caption + ':' + count)
+</script>
+<template><output data-plant="destructure">{{ caption }}|{{ summary }}</output></template>`,
+    assert({ mount, component }) {
+      return mountPlant(mount, component, undefined, async (wrapper) => {
+        const text = () => wrapper.get('[data-plant="destructure"]').text();
+        equal(text(), "fallback|fallback:2", "destructure defaults");
+        await wrapper.setProps({ label: "next", count: 7 });
+        equal(text(), "next|next:7", "aliased prop and computed update");
+        await wrapper.setProps({ label: undefined, count: undefined });
+        equal(text(), "fallback|fallback:2", "defaults restored after prop removal");
       });
     },
   },
@@ -265,7 +313,7 @@ const ModelControl = {
   },
   {
     id: "keyed-list-reorder",
-    coverage: ["v-for", "keyed fragment", "list reorder", "destructuring"],
+    coverage: ["v-for", "keyed fragment", "list reorder", "destructuring", "DOM identity"],
     source: `<script setup>
 import { ref } from 'vue'
 const items = ref([{ id: 'a', label: 'A' }, { id: 'b', label: 'B' }, { id: 'c', label: 'C' }])
@@ -285,6 +333,7 @@ function reverse() { items.value = [...items.value].reverse() }
           "0:A,1:B,2:C",
           "initial keyed list",
         );
+        const before = wrapper.findAll('[data-plant="item"]').map((node) => node.element);
         await wrapper.get('[data-plant="reverse"]').trigger("click");
         equal(
           wrapper
@@ -294,6 +343,13 @@ function reverse() { items.value = [...items.value].reverse() }
           "0:C,1:B,2:A",
           "reordered keyed list",
         );
+        const after = wrapper.findAll('[data-plant="item"]').map((node) => node.element);
+        for (let index = 0; index < before.length; index++) {
+          truthy(
+            after[index] === before[before.length - 1 - index],
+            "keyed reorder lost DOM identity",
+          );
+        }
       });
     },
   },

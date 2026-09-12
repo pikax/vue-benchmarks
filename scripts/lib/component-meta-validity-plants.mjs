@@ -10,7 +10,7 @@ export const COMPONENT_META_CASES_ROOT = join(
   "../../tests/confirm/fixtures/component-meta/cases",
 );
 
-export const COMPONENT_META_VALIDITY_SUITE_VERSION = "2026-08-20.2";
+export const COMPONENT_META_VALIDITY_SUITE_VERSION = "2026-09-12.2";
 
 function coverageFor(expect) {
   const coverage = [];
@@ -27,6 +27,7 @@ function coverageFor(expect) {
   if (items.some((item) => typeof item.required === "boolean")) coverage.push("requiredness");
   if (items.some((item) => item.hasDefault === true)) coverage.push("defaults");
   if (items.some((item) => item.typeIncludes?.length)) coverage.push("coarse type facts");
+  if (items.some((item) => item.typeFacts)) coverage.push("structural payload types");
   return coverage;
 }
 
@@ -41,12 +42,20 @@ export const COMPONENT_META_VALIDITY_PLANTS = Object.freeze(
       const componentFile = readdirSync(caseDir).find((name) => name.endsWith(".vue"));
       if (!componentFile) throw new Error(`component-meta plant ${id} has no .vue source`);
       const expect = JSON.parse(readFileSync(join(caseDir, "expect.json"), "utf8"));
+      const supportFiles = readdirSync(caseDir, { recursive: true })
+        .filter((name) => name !== componentFile && /\.(?:[cm]?[jt]sx?|vue)$/.test(name))
+        .sort()
+        .map((file) => ({
+          file: file.replaceAll("\\", "/"),
+          source: readFileSync(join(caseDir, file), "utf8"),
+        }));
       return Object.freeze({
         id,
         coverage: coverageFor(expect),
         caseDir,
         componentFile,
         source: readFileSync(join(caseDir, componentFile), "utf8"),
+        supportFiles,
         expect,
       });
     }),
@@ -55,13 +64,16 @@ export const COMPONENT_META_VALIDITY_PLANTS = Object.freeze(
 export const COMPONENT_META_VALIDITY_SUITE_HASH = createHash("sha256")
   .update(
     JSON.stringify(
-      COMPONENT_META_VALIDITY_PLANTS.map(({ id, coverage, componentFile, source, expect }) => ({
-        id,
-        coverage,
-        componentFile,
-        source,
-        expect,
-      })),
+      COMPONENT_META_VALIDITY_PLANTS.map(
+        ({ id, coverage, componentFile, source, supportFiles, expect }) => ({
+          id,
+          coverage,
+          componentFile,
+          source,
+          supportFiles,
+          expect,
+        }),
+      ),
     ),
   )
   .digest("hex");

@@ -19,12 +19,16 @@ function truthy(value, context) {
   if (!value) throw new Error(context);
 }
 
-function mountPlant(mount, component, options, run) {
+async function mountPlant(mount, component, options, run) {
   const wrapper = mount(component, options);
-  return Promise.resolve(run(wrapper)).finally(() => wrapper.unmount());
+  try {
+    return await run(wrapper);
+  } finally {
+    wrapper.unmount();
+  }
 }
 
-export const JSX_VALIDITY_SUITE_VERSION = "2026-08-20.1";
+export const JSX_VALIDITY_SUITE_VERSION = "2026-09-12.2";
 
 export const JSX_VALIDITY_PLANTS = Object.freeze([
   {
@@ -62,7 +66,7 @@ export const JSX_VALIDITY_PLANTS = Object.freeze([
   },
   {
     id: "keyed-list-map",
-    coverage: ["array children", "map", "key", "dynamic text"],
+    coverage: ["array children", "map", "key", "dynamic text", "DOM identity"],
     source: `export default function App(props) {
   return <ul>{props.items.map((item) => <li key={item.id}>{item.label}</li>)}</ul>
 }`,
@@ -87,6 +91,7 @@ export const JSX_VALIDITY_PLANTS = Object.freeze([
             "A,B",
             "list order",
           );
+          const before = wrapper.findAll("li").map((item) => item.element);
           await wrapper.setProps({
             items: [
               { id: 2, label: "B2" },
@@ -100,6 +105,11 @@ export const JSX_VALIDITY_PLANTS = Object.freeze([
               .join(","),
             "B2,A2",
             "keyed reorder",
+          );
+          const after = wrapper.findAll("li").map((item) => item.element);
+          truthy(
+            after[0] === before[1] && after[1] === before[0],
+            "keyed reorder lost DOM identity",
           );
         },
       );
@@ -133,10 +143,52 @@ export const JSX_VALIDITY_PLANTS = Object.freeze([
         truthy(wrapper.find('[data-plant="extra"]').exists(), "logical child was not rendered");
         await wrapper.setProps({ ok: false, extra: false });
         truthy(wrapper.find('[data-plant="no"]').exists(), "false branch was not rendered");
+        truthy(!wrapper.find('[data-plant="yes"]').exists(), "old true branch remained rendered");
         truthy(
           !wrapper.find('[data-plant="extra"]').exists(),
           "false logical child remained rendered",
         );
+      });
+    },
+  },
+  {
+    id: "spread-collisions-update-removal",
+    confirmation: true,
+    coverage: ["spread precedence", "class merge", "style merge", "event merge", "spread update", "attribute removal"],
+    source: `export default function App(props) {
+  return <button id="first" class="before" style={{padding:'1px'}} onClick={props.before}
+    {...props.rest} id="last" class="after" style={{borderWidth:'3px'}} onClick={props.after}
+    data-plant="spread-collision">go</button>
+}`,
+    assert({ mount, component }) {
+      const calls = [];
+      const rest = { id: 'middle', class: 'middle', style: { color: 'red' }, title: 'remove-me', onClick: () => calls.push('middle') };
+      return mountPlant(mount, component, {
+        props: { rest, before: () => calls.push('before'), after: () => calls.push('after') },
+      }, async (wrapper) => {
+        const button = () => wrapper.get('[data-plant="spread-collision"]');
+        equal(button().attributes('id'), 'last', 'last ordinary attribute wins');
+        truthy(['before', 'middle', 'after'].every((name) => button().classes(name)), 'classes were not merged');
+        equal(button().element.style.padding, '1px', 'style before spread');
+        equal(button().element.style.color, 'red', 'style from spread');
+        equal(button().element.style.borderWidth, '3px', 'style after spread');
+        await button().trigger('click');
+        equal(calls.join(','), 'before,middle,after', 'merged handler order/count');
+        await wrapper.setProps({ rest: { class: 'replacement', style: { backgroundColor: 'blue' }, onClick: () => calls.push('replacement') } });
+        truthy(!button().classes('middle') && button().classes('replacement'), 'old spread class retained');
+        equal(button().attributes('title'), undefined, 'removed spread attribute');
+        equal(button().element.style.color, '', 'removed spread style');
+        equal(button().element.style.backgroundColor, 'blue', 'updated spread style');
+        calls.length = 0;
+        await button().trigger('click');
+        equal(calls.join(','), 'before,replacement,after', 'replaced spread handler');
+        await wrapper.setProps({ rest: {} });
+        calls.length = 0;
+        await button().trigger('click');
+        equal(calls.join(','), 'before,after', 'removed spread handler');
+        equal(button().element.style.backgroundColor, '', 'removed replacement style');
+        truthy(!button().classes('replacement'), 'removed replacement class');
+        equal(button().attributes('id'), 'last', 'static attribute after spread removal');
       });
     },
   },
@@ -167,6 +219,35 @@ export default function App() {
       return mountPlant(mount, component, undefined, (wrapper) => {
         equal(wrapper.get('[data-plant="child"]').text(), "hi", "child prop");
       });
+    },
+  },
+  {
+    id: "event-handler-replacement-removal",
+    coverage: ["native event", "handler replacement", "handler removal", "reactive props"],
+    source: `export default function App(props) {
+  return <button data-plant="replace-handler" onClick={props.handler}>go</button>
+}`,
+    assert({ mount, component }) {
+      let first = 0;
+      let second = 0;
+      return mountPlant(
+        mount,
+        component,
+        { props: { handler: () => first++ } },
+        async (wrapper) => {
+          const click = () => wrapper.get('[data-plant="replace-handler"]').trigger("click");
+          await click();
+          equal(first, 1, "initial handler");
+          await wrapper.setProps({ handler: () => second++ });
+          await click();
+          equal(first, 1, "old handler must be replaced");
+          equal(second, 1, "replacement handler must run exactly once");
+          await wrapper.setProps({ handler: null });
+          await click();
+          equal(first, 1, "old handler after removal");
+          equal(second, 1, "replacement handler after removal");
+        },
+      );
     },
   },
   {

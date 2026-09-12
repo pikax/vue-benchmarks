@@ -17,6 +17,7 @@ export class LspClient extends EventEmitter {
   #pending = new Map();
   #name;
   #configuration;
+  #serverRequestHandlers = new Map();
   positionEncoding = "utf-16";
 
   constructor(name, command, args = [], options = {}) {
@@ -117,6 +118,14 @@ export class LspClient extends EventEmitter {
       this.emit(`notify:${msg.method}`, msg.params);
       // Respond to server → client requests
       if (msg.id != null) {
+        const handler = this.#serverRequestHandlers.get(msg.method);
+        if (handler) {
+          Promise.resolve().then(() => handler(msg.params)).then(
+            (result) => this.#write({ jsonrpc: "2.0", id: msg.id, result: result ?? null }),
+            (error) => this.#write({ jsonrpc: "2.0", id: msg.id, error: { code: -32603, message: String(error?.message ?? error) } }),
+          );
+          return;
+        }
         const result = this.#handleServerRequest(msg.method, msg.params);
         this.#write({ jsonrpc: "2.0", id: msg.id, result });
       }
@@ -176,6 +185,18 @@ export class LspClient extends EventEmitter {
 
   sendNotification(method, params) {
     this.#write({ jsonrpc: "2.0", method, params });
+  }
+
+  /** Install a scoped server-request handler; the returned function restores its predecessor. */
+  setServerRequestHandler(method, handler) {
+    if (typeof handler !== "function") throw new TypeError("server request handler must be a function");
+    const previous = this.#serverRequestHandlers.get(method);
+    this.#serverRequestHandlers.set(method, handler);
+    return () => {
+      if (this.#serverRequestHandlers.get(method) !== handler) return;
+      if (previous) this.#serverRequestHandlers.set(method, previous);
+      else this.#serverRequestHandlers.delete(method);
+    };
   }
 
   sendRequest(method, params, timeoutMs = 30_000) {

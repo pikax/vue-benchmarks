@@ -98,7 +98,7 @@ export function normalizeVolarComponentMeta(raw, source) {
     .map((p) => ({
       name: p.name,
       type: String(p.type ?? ""),
-      required: Boolean(p.required),
+      required: typeof p.required === "boolean" ? p.required : undefined,
       hasDefault: p.default !== undefined && p.default !== null && p.default !== "",
       default: p.default,
       global: false,

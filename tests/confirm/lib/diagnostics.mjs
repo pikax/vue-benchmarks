@@ -128,7 +128,7 @@ export function fileMatches(diagFile, expectFile) {
   if (!diagFile) return false;
   const got = diagFile.replace(/\\/g, "/");
   const want = String(expectFile).replace(/\\/g, "/");
-  return got === want || got.endsWith(`/${want}`) || got.endsWith(want);
+  return got === want || got.endsWith(`/${want}`);
 }
 
 /** Diagnostics whose path sits under `cases/<caseId>/` in a combined project. */

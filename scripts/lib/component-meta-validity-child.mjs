@@ -63,7 +63,7 @@ function loadOptional(name) {
   }
 }
 
-function preparePlantRoot(entrypoint) {
+export function preparePlantRoot(entrypoint) {
   const cleanupRoot = join(
     rootDir,
     "work",
@@ -73,11 +73,16 @@ function preparePlantRoot(entrypoint) {
   const relativeFiles = COMPONENT_META_VALIDITY_PLANTS.map((plant) =>
     join(plant.id, plant.componentFile),
   );
+  const supportFiles = COMPONENT_META_VALIDITY_PLANTS.flatMap((plant) =>
+    plant.supportFiles.map(({ file }) => join(plant.id, file)),
+  );
   // Reuse the timed generated surface's staging helper, including its compiler
   // options, Vue resolution, package marker and entirely disk-backed layout.
   const workDir = prepareTypecheckDir(
     COMPONENT_META_CASES_ROOT,
-    relativeFiles,
+    // Imported types are part of the plant. Dropping them turns a missing
+    // fixture dependency into an apparent extraction failure for every tool.
+    [...relativeFiles, ...supportFiles],
     cleanupRoot,
     "plants",
   );

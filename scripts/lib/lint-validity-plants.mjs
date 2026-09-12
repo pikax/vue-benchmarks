@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 
-export const LINT_VALIDITY_SUITE_VERSION = "2026-08-20.1";
+export const LINT_VALIDITY_SUITE_VERSION = "2026-09-12.2";
 
 function pair(id, coverage, dirtyLine, dirty, clean, concepts, rules) {
   return { id, coverage, dirtyLine, dirty, clean, concepts, rules };
@@ -80,6 +80,15 @@ export const LINT_VALIDITY_PLANTS = Object.freeze([
     ["vue/no-mutating-props", "no-mutating-props"],
   ),
   pair(
+    "mutating-props-shadowing",
+    ["script-rule", "macro-binding-analysis", "lexical-shadowing"],
+    4,
+    `<script setup>\nconst props = defineProps({ count: { type: Number, default: 0 } })\nfunction bump() {\n  props.count++\n}\n</script>\n<template><button @click="bump">{{ props.count }}</button></template>\n`,
+    `<script setup>\nconst props = defineProps({ count: { type: Number, default: 0 } })\nfunction bump(props) {\n  props.count++\n}\nconst local = { count: 0 }\n</script>\n<template><button @click="bump(local)">{{ props.count }}:{{ local.count }}</button></template>\n`,
+    ["mutating prop", "mutation of prop", "prop mutation"],
+    ["vue/no-mutating-props", "no-mutating-props"],
+  ),
+  pair(
     "deprecated-slot-attribute",
     ["template-rule", "slot-syntax"],
     8,
@@ -116,13 +125,23 @@ function lineMatchesText(text, line) {
   return patterns.some((pattern) => pattern.test(text));
 }
 
-export function diagnosticMatchesPlant(diagnostic, plant, filename = "Plant.vue") {
+export function diagnosticMatchesPlant(
+  diagnostic,
+  plant,
+  filename = "Plant.vue",
+  { requireLine = true } = {},
+) {
   const file = norm(diagnostic.file ?? diagnostic.filePath).replaceAll("\\", "/");
   const rule = norm(diagnostic.rule ?? diagnostic.ruleId ?? diagnostic.code);
   const message = norm(diagnostic.message);
   const raw = norm(diagnostic.raw).replaceAll("\\", "/");
   const expectedFile = norm(filename).replaceAll("\\", "/");
-  const attributed = file.endsWith(expectedFile) || raw.includes(expectedFile);
+  const escapedFile = expectedFile.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  // A structured path is authoritative; a quoted source line in raw output
+  // must not attribute AnotherPlant.vue's diagnostic to Plant.vue.
+  const attributed = file
+    ? file === expectedFile || file.endsWith(`/${expectedFile}`)
+    : new RegExp(`(?:^|[\\s/\\[(])${escapedFile}(?=$|[\\s:),\\]])`).test(raw);
   const line = Number(diagnostic.line);
   const ranged =
     line === plant.dirtyLine || (!Number.isFinite(line) && lineMatchesText(raw, plant.dirtyLine));
@@ -131,7 +150,7 @@ export function diagnosticMatchesPlant(diagnostic, plant, filename = "Plant.vue"
     plant.rules.some((value) => rule.includes(norm(value))) ||
     plant.rules.some((value) => evidence.includes(norm(value))) ||
     plant.concepts.some((value) => evidence.includes(norm(value)));
-  return attributed && ranged && concept;
+  return attributed && (!requireLine || ranged) && concept;
 }
 
 export function judgeLintPair(plant, dirtyDiagnostics, cleanDiagnostics, filename = "Plant.vue") {
@@ -139,7 +158,9 @@ export function judgeLintPair(plant, dirtyDiagnostics, cleanDiagnostics, filenam
     diagnosticMatchesPlant(diagnostic, plant, filename),
   );
   const cleanMatches = cleanDiagnostics.filter((diagnostic) =>
-    diagnosticMatchesPlant(diagnostic, plant, filename),
+    // These are single-concept clean twins. Moving the same false positive to
+    // another line does not mean it was cleared.
+    diagnosticMatchesPlant(diagnostic, plant, filename, { requireLine: false }),
   );
   const failures = [];
   if (dirtyMatches.length === 0)

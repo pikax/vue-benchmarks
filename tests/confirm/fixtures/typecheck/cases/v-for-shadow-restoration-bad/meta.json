@@ -1,0 +1,14 @@
+{
+  "id": "v-for-shadow-restoration-bad",
+  "description": "v-for alias shadows an outer string only inside its lexical scope; reject a string method on its object payload",
+  "expectErrors": true,
+  "minErrors": 1,
+  "mustMatch": [
+    "TS2339",
+    "toUpperCase",
+    "does not exist"
+  ],
+  "expectMention": [
+    "toUpperCase"
+  ]
+}

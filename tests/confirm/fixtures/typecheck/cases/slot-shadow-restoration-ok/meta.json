@@ -1,0 +1,5 @@
+{
+  "id": "slot-shadow-restoration-ok",
+  "description": "slot alias shadows an outer string only inside its lexical scope; restore the outer binding afterwards",
+  "expectErrors": false
+}

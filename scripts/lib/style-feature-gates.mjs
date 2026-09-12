@@ -7,10 +7,16 @@
  * semantics.
  */
 import { createHash } from "node:crypto";
+import { isDeepStrictEqual } from "node:util";
+import { cssProjection } from "./css-semantics.mjs";
 
-export const STYLE_FEATURE_SUITE_VERSION = "2026-08-20.1";
+export const STYLE_FEATURE_SUITE_VERSION = "2026-09-12.2";
 
 export const STYLE_FEATURE_CASES = Object.freeze([
+  Object.freeze({
+    id: "multiple-style-blocks",
+    source: '<template><div class="cascade tail"></div></template><style scoped>.cascade{color:red;color:blue!important;--gap:2px}@media(min-width:1px){.cascade{padding:1px 2px}}</style><style>.tail{color:green;border:1px solid black}</style>',
+  }),
   Object.freeze({
     id: "scoped",
     source: '<template><div class="foo"></div></template><style scoped>.foo{color:red}</style>',
@@ -147,10 +153,34 @@ function assertCssVariableExpression(feature, { css, js }, property, expression)
   return variable;
 }
 
-export function assertStyleFeature(feature, { css, js = "", modules = null }) {
+export function assertStyleFeature(feature, { css, js = "", modules = null, declarationSource }) {
   css = String(css ?? "");
   js = String(js ?? "");
   if (!css) throw new Error(`${feature}: no generated CSS`);
+
+  const plant = STYLE_FEATURE_CASES.find((plant) => plant.id === feature);
+  if (!plant) throw new Error(`unknown style feature ${feature}`);
+  // Scope rewriting may change selectors but cannot silently rewrite/drop the
+  // declarations or their enclosing rule/at-rule order. v-bind and keyframe
+  // names have deliberate value transforms validated separately below.
+  const assertDeclarations = () => {
+    if (feature.startsWith("v-bind") || declarationSource === null) return;
+    const originalCss = [...(declarationSource ?? plant.source).matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/g)].map((match) => match[1]).join("\n");
+    let comparable = css;
+    if (feature === "scoped-keyframes") {
+      const name = /@(?:-[a-z]+-)?keyframes\s+([a-z0-9_-]+)/i.exec(css)?.[1];
+      if (name) comparable = css.replace(new RegExp(`\\b${escapeRegExp(name)}\\b`, "g"), "fade");
+    }
+    if (!isDeepStrictEqual(cssProjection(originalCss, { selectors: false }), cssProjection(comparable, { selectors: false }))) {
+      throw new Error(`${feature}: CSS declarations, values, cascade order or at-rule context changed`);
+    }
+  };
+
+  if (feature === "multiple-style-blocks") {
+    if (!/\.cascade\[data-v-[a-z0-9]+\]/i.test(css) || !/\.tail\s*\{/.test(css)) {
+      throw new Error(`${feature}: scoped and unscoped style blocks must retain their separate selector semantics`);
+    }
+  }
 
   if (feature === "scoped" && !/\.foo\[data-v-[a-z0-9]+\]/i.test(css)) {
     throw new Error(`${feature}: selector was not scope-rewritten`);
@@ -356,6 +386,7 @@ export function assertStyleFeature(feature, { css, js = "", modules = null }) {
       throw new Error(`${feature}: class mapping was not generated or does not match emitted CSS`);
     }
   }
+  assertDeclarations();
 }
 
 export function cssModuleMapping(result) {
@@ -375,4 +406,23 @@ export function cssModuleMapping(result) {
     if (value && typeof value === "object") return value;
   }
   return null;
+}
+
+/** Compile every inline style block in descriptor order, as the timed adapter does. */
+export async function compileVueStyleFeature(compiler, feature) {
+  const filename = `/style-gate/${feature.id}.vue`;
+  const parsed = compiler.parse(feature.source, { filename });
+  if (parsed.errors?.length) throw new Error(`${feature.id}: SFC parse failed`);
+  const results = [];
+  for (const style of parsed.descriptor.styles) {
+    const options = { source: style.content, filename, id: "data-v-abc12345", scoped: style.scoped, isProd: true };
+    const result = style.module ? await compiler.compileStyleAsync({ ...options, modules: true }) : compiler.compileStyle(options);
+    if (result.errors?.length) throw new Error(`${feature.id}: compileStyle failed: ${result.errors.join("; ")}`);
+    results.push(result);
+  }
+  let js = "";
+  if (parsed.descriptor.script || parsed.descriptor.scriptSetup) {
+    js = compiler.compileScript(parsed.descriptor, { id: "abc12345", inlineTemplate: false, isProd: true }).content;
+  }
+  return { css: results.map((result) => result.code).join("\n"), js, modules: Object.assign({}, ...results.map((result) => result.modules)) };
 }

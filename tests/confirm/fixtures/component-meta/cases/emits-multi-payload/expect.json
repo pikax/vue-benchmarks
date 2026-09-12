@@ -3,8 +3,8 @@
   "description": "Tuple defineEmits with multi-argument, optional-argument, and kebab-named events",
   "props": [],
   "events": [
-    { "name": "move", "typeIncludes": ["number"] },
-    { "name": "toggle", "typeIncludes": ["boolean"] },
-    { "name": "item-click", "typeIncludes": ["shift", "id"] }
+    { "name": "move", "typeIncludes": ["number"], "typeFacts": { "parameters": [{ "type": "number" }, { "type": "number" }] } },
+    { "name": "toggle", "typeIncludes": ["boolean"], "typeFacts": { "parameters": [{ "type": "boolean", "optional": true }] } },
+    { "name": "item-click", "typeIncludes": ["shift", "id"], "typeFacts": { "parameters": [{ "type": "number" }, { "properties": { "shift": { "type": "boolean" } } }] } }
   ]
 }

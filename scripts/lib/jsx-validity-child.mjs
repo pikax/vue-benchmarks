@@ -58,7 +58,7 @@ function compilerErrors(result) {
   );
 }
 
-function transformCompilerRs(source) {
+export function transformCompilerRs(source) {
   const loaded = loadOptional("@vue-jsx-vapor/compiler-rs");
   if (loaded.error) throw new Error(loaded.error);
   if (typeof loaded.mod.transform !== "function") throw new Error("transform missing");

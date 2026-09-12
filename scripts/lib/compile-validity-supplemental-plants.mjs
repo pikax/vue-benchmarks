@@ -21,12 +21,16 @@ function truthy(value, context) {
   if (!value) throw new Error(context);
 }
 
-function mountPlant(mount, component, options, run) {
+async function mountPlant(mount, component, options, run) {
   const wrapper = mount(component, options);
-  return Promise.resolve(run(wrapper)).finally(() => wrapper.unmount());
+  try {
+    return await run(wrapper);
+  } finally {
+    wrapper.unmount();
+  }
 }
 
-export const SUPPLEMENTAL_COMPILE_VALIDITY_SUITE_VERSION = "2026-08-20.1";
+export const SUPPLEMENTAL_COMPILE_VALIDITY_SUITE_VERSION = "2026-09-12.1";
 
 export const SUPPLEMENTAL_COMPILE_VALIDITY_PLANTS = Object.freeze([
   {

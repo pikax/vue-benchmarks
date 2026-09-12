@@ -6,6 +6,8 @@
  * names and coarse type tokens.
  */
 
+import { checkMetaTypeFacts } from "./meta-type-facts.mjs";
+
 function findByName(list, name) {
   return (list || []).find((x) => x.name === name);
 }
@@ -91,16 +93,28 @@ export function scoreComponentMeta(meta, expect, tool = {}) {
           );
         }
       }
-
-      if (item.required === true && caps.has("required") && found.required === false) {
-        failures.push(`${section}.${item.name}: expected required=true`);
-      }
-      if (item.required === false && caps.has("required") && found.required === true) {
-        failures.push(`${section}.${item.name}: expected required=false`);
+      for (const failure of checkMetaTypeFacts(found.type, item.typeFacts)) {
+        failures.push(`${section}.${item.name}: ${failure}`);
       }
 
-      if (item.hasDefault === true && caps.has("defaults") && found.hasDefault === false) {
-        failures.push(`${section}.${item.name}: expected hasDefault`);
+      if (
+        typeof item.required === "boolean" &&
+        (caps.has("required") || caps.has("*")) &&
+        found.required !== item.required
+      ) {
+        failures.push(
+          `${section}.${item.name}: expected required=${item.required}, got ${found.required}`,
+        );
+      }
+
+      if (
+        typeof item.hasDefault === "boolean" &&
+        (caps.has("defaults") || caps.has("*")) &&
+        found.hasDefault !== item.hasDefault
+      ) {
+        failures.push(
+          `${section}.${item.name}: expected hasDefault=${item.hasDefault}, got ${found.hasDefault}`,
+        );
       }
     }
   };

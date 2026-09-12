@@ -419,6 +419,7 @@ describe("compile style-inclusive comparison corpus", () => {
     assert.deepEqual(
       STYLE_FEATURE_CASES.map((feature) => feature.id),
       [
+        "multiple-style-blocks",
         "scoped",
         "deep",
         "slotted",
