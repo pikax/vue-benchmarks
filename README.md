@@ -87,7 +87,7 @@ own box, never against the published charts.
 ## Quick start
 
 ```bash
-corepack enable && pnpm install   # Node 22+, pnpm 10
+corepack enable && pnpm install   # Node 22+, pnpm 12 (pinned in package.json)
 pnpm generate                     # fixtures
 pnpm bench                        # full local bench (5 runs, 1 warmup)
 pnpm confirm                      # validity plants

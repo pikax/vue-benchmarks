@@ -358,12 +358,15 @@ function setupNuxtUi({ ref, skipInstall }) {
     // CI/dev boxes — prefer --ignore-scripts and never abort setup if the
     // probe .vue file already exists.
     if (existsSync(join(dir, "pnpm-lock.yaml"))) {
+      const scopeArgs = existsSync(join(dir, "pnpm-workspace.yaml"))
+        ? []
+        : ["--ignore-workspace", "--lockfile-dir", dir];
       try {
-        run("pnpm", ["install", "--frozen-lockfile", "--ignore-scripts"], dir);
+        run("pnpm", ["install", "--frozen-lockfile", "--ignore-scripts", ...scopeArgs], dir);
       } catch {
         console.warn("frozen+ignore-scripts install failed; retrying loose install --ignore-scripts");
         try {
-          run("pnpm", ["install", "--ignore-scripts"], dir);
+          run("pnpm", ["install", "--ignore-scripts", ...scopeArgs], dir);
         } catch (e) {
           console.warn(
             `nuxt-ui install failed (${e.message}); continuing with sources only for LSP e2e`,

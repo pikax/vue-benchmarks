@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import {
   COMPILE_VALIDITY_PLANTS,
   COMPILE_VALIDITY_SUITE_HASH,
@@ -53,7 +54,9 @@ test("Vapor validity executes against the exact pinned Vue 3.6 runtime", () => {
   assert.equal(result.unknown, 0);
   assert.equal(result.plantCount, COMPILE_VALIDITY_PLANTS.length);
   assert.ok(result.results.every((plant) => ["PASS", "FAIL"].includes(plant.status)));
-  assert.equal(result.entrypointMetadata.vaporRuntime.version, "3.6.0-rc.5");
+  const manifest = JSON.parse(readFileSync(new URL("../../package.json", import.meta.url), "utf8"));
+  const pinnedVersion = manifest.dependencies["vue-36"].replace(/^npm:vue@/, "");
+  assert.equal(result.entrypointMetadata.vaporRuntime.version, pinnedVersion);
   assert.equal(
     result.entrypointMetadata.vaporRuntime.compilerVersion,
     result.entrypointMetadata.vaporRuntime.version,

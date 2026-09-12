@@ -1,0 +1,30 @@
+# Only this project belongs to the workspace. envs/tnb stays independently installed.
+packages: []
+allowBuilds:
+  # Preserve the prior install's skipped postinstall scripts; native binaries
+  # are supplied by their platform-specific optional dependencies.
+  '@parcel/watcher': false
+  '@swc/core': false
+  esbuild: false
+autoInstallPeers: true
+
+# The requested 2026-09-12 latest-version update includes releases younger than
+# pnpm 12's 24-hour default. Exempt only these exact pins; future versions still
+# go through the release-age policy. Integrity and other lockfile checks remain on.
+# https://pnpm.io/settings/dependency-resolution#minimumreleaseageexclude
+minimumReleaseAgeExclude:
+  - '@vizejs/musea-mcp-server@0.421.0'
+  - '@vizejs/native@0.421.0'
+  - '@vizejs/native-darwin-arm64@0.421.0'
+  - '@vizejs/native-darwin-x64@0.421.0'
+  - '@vizejs/native-linux-arm64-gnu@0.421.0'
+  - '@vizejs/native-linux-arm64-musl@0.421.0'
+  - '@vizejs/native-linux-x64-gnu@0.421.0'
+  - '@vizejs/native-linux-x64-musl@0.421.0'
+  - '@vizejs/native-win32-arm64-msvc@0.421.0'
+  - '@vizejs/native-win32-x64-msvc@0.421.0'
+  - '@vizejs/rspack-plugin@0.421.0'
+  - '@vizejs/vite-plugin@0.421.0'
+  - 'vize@0.421.0'
+  - 'mocha@12.0.1'
+  - 'sass@1.104.1'

@@ -143,6 +143,11 @@ function fetchRepo(project, dir) {
  */
 function installProject(project, dir) {
   const pm = project.packageManager;
+  // pnpm 12 can still use an ancestor lockfile with --ignore-workspace alone.
+  // Keep standalone clones' lockfiles local; preserve a clone's own workspace.
+  const scopeArgs = existsSync(join(dir, "pnpm-workspace.yaml"))
+    ? []
+    : ["--ignore-workspace", "--lockfile-dir", dir];
   const attempts =
     pm === "pnpm"
       ? [
@@ -177,7 +182,8 @@ function installProject(project, dir) {
           ].filter(Boolean);
 
   const tried = [];
-  for (const argv of attempts) {
+  for (const attempt of attempts) {
+    const argv = pm === "pnpm" ? [...attempt, ...scopeArgs] : attempt;
     const r = run(pm, argv, dir, { allowFailure: true, shell: process.platform === "win32" });
     tried.push({
       command: `${pm} ${argv.join(" ")}`,

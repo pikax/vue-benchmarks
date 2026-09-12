@@ -1,0 +1,3 @@
+# Standalone workspace boundary: this engine alias must never join the root install.
+packages: []
+autoInstallPeers: true
