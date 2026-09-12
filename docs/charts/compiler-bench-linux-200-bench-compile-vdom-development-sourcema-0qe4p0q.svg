@@ -14,27 +14,27 @@
   <line x1="248" y1="56" x2="248" y2="136" stroke="#d0d7de" stroke-opacity="0.55" />
   <text fill="#59636e" x="248" y="156" text-anchor="middle" font-size="11">0.0 ms</text>
   <line x1="348.5" y1="56" x2="348.5" y2="136" stroke="#d0d7de" stroke-opacity="0.55" />
-  <text fill="#59636e" x="348.5" y="156" text-anchor="middle" font-size="11">123 ms</text>
+  <text fill="#59636e" x="348.5" y="156" text-anchor="middle" font-size="11">137 ms</text>
   <line x1="449" y1="56" x2="449" y2="136" stroke="#d0d7de" stroke-opacity="0.55" />
-  <text fill="#59636e" x="449" y="156" text-anchor="middle" font-size="11">245 ms</text>
+  <text fill="#59636e" x="449" y="156" text-anchor="middle" font-size="11">274 ms</text>
   <line x1="549.5" y1="56" x2="549.5" y2="136" stroke="#d0d7de" stroke-opacity="0.55" />
-  <text fill="#59636e" x="549.5" y="156" text-anchor="middle" font-size="11">368 ms</text>
+  <text fill="#59636e" x="549.5" y="156" text-anchor="middle" font-size="11">411 ms</text>
   <line x1="650" y1="56" x2="650" y2="136" stroke="#d0d7de" stroke-opacity="0.55" />
-  <text fill="#59636e" x="650" y="156" text-anchor="middle" font-size="11">491 ms</text>
+  <text fill="#59636e" x="650" y="156" text-anchor="middle" font-size="11">548 ms</text>
   <text fill="#59636e" x="16" y="85" font-size="11">1</text>
       <text fill="#1f2328" x="36" y="85" font-size="13">@vue/compiler-sfc 3.5 (1…</text>
       
       <rect x="248" y="69" width="402" height="22" rx="5" fill="#afb8c133"/>
-      <rect x="248" y="69" width="390.4" height="22" rx="5" fill="#42b883" fill-opacity="0.38"/>
-      <rect x="248" y="69" width="180.6" height="22" rx="5" fill="#42b883" fill-opacity="1"/>
-      <line x1="428.630367601373" y1="68" x2="428.630367601373" y2="92" stroke="#ffffff" stroke-width="2" stroke-opacity="0.9"/>
-      <text fill="#ffffff" x="256" y="85" font-size="12" font-weight="600">221 ms warm / 477 ms fresh child</text>
+      <rect x="248" y="69" width="389.8" height="22" rx="5" fill="#42b883" fill-opacity="0.38"/>
+      <rect x="248" y="69" width="153.3" height="22" rx="5" fill="#42b883" fill-opacity="1"/>
+      <line x1="401.3092812289567" y1="68" x2="401.3092812289567" y2="92" stroke="#ffffff" stroke-width="2" stroke-opacity="0.9"/>
+      <text fill="#ffffff" x="256" y="85" font-size="12" font-weight="600">209 ms warm / 531 ms fresh child</text>
   <text fill="#59636e" x="16" y="121" font-size="11">2</text>
       <text fill="#1f2328" x="36" y="121" font-size="13">@vue/compiler-sfc 3.6 (1…</text>
       
       <rect x="248" y="105" width="402" height="22" rx="5" fill="#afb8c133"/>
       <rect x="248" y="105" width="402.0" height="22" rx="5" fill="#42b883" fill-opacity="0.38"/>
-      <rect x="248" y="105" width="199.8" height="22" rx="5" fill="#42b883" fill-opacity="1"/>
-      <line x1="447.79412693400695" y1="104" x2="447.79412693400695" y2="128" stroke="#ffffff" stroke-width="2" stroke-opacity="0.9"/>
-      <text fill="#ffffff" x="256" y="121" font-size="12" font-weight="600">244 ms warm / 491 ms fresh child</text>
+      <rect x="248" y="105" width="172.4" height="22" rx="5" fill="#42b883" fill-opacity="1"/>
+      <line x1="420.4124187694009" y1="104" x2="420.4124187694009" y2="128" stroke="#ffffff" stroke-width="2" stroke-opacity="0.9"/>
+      <text fill="#ffffff" x="256" y="121" font-size="12" font-weight="600">235 ms warm / 548 ms fresh child</text>
 </svg>

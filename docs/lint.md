@@ -2,12 +2,12 @@
 
 > Auto-generated from the JSON snapshots in [`results/benchmarks/`](../results/benchmarks/) and [`results/real_world/`](../results/real_world/) by `pnpm docs`. Do not edit by hand.
 
-- **Generated:** 2026-08-27T10:24:48.274Z
+- **Generated:** 2026-09-12T11:01:27.224Z
 - **Fixture:** `fixtures/200` (200 files)
 - **Runs / warmups:** 5 / 1
-- **Runner:** Linux · linux/x64 · 4 CPUs · Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz · 15.6 GB · Node v22.23.2
-- **Commit:** [`abafafd`](https://github.com/pikax/vue-benchmarks/commit/abafafd07c14f26c07f1d0ed9da818102fdc97e1)
-- **CI run:** https://github.com/pikax/vue-benchmarks/actions/runs/33062210774
+- **Runner:** Linux · linux/x64 · 4 CPUs · AMD EPYC 7763 64-Core Processor · 15.6 GB · Node v22.23.2
+- **Commit:** [`d4906cb`](https://github.com/pikax/vue-benchmarks/commit/d4906cbe77791d01e3e55b298b0bff7476ea561a)
+- **CI run:** https://github.com/pikax/vue-benchmarks/actions/runs/34689529541
 - **Source:** `results/benchmarks/bench-Linux-200-bench.json`
 
 ## Results
@@ -36,19 +36,19 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput | Peak RSS |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize lint (default threads) | **66.4 ms** | 64.6 ms | 1.9 ms | 2.9% | 1.00x | n/a | 3.0k files/s | 68.0 MB |
-| Vize lint (1T) | **84.3 ms** | 80.7 ms | 2.7 ms | 3.2% | 1.27x | n/a | 2.4k files/s | – |
-| eslint-plugin-vue (CLI) | **2.99 s** | 2.95 s | 21.9 ms | 0.7% | 45.06x | n/a | 67 files/s | – |
-| Biome lint (1T) ⚠ | (296.3 ms) | (292.1 ms) | – | – | not ranked | – | – | – |
-| Biome lint (default threads) ⚠ | (156.6 ms) | (153.3 ms) | – | – | not ranked | – | – | (102.6 MB) |
-| Oxlint (1T) ⚠ | (64.6 ms) | (63.9 ms) | – | – | not ranked | – | – | – |
-| Oxlint (default threads) ⚠ | (61.1 ms) | (59.2 ms) | – | – | not ranked | – | – | (99.3 MB) |
+| eslint-plugin-vue (CLI) | **3.23 s** | 3.15 s | 40.9 ms | 1.3% | 1.00x | n/a | 62 files/s | – |
+| Vize lint (1T) ⚠ | (112.7 ms) | (109.9 ms) | – | – | not ranked | – | – | – |
+| Vize lint (default threads) ⚠ | (81.9 ms) | (80.2 ms) | – | – | not ranked | – | – | (69.3 MB) |
+| Biome lint (1T) ⚠ | (326.1 ms) | (324.0 ms) | – | – | not ranked | – | – | – |
+| Biome lint (default threads) ⚠ | (172.1 ms) | (167.4 ms) | – | – | not ranked | – | – | (101.9 MB) |
+| Oxlint (1T) ⚠ | (74.2 ms) | (72.6 ms) | – | – | not ranked | – | – | – |
+| Oxlint (default threads) ⚠ | (66.9 ms) | (64.2 ms) | – | – | not ranked | – | – | (98.9 MB) |
 
 <details><summary>Notes</summary>
 
-- **Vize lint (default threads)**: vize lint . using default Rayon pool; diagnostics are not suppressed | ⓘ file coverage verified: named 200/200 planted corpus files. | ✓ Vue template-lint validity 10/10: exact-row dirty/clean diagnostics were file, line and rule/concept attributed.
-- **Vize lint (1T)**: vize lint . with RAYON_NUM_THREADS=1; diagnostics are not suppressed | ⓘ file coverage verified: named 200/200 planted corpus files. | ✓ Vue template-lint validity 10/10: exact-row dirty/clean diagnostics were file, line and rule/concept attributed.
-- **eslint-plugin-vue (CLI)**: eslint CLI over the same corpus — pays Node startup + config load per run, like the native CLIs | ⓘ file coverage verified: named 200/200 planted corpus files. | ✓ Vue template-lint validity 10/10: exact-row dirty/clean diagnostics were file, line and rule/concept attributed.
+- **eslint-plugin-vue (CLI)**: eslint CLI over the same corpus — pays Node startup + config load per run, like the native CLIs | ⓘ file coverage verified: named 200/200 planted corpus files. | ✓ Vue template-lint validity 11/11: exact-row dirty/clean diagnostics were file, line and rule/concept attributed.
+- **Vize lint (1T) ⚠**: vize lint . with RAYON_NUM_THREADS=1; diagnostics are not suppressed | ⓘ file coverage verified: named 200/200 planted corpus files. | ⚠ VUE TEMPLATE-LINT VALIDITY FAIL — v-html: dirty twin had no file+line+rule/concept-attributed diagnostic; v-for-key: dirty twin had no file+line+rule/concept-attributed diagnostic. Rows missing any mandatory planted capability remain contextual/unranked; all results are retained in validation.lintSemantics.
+- **Vize lint (default threads) ⚠**: vize lint . using default Rayon pool; diagnostics are not suppressed | ⓘ file coverage verified: named 200/200 planted corpus files. | ⚠ VUE TEMPLATE-LINT VALIDITY FAIL — v-html: dirty twin had no file+line+rule/concept-attributed diagnostic; v-for-key: dirty twin had no file+line+rule/concept-attributed diagnostic. Rows missing any mandatory planted capability remain contextual/unranked; all results are retained in validation.lintSemantics.
 - **Biome lint (1T) ⚠**: biome lint . with RAYON_NUM_THREADS=1 · script block only, no template rules | ⓘ file coverage verified: named 200/200 planted corpus files. | ⚠ VUE TEMPLATE-LINT VALIDITY FAIL — v-html: dirty twin had no file+line+rule/concept-attributed diagnostic; v-for-key: dirty twin had no file+line+rule/concept-attributed diagnostic. This exact row is script-block-only on the planted Vue template capabilities and remains contextual/unranked; all results are retained in validation.lintSemantics.
 - **Biome lint (default threads) ⚠**: biome lint . using its undocumented default pool size · script block only | ⓘ file coverage verified: named 200/200 planted corpus files. | ⚠ VUE TEMPLATE-LINT VALIDITY FAIL — v-html: dirty twin had no file+line+rule/concept-attributed diagnostic; v-for-key: dirty twin had no file+line+rule/concept-attributed diagnostic. This exact row is script-block-only on the planted Vue template capabilities and remains contextual/unranked; all results are retained in validation.lintSemantics.
 - **Oxlint (1T) ⚠**: oxlint . --threads=1, vue plugin enabled via .oxlintrc.json · script block only, no template rules | ⓘ file coverage verified: named 200/200 planted corpus files. | ⚠ VUE TEMPLATE-LINT VALIDITY FAIL — v-html: dirty twin had no file+line+rule/concept-attributed diagnostic; v-for-key: dirty twin had no file+line+rule/concept-attributed diagnostic. This exact row is script-block-only on the planted Vue template capabilities and remains contextual/unranked; all results are retained in validation.lintSemantics.
@@ -65,14 +65,14 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput | Peak RSS |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| eslint-plugin-vue (1T) | **1.79 s** | 1.65 s | 111.0 ms | 6.2% | 1.00x | n/a | 111 files/s | 215.6 MB |
-| eslint-plugin-vue (4 workers) | **3.39 s** | 3.36 s | 20.8 ms | 0.6% | 1.89x | n/a | 59 files/s | – |
-| Verter host lint ⚠ | (161.1 ms) | (155.6 ms) | – | – | not ranked | – | – | (31.8 MB) |
+| eslint-plugin-vue (1T) | **1.68 s** | 1.63 s | 132.2 ms | 7.9% | 1.00x | n/a | 119 files/s | 186.5 MB |
+| eslint-plugin-vue (4 workers) | **3.62 s** | 3.58 s | 49.5 ms | 1.4% | 2.16x | n/a | 55 files/s | – |
+| Verter host lint ⚠ | (151.1 ms) | (148.9 ms) | – | – | not ranked | – | – | (31.8 MB) |
 
 <details><summary>Notes</summary>
 
-- **eslint-plugin-vue (1T)**: ESLint flat config + eslint-plugin-vue recommended, single-threaded lintFiles | ⓘ file coverage by construction: this invocation is handed the 200 corpus files as an explicit list, not a directory walk. | ✓ Vue template-lint validity 10/10: exact-row dirty/clean diagnostics were file, line and rule/concept attributed.
-- **eslint-plugin-vue (4 workers)**: ESLint worker_threads fan-out (one ESLint instance per worker) | ⓘ file coverage by construction: this invocation is handed the 200 corpus files as an explicit list, not a directory walk. | ✓ Vue template-lint validity 10/10: exact-row dirty/clean diagnostics were file, line and rule/concept attributed.
+- **eslint-plugin-vue (1T)**: ESLint flat config + eslint-plugin-vue recommended, single-threaded lintFiles | ⓘ file coverage by construction: this invocation is handed the 200 corpus files as an explicit list, not a directory walk. | ✓ Vue template-lint validity 11/11: exact-row dirty/clean diagnostics were file, line and rule/concept attributed.
+- **eslint-plugin-vue (4 workers)**: ESLint worker_threads fan-out (one ESLint instance per worker) | ⓘ file coverage by construction: this invocation is handed the 200 corpus files as an explicit list, not a directory walk. | ✓ Vue template-lint validity 11/11: exact-row dirty/clean diagnostics were file, line and rule/concept attributed.
 - **Verter host lint ⚠**: VerterHost.upsert + lint(canonicalId) for each file (if API available) | ⓘ file coverage by construction: this invocation is handed the 200 corpus files as an explicit list, not a directory walk. | ⚠ VUE TEMPLATE-LINT VALIDITY FAIL — duplicate-attributes: dirty twin had no file+line+rule/concept-attributed diagnostic; require-component-is: clean twin retained the planted diagnostic. Rows missing any mandatory planted capability remain contextual/unranked; all results are retained in validation.lintSemantics.
 
 </details>
@@ -86,7 +86,7 @@ Tools:
 - No single invocation mode covers every tool — vize lint is CLI-only, VerterHost.lint is in-process-only — which is why the mode is on the row instead of one mode being dropped.
 - eslint-plugin-vue uses flat recommended config generated with fixtures.
 - Vize, Biome and Oxlint each get separate 1T and default-thread rows — a thread-count gap is not a linter gap. The benchmark does not rename an undocumented default pool size as 'all cores'.
-- VUE TEMPLATE-LINT SEMANTIC GATE (untimed, post-timing): suite 2026-08-20.1 runs 10 dirty/clean differential plants through every exact row separately, including main-thread/worker/CLI ESLint, thread-limited/default native CLIs, and fresh VerterHost. A pass must name the planted file, overlap its line, identify the rule or narrow concept, and disappear for the clean twin. Exit status or an unrelated diagnostic never passes. Every result and suite hash is retained in validation.lintSemantics; FAIL/UNKNOWN is measured but UNRANKED.
+- VUE TEMPLATE-LINT SEMANTIC GATE (untimed, post-timing): suite 2026-09-12.2 runs 11 dirty/clean differential plants through every exact row separately, including main-thread/worker/CLI ESLint, thread-limited/default native CLIs, and fresh VerterHost. A pass must name the planted file, overlap its line, identify the rule or narrow concept, and disappear for the clean twin. Exit status or an unrelated diagnostic never passes. Every result and suite hash is retained in validation.lintSemantics; FAIL/UNKNOWN is measured but UNRANKED.
 - Oxlint runs with its vue plugin ON (.oxlintrc.json travels with the corpus and with the gate plant). The exact pinned row still misses every mandatory Vue template diagnostic plant, so it remains contextual/unranked; no hard-coded rule-count claim is carried across package upgrades.
 - Oxlint ships no standalone executable — it is a NAPI addon loaded into a Node process — so its per-run startup is Node's, while vize and biome launch a native binary. All three pay startup every run; it is not the same constant.
 - Biome's script-only view also produces false positives on this corpus: variables declared in &lt;script setup> and used only in &lt;template> are reported as unused. Oxlint avoids that by disabling no-unused-vars for .vue entirely — it reports neither the false positive nor a genuinely unused declaration. Neither tool's diagnostics are comparable to the Vue-aware linters'.
@@ -96,16 +96,16 @@ Tools:
 
 Raw runs:
 
-- **Vize lint (default threads)**: 64.6 ms, 65.0 ms, 68.7 ms, 66.4 ms, 68.5 ms
-- **Vize lint (1T)**: 80.7 ms, 84.3 ms, 85.2 ms, 88.4 ms, 83.9 ms
-- **eslint-plugin-vue (CLI)**: 3.01 s, 2.99 s, 2.95 s, 3.00 s, 2.98 s
-- **Biome lint (1T)**: 292.1 ms, 296.3 ms, 296.3 ms, 299.0 ms, 301.3 ms
-- **Biome lint (default threads)**: 153.3 ms, 156.6 ms, 157.8 ms, 155.4 ms, 159.8 ms
-- **Oxlint (1T)**: 71.1 ms, 64.1 ms, 64.6 ms, 77.7 ms, 63.9 ms
-- **Oxlint (default threads)**: 59.8 ms, 59.2 ms, 61.5 ms, 61.1 ms, 63.5 ms
-- **eslint-plugin-vue (1T)**: 1.90 s, 1.89 s, 1.65 s, 1.69 s, 1.79 s
-- **eslint-plugin-vue (4 workers)**: 3.39 s, 3.38 s, 3.41 s, 3.40 s, 3.36 s
-- **Verter host lint**: 182.3 ms, 161.1 ms, 157.2 ms, 155.6 ms, 163.0 ms
+- **eslint-plugin-vue (CLI)**: 3.23 s, 3.25 s, 3.18 s, 3.23 s, 3.15 s
+- **Vize lint (1T)**: 109.9 ms, 114.1 ms, 110.7 ms, 115.6 ms, 112.7 ms
+- **Vize lint (default threads)**: 81.1 ms, 83.2 ms, 80.2 ms, 81.9 ms, 88.0 ms
+- **Biome lint (1T)**: 324.0 ms, 325.3 ms, 327.4 ms, 326.1 ms, 330.3 ms
+- **Biome lint (default threads)**: 167.4 ms, 178.7 ms, 174.1 ms, 172.1 ms, 171.1 ms
+- **Oxlint (1T)**: 72.6 ms, 75.6 ms, 73.1 ms, 74.2 ms, 76.1 ms
+- **Oxlint (default threads)**: 70.7 ms, 64.2 ms, 66.9 ms, 70.6 ms, 64.6 ms
+- **eslint-plugin-vue (1T)**: 1.88 s, 1.91 s, 1.66 s, 1.63 s, 1.68 s
+- **eslint-plugin-vue (4 workers)**: 3.71 s, 3.62 s, 3.58 s, 3.64 s, 3.59 s
+- **Verter host lint**: 149.2 ms, 148.9 ms, 155.8 ms, 151.1 ms, 154.6 ms
 
 </details>
 
@@ -113,31 +113,32 @@ Raw runs:
 
 Executable correctness checks — planted errors that must be reported, clean fixtures that must stay clean. A fast tool that misses plants cannot rank as a correct one; gate failures surface as ⚠ in the timing tables.
 
-pass **48** · fail **13** · warn **0** · skip **0**
+pass **51** · fail **13** · warn **0** · skip **0**
 
-| Case | eslint-plugin-vue | vize-lint | verter-lint |
-| --- | :---: | :---: | :---: |
-| `async-computed` | ✓ | **✗** | ✓ |
-| `clean` | ✓ | ✓ | ✓ |
-| `computed-side-effect` | ✓ | **✗** | **✗** |
-| `deprecated-slot-attr` | ✓ | ✓ | ✓ |
-| `dupe-else-if` | ✓ | ✓ | **✗** |
-| `duplicate-attributes` | ✓ | ✓ | **✗** |
-| `img-no-alt` | ✓ | ✓ | ✓ |
-| `invalid-v-model` | ✓ | ✓ | **✗** |
-| `invalid-v-slot` | ✓ | **✗** | **✗** |
-| `mutating-props` | ✓ | ✓ | **✗** |
-| `prop-type-constructor` | ✓ | **✗** | ✓ |
-| `require-component-is` | ✓ | ✓ | ✓ |
-| `reserved-props` | ✓ | **✗** | ✓ |
-| `template-key` | ✓ | ✓ | **✗** |
-| `textarea-mustache` | ✓ | ✓ | ✓ |
-| `unused-components` | ✓ | – | – |
-| `v-for-no-key` | ✓ | ✓ | ✓ |
-| `v-html` | ✓ | ✓ | ✓ |
-| `v-if-with-v-for` | ✓ | ✓ | ✓ |
-| `v-on-native-modifier` | ✓ | **✗** | ✓ |
-| `v-text-on-component` | ✓ | ✓ | ✓ |
+| Case | eslint-plugin-vue | vize-lint | verter-lint | eslint-plugin-vue-1t | vize-lint-1t | verter-lint-host |
+| --- | :---: | :---: | :---: | :---: | :---: | :---: |
+| `async-computed` | ✓ | ✓ | ✓ | – | – | – |
+| `clean` | ✓ | ✓ | ✓ | – | – | – |
+| `computed-side-effect` | ✓ | **✗** | **✗** | – | – | – |
+| `deprecated-slot-attr` | ✓ | ✓ | ✓ | – | – | – |
+| `dupe-else-if` | ✓ | ✓ | **✗** | – | – | – |
+| `duplicate-attributes` | ✓ | ✓ | **✗** | – | – | – |
+| `img-no-alt` | ✓ | ✓ | ✓ | – | – | – |
+| `invalid-v-model` | ✓ | ✓ | **✗** | – | – | – |
+| `invalid-v-slot` | ✓ | **✗** | **✗** | – | – | – |
+| `mutating-props` | ✓ | ✓ | **✗** | – | – | – |
+| `mutating-props-shadowing` | – | – | – | ✓ | **✗** | **✗** |
+| `prop-type-constructor` | ✓ | **✗** | ✓ | – | – | – |
+| `require-component-is` | ✓ | ✓ | ✓ | – | – | – |
+| `reserved-props` | ✓ | ✓ | ✓ | – | – | – |
+| `template-key` | ✓ | ✓ | **✗** | – | – | – |
+| `textarea-mustache` | ✓ | ✓ | ✓ | – | – | – |
+| `unused-components` | ✓ | – | – | – | – | – |
+| `v-for-no-key` | ✓ | ✓ | ✓ | – | – | – |
+| `v-html` | ✓ | ✓ | ✓ | – | – | – |
+| `v-if-with-v-for` | ✓ | ✓ | ✓ | – | – | – |
+| `v-on-native-modifier` | ✓ | **✗** | ✓ | – | – | – |
+| `v-text-on-component` | ✓ | ✓ | ✓ | – | – | – |
 
 <details><summary>Failure detail</summary>
 
@@ -149,11 +150,11 @@ pass **48** · fail **13** · warn **0** · skip **0**
 - `invalid-v-slot` · **vize-lint** — expected ≥1 issues, got 0
 - `invalid-v-slot` · **verter-lint** — missing rules valid-v-slot; got no-undef-components, no-bare-strings-in-template, multi-word-component-names
 - `v-on-native-modifier` · **vize-lint** — expected ≥1 issues, got 0
-- `reserved-props` · **vize-lint** — expected ≥1 issues, got 0
 - `computed-side-effect` · **vize-lint** — expected ≥1 issues, got 0
 - `computed-side-effect` · **verter-lint** — expected ≥1 diagnostics, got 0
-- `async-computed` · **vize-lint** — expected ≥1 issues, got 0
 - `prop-type-constructor` · **vize-lint** — expected ≥1 issues, got 0
+- `mutating-props-shadowing` · **vize-lint-1t** — dirty twin had no file+line+rule/concept-attributed diagnostic
+- `mutating-props-shadowing` · **verter-lint-host** — dirty twin had no file+line+rule/concept-attributed diagnostic
 
 </details>
 
@@ -165,11 +166,11 @@ Each tool in its own process so RSS, allocation proxies and CPU are not mixed wi
 
 | Tool | RSS min / max / avg | Alloc min / max / avg | CPU ms | CPU % | Wall ms | Samples |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Verter host lint | 31.61 / 31.61 / 31.61 | 0.46 / 0.46 / 0.46 | 101 | 123.1 | 81 | 3 |
-| Vize lint (default threads) | 14.53 / 67.98 / 45.39 | n/a | 70 | 120.1 | 58 | 3 |
-| Oxlint (default threads; Node host + NAPI addon) | 14.58 / 99.21 / 53.44 | n/a | 50 | 85.1 | 59 | 3 |
-| Biome lint (default threads) | 1.88 / 102.44 / 76.88 | n/a | 20 | 16.5 | 121 | 3 |
-| eslint-plugin-vue (1T) | 18.11 / 214.32 / 152.58 | 7.88 / 130.01 / 62.17 | 3572 | 166.7 | 2147 | 3 |
+| Verter host lint | 31.75 / 31.75 / 31.75 | 0.47 / 0.47 / 0.47 | 103 | 122.6 | 83 | 3 |
+| Vize lint (default threads) | 14.52 / 69.25 / 46.49 | n/a | 80 | 126.3 | 63 | 3 |
+| Oxlint (default threads; Node host + NAPI addon) | 14.55 / 96.86 / 53.62 | n/a | 40 | 70.9 | 57 | 3 |
+| Biome lint (default threads) | 2.32 / 99.93 / 76.18 | n/a | 20 | 15.9 | 127 | 3 |
+| eslint-plugin-vue (1T) | 20.33 / 185.27 / 130.91 | 9.64 / 106.85 / 63.55 | 3685 | 165.0 | 2228 | 3 |
 
 <details><summary>Notes</summary>
 
@@ -189,11 +190,11 @@ Each tool in its own process so RSS, allocation proxies and CPU are not mixed wi
 | --- | --- |
 | node | v22.23.2 |
 | vue | 3.5.42 |
-| vue-36 | 3.6.0-rc.5 |
+| vue-36 | 3.6.0-rc.8 |
 | @vue/compiler-sfc | 3.5.42 |
-| @vue/compiler-sfc-36 | 3.6.0-rc.5 |
-| vize | 0.387.0 |
-| @vizejs/native | 0.387.0 |
+| @vue/compiler-sfc-36 | 3.6.0-rc.8 |
+| vize | 0.421.0 |
+| @vizejs/native | 0.421.0 |
 | @verter/native | 0.0.1-beta.3 |
 | @fervid/napi | 0.4.1 |
 | verter-tsc | 0.0.1-beta.3 |
@@ -208,22 +209,22 @@ Each tool in its own process so RSS, allocation proxies and CPU are not mixed wi
 | golar | 0.1.10 |
 | @golar/vue | 0.1.10 |
 | prettier | 3.9.6 |
-| oxfmt | 0.65.0 |
-| oxlint | 1.80.0 |
-| eslint-plugin-vue | 10.10.0 |
-| @biomejs/biome | 2.5.10 |
+| oxfmt | 0.67.0 |
+| oxlint | 1.82.0 |
+| eslint-plugin-vue | 10.11.0 |
+| @biomejs/biome | 2.5.13 |
 | typescript | 6.0.3 |
-| cli:vize | 0.387.0 |
+| cli:vize | 0.421.0 |
 | cli:vue-tsc | 6.0.3 |
 | cli:verter-tsc | 0.0.1-beta.3 |
 | cli:golar | 0.1.10 |
 | cli:prettier | 3.9.6 |
-| cli:oxfmt | 0.65.0 |
-| cli:oxlint | 1.80.0 |
-| cli:biome | 2.5.10 |
-| vue-jsx-vapor | 3.2.22 |
-| @vue-jsx-vapor/compiler-rs | 3.2.22 |
+| cli:oxfmt | 0.67.0 |
+| cli:oxlint | 1.82.0 |
+| cli:biome | 2.5.13 |
+| vue-jsx-vapor | 3.2.23 |
+| @vue-jsx-vapor/compiler-rs | 3.2.23 |
 | @vue/babel-plugin-jsx | 3.0.0 |
-| @babel/core | 8.0.1 |
+| @babel/core | 8.0.5 |
 
 </details>

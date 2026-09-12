@@ -1,23 +1,23 @@
 {
   "kind": "confirmation",
-  "generatedAt": "2026-08-27T10:17:23.166Z",
+  "generatedAt": "2026-09-12T10:53:38.017Z",
   "runner": {
     "label": "Linux",
     "platform": "linux",
     "arch": "x64",
     "cpuCount": 4,
-    "cpuModel": "AMD EPYC 7763 64-Core Processor",
-    "totalmem": 16766414848,
+    "cpuModel": "Intel(R) Xeon(R) 6973P-C",
+    "totalmem": 16765374464,
     "node": "v22.23.2",
     "ci": true,
-    "runUrl": "https://github.com/pikax/vue-benchmarks/actions/runs/33062210774"
+    "runUrl": "https://github.com/pikax/vue-benchmarks/actions/runs/34689529541"
   },
   "summary": {
-    "pass": 380,
-    "fail": 50,
-    "skip": 0,
+    "pass": 510,
+    "fail": 166,
+    "skip": 26,
     "warn": 0,
-    "total": 430
+    "total": 702
   },
   "results": [
     {
@@ -703,8 +703,8 @@
       "suite": "compile",
       "caseId": "custom-directive",
       "tool": "vize",
-      "status": "fail",
-      "message": "vHighlight is not defined"
+      "status": "pass",
+      "message": ""
     },
     {
       "suite": "compile",
@@ -1071,6 +1071,4050 @@
       "message": "expected text \"a\", got \"\""
     },
     {
+      "suite": "compile",
+      "caseId": "reactive-props-destructure-shadowing",
+      "tool": "vue-3.5",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "suite": "compile",
+      "caseId": "reactive-props-destructure-shadowing",
+      "tool": "vue-3.6",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "suite": "compile",
+      "caseId": "reactive-props-destructure-shadowing",
+      "tool": "vize",
+      "status": "fail",
+      "message": "shadowing after prop update: expected \"updated|parameter|arrow\", got \"outer|parameter|arrow\""
+    },
+    {
+      "suite": "compile",
+      "caseId": "reactive-props-destructure-shadowing",
+      "tool": "fervid",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "suite": "compile",
+      "caseId": "reactive-props-destructure-shadowing",
+      "tool": "verter",
+      "status": "fail",
+      "message": "lexical shadowing: expected \"outer|parameter|arrow\", got \"|parameter|arrow\""
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-multiple-style-blocks",
+      "tool": "@vue/compiler-sfc",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-scoped",
+      "tool": "@vue/compiler-sfc",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-deep",
+      "tool": "@vue/compiler-sfc",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-slotted",
+      "tool": "@vue/compiler-sfc",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-global",
+      "tool": "@vue/compiler-sfc",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-v-bind",
+      "tool": "@vue/compiler-sfc",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-css-modules",
+      "tool": "@vue/compiler-sfc",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-global-mixed-local",
+      "tool": "@vue/compiler-sfc",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-deep-compound",
+      "tool": "@vue/compiler-sfc",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-slotted-compound",
+      "tool": "@vue/compiler-sfc",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-is-selector-list",
+      "tool": "@vue/compiler-sfc",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-where-selector-list",
+      "tool": "@vue/compiler-sfc",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-media-scoped",
+      "tool": "@vue/compiler-sfc",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-supports-scoped",
+      "tool": "@vue/compiler-sfc",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-scoped-keyframes",
+      "tool": "@vue/compiler-sfc",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-v-bind-multiple",
+      "tool": "@vue/compiler-sfc",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-v-bind-quoted",
+      "tool": "@vue/compiler-sfc",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-multiple-style-blocks",
+      "tool": "@vue/compiler-sfc-36",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-scoped",
+      "tool": "@vue/compiler-sfc-36",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-deep",
+      "tool": "@vue/compiler-sfc-36",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-slotted",
+      "tool": "@vue/compiler-sfc-36",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-global",
+      "tool": "@vue/compiler-sfc-36",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-v-bind",
+      "tool": "@vue/compiler-sfc-36",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-css-modules",
+      "tool": "@vue/compiler-sfc-36",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-global-mixed-local",
+      "tool": "@vue/compiler-sfc-36",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-deep-compound",
+      "tool": "@vue/compiler-sfc-36",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-slotted-compound",
+      "tool": "@vue/compiler-sfc-36",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-is-selector-list",
+      "tool": "@vue/compiler-sfc-36",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-where-selector-list",
+      "tool": "@vue/compiler-sfc-36",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-media-scoped",
+      "tool": "@vue/compiler-sfc-36",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-supports-scoped",
+      "tool": "@vue/compiler-sfc-36",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-scoped-keyframes",
+      "tool": "@vue/compiler-sfc-36",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-v-bind-multiple",
+      "tool": "@vue/compiler-sfc-36",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-v-bind-quoted",
+      "tool": "@vue/compiler-sfc-36",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-scoped",
+      "tool": "@vizejs/native:compileSfcBatchWithResults",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-deep",
+      "tool": "@vizejs/native:compileSfcBatchWithResults",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-global",
+      "tool": "@vizejs/native:compileSfcBatchWithResults",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-v-bind",
+      "tool": "@vizejs/native:compileSfcBatchWithResults",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-css-modules",
+      "tool": "@vizejs/native:compileSfcBatchWithResults",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-deep-compound",
+      "tool": "@vizejs/native:compileSfcBatchWithResults",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-is-selector-list",
+      "tool": "@vizejs/native:compileSfcBatchWithResults",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-where-selector-list",
+      "tool": "@vizejs/native:compileSfcBatchWithResults",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-media-scoped",
+      "tool": "@vizejs/native:compileSfcBatchWithResults",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-supports-scoped",
+      "tool": "@vizejs/native:compileSfcBatchWithResults",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-v-bind-multiple",
+      "tool": "@vizejs/native:compileSfcBatchWithResults",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-multiple-style-blocks",
+      "tool": "@vizejs/native:compileSfcBatchWithResults",
+      "status": "fail",
+      "message": "multiple-style-blocks: scoped and unscoped style blocks must retain their separate selector semantics"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-slotted",
+      "tool": "@vizejs/native:compileSfcBatchWithResults",
+      "status": "fail",
+      "message": "slotted: slotted target must receive the [data-v-…-s] attribute selector"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-global-mixed-local",
+      "tool": "@vizejs/native:compileSfcBatchWithResults",
+      "status": "fail",
+      "message": "global-mixed-local: local selector fragments or a scope constraint leaked into Vue's global selector"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-slotted-compound",
+      "tool": "@vizejs/native:compileSfcBatchWithResults",
+      "status": "fail",
+      "message": "slotted-compound: the slotted scope attribute was not attached to the final compound target"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-scoped-keyframes",
+      "tool": "@vizejs/native:compileSfcBatchWithResults",
+      "status": "fail",
+      "message": "scoped-keyframes: scoped keyframe name was not rewritten"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-v-bind-quoted",
+      "tool": "@vizejs/native:compileSfcBatchWithResults",
+      "status": "fail",
+      "message": "v-bind-quoted: margin-left was not rewritten to a CSS variable"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-scoped",
+      "tool": "@vizejs/native:compileSfc",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-deep",
+      "tool": "@vizejs/native:compileSfc",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-global",
+      "tool": "@vizejs/native:compileSfc",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-v-bind",
+      "tool": "@vizejs/native:compileSfc",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-css-modules",
+      "tool": "@vizejs/native:compileSfc",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-deep-compound",
+      "tool": "@vizejs/native:compileSfc",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-is-selector-list",
+      "tool": "@vizejs/native:compileSfc",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-where-selector-list",
+      "tool": "@vizejs/native:compileSfc",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-media-scoped",
+      "tool": "@vizejs/native:compileSfc",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-supports-scoped",
+      "tool": "@vizejs/native:compileSfc",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-v-bind-multiple",
+      "tool": "@vizejs/native:compileSfc",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-multiple-style-blocks",
+      "tool": "@vizejs/native:compileSfc",
+      "status": "fail",
+      "message": "multiple-style-blocks: scoped and unscoped style blocks must retain their separate selector semantics"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-slotted",
+      "tool": "@vizejs/native:compileSfc",
+      "status": "fail",
+      "message": "slotted: slotted target must receive the [data-v-…-s] attribute selector"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-global-mixed-local",
+      "tool": "@vizejs/native:compileSfc",
+      "status": "fail",
+      "message": "global-mixed-local: local selector fragments or a scope constraint leaked into Vue's global selector"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-slotted-compound",
+      "tool": "@vizejs/native:compileSfc",
+      "status": "fail",
+      "message": "slotted-compound: the slotted scope attribute was not attached to the final compound target"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-scoped-keyframes",
+      "tool": "@vizejs/native:compileSfc",
+      "status": "fail",
+      "message": "scoped-keyframes: scoped keyframe name was not rewritten"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-v-bind-quoted",
+      "tool": "@vizejs/native:compileSfc",
+      "status": "fail",
+      "message": "v-bind-quoted: margin-left was not rewritten to a CSS variable"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-multiple-style-blocks",
+      "tool": "@verter/native",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-scoped",
+      "tool": "@verter/native",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-slotted",
+      "tool": "@verter/native",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-global",
+      "tool": "@verter/native",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-css-modules",
+      "tool": "@verter/native",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-deep-compound",
+      "tool": "@verter/native",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-media-scoped",
+      "tool": "@verter/native",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-supports-scoped",
+      "tool": "@verter/native",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-deep",
+      "tool": "@verter/native",
+      "status": "fail",
+      "message": "deep: scope attribute must remain on .deep-host while .deep-target becomes an unscoped descendant"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-v-bind",
+      "tool": "@verter/native",
+      "status": "fail",
+      "message": "v-bind: JS registers \"--927b501a-color\" but Vue's useCssVars runtime adds another -- prefix, so runtime output cannot match emitted CSS var(--927b501a-color)"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-global-mixed-local",
+      "tool": "@verter/native",
+      "status": "fail",
+      "message": "global-mixed-local: local selector fragments or a scope constraint leaked into Vue's global selector"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-slotted-compound",
+      "tool": "@verter/native",
+      "status": "fail",
+      "message": "slotted-compound: the slotted scope attribute was not attached to the final compound target"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-is-selector-list",
+      "tool": "@verter/native",
+      "status": "fail",
+      "message": "is-selector-list: the complete :is() selector list was not preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-where-selector-list",
+      "tool": "@verter/native",
+      "status": "fail",
+      "message": "where-selector-list: the complete :where() selector list was not preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-scoped-keyframes",
+      "tool": "@verter/native",
+      "status": "fail",
+      "message": "scoped-keyframes: scoped keyframe name was not rewritten"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-v-bind-multiple",
+      "tool": "@verter/native",
+      "status": "fail",
+      "message": "v-bind-multiple: JS registers \"--7d8c9d6c-color\" but Vue's useCssVars runtime adds another -- prefix, so runtime output cannot match emitted CSS var(--7d8c9d6c-color)"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-v-bind-quoted",
+      "tool": "@verter/native",
+      "status": "fail",
+      "message": "v-bind-quoted: JS registers \"--ac901a1e-theme_gap\" but Vue's useCssVars runtime adds another -- prefix, so runtime output cannot match emitted CSS var(--ac901a1e-theme_gap)"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-multiple-style-blocks",
+      "tool": "@fervid/napi:compileSync",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-scoped",
+      "tool": "@fervid/napi:compileSync",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-deep",
+      "tool": "@fervid/napi:compileSync",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-deep-compound",
+      "tool": "@fervid/napi:compileSync",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-supports-scoped",
+      "tool": "@fervid/napi:compileSync",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-slotted",
+      "tool": "@fervid/napi:compileSync",
+      "status": "fail",
+      "message": "slotted: :slotted() pseudo-selector was left in generated CSS"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-global",
+      "tool": "@fervid/napi:compileSync",
+      "status": "fail",
+      "message": "global: :global() pseudo-selector was left in generated CSS"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-v-bind",
+      "tool": "@fervid/napi:compileSync",
+      "status": "fail",
+      "message": "v-bind: v-bind() was not rewritten to a CSS variable"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-css-modules",
+      "tool": "@fervid/napi:compileSync",
+      "status": "fail",
+      "message": "css-modules: class mapping was not generated or does not match emitted CSS"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-global-mixed-local",
+      "tool": "@fervid/napi:compileSync",
+      "status": "fail",
+      "message": "global-mixed-local: :global() pseudo-selector was left in generated CSS"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-slotted-compound",
+      "tool": "@fervid/napi:compileSync",
+      "status": "fail",
+      "message": "slotted-compound: :slotted() pseudo-selector was left in generated CSS"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-is-selector-list",
+      "tool": "@fervid/napi:compileSync",
+      "status": "fail",
+      "message": "is-selector-list: the scope attribute was not attached outside :is()"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-where-selector-list",
+      "tool": "@fervid/napi:compileSync",
+      "status": "fail",
+      "message": "where-selector-list: the scope attribute was not attached outside :where()"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-media-scoped",
+      "tool": "@fervid/napi:compileSync",
+      "status": "fail",
+      "message": "media-scoped: selector nested in @media was not scope-rewritten"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-scoped-keyframes",
+      "tool": "@fervid/napi:compileSync",
+      "status": "fail",
+      "message": "scoped-keyframes: scoped keyframe name was not rewritten"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-v-bind-multiple",
+      "tool": "@fervid/napi:compileSync",
+      "status": "fail",
+      "message": "v-bind-multiple: v-bind() was not rewritten to a CSS variable"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-v-bind-quoted",
+      "tool": "@fervid/napi:compileSync",
+      "status": "fail",
+      "message": "v-bind-quoted: v-bind() was not rewritten to a CSS variable"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-multiple-style-blocks",
+      "tool": "@fervid/napi:compileAsync",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-scoped",
+      "tool": "@fervid/napi:compileAsync",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-deep",
+      "tool": "@fervid/napi:compileAsync",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-deep-compound",
+      "tool": "@fervid/napi:compileAsync",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-supports-scoped",
+      "tool": "@fervid/napi:compileAsync",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-slotted",
+      "tool": "@fervid/napi:compileAsync",
+      "status": "fail",
+      "message": "slotted: :slotted() pseudo-selector was left in generated CSS"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-global",
+      "tool": "@fervid/napi:compileAsync",
+      "status": "fail",
+      "message": "global: :global() pseudo-selector was left in generated CSS"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-v-bind",
+      "tool": "@fervid/napi:compileAsync",
+      "status": "fail",
+      "message": "v-bind: v-bind() was not rewritten to a CSS variable"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-css-modules",
+      "tool": "@fervid/napi:compileAsync",
+      "status": "fail",
+      "message": "css-modules: class mapping was not generated or does not match emitted CSS"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-global-mixed-local",
+      "tool": "@fervid/napi:compileAsync",
+      "status": "fail",
+      "message": "global-mixed-local: :global() pseudo-selector was left in generated CSS"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-slotted-compound",
+      "tool": "@fervid/napi:compileAsync",
+      "status": "fail",
+      "message": "slotted-compound: :slotted() pseudo-selector was left in generated CSS"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-is-selector-list",
+      "tool": "@fervid/napi:compileAsync",
+      "status": "fail",
+      "message": "is-selector-list: the scope attribute was not attached outside :is()"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-where-selector-list",
+      "tool": "@fervid/napi:compileAsync",
+      "status": "fail",
+      "message": "where-selector-list: the scope attribute was not attached outside :where()"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-media-scoped",
+      "tool": "@fervid/napi:compileAsync",
+      "status": "fail",
+      "message": "media-scoped: selector nested in @media was not scope-rewritten"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-scoped-keyframes",
+      "tool": "@fervid/napi:compileAsync",
+      "status": "fail",
+      "message": "scoped-keyframes: scoped keyframe name was not rewritten"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-v-bind-multiple",
+      "tool": "@fervid/napi:compileAsync",
+      "status": "fail",
+      "message": "v-bind-multiple: v-bind() was not rewritten to a CSS variable"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-v-bind-quoted",
+      "tool": "@fervid/napi:compileAsync",
+      "status": "fail",
+      "message": "v-bind-quoted: v-bind() was not rewritten to a CSS variable"
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-production-lf-raw",
+      "tool": "vue-3.5",
+      "status": "pass",
+      "message": "all selected generated positions trace to exact SFC coordinates",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 64,
+            "generated": {
+              "line": 2,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 313,
+            "generated": {
+              "line": 6,
+              "column": 78
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 4,
+              "column": 27,
+              "name": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-production-crlf-raw",
+      "tool": "vue-3.5",
+      "status": "pass",
+      "message": "all selected generated positions trace to exact SFC coordinates",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 64,
+            "generated": {
+              "line": 2,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 313,
+            "generated": {
+              "line": 6,
+              "column": 78
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 4,
+              "column": 27,
+              "name": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-production-lf-styles",
+      "tool": "vue-3.5",
+      "status": "pass",
+      "message": "all selected generated positions trace to exact SFC coordinates",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 64,
+            "generated": {
+              "line": 2,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 313,
+            "generated": {
+              "line": 6,
+              "column": 78
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 4,
+              "column": 27,
+              "name": null
+            }
+          },
+          {
+            "id": "css-0",
+            "ok": true,
+            "generatedOffset": 40,
+            "generated": {
+              "line": 3,
+              "column": 30
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 6,
+              "column": 22
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 6,
+              "column": 22,
+              "name": null
+            }
+          },
+          {
+            "id": "css-1",
+            "ok": true,
+            "generatedOffset": 21,
+            "generated": {
+              "line": 3,
+              "column": 11
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 9,
+              "column": 20
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 9,
+              "column": 20,
+              "name": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-production-crlf-styles",
+      "tool": "vue-3.5",
+      "status": "pass",
+      "message": "all selected generated positions trace to exact SFC coordinates",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 64,
+            "generated": {
+              "line": 2,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 313,
+            "generated": {
+              "line": 6,
+              "column": 78
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 4,
+              "column": 27,
+              "name": null
+            }
+          },
+          {
+            "id": "css-0",
+            "ok": true,
+            "generatedOffset": 41,
+            "generated": {
+              "line": 3,
+              "column": 30
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 6,
+              "column": 22
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 6,
+              "column": 22,
+              "name": null
+            }
+          },
+          {
+            "id": "css-1",
+            "ok": true,
+            "generatedOffset": 22,
+            "generated": {
+              "line": 3,
+              "column": 11
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 9,
+              "column": 20
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 9,
+              "column": 20,
+              "name": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-production-lf-raw",
+      "tool": "vue-3.6",
+      "status": "pass",
+      "message": "all selected generated positions trace to exact SFC coordinates",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 64,
+            "generated": {
+              "line": 2,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 313,
+            "generated": {
+              "line": 6,
+              "column": 78
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 4,
+              "column": 27,
+              "name": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-production-crlf-raw",
+      "tool": "vue-3.6",
+      "status": "pass",
+      "message": "all selected generated positions trace to exact SFC coordinates",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 64,
+            "generated": {
+              "line": 2,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 313,
+            "generated": {
+              "line": 6,
+              "column": 78
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 4,
+              "column": 27,
+              "name": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-production-lf-styles",
+      "tool": "vue-3.6",
+      "status": "pass",
+      "message": "all selected generated positions trace to exact SFC coordinates",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 64,
+            "generated": {
+              "line": 2,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 313,
+            "generated": {
+              "line": 6,
+              "column": 78
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 4,
+              "column": 27,
+              "name": null
+            }
+          },
+          {
+            "id": "css-0",
+            "ok": true,
+            "generatedOffset": 40,
+            "generated": {
+              "line": 3,
+              "column": 30
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 6,
+              "column": 22
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 6,
+              "column": 22,
+              "name": null
+            }
+          },
+          {
+            "id": "css-1",
+            "ok": true,
+            "generatedOffset": 21,
+            "generated": {
+              "line": 3,
+              "column": 11
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 9,
+              "column": 20
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 9,
+              "column": 20,
+              "name": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-production-crlf-styles",
+      "tool": "vue-3.6",
+      "status": "pass",
+      "message": "all selected generated positions trace to exact SFC coordinates",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 64,
+            "generated": {
+              "line": 2,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 313,
+            "generated": {
+              "line": 6,
+              "column": 78
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 4,
+              "column": 27,
+              "name": null
+            }
+          },
+          {
+            "id": "css-0",
+            "ok": true,
+            "generatedOffset": 41,
+            "generated": {
+              "line": 3,
+              "column": 30
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 6,
+              "column": 22
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 6,
+              "column": 22,
+              "name": null
+            }
+          },
+          {
+            "id": "css-1",
+            "ok": true,
+            "generatedOffset": 22,
+            "generated": {
+              "line": 3,
+              "column": 11
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 9,
+              "column": 20
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 9,
+              "column": 20,
+              "name": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-production-lf-raw",
+      "tool": "vize-single",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-production-crlf-raw",
+      "tool": "vize-single",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-production-lf-styles",
+      "tool": "vize-single",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-production-crlf-styles",
+      "tool": "vize-single",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-production-lf-raw",
+      "tool": "vize-batch",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-production-crlf-raw",
+      "tool": "vize-batch",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-production-lf-styles",
+      "tool": "vize-batch",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-production-crlf-styles",
+      "tool": "vize-batch",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-production-lf-raw",
+      "tool": "verter-compile-many",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-production-crlf-raw",
+      "tool": "verter-compile-many",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-production-lf-styles",
+      "tool": "verter-compile-many",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-production-crlf-styles",
+      "tool": "verter-compile-many",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-production-lf-raw",
+      "tool": "fervid-sync",
+      "status": "pass",
+      "message": "all selected generated positions trace to exact SFC coordinates",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 320,
+            "generated": {
+              "line": 5,
+              "column": 14
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": "mapScriptToken"
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 473,
+            "generated": {
+              "line": 8,
+              "column": 32
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 4,
+              "column": 27,
+              "name": "Math"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-production-crlf-raw",
+      "tool": "fervid-sync",
+      "status": "fail",
+      "message": "script: script: mapped to 2:14; expected 2:15",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": false,
+            "generatedOffset": 322,
+            "generated": {
+              "line": 5,
+              "column": 14
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 14,
+              "name": "mapScriptToken"
+            },
+            "failure": "mapped to 2:14; expected 2:15"
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 475,
+            "generated": {
+              "line": 8,
+              "column": 32
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 4,
+              "column": 27,
+              "name": "Math"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-production-lf-styles",
+      "tool": "fervid-sync",
+      "status": "fail",
+      "message": "css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 357,
+            "generated": {
+              "line": 6,
+              "column": 14
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": "mapScriptToken"
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 510,
+            "generated": {
+              "line": 9,
+              "column": 32
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 4,
+              "column": 27,
+              "name": "Math"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-production-crlf-styles",
+      "tool": "fervid-sync",
+      "status": "fail",
+      "message": "script: script: mapped to 2:14; expected 2:15; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": false,
+            "generatedOffset": 359,
+            "generated": {
+              "line": 6,
+              "column": 14
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 14,
+              "name": "mapScriptToken"
+            },
+            "failure": "mapped to 2:14; expected 2:15"
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 512,
+            "generated": {
+              "line": 9,
+              "column": 32
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 4,
+              "column": 27,
+              "name": "Math"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-production-lf-raw",
+      "tool": "fervid-async",
+      "status": "pass",
+      "message": "all selected generated positions trace to exact SFC coordinates",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 320,
+            "generated": {
+              "line": 5,
+              "column": 14
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": "mapScriptToken"
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 473,
+            "generated": {
+              "line": 8,
+              "column": 32
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 4,
+              "column": 27,
+              "name": "Math"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-production-crlf-raw",
+      "tool": "fervid-async",
+      "status": "fail",
+      "message": "script: script: mapped to 2:14; expected 2:15",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": false,
+            "generatedOffset": 322,
+            "generated": {
+              "line": 5,
+              "column": 14
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 14,
+              "name": "mapScriptToken"
+            },
+            "failure": "mapped to 2:14; expected 2:15"
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 475,
+            "generated": {
+              "line": 8,
+              "column": 32
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 4,
+              "column": 27,
+              "name": "Math"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-production-lf-styles",
+      "tool": "fervid-async",
+      "status": "fail",
+      "message": "css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 357,
+            "generated": {
+              "line": 6,
+              "column": 14
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": "mapScriptToken"
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 510,
+            "generated": {
+              "line": 9,
+              "column": 32
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 4,
+              "column": 27,
+              "name": "Math"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-production-crlf-styles",
+      "tool": "fervid-async",
+      "status": "fail",
+      "message": "script: script: mapped to 2:14; expected 2:15; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": false,
+            "generatedOffset": 359,
+            "generated": {
+              "line": 6,
+              "column": 14
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 14,
+              "name": "mapScriptToken"
+            },
+            "failure": "mapped to 2:14; expected 2:15"
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 512,
+            "generated": {
+              "line": 9,
+              "column": 32
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 4,
+              "column": 27,
+              "name": "Math"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-development-lf-raw",
+      "tool": "vue-3.5",
+      "status": "pass",
+      "message": "all selected generated positions trace to exact SFC coordinates",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 64,
+            "generated": {
+              "line": 2,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 282,
+            "generated": {
+              "line": 4,
+              "column": 83
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 4,
+              "column": 27,
+              "name": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-development-crlf-raw",
+      "tool": "vue-3.5",
+      "status": "pass",
+      "message": "all selected generated positions trace to exact SFC coordinates",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 64,
+            "generated": {
+              "line": 2,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 282,
+            "generated": {
+              "line": 4,
+              "column": 83
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 4,
+              "column": 27,
+              "name": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-development-lf-styles",
+      "tool": "vue-3.5",
+      "status": "pass",
+      "message": "all selected generated positions trace to exact SFC coordinates",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 64,
+            "generated": {
+              "line": 2,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 282,
+            "generated": {
+              "line": 4,
+              "column": 83
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 4,
+              "column": 27,
+              "name": null
+            }
+          },
+          {
+            "id": "css-0",
+            "ok": true,
+            "generatedOffset": 40,
+            "generated": {
+              "line": 3,
+              "column": 30
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 6,
+              "column": 22
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 6,
+              "column": 22,
+              "name": null
+            }
+          },
+          {
+            "id": "css-1",
+            "ok": true,
+            "generatedOffset": 21,
+            "generated": {
+              "line": 3,
+              "column": 11
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 9,
+              "column": 20
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 9,
+              "column": 20,
+              "name": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-development-crlf-styles",
+      "tool": "vue-3.5",
+      "status": "pass",
+      "message": "all selected generated positions trace to exact SFC coordinates",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 64,
+            "generated": {
+              "line": 2,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 282,
+            "generated": {
+              "line": 4,
+              "column": 83
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 4,
+              "column": 27,
+              "name": null
+            }
+          },
+          {
+            "id": "css-0",
+            "ok": true,
+            "generatedOffset": 41,
+            "generated": {
+              "line": 3,
+              "column": 30
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 6,
+              "column": 22
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 6,
+              "column": 22,
+              "name": null
+            }
+          },
+          {
+            "id": "css-1",
+            "ok": true,
+            "generatedOffset": 22,
+            "generated": {
+              "line": 3,
+              "column": 11
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 9,
+              "column": 20
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 9,
+              "column": 20,
+              "name": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-development-lf-raw",
+      "tool": "vue-3.6",
+      "status": "pass",
+      "message": "all selected generated positions trace to exact SFC coordinates",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 64,
+            "generated": {
+              "line": 2,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 282,
+            "generated": {
+              "line": 4,
+              "column": 83
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 4,
+              "column": 27,
+              "name": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-development-crlf-raw",
+      "tool": "vue-3.6",
+      "status": "pass",
+      "message": "all selected generated positions trace to exact SFC coordinates",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 64,
+            "generated": {
+              "line": 2,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 282,
+            "generated": {
+              "line": 4,
+              "column": 83
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 4,
+              "column": 27,
+              "name": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-development-lf-styles",
+      "tool": "vue-3.6",
+      "status": "pass",
+      "message": "all selected generated positions trace to exact SFC coordinates",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 64,
+            "generated": {
+              "line": 2,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 282,
+            "generated": {
+              "line": 4,
+              "column": 83
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 4,
+              "column": 27,
+              "name": null
+            }
+          },
+          {
+            "id": "css-0",
+            "ok": true,
+            "generatedOffset": 40,
+            "generated": {
+              "line": 3,
+              "column": 30
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 6,
+              "column": 22
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 6,
+              "column": 22,
+              "name": null
+            }
+          },
+          {
+            "id": "css-1",
+            "ok": true,
+            "generatedOffset": 21,
+            "generated": {
+              "line": 3,
+              "column": 11
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 9,
+              "column": 20
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 9,
+              "column": 20,
+              "name": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-development-crlf-styles",
+      "tool": "vue-3.6",
+      "status": "pass",
+      "message": "all selected generated positions trace to exact SFC coordinates",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 64,
+            "generated": {
+              "line": 2,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 282,
+            "generated": {
+              "line": 4,
+              "column": 83
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 4,
+              "column": 27,
+              "name": null
+            }
+          },
+          {
+            "id": "css-0",
+            "ok": true,
+            "generatedOffset": 41,
+            "generated": {
+              "line": 3,
+              "column": 30
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 6,
+              "column": 22
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 6,
+              "column": 22,
+              "name": null
+            }
+          },
+          {
+            "id": "css-1",
+            "ok": true,
+            "generatedOffset": 22,
+            "generated": {
+              "line": 3,
+              "column": 11
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 9,
+              "column": 20
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 9,
+              "column": 20,
+              "name": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-development-lf-raw",
+      "tool": "vize-single",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-development-crlf-raw",
+      "tool": "vize-single",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-development-lf-styles",
+      "tool": "vize-single",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-development-crlf-styles",
+      "tool": "vize-single",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-development-lf-raw",
+      "tool": "vize-batch",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-development-crlf-raw",
+      "tool": "vize-batch",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-development-lf-styles",
+      "tool": "vize-batch",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-development-crlf-styles",
+      "tool": "vize-batch",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-development-lf-raw",
+      "tool": "verter-compile-many",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-development-crlf-raw",
+      "tool": "verter-compile-many",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-development-lf-styles",
+      "tool": "verter-compile-many",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-development-crlf-styles",
+      "tool": "verter-compile-many",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-development-lf-raw",
+      "tool": "fervid-sync",
+      "status": "pass",
+      "message": "all selected generated positions trace to exact SFC coordinates",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 578,
+            "generated": {
+              "line": 11,
+              "column": 14
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": "mapScriptToken"
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 461,
+            "generated": {
+              "line": 7,
+              "column": 28
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 4,
+              "column": 27,
+              "name": "Math"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-development-crlf-raw",
+      "tool": "fervid-sync",
+      "status": "fail",
+      "message": "script: script: mapped to 2:14; expected 2:15",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": false,
+            "generatedOffset": 580,
+            "generated": {
+              "line": 11,
+              "column": 14
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 14,
+              "name": "mapScriptToken"
+            },
+            "failure": "mapped to 2:14; expected 2:15"
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 463,
+            "generated": {
+              "line": 7,
+              "column": 28
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 4,
+              "column": 27,
+              "name": "Math"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-development-lf-styles",
+      "tool": "fervid-sync",
+      "status": "fail",
+      "message": "css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 615,
+            "generated": {
+              "line": 12,
+              "column": 14
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": "mapScriptToken"
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 498,
+            "generated": {
+              "line": 8,
+              "column": 28
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 4,
+              "column": 27,
+              "name": "Math"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-development-crlf-styles",
+      "tool": "fervid-sync",
+      "status": "fail",
+      "message": "script: script: mapped to 2:14; expected 2:15; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": false,
+            "generatedOffset": 617,
+            "generated": {
+              "line": 12,
+              "column": 14
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 14,
+              "name": "mapScriptToken"
+            },
+            "failure": "mapped to 2:14; expected 2:15"
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 500,
+            "generated": {
+              "line": 8,
+              "column": 28
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 4,
+              "column": 27,
+              "name": "Math"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-development-lf-raw",
+      "tool": "fervid-async",
+      "status": "pass",
+      "message": "all selected generated positions trace to exact SFC coordinates",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 578,
+            "generated": {
+              "line": 11,
+              "column": 14
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": "mapScriptToken"
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 461,
+            "generated": {
+              "line": 7,
+              "column": 28
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 4,
+              "column": 27,
+              "name": "Math"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-development-crlf-raw",
+      "tool": "fervid-async",
+      "status": "fail",
+      "message": "script: script: mapped to 2:14; expected 2:15",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": false,
+            "generatedOffset": 580,
+            "generated": {
+              "line": 11,
+              "column": 14
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 14,
+              "name": "mapScriptToken"
+            },
+            "failure": "mapped to 2:14; expected 2:15"
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 463,
+            "generated": {
+              "line": 7,
+              "column": 28
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 4,
+              "column": 27,
+              "name": "Math"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-development-lf-styles",
+      "tool": "fervid-async",
+      "status": "fail",
+      "message": "css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 615,
+            "generated": {
+              "line": 12,
+              "column": 14
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": "mapScriptToken"
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 498,
+            "generated": {
+              "line": 8,
+              "column": 28
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 4,
+              "column": 27,
+              "name": "Math"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vdom-development-crlf-styles",
+      "tool": "fervid-async",
+      "status": "fail",
+      "message": "script: script: mapped to 2:14; expected 2:15; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": false,
+            "generatedOffset": 617,
+            "generated": {
+              "line": 12,
+              "column": 14
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 14,
+              "name": "mapScriptToken"
+            },
+            "failure": "mapped to 2:14; expected 2:15"
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 500,
+            "generated": {
+              "line": 8,
+              "column": 28
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 4,
+              "column": 27,
+              "name": "Math"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-production-lf-raw",
+      "tool": "vue-3.5",
+      "status": "skip",
+      "message": "no Vapor backend"
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-production-crlf-raw",
+      "tool": "vue-3.5",
+      "status": "skip",
+      "message": "no Vapor backend"
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-production-lf-styles",
+      "tool": "vue-3.5",
+      "status": "skip",
+      "message": "no Vapor backend"
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-production-crlf-styles",
+      "tool": "vue-3.5",
+      "status": "skip",
+      "message": "no Vapor backend"
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-production-lf-raw",
+      "tool": "vue-3.6",
+      "status": "pass",
+      "message": "all selected generated positions trace to exact SFC coordinates",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 74,
+            "generated": {
+              "line": 2,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 343,
+            "generated": {
+              "line": 7,
+              "column": 52
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 4,
+              "column": 27,
+              "name": "Math"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-production-crlf-raw",
+      "tool": "vue-3.6",
+      "status": "pass",
+      "message": "all selected generated positions trace to exact SFC coordinates",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 74,
+            "generated": {
+              "line": 2,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 343,
+            "generated": {
+              "line": 7,
+              "column": 52
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 4,
+              "column": 27,
+              "name": "Math"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-production-lf-styles",
+      "tool": "vue-3.6",
+      "status": "pass",
+      "message": "all selected generated positions trace to exact SFC coordinates",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 74,
+            "generated": {
+              "line": 2,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 359,
+            "generated": {
+              "line": 7,
+              "column": 52
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 4,
+              "column": 27,
+              "name": "Math"
+            }
+          },
+          {
+            "id": "css-0",
+            "ok": true,
+            "generatedOffset": 40,
+            "generated": {
+              "line": 3,
+              "column": 30
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 6,
+              "column": 22
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 6,
+              "column": 22,
+              "name": null
+            }
+          },
+          {
+            "id": "css-1",
+            "ok": true,
+            "generatedOffset": 21,
+            "generated": {
+              "line": 3,
+              "column": 11
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 9,
+              "column": 20
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 9,
+              "column": 20,
+              "name": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-production-crlf-styles",
+      "tool": "vue-3.6",
+      "status": "pass",
+      "message": "all selected generated positions trace to exact SFC coordinates",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 74,
+            "generated": {
+              "line": 2,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 359,
+            "generated": {
+              "line": 7,
+              "column": 52
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 4,
+              "column": 27,
+              "name": "Math"
+            }
+          },
+          {
+            "id": "css-0",
+            "ok": true,
+            "generatedOffset": 41,
+            "generated": {
+              "line": 3,
+              "column": 30
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 6,
+              "column": 22
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 6,
+              "column": 22,
+              "name": null
+            }
+          },
+          {
+            "id": "css-1",
+            "ok": true,
+            "generatedOffset": 22,
+            "generated": {
+              "line": 3,
+              "column": 11
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 9,
+              "column": 20
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 9,
+              "column": 20,
+              "name": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-production-lf-raw",
+      "tool": "vize-single",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-production-crlf-raw",
+      "tool": "vize-single",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-production-lf-styles",
+      "tool": "vize-single",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-production-crlf-styles",
+      "tool": "vize-single",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-production-lf-raw",
+      "tool": "vize-batch",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-production-crlf-raw",
+      "tool": "vize-batch",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-production-lf-styles",
+      "tool": "vize-batch",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-production-crlf-styles",
+      "tool": "vize-batch",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-production-lf-raw",
+      "tool": "verter-compile-many",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-production-crlf-raw",
+      "tool": "verter-compile-many",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-production-lf-styles",
+      "tool": "verter-compile-many",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-production-crlf-styles",
+      "tool": "verter-compile-many",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-production-lf-raw",
+      "tool": "fervid-sync",
+      "status": "skip",
+      "message": "no Vapor backend"
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-production-crlf-raw",
+      "tool": "fervid-sync",
+      "status": "skip",
+      "message": "no Vapor backend"
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-production-lf-styles",
+      "tool": "fervid-sync",
+      "status": "skip",
+      "message": "no Vapor backend"
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-production-crlf-styles",
+      "tool": "fervid-sync",
+      "status": "skip",
+      "message": "no Vapor backend"
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-production-lf-raw",
+      "tool": "fervid-async",
+      "status": "skip",
+      "message": "no Vapor backend"
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-production-crlf-raw",
+      "tool": "fervid-async",
+      "status": "skip",
+      "message": "no Vapor backend"
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-production-lf-styles",
+      "tool": "fervid-async",
+      "status": "skip",
+      "message": "no Vapor backend"
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-production-crlf-styles",
+      "tool": "fervid-async",
+      "status": "skip",
+      "message": "no Vapor backend"
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-development-lf-raw",
+      "tool": "vue-3.5",
+      "status": "skip",
+      "message": "no Vapor backend"
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-development-crlf-raw",
+      "tool": "vue-3.5",
+      "status": "skip",
+      "message": "no Vapor backend"
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-development-lf-styles",
+      "tool": "vue-3.5",
+      "status": "skip",
+      "message": "no Vapor backend"
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-development-crlf-styles",
+      "tool": "vue-3.5",
+      "status": "skip",
+      "message": "no Vapor backend"
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-development-lf-raw",
+      "tool": "vue-3.6",
+      "status": "pass",
+      "message": "all selected generated positions trace to exact SFC coordinates",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 74,
+            "generated": {
+              "line": 2,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 343,
+            "generated": {
+              "line": 7,
+              "column": 52
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 4,
+              "column": 27,
+              "name": "Math"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-development-crlf-raw",
+      "tool": "vue-3.6",
+      "status": "pass",
+      "message": "all selected generated positions trace to exact SFC coordinates",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 74,
+            "generated": {
+              "line": 2,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 343,
+            "generated": {
+              "line": 7,
+              "column": 52
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 4,
+              "column": 27,
+              "name": "Math"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-development-lf-styles",
+      "tool": "vue-3.6",
+      "status": "pass",
+      "message": "all selected generated positions trace to exact SFC coordinates",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 74,
+            "generated": {
+              "line": 2,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 359,
+            "generated": {
+              "line": 7,
+              "column": 52
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 4,
+              "column": 27,
+              "name": "Math"
+            }
+          },
+          {
+            "id": "css-0",
+            "ok": true,
+            "generatedOffset": 40,
+            "generated": {
+              "line": 3,
+              "column": 30
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 6,
+              "column": 22
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 6,
+              "column": 22,
+              "name": null
+            }
+          },
+          {
+            "id": "css-1",
+            "ok": true,
+            "generatedOffset": 21,
+            "generated": {
+              "line": 3,
+              "column": 11
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 9,
+              "column": 20
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 9,
+              "column": 20,
+              "name": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-development-crlf-styles",
+      "tool": "vue-3.6",
+      "status": "pass",
+      "message": "all selected generated positions trace to exact SFC coordinates",
+      "detail": {
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 74,
+            "generated": {
+              "line": 2,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 359,
+            "generated": {
+              "line": 7,
+              "column": 52
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 4,
+              "column": 27,
+              "name": "Math"
+            }
+          },
+          {
+            "id": "css-0",
+            "ok": true,
+            "generatedOffset": 41,
+            "generated": {
+              "line": 3,
+              "column": 30
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 6,
+              "column": 22
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 6,
+              "column": 22,
+              "name": null
+            }
+          },
+          {
+            "id": "css-1",
+            "ok": true,
+            "generatedOffset": 22,
+            "generated": {
+              "line": 3,
+              "column": 11
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 9,
+              "column": 20
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 9,
+              "column": 20,
+              "name": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-development-lf-raw",
+      "tool": "vize-single",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-development-crlf-raw",
+      "tool": "vize-single",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-development-lf-styles",
+      "tool": "vize-single",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-development-crlf-styles",
+      "tool": "vize-single",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-development-lf-raw",
+      "tool": "vize-batch",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-development-crlf-raw",
+      "tool": "vize-batch",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-development-lf-styles",
+      "tool": "vize-batch",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-development-crlf-styles",
+      "tool": "vize-batch",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-development-lf-raw",
+      "tool": "verter-compile-many",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-development-crlf-raw",
+      "tool": "verter-compile-many",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-development-lf-styles",
+      "tool": "verter-compile-many",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-development-crlf-styles",
+      "tool": "verter-compile-many",
+      "status": "fail",
+      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "detail": {
+        "traces": []
+      }
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-development-lf-raw",
+      "tool": "fervid-sync",
+      "status": "skip",
+      "message": "no Vapor backend"
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-development-crlf-raw",
+      "tool": "fervid-sync",
+      "status": "skip",
+      "message": "no Vapor backend"
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-development-lf-styles",
+      "tool": "fervid-sync",
+      "status": "skip",
+      "message": "no Vapor backend"
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-development-crlf-styles",
+      "tool": "fervid-sync",
+      "status": "skip",
+      "message": "no Vapor backend"
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-development-lf-raw",
+      "tool": "fervid-async",
+      "status": "skip",
+      "message": "no Vapor backend"
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-development-crlf-raw",
+      "tool": "fervid-async",
+      "status": "skip",
+      "message": "no Vapor backend"
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-development-lf-styles",
+      "tool": "fervid-async",
+      "status": "skip",
+      "message": "no Vapor backend"
+    },
+    {
+      "suite": "compile",
+      "caseId": "source-map-vapor-development-crlf-styles",
+      "tool": "fervid-async",
+      "status": "skip",
+      "message": "no Vapor backend"
+    },
+    {
       "suite": "jsx-compile",
       "caseId": "static-div",
       "tool": "compiler-rs-vapor",
@@ -1080,6 +5124,13 @@
     {
       "suite": "jsx-compile",
       "caseId": "static-div",
+      "tool": "compiler-rs-vdom",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "suite": "jsx-compile",
+      "caseId": "static-div (runtime)",
       "tool": "compiler-rs-vdom",
       "status": "pass",
       "message": ""
@@ -1149,6 +5200,13 @@
     },
     {
       "suite": "jsx-compile",
+      "caseId": "list-map (runtime)",
+      "tool": "compiler-rs-vdom",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "suite": "jsx-compile",
       "caseId": "list-map",
       "tool": "babel-vue-jsx",
       "status": "pass",
@@ -1178,6 +5236,13 @@
     {
       "suite": "jsx-compile",
       "caseId": "fragment",
+      "tool": "compiler-rs-vdom",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "suite": "jsx-compile",
+      "caseId": "fragment (runtime)",
       "tool": "compiler-rs-vdom",
       "status": "pass",
       "message": ""
@@ -1219,6 +5284,13 @@
     },
     {
       "suite": "jsx-compile",
+      "caseId": "conditional (runtime)",
+      "tool": "compiler-rs-vdom",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "suite": "jsx-compile",
       "caseId": "conditional",
       "tool": "babel-vue-jsx",
       "status": "pass",
@@ -1248,6 +5320,13 @@
     {
       "suite": "jsx-compile",
       "caseId": "spread-props",
+      "tool": "compiler-rs-vdom",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "suite": "jsx-compile",
+      "caseId": "spread-props (runtime)",
       "tool": "compiler-rs-vdom",
       "status": "pass",
       "message": ""
@@ -1289,6 +5368,13 @@
     },
     {
       "suite": "jsx-compile",
+      "caseId": "component-props (runtime)",
+      "tool": "compiler-rs-vdom",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "suite": "jsx-compile",
       "caseId": "component-props",
       "tool": "babel-vue-jsx",
       "status": "pass",
@@ -1318,6 +5404,13 @@
     {
       "suite": "jsx-compile",
       "caseId": "component-slot-children",
+      "tool": "compiler-rs-vdom",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "suite": "jsx-compile",
+      "caseId": "component-slot-children (runtime)",
       "tool": "compiler-rs-vdom",
       "status": "pass",
       "message": ""
@@ -1359,6 +5452,13 @@
     },
     {
       "suite": "jsx-compile",
+      "caseId": "v-show-directive (runtime)",
+      "tool": "compiler-rs-vdom",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "suite": "jsx-compile",
       "caseId": "v-show-directive",
       "tool": "babel-vue-jsx",
       "status": "pass",
@@ -1394,6 +5494,13 @@
     },
     {
       "suite": "jsx-compile",
+      "caseId": "event-handler (runtime)",
+      "tool": "compiler-rs-vdom",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "suite": "jsx-compile",
       "caseId": "event-handler",
       "tool": "babel-vue-jsx",
       "status": "pass",
@@ -1412,6 +5519,34 @@
       "tool": "vue-jsx-vapor-api",
       "status": "pass",
       "message": ""
+    },
+    {
+      "suite": "jsx-compile",
+      "caseId": "spread-collisions-update-removal",
+      "tool": "compiler-rs-vapor",
+      "status": "skip",
+      "message": "compatible Vapor runtime unavailable for behavioural confirmation"
+    },
+    {
+      "suite": "jsx-compile",
+      "caseId": "spread-collisions-update-removal (runtime)",
+      "tool": "compiler-rs-vdom",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "suite": "jsx-compile",
+      "caseId": "spread-collisions-update-removal (runtime)",
+      "tool": "babel-vue-jsx",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "suite": "jsx-compile",
+      "caseId": "spread-collisions-update-removal",
+      "tool": "vue-jsx-vapor-api",
+      "status": "skip",
+      "message": "compatible Vapor runtime unavailable for behavioural confirmation"
     },
     {
       "suite": "lint",
@@ -1728,7 +5863,7 @@
       "status": "fail",
       "message": "expected ≥1 issues, got 0",
       "detail": {
-        "snippet": "\nNo problems found in 1 file(s)\nLinted 1 files in 897.0070µs\n"
+        "snippet": "\nNo problems found in 1 file(s)\nLinted 1 files in 564.5710µs\n"
       }
     },
     {
@@ -1752,7 +5887,7 @@
       "status": "fail",
       "message": "expected ≥1 issues, got 0",
       "detail": {
-        "snippet": "\nNo problems found in 1 file(s)\nLinted 1 files in 892.0400µs\n"
+        "snippet": "\nNo problems found in 1 file(s)\nLinted 1 files in 537.6510µs\n"
       }
     },
     {
@@ -1773,11 +5908,8 @@
       "suite": "lint",
       "caseId": "reserved-props",
       "tool": "vize-lint",
-      "status": "fail",
-      "message": "expected ≥1 issues, got 0",
-      "detail": {
-        "snippet": "\nNo problems found in 1 file(s)\nLinted 1 files in 895.9360µs\n"
-      }
+      "status": "pass",
+      "message": "issues=1"
     },
     {
       "suite": "lint",
@@ -1800,7 +5932,7 @@
       "status": "fail",
       "message": "expected ≥1 issues, got 0",
       "detail": {
-        "snippet": "\nNo problems found in 1 file(s)\nLinted 1 files in 882.6320µs\n"
+        "snippet": "\nNo problems found in 1 file(s)\nLinted 1 files in 534.7640µs\n"
       }
     },
     {
@@ -1821,11 +5953,8 @@
       "suite": "lint",
       "caseId": "async-computed",
       "tool": "vize-lint",
-      "status": "fail",
-      "message": "expected ≥1 issues, got 0",
-      "detail": {
-        "snippet": "\nNo problems found in 1 file(s)\nLinted 1 files in 887.7720µs\n"
-      }
+      "status": "pass",
+      "message": "issues=1"
     },
     {
       "suite": "lint",
@@ -1848,7 +5977,7 @@
       "status": "fail",
       "message": "expected ≥1 issues, got 0",
       "detail": {
-        "snippet": "\n1 warning in 1 file\nLinted 1 files in 945.6560µs\n"
+        "snippet": "\n1 warning in 1 file\nLinted 1 files in 592.9120µs\n"
       }
     },
     {
@@ -1859,33 +5988,54 @@
       "message": "issues=2 rules=require-prop-types,define-props-declaration"
     },
     {
+      "suite": "lint",
+      "caseId": "mutating-props-shadowing",
+      "tool": "eslint-plugin-vue-1t",
+      "status": "pass",
+      "message": "dirty diagnostic attributed; clean twin cleared"
+    },
+    {
+      "suite": "lint",
+      "caseId": "mutating-props-shadowing",
+      "tool": "vize-lint-1t",
+      "status": "fail",
+      "message": "dirty twin had no file+line+rule/concept-attributed diagnostic"
+    },
+    {
+      "suite": "lint",
+      "caseId": "mutating-props-shadowing",
+      "tool": "verter-lint-host",
+      "status": "fail",
+      "message": "dirty twin had no file+line+rule/concept-attributed diagnostic"
+    },
+    {
       "suite": "typecheck-all",
       "caseId": "all-plants",
       "tool": "vue-tsc",
       "status": "pass",
-      "message": "95% (143/150) · 5 ⚠ (needed fallthroughAttributes) · median 3.30s · avg 3.36s of 5 after 1 warmup(s)",
+      "message": "95% (147/154) · 5 ⚠ (needed fallthroughAttributes) · median 2.20s · avg 2.20s of 5 after 1 warmup(s)",
       "detail": {
-        "ms": 3299.2,
-        "avgMs": 3357.6,
-        "minMs": 3251,
-        "maxMs": 3646.5,
-        "rssMb": 342.5,
-        "rssToolMb": 342.5,
+        "ms": 2196.8,
+        "avgMs": 2196.9,
+        "minMs": 2182,
+        "maxMs": 2209.9,
+        "rssMb": 345.9,
+        "rssToolMb": 345.9,
         "runs": [
-          3646.5,
-          3281.5,
-          3251,
-          3299.2,
-          3310
+          2203.1,
+          2182,
+          2209.9,
+          2196.8,
+          2192.5
         ],
         "warmups": 1,
         "runCount": 5,
-        "pass": 143,
+        "pass": 147,
         "fail": 2,
         "warn": 5,
         "skip": 0,
-        "scored": 150,
-        "passPct": 95.33333333333333,
+        "scored": 154,
+        "passPct": 95.45454545454545,
         "plants": [
           {
             "caseId": "async-component-prop-bad",
@@ -2630,6 +6780,20 @@
             "message": "caught 1 error(s)"
           },
           {
+            "caseId": "slot-shadow-restoration-bad",
+            "skip": false,
+            "status": "pass",
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "slot-shadow-restoration-ok",
+            "skip": false,
+            "status": "pass",
+            "ok": true,
+            "message": "clean"
+          },
+          {
             "caseId": "slot-unknown-prop-bad",
             "skip": false,
             "status": "pass",
@@ -2771,6 +6935,20 @@
           },
           {
             "caseId": "v-for-ok",
+            "skip": false,
+            "status": "pass",
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-for-shadow-restoration-bad",
+            "skip": false,
+            "status": "pass",
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-for-shadow-restoration-ok",
             "skip": false,
             "status": "pass",
             "ok": true,
@@ -2941,39 +7119,39 @@
         "unattributed": 0,
         "unattributedFiles": []
       },
-      "ms": 3299.2,
-      "rssMb": 342.5,
-      "rssToolMb": 342.5
+      "ms": 2196.8,
+      "rssMb": 345.9,
+      "rssToolMb": 345.9
     },
     {
       "suite": "typecheck-all",
       "caseId": "all-plants",
       "tool": "vize-check",
       "status": "pass",
-      "message": "99% (148/150) · median 0.83s · avg 0.83s of 5 after 1 warmup(s)",
+      "message": "92% (142/154) · median 0.82s · avg 0.82s of 5 after 1 warmup(s)",
       "detail": {
-        "ms": 832,
-        "avgMs": 826.5,
-        "minMs": 805.3,
-        "maxMs": 839.6,
-        "rssMb": 485.8,
-        "rssToolMb": 72.9,
-        "rssEngineMb": 413,
+        "ms": 815.4,
+        "avgMs": 821.1,
+        "minMs": 806.7,
+        "maxMs": 838.4,
+        "rssMb": 540.8,
+        "rssToolMb": 73.8,
+        "rssEngineMb": 467,
         "runs": [
-          839.6,
-          805.3,
-          822.6,
-          832,
-          833.1
+          806.7,
+          815.4,
+          838.4,
+          813.4,
+          831.4
         ],
         "warmups": 1,
         "runCount": 5,
-        "pass": 148,
-        "fail": 2,
+        "pass": 142,
+        "fail": 12,
         "warn": 0,
         "skip": 0,
-        "scored": 150,
-        "passPct": 98.66666666666667,
+        "scored": 154,
+        "passPct": 92.20779220779221,
         "plants": [
           {
             "caseId": "async-component-prop-bad",
@@ -3006,9 +7184,9 @@
           {
             "caseId": "attrs-aria-data-unknown",
             "skip": false,
-            "status": "pass",
-            "ok": true,
-            "message": "caught 1 error(s) — passed despite an unclaimed capability (strict-component-attrs); TOOL_CAPABILITIES is stale"
+            "status": "fail",
+            "ok": false,
+            "message": "capability gap — tool does not claim: strict-component-attrs (scored: expected ≥1 error(s), got 0)"
           },
           {
             "caseId": "attrs-class-style-ok",
@@ -3314,9 +7492,9 @@
           {
             "caseId": "fallthrough-mono-false-bad",
             "skip": false,
-            "status": "pass",
-            "ok": true,
-            "message": "caught 1 error(s)"
+            "status": "fail",
+            "ok": false,
+            "message": "EXTRA VUE COMPILER OPTION — vueCompilerOptions.fallthroughAttributes is not default and is not on the shared tsconfig. A fully compatible checker types inheritAttrs fallthrough without this opt-in. Failed on the shared tsconfig and still failed after enabling it: expected ≥1 error(s), got 0."
           },
           {
             "caseId": "fallthrough-mono-ok",
@@ -3328,16 +7506,16 @@
           {
             "caseId": "fallthrough-multi-bad",
             "skip": false,
-            "status": "pass",
-            "ok": true,
-            "message": "caught 1 error(s)"
+            "status": "fail",
+            "ok": false,
+            "message": "EXTRA VUE COMPILER OPTION — vueCompilerOptions.fallthroughAttributes is not default and is not on the shared tsconfig. A fully compatible checker types inheritAttrs fallthrough without this opt-in. Failed on the shared tsconfig and still failed after enabling it: expected ≥1 error(s), got 0."
           },
           {
             "caseId": "fallthrough-multi-false-bad",
             "skip": false,
-            "status": "pass",
-            "ok": true,
-            "message": "caught 1 error(s)"
+            "status": "fail",
+            "ok": false,
+            "message": "EXTRA VUE COMPILER OPTION — vueCompilerOptions.fallthroughAttributes is not default and is not on the shared tsconfig. A fully compatible checker types inheritAttrs fallthrough without this opt-in. Failed on the shared tsconfig and still failed after enabling it: expected ≥1 error(s), got 0."
           },
           {
             "caseId": "fallthrough-native-type-bad",
@@ -3349,9 +7527,9 @@
           {
             "caseId": "fallthrough-vif-both-mono-false-bad",
             "skip": false,
-            "status": "pass",
-            "ok": true,
-            "message": "caught 1 error(s)"
+            "status": "fail",
+            "ok": false,
+            "message": "EXTRA VUE COMPILER OPTION — vueCompilerOptions.fallthroughAttributes is not default and is not on the shared tsconfig. A fully compatible checker types inheritAttrs fallthrough without this opt-in. Failed on the shared tsconfig and still failed after enabling it: expected ≥1 error(s), got 0."
           },
           {
             "caseId": "fallthrough-vif-both-mono-ok",
@@ -3363,16 +7541,16 @@
           {
             "caseId": "fallthrough-vif-mono-multi-bad",
             "skip": false,
-            "status": "pass",
-            "ok": true,
-            "message": "caught 1 error(s)"
+            "status": "fail",
+            "ok": false,
+            "message": "EXTRA VUE COMPILER OPTION — vueCompilerOptions.fallthroughAttributes is not default and is not on the shared tsconfig. A fully compatible checker types inheritAttrs fallthrough without this opt-in. Failed on the shared tsconfig and still failed after enabling it: expected ≥1 error(s), got 0."
           },
           {
             "caseId": "fallthrough-vif-static-multi-bad",
             "skip": false,
-            "status": "pass",
-            "ok": true,
-            "message": "caught 1 error(s)"
+            "status": "fail",
+            "ok": false,
+            "message": "EXTRA VUE COMPILER OPTION — vueCompilerOptions.fallthroughAttributes is not default and is not on the shared tsconfig. A fully compatible checker types inheritAttrs fallthrough without this opt-in. Failed on the shared tsconfig and still failed after enabling it: expected ≥1 error(s), got 0."
           },
           {
             "caseId": "fallthrough-vif-static-ok",
@@ -3538,9 +7716,9 @@
           {
             "caseId": "inherit-attrs-false-unknown",
             "skip": false,
-            "status": "pass",
-            "ok": true,
-            "message": "caught 1 error(s) — passed despite an unclaimed capability (strict-component-attrs); TOOL_CAPABILITIES is stale"
+            "status": "fail",
+            "ok": false,
+            "message": "capability gap — tool does not claim: strict-component-attrs (scored: expected ≥1 error(s), got 0)"
           },
           {
             "caseId": "inject-key-type",
@@ -3718,6 +7896,20 @@
             "message": "caught 1 error(s)"
           },
           {
+            "caseId": "slot-shadow-restoration-bad",
+            "skip": false,
+            "status": "pass",
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "slot-shadow-restoration-ok",
+            "skip": false,
+            "status": "pass",
+            "ok": true,
+            "message": "clean"
+          },
+          {
             "caseId": "slot-unknown-prop-bad",
             "skip": false,
             "status": "pass",
@@ -3727,9 +7919,9 @@
           {
             "caseId": "slot-v-bind-bad",
             "skip": false,
-            "status": "pass",
-            "ok": true,
-            "message": "caught 1 error(s)"
+            "status": "fail",
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
           },
           {
             "caseId": "slot-v-bind-ok",
@@ -3797,9 +7989,9 @@
           {
             "caseId": "unknown-prop-strict",
             "skip": false,
-            "status": "pass",
-            "ok": true,
-            "message": "caught 1 error(s) — passed despite an unclaimed capability (strict-component-attrs); TOOL_CAPABILITIES is stale"
+            "status": "fail",
+            "ok": false,
+            "message": "capability gap — tool does not claim: strict-component-attrs (scored: expected ≥1 error(s), got 0)"
           },
           {
             "caseId": "v-bind-object-bad",
@@ -3859,6 +8051,20 @@
           },
           {
             "caseId": "v-for-ok",
+            "skip": false,
+            "status": "pass",
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-for-shadow-restoration-bad",
+            "skip": false,
+            "status": "pass",
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-for-shadow-restoration-ok",
             "skip": false,
             "status": "pass",
             "ok": true,
@@ -4029,40 +8235,40 @@
         "unattributed": 0,
         "unattributedFiles": []
       },
-      "ms": 832,
-      "rssMb": 485.8,
-      "rssToolMb": 72.9,
-      "rssEngineMb": 413
+      "ms": 815.4,
+      "rssMb": 540.8,
+      "rssToolMb": 73.8,
+      "rssEngineMb": 467
     },
     {
       "suite": "typecheck-all",
       "caseId": "all-plants",
       "tool": "verter-tsc",
       "status": "pass",
-      "message": "81% (121/150) · median 0.76s · avg 0.77s of 5 after 1 warmup(s) · 1 diagnostic(s) not attributable to a plant (/home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/App_aead458673bec6c8.vue.ts)",
+      "message": "81% (125/154) · median 0.51s · avg 0.51s of 5 after 1 warmup(s) · 1 diagnostic(s) not attributable to a plant (/home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/App_aead458673bec6c8.vue.ts)",
       "detail": {
-        "ms": 761.5,
-        "avgMs": 766.7,
-        "minMs": 759,
-        "maxMs": 784,
-        "rssMb": 234.5,
-        "rssToolMb": 84.7,
-        "rssEngineMb": 149.8,
+        "ms": 513.9,
+        "avgMs": 512.6,
+        "minMs": 499.7,
+        "maxMs": 529.7,
+        "rssMb": 240.9,
+        "rssToolMb": 85.2,
+        "rssEngineMb": 155.7,
         "runs": [
-          761.5,
-          759.8,
-          759,
-          784,
-          769.2
+          499.7,
+          515.2,
+          513.9,
+          529.7,
+          504.5
         ],
         "warmups": 1,
         "runCount": 5,
-        "pass": 121,
+        "pass": 125,
         "fail": 29,
         "warn": 0,
         "skip": 0,
-        "scored": 150,
-        "passPct": 80.66666666666667,
+        "scored": 154,
+        "passPct": 81.16883116883118,
         "plants": [
           {
             "caseId": "async-component-prop-bad",
@@ -4807,6 +9013,20 @@
             "message": "caught 1 error(s)"
           },
           {
+            "caseId": "slot-shadow-restoration-bad",
+            "skip": false,
+            "status": "pass",
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "slot-shadow-restoration-ok",
+            "skip": false,
+            "status": "pass",
+            "ok": true,
+            "message": "clean"
+          },
+          {
             "caseId": "slot-unknown-prop-bad",
             "skip": false,
             "status": "pass",
@@ -4948,6 +9168,20 @@
           },
           {
             "caseId": "v-for-ok",
+            "skip": false,
+            "status": "pass",
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-for-shadow-restoration-bad",
+            "skip": false,
+            "status": "pass",
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-for-shadow-restoration-ok",
             "skip": false,
             "status": "pass",
             "ok": true,
@@ -5120,39 +9354,39 @@
           "/home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/App_aead458673bec6c8.vue.ts"
         ]
       },
-      "ms": 761.5,
-      "rssMb": 234.5,
-      "rssToolMb": 84.7,
-      "rssEngineMb": 149.8
+      "ms": 513.9,
+      "rssMb": 240.9,
+      "rssToolMb": 85.2,
+      "rssEngineMb": 155.7
     },
     {
       "suite": "typecheck-all",
       "caseId": "all-plants",
       "tool": "golar-typecheck",
       "status": "pass",
-      "message": "94% (141/150) · 5 ⚠ (needed fallthroughAttributes) · median 0.95s · avg 0.94s of 5 after 1 warmup(s)",
+      "message": "94% (145/154) · 5 ⚠ (needed fallthroughAttributes) · median 0.67s · avg 0.67s of 5 after 1 warmup(s)",
       "detail": {
-        "ms": 949.6,
-        "avgMs": 943,
-        "minMs": 930.6,
-        "maxMs": 951.9,
-        "rssMb": 356.9,
-        "rssToolMb": 356.9,
+        "ms": 665.7,
+        "avgMs": 673.9,
+        "minMs": 653.3,
+        "maxMs": 695.2,
+        "rssMb": 368.3,
+        "rssToolMb": 368.3,
         "runs": [
-          931.6,
-          951.9,
-          949.6,
-          951.2,
-          930.6
+          665.7,
+          690.7,
+          695.2,
+          664.5,
+          653.3
         ],
         "warmups": 1,
         "runCount": 5,
-        "pass": 141,
+        "pass": 145,
         "fail": 4,
         "warn": 5,
         "skip": 0,
-        "scored": 150,
-        "passPct": 94,
+        "scored": 154,
+        "passPct": 94.15584415584415,
         "plants": [
           {
             "caseId": "async-component-prop-bad",
@@ -5897,6 +10131,20 @@
             "message": "caught 1 error(s)"
           },
           {
+            "caseId": "slot-shadow-restoration-bad",
+            "skip": false,
+            "status": "pass",
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "slot-shadow-restoration-ok",
+            "skip": false,
+            "status": "pass",
+            "ok": true,
+            "message": "clean"
+          },
+          {
             "caseId": "slot-unknown-prop-bad",
             "skip": false,
             "status": "pass",
@@ -6038,6 +10286,20 @@
           },
           {
             "caseId": "v-for-ok",
+            "skip": false,
+            "status": "pass",
+            "ok": true,
+            "message": "clean"
+          },
+          {
+            "caseId": "v-for-shadow-restoration-bad",
+            "skip": false,
+            "status": "pass",
+            "ok": true,
+            "message": "caught 1 error(s)"
+          },
+          {
+            "caseId": "v-for-shadow-restoration-ok",
             "skip": false,
             "status": "pass",
             "ok": true,
@@ -6208,9 +10470,9 @@
         "unattributed": 0,
         "unattributedFiles": []
       },
-      "ms": 949.6,
-      "rssMb": 356.9,
-      "rssToolMb": 356.9
+      "ms": 665.7,
+      "rssMb": 368.3,
+      "rssToolMb": 368.3
     },
     {
       "suite": "component-meta",
@@ -7385,7 +11647,7 @@
       "caseId": "props-destructure",
       "tool": "verter-component-meta",
       "status": "fail",
-      "message": "props.count: expected hasDefault; props.verbose: expected hasDefault",
+      "message": "props.count: expected hasDefault=true, got false; props.verbose: expected hasDefault=true, got false",
       "detail": {
         "meta": {
           "source": "verter-component-meta",
@@ -7619,40 +11881,44 @@
       "suite": "component-meta",
       "caseId": "slots",
       "tool": "verter-component-meta",
-      "status": "pass",
-      "message": "props=1 · events=0 · slots=3 · exposed=0",
+      "status": "fail",
+      "message": "slots.default: type.open: expected boolean, got open; slots.footer: type.id: expected number, got id",
       "detail": {
-        "source": "verter-component-meta",
-        "props": [
-          "heading"
-        ],
-        "events": [],
-        "slots": [
-          "default",
-          "icon",
-          "footer"
-        ],
-        "exposed": []
+        "meta": {
+          "source": "verter-component-meta",
+          "props": [
+            "heading"
+          ],
+          "events": [],
+          "slots": [
+            "default",
+            "icon",
+            "footer"
+          ],
+          "exposed": []
+        }
       }
     },
     {
       "suite": "component-meta",
       "caseId": "slots",
       "tool": "vize-declaration-meta",
-      "status": "pass",
-      "message": "props=1 · events=0 · slots=3 · exposed=0",
+      "status": "fail",
+      "message": "slots.default: reported type is missing or is not a parseable TypeScript type; slots.footer: reported type is missing or is not a parseable TypeScript type",
       "detail": {
-        "source": "vize-declaration",
-        "props": [
-          "heading"
-        ],
-        "events": [],
-        "slots": [
-          "default",
-          "icon",
-          "footer"
-        ],
-        "exposed": []
+        "meta": {
+          "source": "vize-declaration",
+          "props": [
+            "heading"
+          ],
+          "events": [],
+          "slots": [
+            "default",
+            "icon",
+            "footer"
+          ],
+          "exposed": []
+        }
       }
     },
     {
@@ -7834,14 +12100,14 @@
       "caseId": "hover-template-binding",
       "tool": "volar",
       "status": "pass",
-      "message": "template hover mentions a type (```typescript (property) greeting: \"confirm-lsp\" ```)",
+      "message": "template hover has the expected string type (```typescript (property) greeting: \"confirm-lsp\" ```)",
       "detail": {
         "snippet": "```typescript\n(property) greeting: \"confirm-lsp\"\n```",
-        "ms": 1737.6,
-        "readyMs": 1173.9,
+        "ms": 1078,
+        "readyMs": 709,
         "readySignalMs": null
       },
-      "ms": 1737.6
+      "ms": 1078
     },
     {
       "suite": "lsp",
@@ -7898,9 +12164,9 @@
       "caseId": "rename-prop-template",
       "tool": "volar",
       "status": "pass",
-      "message": "rename of title edits App.vue's template usage (app.vue:1, child.vue:2 :: [\"renamedTitle\"])",
+      "message": "rename of title edits App.vue's template usage (app.vue:1, child.vue:2 :: applied rename of title to renamedTitle; declaration, uses and decoys checked)",
       "detail": {
-        "snippet": "app.vue:1, child.vue:2 :: [\"renamedTitle\"]"
+        "snippet": "app.vue:1, child.vue:2 :: applied rename of title to renamedTitle; declaration, uses and decoys checked"
       }
     },
     {
@@ -7928,14 +12194,14 @@
       "caseId": "hover-template-binding",
       "tool": "vize",
       "status": "pass",
-      "message": "template hover mentions a type (```typescript const greeting: \"confirm-lsp\" ```)",
+      "message": "template hover has the expected string type (```typescript const greeting: \"confirm-lsp\" ```)",
       "detail": {
         "snippet": "```typescript\nconst greeting: \"confirm-lsp\"\n```",
-        "ms": 317.5,
-        "readyMs": 265.7,
+        "ms": 266.7,
+        "readyMs": 228.3,
         "readySignalMs": null
       },
-      "ms": 317.5
+      "ms": 266.7
     },
     {
       "suite": "lsp",
@@ -7981,10 +12247,10 @@
       "suite": "lsp",
       "caseId": "references-prop-template",
       "tool": "vize",
-      "status": "pass",
-      "message": "references from the title declaration reach App.vue's template",
+      "status": "fail",
+      "message": "references missing App.vue symbol ranges — found files child.vue",
       "detail": {
-        "snippet": "app.vue@3:12 child.vue@2:2 child.vue@10:9"
+        "snippet": "child.vue@2:2 child.vue@4:7 child.vue@4:59 child.vue@10:9"
       }
     },
     {
@@ -7992,27 +12258,27 @@
       "caseId": "rename-prop-template",
       "tool": "vize",
       "status": "pass",
-      "message": "rename of title edits App.vue's template usage (app.vue:1, child.vue:2 :: [\"renamedTitle\"])",
+      "message": "rename of title edits App.vue's template usage (app.vue:1, child.vue:2 :: applied rename of title to renamedTitle; declaration, uses and decoys checked)",
       "detail": {
-        "snippet": "app.vue:1, child.vue:2 :: [\"renamedTitle\"]"
+        "snippet": "app.vue:1, child.vue:2 :: applied rename of title to renamedTitle; declaration, uses and decoys checked"
       }
     },
     {
       "suite": "lsp",
       "caseId": "diagnostics-template",
       "tool": "vize",
-      "status": "pass",
-      "message": "publishDiagnostics names plantedBadProp",
+      "status": "fail",
+      "message": "no diagnostic mentioning plantedBadProp within 20000ms — no diagnostics published",
       "detail": {
-        "snippet": "Object literal may only specify known properties, and '\"plantedBadProp\"' does not exist in type '__VizeComponentCheckProps<Props, __VizePublicComponentAttrs & {"
+        "snippet": ""
       }
     },
     {
       "suite": "lsp",
       "caseId": "diagnostics-clear-after-fix",
       "tool": "vize",
-      "status": "pass",
-      "message": "planted plantedBadProp diagnostic cleared after didChange",
+      "status": "fail",
+      "message": "cannot confirm clear: planted plantedBadProp never appeared",
       "detail": {
         "snippet": ""
       }
@@ -8022,14 +12288,14 @@
       "caseId": "hover-template-binding",
       "tool": "verter",
       "status": "pass",
-      "message": "template hover mentions a type (```typescript const greeting: \"confirm-lsp\" ```)",
+      "message": "template hover has the expected string type (```typescript const greeting: \"confirm-lsp\" ```)",
       "detail": {
         "snippet": "```typescript\nconst greeting: \"confirm-lsp\"\n```",
-        "ms": 203.7,
-        "readyMs": 190.2,
-        "readySignalMs": null
+        "ms": 263,
+        "readyMs": 256,
+        "readySignalMs": 228.2
       },
-      "ms": 203.7
+      "ms": 263
     },
     {
       "suite": "lsp",
@@ -8076,7 +12342,7 @@
       "caseId": "references-prop-template",
       "tool": "verter",
       "status": "fail",
-      "message": "references missing App.vue — only found child.vue",
+      "message": "references missing App.vue symbol ranges — found files child.vue",
       "detail": {
         "snippet": "child.vue@2:2 child.vue@10:9"
       }
@@ -8086,9 +12352,9 @@
       "caseId": "rename-prop-template",
       "tool": "verter",
       "status": "fail",
-      "message": "BROKEN REFACTOR: edited child.vue:2 but produced no edit in App.vue — the template usage is left behind",
+      "message": "BROKEN REFACTOR: must edit both App.vue and Child.vue",
       "detail": {
-        "snippet": "child.vue:2 :: []"
+        "snippet": "child.vue:2 :: applied rename of title to renamedTitle; declaration, uses and decoys checked"
       }
     },
     {
@@ -8098,7 +12364,7 @@
       "status": "pass",
       "message": "publishDiagnostics names plantedBadProp",
       "detail": {
-        "snippet": "Type '{ title: \"confirm-lsp\"; plantedBadProp: string; }' is not assignable to type 'IntrinsicAttributes & VNodeProps & AllowedComponentProps & ComponentCustomPr"
+        "snippet": "Unknown prop 'planted-bad-prop' on component <Child> verter verter/unknown-prop | Type '{ title: \"confirm-lsp\"; plantedBadProp: string; }' is not assignable to type 'IntrinsicAttributes & VNodeProps & AllowedComponentProps & ComponentCustomPr"
       }
     },
     {
@@ -8118,9 +12384,9 @@
       "status": "pass",
       "message": "487→487B idempotent rewrote",
       "detail": {
-        "ms": 246.35288700000092
+        "ms": 156.26842999999644
       },
-      "ms": 246.35288700000092
+      "ms": 156.26842999999644
     },
     {
       "suite": "format",
@@ -8129,9 +12395,9 @@
       "status": "pass",
       "message": "487→487B idempotent rewrote",
       "detail": {
-        "ms": 322.2303230000107
+        "ms": 231.40907999999763
       },
-      "ms": 322.2303230000107
+      "ms": 231.40907999999763
     },
     {
       "suite": "format",
@@ -8140,9 +12406,9 @@
       "status": "pass",
       "message": "487→488B idempotent rewrote",
       "detail": {
-        "ms": 49.40488000000187
+        "ms": 96.06387100000575
       },
-      "ms": 49.40488000000187
+      "ms": 96.06387100000575
     },
     {
       "suite": "format",
@@ -8151,9 +12417,9 @@
       "status": "pass",
       "message": "487→497B idempotent rewrote",
       "detail": {
-        "ms": 53.77226399999927
+        "ms": 35.42771299999731
       },
-      "ms": 53.77226399999927
+      "ms": 35.42771299999731
     },
     {
       "suite": "format",
@@ -8162,9 +12428,9 @@
       "status": "pass",
       "message": "337→337B unchanged",
       "detail": {
-        "ms": 181.51078199999756
+        "ms": 117.78806500000064
       },
-      "ms": 181.51078199999756
+      "ms": 117.78806500000064
     },
     {
       "suite": "format",
@@ -8173,9 +12439,9 @@
       "status": "pass",
       "message": "337→337B unchanged",
       "detail": {
-        "ms": 309.5493589999969
+        "ms": 212.91153399999894
       },
-      "ms": 309.5493589999969
+      "ms": 212.91153399999894
     },
     {
       "suite": "format",
@@ -8184,9 +12450,9 @@
       "status": "pass",
       "message": "337→337B unchanged",
       "detail": {
-        "ms": 47.94562399999995
+        "ms": 28.725967000005767
       },
-      "ms": 47.94562399999995
+      "ms": 28.725967000005767
     },
     {
       "suite": "format",
@@ -8195,9 +12461,9 @@
       "status": "pass",
       "message": "337→337B unchanged",
       "detail": {
-        "ms": 51.669607999996515
+        "ms": 34.011358999996446
       },
-      "ms": 51.669607999996515
+      "ms": 34.011358999996446
     },
     {
       "suite": "format",
@@ -8206,9 +12472,9 @@
       "status": "pass",
       "message": "216→216B unchanged",
       "detail": {
-        "ms": 168.89552199999162
+        "ms": 102.89321499998914
       },
-      "ms": 168.89552199999162
+      "ms": 102.89321499998914
     },
     {
       "suite": "format",
@@ -8217,9 +12483,9 @@
       "status": "pass",
       "message": "216→216B unchanged",
       "detail": {
-        "ms": 272.6092619999981
+        "ms": 190.81586499999685
       },
-      "ms": 272.6092619999981
+      "ms": 190.81586499999685
     },
     {
       "suite": "format",
@@ -8228,9 +12494,9 @@
       "status": "pass",
       "message": "216→216B rewrote",
       "detail": {
-        "ms": 47.467262000005576
+        "ms": 30.929873999994015
       },
-      "ms": 47.467262000005576
+      "ms": 30.929873999994015
     },
     {
       "suite": "format",
@@ -8239,9 +12505,9 @@
       "status": "pass",
       "message": "216→216B unchanged",
       "detail": {
-        "ms": 52.573741000000155
+        "ms": 35.25779299999704
       },
-      "ms": 52.573741000000155
+      "ms": 35.25779299999704
     },
     {
       "suite": "format",
@@ -8250,9 +12516,9 @@
       "status": "pass",
       "message": "204→204B unchanged",
       "detail": {
-        "ms": 156.75417000000016
+        "ms": 99.92762000000221
       },
-      "ms": 156.75417000000016
+      "ms": 99.92762000000221
     },
     {
       "suite": "format",
@@ -8261,9 +12527,9 @@
       "status": "pass",
       "message": "204→204B unchanged",
       "detail": {
-        "ms": 280.55129000000306
+        "ms": 201.2847419999889
       },
-      "ms": 280.55129000000306
+      "ms": 201.2847419999889
     },
     {
       "suite": "format",
@@ -8272,9 +12538,9 @@
       "status": "pass",
       "message": "204→204B unchanged",
       "detail": {
-        "ms": 48.02715700000408
+        "ms": 30.07455299999856
       },
-      "ms": 48.02715700000408
+      "ms": 30.07455299999856
     },
     {
       "suite": "format",
@@ -8283,9 +12549,9 @@
       "status": "pass",
       "message": "204→203B rewrote",
       "detail": {
-        "ms": 50.04989999999816
+        "ms": 34.18230899999617
       },
-      "ms": 50.04989999999816
+      "ms": 34.18230899999617
     },
     {
       "suite": "format",
@@ -8294,9 +12560,9 @@
       "status": "pass",
       "message": "153→153B unchanged",
       "detail": {
-        "ms": 201.45694800000638
+        "ms": 131.8130700000038
       },
-      "ms": 201.45694800000638
+      "ms": 131.8130700000038
     },
     {
       "suite": "format",
@@ -8305,9 +12571,9 @@
       "status": "pass",
       "message": "153→153B unchanged",
       "detail": {
-        "ms": 278.73747400000866
+        "ms": 197.78092599999218
       },
-      "ms": 278.73747400000866
+      "ms": 197.78092599999218
     },
     {
       "suite": "format",
@@ -8316,9 +12582,9 @@
       "status": "pass",
       "message": "153→153B unchanged",
       "detail": {
-        "ms": 48.40566899999976
+        "ms": 29.462056999997003
       },
-      "ms": 48.40566899999976
+      "ms": 29.462056999997003
     },
     {
       "suite": "format",
@@ -8327,9 +12593,9 @@
       "status": "pass",
       "message": "153→151B rewrote",
       "detail": {
-        "ms": 51.88017899999977
+        "ms": 32.66191899999103
       },
-      "ms": 51.88017899999977
+      "ms": 32.66191899999103
     },
     {
       "suite": "format",
@@ -8338,9 +12604,9 @@
       "status": "pass",
       "message": "298→299B idempotent rewrote",
       "detail": {
-        "ms": 152.39710800000466
+        "ms": 95.15444100000605
       },
-      "ms": 152.39710800000466
+      "ms": 95.15444100000605
     },
     {
       "suite": "format",
@@ -8349,9 +12615,9 @@
       "status": "pass",
       "message": "298→299B idempotent rewrote",
       "detail": {
-        "ms": 257.043697000001
+        "ms": 174.98085499998706
       },
-      "ms": 257.043697000001
+      "ms": 174.98085499998706
     },
     {
       "suite": "format",
@@ -8360,9 +12626,9 @@
       "status": "pass",
       "message": "298→298B idempotent rewrote",
       "detail": {
-        "ms": 47.891654999999446
+        "ms": 30.30866199999582
       },
-      "ms": 47.891654999999446
+      "ms": 30.30866199999582
     },
     {
       "suite": "format",
@@ -8371,9 +12637,9 @@
       "status": "pass",
       "message": "298→298B idempotent unchanged",
       "detail": {
-        "ms": 53.03537199999846
+        "ms": 32.92329099999915
       },
-      "ms": 53.03537199999846
+      "ms": 32.92329099999915
     },
     {
       "suite": "format",
@@ -8382,9 +12648,9 @@
       "status": "pass",
       "message": "228→228B unchanged",
       "detail": {
-        "ms": 151.8837940000085
+        "ms": 96.29527699999744
       },
-      "ms": 151.8837940000085
+      "ms": 96.29527699999744
     },
     {
       "suite": "format",
@@ -8393,9 +12659,9 @@
       "status": "pass",
       "message": "228→228B unchanged",
       "detail": {
-        "ms": 285.3144289999909
+        "ms": 203.43848400001298
       },
-      "ms": 285.3144289999909
+      "ms": 203.43848400001298
     },
     {
       "suite": "format",
@@ -8404,9 +12670,9 @@
       "status": "pass",
       "message": "228→228B rewrote",
       "detail": {
-        "ms": 50.51362499999232
+        "ms": 87.40881399999489
       },
-      "ms": 50.51362499999232
+      "ms": 87.40881399999489
     },
     {
       "suite": "format",
@@ -8415,9 +12681,9 @@
       "status": "pass",
       "message": "228→228B unchanged",
       "detail": {
-        "ms": 54.642502999995486
+        "ms": 33.11239999999816
       },
-      "ms": 54.642502999995486
+      "ms": 33.11239999999816
     },
     {
       "suite": "format",
@@ -8426,9 +12692,9 @@
       "status": "pass",
       "message": "356→356B rewrote",
       "detail": {
-        "ms": 177.5827380000119
+        "ms": 110.65414400000009
       },
-      "ms": 177.5827380000119
+      "ms": 110.65414400000009
     },
     {
       "suite": "format",
@@ -8437,9 +12703,9 @@
       "status": "pass",
       "message": "356→356B rewrote",
       "detail": {
-        "ms": 274.6736749999982
+        "ms": 192.49629299998924
       },
-      "ms": 274.6736749999982
+      "ms": 192.49629299998924
     },
     {
       "suite": "format",
@@ -8448,9 +12714,9 @@
       "status": "pass",
       "message": "356→356B rewrote",
       "detail": {
-        "ms": 48.439343000005465
+        "ms": 30.281308000005083
       },
-      "ms": 48.439343000005465
+      "ms": 30.281308000005083
     },
     {
       "suite": "format",
@@ -8459,9 +12725,9 @@
       "status": "pass",
       "message": "356→356B unchanged",
       "detail": {
-        "ms": 51.625654999996186
+        "ms": 35.17223399999784
       },
-      "ms": 51.625654999996186
+      "ms": 35.17223399999784
     },
     {
       "suite": "format",
@@ -8470,9 +12736,9 @@
       "status": "pass",
       "message": "179→182B rewrote",
       "detail": {
-        "ms": 149.8281130000105
+        "ms": 99.55305699999735
       },
-      "ms": 149.8281130000105
+      "ms": 99.55305699999735
     },
     {
       "suite": "format",
@@ -8481,9 +12747,9 @@
       "status": "pass",
       "message": "179→182B rewrote",
       "detail": {
-        "ms": 281.68198900000425
+        "ms": 197.22065499999735
       },
-      "ms": 281.68198900000425
+      "ms": 197.22065499999735
     },
     {
       "suite": "format",
@@ -8492,9 +12758,9 @@
       "status": "pass",
       "message": "179→179B unchanged",
       "detail": {
-        "ms": 47.6329609999957
+        "ms": 30.570414999994682
       },
-      "ms": 47.6329609999957
+      "ms": 30.570414999994682
     },
     {
       "suite": "format",
@@ -8503,9 +12769,9 @@
       "status": "pass",
       "message": "179→179B unchanged",
       "detail": {
-        "ms": 51.161974000002374
+        "ms": 34.040875000006054
       },
-      "ms": 51.161974000002374
+      "ms": 34.040875000006054
     },
     {
       "suite": "format",
@@ -8514,9 +12780,9 @@
       "status": "pass",
       "message": "182→182B unchanged",
       "detail": {
-        "ms": 157.78388000000268
+        "ms": 96.9792490000109
       },
-      "ms": 157.78388000000268
+      "ms": 96.9792490000109
     },
     {
       "suite": "format",
@@ -8525,9 +12791,9 @@
       "status": "pass",
       "message": "182→182B unchanged",
       "detail": {
-        "ms": 282.45762199998717
+        "ms": 199.148829999991
       },
-      "ms": 282.45762199998717
+      "ms": 199.148829999991
     },
     {
       "suite": "format",
@@ -8537,10 +12803,10 @@
       "message": "formatted output does not match /(^|[\\r\\n])\\.wrapper\\r?\\n {2}h1\\.title CONFIRM_PUG_TITLE\\r?\\n {2}ul\\r?\\n {4}li\\(v-for=\"item in items\" :key=\"item\"\\) \\{\\{ item \\}\\}/",
       "detail": {
         "formatted": "<script setup>\nconst items = [\"a\", \"b\"];\n</script>\n\n<template lang=\"pug\">\n  .wrapper\n    h1.title CONFIRM_PUG_TITLE\n    ul\n      li(v-for=\"item in items\" :key=\"item\") {{ item }}\n</template>\n",
-        "ms": 51.66525599999295,
+        "ms": 32.85142099999939,
         "snippet": "Found 1 file(s)\nReformatted: format-pug-template.vue\n\nFormatted 1 file(s)\n  1 file(s) reformatted\n"
       },
-      "ms": 51.66525599999295
+      "ms": 32.85142099999939
     },
     {
       "suite": "format",
@@ -8549,9 +12815,9 @@
       "status": "pass",
       "message": "182→182B unchanged",
       "detail": {
-        "ms": 52.5863859999954
+        "ms": 34.02024899999378
       },
-      "ms": 52.5863859999954
+      "ms": 34.02024899999378
     },
     {
       "suite": "format",
@@ -8560,9 +12826,9 @@
       "status": "pass",
       "message": "675→763B idempotent rewrote",
       "detail": {
-        "ms": 173.02559200000542
+        "ms": 107.87101499999699
       },
-      "ms": 173.02559200000542
+      "ms": 107.87101499999699
     },
     {
       "suite": "format",
@@ -8571,9 +12837,9 @@
       "status": "pass",
       "message": "675→740B idempotent rewrote",
       "detail": {
-        "ms": 292.2192930000019
+        "ms": 210.03864199999953
       },
-      "ms": 292.2192930000019
+      "ms": 210.03864199999953
     },
     {
       "suite": "format",
@@ -8582,9 +12848,9 @@
       "status": "pass",
       "message": "675→721B idempotent rewrote",
       "detail": {
-        "ms": 49.10071400000015
+        "ms": 33.67719300001045
       },
-      "ms": 49.10071400000015
+      "ms": 33.67719300001045
     },
     {
       "suite": "format",
@@ -8593,9 +12859,9 @@
       "status": "pass",
       "message": "675→674B idempotent rewrote",
       "detail": {
-        "ms": 52.80725800000073
+        "ms": 35.111581999997725
       },
-      "ms": 52.80725800000073
+      "ms": 35.111581999997725
     },
     {
       "suite": "format",
@@ -8604,9 +12870,9 @@
       "status": "pass",
       "message": "336→342B idempotent rewrote",
       "detail": {
-        "ms": 159.61667399998987
+        "ms": 99.74275099999795
       },
-      "ms": 159.61667399998987
+      "ms": 99.74275099999795
     },
     {
       "suite": "format",
@@ -8615,9 +12881,9 @@
       "status": "pass",
       "message": "336→342B idempotent rewrote",
       "detail": {
-        "ms": 284.1109460000007
+        "ms": 201.36015499998757
       },
-      "ms": 284.1109460000007
+      "ms": 201.36015499998757
     },
     {
       "suite": "format",
@@ -8626,9 +12892,9 @@
       "status": "pass",
       "message": "336→336B idempotent unchanged",
       "detail": {
-        "ms": 47.36909300000116
+        "ms": 30.91153199999826
       },
-      "ms": 47.36909300000116
+      "ms": 30.91153199999826
     },
     {
       "suite": "format",
@@ -8637,9 +12903,9 @@
       "status": "pass",
       "message": "336→336B idempotent unchanged",
       "detail": {
-        "ms": 55.84859099998721
+        "ms": 33.293854999996256
       },
-      "ms": 55.84859099998721
+      "ms": 33.293854999996256
     },
     {
       "suite": "format",
@@ -8648,9 +12914,9 @@
       "status": "pass",
       "message": "208→208B unchanged",
       "detail": {
-        "ms": 150.01533399999607
+        "ms": 96.65754899999592
       },
-      "ms": 150.01533399999607
+      "ms": 96.65754899999592
     },
     {
       "suite": "format",
@@ -8659,9 +12925,9 @@
       "status": "pass",
       "message": "208→208B unchanged",
       "detail": {
-        "ms": 249.4004600000044
+        "ms": 176.67646299999615
       },
-      "ms": 249.4004600000044
+      "ms": 176.67646299999615
     },
     {
       "suite": "format",
@@ -8671,10 +12937,10 @@
       "message": "formatted output missing \"CONFIRM_TOP_BETWEEN_BLOCKS\"",
       "detail": {
         "formatted": "<!-- CONFIRM_TOP_BEFORE_TEMPLATE -->\n\n<script setup>\nconst planted = 1;\n</script>\n\n<template>\n  <p>top-level comments</p>\n</template>\n",
-        "ms": 49.352404999997816,
+        "ms": 31.318969999992987,
         "snippet": "Found 1 file(s)\nReformatted: format-top-level-comments.vue\n\nFormatted 1 file(s)\n  1 file(s) reformatted\n"
       },
-      "ms": 49.352404999997816
+      "ms": 31.318969999992987
     },
     {
       "suite": "format",
@@ -8683,9 +12949,239 @@
       "status": "pass",
       "message": "208→208B unchanged",
       "detail": {
-        "ms": 53.541184999994584
+        "ms": 33.6418740000081
       },
-      "ms": 53.541184999994584
+      "ms": 33.6418740000081
+    },
+    {
+      "suite": "format",
+      "caseId": "shared-css-and-custom-block-semantics",
+      "tool": "prettier",
+      "status": "pass",
+      "message": "460→536B idempotent rewrote",
+      "detail": {
+        "ms": 109.42707799999334
+      },
+      "ms": 109.42707799999334
+    },
+    {
+      "suite": "format",
+      "caseId": "shared-css-and-custom-block-semantics",
+      "tool": "oxfmt",
+      "status": "pass",
+      "message": "460→536B idempotent rewrote",
+      "detail": {
+        "ms": 215.9455159999925
+      },
+      "ms": 215.9455159999925
+    },
+    {
+      "suite": "format",
+      "caseId": "shared-css-and-custom-block-semantics",
+      "tool": "vize-fmt",
+      "status": "pass",
+      "message": "460→529B idempotent rewrote",
+      "detail": {
+        "ms": 30.169031999990693
+      },
+      "ms": 30.169031999990693
+    },
+    {
+      "suite": "format",
+      "caseId": "shared-css-and-custom-block-semantics",
+      "tool": "biome-fmt",
+      "status": "fail",
+      "message": "messy template block was not rewritten",
+      "detail": {
+        "formatted": "<template><section><span>preserve</span><span>styles</span></section></template>\n<style scoped>.card{color:red;color:blue!important;--label:\"keep  two spaces\";padding:1px 2px}@media(min-width:1px){.card:hover{opacity:.8}}</style>\n<style>.ca",
+        "ms": 32.349809000006644,
+        "snippet": "Formatted 1 file in 699µs. No fixes applied.\n"
+      },
+      "ms": 32.349809000006644
+    },
+    {
+      "suite": "format",
+      "caseId": "shared-template-behaviour",
+      "tool": "prettier",
+      "status": "pass",
+      "message": "537→631B idempotent rewrote",
+      "detail": {
+        "ms": 136.139393999998
+      },
+      "ms": 136.139393999998
+    },
+    {
+      "suite": "format",
+      "caseId": "shared-template-behaviour",
+      "tool": "oxfmt",
+      "status": "pass",
+      "message": "537→615B idempotent rewrote",
+      "detail": {
+        "ms": 217.7615070000029
+      },
+      "ms": 217.7615070000029
+    },
+    {
+      "suite": "format",
+      "caseId": "shared-template-behaviour",
+      "tool": "vize-fmt",
+      "status": "pass",
+      "message": "537→602B idempotent rewrote",
+      "detail": {
+        "ms": 30.98167900000408
+      },
+      "ms": 30.98167900000408
+    },
+    {
+      "suite": "format",
+      "caseId": "shared-template-behaviour",
+      "tool": "biome-fmt",
+      "status": "fail",
+      "message": "messy template block was not rewritten",
+      "detail": {
+        "formatted": "<script setup lang=\"ts\">\nimport { ref, computed } from \"vue\";\nconst ok = ref(true);\nconst query = ref(\" x \");\nconst rows = ref([\n\t{ id: 1, label: \"one\" },\n\t{ id: 2, label: \"two\" },\n]);\nconst upper = computed(() => query.value.toUpperCase())",
+        "ms": 35.8913590000011,
+        "snippet": "Formatted 1 file in 1343µs. Fixed 1 file.\n"
+      },
+      "ms": 35.8913590000011
+    },
+    {
+      "suite": "format",
+      "caseId": "shared-descriptor-attributes",
+      "tool": "prettier",
+      "status": "pass",
+      "message": "499→532B idempotent rewrote",
+      "detail": {
+        "ms": 161.79775500000687
+      },
+      "ms": 161.79775500000687
+    },
+    {
+      "suite": "format",
+      "caseId": "shared-descriptor-attributes",
+      "tool": "oxfmt",
+      "status": "pass",
+      "message": "499→532B idempotent rewrote",
+      "detail": {
+        "ms": 251.27926000001025
+      },
+      "ms": 251.27926000001025
+    },
+    {
+      "suite": "format",
+      "caseId": "shared-descriptor-attributes",
+      "tool": "vize-fmt",
+      "status": "pass",
+      "message": "499→514B idempotent rewrote",
+      "detail": {
+        "ms": 32.15941700000258
+      },
+      "ms": 32.15941700000258
+    },
+    {
+      "suite": "format",
+      "caseId": "shared-descriptor-attributes",
+      "tool": "biome-fmt",
+      "status": "fail",
+      "message": "messy template block was not rewritten",
+      "detail": {
+        "formatted": "<script setup lang=\"ts\" generic=\"T extends { id: number }\">\nconst props = defineProps<{ items: T[] }>();\n</script>\n<template><ol><li v-for=\"item in props.items\" :key=\"item.id\">{{ item.id }}</li></ol></template>\n<style scoped module=\"theme\" ",
+        "ms": 34.51969200000167,
+        "snippet": "Formatted 1 file in 1182µs. Fixed 1 file.\n"
+      },
+      "ms": 34.51969200000167
+    },
+    {
+      "suite": "format",
+      "caseId": "shared-significant-whitespace-and-regexp",
+      "tool": "prettier",
+      "status": "pass",
+      "message": "246→270B idempotent rewrote",
+      "detail": {
+        "ms": 99.96006099999067
+      },
+      "ms": 99.96006099999067
+    },
+    {
+      "suite": "format",
+      "caseId": "shared-significant-whitespace-and-regexp",
+      "tool": "oxfmt",
+      "status": "pass",
+      "message": "246→270B idempotent rewrote",
+      "detail": {
+        "ms": 200.10258500000054
+      },
+      "ms": 200.10258500000054
+    },
+    {
+      "suite": "format",
+      "caseId": "shared-significant-whitespace-and-regexp",
+      "tool": "vize-fmt",
+      "status": "pass",
+      "message": "246→257B idempotent rewrote",
+      "detail": {
+        "ms": 32.96906800000579
+      },
+      "ms": 32.96906800000579
+    },
+    {
+      "suite": "format",
+      "caseId": "shared-significant-whitespace-and-regexp",
+      "tool": "biome-fmt",
+      "status": "fail",
+      "message": "messy template block was not rewritten",
+      "detail": {
+        "formatted": "<script setup>\nconst pattern = /alpha+/gi;\nconst matched = pattern.test(\"ALPHA\");\n</script>\n<template><section :data-match=\"matched\"><pre>  alpha\n    beta  </pre><span>left</span> <span>right</span><code v-pre>{{ literal }}</code></section>",
+        "ms": 34.99328600001172,
+        "snippet": "Formatted 1 file in 1039µs. Fixed 1 file.\n"
+      },
+      "ms": 34.99328600001172
+    },
+    {
+      "suite": "format",
+      "caseId": "shared-comments-and-svg",
+      "tool": "prettier",
+      "status": "pass",
+      "message": "287→309B idempotent rewrote",
+      "detail": {
+        "ms": 110.58660899999086
+      },
+      "ms": 110.58660899999086
+    },
+    {
+      "suite": "format",
+      "caseId": "shared-comments-and-svg",
+      "tool": "oxfmt",
+      "status": "pass",
+      "message": "287→301B idempotent rewrote",
+      "detail": {
+        "ms": 216.74411499999405
+      },
+      "ms": 216.74411499999405
+    },
+    {
+      "suite": "format",
+      "caseId": "shared-comments-and-svg",
+      "tool": "vize-fmt",
+      "status": "pass",
+      "message": "287→303B idempotent rewrote",
+      "detail": {
+        "ms": 30.05281300000206
+      },
+      "ms": 30.05281300000206
+    },
+    {
+      "suite": "format",
+      "caseId": "shared-comments-and-svg",
+      "tool": "biome-fmt",
+      "status": "fail",
+      "message": "messy template block was not rewritten",
+      "detail": {
+        "formatted": "<script setup>\n// FORMAT_SCRIPT_COMMENT\nconst colour = \"red\";\n</script>\n<template>\n <!-- FORMAT_TEMPLATE_COMMENT -->\n <svg viewBox=\"0 0 10 10\" @click.once=\"()=>0\"><circle :fill=\"colour\" cx=\"5\" cy=\"5\" r=\"4\" /></svg>\n</template>\n<style>\n/* FO",
+        "ms": 32.97433599999931,
+        "snippet": "Formatted 1 file in 1069µs. Fixed 1 file.\n"
+      },
+      "ms": 32.97433599999931
     }
   ]
 }
