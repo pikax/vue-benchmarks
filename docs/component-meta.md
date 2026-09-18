@@ -2,12 +2,12 @@
 
 > Auto-generated from the JSON snapshots in [`results/benchmarks/`](../results/benchmarks/) and [`results/real_world/`](../results/real_world/) by `pnpm docs`. Do not edit by hand.
 
-- **Generated:** 2026-09-12T11:01:27.224Z
+- **Generated:** 2026-09-18T13:42:39.794Z
 - **Fixture:** `fixtures/200` (200 files)
 - **Runs / warmups:** 5 / 1
 - **Runner:** Linux · linux/x64 · 4 CPUs · AMD EPYC 7763 64-Core Processor · 15.6 GB · Node v22.23.2
-- **Commit:** [`d4906cb`](https://github.com/pikax/vue-benchmarks/commit/d4906cbe77791d01e3e55b298b0bff7476ea561a)
-- **CI run:** https://github.com/pikax/vue-benchmarks/actions/runs/34689529541
+- **Commit:** [`9db7b15`](https://github.com/pikax/vue-benchmarks/commit/9db7b15d6a8266ab757541d4f5e3a2a6ae13d2b6)
+- **CI run:** https://github.com/pikax/vue-benchmarks/actions/runs/35350720887
 - **Source:** `results/benchmarks/bench-Linux-200-bench.json`
 
 ## Results
@@ -39,15 +39,15 @@ Files: **100** · Bytes: **142,771**
 
 | Tool | Fresh child | Fresh min | Fresh stddev | Fresh CV% | vs fastest fresh child | **Warm (primary)** | Warm min | Warm stddev | Warm CV% | vs fastest warm | Meta members | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| vue-component-meta (Promise.all) ⚠ | (2.38 s) | (2.36 s) | (21.9 ms) | (0.9%) | not ranked | (908.6 ms) | (898.7 ms) | (46.1 ms) | (5.1%) | not ranked | (1,343) | – |
-| @verter/component-meta (Promise.all) ⚠ | (469.5 ms) | (463.9 ms) | (6.7 ms) | (1.4%) | not ranked | (472.8 ms) | (465.3 ms) | (106.3 ms) | (22.5%) | not ranked | (88) | – |
-| @verter/component-meta (getComponentMetaBatch) ⚠ | (318.4 ms) | (314.9 ms) | (4.3 ms) | (1.3%) | not ranked | (283.3 ms) | (277.7 ms) | (5.5 ms) | (1.9%) | not ranked | (88) | – |
+| vue-component-meta (Promise.all) ⚠ | (2.50 s) | (2.46 s) | (28.6 ms) | (1.1%) | not ranked | (969.7 ms) | (908.5 ms) | (65.7 ms) | (6.8%) | not ranked | (1,343) | – |
+| @verter/component-meta (Promise.all) ❌ | error | – | – | – | – | – | – | – | – | – | – | – |
+| @verter/component-meta (getComponentMetaBatch) ❌ | error | – | – | – | – | – | – | – | – | – | – | – |
 
 <details><summary>Notes</summary>
 
 - **vue-component-meta (Promise.all) ⚠**: createChecker(tsconfig) + Promise.all over getComponentMeta for each .vue file. getComponentMeta is SYNCHRONOUS: every request is issued before any is awaited, but a synchronous API cannot overlap them — the event loop serialises the whole fan-out on one thread. Read this row as the cost of fanning out a sync API, never as a parallel result. ⚠ COMPONENT-META SEMANTIC VALIDITY FAIL (28/29 passed) — options-api-component: events.increment: missing; events.reset: missing.
-- **@verter/component-meta (Promise.all) ⚠**: openComponentMetaSession(root, tsconfig) + Promise.all over getComponentMeta for each .vue file, so the whole corpus is in flight at once against one session; no updateFile overlay. In-flight count equals the corpus size, so this number is corpus-dependent by construction. ⚠ COMPONENT-META SEMANTIC VALIDITY FAIL (27/29 passed) — props-destructure: props.count: expected hasDefault=true, got false; props.verbose: expected hasDefault=true, got false; slots: slots.default: type.open: expected boolean, got open; slots.footer: type.id: expected number, got id. ⚠ COMPARISON REFERENCE INVALID: the official Vue component-meta baseline did not pass mandatory validation.
-- **@verter/component-meta (getComponentMetaBatch) ⚠**: openComponentMetaSession(root, tsconfig) + a SINGLE getComponentMetaBatch(files) call — one scheduler dispatch with the host-owned admission caches shared across the batch, rather than N independent requests; no updateFile overlay. ⚠ COMPONENT-META SEMANTIC VALIDITY FAIL (27/29 passed) — props-destructure: props.count: expected hasDefault=true, got false; props.verbose: expected hasDefault=true, got false; slots: slots.default: type.open: expected boolean, got open; slots.footer: type.id: expected number, got id. ⚠ COMPARISON REFERENCE INVALID: the official Vue component-meta baseline did not pass mandatory validation.
+- **@verter/component-meta (Promise.all) ❌**: output materialization error: component-meta output materialization failed at exposed[].type index 0: the source has no live graph representation under the request view
+- **@verter/component-meta (getComponentMetaBatch) ❌**: output materialization error: component-meta output materialization failed at exposed[].type index 0: the source has no live graph representation under the request view
 
 </details>
 
@@ -60,13 +60,13 @@ Files: **100** · Bytes: **142,771**
 
 | Tool | Fresh child | Fresh min | Fresh stddev | Fresh CV% | vs fastest fresh child | **Warm (primary)** | Warm min | Warm stddev | Warm CV% | vs fastest warm | Meta members | Throughput | Peak RSS |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| vue-component-meta ⚠ | (2.38 s) | (2.36 s) | (17.3 ms) | (0.7%) | not ranked | (910.3 ms) | (904.5 ms) | (50.5 ms) | (5.5%) | not ranked | (1,343) | – | (247.6 MB) |
-| @verter/component-meta ⚠ | (468.5 ms) | (460.0 ms) | (4.5 ms) | (1.0%) | not ranked | (470.7 ms) | (447.2 ms) | (18.9 ms) | (4.0%) | not ranked | (88) | – | (91.5 MB) |
+| vue-component-meta ⚠ | (2.46 s) | (2.40 s) | (45.7 ms) | (1.9%) | not ranked | (953.7 ms) | (910.9 ms) | (66.5 ms) | (7.0%) | not ranked | (1,343) | – | (248.7 MB) |
+| @verter/component-meta ❌ | error | – | – | – | – | – | – | – | – | – | – | – | – |
 
 <details><summary>Notes</summary>
 
 - **vue-component-meta ⚠**: createChecker(tsconfig) + getComponentMeta for each .vue file ⚠ COMPONENT-META SEMANTIC VALIDITY FAIL (28/29 passed) — options-api-component: events.increment: missing; events.reset: missing.
-- **@verter/component-meta ⚠**: openComponentMetaSession(root, tsconfig) + disk-backed getComponentMeta for each .vue file; no updateFile overlay ⚠ COMPONENT-META SEMANTIC VALIDITY FAIL (27/29 passed) — props-destructure: props.count: expected hasDefault=true, got false; props.verbose: expected hasDefault=true, got false; slots: slots.default: type.open: expected boolean, got open; slots.footer: type.id: expected number, got id. ⚠ COMPARISON REFERENCE INVALID: the official Vue component-meta baseline did not pass mandatory validation.
+- **@verter/component-meta ❌**: output materialization error: component-meta output materialization failed at exposed[].type index 0: the source has no live graph representation under the request view
 
 </details>
 
@@ -91,11 +91,8 @@ Files: **100** · Bytes: **142,771**
 
 Raw runs:
 
-- **vue-component-meta (Promise.all)**: Fresh child (first timed row workload): 2.39 s, 2.38 s, 2.36 s, 2.37 s, 2.42 s · Warm: 928.6 ms, 1.01 s, 901.8 ms, 908.6 ms, 898.7 ms
-- **@verter/component-meta (Promise.all)**: Fresh child (first timed row workload): 480.8 ms, 476.6 ms, 469.1 ms, 469.5 ms, 463.9 ms · Warm: 709.0 ms, 466.0 ms, 465.3 ms, 472.8 ms, 483.4 ms
-- **@verter/component-meta (getComponentMetaBatch)**: Fresh child (first timed row workload): 326.2 ms, 318.4 ms, 317.2 ms, 314.9 ms, 318.5 ms · Warm: 277.7 ms, 278.1 ms, 289.0 ms, 283.3 ms, 288.7 ms
-- **vue-component-meta**: Fresh child (first timed row workload): 2.39 s, 2.36 s, 2.37 s, 2.40 s, 2.38 s · Warm: 1.02 s, 921.8 ms, 904.5 ms, 904.7 ms, 910.3 ms
-- **@verter/component-meta**: Fresh child (first timed row workload): 471.8 ms, 468.5 ms, 460.0 ms, 469.3 ms, 467.3 ms · Warm: 447.2 ms, 498.9 ms, 470.7 ms, 468.5 ms, 481.0 ms
+- **vue-component-meta (Promise.all)**: Fresh child (first timed row workload): 2.47 s, 2.50 s, 2.46 s, 2.52 s, 2.51 s · Warm: 971.7 ms, 969.7 ms, 908.5 ms, 931.0 ms, 1.08 s
+- **vue-component-meta**: Fresh child (first timed row workload): 2.40 s, 2.47 s, 2.45 s, 2.53 s, 2.46 s · Warm: 1.06 s, 1.04 s, 910.9 ms, 934.8 ms, 953.7 ms
 
 </details>
 
@@ -103,7 +100,7 @@ Raw runs:
 
 Executable correctness checks — planted errors that must be reported, clean fixtures that must stay clean. A fast tool that misses plants cannot rank as a correct one; gate failures surface as ⚠ in the timing tables.
 
-pass **76** · fail **11** · warn **0** · skip **0**
+pass **73** · fail **14** · warn **0** · skip **0**
 
 | Case | vue-component-meta | verter-component-meta | vize-declaration-meta |
 | --- | :---: | :---: | :---: |
@@ -113,26 +110,26 @@ pass **76** · fail **11** · warn **0** · skip **0**
 | `define-model` | ✓ | ✓ | **✗** |
 | `define-model-modifiers` | ✓ | ✓ | **✗** |
 | `define-options` | ✓ | ✓ | ✓ |
-| `emits-multi-payload` | ✓ | ✓ | ✓ |
+| `emits-multi-payload` | ✓ | **✗** | ✓ |
 | `emits-overloads` | ✓ | ✓ | ✓ |
 | `emits-runtime-validators` | ✓ | ✓ | ✓ |
 | `emits-type-alias` | ✓ | ✓ | **✗** |
 | `enum-props` | ✓ | ✓ | ✓ |
 | `events-emits` | ✓ | ✓ | ✓ |
-| `expose` | ✓ | ✓ | **✗** |
-| `expose-ref-computed` | ✓ | ✓ | ✓ |
+| `expose` | ✓ | **✗** | **✗** |
+| `expose-ref-computed` | ✓ | **✗** | ✓ |
 | `external-props-import` | ✓ | ✓ | **✗** |
-| `full-api` | ✓ | ✓ | ✓ |
+| `full-api` | ✓ | **✗** | ✓ |
 | `generic-props` | ✓ | ✓ | ✓ |
 | `interface-extends-props` | ✓ | ✓ | **✗** |
 | `no-declared-api` | ✓ | ✓ | ✓ |
 | `options-api-component` | **✗** | ✓ | **✗** |
-| `prop-type-factory-defaults` | ✓ | ✓ | ✓ |
-| `props-destructure` | ✓ | **✗** | ✓ |
+| `prop-type-factory-defaults` | ✓ | **✗** | ✓ |
+| `props-destructure` | ✓ | ✓ | ✓ |
 | `recursive-props` | ✓ | ✓ | ✓ |
 | `runtime-props` | ✓ | ✓ | ✓ |
 | `script-mixed-blocks` | ✓ | ✓ | ✓ |
-| `slots` | ✓ | **✗** | **✗** |
+| `slots` | ✓ | ✓ | **✗** |
 | `slots-generic-optional` | ✓ | ✓ | ✓ |
 | `union-intersection-props` | ✓ | ✓ | ✓ |
 | `with-defaults` | ✓ | ✓ | ✓ |
@@ -141,14 +138,17 @@ pass **76** · fail **11** · warn **0** · skip **0**
 
 - `define-model` · **vize-declaration-meta** — props.modelValue: missing; props.count: missing; events.update:modelValue: missing; events.update:count: missing
 - `define-model-modifiers` · **vize-declaration-meta** — props.modelValue: missing; props.page: missing; events.update:modelValue: missing; events.update:page: missing
+- `emits-multi-payload` · **verter-component-meta** — events.toggle: parameter 1: optionality differs; events.item-click: parameter 2.shift: missing property
 - `emits-type-alias` · **vize-declaration-meta** — events.update:modelValue: missing; events.blur: missing; events.commit: missing
+- `expose` · **verter-component-meta** — output materialization error: component-meta output materialization failed at exposed[].type index 2: the source has no live graph representation under the request view
 - `expose` · **vize-declaration-meta** — capability gap — generateDeclaration does not emit defineExpose members
+- `expose-ref-computed` · **verter-component-meta** — output materialization error: component-meta output materialization failed at exposed[].type index 0: the source has no live graph representation under the request view
 - `external-props-import` · **vize-declaration-meta** — props.name: missing; props.hint: missing; props.value: missing
+- `full-api` · **verter-component-meta** — output materialization error: component-meta output materialization failed at exposed[].type index 1: the source has no live graph representation under the request view
 - `interface-extends-props` · **vize-declaration-meta** — props.id: missing; props.disabled: missing; props.modelValue: missing; props.maxLength: missing
 - `options-api-component` · **vue-component-meta** — events.increment: missing; events.reset: missing
 - `options-api-component` · **vize-declaration-meta** — props.label: missing; props.step: missing
-- `props-destructure` · **verter-component-meta** — props.count: expected hasDefault=true, got false; props.verbose: expected hasDefault=true, got false
-- `slots` · **verter-component-meta** — slots.default: type.open: expected boolean, got open; slots.footer: type.id: expected number, got id
+- `prop-type-factory-defaults` · **verter-component-meta** — props.filters: type "unknown | undefined" missing filter; props.pagination: type "unknown | undefined" missing page|size; props.scope: type "unknown" missing all|active
 - `slots` · **vize-declaration-meta** — slots.default: reported type is missing or is not a parseable TypeScript type; slots.footer: reported type is missing or is not a parseable TypeScript type
 
 </details>
@@ -161,12 +161,11 @@ Each tool in its own process so RSS, allocation proxies and CPU are not mixed wi
 
 | Tool | RSS min / max / avg | Alloc min / max / avg | CPU ms | CPU % | Wall ms | Samples |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| @verter/component-meta | 31.30 / 90.30 / 70.52 | 7.97 / 23.79 / 15.88 | 633 | 155.6 | 410 | 3 |
-| vue-component-meta | 247.49 / 247.49 / 247.49 | 168.00 / 168.00 / 168.00 | 4160 | 217.7 | 1911 | 3 |
+| vue-component-meta | 247.54 / 247.54 / 247.54 | 179.54 / 179.54 / 179.54 | 3099 | 221.7 | 1398 | 3 |
+| @verter/component-meta ❌ | n/a | n/a | n/a | n/a | n/a | – |
 
 <details><summary>Notes</summary>
 
-- **@verter/component-meta** — RSS/heap deltas vs baseline after GC; CPU via process.cpuUsage() in isolated worker
 - **vue-component-meta** — RSS/heap deltas vs baseline after GC; CPU via process.cpuUsage() in isolated worker
 
 </details>
@@ -178,18 +177,18 @@ Each tool in its own process so RSS, allocation proxies and CPU are not mixed wi
 | Package | Version |
 | --- | --- |
 | node | v22.23.2 |
-| vue | 3.5.42 |
-| vue-36 | 3.6.0-rc.8 |
-| @vue/compiler-sfc | 3.5.42 |
-| @vue/compiler-sfc-36 | 3.6.0-rc.8 |
-| vize | 0.421.0 |
-| @vizejs/native | 0.421.0 |
-| @verter/native | 0.0.1-beta.3 |
+| vue | 3.5.43 |
+| vue-36 | 3.6.0-rc.9 |
+| @vue/compiler-sfc | 3.5.43 |
+| @vue/compiler-sfc-36 | 3.6.0-rc.9 |
+| vize | 0.424.10 |
+| @vizejs/native | 0.424.10 |
+| @verter/native | 0.0.1-beta.5 |
 | @fervid/napi | 0.4.1 |
-| verter-tsc | 0.0.1-beta.3 |
-| @verter/component-meta | 0.0.1-beta.3 |
-| verter-lsp | 0.0.1-beta.3 |
-| verter-mcp | 0.0.1-beta.3 |
+| verter-tsc | 0.0.1-beta.5 |
+| @verter/component-meta | 0.0.1-beta.5 |
+| verter-lsp | 0.0.1-beta.5 |
+| verter-mcp | 0.0.1-beta.5 |
 | @vue/language-server | 3.3.11 |
 | @vue/typescript-plugin | 3.3.11 |
 | typescript-language-server | 6.0.0 |
@@ -197,22 +196,22 @@ Each tool in its own process so RSS, allocation proxies and CPU are not mixed wi
 | vue-component-meta | 3.3.11 |
 | golar | 0.1.10 |
 | @golar/vue | 0.1.10 |
-| prettier | 3.9.6 |
-| oxfmt | 0.67.0 |
-| oxlint | 1.82.0 |
+| prettier | 3.9.7 |
+| oxfmt | 0.68.0 |
+| oxlint | 1.83.0 |
 | eslint-plugin-vue | 10.11.0 |
-| @biomejs/biome | 2.5.13 |
+| @biomejs/biome | 2.5.14 |
 | typescript | 6.0.3 |
-| cli:vize | 0.421.0 |
+| cli:vize | 0.424.10 |
 | cli:vue-tsc | 6.0.3 |
-| cli:verter-tsc | 0.0.1-beta.3 |
+| cli:verter-tsc | 0.0.1-beta.5 |
 | cli:golar | 0.1.10 |
-| cli:prettier | 3.9.6 |
-| cli:oxfmt | 0.67.0 |
-| cli:oxlint | 1.82.0 |
-| cli:biome | 2.5.13 |
-| vue-jsx-vapor | 3.2.23 |
-| @vue-jsx-vapor/compiler-rs | 3.2.23 |
+| cli:prettier | 3.9.7 |
+| cli:oxfmt | 0.68.0 |
+| cli:oxlint | 1.83.0 |
+| cli:biome | 2.5.14 |
+| vue-jsx-vapor | 3.2.24 |
+| @vue-jsx-vapor/compiler-rs | 3.2.24 |
 | @vue/babel-plugin-jsx | 3.0.0 |
 | @babel/core | 8.0.5 |
 

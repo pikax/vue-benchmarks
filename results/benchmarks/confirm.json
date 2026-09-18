@@ -1,20 +1,20 @@
 {
   "kind": "confirmation",
-  "generatedAt": "2026-09-12T10:53:38.017Z",
+  "generatedAt": "2026-09-18T13:35:18.494Z",
   "runner": {
     "label": "Linux",
     "platform": "linux",
     "arch": "x64",
     "cpuCount": 4,
-    "cpuModel": "Intel(R) Xeon(R) 6973P-C",
-    "totalmem": 16765374464,
+    "cpuModel": "AMD EPYC 7763 64-Core Processor",
+    "totalmem": 16770748416,
     "node": "v22.23.2",
     "ci": true,
-    "runUrl": "https://github.com/pikax/vue-benchmarks/actions/runs/34689529541"
+    "runUrl": "https://github.com/pikax/vue-benchmarks/actions/runs/35350720887"
   },
   "summary": {
-    "pass": 510,
-    "fail": 166,
+    "pass": 524,
+    "fail": 152,
     "skip": 26,
     "warn": 0,
     "total": 702
@@ -612,8 +612,8 @@
       "suite": "compile",
       "caseId": "v-text-v-html",
       "tool": "verter",
-      "status": "fail",
-      "message": "expected text \"compiled\", got \"\""
+      "status": "pass",
+      "message": ""
     },
     {
       "suite": "compile",
@@ -822,8 +822,8 @@
       "suite": "compile",
       "caseId": "css-v-bind",
       "tool": "verter",
-      "status": "fail",
-      "message": "useCssVars key \"--a91785dd-themeColor\" is already \"--\"-prefixed; the runtime prepends \"--\", so the style var resolves to \"----a91785dd-themeColor\" and cannot match the emitted CSS"
+      "status": "pass",
+      "message": ""
     },
     {
       "suite": "compile",
@@ -857,8 +857,8 @@
       "suite": "compile",
       "caseId": "v-show",
       "tool": "verter",
-      "status": "fail",
-      "message": "v-show false must set display:none (element must stay in the DOM)"
+      "status": "pass",
+      "message": ""
     },
     {
       "suite": "compile",
@@ -1067,8 +1067,8 @@
       "suite": "compile",
       "caseId": "v-model-choice",
       "tool": "verter",
-      "status": "fail",
-      "message": "expected text \"a\", got \"\""
+      "status": "pass",
+      "message": ""
     },
     {
       "suite": "compile",
@@ -1597,6 +1597,13 @@
     },
     {
       "suite": "compile",
+      "caseId": "style-deep",
+      "tool": "@verter/native",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
       "caseId": "style-slotted",
       "tool": "@verter/native",
       "status": "pass",
@@ -1611,6 +1618,13 @@
     },
     {
       "suite": "compile",
+      "caseId": "style-v-bind",
+      "tool": "@verter/native",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
       "caseId": "style-css-modules",
       "tool": "@verter/native",
       "status": "pass",
@@ -1618,7 +1632,35 @@
     },
     {
       "suite": "compile",
+      "caseId": "style-global-mixed-local",
+      "tool": "@verter/native",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
       "caseId": "style-deep-compound",
+      "tool": "@verter/native",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-slotted-compound",
+      "tool": "@verter/native",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-is-selector-list",
+      "tool": "@verter/native",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
+      "caseId": "style-where-selector-list",
       "tool": "@verter/native",
       "status": "pass",
       "message": "selector and declaration semantics preserved"
@@ -1639,66 +1681,24 @@
     },
     {
       "suite": "compile",
-      "caseId": "style-deep",
-      "tool": "@verter/native",
-      "status": "fail",
-      "message": "deep: scope attribute must remain on .deep-host while .deep-target becomes an unscoped descendant"
-    },
-    {
-      "suite": "compile",
-      "caseId": "style-v-bind",
-      "tool": "@verter/native",
-      "status": "fail",
-      "message": "v-bind: JS registers \"--927b501a-color\" but Vue's useCssVars runtime adds another -- prefix, so runtime output cannot match emitted CSS var(--927b501a-color)"
-    },
-    {
-      "suite": "compile",
-      "caseId": "style-global-mixed-local",
-      "tool": "@verter/native",
-      "status": "fail",
-      "message": "global-mixed-local: local selector fragments or a scope constraint leaked into Vue's global selector"
-    },
-    {
-      "suite": "compile",
-      "caseId": "style-slotted-compound",
-      "tool": "@verter/native",
-      "status": "fail",
-      "message": "slotted-compound: the slotted scope attribute was not attached to the final compound target"
-    },
-    {
-      "suite": "compile",
-      "caseId": "style-is-selector-list",
-      "tool": "@verter/native",
-      "status": "fail",
-      "message": "is-selector-list: the complete :is() selector list was not preserved"
-    },
-    {
-      "suite": "compile",
-      "caseId": "style-where-selector-list",
-      "tool": "@verter/native",
-      "status": "fail",
-      "message": "where-selector-list: the complete :where() selector list was not preserved"
-    },
-    {
-      "suite": "compile",
       "caseId": "style-scoped-keyframes",
       "tool": "@verter/native",
-      "status": "fail",
-      "message": "scoped-keyframes: scoped keyframe name was not rewritten"
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
     },
     {
       "suite": "compile",
       "caseId": "style-v-bind-multiple",
       "tool": "@verter/native",
-      "status": "fail",
-      "message": "v-bind-multiple: JS registers \"--7d8c9d6c-color\" but Vue's useCssVars runtime adds another -- prefix, so runtime output cannot match emitted CSS var(--7d8c9d6c-color)"
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
     },
     {
       "suite": "compile",
       "caseId": "style-v-bind-quoted",
       "tool": "@verter/native",
-      "status": "fail",
-      "message": "v-bind-quoted: JS registers \"--ac901a1e-theme_gap\" but Vue's useCssVars runtime adds another -- prefix, so runtime output cannot match emitted CSS var(--ac901a1e-theme_gap)"
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
     },
     {
       "suite": "compile",
@@ -2591,9 +2591,45 @@
       "caseId": "source-map-vdom-production-lf-raw",
       "tool": "verter-compile-many",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 325,
+            "generated": {
+              "line": 9,
+              "column": 15
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 449,
+            "generated": {
+              "line": 12,
+              "column": 77
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          }
+        ]
       }
     },
     {
@@ -2601,9 +2637,45 @@
       "caseId": "source-map-vdom-production-crlf-raw",
       "tool": "verter-compile-many",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 328,
+            "generated": {
+              "line": 9,
+              "column": 15
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 453,
+            "generated": {
+              "line": 12,
+              "column": 77
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          }
+        ]
       }
     },
     {
@@ -2611,9 +2683,81 @@
       "caseId": "source-map-vdom-production-lf-styles",
       "tool": "verter-compile-many",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token; css-0: css-0: no mapping segment starts at the selected generated token; css-1: css-1: sourcesContent does not equal the complete original SFC",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 581,
+            "generated": {
+              "line": 12,
+              "column": 15
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 705,
+            "generated": {
+              "line": 15,
+              "column": 77
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          },
+          {
+            "id": "css-0",
+            "ok": false,
+            "generatedOffset": 40,
+            "generated": {
+              "line": 2,
+              "column": 39
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 6,
+              "column": 22
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          },
+          {
+            "id": "css-1",
+            "ok": false,
+            "generatedOffset": 21,
+            "generated": {
+              "line": 2,
+              "column": 20
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 9,
+              "column": 20
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 20,
+              "name": null
+            },
+            "failure": "sourcesContent does not equal the complete original SFC"
+          }
+        ]
       }
     },
     {
@@ -2621,9 +2765,81 @@
       "caseId": "source-map-vdom-production-crlf-styles",
       "tool": "verter-compile-many",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token; css-0: css-0: no mapping segment starts at the selected generated token; css-1: css-1: sourcesContent does not equal the complete original SFC",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 588,
+            "generated": {
+              "line": 12,
+              "column": 15
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 713,
+            "generated": {
+              "line": 15,
+              "column": 77
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          },
+          {
+            "id": "css-0",
+            "ok": false,
+            "generatedOffset": 41,
+            "generated": {
+              "line": 2,
+              "column": 39
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 6,
+              "column": 22
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          },
+          {
+            "id": "css-1",
+            "ok": false,
+            "generatedOffset": 22,
+            "generated": {
+              "line": 2,
+              "column": 20
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 9,
+              "column": 20
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 20,
+              "name": null
+            },
+            "failure": "sourcesContent does not equal the complete original SFC"
+          }
+        ]
       }
     },
     {
@@ -3691,9 +3907,45 @@
       "caseId": "source-map-vdom-development-lf-raw",
       "tool": "verter-compile-many",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 200,
+            "generated": {
+              "line": 8,
+              "column": 15
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 686,
+            "generated": {
+              "line": 20,
+              "column": 77
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          }
+        ]
       }
     },
     {
@@ -3701,9 +3953,45 @@
       "caseId": "source-map-vdom-development-crlf-raw",
       "tool": "verter-compile-many",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 203,
+            "generated": {
+              "line": 8,
+              "column": 15
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 690,
+            "generated": {
+              "line": 20,
+              "column": 77
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          }
+        ]
       }
     },
     {
@@ -3711,9 +3999,81 @@
       "caseId": "source-map-vdom-development-lf-styles",
       "tool": "verter-compile-many",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token; css-0: css-0: no mapping segment starts at the selected generated token; css-1: css-1: sourcesContent does not equal the complete original SFC",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 456,
+            "generated": {
+              "line": 11,
+              "column": 15
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 983,
+            "generated": {
+              "line": 24,
+              "column": 77
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          },
+          {
+            "id": "css-0",
+            "ok": false,
+            "generatedOffset": 40,
+            "generated": {
+              "line": 2,
+              "column": 39
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 6,
+              "column": 22
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          },
+          {
+            "id": "css-1",
+            "ok": false,
+            "generatedOffset": 21,
+            "generated": {
+              "line": 2,
+              "column": 20
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 9,
+              "column": 20
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 20,
+              "name": null
+            },
+            "failure": "sourcesContent does not equal the complete original SFC"
+          }
+        ]
       }
     },
     {
@@ -3721,9 +4081,81 @@
       "caseId": "source-map-vdom-development-crlf-styles",
       "tool": "verter-compile-many",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token; css-0: css-0: no mapping segment starts at the selected generated token; css-1: css-1: sourcesContent does not equal the complete original SFC",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 463,
+            "generated": {
+              "line": 11,
+              "column": 15
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 991,
+            "generated": {
+              "line": 24,
+              "column": 77
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          },
+          {
+            "id": "css-0",
+            "ok": false,
+            "generatedOffset": 41,
+            "generated": {
+              "line": 2,
+              "column": 39
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 6,
+              "column": 22
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          },
+          {
+            "id": "css-1",
+            "ok": false,
+            "generatedOffset": 22,
+            "generated": {
+              "line": 2,
+              "column": 20
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 9,
+              "column": 20
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 20,
+              "name": null
+            },
+            "failure": "sourcesContent does not equal the complete original SFC"
+          }
+        ]
       }
     },
     {
@@ -4534,20 +4966,102 @@
       "suite": "compile",
       "caseId": "source-map-vapor-production-lf-raw",
       "tool": "verter-compile-many",
-      "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "status": "pass",
+      "message": "all selected generated positions trace to exact SFC coordinates",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 215,
+            "generated": {
+              "line": 8,
+              "column": 15
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 731,
+            "generated": {
+              "line": 21,
+              "column": 52
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 4,
+              "column": 27,
+              "name": null
+            }
+          }
+        ]
       }
     },
     {
       "suite": "compile",
       "caseId": "source-map-vapor-production-crlf-raw",
       "tool": "verter-compile-many",
-      "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "status": "pass",
+      "message": "all selected generated positions trace to exact SFC coordinates",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 218,
+            "generated": {
+              "line": 8,
+              "column": 15
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 735,
+            "generated": {
+              "line": 21,
+              "column": 52
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 4,
+              "column": 27,
+              "name": null
+            }
+          }
+        ]
       }
     },
     {
@@ -4555,9 +5069,86 @@
       "caseId": "source-map-vapor-production-lf-styles",
       "tool": "verter-compile-many",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "message": "css-0: css-0: no mapping segment starts at the selected generated token; css-1: css-1: sourcesContent does not equal the complete original SFC",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 471,
+            "generated": {
+              "line": 11,
+              "column": 15
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 1028,
+            "generated": {
+              "line": 25,
+              "column": 52
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 4,
+              "column": 27,
+              "name": null
+            }
+          },
+          {
+            "id": "css-0",
+            "ok": false,
+            "generatedOffset": 40,
+            "generated": {
+              "line": 2,
+              "column": 39
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 6,
+              "column": 22
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          },
+          {
+            "id": "css-1",
+            "ok": false,
+            "generatedOffset": 21,
+            "generated": {
+              "line": 2,
+              "column": 20
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 9,
+              "column": 20
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 20,
+              "name": null
+            },
+            "failure": "sourcesContent does not equal the complete original SFC"
+          }
+        ]
       }
     },
     {
@@ -4565,9 +5156,86 @@
       "caseId": "source-map-vapor-production-crlf-styles",
       "tool": "verter-compile-many",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "message": "css-0: css-0: no mapping segment starts at the selected generated token; css-1: css-1: sourcesContent does not equal the complete original SFC",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 478,
+            "generated": {
+              "line": 11,
+              "column": 15
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 1036,
+            "generated": {
+              "line": 25,
+              "column": 52
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 4,
+              "column": 27,
+              "name": null
+            }
+          },
+          {
+            "id": "css-0",
+            "ok": false,
+            "generatedOffset": 41,
+            "generated": {
+              "line": 2,
+              "column": 39
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 6,
+              "column": 22
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          },
+          {
+            "id": "css-1",
+            "ok": false,
+            "generatedOffset": 22,
+            "generated": {
+              "line": 2,
+              "column": 20
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 9,
+              "column": 20
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 20,
+              "name": null
+            },
+            "failure": "sourcesContent does not equal the complete original SFC"
+          }
+        ]
       }
     },
     {
@@ -5022,20 +5690,102 @@
       "suite": "compile",
       "caseId": "source-map-vapor-development-lf-raw",
       "tool": "verter-compile-many",
-      "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "status": "pass",
+      "message": "all selected generated positions trace to exact SFC coordinates",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 215,
+            "generated": {
+              "line": 8,
+              "column": 15
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 731,
+            "generated": {
+              "line": 21,
+              "column": 52
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 4,
+              "column": 27,
+              "name": null
+            }
+          }
+        ]
       }
     },
     {
       "suite": "compile",
       "caseId": "source-map-vapor-development-crlf-raw",
       "tool": "verter-compile-many",
-      "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "status": "pass",
+      "message": "all selected generated positions trace to exact SFC coordinates",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 218,
+            "generated": {
+              "line": 8,
+              "column": 15
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 735,
+            "generated": {
+              "line": 21,
+              "column": 52
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 4,
+              "column": 27,
+              "name": null
+            }
+          }
+        ]
       }
     },
     {
@@ -5043,9 +5793,86 @@
       "caseId": "source-map-vapor-development-lf-styles",
       "tool": "verter-compile-many",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "message": "css-0: css-0: no mapping segment starts at the selected generated token; css-1: css-1: sourcesContent does not equal the complete original SFC",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 471,
+            "generated": {
+              "line": 11,
+              "column": 15
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 1028,
+            "generated": {
+              "line": 25,
+              "column": 52
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 4,
+              "column": 27,
+              "name": null
+            }
+          },
+          {
+            "id": "css-0",
+            "ok": false,
+            "generatedOffset": 40,
+            "generated": {
+              "line": 2,
+              "column": 39
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 6,
+              "column": 22
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          },
+          {
+            "id": "css-1",
+            "ok": false,
+            "generatedOffset": 21,
+            "generated": {
+              "line": 2,
+              "column": 20
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 9,
+              "column": 20
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 20,
+              "name": null
+            },
+            "failure": "sourcesContent does not equal the complete original SFC"
+          }
+        ]
       }
     },
     {
@@ -5053,9 +5880,86 @@
       "caseId": "source-map-vapor-development-crlf-styles",
       "tool": "verter-compile-many",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "message": "css-0: css-0: no mapping segment starts at the selected generated token; css-1: css-1: sourcesContent does not equal the complete original SFC",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 478,
+            "generated": {
+              "line": 11,
+              "column": 15
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": true,
+            "generatedOffset": 1036,
+            "generated": {
+              "line": 25,
+              "column": 52
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 4,
+              "column": 27,
+              "name": null
+            }
+          },
+          {
+            "id": "css-0",
+            "ok": false,
+            "generatedOffset": 41,
+            "generated": {
+              "line": 2,
+              "column": 39
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 6,
+              "column": 22
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          },
+          {
+            "id": "css-1",
+            "ok": false,
+            "generatedOffset": 22,
+            "generated": {
+              "line": 2,
+              "column": 20
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 9,
+              "column": 20
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 20,
+              "name": null
+            },
+            "failure": "sourcesContent does not equal the complete original SFC"
+          }
+        ]
       }
     },
     {
@@ -5567,7 +6471,7 @@
       "caseId": "clean",
       "tool": "verter-lint",
       "status": "pass",
-      "message": "issues=0 (also fired, not scored: no-bare-strings-in-template, define-props-declaration, click-events-have-key-events, no-undef-components, multi-word-component-names)"
+      "message": "issues=0 (also fired, not scored: no-bare-strings-in-template, define-props-declaration, block-lang, click-events-have-key-events, no-undef-components, multi-word-component-names)"
     },
     {
       "suite": "lint",
@@ -5588,7 +6492,7 @@
       "caseId": "v-html",
       "tool": "verter-lint",
       "status": "pass",
-      "message": "issues=1 rules=no-v-html"
+      "message": "issues=2 rules=no-v-html,block-lang"
     },
     {
       "suite": "lint",
@@ -5609,7 +6513,7 @@
       "caseId": "v-for-no-key",
       "tool": "verter-lint",
       "status": "pass",
-      "message": "issues=1 rules=require-v-for-key"
+      "message": "issues=2 rules=require-v-for-key,block-lang"
     },
     {
       "suite": "lint",
@@ -5630,7 +6534,7 @@
       "caseId": "dupe-else-if",
       "tool": "verter-lint",
       "status": "fail",
-      "message": "missing rules no-dupe-v-else-if; got no-bare-strings-in-template, no-bare-strings-in-template"
+      "message": "missing rules no-dupe-v-else-if; got no-bare-strings-in-template, no-bare-strings-in-template, block-lang"
     },
     {
       "suite": "lint",
@@ -5651,7 +6555,7 @@
       "caseId": "textarea-mustache",
       "tool": "verter-lint",
       "status": "pass",
-      "message": "issues=2 rules=no-textarea-mustache,form-control-has-label"
+      "message": "issues=3 rules=no-textarea-mustache,form-control-has-label,block-lang"
     },
     {
       "suite": "lint",
@@ -5672,7 +6576,7 @@
       "caseId": "img-no-alt",
       "tool": "verter-lint",
       "status": "pass",
-      "message": "issues=1 rules=alt-text"
+      "message": "issues=2 rules=alt-text,block-lang"
     },
     {
       "suite": "lint",
@@ -5693,7 +6597,7 @@
       "caseId": "v-if-with-v-for",
       "tool": "verter-lint",
       "status": "pass",
-      "message": "issues=4 rules=no-use-v-if-with-v-for,no-undef-properties,no-use-v-if-with-v-for,attribute-order"
+      "message": "issues=5 rules=no-use-v-if-with-v-for,no-undef-properties,no-use-v-if-with-v-for,attribute-order,block-lang"
     },
     {
       "suite": "lint",
@@ -5714,7 +6618,7 @@
       "caseId": "duplicate-attributes",
       "tool": "verter-lint",
       "status": "fail",
-      "message": "missing rules no-duplicate-attributes; got no-bare-strings-in-template"
+      "message": "missing rules no-duplicate-attributes; got no-bare-strings-in-template, block-lang"
     },
     {
       "suite": "lint",
@@ -5756,7 +6660,7 @@
       "caseId": "mutating-props",
       "tool": "verter-lint",
       "status": "fail",
-      "message": "missing rules no-mutating-props; got click-events-have-key-events, define-props-declaration"
+      "message": "missing rules no-mutating-props; got click-events-have-key-events, define-props-declaration, block-lang"
     },
     {
       "suite": "lint",
@@ -5777,7 +6681,7 @@
       "caseId": "deprecated-slot-attr",
       "tool": "verter-lint",
       "status": "pass",
-      "message": "issues=3 rules=no-undef-components,no-bare-strings-in-template,no-deprecated-slot-attribute"
+      "message": "issues=4 rules=no-undef-components,no-bare-strings-in-template,no-deprecated-slot-attribute,block-lang"
     },
     {
       "suite": "lint",
@@ -5798,7 +6702,7 @@
       "caseId": "v-text-on-component",
       "tool": "verter-lint",
       "status": "pass",
-      "message": "issues=3 rules=no-undef-components,no-v-text-v-html-on-component,no-v-text"
+      "message": "issues=4 rules=no-undef-components,no-v-text-v-html-on-component,no-v-text,block-lang"
     },
     {
       "suite": "lint",
@@ -5826,7 +6730,7 @@
       "caseId": "template-key",
       "tool": "verter-lint",
       "status": "fail",
-      "message": "missing rules no-template-key; got no-bare-strings-in-template, no-useless-template-attributes, no-lone-template"
+      "message": "missing rules no-template-key; got no-bare-strings-in-template, no-useless-template-attributes, no-lone-template, block-lang"
     },
     {
       "suite": "lint",
@@ -5847,7 +6751,7 @@
       "caseId": "invalid-v-model",
       "tool": "verter-lint",
       "status": "fail",
-      "message": "expected ≥1 diagnostics, got 0"
+      "message": "missing rules valid-v-model; got block-lang"
     },
     {
       "suite": "lint",
@@ -5863,7 +6767,7 @@
       "status": "fail",
       "message": "expected ≥1 issues, got 0",
       "detail": {
-        "snippet": "\nNo problems found in 1 file(s)\nLinted 1 files in 564.5710µs\n"
+        "snippet": "\nNo problems found in 1 file(s)\nLinted 1 files in 918.1430µs\n"
       }
     },
     {
@@ -5871,7 +6775,7 @@
       "caseId": "invalid-v-slot",
       "tool": "verter-lint",
       "status": "fail",
-      "message": "missing rules valid-v-slot; got no-undef-components, no-bare-strings-in-template, multi-word-component-names"
+      "message": "missing rules valid-v-slot; got no-undef-components, no-bare-strings-in-template, multi-word-component-names, block-lang"
     },
     {
       "suite": "lint",
@@ -5887,7 +6791,7 @@
       "status": "fail",
       "message": "expected ≥1 issues, got 0",
       "detail": {
-        "snippet": "\nNo problems found in 1 file(s)\nLinted 1 files in 537.6510µs\n"
+        "snippet": "\nNo problems found in 1 file(s)\nLinted 1 files in 972.1530µs\n"
       }
     },
     {
@@ -5895,7 +6799,7 @@
       "caseId": "v-on-native-modifier",
       "tool": "verter-lint",
       "status": "pass",
-      "message": "issues=3 rules=no-undef-components,click-events-have-key-events,no-deprecated-v-on-native-modifier"
+      "message": "issues=4 rules=no-undef-components,click-events-have-key-events,no-deprecated-v-on-native-modifier,block-lang"
     },
     {
       "suite": "lint",
@@ -5916,7 +6820,7 @@
       "caseId": "reserved-props",
       "tool": "verter-lint",
       "status": "pass",
-      "message": "issues=2 rules=no-reserved-props,define-props-declaration"
+      "message": "issues=3 rules=no-reserved-props,define-props-declaration,block-lang"
     },
     {
       "suite": "lint",
@@ -5932,7 +6836,7 @@
       "status": "fail",
       "message": "expected ≥1 issues, got 0",
       "detail": {
-        "snippet": "\nNo problems found in 1 file(s)\nLinted 1 files in 534.7640µs\n"
+        "snippet": "\nNo problems found in 1 file(s)\nLinted 1 files in 939.8730µs\n"
       }
     },
     {
@@ -5940,7 +6844,7 @@
       "caseId": "computed-side-effect",
       "tool": "verter-lint",
       "status": "fail",
-      "message": "expected ≥1 diagnostics, got 0"
+      "message": "missing rules no-side-effects-in-computed; got block-lang"
     },
     {
       "suite": "lint",
@@ -5961,7 +6865,7 @@
       "caseId": "async-computed",
       "tool": "verter-lint",
       "status": "pass",
-      "message": "issues=3 rules=no-async-in-computed,no-side-effects-in-computed,no-potential-component-option-typo"
+      "message": "issues=4 rules=no-async-in-computed,no-side-effects-in-computed,no-potential-component-option-typo,block-lang"
     },
     {
       "suite": "lint",
@@ -5977,7 +6881,7 @@
       "status": "fail",
       "message": "expected ≥1 issues, got 0",
       "detail": {
-        "snippet": "\n1 warning in 1 file\nLinted 1 files in 592.9120µs\n"
+        "snippet": "\n1 warning in 1 file\nLinted 1 files in 1.0336ms\n"
       }
     },
     {
@@ -5985,7 +6889,7 @@
       "caseId": "prop-type-constructor",
       "tool": "verter-lint",
       "status": "pass",
-      "message": "issues=2 rules=require-prop-types,define-props-declaration"
+      "message": "issues=3 rules=require-prop-types,define-props-declaration,block-lang"
     },
     {
       "suite": "lint",
@@ -6013,20 +6917,20 @@
       "caseId": "all-plants",
       "tool": "vue-tsc",
       "status": "pass",
-      "message": "95% (147/154) · 5 ⚠ (needed fallthroughAttributes) · median 2.20s · avg 2.20s of 5 after 1 warmup(s)",
+      "message": "95% (147/154) · 5 ⚠ (needed fallthroughAttributes) · median 3.48s · avg 3.46s of 5 after 1 warmup(s)",
       "detail": {
-        "ms": 2196.8,
-        "avgMs": 2196.9,
-        "minMs": 2182,
-        "maxMs": 2209.9,
-        "rssMb": 345.9,
-        "rssToolMb": 345.9,
+        "ms": 3475.6,
+        "avgMs": 3461.3,
+        "minMs": 3409.9,
+        "maxMs": 3493.7,
+        "rssMb": 346.5,
+        "rssToolMb": 346.5,
         "runs": [
-          2203.1,
-          2182,
-          2209.9,
-          2196.8,
-          2192.5
+          3491.1,
+          3475.6,
+          3436.2,
+          3409.9,
+          3493.7
         ],
         "warmups": 1,
         "runCount": 5,
@@ -7119,30 +8023,30 @@
         "unattributed": 0,
         "unattributedFiles": []
       },
-      "ms": 2196.8,
-      "rssMb": 345.9,
-      "rssToolMb": 345.9
+      "ms": 3475.6,
+      "rssMb": 346.5,
+      "rssToolMb": 346.5
     },
     {
       "suite": "typecheck-all",
       "caseId": "all-plants",
       "tool": "vize-check",
       "status": "pass",
-      "message": "92% (142/154) · median 0.82s · avg 0.82s of 5 after 1 warmup(s)",
+      "message": "92% (142/154) · median 1.35s · avg 1.36s of 5 after 1 warmup(s)",
       "detail": {
-        "ms": 815.4,
-        "avgMs": 821.1,
-        "minMs": 806.7,
-        "maxMs": 838.4,
-        "rssMb": 540.8,
-        "rssToolMb": 73.8,
-        "rssEngineMb": 467,
+        "ms": 1354.4,
+        "avgMs": 1357.1,
+        "minMs": 1341.9,
+        "maxMs": 1383.8,
+        "rssMb": 553.6,
+        "rssToolMb": 74.4,
+        "rssEngineMb": 479.2,
         "runs": [
-          806.7,
-          815.4,
-          838.4,
-          813.4,
-          831.4
+          1354.4,
+          1383.8,
+          1360.6,
+          1344.6,
+          1341.9
         ],
         "warmups": 1,
         "runCount": 5,
@@ -8235,40 +9139,40 @@
         "unattributed": 0,
         "unattributedFiles": []
       },
-      "ms": 815.4,
-      "rssMb": 540.8,
-      "rssToolMb": 73.8,
-      "rssEngineMb": 467
+      "ms": 1354.4,
+      "rssMb": 553.6,
+      "rssToolMb": 74.4,
+      "rssEngineMb": 479.2
     },
     {
       "suite": "typecheck-all",
       "caseId": "all-plants",
       "tool": "verter-tsc",
       "status": "pass",
-      "message": "81% (125/154) · median 0.51s · avg 0.51s of 5 after 1 warmup(s) · 1 diagnostic(s) not attributable to a plant (/home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/App_aead458673bec6c8.vue.ts)",
+      "message": "88% (135/154) · median 3.07s · avg 3.08s of 5 after 1 warmup(s) · 1 diagnostic(s) not attributable to a plant (/home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/App_aead458673bec6c8.vue.ts)",
       "detail": {
-        "ms": 513.9,
-        "avgMs": 512.6,
-        "minMs": 499.7,
-        "maxMs": 529.7,
-        "rssMb": 240.9,
-        "rssToolMb": 85.2,
-        "rssEngineMb": 155.7,
+        "ms": 3068.9,
+        "avgMs": 3075.3,
+        "minMs": 3009.2,
+        "maxMs": 3197.4,
+        "rssMb": 729.8,
+        "rssToolMb": 306.6,
+        "rssEngineMb": 423.1,
         "runs": [
-          499.7,
-          515.2,
-          513.9,
-          529.7,
-          504.5
+          3031.6,
+          3069.2,
+          3009.2,
+          3068.9,
+          3197.4
         ],
         "warmups": 1,
         "runCount": 5,
-        "pass": 125,
-        "fail": 29,
+        "pass": 135,
+        "fail": 19,
         "warn": 0,
         "skip": 0,
         "scored": 154,
-        "passPct": 81.16883116883118,
+        "passPct": 87.66233766233766,
         "plants": [
           {
             "caseId": "async-component-prop-bad",
@@ -8315,9 +9219,9 @@
           {
             "caseId": "attrs-unknown-fallthrough",
             "skip": false,
-            "status": "pass",
-            "ok": true,
-            "message": "caught 1 error(s)"
+            "status": "fail",
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
           },
           {
             "caseId": "boolean-prop-attr-ok",
@@ -8616,9 +9520,9 @@
           {
             "caseId": "fallthrough-mono-ok",
             "skip": false,
-            "status": "fail",
-            "ok": false,
-            "message": "EXTRA VUE COMPILER OPTION — vueCompilerOptions.fallthroughAttributes is not default and is not on the shared tsconfig. A fully compatible checker types inheritAttrs fallthrough without this opt-in. Failed on the shared tsconfig and still failed after enabling it: expected clean (0 errors), got 1."
+            "status": "pass",
+            "ok": true,
+            "message": "clean"
           },
           {
             "caseId": "fallthrough-multi-bad",
@@ -8637,9 +9541,9 @@
           {
             "caseId": "fallthrough-native-type-bad",
             "skip": false,
-            "status": "fail",
-            "ok": false,
-            "message": "EXTRA VUE COMPILER OPTION — vueCompilerOptions.fallthroughAttributes is not default and is not on the shared tsconfig. A fully compatible checker types inheritAttrs fallthrough without this opt-in. Failed on the shared tsconfig and still failed after enabling it: plant at App.vue:8 did not mention one of: 'disabled' | Booleanish."
+            "status": "pass",
+            "ok": true,
+            "message": "caught 1 error(s)"
           },
           {
             "caseId": "fallthrough-vif-both-mono-false-bad",
@@ -8651,9 +9555,9 @@
           {
             "caseId": "fallthrough-vif-both-mono-ok",
             "skip": false,
-            "status": "fail",
-            "ok": false,
-            "message": "EXTRA VUE COMPILER OPTION — vueCompilerOptions.fallthroughAttributes is not default and is not on the shared tsconfig. A fully compatible checker types inheritAttrs fallthrough without this opt-in. Failed on the shared tsconfig and still failed after enabling it: expected clean (0 errors), got 1."
+            "status": "pass",
+            "ok": true,
+            "message": "clean"
           },
           {
             "caseId": "fallthrough-vif-mono-multi-bad",
@@ -8672,128 +9576,128 @@
           {
             "caseId": "fallthrough-vif-static-ok",
             "skip": false,
-            "status": "fail",
-            "ok": false,
-            "message": "EXTRA VUE COMPILER OPTION — vueCompilerOptions.fallthroughAttributes is not default and is not on the shared tsconfig. A fully compatible checker types inheritAttrs fallthrough without this opt-in. Failed on the shared tsconfig and still failed after enabling it: expected clean (0 errors), got 1."
+            "status": "pass",
+            "ok": true,
+            "message": "clean"
           },
           {
             "caseId": "fallthrough-vif-static-prop-ok",
             "skip": false,
-            "status": "fail",
-            "ok": false,
-            "message": "EXTRA VUE COMPILER OPTION — vueCompilerOptions.fallthroughAttributes is not default and is not on the shared tsconfig. A fully compatible checker types inheritAttrs fallthrough without this opt-in. Failed on the shared tsconfig and still failed after enabling it: expected clean (0 errors), got 1."
+            "status": "pass",
+            "ok": true,
+            "message": "clean"
           },
           {
             "caseId": "generic-component-bad",
             "skip": false,
             "status": "pass",
             "ok": true,
-            "message": "caught 4 error(s)"
+            "message": "caught 2 error(s)"
           },
           {
             "caseId": "generic-component-ok",
             "skip": false,
             "status": "fail",
             "ok": false,
-            "message": "clean fixture: diagnostic describes the tool's own generated code — /home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/cases/generic-component-ok/Child.vue(1,1): error TS2314: Generic type '___VERTER___Attrs' requires 1 type argument(s)."
+            "message": "expected clean (0 errors), got 1"
           },
           {
             "caseId": "generic-constraint-template-bad",
             "skip": false,
             "status": "pass",
             "ok": true,
-            "message": "caught 3 error(s)"
+            "message": "caught 1 error(s)"
           },
           {
             "caseId": "generic-default-ok",
             "skip": false,
-            "status": "fail",
-            "ok": false,
-            "message": "clean fixture: diagnostic describes the tool's own generated code — /home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/cases/generic-default-ok/Child.vue(1,1): error TS2315: Type '___VERTER___attributes' is not generic."
+            "status": "pass",
+            "ok": true,
+            "message": "clean"
           },
           {
             "caseId": "generic-define-model-bad",
             "skip": false,
             "status": "fail",
             "ok": false,
-            "message": "no diagnostic at App.vue:11 (@plant-error)"
+            "message": "expected ≥1 error(s), got 0"
           },
           {
             "caseId": "generic-define-model-ok",
             "skip": false,
-            "status": "fail",
-            "ok": false,
-            "message": "clean fixture: diagnostic describes the tool's own generated code — /home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/cases/generic-define-model-ok/Child.vue(1,1): error TS2314: Generic type '___VERTER___Attrs' requires 1 type argument(s)."
+            "status": "pass",
+            "ok": true,
+            "message": "clean"
           },
           {
             "caseId": "generic-emit-bad",
             "skip": false,
             "status": "pass",
             "ok": true,
-            "message": "caught 3 error(s)"
+            "message": "caught 1 error(s)"
           },
           {
             "caseId": "generic-emit-ok",
             "skip": false,
-            "status": "fail",
-            "ok": false,
-            "message": "clean fixture: diagnostic describes the tool's own generated code — /home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/cases/generic-emit-ok/Child.vue(1,1): error TS2314: Generic type '___VERTER___Attrs' requires 1 type argument(s)."
+            "status": "pass",
+            "ok": true,
+            "message": "clean"
           },
           {
             "caseId": "generic-fallthrough-mono-ok",
             "skip": false,
-            "status": "fail",
-            "ok": false,
-            "message": "EXTRA VUE COMPILER OPTION — vueCompilerOptions.fallthroughAttributes is not default and is not on the shared tsconfig. A fully compatible checker types inheritAttrs fallthrough without this opt-in. Failed on the shared tsconfig and still failed after enabling it: clean fixture: diagnostic describes the tool's own generated code — /home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/cases/generic-fallthrough-mono-ok/Child.vue(1,1): error TS2314: Generic type '___VERTER___Attrs' requires 1 type argument(s).."
+            "status": "pass",
+            "ok": true,
+            "message": "clean"
           },
           {
             "caseId": "generic-inherit-false-class-ok",
             "skip": false,
             "status": "fail",
             "ok": false,
-            "message": "clean fixture: diagnostic describes the tool's own generated code — /home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/cases/generic-inherit-false-class-ok/Child.vue(1,1): error TS2314: Generic type '___VERTER___Attrs' requires 1 type argument("
+            "message": "expected clean (0 errors), got 1"
           },
           {
             "caseId": "generic-inherit-false-unknown",
             "skip": false,
             "status": "pass",
             "ok": true,
-            "message": "caught 4 error(s)"
+            "message": "caught 2 error(s)"
           },
           {
             "caseId": "generic-multi-root-ok",
             "skip": false,
-            "status": "fail",
-            "ok": false,
-            "message": "clean fixture: diagnostic describes the tool's own generated code — /home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/cases/generic-multi-root-ok/Child.vue(1,1): error TS2314: Generic type '___VERTER___Attrs' requires 1 type argument(s)."
+            "status": "pass",
+            "ok": true,
+            "message": "clean"
           },
           {
             "caseId": "generic-slot-bad",
             "skip": false,
             "status": "pass",
             "ok": true,
-            "message": "caught 3 error(s)"
+            "message": "caught 1 error(s)"
           },
           {
             "caseId": "generic-slot-ok",
             "skip": false,
-            "status": "fail",
-            "ok": false,
-            "message": "clean fixture: diagnostic describes the tool's own generated code — /home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/cases/generic-slot-ok/Child.vue(1,1): error TS2314: Generic type '___VERTER___Attrs' requires 1 type argument(s)."
+            "status": "pass",
+            "ok": true,
+            "message": "clean"
           },
           {
             "caseId": "generic-two-params-bad",
             "skip": false,
             "status": "pass",
             "ok": true,
-            "message": "caught 3 error(s)"
+            "message": "caught 1 error(s)"
           },
           {
             "caseId": "generic-two-params-ok",
             "skip": false,
-            "status": "fail",
-            "ok": false,
-            "message": "clean fixture: diagnostic describes the tool's own generated code — /home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/cases/generic-two-params-ok/Child.vue(1,1): error TS2314: Generic type '___VERTER___Attrs' requires 2 type argument(s)."
+            "status": "pass",
+            "ok": true,
+            "message": "clean"
           },
           {
             "caseId": "global-component-prop-bad",
@@ -8819,9 +9723,9 @@
           {
             "caseId": "inherit-attrs-default-unknown",
             "skip": false,
-            "status": "pass",
-            "ok": true,
-            "message": "caught 1 error(s)"
+            "status": "fail",
+            "ok": false,
+            "message": "expected ≥1 error(s), got 0"
           },
           {
             "caseId": "inherit-attrs-false-class-style-ok",
@@ -9354,30 +10258,30 @@
           "/home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/App_aead458673bec6c8.vue.ts"
         ]
       },
-      "ms": 513.9,
-      "rssMb": 240.9,
-      "rssToolMb": 85.2,
-      "rssEngineMb": 155.7
+      "ms": 3068.9,
+      "rssMb": 729.8,
+      "rssToolMb": 306.6,
+      "rssEngineMb": 423.1
     },
     {
       "suite": "typecheck-all",
       "caseId": "all-plants",
       "tool": "golar-typecheck",
       "status": "pass",
-      "message": "94% (145/154) · 5 ⚠ (needed fallthroughAttributes) · median 0.67s · avg 0.67s of 5 after 1 warmup(s)",
+      "message": "94% (145/154) · 5 ⚠ (needed fallthroughAttributes) · median 0.99s · avg 0.99s of 5 after 1 warmup(s)",
       "detail": {
-        "ms": 665.7,
-        "avgMs": 673.9,
-        "minMs": 653.3,
-        "maxMs": 695.2,
-        "rssMb": 368.3,
-        "rssToolMb": 368.3,
+        "ms": 988.8,
+        "avgMs": 989.1,
+        "minMs": 978.4,
+        "maxMs": 1003.1,
+        "rssMb": 366,
+        "rssToolMb": 366,
         "runs": [
-          665.7,
-          690.7,
-          695.2,
-          664.5,
-          653.3
+          983,
+          992.4,
+          978.4,
+          988.8,
+          1003.1
         ],
         "warmups": 1,
         "runCount": 5,
@@ -10470,9 +11374,9 @@
         "unattributed": 0,
         "unattributedFiles": []
       },
-      "ms": 665.7,
-      "rssMb": 368.3,
-      "rssToolMb": 368.3
+      "ms": 988.8,
+      "rssMb": 366,
+      "rssToolMb": 366
     },
     {
       "suite": "component-meta",
@@ -10822,18 +11726,20 @@
       "suite": "component-meta",
       "caseId": "emits-multi-payload",
       "tool": "verter-component-meta",
-      "status": "pass",
-      "message": "props=0 · events=3 · slots=0 · exposed=0",
+      "status": "fail",
+      "message": "events.toggle: parameter 1: optionality differs; events.item-click: parameter 2.shift: missing property",
       "detail": {
-        "source": "verter-component-meta",
-        "props": [],
-        "events": [
-          "move",
-          "toggle",
-          "item-click"
-        ],
-        "slots": [],
-        "exposed": []
+        "meta": {
+          "source": "verter-component-meta",
+          "props": [],
+          "events": [
+            "move",
+            "toggle",
+            "item-click"
+          ],
+          "slots": [],
+          "exposed": []
+        }
       }
     },
     {
@@ -11154,19 +12060,8 @@
       "suite": "component-meta",
       "caseId": "expose",
       "tool": "verter-component-meta",
-      "status": "pass",
-      "message": "props=0 · events=0 · slots=0 · exposed=3",
-      "detail": {
-        "source": "verter-component-meta",
-        "props": [],
-        "events": [],
-        "slots": [],
-        "exposed": [
-          "focus",
-          "reset",
-          "value"
-        ]
-      }
+      "status": "fail",
+      "message": "output materialization error: component-meta output materialization failed at exposed[].type index 2: the source has no live graph representation under the request view"
     },
     {
       "suite": "component-meta",
@@ -11197,19 +12092,8 @@
       "suite": "component-meta",
       "caseId": "expose-ref-computed",
       "tool": "verter-component-meta",
-      "status": "pass",
-      "message": "props=0 · events=0 · slots=0 · exposed=3",
-      "detail": {
-        "source": "verter-component-meta",
-        "props": [],
-        "events": [],
-        "slots": [],
-        "exposed": [
-          "query",
-          "isEmpty",
-          "clear"
-        ]
-      }
+      "status": "fail",
+      "message": "output materialization error: component-meta output materialization failed at exposed[].type index 0: the source has no live graph representation under the request view"
     },
     {
       "suite": "component-meta",
@@ -11307,27 +12191,8 @@
       "suite": "component-meta",
       "caseId": "full-api",
       "tool": "verter-component-meta",
-      "status": "pass",
-      "message": "props=2 · events=2 · slots=2 · exposed=2",
-      "detail": {
-        "source": "verter-component-meta",
-        "props": [
-          "modelValue",
-          "size"
-        ],
-        "events": [
-          "update:modelValue",
-          "submit"
-        ],
-        "slots": [
-          "default",
-          "actions"
-        ],
-        "exposed": [
-          "focus",
-          "props"
-        ]
-      }
+      "status": "fail",
+      "message": "output materialization error: component-meta output materialization failed at exposed[].type index 1: the source has no live graph representation under the request view"
     },
     {
       "suite": "component-meta",
@@ -11592,18 +12457,20 @@
       "suite": "component-meta",
       "caseId": "prop-type-factory-defaults",
       "tool": "verter-component-meta",
-      "status": "pass",
-      "message": "props=3 · events=0 · slots=0 · exposed=0",
+      "status": "fail",
+      "message": "props.filters: type \"unknown | undefined\" missing filter; props.pagination: type \"unknown | undefined\" missing page|size; props.scope: type \"unknown\" missing all|active",
       "detail": {
-        "source": "verter-component-meta",
-        "props": [
-          "filters",
-          "pagination",
-          "scope"
-        ],
-        "events": [],
-        "slots": [],
-        "exposed": []
+        "meta": {
+          "source": "verter-component-meta",
+          "props": [
+            "filters",
+            "pagination",
+            "scope"
+          ],
+          "events": [],
+          "slots": [],
+          "exposed": []
+        }
       }
     },
     {
@@ -11646,20 +12513,18 @@
       "suite": "component-meta",
       "caseId": "props-destructure",
       "tool": "verter-component-meta",
-      "status": "fail",
-      "message": "props.count: expected hasDefault=true, got false; props.verbose: expected hasDefault=true, got false",
+      "status": "pass",
+      "message": "props=3 · events=0 · slots=0 · exposed=0",
       "detail": {
-        "meta": {
-          "source": "verter-component-meta",
-          "props": [
-            "label",
-            "count",
-            "verbose"
-          ],
-          "events": [],
-          "slots": [],
-          "exposed": []
-        }
+        "source": "verter-component-meta",
+        "props": [
+          "label",
+          "count",
+          "verbose"
+        ],
+        "events": [],
+        "slots": [],
+        "exposed": []
       }
     },
     {
@@ -11881,22 +12746,20 @@
       "suite": "component-meta",
       "caseId": "slots",
       "tool": "verter-component-meta",
-      "status": "fail",
-      "message": "slots.default: type.open: expected boolean, got open; slots.footer: type.id: expected number, got id",
+      "status": "pass",
+      "message": "props=1 · events=0 · slots=3 · exposed=0",
       "detail": {
-        "meta": {
-          "source": "verter-component-meta",
-          "props": [
-            "heading"
-          ],
-          "events": [],
-          "slots": [
-            "default",
-            "icon",
-            "footer"
-          ],
-          "exposed": []
-        }
+        "source": "verter-component-meta",
+        "props": [
+          "heading"
+        ],
+        "events": [],
+        "slots": [
+          "default",
+          "icon",
+          "footer"
+        ],
+        "exposed": []
       }
     },
     {
@@ -12103,11 +12966,11 @@
       "message": "template hover has the expected string type (```typescript (property) greeting: \"confirm-lsp\" ```)",
       "detail": {
         "snippet": "```typescript\n(property) greeting: \"confirm-lsp\"\n```",
-        "ms": 1078,
-        "readyMs": 709,
+        "ms": 1731.3,
+        "readyMs": 1161,
         "readySignalMs": null
       },
-      "ms": 1078
+      "ms": 1731.3
     },
     {
       "suite": "lsp",
@@ -12197,11 +13060,11 @@
       "message": "template hover has the expected string type (```typescript const greeting: \"confirm-lsp\" ```)",
       "detail": {
         "snippet": "```typescript\nconst greeting: \"confirm-lsp\"\n```",
-        "ms": 266.7,
-        "readyMs": 228.3,
+        "ms": 373.8,
+        "readyMs": 320.2,
         "readySignalMs": null
       },
-      "ms": 266.7
+      "ms": 373.8
     },
     {
       "suite": "lsp",
@@ -12291,11 +13154,11 @@
       "message": "template hover has the expected string type (```typescript const greeting: \"confirm-lsp\" ```)",
       "detail": {
         "snippet": "```typescript\nconst greeting: \"confirm-lsp\"\n```",
-        "ms": 263,
-        "readyMs": 256,
-        "readySignalMs": 228.2
+        "ms": 260.6,
+        "readyMs": 250.3,
+        "readySignalMs": null
       },
-      "ms": 263
+      "ms": 260.6
     },
     {
       "suite": "lsp",
@@ -12352,10 +13215,7 @@
       "caseId": "rename-prop-template",
       "tool": "verter",
       "status": "fail",
-      "message": "BROKEN REFACTOR: must edit both App.vue and Child.vue",
-      "detail": {
-        "snippet": "child.vue:2 :: applied rename of title to renamedTitle; declaration, uses and decoys checked"
-      }
+      "message": "rename request failed: {\"code\":-32803,\"message\":\"verter: rename is unavailable for public component props because complete cross-file usage proof is unavailable; no rename edit was produced.\"}"
     },
     {
       "suite": "lsp",
@@ -12364,7 +13224,7 @@
       "status": "pass",
       "message": "publishDiagnostics names plantedBadProp",
       "detail": {
-        "snippet": "Unknown prop 'planted-bad-prop' on component <Child> verter verter/unknown-prop | Type '{ title: \"confirm-lsp\"; plantedBadProp: string; }' is not assignable to type 'IntrinsicAttributes & VNodeProps & AllowedComponentProps & ComponentCustomPr"
+        "snippet": "Type '{ title: \"confirm-lsp\"; plantedBadProp: string; }' is not assignable to type 'IntrinsicAttributes & VNodeProps & AllowedComponentProps & ComponentCustomPr"
       }
     },
     {
@@ -12384,9 +13244,9 @@
       "status": "pass",
       "message": "487→487B idempotent rewrote",
       "detail": {
-        "ms": 156.26842999999644
+        "ms": 250.81757400001516
       },
-      "ms": 156.26842999999644
+      "ms": 250.81757400001516
     },
     {
       "suite": "format",
@@ -12395,9 +13255,9 @@
       "status": "pass",
       "message": "487→487B idempotent rewrote",
       "detail": {
-        "ms": 231.40907999999763
+        "ms": 344.703582999995
       },
-      "ms": 231.40907999999763
+      "ms": 344.703582999995
     },
     {
       "suite": "format",
@@ -12406,9 +13266,9 @@
       "status": "pass",
       "message": "487→488B idempotent rewrote",
       "detail": {
-        "ms": 96.06387100000575
+        "ms": 45.60325899999589
       },
-      "ms": 96.06387100000575
+      "ms": 45.60325899999589
     },
     {
       "suite": "format",
@@ -12417,9 +13277,9 @@
       "status": "pass",
       "message": "487→497B idempotent rewrote",
       "detail": {
-        "ms": 35.42771299999731
+        "ms": 52.44976899999892
       },
-      "ms": 35.42771299999731
+      "ms": 52.44976899999892
     },
     {
       "suite": "format",
@@ -12428,9 +13288,9 @@
       "status": "pass",
       "message": "337→337B unchanged",
       "detail": {
-        "ms": 117.78806500000064
+        "ms": 183.65548999997554
       },
-      "ms": 117.78806500000064
+      "ms": 183.65548999997554
     },
     {
       "suite": "format",
@@ -12439,9 +13299,9 @@
       "status": "pass",
       "message": "337→337B unchanged",
       "detail": {
-        "ms": 212.91153399999894
+        "ms": 316.0495419999934
       },
-      "ms": 212.91153399999894
+      "ms": 316.0495419999934
     },
     {
       "suite": "format",
@@ -12450,9 +13310,9 @@
       "status": "pass",
       "message": "337→337B unchanged",
       "detail": {
-        "ms": 28.725967000005767
+        "ms": 46.59373399999458
       },
-      "ms": 28.725967000005767
+      "ms": 46.59373399999458
     },
     {
       "suite": "format",
@@ -12461,9 +13321,9 @@
       "status": "pass",
       "message": "337→337B unchanged",
       "detail": {
-        "ms": 34.011358999996446
+        "ms": 51.46614500001306
       },
-      "ms": 34.011358999996446
+      "ms": 51.46614500001306
     },
     {
       "suite": "format",
@@ -12472,9 +13332,9 @@
       "status": "pass",
       "message": "216→216B unchanged",
       "detail": {
-        "ms": 102.89321499998914
+        "ms": 164.01883099999395
       },
-      "ms": 102.89321499998914
+      "ms": 164.01883099999395
     },
     {
       "suite": "format",
@@ -12483,9 +13343,9 @@
       "status": "pass",
       "message": "216→216B unchanged",
       "detail": {
-        "ms": 190.81586499999685
+        "ms": 273.7030139999988
       },
-      "ms": 190.81586499999685
+      "ms": 273.7030139999988
     },
     {
       "suite": "format",
@@ -12494,9 +13354,9 @@
       "status": "pass",
       "message": "216→216B rewrote",
       "detail": {
-        "ms": 30.929873999994015
+        "ms": 45.43212800001493
       },
-      "ms": 30.929873999994015
+      "ms": 45.43212800001493
     },
     {
       "suite": "format",
@@ -12505,9 +13365,9 @@
       "status": "pass",
       "message": "216→216B unchanged",
       "detail": {
-        "ms": 35.25779299999704
+        "ms": 49.966050000017276
       },
-      "ms": 35.25779299999704
+      "ms": 49.966050000017276
     },
     {
       "suite": "format",
@@ -12516,9 +13376,9 @@
       "status": "pass",
       "message": "204→204B unchanged",
       "detail": {
-        "ms": 99.92762000000221
+        "ms": 157.2358949999907
       },
-      "ms": 99.92762000000221
+      "ms": 157.2358949999907
     },
     {
       "suite": "format",
@@ -12527,9 +13387,9 @@
       "status": "pass",
       "message": "204→204B unchanged",
       "detail": {
-        "ms": 201.2847419999889
+        "ms": 279.5464090000023
       },
-      "ms": 201.2847419999889
+      "ms": 279.5464090000023
     },
     {
       "suite": "format",
@@ -12538,9 +13398,9 @@
       "status": "pass",
       "message": "204→204B unchanged",
       "detail": {
-        "ms": 30.07455299999856
+        "ms": 44.33872400000109
       },
-      "ms": 30.07455299999856
+      "ms": 44.33872400000109
     },
     {
       "suite": "format",
@@ -12549,9 +13409,9 @@
       "status": "pass",
       "message": "204→203B rewrote",
       "detail": {
-        "ms": 34.18230899999617
+        "ms": 48.53310100000817
       },
-      "ms": 34.18230899999617
+      "ms": 48.53310100000817
     },
     {
       "suite": "format",
@@ -12560,9 +13420,9 @@
       "status": "pass",
       "message": "153→153B unchanged",
       "detail": {
-        "ms": 131.8130700000038
+        "ms": 200.65577300000587
       },
-      "ms": 131.8130700000038
+      "ms": 200.65577300000587
     },
     {
       "suite": "format",
@@ -12571,9 +13431,9 @@
       "status": "pass",
       "message": "153→153B unchanged",
       "detail": {
-        "ms": 197.78092599999218
+        "ms": 282.32439400002477
       },
-      "ms": 197.78092599999218
+      "ms": 282.32439400002477
     },
     {
       "suite": "format",
@@ -12582,9 +13442,9 @@
       "status": "pass",
       "message": "153→153B unchanged",
       "detail": {
-        "ms": 29.462056999997003
+        "ms": 43.8456699999806
       },
-      "ms": 29.462056999997003
+      "ms": 43.8456699999806
     },
     {
       "suite": "format",
@@ -12593,9 +13453,9 @@
       "status": "pass",
       "message": "153→151B rewrote",
       "detail": {
-        "ms": 32.66191899999103
+        "ms": 49.85355899998103
       },
-      "ms": 32.66191899999103
+      "ms": 49.85355899998103
     },
     {
       "suite": "format",
@@ -12604,9 +13464,9 @@
       "status": "pass",
       "message": "298→299B idempotent rewrote",
       "detail": {
-        "ms": 95.15444100000605
+        "ms": 149.85625899999286
       },
-      "ms": 95.15444100000605
+      "ms": 149.85625899999286
     },
     {
       "suite": "format",
@@ -12615,9 +13475,9 @@
       "status": "pass",
       "message": "298→299B idempotent rewrote",
       "detail": {
-        "ms": 174.98085499998706
+        "ms": 247.4026249999879
       },
-      "ms": 174.98085499998706
+      "ms": 247.4026249999879
     },
     {
       "suite": "format",
@@ -12626,9 +13486,9 @@
       "status": "pass",
       "message": "298→298B idempotent rewrote",
       "detail": {
-        "ms": 30.30866199999582
+        "ms": 44.38019700002042
       },
-      "ms": 30.30866199999582
+      "ms": 44.38019700002042
     },
     {
       "suite": "format",
@@ -12637,9 +13497,9 @@
       "status": "pass",
       "message": "298→298B idempotent unchanged",
       "detail": {
-        "ms": 32.92329099999915
+        "ms": 48.295088999992004
       },
-      "ms": 32.92329099999915
+      "ms": 48.295088999992004
     },
     {
       "suite": "format",
@@ -12648,9 +13508,9 @@
       "status": "pass",
       "message": "228→228B unchanged",
       "detail": {
-        "ms": 96.29527699999744
+        "ms": 152.75308500000392
       },
-      "ms": 96.29527699999744
+      "ms": 152.75308500000392
     },
     {
       "suite": "format",
@@ -12659,9 +13519,9 @@
       "status": "pass",
       "message": "228→228B unchanged",
       "detail": {
-        "ms": 203.43848400001298
+        "ms": 288.1004050000047
       },
-      "ms": 203.43848400001298
+      "ms": 288.1004050000047
     },
     {
       "suite": "format",
@@ -12670,9 +13530,9 @@
       "status": "pass",
       "message": "228→228B rewrote",
       "detail": {
-        "ms": 87.40881399999489
+        "ms": 45.65422500000568
       },
-      "ms": 87.40881399999489
+      "ms": 45.65422500000568
     },
     {
       "suite": "format",
@@ -12681,9 +13541,9 @@
       "status": "pass",
       "message": "228→228B unchanged",
       "detail": {
-        "ms": 33.11239999999816
+        "ms": 51.26113699999405
       },
-      "ms": 33.11239999999816
+      "ms": 51.26113699999405
     },
     {
       "suite": "format",
@@ -12692,9 +13552,9 @@
       "status": "pass",
       "message": "356→356B rewrote",
       "detail": {
-        "ms": 110.65414400000009
+        "ms": 173.46626300000935
       },
-      "ms": 110.65414400000009
+      "ms": 173.46626300000935
     },
     {
       "suite": "format",
@@ -12703,9 +13563,9 @@
       "status": "pass",
       "message": "356→356B rewrote",
       "detail": {
-        "ms": 192.49629299998924
+        "ms": 278.35323400000925
       },
-      "ms": 192.49629299998924
+      "ms": 278.35323400000925
     },
     {
       "suite": "format",
@@ -12714,9 +13574,9 @@
       "status": "pass",
       "message": "356→356B rewrote",
       "detail": {
-        "ms": 30.281308000005083
+        "ms": 48.41993000000366
       },
-      "ms": 30.281308000005083
+      "ms": 48.41993000000366
     },
     {
       "suite": "format",
@@ -12725,9 +13585,9 @@
       "status": "pass",
       "message": "356→356B unchanged",
       "detail": {
-        "ms": 35.17223399999784
+        "ms": 50.020017000002554
       },
-      "ms": 35.17223399999784
+      "ms": 50.020017000002554
     },
     {
       "suite": "format",
@@ -12736,9 +13596,9 @@
       "status": "pass",
       "message": "179→182B rewrote",
       "detail": {
-        "ms": 99.55305699999735
+        "ms": 152.43269399998826
       },
-      "ms": 99.55305699999735
+      "ms": 152.43269399998826
     },
     {
       "suite": "format",
@@ -12747,9 +13607,9 @@
       "status": "pass",
       "message": "179→182B rewrote",
       "detail": {
-        "ms": 197.22065499999735
+        "ms": 289.7649800000072
       },
-      "ms": 197.22065499999735
+      "ms": 289.7649800000072
     },
     {
       "suite": "format",
@@ -12758,9 +13618,9 @@
       "status": "pass",
       "message": "179→179B unchanged",
       "detail": {
-        "ms": 30.570414999994682
+        "ms": 43.50230799999554
       },
-      "ms": 30.570414999994682
+      "ms": 43.50230799999554
     },
     {
       "suite": "format",
@@ -12769,9 +13629,9 @@
       "status": "pass",
       "message": "179→179B unchanged",
       "detail": {
-        "ms": 34.040875000006054
+        "ms": 52.299199000000954
       },
-      "ms": 34.040875000006054
+      "ms": 52.299199000000954
     },
     {
       "suite": "format",
@@ -12780,9 +13640,9 @@
       "status": "pass",
       "message": "182→182B unchanged",
       "detail": {
-        "ms": 96.9792490000109
+        "ms": 147.56631199998083
       },
-      "ms": 96.9792490000109
+      "ms": 147.56631199998083
     },
     {
       "suite": "format",
@@ -12791,9 +13651,9 @@
       "status": "pass",
       "message": "182→182B unchanged",
       "detail": {
-        "ms": 199.148829999991
+        "ms": 274.89618100001826
       },
-      "ms": 199.148829999991
+      "ms": 274.89618100001826
     },
     {
       "suite": "format",
@@ -12803,10 +13663,10 @@
       "message": "formatted output does not match /(^|[\\r\\n])\\.wrapper\\r?\\n {2}h1\\.title CONFIRM_PUG_TITLE\\r?\\n {2}ul\\r?\\n {4}li\\(v-for=\"item in items\" :key=\"item\"\\) \\{\\{ item \\}\\}/",
       "detail": {
         "formatted": "<script setup>\nconst items = [\"a\", \"b\"];\n</script>\n\n<template lang=\"pug\">\n  .wrapper\n    h1.title CONFIRM_PUG_TITLE\n    ul\n      li(v-for=\"item in items\" :key=\"item\") {{ item }}\n</template>\n",
-        "ms": 32.85142099999939,
+        "ms": 44.80932500000927,
         "snippet": "Found 1 file(s)\nReformatted: format-pug-template.vue\n\nFormatted 1 file(s)\n  1 file(s) reformatted\n"
       },
-      "ms": 32.85142099999939
+      "ms": 44.80932500000927
     },
     {
       "suite": "format",
@@ -12815,9 +13675,9 @@
       "status": "pass",
       "message": "182→182B unchanged",
       "detail": {
-        "ms": 34.02024899999378
+        "ms": 49.8440689999843
       },
-      "ms": 34.02024899999378
+      "ms": 49.8440689999843
     },
     {
       "suite": "format",
@@ -12826,9 +13686,9 @@
       "status": "pass",
       "message": "675→763B idempotent rewrote",
       "detail": {
-        "ms": 107.87101499999699
+        "ms": 168.4916840000078
       },
-      "ms": 107.87101499999699
+      "ms": 168.4916840000078
     },
     {
       "suite": "format",
@@ -12837,9 +13697,9 @@
       "status": "pass",
       "message": "675→740B idempotent rewrote",
       "detail": {
-        "ms": 210.03864199999953
+        "ms": 293.55678199999966
       },
-      "ms": 210.03864199999953
+      "ms": 293.55678199999966
     },
     {
       "suite": "format",
@@ -12848,9 +13708,9 @@
       "status": "pass",
       "message": "675→721B idempotent rewrote",
       "detail": {
-        "ms": 33.67719300001045
+        "ms": 45.502289000025485
       },
-      "ms": 33.67719300001045
+      "ms": 45.502289000025485
     },
     {
       "suite": "format",
@@ -12859,9 +13719,9 @@
       "status": "pass",
       "message": "675→674B idempotent rewrote",
       "detail": {
-        "ms": 35.111581999997725
+        "ms": 49.83255699998699
       },
-      "ms": 35.111581999997725
+      "ms": 49.83255699998699
     },
     {
       "suite": "format",
@@ -12870,9 +13730,9 @@
       "status": "pass",
       "message": "336→342B idempotent rewrote",
       "detail": {
-        "ms": 99.74275099999795
+        "ms": 151.02249400000437
       },
-      "ms": 99.74275099999795
+      "ms": 151.02249400000437
     },
     {
       "suite": "format",
@@ -12881,9 +13741,9 @@
       "status": "pass",
       "message": "336→342B idempotent rewrote",
       "detail": {
-        "ms": 201.36015499998757
+        "ms": 288.92777899999055
       },
-      "ms": 201.36015499998757
+      "ms": 288.92777899999055
     },
     {
       "suite": "format",
@@ -12892,9 +13752,9 @@
       "status": "pass",
       "message": "336→336B idempotent unchanged",
       "detail": {
-        "ms": 30.91153199999826
+        "ms": 46.337839999992866
       },
-      "ms": 30.91153199999826
+      "ms": 46.337839999992866
     },
     {
       "suite": "format",
@@ -12903,9 +13763,9 @@
       "status": "pass",
       "message": "336→336B idempotent unchanged",
       "detail": {
-        "ms": 33.293854999996256
+        "ms": 48.04113699999289
       },
-      "ms": 33.293854999996256
+      "ms": 48.04113699999289
     },
     {
       "suite": "format",
@@ -12914,9 +13774,9 @@
       "status": "pass",
       "message": "208→208B unchanged",
       "detail": {
-        "ms": 96.65754899999592
+        "ms": 146.71841499998118
       },
-      "ms": 96.65754899999592
+      "ms": 146.71841499998118
     },
     {
       "suite": "format",
@@ -12925,9 +13785,9 @@
       "status": "pass",
       "message": "208→208B unchanged",
       "detail": {
-        "ms": 176.67646299999615
+        "ms": 252.3761940000113
       },
-      "ms": 176.67646299999615
+      "ms": 252.3761940000113
     },
     {
       "suite": "format",
@@ -12937,10 +13797,10 @@
       "message": "formatted output missing \"CONFIRM_TOP_BETWEEN_BLOCKS\"",
       "detail": {
         "formatted": "<!-- CONFIRM_TOP_BEFORE_TEMPLATE -->\n\n<script setup>\nconst planted = 1;\n</script>\n\n<template>\n  <p>top-level comments</p>\n</template>\n",
-        "ms": 31.318969999992987,
+        "ms": 47.95369299998856,
         "snippet": "Found 1 file(s)\nReformatted: format-top-level-comments.vue\n\nFormatted 1 file(s)\n  1 file(s) reformatted\n"
       },
-      "ms": 31.318969999992987
+      "ms": 47.95369299998856
     },
     {
       "suite": "format",
@@ -12949,9 +13809,9 @@
       "status": "pass",
       "message": "208→208B unchanged",
       "detail": {
-        "ms": 33.6418740000081
+        "ms": 48.29890500000329
       },
-      "ms": 33.6418740000081
+      "ms": 48.29890500000329
     },
     {
       "suite": "format",
@@ -12960,9 +13820,9 @@
       "status": "pass",
       "message": "460→536B idempotent rewrote",
       "detail": {
-        "ms": 109.42707799999334
+        "ms": 185.17686800000956
       },
-      "ms": 109.42707799999334
+      "ms": 185.17686800000956
     },
     {
       "suite": "format",
@@ -12971,9 +13831,9 @@
       "status": "pass",
       "message": "460→536B idempotent rewrote",
       "detail": {
-        "ms": 215.9455159999925
+        "ms": 321.5713429999887
       },
-      "ms": 215.9455159999925
+      "ms": 321.5713429999887
     },
     {
       "suite": "format",
@@ -12982,9 +13842,9 @@
       "status": "pass",
       "message": "460→529B idempotent rewrote",
       "detail": {
-        "ms": 30.169031999990693
+        "ms": 46.43985799999791
       },
-      "ms": 30.169031999990693
+      "ms": 46.43985799999791
     },
     {
       "suite": "format",
@@ -12994,10 +13854,10 @@
       "message": "messy template block was not rewritten",
       "detail": {
         "formatted": "<template><section><span>preserve</span><span>styles</span></section></template>\n<style scoped>.card{color:red;color:blue!important;--label:\"keep  two spaces\";padding:1px 2px}@media(min-width:1px){.card:hover{opacity:.8}}</style>\n<style>.ca",
-        "ms": 32.349809000006644,
-        "snippet": "Formatted 1 file in 699µs. No fixes applied.\n"
+        "ms": 47.306345000019064,
+        "snippet": "Formatted 1 file in 851µs. No fixes applied.\n"
       },
-      "ms": 32.349809000006644
+      "ms": 47.306345000019064
     },
     {
       "suite": "format",
@@ -13006,9 +13866,9 @@
       "status": "pass",
       "message": "537→631B idempotent rewrote",
       "detail": {
-        "ms": 136.139393999998
+        "ms": 208.27767499999027
       },
-      "ms": 136.139393999998
+      "ms": 208.27767499999027
     },
     {
       "suite": "format",
@@ -13017,9 +13877,9 @@
       "status": "pass",
       "message": "537→615B idempotent rewrote",
       "detail": {
-        "ms": 217.7615070000029
+        "ms": 299.7680209999962
       },
-      "ms": 217.7615070000029
+      "ms": 299.7680209999962
     },
     {
       "suite": "format",
@@ -13028,9 +13888,9 @@
       "status": "pass",
       "message": "537→602B idempotent rewrote",
       "detail": {
-        "ms": 30.98167900000408
+        "ms": 47.27334200000041
       },
-      "ms": 30.98167900000408
+      "ms": 47.27334200000041
     },
     {
       "suite": "format",
@@ -13040,10 +13900,10 @@
       "message": "messy template block was not rewritten",
       "detail": {
         "formatted": "<script setup lang=\"ts\">\nimport { ref, computed } from \"vue\";\nconst ok = ref(true);\nconst query = ref(\" x \");\nconst rows = ref([\n\t{ id: 1, label: \"one\" },\n\t{ id: 2, label: \"two\" },\n]);\nconst upper = computed(() => query.value.toUpperCase())",
-        "ms": 35.8913590000011,
-        "snippet": "Formatted 1 file in 1343µs. Fixed 1 file.\n"
+        "ms": 49.41846000001533,
+        "snippet": "Formatted 1 file in 1439µs. Fixed 1 file.\n"
       },
-      "ms": 35.8913590000011
+      "ms": 49.41846000001533
     },
     {
       "suite": "format",
@@ -13052,9 +13912,9 @@
       "status": "pass",
       "message": "499→532B idempotent rewrote",
       "detail": {
-        "ms": 161.79775500000687
+        "ms": 255.72802099998808
       },
-      "ms": 161.79775500000687
+      "ms": 255.72802099998808
     },
     {
       "suite": "format",
@@ -13063,9 +13923,9 @@
       "status": "pass",
       "message": "499→532B idempotent rewrote",
       "detail": {
-        "ms": 251.27926000001025
+        "ms": 359.1004289999837
       },
-      "ms": 251.27926000001025
+      "ms": 359.1004289999837
     },
     {
       "suite": "format",
@@ -13074,9 +13934,9 @@
       "status": "pass",
       "message": "499→514B idempotent rewrote",
       "detail": {
-        "ms": 32.15941700000258
+        "ms": 49.08446400001412
       },
-      "ms": 32.15941700000258
+      "ms": 49.08446400001412
     },
     {
       "suite": "format",
@@ -13086,10 +13946,10 @@
       "message": "messy template block was not rewritten",
       "detail": {
         "formatted": "<script setup lang=\"ts\" generic=\"T extends { id: number }\">\nconst props = defineProps<{ items: T[] }>();\n</script>\n<template><ol><li v-for=\"item in props.items\" :key=\"item.id\">{{ item.id }}</li></ol></template>\n<style scoped module=\"theme\" ",
-        "ms": 34.51969200000167,
-        "snippet": "Formatted 1 file in 1182µs. Fixed 1 file.\n"
+        "ms": 53.773895000020275,
+        "snippet": "Formatted 1 file in 1285µs. Fixed 1 file.\n"
       },
-      "ms": 34.51969200000167
+      "ms": 53.773895000020275
     },
     {
       "suite": "format",
@@ -13098,9 +13958,9 @@
       "status": "pass",
       "message": "246→270B idempotent rewrote",
       "detail": {
-        "ms": 99.96006099999067
+        "ms": 160.53943099998287
       },
-      "ms": 99.96006099999067
+      "ms": 160.53943099998287
     },
     {
       "suite": "format",
@@ -13109,9 +13969,9 @@
       "status": "pass",
       "message": "246→270B idempotent rewrote",
       "detail": {
-        "ms": 200.10258500000054
+        "ms": 294.78074800001923
       },
-      "ms": 200.10258500000054
+      "ms": 294.78074800001923
     },
     {
       "suite": "format",
@@ -13120,9 +13980,9 @@
       "status": "pass",
       "message": "246→257B idempotent rewrote",
       "detail": {
-        "ms": 32.96906800000579
+        "ms": 46.77628200000618
       },
-      "ms": 32.96906800000579
+      "ms": 46.77628200000618
     },
     {
       "suite": "format",
@@ -13132,10 +13992,10 @@
       "message": "messy template block was not rewritten",
       "detail": {
         "formatted": "<script setup>\nconst pattern = /alpha+/gi;\nconst matched = pattern.test(\"ALPHA\");\n</script>\n<template><section :data-match=\"matched\"><pre>  alpha\n    beta  </pre><span>left</span> <span>right</span><code v-pre>{{ literal }}</code></section>",
-        "ms": 34.99328600001172,
-        "snippet": "Formatted 1 file in 1039µs. Fixed 1 file.\n"
+        "ms": 49.01772199998959,
+        "snippet": "Formatted 1 file in 1228µs. Fixed 1 file.\n"
       },
-      "ms": 34.99328600001172
+      "ms": 49.01772199998959
     },
     {
       "suite": "format",
@@ -13144,9 +14004,9 @@
       "status": "pass",
       "message": "287→309B idempotent rewrote",
       "detail": {
-        "ms": 110.58660899999086
+        "ms": 170.93136099999538
       },
-      "ms": 110.58660899999086
+      "ms": 170.93136099999538
     },
     {
       "suite": "format",
@@ -13155,9 +14015,9 @@
       "status": "pass",
       "message": "287→301B idempotent rewrote",
       "detail": {
-        "ms": 216.74411499999405
+        "ms": 312.37182400000165
       },
-      "ms": 216.74411499999405
+      "ms": 312.37182400000165
     },
     {
       "suite": "format",
@@ -13166,9 +14026,9 @@
       "status": "pass",
       "message": "287→303B idempotent rewrote",
       "detail": {
-        "ms": 30.05281300000206
+        "ms": 45.24511600000551
       },
-      "ms": 30.05281300000206
+      "ms": 45.24511600000551
     },
     {
       "suite": "format",
@@ -13178,10 +14038,10 @@
       "message": "messy template block was not rewritten",
       "detail": {
         "formatted": "<script setup>\n// FORMAT_SCRIPT_COMMENT\nconst colour = \"red\";\n</script>\n<template>\n <!-- FORMAT_TEMPLATE_COMMENT -->\n <svg viewBox=\"0 0 10 10\" @click.once=\"()=>0\"><circle :fill=\"colour\" cx=\"5\" cy=\"5\" r=\"4\" /></svg>\n</template>\n<style>\n/* FO",
-        "ms": 32.97433599999931,
-        "snippet": "Formatted 1 file in 1069µs. Fixed 1 file.\n"
+        "ms": 50.88492199999746,
+        "snippet": "Formatted 1 file in 1250µs. Fixed 1 file.\n"
       },
-      "ms": 32.97433599999931
+      "ms": 50.88492199999746
     }
   ]
 }

@@ -1,48 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="760" height="200" viewBox="0 0 760 200" role="img" aria-label="Component-meta — Component public-API metadata — concurrent (every request in flight)">
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="128" viewBox="0 0 760 128" role="img" aria-label="Component-meta — Component public-API metadata — concurrent (every request in flight)">
   <title>Component-meta — Component public-API metadata — concurrent (every request in flight) (lower is better)</title>
   <style><![CDATA[
     text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
   ]]></style>
-  <defs><pattern id="hatch-0" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="8" height="8" fill="#e11d48"/><line x1="0" y1="0" x2="0" y2="8" stroke="#fff" stroke-width="3" opacity="0.35"/></pattern><pattern id="hatch-1" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="8" height="8" fill="#e11d48"/><line x1="0" y1="0" x2="0" y2="8" stroke="#fff" stroke-width="3" opacity="0.35"/></pattern><pattern id="hatch-2" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="8" height="8" fill="#42b883"/><line x1="0" y1="0" x2="0" y2="8" stroke="#fff" stroke-width="3" opacity="0.35"/></pattern></defs>
+  <defs><pattern id="hatch-0" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="8" height="8" fill="#42b883"/><line x1="0" y1="0" x2="0" y2="8" stroke="#fff" stroke-width="3" opacity="0.35"/></pattern></defs>
   <text fill="#e6edf3" x="16" y="20" font-size="15" font-weight="600">Component-meta — Component public-API metadata — concurrent (every request in…</text>
   <text fill="#9198a1" x="16" y="36" font-size="11">lower is better</text>
   <rect x="146" y="33" width="10" height="10" rx="2" fill="#e6edf3"/>
   <text fill="#9198a1" x="160" y="42" font-size="11">warm</text>
   <rect x="204" y="33" width="10" height="10" rx="2" fill="#e6edf3" fill-opacity="0.38"/>
   <text fill="#9198a1" x="218" y="42" font-size="11">fresh child</text>
-  <line x1="248" y1="56" x2="248" y2="172" stroke="#3d444d" stroke-opacity="0.55" />
-  <text fill="#9198a1" x="248" y="192" text-anchor="middle" font-size="11">0.0 ms</text>
-  <line x1="348.5" y1="56" x2="348.5" y2="172" stroke="#3d444d" stroke-opacity="0.55" />
-  <text fill="#9198a1" x="348.5" y="192" text-anchor="middle" font-size="11">595 ms</text>
-  <line x1="449" y1="56" x2="449" y2="172" stroke="#3d444d" stroke-opacity="0.55" />
-  <text fill="#9198a1" x="449" y="192" text-anchor="middle" font-size="11">1.19 s</text>
-  <line x1="549.5" y1="56" x2="549.5" y2="172" stroke="#3d444d" stroke-opacity="0.55" />
-  <text fill="#9198a1" x="549.5" y="192" text-anchor="middle" font-size="11">1.78 s</text>
-  <line x1="650" y1="56" x2="650" y2="172" stroke="#3d444d" stroke-opacity="0.55" />
-  <text fill="#9198a1" x="650" y="192" text-anchor="middle" font-size="11">2.38 s</text>
+  <line x1="248" y1="56" x2="248" y2="100" stroke="#3d444d" stroke-opacity="0.55" />
+  <text fill="#9198a1" x="248" y="120" text-anchor="middle" font-size="11">0.0 ms</text>
+  <line x1="348.5" y1="56" x2="348.5" y2="100" stroke="#3d444d" stroke-opacity="0.55" />
+  <text fill="#9198a1" x="348.5" y="120" text-anchor="middle" font-size="11">624 ms</text>
+  <line x1="449" y1="56" x2="449" y2="100" stroke="#3d444d" stroke-opacity="0.55" />
+  <text fill="#9198a1" x="449" y="120" text-anchor="middle" font-size="11">1.25 s</text>
+  <line x1="549.5" y1="56" x2="549.5" y2="100" stroke="#3d444d" stroke-opacity="0.55" />
+  <text fill="#9198a1" x="549.5" y="120" text-anchor="middle" font-size="11">1.87 s</text>
+  <line x1="650" y1="56" x2="650" y2="100" stroke="#3d444d" stroke-opacity="0.55" />
+  <text fill="#9198a1" x="650" y="120" text-anchor="middle" font-size="11">2.50 s</text>
   <text fill="#9198a1" x="16" y="85" font-size="11">1</text>
-      <text fill="#e6edf3" x="36" y="85" font-size="13" fill-opacity="0.62">@verter/component-meta (…</text>
+      <text fill="#e6edf3" x="36" y="85" font-size="13" fill-opacity="0.62">vue-component-meta (Prom…</text>
       <line x1="36" y1="80" x2="240" y2="80" stroke="#e6edf3" stroke-opacity="0.45" />
       <rect x="248" y="69" width="402" height="22" rx="5" fill="#6e768166"/>
-      <rect x="248" y="69" width="53.8" height="22" rx="5" fill="url(#hatch-0)" fill-opacity="0.38"/>
-      <rect x="248" y="69" width="47.8" height="22" rx="5" fill="url(#hatch-0)" fill-opacity="1"/>
-      <line x1="295.84977499149124" y1="68" x2="295.84977499149124" y2="92" stroke="#0d1117" stroke-width="2" stroke-opacity="0.9"/>
-      <text fill="#e6edf3" x="309.7752763759974" y="85" font-size="12" font-weight="600">283 ms warm / 318 ms fresh child · unranked</text>
-  <text fill="#9198a1" x="16" y="121" font-size="11">2</text>
-      <text fill="#e6edf3" x="36" y="121" font-size="13" fill-opacity="0.62">@verter/component-meta (…</text>
-      <line x1="36" y1="116" x2="240" y2="116" stroke="#e6edf3" stroke-opacity="0.45" />
-      <rect x="248" y="105" width="402" height="22" rx="5" fill="#6e768166"/>
-      <rect x="248" y="105" width="79.9" height="22" rx="5" fill="url(#hatch-1)" fill-opacity="1"/>
-      <rect x="248" y="105" width="79.3" height="22" rx="5" fill="url(#hatch-1)" fill-opacity="0.38"/>
-      <line x1="327.3032417192247" y1="104" x2="327.3032417192247" y2="128" stroke="#0d1117" stroke-width="2" stroke-opacity="0.9"/>
-      <text fill="#e6edf3" x="335.8697791092941" y="121" font-size="12" font-weight="600">473 ms warm / 469 ms fresh child · unranked</text>
-  <text fill="#9198a1" x="16" y="157" font-size="11">3</text>
-      <text fill="#e6edf3" x="36" y="157" font-size="13" fill-opacity="0.62">vue-component-meta (Prom…</text>
-      <line x1="36" y1="152" x2="240" y2="152" stroke="#e6edf3" stroke-opacity="0.45" />
-      <rect x="248" y="141" width="402" height="22" rx="5" fill="#6e768166"/>
-      <rect x="248" y="141" width="402.0" height="22" rx="5" fill="url(#hatch-2)" fill-opacity="0.38"/>
-      <rect x="248" y="141" width="153.5" height="22" rx="5" fill="url(#hatch-2)" fill-opacity="1"/>
-      <line x1="401.47842481438374" y1="140" x2="401.47842481438374" y2="164" stroke="#0d1117" stroke-width="2" stroke-opacity="0.9"/>
-      <text fill="#ffffff" x="256" y="157" font-size="12" font-weight="600">909 ms warm / 2.38 s fresh child · unranked</text>
+      <rect x="248" y="69" width="402.0" height="22" rx="5" fill="url(#hatch-0)" fill-opacity="0.38"/>
+      <rect x="248" y="69" width="156.2" height="22" rx="5" fill="url(#hatch-0)" fill-opacity="1"/>
+      <line x1="404.1984545810804" y1="68" x2="404.1984545810804" y2="92" stroke="#0d1117" stroke-width="2" stroke-opacity="0.9"/>
+      <text fill="#ffffff" x="256" y="85" font-size="12" font-weight="600">970 ms warm / 2.50 s fresh child · unranked</text>
 </svg>

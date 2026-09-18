@@ -14,35 +14,35 @@
   <line x1="248" y1="56" x2="248" y2="172" stroke="#d0d7de" stroke-opacity="0.55" />
   <text fill="#59636e" x="248" y="192" text-anchor="middle" font-size="11">0.0 ms</text>
   <line x1="348.5" y1="56" x2="348.5" y2="172" stroke="#d0d7de" stroke-opacity="0.55" />
-  <text fill="#59636e" x="348.5" y="192" text-anchor="middle" font-size="11">136 ms</text>
+  <text fill="#59636e" x="348.5" y="192" text-anchor="middle" font-size="11">138 ms</text>
   <line x1="449" y1="56" x2="449" y2="172" stroke="#d0d7de" stroke-opacity="0.55" />
-  <text fill="#59636e" x="449" y="192" text-anchor="middle" font-size="11">271 ms</text>
+  <text fill="#59636e" x="449" y="192" text-anchor="middle" font-size="11">275 ms</text>
   <line x1="549.5" y1="56" x2="549.5" y2="172" stroke="#d0d7de" stroke-opacity="0.55" />
-  <text fill="#59636e" x="549.5" y="192" text-anchor="middle" font-size="11">407 ms</text>
+  <text fill="#59636e" x="549.5" y="192" text-anchor="middle" font-size="11">413 ms</text>
   <line x1="650" y1="56" x2="650" y2="172" stroke="#d0d7de" stroke-opacity="0.55" />
-  <text fill="#59636e" x="650" y="192" text-anchor="middle" font-size="11">543 ms</text>
+  <text fill="#59636e" x="650" y="192" text-anchor="middle" font-size="11">551 ms</text>
   <text fill="#59636e" x="16" y="85" font-size="11">1</text>
       <text fill="#1f2328" x="36" y="85" font-size="13">Vue compiler-sfc 3.5 ref…</text>
       
       <rect x="248" y="69" width="402" height="22" rx="5" fill="#afb8c133"/>
       <rect x="248" y="69" width="402.0" height="22" rx="5" fill="#42b883" fill-opacity="0.38"/>
-      <rect x="248" y="69" width="179.3" height="22" rx="5" fill="#42b883" fill-opacity="1"/>
-      <line x1="427.27652806012895" y1="68" x2="427.27652806012895" y2="92" stroke="#ffffff" stroke-width="2" stroke-opacity="0.9"/>
-      <text fill="#ffffff" x="256" y="85" font-size="12" font-weight="600">242 ms warm / 543 ms fresh child</text>
+      <rect x="248" y="69" width="180.2" height="22" rx="5" fill="#42b883" fill-opacity="1"/>
+      <line x1="428.1770466801024" y1="68" x2="428.1770466801024" y2="92" stroke="#ffffff" stroke-width="2" stroke-opacity="0.9"/>
+      <text fill="#ffffff" x="256" y="85" font-size="12" font-weight="600">247 ms warm / 551 ms fresh child</text>
   <text fill="#59636e" x="16" y="121" font-size="11">2</text>
       <text fill="#1f2328" x="36" y="121" font-size="13" fill-opacity="0.62">Vize compileSfcBatchWith…</text>
       <line x1="36" y1="116" x2="240" y2="116" stroke="#1f2328" stroke-opacity="0.45" />
       <rect x="248" y="105" width="402" height="22" rx="5" fill="#afb8c133"/>
-      <rect x="248" y="105" width="18.3" height="22" rx="5" fill="url(#hatch-1)" fill-opacity="0.38"/>
-      <rect x="248" y="105" width="16.8" height="22" rx="5" fill="url(#hatch-1)" fill-opacity="1"/>
-      <line x1="264.80263635643155" y1="104" x2="264.80263635643155" y2="128" stroke="#ffffff" stroke-width="2" stroke-opacity="0.9"/>
-      <text fill="#1f2328" x="274.295594829763" y="121" font-size="12" font-weight="600">22.7 ms warm / 24.7 ms fresh child · unranked</text>
+      <rect x="248" y="105" width="17.8" height="22" rx="5" fill="url(#hatch-1)" fill-opacity="0.38"/>
+      <rect x="248" y="105" width="16.4" height="22" rx="5" fill="url(#hatch-1)" fill-opacity="1"/>
+      <line x1="264.35093414674003" y1="104" x2="264.35093414674003" y2="128" stroke="#ffffff" stroke-width="2" stroke-opacity="0.9"/>
+      <text fill="#1f2328" x="273.8077890952666" y="121" font-size="12" font-weight="600">22.4 ms warm / 24.4 ms fresh child · unranked</text>
   <text fill="#59636e" x="16" y="157" font-size="11">3</text>
       <text fill="#1f2328" x="36" y="157" font-size="13" fill-opacity="0.62">Verter compileMany (firs…</text>
       <line x1="36" y1="152" x2="240" y2="152" stroke="#1f2328" stroke-opacity="0.45" />
       <rect x="248" y="141" width="402" height="22" rx="5" fill="#afb8c133"/>
-      <rect x="248" y="141" width="92.4" height="22" rx="5" fill="url(#hatch-2)" fill-opacity="0.38"/>
-      <rect x="248" y="141" width="86.7" height="22" rx="5" fill="url(#hatch-2)" fill-opacity="1"/>
-      <line x1="334.67383383066056" y1="140" x2="334.67383383066056" y2="164" stroke="#ffffff" stroke-width="2" stroke-opacity="0.9"/>
-      <text fill="#1f2328" x="348.3670809319402" y="157" font-size="12" font-weight="600">117 ms warm / 125 ms fresh child · unranked</text>
+      <rect x="248" y="141" width="98.0" height="22" rx="5" fill="url(#hatch-2)" fill-opacity="0.38"/>
+      <rect x="248" y="141" width="89.1" height="22" rx="5" fill="url(#hatch-2)" fill-opacity="1"/>
+      <line x1="337.11339397570674" y1="140" x2="337.11339397570674" y2="164" stroke="#ffffff" stroke-width="2" stroke-opacity="0.9"/>
+      <text fill="#ffffff" x="256" y="157" font-size="12" font-weight="600">122 ms warm / 134 ms fresh child · unranked</text>
 </svg>

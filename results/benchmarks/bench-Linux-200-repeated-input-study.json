@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-12T11:01:56.341Z",
+  "generatedAt": "2026-09-18T13:43:08.524Z",
   "fixture": "fixtures/200-repeated",
   "fileCount": 200,
   "settings": {
@@ -24,31 +24,31 @@
     "arch": "x64",
     "cpuCount": 4,
     "cpuModel": "AMD EPYC 7763 64-Core Processor",
-    "totalmem": 16770748416,
+    "totalmem": 16766414848,
     "node": "v22.23.2"
   },
   "commit": {
-    "sha": "d4906cbe77791d01e3e55b298b0bff7476ea561a",
+    "sha": "9db7b15d6a8266ab757541d4f5e3a2a6ae13d2b6",
     "ref": "main",
     "repository": "pikax/vue-benchmarks",
-    "runUrl": "https://github.com/pikax/vue-benchmarks/actions/runs/34689529541",
+    "runUrl": "https://github.com/pikax/vue-benchmarks/actions/runs/35350720887",
     "dirty": false,
     "statusAvailable": true
   },
   "versions": {
     "node": "v22.23.2",
-    "vue": "3.5.42",
-    "vue-36": "3.6.0-rc.8",
-    "@vue/compiler-sfc": "3.5.42",
-    "@vue/compiler-sfc-36": "3.6.0-rc.8",
-    "vize": "0.421.0",
-    "@vizejs/native": "0.421.0",
-    "@verter/native": "0.0.1-beta.3",
+    "vue": "3.5.43",
+    "vue-36": "3.6.0-rc.9",
+    "@vue/compiler-sfc": "3.5.43",
+    "@vue/compiler-sfc-36": "3.6.0-rc.9",
+    "vize": "0.424.10",
+    "@vizejs/native": "0.424.10",
+    "@verter/native": "0.0.1-beta.5",
     "@fervid/napi": "0.4.1",
-    "verter-tsc": "0.0.1-beta.3",
-    "@verter/component-meta": "0.0.1-beta.3",
-    "verter-lsp": "0.0.1-beta.3",
-    "verter-mcp": "0.0.1-beta.3",
+    "verter-tsc": "0.0.1-beta.5",
+    "@verter/component-meta": "0.0.1-beta.5",
+    "verter-lsp": "0.0.1-beta.5",
+    "verter-mcp": "0.0.1-beta.5",
     "@vue/language-server": "3.3.11",
     "@vue/typescript-plugin": "3.3.11",
     "typescript-language-server": "6.0.0",
@@ -56,22 +56,22 @@
     "vue-component-meta": "3.3.11",
     "golar": "0.1.10",
     "@golar/vue": "0.1.10",
-    "prettier": "3.9.6",
-    "oxfmt": "0.67.0",
-    "oxlint": "1.82.0",
+    "prettier": "3.9.7",
+    "oxfmt": "0.68.0",
+    "oxlint": "1.83.0",
     "eslint-plugin-vue": "10.11.0",
-    "@biomejs/biome": "2.5.13",
+    "@biomejs/biome": "2.5.14",
     "typescript": "6.0.3",
-    "cli:vize": "0.421.0",
+    "cli:vize": "0.424.10",
     "cli:vue-tsc": "6.0.3",
-    "cli:verter-tsc": "0.0.1-beta.3",
+    "cli:verter-tsc": "0.0.1-beta.5",
     "cli:golar": "0.1.10",
-    "cli:prettier": "3.9.6",
-    "cli:oxfmt": "0.67.0",
-    "cli:oxlint": "1.82.0",
-    "cli:biome": "2.5.13",
-    "vue-jsx-vapor": "3.2.23",
-    "@vue-jsx-vapor/compiler-rs": "3.2.23",
+    "cli:prettier": "3.9.7",
+    "cli:oxfmt": "0.68.0",
+    "cli:oxlint": "1.83.0",
+    "cli:biome": "2.5.14",
+    "vue-jsx-vapor": "3.2.24",
+    "@vue-jsx-vapor/compiler-rs": "3.2.24",
     "@vue/babel-plugin-jsx": "3.0.0",
     "@babel/core": "8.0.5"
   },
@@ -262,12 +262,12 @@
           },
           "verter": {
             "runtimeSourceMap": {
-              "ok": false,
-              "detail": "runtime-render returned no map"
+              "ok": true,
+              "detail": "410 source-map bytes"
             },
             "styleSourceMap": {
-              "ok": false,
-              "detail": "processStyle returned no map"
+              "ok": true,
+              "detail": "152 source-map bytes"
             },
             "runtimeEmitsCss": {
               "ok": false,
@@ -419,56 +419,27 @@
             "error": "[multiple-style-blocks] multiple-style-blocks: scoped and unscoped style blocks must retain their separate selector semantics; [slotted] slotted: slotted target must receive the [data-v-…-s] attribute selector; [global-mixed-local] global-mixed-local: local selector fragments or a scope constraint leaked into Vue's global selector; [slotted-compound] slotted-compound: the slotted scope attribute was not attached to the final compound target; [scoped-keyframes] scoped-keyframes: scoped keyframe name was not rewritten; [v-bind-quoted] v-bind-quoted: margin-left was not rewritten to a CSS variable"
           },
           "@verter/native": {
-            "ok": false,
+            "ok": true,
             "passed": [
               "multiple-style-blocks",
               "scoped",
+              "deep",
               "slotted",
               "global",
+              "v-bind",
               "css-modules",
+              "global-mixed-local",
               "deep-compound",
+              "slotted-compound",
+              "is-selector-list",
+              "where-selector-list",
               "media-scoped",
-              "supports-scoped"
+              "supports-scoped",
+              "scoped-keyframes",
+              "v-bind-multiple",
+              "v-bind-quoted"
             ],
-            "failures": [
-              {
-                "id": "deep",
-                "error": "deep: scope attribute must remain on .deep-host while .deep-target becomes an unscoped descendant"
-              },
-              {
-                "id": "v-bind",
-                "error": "v-bind: JS registers \"--927b501a-color\" but Vue's useCssVars runtime adds another -- prefix, so runtime output cannot match emitted CSS var(--927b501a-color)"
-              },
-              {
-                "id": "global-mixed-local",
-                "error": "global-mixed-local: local selector fragments or a scope constraint leaked into Vue's global selector"
-              },
-              {
-                "id": "slotted-compound",
-                "error": "slotted-compound: the slotted scope attribute was not attached to the final compound target"
-              },
-              {
-                "id": "is-selector-list",
-                "error": "is-selector-list: the complete :is() selector list was not preserved"
-              },
-              {
-                "id": "where-selector-list",
-                "error": "where-selector-list: the complete :where() selector list was not preserved"
-              },
-              {
-                "id": "scoped-keyframes",
-                "error": "scoped-keyframes: scoped keyframe name was not rewritten"
-              },
-              {
-                "id": "v-bind-multiple",
-                "error": "v-bind-multiple: JS registers \"--7d8c9d6c-color\" but Vue's useCssVars runtime adds another -- prefix, so runtime output cannot match emitted CSS var(--7d8c9d6c-color)"
-              },
-              {
-                "id": "v-bind-quoted",
-                "error": "v-bind-quoted: JS registers \"--ac901a1e-theme_gap\" but Vue's useCssVars runtime adds another -- prefix, so runtime output cannot match emitted CSS var(--ac901a1e-theme_gap)"
-              }
-            ],
-            "error": "[deep] deep: scope attribute must remain on .deep-host while .deep-target becomes an unscoped descendant; [v-bind] v-bind: JS registers \"--927b501a-color\" but Vue's useCssVars runtime adds another -- prefix, so runtime output cannot match emitted CSS var(--927b501a-color); [global-mixed-local] global-mixed-local: local selector fragments or a scope constraint leaked into Vue's global selector; [slotted-compound] slotted-compound: the slotted scope attribute was not attached to the final compound target; [is-selector-list] is-selector-list: the complete :is() selector list was not preserved; [where-selector-list] where-selector-list: the complete :where() selector list was not preserved; [scoped-keyframes] scoped-keyframes: scoped keyframe name was not rewritten; [v-bind-multiple] v-bind-multiple: JS registers \"--7d8c9d6c-color\" but Vue's useCssVars runtime adds another -- prefix, so runtime output cannot match emitted CSS var(--7d8c9d6c-color); [v-bind-quoted] v-bind-quoted: JS registers \"--ac901a1e-theme_gap\" but Vue's useCssVars runtime adds another -- prefix, so runtime output cannot match emitted CSS var(--ac901a1e-theme_gap)"
+            "failures": []
           },
           "@fervid/napi:compileSync": {
             "ok": false,
@@ -982,41 +953,41 @@
             "@verter/native": {
               "status": "FAIL",
               "ok": false,
-              "exactPath": "one newly created host reused for the 8-case authored-language compileMany + processStyle gate",
+              "exactPath": "one newly created host reused for the 8-case authored-language compileMany + transformVueStyle gate",
               "plantCount": 8,
               "passed": [],
               "failures": [
                 {
                   "id": "scss-nesting-mixin-scoped",
-                  "error": "CSS parse error: Invalid empty selector at :0:1"
+                  "error": "[/style-preprocessor-gate/scss-nesting-mixin-scoped.vue] style rewrite PostPreprocessScoping refused Scss input with StageRequiresPlainCss at None"
                 },
                 {
                   "id": "scss-deep-media-scoped",
-                  "error": "CSS parse error: Invalid empty selector at :0:1"
+                  "error": "[/style-preprocessor-gate/scss-deep-media-scoped.vue] style rewrite PostPreprocessScoping refused Scss input with StageRequiresPlainCss at None"
                 },
                 {
                   "id": "scss-v-bind-scoped",
-                  "error": "scss-v-bind-scoped: emitted CSS still contains nested parent selector"
+                  "error": "[/style-preprocessor-gate/scss-v-bind-scoped.vue] style rewrite PostPreprocessScoping refused Scss input with StageRequiresPlainCss at None"
                 },
                 {
                   "id": "scss-css-modules",
-                  "error": "CSS parse error: Invalid empty selector at :0:1"
+                  "error": "[/style-preprocessor-gate/scss-css-modules.vue] style rewrite PostPreprocessModules refused Scss input with UntrustedRewriteTarget at Some(Span { start: 128, end: 162 })"
                 },
                 {
                   "id": "sass-nesting-mixin-scoped",
-                  "error": "CSS parse error: Unexpected end of input at :6:31"
+                  "error": "[/style-preprocessor-gate/sass-nesting-mixin-scoped.vue] style rewrite PostPreprocessScoping refused Sass input with StageRequiresPlainCss at None"
                 },
                 {
                   "id": "sass-deep-media-scoped",
-                  "error": "CSS parse error: Unexpected end of input at :4:18"
+                  "error": "[/style-preprocessor-gate/sass-deep-media-scoped.vue] style rewrite PostPreprocessScoping refused Sass input with StageRequiresPlainCss at None"
                 },
                 {
                   "id": "sass-v-bind-scoped",
-                  "error": "CSS parse error: Unexpected end of input at :3:43"
+                  "error": "[/style-preprocessor-gate/sass-v-bind-scoped.vue] style rewrite PostPreprocessScoping refused Sass input with StageRequiresPlainCss at None"
                 },
                 {
                   "id": "sass-css-modules",
-                  "error": "CSS parse error: Unexpected end of input at :4:26"
+                  "error": "[/style-preprocessor-gate/sass-css-modules.vue] style rewrite PostPreprocessModules refused Sass input with UntrustedRewriteTarget at Some(Span { start: 127, end: 160 })"
                 }
               ],
               "unknown": [],
@@ -1025,49 +996,49 @@
                   "id": "scss-nesting-mixin-scoped",
                   "lang": "scss",
                   "status": "FAIL",
-                  "error": "CSS parse error: Invalid empty selector at :0:1"
+                  "error": "[/style-preprocessor-gate/scss-nesting-mixin-scoped.vue] style rewrite PostPreprocessScoping refused Scss input with StageRequiresPlainCss at None"
                 },
                 {
                   "id": "scss-deep-media-scoped",
                   "lang": "scss",
                   "status": "FAIL",
-                  "error": "CSS parse error: Invalid empty selector at :0:1"
+                  "error": "[/style-preprocessor-gate/scss-deep-media-scoped.vue] style rewrite PostPreprocessScoping refused Scss input with StageRequiresPlainCss at None"
                 },
                 {
                   "id": "scss-v-bind-scoped",
                   "lang": "scss",
                   "status": "FAIL",
-                  "error": "scss-v-bind-scoped: emitted CSS still contains nested parent selector"
+                  "error": "[/style-preprocessor-gate/scss-v-bind-scoped.vue] style rewrite PostPreprocessScoping refused Scss input with StageRequiresPlainCss at None"
                 },
                 {
                   "id": "scss-css-modules",
                   "lang": "scss",
                   "status": "FAIL",
-                  "error": "CSS parse error: Invalid empty selector at :0:1"
+                  "error": "[/style-preprocessor-gate/scss-css-modules.vue] style rewrite PostPreprocessModules refused Scss input with UntrustedRewriteTarget at Some(Span { start: 128, end: 162 })"
                 },
                 {
                   "id": "sass-nesting-mixin-scoped",
                   "lang": "sass",
                   "status": "FAIL",
-                  "error": "CSS parse error: Unexpected end of input at :6:31"
+                  "error": "[/style-preprocessor-gate/sass-nesting-mixin-scoped.vue] style rewrite PostPreprocessScoping refused Sass input with StageRequiresPlainCss at None"
                 },
                 {
                   "id": "sass-deep-media-scoped",
                   "lang": "sass",
                   "status": "FAIL",
-                  "error": "CSS parse error: Unexpected end of input at :4:18"
+                  "error": "[/style-preprocessor-gate/sass-deep-media-scoped.vue] style rewrite PostPreprocessScoping refused Sass input with StageRequiresPlainCss at None"
                 },
                 {
                   "id": "sass-v-bind-scoped",
                   "lang": "sass",
                   "status": "FAIL",
-                  "error": "CSS parse error: Unexpected end of input at :3:43"
+                  "error": "[/style-preprocessor-gate/sass-v-bind-scoped.vue] style rewrite PostPreprocessScoping refused Sass input with StageRequiresPlainCss at None"
                 },
                 {
                   "id": "sass-css-modules",
                   "lang": "sass",
                   "status": "FAIL",
-                  "error": "CSS parse error: Unexpected end of input at :4:26"
+                  "error": "[/style-preprocessor-gate/sass-css-modules.vue] style rewrite PostPreprocessModules refused Sass input with UntrustedRewriteTarget at Some(Span { start: 127, end: 160 })"
                 }
               ]
             },
@@ -1498,34 +1469,21 @@
               ]
             },
             "@verter/native": {
-              "status": "FAIL",
-              "ok": false,
-              "exactPath": "sass.compileString -> one newly created host reused for the 8-case compileMany (CSS SFC) + processStyle gate",
+              "status": "PASS",
+              "ok": true,
+              "exactPath": "sass.compileString -> one newly created host reused for the 8-case compileMany (CSS SFC) + transformVueStyle gate",
               "plantCount": 8,
               "passed": [
                 "scss-nesting-mixin-scoped",
+                "scss-deep-media-scoped",
+                "scss-v-bind-scoped",
                 "scss-css-modules",
                 "sass-nesting-mixin-scoped",
+                "sass-deep-media-scoped",
+                "sass-v-bind-scoped",
                 "sass-css-modules"
               ],
-              "failures": [
-                {
-                  "id": "scss-deep-media-scoped",
-                  "error": "scss-deep-media-scoped: local host/deep descendant scoping relationship is wrong"
-                },
-                {
-                  "id": "scss-v-bind-scoped",
-                  "error": "v-bind: JS registers \"--a2b77683-tone\" but Vue's useCssVars runtime adds another -- prefix, so runtime output cannot match emitted CSS var(--a2b77683-tone)"
-                },
-                {
-                  "id": "sass-deep-media-scoped",
-                  "error": "sass-deep-media-scoped: local host/deep descendant scoping relationship is wrong"
-                },
-                {
-                  "id": "sass-v-bind-scoped",
-                  "error": "v-bind: JS registers \"--17d7edfb-tone\" but Vue's useCssVars runtime adds another -- prefix, so runtime output cannot match emitted CSS var(--17d7edfb-tone)"
-                }
-              ],
+              "failures": [],
               "unknown": [],
               "results": [
                 {
@@ -1536,14 +1494,12 @@
                 {
                   "id": "scss-deep-media-scoped",
                   "lang": "scss",
-                  "status": "FAIL",
-                  "error": "scss-deep-media-scoped: local host/deep descendant scoping relationship is wrong"
+                  "status": "PASS"
                 },
                 {
                   "id": "scss-v-bind-scoped",
                   "lang": "scss",
-                  "status": "FAIL",
-                  "error": "v-bind: JS registers \"--a2b77683-tone\" but Vue's useCssVars runtime adds another -- prefix, so runtime output cannot match emitted CSS var(--a2b77683-tone)"
+                  "status": "PASS"
                 },
                 {
                   "id": "scss-css-modules",
@@ -1558,14 +1514,12 @@
                 {
                   "id": "sass-deep-media-scoped",
                   "lang": "sass",
-                  "status": "FAIL",
-                  "error": "sass-deep-media-scoped: local host/deep descendant scoping relationship is wrong"
+                  "status": "PASS"
                 },
                 {
                   "id": "sass-v-bind-scoped",
                   "lang": "sass",
-                  "status": "FAIL",
-                  "error": "v-bind: JS registers \"--17d7edfb-tone\" but Vue's useCssVars runtime adds another -- prefix, so runtime output cannot match emitted CSS var(--17d7edfb-tone)"
+                  "status": "PASS"
                 },
                 {
                   "id": "sass-css-modules",
@@ -3386,8 +3340,8 @@
                     "requestedMode": "stateless"
                   },
                   "plantCount": 33,
-                  "passed": 23,
-                  "failed": 10,
+                  "passed": 26,
+                  "failed": 7,
                   "unknown": 0,
                   "results": [
                     {
@@ -3506,9 +3460,8 @@
                         "SVG event",
                         "reactive update"
                       ],
-                      "status": "FAIL",
+                      "status": "PASS",
                       "phase": "runtime",
-                      "detail": "reactive SVG attribute: expected \"9\", got \"4\"",
                       "metadata": {
                         "cacheHit": false,
                         "actualMode": "stateless"
@@ -3829,9 +3782,8 @@
                         "HTML replacement",
                         "directive update"
                       ],
-                      "status": "FAIL",
+                      "status": "PASS",
                       "phase": "runtime",
-                      "detail": "v-text text content: expected \"<safe & text>\", got \"\"",
                       "metadata": {
                         "cacheHit": false,
                         "actualMode": "stateless"
@@ -3890,9 +3842,8 @@
                         "compile-skip subtree",
                         "normal sibling interpolation"
                       ],
-                      "status": "FAIL",
-                      "phase": "module-load",
-                      "detail": "generated TypeScript is invalid: ',' expected.",
+                      "status": "PASS",
+                      "phase": "runtime",
                       "metadata": {
                         "cacheHit": false,
                         "actualMode": "stateless"
@@ -4923,23 +4874,23 @@
         "Every raw-class cell/pass injects a distinct fixed-width semantically neutral comment into every present script and template block. This prevents Vue cross-cell source-cache contamination and previous whole-output reuse; all candidates in a cell receive the exact same revised strings. Revision and input-object construction happen outside the timer.",
         "Official Vue-version context rows use a separate fixed-width source namespace from the candidate raw class. This prevents the context row and Vue candidate baseline from lending each other same-compiler parse/template cache entries while preserving byte-identical Vue/Vize/Verter inputs inside the candidate class.",
         "The ranked raw Verter row creates a fresh workspace-backed host/project outside every timed pass, then measures first source admission through compileMany. requestedMode=stateless is explicit and cacheHit is asserted zero. Process/native-library state may remain warm, but no populated-host parsed, semantic, dependency-graph or output state crosses timed passes.",
-        "The SFC RENDER + CSS class changes every present script, template and style block on every pass. Vue runs its official composed compiler-sfc pipeline (parse + compileScript + compileTemplate + compileStyle); Vize runs compileSfc/compileSfcBatchWithResults; Verter runs compileMany runtime-render plus one processStyle call per block. Generated JS and CSS bytes are both counted.",
+        "The SFC RENDER + CSS class changes every present script, template and style block on every pass. Vue runs its official composed compiler-sfc pipeline (parse + compileScript + compileTemplate + compileStyle); Vize runs compileSfc/compileSfcBatchWithResults; Verter runs compileMany runtime-render plus one public style-transform call per block. Generated JS and CSS bytes are both counted.",
         "TIMED STYLE CORPUS CENSUS: 200/200 files contain 200 style block(s): scoped=200, CSS Modules=0, v-bind=0, preprocessors=0, external src=0. The direct three-tool comparison currently requires inline plain CSS; the report never claims timed feature coverage absent from these counts.",
-        "STYLE CORRECTNESS GATE (untimed, mandatory for style ranking): suite 2026-09-12.3 (dc4ba0a462e6) runs 17 independent plants covering ordinary and compound scoped selectors; :deep(), :slotted(), :global(), :is() and :where() semantics; selectors nested in @media/@supports; scoped keyframe declaration/reference consistency; multiple and quoted v-bind() expression linkage; and CSS Modules mapping. Checks assert semantic relationships, never whole generated-CSS equality. Vize compileSfc and one real multi-input compileSfcBatchWithResults call have separate verdicts; Verter uses one fresh-host multi-input compileMany followed by serial processStyle; fervid sync and async are checked separately. Any failure is measured but UNRANKED and self-clears after a fixed upgrade. Plants execute after timing so they cannot pre-warm measured entrypoints; manifest metadata is retained in validation.styleCorrectnessManifest.",
+        "STYLE CORRECTNESS GATE (untimed, mandatory for style ranking): suite 2026-09-12.3 (dc4ba0a462e6) runs 17 independent plants covering ordinary and compound scoped selectors; :deep(), :slotted(), :global(), :is() and :where() semantics; selectors nested in @media/@supports; scoped keyframe declaration/reference consistency; multiple and quoted v-bind() expression linkage; and CSS Modules mapping. Checks assert semantic relationships, never whole generated-CSS equality. Vize compileSfc and one real multi-input compileSfcBatchWithResults call have separate verdicts; Verter uses one fresh-host multi-input compileMany followed by serial transformVueStyle; fervid sync and async are checked separately. Any failure is measured but UNRANKED and self-clears after a fixed upgrade. Plants execute after timing so they cannot pre-warm measured entrypoints; manifest metadata is retained in validation.styleCorrectnessManifest.",
         "SASS/SCSS CAPABILITY AUDIT (untimed, diagnostic): suite 2026-08-20.2 (e302bbad5972) runs 8 independent lang=scss/lang=sass plants for variables, mixins/nesting, scoped selectors, :deep() inside @media, v-bind linkage and CSS Modules. validation.stylePreprocessors keeps two non-interchangeable verdicts: exactEntrypoints says whether the measured compiler API directly accepts authored Sass and orchestrates the separately installed preprocessor in that call; sharedSassAdapter first runs the pinned sass dependency once per plant and then tests only each compiler's downstream Vue-style transform. Harness preprocessing can never turn an unsupported exact API into PASS. These diagnostic plants do not gate the separately defined timed inline-plain-CSS class.",
         "RUNTIME SEMANTIC GATE (untimed, mandatory): suite 2026-09-12.2 runs 33 independent valid-SFC plants against observable DOM/events/updates/public-instance behaviour, never generated-text equality. It certifies Vue's composed non-inline API, Vize single and real multi-input batch, fresh-host stateless multi-input Verter compileMany, and fervid sync/async separately with the exact target/env/map flags. Each API runs in an isolated child after all timings; every outcome and the manifest hash are retained in validation.compileSemantics. FAIL, crash, timeout, missing verdict and UNKNOWN are measured but UNRANKED. Vapor output is executed with Vue's pinned, version-matched 3.6 compiler/runtime and shipped createVaporApp path; each Vapor entrypoint receives its own PASS/FAIL verdict, while unsupported backends remain UNKNOWN individually. VDOM evidence is never borrowed.",
-        "Scheduling is not disguised as equal: Vue's reference and Vize compileSfc loop are 1T; Vize's with-results API compiles inside the process-global Rayon pool; Verter compileMany uses its host pool but public processStyle is synchronous and is called serially; fervid async uses libuv. Each row says so.",
+        "Scheduling is not disguised as equal: Vue's reference and Vize compileSfc loop are 1T; Vize's with-results API compiles inside the process-global Rayon pool; Verter compileMany uses its host pool but its public style transform is synchronous and is called serially; fervid async uses libuv. Each row says so.",
         "Imported-type resolution is PROVISIONED for every tool that accepts a provision: @vue/compiler-sfc gets an fs bridge (ts.sys semantics — fileExists is false for directories) AND a registered TypeScript module for non-relative sources, exactly as Vite's plugin-vue provides in real builds; Verter gets a workspace-backed host rooted at the project. Withholding either does not 'treat tools equally' — it uniquely disables the tools that resolve through the host and publishes the gap as their ❌.",
         "The TypeScript registered for @vue/compiler-sfc is THE HARNESS'S OWN (the declared JS arm), the same version for every corpus — not each project's pinned TS. Uniform resolution behaviour across corpora was chosen over per-project fidelity; the tsconfig consulted is still the project's own.",
         "⚠ Imported-type resolution DEPTH differs by tool: @vue/compiler-sfc THROWS on an unresolvable prop type, Verter reports an error, Vize resolves what it can and silently emits a smaller runtime props object, and fervid emits NO props object at all while reporting a resolve diagnostic this harness otherwise tolerates. This is GATED for every compiler alike, not just disclosed: a baseline-anchored PROP-RESOLUTION CENSUS samples the corpus's type-only defineProps files, compares each compiler's emitted prop keys (Vize, fervid, Verter) with the prop names the baseline resolves, and unranks on any drop — fervid's missing props count as dropped when its own resolve diagnostic attributes them. Annotates instead when a compiler's emission shape cannot be read. Re-run every benchmark; self-clearing on a fixed release.",
         "VDOM = classic Virtual DOM render functions. Vapor = direct DOM codegen (Vue 3.6+ / native tool vapor flags).",
-        "Source map is an INDEPENDENT dimension, requested from every compiler in a cell (Vue and Vize single-file: sourceMap; Vize batch: includeSourceMap; Verter: compileProfile.sourceMap/processStyle sourcemap; fervid: FervidJsCompilerOptions.sourceMap). Raw render requires a JS map. Style-inclusive rows emit two artifacts and therefore require both JS and CSS maps. Timed paths assert returned bytes whenever the installed capability exists. Current executable presence probe: Vize single JS=YES/CSS=NO, Vize batch JS=YES/CSS=NO, Verter runtime-render JS=NO/processStyle CSS=NO, fervid JS=YES/CSS=NO. Presence is not mapping correctness: a separate post-timing child traces selected script/template/CSS AST positions to the exact filename, full SFC content and UTF-16 coordinates for LF and CRLF plants. Each exact entrypoint and raw/style workload needs its own PASS in validation.sourceMaps; missing, failed or unknown evidence keeps that row UNRANKED. Vue template maps are translated to full SFC coordinates inside its timed composed adapter, including the first-line block column.",
+        "Source map is an INDEPENDENT dimension, requested from every compiler in a cell (Vue and Vize single-file: sourceMap; Vize batch: includeSourceMap; Verter: compileProfile.sourceMap/transformVueStyle sourcemap; fervid: FervidJsCompilerOptions.sourceMap). Raw render requires a JS map. Style-inclusive rows emit two artifacts and therefore require both JS and CSS maps. Timed paths assert returned bytes whenever the installed capability exists. Current executable presence probe: Vize single JS=YES/CSS=NO, Vize batch JS=YES/CSS=NO, Verter runtime-render JS=YES/transformVueStyle CSS=YES, fervid JS=YES/CSS=NO. Presence is not mapping correctness: a separate post-timing child traces selected script/template/CSS AST positions to the exact filename, full SFC content and UTF-16 coordinates for LF and CRLF plants. Each exact entrypoint and raw/style workload needs its own PASS in validation.sourceMaps; missing, failed or unknown evidence keeps that row UNRANKED. Vue template maps are translated to full SFC coordinates inside its timed composed adapter, including the first-line block column.",
         "TypeScript handling is ONE benchmark standard for the whole cell: PASSTHROUGH, requested identically from every compiler (Vue and fervid preserve annotations by their API behaviour; Vize via isTs:true; Verter via forceJs:false). The report describes the exact benchmark call rather than inferring behaviour from a separate Vite integration.",
         "Verter analysisLevel=full for every timed and validation call. The default benchmark setting is full; VERTER_ANALYSIS_LEVEL remains an explicit diagnostic override, and every Verter row prints the effective value so a tuned run cannot masquerade as the default. devMode follows the cell's isProduction value.",
         "Production vs development uses each tool's real semantic knobs: Vue isProd (hoistStatic + cacheHandlers); Vize templateHoistStatic + templateCacheHandlers; Verter isProduction + hmrStrategy; fervid isProduction.",
         "VIZE MODE CAPABILITY AUDIT (untimed): VDOM compileSfc=YES, VDOM compileSfcBatchWithResults=YES; Vapor compileSfc output changes=NO, Vapor batch output changes=NO. \"NO\" for the Vapor observation is not itself a failure: the current Vapor backend does not use these VDOM transforms. A VDOM row whose options stop affecting output is automatically unranked.",
-        "VERTER API CAPABILITY AUDIT (untimed): runtime-render emits compiled CSS=NO. The style adapter composes runtime-render + processStyle only while runtime-render returns no CSS; if an upgrade starts emitting CSS, that row is automatically unranked pending adapter revalidation so CSS cannot be charged twice.",
-        "fervid and Vize's full-SFC APIs, Vue's composed compiler-sfc reference, and Verter's composed render+processStyle path are classified in the style-inclusive class because each timed row emits both JS and CSS. API composition and scheduling differences remain explicit row properties.",
+        "VERTER API CAPABILITY AUDIT (untimed): runtime-render emits compiled CSS=NO. The style adapter composes runtime-render + transformVueStyle only while runtime-render returns no CSS; if an upgrade starts emitting CSS, that row is automatically unranked pending adapter revalidation so CSS cannot be charged twice.",
+        "fervid and Vize's full-SFC APIs, Vue's composed compiler-sfc reference, and Verter's composed render + style-transform path are classified in the style-inclusive class because each timed row emits both JS and CSS. API composition and scheduling differences remain explicit row properties.",
         "fervid may emit the non-fatal HTML-strictness diagnostic NonVoidHtmlElementStartTagWithTrailingSolidus on self-closing non-void tags accepted by Vue. Only that complete diagnostic code is tolerated, and only with generated output; every other fervid diagnostic fails the timed row. The exact tolerated count is captured from each run.",
         "fervid and Vue 3.5 have no Vapor path → skipped for vapor cells (not run as VDOM).",
         "fervid's compileAsync row fans out over libuv's threadpool (UV_THREADPOOL_SIZE=4), which is a fixed default of 4 rather than core count. It is reported, not tuned.",
@@ -4976,15 +4927,15 @@
               "files": 200,
               "status": "ok",
               "runs": [
-                63.159,
-                53.8
+                61.983,
+                56.799
               ],
-              "medianMs": 58.48,
-              "minMs": 53.8,
-              "maxMs": 63.159,
-              "meanMs": 58.48,
-              "stddevMs": 6.618,
-              "cvPct": 11.3,
+              "medianMs": 59.391,
+              "minMs": 56.799,
+              "maxMs": 61.983,
+              "meanMs": 59.391,
+              "stddevMs": 3.666,
+              "cvPct": 6.2,
               "metaSamples": [
                 {
                   "adapterOptionsHash": "f4306d2b3e7250b5951534e5d7fe84851d37daad31d62b0cc4d309ee6863cae3",
@@ -5009,14 +4960,14 @@
               "warmupPasses": 1,
               "throughput": "3.4k files/s",
               "freshChildRuns": [
-                127.136,
-                127.234
+                132.4,
+                128.97
               ],
-              "freshChildMedianMs": 127.185,
-              "freshChildMinMs": 127.136,
-              "freshChildMeanMs": 127.185,
-              "freshChildStddevMs": 0.069,
-              "freshChildCvPct": 0.1,
+              "freshChildMedianMs": 130.685,
+              "freshChildMinMs": 128.97,
+              "freshChildMeanMs": 130.685,
+              "freshChildStddevMs": 2.425,
+              "freshChildCvPct": 1.9,
               "freshChildMetaSamples": [
                 {
                   "adapterOptionsHash": "f4306d2b3e7250b5951534e5d7fe84851d37daad31d62b0cc4d309ee6863cae3",
@@ -5074,15 +5025,15 @@
               "files": 200,
               "status": "ok",
               "runs": [
-                81.918,
-                61.227
+                86.994,
+                64.64
               ],
-              "medianMs": 71.573,
-              "minMs": 61.227,
-              "maxMs": 81.918,
-              "meanMs": 71.573,
-              "stddevMs": 14.631,
-              "cvPct": 20.4,
+              "medianMs": 75.817,
+              "minMs": 64.64,
+              "maxMs": 86.994,
+              "meanMs": 75.817,
+              "stddevMs": 15.807,
+              "cvPct": 20.8,
               "metaSamples": [
                 {
                   "adapterOptionsHash": "43a62ac5ad5d1861b9f78520deea2f6731e3ead3b4dfbebfb95a8e19cfc1c2ec",
@@ -5105,16 +5056,16 @@
               ],
               "artifactMedian": 214800,
               "warmupPasses": 1,
-              "throughput": "2.8k files/s",
+              "throughput": "2.6k files/s",
               "freshChildRuns": [
-                133.482,
-                131.101
+                128.333,
+                132.917
               ],
-              "freshChildMedianMs": 132.291,
-              "freshChildMinMs": 131.101,
-              "freshChildMeanMs": 132.291,
-              "freshChildStddevMs": 1.684,
-              "freshChildCvPct": 1.3,
+              "freshChildMedianMs": 130.625,
+              "freshChildMinMs": 128.333,
+              "freshChildMeanMs": 130.625,
+              "freshChildStddevMs": 3.241,
+              "freshChildCvPct": 2.5,
               "freshChildMetaSamples": [
                 {
                   "adapterOptionsHash": "43a62ac5ad5d1861b9f78520deea2f6731e3ead3b4dfbebfb95a8e19cfc1c2ec",
@@ -5173,15 +5124,15 @@
               "files": 200,
               "status": "ok",
               "runs": [
-                56.797,
-                60.059
+                58.269,
+                56.31
               ],
-              "medianMs": 58.428,
-              "minMs": 56.797,
-              "maxMs": 60.059,
-              "meanMs": 58.428,
-              "stddevMs": 2.307,
-              "cvPct": 3.9,
+              "medianMs": 57.29,
+              "minMs": 56.31,
+              "maxMs": 58.269,
+              "meanMs": 57.29,
+              "stddevMs": 1.385,
+              "cvPct": 2.4,
               "metaSamples": [
                 {
                   "adapterOptionsHash": "27325e801a255676e6eebb5fcf6ef1c7c04083b4d635aa241d7dcb2e7bf1cf06",
@@ -5208,16 +5159,16 @@
               ],
               "artifactMedian": 214600,
               "warmupPasses": 1,
-              "throughput": "3.4k files/s",
+              "throughput": "3.5k files/s",
               "freshChildRuns": [
-                122.16,
-                130.584
+                124.545,
+                125.558
               ],
-              "freshChildMedianMs": 126.372,
-              "freshChildMinMs": 122.16,
-              "freshChildMeanMs": 126.372,
-              "freshChildStddevMs": 5.957,
-              "freshChildCvPct": 4.7,
+              "freshChildMedianMs": 125.052,
+              "freshChildMinMs": 124.545,
+              "freshChildMeanMs": 125.052,
+              "freshChildStddevMs": 0.716,
+              "freshChildCvPct": 0.6,
               "freshChildMetaSamples": [
                 {
                   "adapterOptionsHash": "27325e801a255676e6eebb5fcf6ef1c7c04083b4d635aa241d7dcb2e7bf1cf06",
@@ -5280,15 +5231,15 @@
               "files": 200,
               "status": "ok",
               "runs": [
-                113.025,
-                111.379
+                115.899,
+                108.32
               ],
-              "medianMs": 112.202,
-              "minMs": 111.379,
-              "maxMs": 113.025,
-              "meanMs": 112.202,
-              "stddevMs": 1.164,
-              "cvPct": 1,
+              "medianMs": 112.109,
+              "minMs": 108.32,
+              "maxMs": 115.899,
+              "meanMs": 112.109,
+              "stddevMs": 5.359,
+              "cvPct": 4.8,
               "metaSamples": [
                 {
                   "adapterOptionsHash": "bd14c200b2cf2aed5b6cd61a998a00444b56a8673d831cc49612ce5bff35126d",
@@ -5325,14 +5276,14 @@
               "warmupPasses": 1,
               "throughput": "1.8k files/s",
               "freshChildRuns": [
-                194.504,
-                200.347
+                198.691,
+                194.531
               ],
-              "freshChildMedianMs": 197.425,
-              "freshChildMinMs": 194.504,
-              "freshChildMeanMs": 197.425,
-              "freshChildStddevMs": 4.132,
-              "freshChildCvPct": 2.1,
+              "freshChildMedianMs": 196.611,
+              "freshChildMinMs": 194.531,
+              "freshChildMeanMs": 196.611,
+              "freshChildStddevMs": 2.942,
+              "freshChildCvPct": 1.5,
               "freshChildMetaSamples": [
                 {
                   "adapterOptionsHash": "bd14c200b2cf2aed5b6cd61a998a00444b56a8673d831cc49612ce5bff35126d",
@@ -5402,15 +5353,15 @@
               "files": 200,
               "status": "unranked",
               "runs": [
-                25.201,
-                24.522
+                25.198,
+                24.924
               ],
-              "medianMs": 24.861,
-              "minMs": 24.522,
-              "maxMs": 25.201,
-              "meanMs": 24.861,
-              "stddevMs": 0.48,
-              "cvPct": 1.9,
+              "medianMs": 25.061,
+              "minMs": 24.924,
+              "maxMs": 25.198,
+              "meanMs": 25.061,
+              "stddevMs": 0.194,
+              "cvPct": 0.8,
               "metaSamples": [
                 {
                   "adapterOptionsHash": "646d56b2fd7a66b5b492b3e2f7d2a9bb75b1f4b40c71aab9b254187517a5226a",
@@ -5447,14 +5398,14 @@
               "warmupPasses": 1,
               "throughput": "n/a",
               "freshChildRuns": [
-                26.479,
-                26.899
+                27.195,
+                27.092
               ],
-              "freshChildMedianMs": 26.689,
-              "freshChildMinMs": 26.479,
-              "freshChildMeanMs": 26.689,
-              "freshChildStddevMs": 0.297,
-              "freshChildCvPct": 1.1,
+              "freshChildMedianMs": 27.143,
+              "freshChildMinMs": 27.092,
+              "freshChildMeanMs": 27.143,
+              "freshChildStddevMs": 0.073,
+              "freshChildCvPct": 0.3,
               "freshChildMetaSamples": [
                 {
                   "adapterOptionsHash": "646d56b2fd7a66b5b492b3e2f7d2a9bb75b1f4b40c71aab9b254187517a5226a",
@@ -5525,15 +5476,15 @@
               "files": 200,
               "status": "unranked",
               "runs": [
-                8.448,
-                7.878
+                8.312,
+                8.052
               ],
-              "medianMs": 8.163,
-              "minMs": 7.878,
-              "maxMs": 8.448,
-              "meanMs": 8.163,
-              "stddevMs": 0.403,
-              "cvPct": 4.9,
+              "medianMs": 8.182,
+              "minMs": 8.052,
+              "maxMs": 8.312,
+              "meanMs": 8.182,
+              "stddevMs": 0.184,
+              "cvPct": 2.2,
               "metaSamples": [
                 {
                   "adapterOptionsHash": "73d124ddbcc13a252f1096b9df42e827640ea15928d1886d4adbfbe6c1f35a53",
@@ -5570,14 +5521,14 @@
               "warmupPasses": 1,
               "throughput": "n/a",
               "freshChildRuns": [
-                9.57,
-                9.48
+                10.687,
+                9.783
               ],
-              "freshChildMedianMs": 9.525,
-              "freshChildMinMs": 9.48,
-              "freshChildMeanMs": 9.525,
-              "freshChildStddevMs": 0.064,
-              "freshChildCvPct": 0.7,
+              "freshChildMedianMs": 10.235,
+              "freshChildMinMs": 9.783,
+              "freshChildMeanMs": 10.235,
+              "freshChildStddevMs": 0.639,
+              "freshChildCvPct": 6.2,
               "freshChildMetaSamples": [
                 {
                   "adapterOptionsHash": "73d124ddbcc13a252f1096b9df42e827640ea15928d1886d4adbfbe6c1f35a53",
@@ -5648,15 +5599,15 @@
               "files": 200,
               "status": "unranked",
               "runs": [
-                7.227,
-                7.386
+                7.288,
+                7.602
               ],
-              "medianMs": 7.306,
-              "minMs": 7.227,
-              "maxMs": 7.386,
-              "meanMs": 7.306,
-              "stddevMs": 0.112,
-              "cvPct": 1.5,
+              "medianMs": 7.445,
+              "minMs": 7.288,
+              "maxMs": 7.602,
+              "meanMs": 7.445,
+              "stddevMs": 0.222,
+              "cvPct": 3,
               "metaSamples": [
                 {
                   "adapterOptionsHash": "672454a2f3535e17790ad506dac398198989dc211a4d41f28ba051d0d1fb0078",
@@ -5681,14 +5632,14 @@
               "warmupPasses": 1,
               "throughput": "n/a",
               "freshChildRuns": [
-                8.32,
-                8.259
+                8.448,
+                8.658
               ],
-              "freshChildMedianMs": 8.29,
-              "freshChildMinMs": 8.259,
-              "freshChildMeanMs": 8.29,
-              "freshChildStddevMs": 0.043,
-              "freshChildCvPct": 0.5,
+              "freshChildMedianMs": 8.553,
+              "freshChildMinMs": 8.448,
+              "freshChildMeanMs": 8.553,
+              "freshChildStddevMs": 0.148,
+              "freshChildCvPct": 1.7,
               "freshChildMetaSamples": [
                 {
                   "adapterOptionsHash": "672454a2f3535e17790ad506dac398198989dc211a4d41f28ba051d0d1fb0078",
@@ -5747,15 +5698,15 @@
               "files": 200,
               "status": "unranked",
               "runs": [
-                16.333,
-                16.328
+                16.297,
+                16.142
               ],
-              "medianMs": 16.331,
-              "minMs": 16.328,
-              "maxMs": 16.333,
-              "meanMs": 16.331,
-              "stddevMs": 0.004,
-              "cvPct": 0,
+              "medianMs": 16.22,
+              "minMs": 16.142,
+              "maxMs": 16.297,
+              "meanMs": 16.22,
+              "stddevMs": 0.11,
+              "cvPct": 0.7,
               "metaSamples": [
                 {
                   "adapterOptionsHash": "5cbd06a0206d53197b015fd136478cc90b72f22d6886955b56dae38994e262a3",
@@ -5794,14 +5745,14 @@
               "warmupPasses": 1,
               "throughput": "n/a",
               "freshChildRuns": [
-                16.954,
-                17.189
+                17.781,
+                17.505
               ],
-              "freshChildMedianMs": 17.072,
-              "freshChildMinMs": 16.954,
-              "freshChildMeanMs": 17.072,
-              "freshChildStddevMs": 0.166,
-              "freshChildCvPct": 1,
+              "freshChildMedianMs": 17.643,
+              "freshChildMinMs": 17.505,
+              "freshChildMeanMs": 17.643,
+              "freshChildStddevMs": 0.195,
+              "freshChildCvPct": 1.1,
               "freshChildMetaSamples": [
                 {
                   "adapterOptionsHash": "5cbd06a0206d53197b015fd136478cc90b72f22d6886955b56dae38994e262a3",
@@ -5874,15 +5825,15 @@
               "files": 200,
               "status": "unranked",
               "runs": [
-                9.842,
-                6.97
+                20.675,
+                6.916
               ],
-              "medianMs": 8.406,
-              "minMs": 6.97,
-              "maxMs": 9.842,
-              "meanMs": 8.406,
-              "stddevMs": 2.031,
-              "cvPct": 24.2,
+              "medianMs": 13.796,
+              "minMs": 6.916,
+              "maxMs": 20.675,
+              "meanMs": 13.796,
+              "stddevMs": 9.729,
+              "cvPct": 70.5,
               "metaSamples": [
                 {
                   "adapterOptionsHash": "d28660da738599195553e0d18b60ce267efe8f985280c0120451839f0ef59bc2",
@@ -5921,14 +5872,14 @@
               "warmupPasses": 1,
               "throughput": "n/a",
               "freshChildRuns": [
-                7.141,
-                9.054
+                7.778,
+                8.218
               ],
-              "freshChildMedianMs": 8.098,
-              "freshChildMinMs": 7.141,
-              "freshChildMeanMs": 8.098,
-              "freshChildStddevMs": 1.353,
-              "freshChildCvPct": 16.7,
+              "freshChildMedianMs": 7.998,
+              "freshChildMinMs": 7.778,
+              "freshChildMeanMs": 7.998,
+              "freshChildStddevMs": 0.311,
+              "freshChildCvPct": 3.9,
               "freshChildMetaSamples": [
                 {
                   "adapterOptionsHash": "d28660da738599195553e0d18b60ce267efe8f985280c0120451839f0ef59bc2",
@@ -5986,7 +5937,7 @@
             },
             {
               "id": "verter-render-style-vdom-prod-smoff",
-              "label": "Verter compileMany + processStyle (render + CSS)",
+              "label": "Verter compileMany + transformVueStyle (render + CSS)",
               "package": "@verter/native",
               "target": "vdom",
               "env": "production",
@@ -5997,19 +5948,19 @@
               "comparisonClassLabel": "SFC compilation with CSS — script, template and style changed",
               "baseline": false,
               "artifactLabel": "Generated JS + CSS bytes",
-              "notes": "CANDIDATE VS VUE STYLE BASELINE: runtime-render plus one public processStyle call per style block; forceVapor=false, isProduction=true, forceJs=false, sourceMap=false, requestedMode=stateless, analysis=full. Receives the same per-pass-revised full SFCs and exact revised CSS contents as Vue/Vize. Each pass gets a fresh workspace-backed host/project, created outside the timer; compileMany performs first admission inside the timer. processStyle is synchronous and called serially on the JS thread. cacheHit must stay zero. ⚠ FAILED STYLE CORRECTNESS GATE — [deep] deep: scope attribute must remain on .deep-host while .deep-target becomes an unscoped descendant; [v-bind] v-bind: JS registers \"--927b501a-color\" but Vue's useCssVars runtime adds another -- prefix, so runtime output cannot match emitted CSS var(--927b501a-color); [global-mixed-local] global-mixed-local: local selector fragments or a scope constraint leaked into Vue's global selector; [slotted-compound] slotted-compound: the slotted scope attribute was not attached to the final compound target; [is-selector-list] is-selector-list: the complete :is() selector list was not preserved; [where-selector-list] where-selector-list: the complete :where() selector list was not preserved; [scoped-keyframes] scoped-keyframes: scoped keyframe name was not rewritten; [v-bind-multiple] v-bind-multiple: JS registers \"--7d8c9d6c-color\" but Vue's useCssVars runtime adds another -- prefix, so runtime output cannot match emitted CSS var(--7d8c9d6c-color); [v-bind-quoted] v-bind-quoted: JS registers \"--ac901a1e-theme_gap\" but Vue's useCssVars runtime adds another -- prefix, so runtime output cannot match emitted CSS var(--ac901a1e-theme_gap). All 17 independent CSS semantics plants are mandatory; measured but UNRANKED. ⚠ RUNTIME SEMANTIC VALIDITY FAIL (23/33 passed) — reactive-props-destructure-shadowing [runtime]: lexical shadowing: expected \"outer|parameter|arrow\", got \"|parameter|arrow\"; reactive-props-destructure-alias-default [runtime]: destructure defaults: expected \"fallback|fallback:2\", got \"|fallback:2\"; svg-namespace-reactivity [runtime]: reactive SVG attribute: expected \"9\", got \"4\"; +7 more (all retained in JSON). Generated text is not compared; these are observable runtime/API outcomes. Full per-plant results are retained in validation.compileSemantics.",
+              "notes": "CANDIDATE VS VUE STYLE BASELINE: runtime-render plus one public transformVueStyle call per style block; forceVapor=false, isProduction=true, forceJs=false, sourceMap=false, requestedMode=stateless, analysis=full. Receives the same per-pass-revised full SFCs and exact revised CSS contents as Vue/Vize. Each pass gets a fresh workspace-backed host/project, created outside the timer; compileMany performs first admission inside the timer. transformVueStyle is synchronous and called serially on the JS thread; a non-empty refusals list fails the pass. cacheHit must stay zero. ✓ STYLE CORRECTNESS GATE: all 17 independent CSS semantics plants passed. ⚠ RUNTIME SEMANTIC VALIDITY FAIL (26/33 passed) — reactive-props-destructure-shadowing [runtime]: lexical shadowing: expected \"outer|parameter|arrow\", got \"|parameter|arrow\"; reactive-props-destructure-alias-default [runtime]: destructure defaults: expected \"fallback|fallback:2\", got \"|fallback:2\"; dynamic-event-name-handler-removal [runtime]: initial dynamic event: expected \"1\", got \"0\"; +4 more (all retained in JSON). Generated text is not compared; these are observable runtime/API outcomes. Full per-plant results are retained in validation.compileSemantics.",
               "files": 200,
               "status": "unranked",
               "runs": [
-                108.38,
-                106.209
+                64.679,
+                59.635
               ],
-              "medianMs": 107.294,
-              "minMs": 106.209,
-              "maxMs": 108.38,
-              "meanMs": 107.294,
-              "stddevMs": 1.535,
-              "cvPct": 1.4,
+              "medianMs": 62.157,
+              "minMs": 59.635,
+              "maxMs": 64.679,
+              "meanMs": 62.157,
+              "stddevMs": 3.567,
+              "cvPct": 5.7,
               "metaSamples": [
                 {
                   "adapterOptionsHash": "3cb3b66c74f949d0c2d8748eddc80212c8f21743d958aa103bb5e04c3e459b98",
@@ -6017,9 +5968,9 @@
                   "inputCount": 200,
                   "inputBytes": 77200,
                   "sourceRevision": "measure:0",
-                  "artifact": 176800,
-                  "jsBytes": 148600,
-                  "cssBytes": 28200,
+                  "artifact": 179600,
+                  "jsBytes": 153000,
+                  "cssBytes": 26600,
                   "styleBlocks": 200,
                   "styleFiles": 200,
                   "moduleMappings": 0,
@@ -6035,9 +5986,9 @@
                   "inputCount": 200,
                   "inputBytes": 77200,
                   "sourceRevision": "measure:1",
-                  "artifact": 176800,
-                  "jsBytes": 148600,
-                  "cssBytes": 28200,
+                  "artifact": 179600,
+                  "jsBytes": 153000,
+                  "cssBytes": 26600,
                   "styleBlocks": 200,
                   "styleFiles": 200,
                   "moduleMappings": 0,
@@ -6050,18 +6001,18 @@
               ],
               "cacheHitsMedian": 0,
               "cacheHitsLast": 0,
-              "artifactMedian": 176800,
+              "artifactMedian": 179600,
               "warmupPasses": 1,
               "throughput": "n/a",
               "freshChildRuns": [
-                111.982,
-                117.477
+                66.239,
+                66.977
               ],
-              "freshChildMedianMs": 114.73,
-              "freshChildMinMs": 111.982,
-              "freshChildMeanMs": 114.73,
-              "freshChildStddevMs": 3.886,
-              "freshChildCvPct": 3.4,
+              "freshChildMedianMs": 66.608,
+              "freshChildMinMs": 66.239,
+              "freshChildMeanMs": 66.608,
+              "freshChildStddevMs": 0.522,
+              "freshChildCvPct": 0.8,
               "freshChildMetaSamples": [
                 {
                   "adapterOptionsHash": "3cb3b66c74f949d0c2d8748eddc80212c8f21743d958aa103bb5e04c3e459b98",
@@ -6069,9 +6020,9 @@
                   "inputCount": 200,
                   "inputBytes": 77200,
                   "sourceRevision": "fresh-child:0",
-                  "artifact": 176800,
-                  "jsBytes": 148600,
-                  "cssBytes": 28200,
+                  "artifact": 179600,
+                  "jsBytes": 153000,
+                  "cssBytes": 26600,
                   "styleBlocks": 200,
                   "styleFiles": 200,
                   "moduleMappings": 0,
@@ -6087,9 +6038,9 @@
                   "inputCount": 200,
                   "inputBytes": 77200,
                   "sourceRevision": "fresh-child:1",
-                  "artifact": 176800,
-                  "jsBytes": 148600,
-                  "cssBytes": 28200,
+                  "artifact": 179600,
+                  "jsBytes": 153000,
+                  "cssBytes": 26600,
                   "styleBlocks": 200,
                   "styleFiles": 200,
                   "moduleMappings": 0,
@@ -6136,19 +6087,19 @@
               "comparisonClassLabel": "Raw SFC compilation — identical changed inputs; no output-cache reuse",
               "baseline": false,
               "artifactLabel": "Generated JS bytes",
-              "notes": "CANDIDATE VS VUE RAW BASELINE: runtime-render forceVapor=false, isProduction=true, forceJs=false, sourceMap=false, hmr=none, requestedMode=stateless, analysis=full. Receives the exact same style-free, per-pass-revised strings as Vue and Vize. Each pass gets a fresh workspace-backed host/project, created outside the timer, so the timed compileMany call measures first source admission rather than incremental edits on a populated host. cacheHit must remain zero. Warm samples retain process/native-library state; Fresh-child samples exclude package import and host construction, so neither metric claims wholly untouched global state. No host-owned parsed or semantic state crosses passes. ⚠ RUNTIME SEMANTIC VALIDITY FAIL (23/33 passed) — reactive-props-destructure-shadowing [runtime]: lexical shadowing: expected \"outer|parameter|arrow\", got \"|parameter|arrow\"; reactive-props-destructure-alias-default [runtime]: destructure defaults: expected \"fallback|fallback:2\", got \"|fallback:2\"; svg-namespace-reactivity [runtime]: reactive SVG attribute: expected \"9\", got \"4\"; +7 more (all retained in JSON). Generated text is not compared; these are observable runtime/API outcomes. Full per-plant results are retained in validation.compileSemantics.",
+              "notes": "CANDIDATE VS VUE RAW BASELINE: runtime-render forceVapor=false, isProduction=true, forceJs=false, sourceMap=false, hmr=none, requestedMode=stateless, analysis=full. Receives the exact same style-free, per-pass-revised strings as Vue and Vize. Each pass gets a fresh workspace-backed host/project, created outside the timer, so the timed compileMany call measures first source admission rather than incremental edits on a populated host. cacheHit must remain zero. Warm samples retain process/native-library state; Fresh-child samples exclude package import and host construction, so neither metric claims wholly untouched global state. No host-owned parsed or semantic state crosses passes. ⚠ RUNTIME SEMANTIC VALIDITY FAIL (26/33 passed) — reactive-props-destructure-shadowing [runtime]: lexical shadowing: expected \"outer|parameter|arrow\", got \"|parameter|arrow\"; reactive-props-destructure-alias-default [runtime]: destructure defaults: expected \"fallback|fallback:2\", got \"|fallback:2\"; dynamic-event-name-handler-removal [runtime]: initial dynamic event: expected \"1\", got \"0\"; +4 more (all retained in JSON). Generated text is not compared; these are observable runtime/API outcomes. Full per-plant results are retained in validation.compileSemantics.",
               "files": 200,
               "status": "unranked",
               "runs": [
-                102.213,
-                98.785
+                65.835,
+                72.904
               ],
-              "medianMs": 100.499,
-              "minMs": 98.785,
-              "maxMs": 102.213,
-              "meanMs": 100.499,
-              "stddevMs": 2.424,
-              "cvPct": 2.4,
+              "medianMs": 69.369,
+              "minMs": 65.835,
+              "maxMs": 72.904,
+              "meanMs": 69.369,
+              "stddevMs": 4.999,
+              "cvPct": 7.2,
               "metaSamples": [
                 {
                   "adapterOptionsHash": "f42e7e128703a93be7e9a6f7aec4a5ba5b2f321d058363c4634c8f8ba3051b0a",
@@ -6156,7 +6107,7 @@
                   "inputCount": 200,
                   "inputBytes": 52200,
                   "sourceRevision": "candidate-raw:measure:0",
-                  "artifact": 114800,
+                  "artifact": 119200,
                   "cacheHits": 0,
                   "actualModes": [
                     "stateless"
@@ -6169,7 +6120,7 @@
                   "inputCount": 200,
                   "inputBytes": 52200,
                   "sourceRevision": "candidate-raw:measure:1",
-                  "artifact": 114800,
+                  "artifact": 119200,
                   "cacheHits": 0,
                   "actualModes": [
                     "stateless"
@@ -6179,18 +6130,18 @@
               ],
               "cacheHitsMedian": 0,
               "cacheHitsLast": 0,
-              "artifactMedian": 114800,
+              "artifactMedian": 119200,
               "warmupPasses": 1,
               "throughput": "n/a",
               "freshChildRuns": [
-                107.888,
-                107.647
+                81.144,
+                74.954
               ],
-              "freshChildMedianMs": 107.768,
-              "freshChildMinMs": 107.647,
-              "freshChildMeanMs": 107.768,
-              "freshChildStddevMs": 0.17,
-              "freshChildCvPct": 0.2,
+              "freshChildMedianMs": 78.049,
+              "freshChildMinMs": 74.954,
+              "freshChildMeanMs": 78.049,
+              "freshChildStddevMs": 4.377,
+              "freshChildCvPct": 5.6,
               "freshChildMetaSamples": [
                 {
                   "adapterOptionsHash": "f42e7e128703a93be7e9a6f7aec4a5ba5b2f321d058363c4634c8f8ba3051b0a",
@@ -6198,7 +6149,7 @@
                   "inputCount": 200,
                   "inputBytes": 52200,
                   "sourceRevision": "candidate-raw:fresh-child:0",
-                  "artifact": 114800,
+                  "artifact": 119200,
                   "cacheHits": 0,
                   "actualModes": [
                     "stateless"
@@ -6211,7 +6162,7 @@
                   "inputCount": 200,
                   "inputBytes": 52200,
                   "sourceRevision": "candidate-raw:fresh-child:1",
-                  "artifact": 114800,
+                  "artifact": 119200,
                   "cacheHits": 0,
                   "actualModes": [
                     "stateless"
@@ -6263,15 +6214,15 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            63.159,
-            53.8
+            61.983,
+            56.799
           ],
-          "medianMs": 58.48,
-          "minMs": 53.8,
-          "maxMs": 63.159,
-          "meanMs": 58.48,
-          "stddevMs": 6.618,
-          "cvPct": 11.3,
+          "medianMs": 59.391,
+          "minMs": 56.799,
+          "maxMs": 61.983,
+          "meanMs": 59.391,
+          "stddevMs": 3.666,
+          "cvPct": 6.2,
           "metaSamples": [
             {
               "adapterOptionsHash": "f4306d2b3e7250b5951534e5d7fe84851d37daad31d62b0cc4d309ee6863cae3",
@@ -6296,14 +6247,14 @@
           "warmupPasses": 1,
           "throughput": "3.4k files/s",
           "freshChildRuns": [
-            127.136,
-            127.234
+            132.4,
+            128.97
           ],
-          "freshChildMedianMs": 127.185,
-          "freshChildMinMs": 127.136,
-          "freshChildMeanMs": 127.185,
-          "freshChildStddevMs": 0.069,
-          "freshChildCvPct": 0.1,
+          "freshChildMedianMs": 130.685,
+          "freshChildMinMs": 128.97,
+          "freshChildMeanMs": 130.685,
+          "freshChildStddevMs": 2.425,
+          "freshChildCvPct": 1.9,
           "freshChildMetaSamples": [
             {
               "adapterOptionsHash": "f4306d2b3e7250b5951534e5d7fe84851d37daad31d62b0cc4d309ee6863cae3",
@@ -6361,15 +6312,15 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            81.918,
-            61.227
+            86.994,
+            64.64
           ],
-          "medianMs": 71.573,
-          "minMs": 61.227,
-          "maxMs": 81.918,
-          "meanMs": 71.573,
-          "stddevMs": 14.631,
-          "cvPct": 20.4,
+          "medianMs": 75.817,
+          "minMs": 64.64,
+          "maxMs": 86.994,
+          "meanMs": 75.817,
+          "stddevMs": 15.807,
+          "cvPct": 20.8,
           "metaSamples": [
             {
               "adapterOptionsHash": "43a62ac5ad5d1861b9f78520deea2f6731e3ead3b4dfbebfb95a8e19cfc1c2ec",
@@ -6392,16 +6343,16 @@
           ],
           "artifactMedian": 214800,
           "warmupPasses": 1,
-          "throughput": "2.8k files/s",
+          "throughput": "2.6k files/s",
           "freshChildRuns": [
-            133.482,
-            131.101
+            128.333,
+            132.917
           ],
-          "freshChildMedianMs": 132.291,
-          "freshChildMinMs": 131.101,
-          "freshChildMeanMs": 132.291,
-          "freshChildStddevMs": 1.684,
-          "freshChildCvPct": 1.3,
+          "freshChildMedianMs": 130.625,
+          "freshChildMinMs": 128.333,
+          "freshChildMeanMs": 130.625,
+          "freshChildStddevMs": 3.241,
+          "freshChildCvPct": 2.5,
           "freshChildMetaSamples": [
             {
               "adapterOptionsHash": "43a62ac5ad5d1861b9f78520deea2f6731e3ead3b4dfbebfb95a8e19cfc1c2ec",
@@ -6460,15 +6411,15 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            56.797,
-            60.059
+            58.269,
+            56.31
           ],
-          "medianMs": 58.428,
-          "minMs": 56.797,
-          "maxMs": 60.059,
-          "meanMs": 58.428,
-          "stddevMs": 2.307,
-          "cvPct": 3.9,
+          "medianMs": 57.29,
+          "minMs": 56.31,
+          "maxMs": 58.269,
+          "meanMs": 57.29,
+          "stddevMs": 1.385,
+          "cvPct": 2.4,
           "metaSamples": [
             {
               "adapterOptionsHash": "27325e801a255676e6eebb5fcf6ef1c7c04083b4d635aa241d7dcb2e7bf1cf06",
@@ -6495,16 +6446,16 @@
           ],
           "artifactMedian": 214600,
           "warmupPasses": 1,
-          "throughput": "3.4k files/s",
+          "throughput": "3.5k files/s",
           "freshChildRuns": [
-            122.16,
-            130.584
+            124.545,
+            125.558
           ],
-          "freshChildMedianMs": 126.372,
-          "freshChildMinMs": 122.16,
-          "freshChildMeanMs": 126.372,
-          "freshChildStddevMs": 5.957,
-          "freshChildCvPct": 4.7,
+          "freshChildMedianMs": 125.052,
+          "freshChildMinMs": 124.545,
+          "freshChildMeanMs": 125.052,
+          "freshChildStddevMs": 0.716,
+          "freshChildCvPct": 0.6,
           "freshChildMetaSamples": [
             {
               "adapterOptionsHash": "27325e801a255676e6eebb5fcf6ef1c7c04083b4d635aa241d7dcb2e7bf1cf06",
@@ -6567,15 +6518,15 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            113.025,
-            111.379
+            115.899,
+            108.32
           ],
-          "medianMs": 112.202,
-          "minMs": 111.379,
-          "maxMs": 113.025,
-          "meanMs": 112.202,
-          "stddevMs": 1.164,
-          "cvPct": 1,
+          "medianMs": 112.109,
+          "minMs": 108.32,
+          "maxMs": 115.899,
+          "meanMs": 112.109,
+          "stddevMs": 5.359,
+          "cvPct": 4.8,
           "metaSamples": [
             {
               "adapterOptionsHash": "bd14c200b2cf2aed5b6cd61a998a00444b56a8673d831cc49612ce5bff35126d",
@@ -6612,14 +6563,14 @@
           "warmupPasses": 1,
           "throughput": "1.8k files/s",
           "freshChildRuns": [
-            194.504,
-            200.347
+            198.691,
+            194.531
           ],
-          "freshChildMedianMs": 197.425,
-          "freshChildMinMs": 194.504,
-          "freshChildMeanMs": 197.425,
-          "freshChildStddevMs": 4.132,
-          "freshChildCvPct": 2.1,
+          "freshChildMedianMs": 196.611,
+          "freshChildMinMs": 194.531,
+          "freshChildMeanMs": 196.611,
+          "freshChildStddevMs": 2.942,
+          "freshChildCvPct": 1.5,
           "freshChildMetaSamples": [
             {
               "adapterOptionsHash": "bd14c200b2cf2aed5b6cd61a998a00444b56a8673d831cc49612ce5bff35126d",
@@ -6689,15 +6640,15 @@
           "files": 200,
           "status": "unranked",
           "runs": [
-            25.201,
-            24.522
+            25.198,
+            24.924
           ],
-          "medianMs": 24.861,
-          "minMs": 24.522,
-          "maxMs": 25.201,
-          "meanMs": 24.861,
-          "stddevMs": 0.48,
-          "cvPct": 1.9,
+          "medianMs": 25.061,
+          "minMs": 24.924,
+          "maxMs": 25.198,
+          "meanMs": 25.061,
+          "stddevMs": 0.194,
+          "cvPct": 0.8,
           "metaSamples": [
             {
               "adapterOptionsHash": "646d56b2fd7a66b5b492b3e2f7d2a9bb75b1f4b40c71aab9b254187517a5226a",
@@ -6734,14 +6685,14 @@
           "warmupPasses": 1,
           "throughput": "n/a",
           "freshChildRuns": [
-            26.479,
-            26.899
+            27.195,
+            27.092
           ],
-          "freshChildMedianMs": 26.689,
-          "freshChildMinMs": 26.479,
-          "freshChildMeanMs": 26.689,
-          "freshChildStddevMs": 0.297,
-          "freshChildCvPct": 1.1,
+          "freshChildMedianMs": 27.143,
+          "freshChildMinMs": 27.092,
+          "freshChildMeanMs": 27.143,
+          "freshChildStddevMs": 0.073,
+          "freshChildCvPct": 0.3,
           "freshChildMetaSamples": [
             {
               "adapterOptionsHash": "646d56b2fd7a66b5b492b3e2f7d2a9bb75b1f4b40c71aab9b254187517a5226a",
@@ -6812,15 +6763,15 @@
           "files": 200,
           "status": "unranked",
           "runs": [
-            8.448,
-            7.878
+            8.312,
+            8.052
           ],
-          "medianMs": 8.163,
-          "minMs": 7.878,
-          "maxMs": 8.448,
-          "meanMs": 8.163,
-          "stddevMs": 0.403,
-          "cvPct": 4.9,
+          "medianMs": 8.182,
+          "minMs": 8.052,
+          "maxMs": 8.312,
+          "meanMs": 8.182,
+          "stddevMs": 0.184,
+          "cvPct": 2.2,
           "metaSamples": [
             {
               "adapterOptionsHash": "73d124ddbcc13a252f1096b9df42e827640ea15928d1886d4adbfbe6c1f35a53",
@@ -6857,14 +6808,14 @@
           "warmupPasses": 1,
           "throughput": "n/a",
           "freshChildRuns": [
-            9.57,
-            9.48
+            10.687,
+            9.783
           ],
-          "freshChildMedianMs": 9.525,
-          "freshChildMinMs": 9.48,
-          "freshChildMeanMs": 9.525,
-          "freshChildStddevMs": 0.064,
-          "freshChildCvPct": 0.7,
+          "freshChildMedianMs": 10.235,
+          "freshChildMinMs": 9.783,
+          "freshChildMeanMs": 10.235,
+          "freshChildStddevMs": 0.639,
+          "freshChildCvPct": 6.2,
           "freshChildMetaSamples": [
             {
               "adapterOptionsHash": "73d124ddbcc13a252f1096b9df42e827640ea15928d1886d4adbfbe6c1f35a53",
@@ -6935,15 +6886,15 @@
           "files": 200,
           "status": "unranked",
           "runs": [
-            7.227,
-            7.386
+            7.288,
+            7.602
           ],
-          "medianMs": 7.306,
-          "minMs": 7.227,
-          "maxMs": 7.386,
-          "meanMs": 7.306,
-          "stddevMs": 0.112,
-          "cvPct": 1.5,
+          "medianMs": 7.445,
+          "minMs": 7.288,
+          "maxMs": 7.602,
+          "meanMs": 7.445,
+          "stddevMs": 0.222,
+          "cvPct": 3,
           "metaSamples": [
             {
               "adapterOptionsHash": "672454a2f3535e17790ad506dac398198989dc211a4d41f28ba051d0d1fb0078",
@@ -6968,14 +6919,14 @@
           "warmupPasses": 1,
           "throughput": "n/a",
           "freshChildRuns": [
-            8.32,
-            8.259
+            8.448,
+            8.658
           ],
-          "freshChildMedianMs": 8.29,
-          "freshChildMinMs": 8.259,
-          "freshChildMeanMs": 8.29,
-          "freshChildStddevMs": 0.043,
-          "freshChildCvPct": 0.5,
+          "freshChildMedianMs": 8.553,
+          "freshChildMinMs": 8.448,
+          "freshChildMeanMs": 8.553,
+          "freshChildStddevMs": 0.148,
+          "freshChildCvPct": 1.7,
           "freshChildMetaSamples": [
             {
               "adapterOptionsHash": "672454a2f3535e17790ad506dac398198989dc211a4d41f28ba051d0d1fb0078",
@@ -7034,15 +6985,15 @@
           "files": 200,
           "status": "unranked",
           "runs": [
-            16.333,
-            16.328
+            16.297,
+            16.142
           ],
-          "medianMs": 16.331,
-          "minMs": 16.328,
-          "maxMs": 16.333,
-          "meanMs": 16.331,
-          "stddevMs": 0.004,
-          "cvPct": 0,
+          "medianMs": 16.22,
+          "minMs": 16.142,
+          "maxMs": 16.297,
+          "meanMs": 16.22,
+          "stddevMs": 0.11,
+          "cvPct": 0.7,
           "metaSamples": [
             {
               "adapterOptionsHash": "5cbd06a0206d53197b015fd136478cc90b72f22d6886955b56dae38994e262a3",
@@ -7081,14 +7032,14 @@
           "warmupPasses": 1,
           "throughput": "n/a",
           "freshChildRuns": [
-            16.954,
-            17.189
+            17.781,
+            17.505
           ],
-          "freshChildMedianMs": 17.072,
-          "freshChildMinMs": 16.954,
-          "freshChildMeanMs": 17.072,
-          "freshChildStddevMs": 0.166,
-          "freshChildCvPct": 1,
+          "freshChildMedianMs": 17.643,
+          "freshChildMinMs": 17.505,
+          "freshChildMeanMs": 17.643,
+          "freshChildStddevMs": 0.195,
+          "freshChildCvPct": 1.1,
           "freshChildMetaSamples": [
             {
               "adapterOptionsHash": "5cbd06a0206d53197b015fd136478cc90b72f22d6886955b56dae38994e262a3",
@@ -7161,15 +7112,15 @@
           "files": 200,
           "status": "unranked",
           "runs": [
-            9.842,
-            6.97
+            20.675,
+            6.916
           ],
-          "medianMs": 8.406,
-          "minMs": 6.97,
-          "maxMs": 9.842,
-          "meanMs": 8.406,
-          "stddevMs": 2.031,
-          "cvPct": 24.2,
+          "medianMs": 13.796,
+          "minMs": 6.916,
+          "maxMs": 20.675,
+          "meanMs": 13.796,
+          "stddevMs": 9.729,
+          "cvPct": 70.5,
           "metaSamples": [
             {
               "adapterOptionsHash": "d28660da738599195553e0d18b60ce267efe8f985280c0120451839f0ef59bc2",
@@ -7208,14 +7159,14 @@
           "warmupPasses": 1,
           "throughput": "n/a",
           "freshChildRuns": [
-            7.141,
-            9.054
+            7.778,
+            8.218
           ],
-          "freshChildMedianMs": 8.098,
-          "freshChildMinMs": 7.141,
-          "freshChildMeanMs": 8.098,
-          "freshChildStddevMs": 1.353,
-          "freshChildCvPct": 16.7,
+          "freshChildMedianMs": 7.998,
+          "freshChildMinMs": 7.778,
+          "freshChildMeanMs": 7.998,
+          "freshChildStddevMs": 0.311,
+          "freshChildCvPct": 3.9,
           "freshChildMetaSamples": [
             {
               "adapterOptionsHash": "d28660da738599195553e0d18b60ce267efe8f985280c0120451839f0ef59bc2",
@@ -7273,7 +7224,7 @@
         },
         {
           "id": "verter-render-style-vdom-prod-smoff",
-          "label": "Verter compileMany + processStyle (render + CSS)",
+          "label": "Verter compileMany + transformVueStyle (render + CSS)",
           "package": "@verter/native",
           "target": "vdom",
           "env": "production",
@@ -7284,19 +7235,19 @@
           "comparisonClassLabel": "SFC compilation with CSS — script, template and style changed",
           "baseline": false,
           "artifactLabel": "Generated JS + CSS bytes",
-          "notes": "CANDIDATE VS VUE STYLE BASELINE: runtime-render plus one public processStyle call per style block; forceVapor=false, isProduction=true, forceJs=false, sourceMap=false, requestedMode=stateless, analysis=full. Receives the same per-pass-revised full SFCs and exact revised CSS contents as Vue/Vize. Each pass gets a fresh workspace-backed host/project, created outside the timer; compileMany performs first admission inside the timer. processStyle is synchronous and called serially on the JS thread. cacheHit must stay zero. ⚠ FAILED STYLE CORRECTNESS GATE — [deep] deep: scope attribute must remain on .deep-host while .deep-target becomes an unscoped descendant; [v-bind] v-bind: JS registers \"--927b501a-color\" but Vue's useCssVars runtime adds another -- prefix, so runtime output cannot match emitted CSS var(--927b501a-color); [global-mixed-local] global-mixed-local: local selector fragments or a scope constraint leaked into Vue's global selector; [slotted-compound] slotted-compound: the slotted scope attribute was not attached to the final compound target; [is-selector-list] is-selector-list: the complete :is() selector list was not preserved; [where-selector-list] where-selector-list: the complete :where() selector list was not preserved; [scoped-keyframes] scoped-keyframes: scoped keyframe name was not rewritten; [v-bind-multiple] v-bind-multiple: JS registers \"--7d8c9d6c-color\" but Vue's useCssVars runtime adds another -- prefix, so runtime output cannot match emitted CSS var(--7d8c9d6c-color); [v-bind-quoted] v-bind-quoted: JS registers \"--ac901a1e-theme_gap\" but Vue's useCssVars runtime adds another -- prefix, so runtime output cannot match emitted CSS var(--ac901a1e-theme_gap). All 17 independent CSS semantics plants are mandatory; measured but UNRANKED. ⚠ RUNTIME SEMANTIC VALIDITY FAIL (23/33 passed) — reactive-props-destructure-shadowing [runtime]: lexical shadowing: expected \"outer|parameter|arrow\", got \"|parameter|arrow\"; reactive-props-destructure-alias-default [runtime]: destructure defaults: expected \"fallback|fallback:2\", got \"|fallback:2\"; svg-namespace-reactivity [runtime]: reactive SVG attribute: expected \"9\", got \"4\"; +7 more (all retained in JSON). Generated text is not compared; these are observable runtime/API outcomes. Full per-plant results are retained in validation.compileSemantics.",
+          "notes": "CANDIDATE VS VUE STYLE BASELINE: runtime-render plus one public transformVueStyle call per style block; forceVapor=false, isProduction=true, forceJs=false, sourceMap=false, requestedMode=stateless, analysis=full. Receives the same per-pass-revised full SFCs and exact revised CSS contents as Vue/Vize. Each pass gets a fresh workspace-backed host/project, created outside the timer; compileMany performs first admission inside the timer. transformVueStyle is synchronous and called serially on the JS thread; a non-empty refusals list fails the pass. cacheHit must stay zero. ✓ STYLE CORRECTNESS GATE: all 17 independent CSS semantics plants passed. ⚠ RUNTIME SEMANTIC VALIDITY FAIL (26/33 passed) — reactive-props-destructure-shadowing [runtime]: lexical shadowing: expected \"outer|parameter|arrow\", got \"|parameter|arrow\"; reactive-props-destructure-alias-default [runtime]: destructure defaults: expected \"fallback|fallback:2\", got \"|fallback:2\"; dynamic-event-name-handler-removal [runtime]: initial dynamic event: expected \"1\", got \"0\"; +4 more (all retained in JSON). Generated text is not compared; these are observable runtime/API outcomes. Full per-plant results are retained in validation.compileSemantics.",
           "files": 200,
           "status": "unranked",
           "runs": [
-            108.38,
-            106.209
+            64.679,
+            59.635
           ],
-          "medianMs": 107.294,
-          "minMs": 106.209,
-          "maxMs": 108.38,
-          "meanMs": 107.294,
-          "stddevMs": 1.535,
-          "cvPct": 1.4,
+          "medianMs": 62.157,
+          "minMs": 59.635,
+          "maxMs": 64.679,
+          "meanMs": 62.157,
+          "stddevMs": 3.567,
+          "cvPct": 5.7,
           "metaSamples": [
             {
               "adapterOptionsHash": "3cb3b66c74f949d0c2d8748eddc80212c8f21743d958aa103bb5e04c3e459b98",
@@ -7304,9 +7255,9 @@
               "inputCount": 200,
               "inputBytes": 77200,
               "sourceRevision": "measure:0",
-              "artifact": 176800,
-              "jsBytes": 148600,
-              "cssBytes": 28200,
+              "artifact": 179600,
+              "jsBytes": 153000,
+              "cssBytes": 26600,
               "styleBlocks": 200,
               "styleFiles": 200,
               "moduleMappings": 0,
@@ -7322,9 +7273,9 @@
               "inputCount": 200,
               "inputBytes": 77200,
               "sourceRevision": "measure:1",
-              "artifact": 176800,
-              "jsBytes": 148600,
-              "cssBytes": 28200,
+              "artifact": 179600,
+              "jsBytes": 153000,
+              "cssBytes": 26600,
               "styleBlocks": 200,
               "styleFiles": 200,
               "moduleMappings": 0,
@@ -7337,18 +7288,18 @@
           ],
           "cacheHitsMedian": 0,
           "cacheHitsLast": 0,
-          "artifactMedian": 176800,
+          "artifactMedian": 179600,
           "warmupPasses": 1,
           "throughput": "n/a",
           "freshChildRuns": [
-            111.982,
-            117.477
+            66.239,
+            66.977
           ],
-          "freshChildMedianMs": 114.73,
-          "freshChildMinMs": 111.982,
-          "freshChildMeanMs": 114.73,
-          "freshChildStddevMs": 3.886,
-          "freshChildCvPct": 3.4,
+          "freshChildMedianMs": 66.608,
+          "freshChildMinMs": 66.239,
+          "freshChildMeanMs": 66.608,
+          "freshChildStddevMs": 0.522,
+          "freshChildCvPct": 0.8,
           "freshChildMetaSamples": [
             {
               "adapterOptionsHash": "3cb3b66c74f949d0c2d8748eddc80212c8f21743d958aa103bb5e04c3e459b98",
@@ -7356,9 +7307,9 @@
               "inputCount": 200,
               "inputBytes": 77200,
               "sourceRevision": "fresh-child:0",
-              "artifact": 176800,
-              "jsBytes": 148600,
-              "cssBytes": 28200,
+              "artifact": 179600,
+              "jsBytes": 153000,
+              "cssBytes": 26600,
               "styleBlocks": 200,
               "styleFiles": 200,
               "moduleMappings": 0,
@@ -7374,9 +7325,9 @@
               "inputCount": 200,
               "inputBytes": 77200,
               "sourceRevision": "fresh-child:1",
-              "artifact": 176800,
-              "jsBytes": 148600,
-              "cssBytes": 28200,
+              "artifact": 179600,
+              "jsBytes": 153000,
+              "cssBytes": 26600,
               "styleBlocks": 200,
               "styleFiles": 200,
               "moduleMappings": 0,
@@ -7423,19 +7374,19 @@
           "comparisonClassLabel": "Raw SFC compilation — identical changed inputs; no output-cache reuse",
           "baseline": false,
           "artifactLabel": "Generated JS bytes",
-          "notes": "CANDIDATE VS VUE RAW BASELINE: runtime-render forceVapor=false, isProduction=true, forceJs=false, sourceMap=false, hmr=none, requestedMode=stateless, analysis=full. Receives the exact same style-free, per-pass-revised strings as Vue and Vize. Each pass gets a fresh workspace-backed host/project, created outside the timer, so the timed compileMany call measures first source admission rather than incremental edits on a populated host. cacheHit must remain zero. Warm samples retain process/native-library state; Fresh-child samples exclude package import and host construction, so neither metric claims wholly untouched global state. No host-owned parsed or semantic state crosses passes. ⚠ RUNTIME SEMANTIC VALIDITY FAIL (23/33 passed) — reactive-props-destructure-shadowing [runtime]: lexical shadowing: expected \"outer|parameter|arrow\", got \"|parameter|arrow\"; reactive-props-destructure-alias-default [runtime]: destructure defaults: expected \"fallback|fallback:2\", got \"|fallback:2\"; svg-namespace-reactivity [runtime]: reactive SVG attribute: expected \"9\", got \"4\"; +7 more (all retained in JSON). Generated text is not compared; these are observable runtime/API outcomes. Full per-plant results are retained in validation.compileSemantics.",
+          "notes": "CANDIDATE VS VUE RAW BASELINE: runtime-render forceVapor=false, isProduction=true, forceJs=false, sourceMap=false, hmr=none, requestedMode=stateless, analysis=full. Receives the exact same style-free, per-pass-revised strings as Vue and Vize. Each pass gets a fresh workspace-backed host/project, created outside the timer, so the timed compileMany call measures first source admission rather than incremental edits on a populated host. cacheHit must remain zero. Warm samples retain process/native-library state; Fresh-child samples exclude package import and host construction, so neither metric claims wholly untouched global state. No host-owned parsed or semantic state crosses passes. ⚠ RUNTIME SEMANTIC VALIDITY FAIL (26/33 passed) — reactive-props-destructure-shadowing [runtime]: lexical shadowing: expected \"outer|parameter|arrow\", got \"|parameter|arrow\"; reactive-props-destructure-alias-default [runtime]: destructure defaults: expected \"fallback|fallback:2\", got \"|fallback:2\"; dynamic-event-name-handler-removal [runtime]: initial dynamic event: expected \"1\", got \"0\"; +4 more (all retained in JSON). Generated text is not compared; these are observable runtime/API outcomes. Full per-plant results are retained in validation.compileSemantics.",
           "files": 200,
           "status": "unranked",
           "runs": [
-            102.213,
-            98.785
+            65.835,
+            72.904
           ],
-          "medianMs": 100.499,
-          "minMs": 98.785,
-          "maxMs": 102.213,
-          "meanMs": 100.499,
-          "stddevMs": 2.424,
-          "cvPct": 2.4,
+          "medianMs": 69.369,
+          "minMs": 65.835,
+          "maxMs": 72.904,
+          "meanMs": 69.369,
+          "stddevMs": 4.999,
+          "cvPct": 7.2,
           "metaSamples": [
             {
               "adapterOptionsHash": "f42e7e128703a93be7e9a6f7aec4a5ba5b2f321d058363c4634c8f8ba3051b0a",
@@ -7443,7 +7394,7 @@
               "inputCount": 200,
               "inputBytes": 52200,
               "sourceRevision": "candidate-raw:measure:0",
-              "artifact": 114800,
+              "artifact": 119200,
               "cacheHits": 0,
               "actualModes": [
                 "stateless"
@@ -7456,7 +7407,7 @@
               "inputCount": 200,
               "inputBytes": 52200,
               "sourceRevision": "candidate-raw:measure:1",
-              "artifact": 114800,
+              "artifact": 119200,
               "cacheHits": 0,
               "actualModes": [
                 "stateless"
@@ -7466,18 +7417,18 @@
           ],
           "cacheHitsMedian": 0,
           "cacheHitsLast": 0,
-          "artifactMedian": 114800,
+          "artifactMedian": 119200,
           "warmupPasses": 1,
           "throughput": "n/a",
           "freshChildRuns": [
-            107.888,
-            107.647
+            81.144,
+            74.954
           ],
-          "freshChildMedianMs": 107.768,
-          "freshChildMinMs": 107.647,
-          "freshChildMeanMs": 107.768,
-          "freshChildStddevMs": 0.17,
-          "freshChildCvPct": 0.2,
+          "freshChildMedianMs": 78.049,
+          "freshChildMinMs": 74.954,
+          "freshChildMeanMs": 78.049,
+          "freshChildStddevMs": 4.377,
+          "freshChildCvPct": 5.6,
           "freshChildMetaSamples": [
             {
               "adapterOptionsHash": "f42e7e128703a93be7e9a6f7aec4a5ba5b2f321d058363c4634c8f8ba3051b0a",
@@ -7485,7 +7436,7 @@
               "inputCount": 200,
               "inputBytes": 52200,
               "sourceRevision": "candidate-raw:fresh-child:0",
-              "artifact": 114800,
+              "artifact": 119200,
               "cacheHits": 0,
               "actualModes": [
                 "stateless"
@@ -7498,7 +7449,7 @@
               "inputCount": 200,
               "inputBytes": 52200,
               "sourceRevision": "candidate-raw:fresh-child:1",
-              "artifact": 114800,
+              "artifact": 119200,
               "cacheHits": 0,
               "actualModes": [
                 "stateless"
