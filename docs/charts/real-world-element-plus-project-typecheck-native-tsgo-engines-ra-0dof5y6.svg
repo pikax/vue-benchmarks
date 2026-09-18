@@ -11,29 +11,29 @@
   <line x1="248" y1="48" x2="248" y2="164" stroke="#d0d7de" stroke-opacity="0.55" />
   <text fill="#59636e" x="248" y="184" text-anchor="middle" font-size="11">0.0 ms</text>
   <line x1="348.5" y1="48" x2="348.5" y2="164" stroke="#d0d7de" stroke-opacity="0.55" />
-  <text fill="#59636e" x="348.5" y="184" text-anchor="middle" font-size="11">3.76 s</text>
+  <text fill="#59636e" x="348.5" y="184" text-anchor="middle" font-size="11">4.23 s</text>
   <line x1="449" y1="48" x2="449" y2="164" stroke="#d0d7de" stroke-opacity="0.55" />
-  <text fill="#59636e" x="449" y="184" text-anchor="middle" font-size="11">7.51 s</text>
+  <text fill="#59636e" x="449" y="184" text-anchor="middle" font-size="11">8.46 s</text>
   <line x1="549.5" y1="48" x2="549.5" y2="164" stroke="#d0d7de" stroke-opacity="0.55" />
-  <text fill="#59636e" x="549.5" y="184" text-anchor="middle" font-size="11">11.3 s</text>
+  <text fill="#59636e" x="549.5" y="184" text-anchor="middle" font-size="11">12.7 s</text>
   <line x1="650" y1="48" x2="650" y2="164" stroke="#d0d7de" stroke-opacity="0.55" />
-  <text fill="#59636e" x="650" y="184" text-anchor="middle" font-size="11">15.0 s</text>
+  <text fill="#59636e" x="650" y="184" text-anchor="middle" font-size="11">16.9 s</text>
   <text fill="#59636e" x="16" y="77" font-size="11">1</text>
-      <text fill="#1f2328" x="36" y="77" font-size="13">verter-tsc</text>
+      <text fill="#1f2328" x="36" y="77" font-size="13">vue-tsc (N)</text>
       
       <rect x="248" y="61" width="402" height="22" rx="5" fill="#afb8c133"/>
-      <rect x="248" y="61" width="68.0" height="22" rx="5" fill="#e11d48"/>
-      <text fill="#1f2328" x="323.99774361388415" y="77" font-size="12" font-weight="600">2.54 s</text>
+      <rect x="248" y="61" width="236.4" height="22" rx="5" fill="#42b883"/>
+      <text fill="#ffffff" x="256" y="77" font-size="12" font-weight="600">9.96 s</text>
   <text fill="#59636e" x="16" y="113" font-size="11">2</text>
-      <text fill="#1f2328" x="36" y="113" font-size="13">vue-tsc (N)</text>
+      <text fill="#1f2328" x="36" y="113" font-size="13">verter-tsc</text>
       
       <rect x="248" y="97" width="402" height="22" rx="5" fill="#afb8c133"/>
-      <rect x="248" y="97" width="210.0" height="22" rx="5" fill="#42b883"/>
-      <text fill="#ffffff" x="256" y="113" font-size="12" font-weight="600">7.85 s</text>
+      <rect x="248" y="97" width="237.1" height="22" rx="5" fill="#e11d48"/>
+      <text fill="#ffffff" x="256" y="113" font-size="12" font-weight="600">9.99 s</text>
   <text fill="#59636e" x="16" y="149" font-size="11">3</text>
       <text fill="#1f2328" x="36" y="149" font-size="13" fill-opacity="0.62">Vize</text>
       <line x1="36" y1="144" x2="240" y2="144" stroke="#1f2328" stroke-opacity="0.45" />
       <rect x="248" y="133" width="402" height="22" rx="5" fill="#afb8c133"/>
       <rect x="248" y="133" width="402.0" height="22" rx="5" fill="url(#hatch-2)"/>
-      <text fill="#ffffff" x="256" y="149" font-size="12" font-weight="600">15.0 s · unranked</text>
+      <text fill="#ffffff" x="256" y="149" font-size="12" font-weight="600">16.9 s · unranked</text>
 </svg>
