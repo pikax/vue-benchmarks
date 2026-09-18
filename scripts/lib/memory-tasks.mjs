@@ -312,7 +312,7 @@ export function buildMemoryTasks(fixtureDir, options = {}) {
 
       tasks.push({
         id: `mem-verter-render-style-${cell}`,
-        label: `Verter compileMany + processStyle (render + CSS) ${cell}`,
+        label: `Verter compileMany + style transform (render + CSS) ${cell}`,
         package: "@verter/native",
         surface: "compile",
         comparisonClass: "sfc-with-style",

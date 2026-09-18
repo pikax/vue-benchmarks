@@ -12,6 +12,7 @@ import {
   SOURCE_MAP_SUITE_HASH,
 } from "./source-map-validity-plants.mjs";
 import { judgeSourceMapArtifact } from "./source-map-validity-oracle.mjs";
+import { resolveVerterStyleTransform, assertVerterStyleResult } from "./verter-style.mjs";
 
 const require = createRequire(import.meta.url);
 const root = join(dirname(fileURLToPath(import.meta.url)), "../..");
@@ -185,8 +186,10 @@ async function capture(entrypoint, plants, { target, env }) {
         const artifacts = nativeArtifacts(result);
         if (withStyles) {
           const { descriptor } = require("@vue/compiler-sfc").parse(plants[index].source);
+          const verterStyle = resolveVerterStyleTransform(native);
+          if (!verterStyle) throw new Error("verter exposes no public style transform export");
           descriptor.styles.forEach((style, styleIndex) => {
-            const output = native.processStyle(style.content, {
+            const output = verterStyle.transform(style.content, {
               scopeId: "abc12345",
               scoped: style.scoped,
               isModule: false,
@@ -194,6 +197,7 @@ async function capture(entrypoint, plants, { target, env }) {
               sourcemap: true,
             });
             assertErrors(output);
+            assertVerterStyleResult(output, verterStyle.name);
             artifacts.push({ kind: "css", styleIndex, code: output.code, map: output.sourceMap });
           });
         }

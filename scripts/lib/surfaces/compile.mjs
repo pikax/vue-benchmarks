@@ -37,6 +37,7 @@ import {
 } from "../compile-validity-gates.mjs";
 import { measureCompileFreshChildVariants } from "../compile-cold-runs.mjs";
 import { runSourceMapValidityMatrix, sourceMapVerdict } from "../source-map-validity-gates.mjs";
+import { resolveVerterStyleTransform, assertVerterStyleResult } from "../verter-style.mjs";
 
 export { STYLE_FEATURE_CASES } from "../style-feature-gates.mjs";
 export { STYLE_PREPROCESSOR_CASES } from "../style-preprocessor-gates.mjs";
@@ -780,21 +781,25 @@ export function computeCompileCapabilities({
     }
   }
 
-  if (!verterNative?.error && typeof verterNative.processStyle === "function") {
+  const verterStyle = resolveVerterStyleTransform(verterNative);
+  if (verterStyle) {
     try {
-      const result = verterNative.processStyle(".probe {\n  color: red;\n}\n", {
-        scopeId: "abc12345",
-        scoped: true,
-        isModule: false,
-        filename: "/capability-audit/Probe.vue",
-        sourcemap: true,
-      });
+      const result = assertVerterStyleResult(
+        verterStyle.transform(".probe {\n  color: red;\n}\n", {
+          scopeId: "abc12345",
+          scoped: true,
+          isModule: false,
+          filename: "/capability-audit/Probe.vue",
+          sourcemap: true,
+        }),
+        `${verterStyle.name} capability probe`,
+      );
       const mapBytes = serializedMapBytes(result?.sourceMap);
       capabilities.verter.styleSourceMap = capabilityResult(
         mapBytes > 0,
         mapBytes
           ? `${mapBytes} source-map bytes`
-          : "processStyle returned no map",
+          : `${verterStyle.name} returned no map`,
       );
     } catch (error) {
       capabilities.verter.styleSourceMap = capabilityResult(
@@ -1131,7 +1136,7 @@ function componentIdFor(file) {
  * The generated benchmark fixture deliberately contains only inline plain
  * CSS. That is the overlap supported by the public paths measured here: Vue
  * compileStyle(), Vize compileSfc/compileSfcBatchWithResults(), Verter
- * processStyle(), and fervid compileSync/compileAsync. Preprocessors, CSS
+ * the public style transform (transformVueStyle / processStyle), and fervid compileSync/compileAsync. Preprocessors, CSS
  * Modules and external `src` styles are rejected instead of being silently
  * handled for only one compiler.
  */
@@ -1198,7 +1203,7 @@ export function prepareStyleSfcCorpus(sources, compiler) {
  * Materialise one fixed-width revision of the style-inclusive corpus.
  *
  * Every present script, template and style block changes on every pass. The
- * CSS task handed to Verter processStyle() contains the exact same inserted
+ * CSS task handed to the Verter style transform contains the exact same inserted
  * marker as the CSS block in the full SFC handed to Vue, Vize and compileMany.
  */
 export function materializeStyleSfcCorpus(
@@ -2078,11 +2083,12 @@ export function buildCellVariants({
       hmrStrategy: isProd ? "none" : "vite",
       runtimeModuleName: "vue",
     };
-    if (typeof verterNative.processStyle === "function") {
+    const verterStyle = resolveVerterStyleTransform(verterNative);
+    if (verterStyle) {
       variants.push({
         ...COMPARISON.sfcWithStyle,
         id: `verter-render-style-${cell}`,
-        label: `Verter compileMany + processStyle (render + CSS)`,
+        label: `Verter compileMany + ${verterStyle.name} (render + CSS)`,
         package: "@verter/native",
         target,
         env,
@@ -2093,7 +2099,7 @@ export function buildCellVariants({
         unranked:
           (sourceMap && (!verterRuntimeMapOk || !verterStyleMapOk)) ||
           verterRuntimeAlreadyEmitsCss,
-        notes: `CANDIDATE VS VUE STYLE BASELINE: runtime-render plus one public processStyle call per style block; forceVapor=${vapor}, isProduction=${isProd}, forceJs=false, ${smNote}, requestedMode=stateless, analysis=${VERTER_ANALYSIS_LEVEL}. Receives the same per-pass-revised full SFCs and exact revised CSS contents as Vue/Vize. Each pass gets a fresh workspace-backed host/project, created outside the timer; compileMany performs first admission inside the timer. processStyle is synchronous and called serially on the JS thread. cacheHit must stay zero.${sourceMap && (!verterRuntimeMapOk || !verterStyleMapOk) ? ` ⚠ UNRANKED: installed capability probe reports runtime JS maps=${verterRuntimeMapOk} and processStyle CSS maps=${verterStyleMapOk}.` : ""}${verterRuntimeAlreadyEmitsCss ? " ⚠ UNRANKED: runtime-render now emits compiled CSS, so composing it with processStyle may duplicate style work; this adapter requires revalidation before ranking." : ""}`,
+        notes: `CANDIDATE VS VUE STYLE BASELINE: runtime-render plus one public ${verterStyle.name} call per style block; forceVapor=${vapor}, isProduction=${isProd}, forceJs=false, ${smNote}, requestedMode=stateless, analysis=${VERTER_ANALYSIS_LEVEL}. Receives the same per-pass-revised full SFCs and exact revised CSS contents as Vue/Vize. Each pass gets a fresh workspace-backed host/project, created outside the timer; compileMany performs first admission inside the timer. ${verterStyle.name} is synchronous and called serially on the JS thread; a non-empty refusals list fails the pass. cacheHit must stay zero.${sourceMap && (!verterRuntimeMapOk || !verterStyleMapOk) ? ` ⚠ UNRANKED: installed capability probe reports runtime JS maps=${verterRuntimeMapOk} and ${verterStyle.name} CSS maps=${verterStyleMapOk}.` : ""}${verterRuntimeAlreadyEmitsCss ? " ⚠ UNRANKED: runtime-render now emits compiled CSS, so composing it with ${verterStyle.name} may duplicate style work; this adapter requires revalidation before ranking." : ""}`,
         measure: async (pass) => {
           const inputs = styleInputsForPass(pass);
           const host = makeVerterHost({
@@ -2136,13 +2142,16 @@ export function buildCellVariants({
             let moduleMappings = 0;
             for (const file of inputs.files) {
               for (const style of file.styles) {
-                const result = verterNative.processStyle(style.content, {
-                  scopeId: style.scopeId,
-                  scoped: style.scoped,
-                  isModule: false,
-                  filename: style.filename,
-                  sourcemap: sourceMap,
-                });
+                const result = assertVerterStyleResult(
+                  verterStyle.transform(style.content, {
+                    scopeId: style.scopeId,
+                    scoped: style.scoped,
+                    isModule: false,
+                    filename: style.filename,
+                    sourcemap: sourceMap,
+                  }),
+                  `verter ${verterStyle.name}`,
+                );
                 cssBytes += result?.code?.length ?? 0;
                 cssMapBytes += serializedMapBytes(result?.sourceMap);
                 moduleMappings += result?.moduleClasses?.length ?? 0;
@@ -2154,7 +2163,7 @@ export function buildCellVariants({
             }
             if (styleBlocks !== inputs.styleBlocks) {
               throw new Error(
-                `verter processStyle handled ${styleBlocks}/${inputs.styleBlocks} blocks`,
+                `verter ${verterStyle.name} handled ${styleBlocks}/${inputs.styleBlocks} blocks`,
               );
             }
             const jsMapBytes = results.reduce(
@@ -2195,7 +2204,7 @@ export function buildCellVariants({
         target,
         env,
         notes:
-          "processStyle export not found; no equivalent style-inclusive native path can be measured.",
+          "No public style transform export (transformVueStyle / processStyle) found; no equivalent style-inclusive native path can be measured.",
         skip: true,
       });
     }
@@ -2895,7 +2904,7 @@ export async function computeStyleCorrectnessGates({
 
   if (
     !verterNative.error &&
-    typeof verterNative.processStyle === "function" &&
+    resolveVerterStyleTransform(verterNative) &&
     typeof verterNative.VerterHost === "function"
   ) {
     const host = makeVerterHost({
@@ -2973,7 +2982,8 @@ export async function computeStyleCorrectnessGates({
             const styles = compiler35.parse(feature.source, {
               filename: input.canonicalId,
             }).descriptor.styles;
-            const results = styles.map((style) => verterNative.processStyle(style.content, {
+            const verterStyle = resolveVerterStyleTransform(verterNative);
+            const results = styles.map((style) => verterStyle.transform(style.content, {
               scopeId: input.componentId,
               scoped: style.scoped,
               isModule: Boolean(style.module),
@@ -2982,7 +2992,8 @@ export async function computeStyleCorrectnessGates({
               filename: input.canonicalId,
             }));
             for (const result of results) {
-              if (result.errors?.length) throw new Error(`processStyle errors: ${firstCompileError(result.errors)}`);
+              if (result.errors?.length) throw new Error(`${verterStyle.name} errors: ${firstCompileError(result.errors)}`);
+              assertVerterStyleResult(result, verterStyle.name);
             }
             assertStyleFeature(feature.id, {
               css: results.map((result) => result.code).join("\n"),
@@ -3634,6 +3645,7 @@ export async function runCompileSurface(fixtureDir, options) {
 
   const vizeNative = loadOptional("@vizejs/native");
   const verterNative = loadOptional("@verter/native");
+  const verterStyleApi = resolveVerterStyleTransform(verterNative)?.name ?? "transformVueStyle";
   const fervidNative = loadOptional("@fervid/napi");
   // Verter's project context. A bare `new VerterHost()` has no filesystem, so
   // `defineProps<Imported>()` fails with "missing-declaration" on every real
@@ -3983,23 +3995,23 @@ export async function runCompileSurface(fixtureDir, options) {
       "Every raw-class cell/pass injects a distinct fixed-width semantically neutral comment into every present script and template block. This prevents Vue cross-cell source-cache contamination and previous whole-output reuse; all candidates in a cell receive the exact same revised strings. Revision and input-object construction happen outside the timer.",
       "Official Vue-version context rows use a separate fixed-width source namespace from the candidate raw class. This prevents the context row and Vue candidate baseline from lending each other same-compiler parse/template cache entries while preserving byte-identical Vue/Vize/Verter inputs inside the candidate class.",
       "The ranked raw Verter row creates a fresh workspace-backed host/project outside every timed pass, then measures first source admission through compileMany. requestedMode=stateless is explicit and cacheHit is asserted zero. Process/native-library state may remain warm, but no populated-host parsed, semantic, dependency-graph or output state crosses timed passes.",
-      "The SFC RENDER + CSS class changes every present script, template and style block on every pass. Vue runs its official composed compiler-sfc pipeline (parse + compileScript + compileTemplate + compileStyle); Vize runs compileSfc/compileSfcBatchWithResults; Verter runs compileMany runtime-render plus one processStyle call per block. Generated JS and CSS bytes are both counted.",
+      "The SFC RENDER + CSS class changes every present script, template and style block on every pass. Vue runs its official composed compiler-sfc pipeline (parse + compileScript + compileTemplate + compileStyle); Vize runs compileSfc/compileSfcBatchWithResults; Verter runs compileMany runtime-render plus one public style-transform call per block. Generated JS and CSS bytes are both counted.",
       `TIMED STYLE CORPUS CENSUS: ${styleCensus.filesWithStyles}/${fileCount} files contain ${styleCensus.blocks} style block(s): scoped=${styleCensus.scoped}, CSS Modules=${styleCensus.modules}, v-bind=${styleCensus.vBind}, preprocessors=${styleCensus.preprocessors}, external src=${styleCensus.external}. The direct three-tool comparison currently requires inline plain CSS; the report never claims timed feature coverage absent from these counts.`,
-      `STYLE CORRECTNESS GATE (untimed, mandatory for style ranking): suite ${STYLE_FEATURE_SUITE_VERSION} (${STYLE_FEATURE_SUITE_HASH.slice(0, 12)}) runs ${STYLE_FEATURE_CASES.length} independent plants covering ordinary and compound scoped selectors; :deep(), :slotted(), :global(), :is() and :where() semantics; selectors nested in @media/@supports; scoped keyframe declaration/reference consistency; multiple and quoted v-bind() expression linkage; and CSS Modules mapping. Checks assert semantic relationships, never whole generated-CSS equality. Vize compileSfc and one real multi-input compileSfcBatchWithResults call have separate verdicts; Verter uses one fresh-host multi-input compileMany followed by serial processStyle; fervid sync and async are checked separately. Any failure is measured but UNRANKED and self-clears after a fixed upgrade. Plants execute after timing so they cannot pre-warm measured entrypoints; manifest metadata is retained in validation.styleCorrectnessManifest.`,
+      `STYLE CORRECTNESS GATE (untimed, mandatory for style ranking): suite ${STYLE_FEATURE_SUITE_VERSION} (${STYLE_FEATURE_SUITE_HASH.slice(0, 12)}) runs ${STYLE_FEATURE_CASES.length} independent plants covering ordinary and compound scoped selectors; :deep(), :slotted(), :global(), :is() and :where() semantics; selectors nested in @media/@supports; scoped keyframe declaration/reference consistency; multiple and quoted v-bind() expression linkage; and CSS Modules mapping. Checks assert semantic relationships, never whole generated-CSS equality. Vize compileSfc and one real multi-input compileSfcBatchWithResults call have separate verdicts; Verter uses one fresh-host multi-input compileMany followed by serial ${verterStyleApi}; fervid sync and async are checked separately. Any failure is measured but UNRANKED and self-clears after a fixed upgrade. Plants execute after timing so they cannot pre-warm measured entrypoints; manifest metadata is retained in validation.styleCorrectnessManifest.`,
       `SASS/SCSS CAPABILITY AUDIT (untimed, diagnostic): suite ${STYLE_PREPROCESSOR_SUITE_VERSION} (${STYLE_PREPROCESSOR_SUITE_HASH.slice(0, 12)}) runs ${STYLE_PREPROCESSOR_CASES.length} independent lang=scss/lang=sass plants for variables, mixins/nesting, scoped selectors, :deep() inside @media, v-bind linkage and CSS Modules. validation.stylePreprocessors keeps two non-interchangeable verdicts: exactEntrypoints says whether the measured compiler API directly accepts authored Sass and orchestrates the separately installed preprocessor in that call; sharedSassAdapter first runs the pinned sass dependency once per plant and then tests only each compiler's downstream Vue-style transform. Harness preprocessing can never turn an unsupported exact API into PASS. These diagnostic plants do not gate the separately defined timed inline-plain-CSS class.`,
       `RUNTIME SEMANTIC GATE (untimed, mandatory): suite ${compileSemantics.suiteVersion} runs ${compileSemantics.plantCount} independent valid-SFC plants against observable DOM/events/updates/public-instance behaviour, never generated-text equality. It certifies Vue's composed non-inline API, Vize single and real multi-input batch, fresh-host stateless multi-input Verter compileMany, and fervid sync/async separately with the exact target/env/map flags. Each API runs in an isolated child after all timings; every outcome and the manifest hash are retained in validation.compileSemantics. FAIL, crash, timeout, missing verdict and UNKNOWN are measured but UNRANKED. Vapor output is executed with Vue's pinned, version-matched 3.6 compiler/runtime and shipped createVaporApp path; each Vapor entrypoint receives its own PASS/FAIL verdict, while unsupported backends remain UNKNOWN individually. VDOM evidence is never borrowed.`,
-      "Scheduling is not disguised as equal: Vue's reference and Vize compileSfc loop are 1T; Vize's with-results API compiles inside the process-global Rayon pool; Verter compileMany uses its host pool but public processStyle is synchronous and is called serially; fervid async uses libuv. Each row says so.",
+      "Scheduling is not disguised as equal: Vue's reference and Vize compileSfc loop are 1T; Vize's with-results API compiles inside the process-global Rayon pool; Verter compileMany uses its host pool but its public style transform is synchronous and is called serially; fervid async uses libuv. Each row says so.",
       "Imported-type resolution is PROVISIONED for every tool that accepts a provision: @vue/compiler-sfc gets an fs bridge (ts.sys semantics — fileExists is false for directories) AND a registered TypeScript module for non-relative sources, exactly as Vite's plugin-vue provides in real builds; Verter gets a workspace-backed host rooted at the project. Withholding either does not 'treat tools equally' — it uniquely disables the tools that resolve through the host and publishes the gap as their ❌.",
       "The TypeScript registered for @vue/compiler-sfc is THE HARNESS'S OWN (the declared JS arm), the same version for every corpus — not each project's pinned TS. Uniform resolution behaviour across corpora was chosen over per-project fidelity; the tsconfig consulted is still the project's own.",
       "⚠ Imported-type resolution DEPTH differs by tool: @vue/compiler-sfc THROWS on an unresolvable prop type, Verter reports an error, Vize resolves what it can and silently emits a smaller runtime props object, and fervid emits NO props object at all while reporting a resolve diagnostic this harness otherwise tolerates. This is GATED for every compiler alike, not just disclosed: a baseline-anchored PROP-RESOLUTION CENSUS samples the corpus's type-only defineProps files, compares each compiler's emitted prop keys (Vize, fervid, Verter) with the prop names the baseline resolves, and unranks on any drop — fervid's missing props count as dropped when its own resolve diagnostic attributes them. Annotates instead when a compiler's emission shape cannot be read. Re-run every benchmark; self-clearing on a fixed release.",
       "VDOM = classic Virtual DOM render functions. Vapor = direct DOM codegen (Vue 3.6+ / native tool vapor flags).",
-      `Source map is an INDEPENDENT dimension, requested from every compiler in a cell (Vue and Vize single-file: sourceMap; Vize batch: includeSourceMap; Verter: compileProfile.sourceMap/processStyle sourcemap; fervid: FervidJsCompilerOptions.sourceMap). Raw render requires a JS map. Style-inclusive rows emit two artifacts and therefore require both JS and CSS maps. Timed paths assert returned bytes whenever the installed capability exists. Current executable presence probe: Vize single JS=${compileCapabilities.vize.singleSourceMap.ok ? "YES" : "NO"}/CSS=${compileCapabilities.vize.singleStyleSourceMap.ok ? "YES" : "NO"}, Vize batch JS=${compileCapabilities.vize.batchSourceMap.ok ? "YES" : "NO"}/CSS=${compileCapabilities.vize.batchStyleSourceMap.ok ? "YES" : "NO"}, Verter runtime-render JS=${compileCapabilities.verter.runtimeSourceMap.ok ? "YES" : "NO"}/processStyle CSS=${compileCapabilities.verter.styleSourceMap.ok ? "YES" : "NO"}, fervid JS=${compileCapabilities.fervid.sourceMap.ok ? "YES" : "NO"}/CSS=${compileCapabilities.fervid.styleSourceMap.ok ? "YES" : "NO"}. Presence is not mapping correctness: a separate post-timing child traces selected script/template/CSS AST positions to the exact filename, full SFC content and UTF-16 coordinates for LF and CRLF plants. Each exact entrypoint and raw/style workload needs its own PASS in validation.sourceMaps; missing, failed or unknown evidence keeps that row UNRANKED. Vue template maps are translated to full SFC coordinates inside its timed composed adapter, including the first-line block column.`,
+      `Source map is an INDEPENDENT dimension, requested from every compiler in a cell (Vue and Vize single-file: sourceMap; Vize batch: includeSourceMap; Verter: compileProfile.sourceMap/${verterStyleApi} sourcemap; fervid: FervidJsCompilerOptions.sourceMap). Raw render requires a JS map. Style-inclusive rows emit two artifacts and therefore require both JS and CSS maps. Timed paths assert returned bytes whenever the installed capability exists. Current executable presence probe: Vize single JS=${compileCapabilities.vize.singleSourceMap.ok ? "YES" : "NO"}/CSS=${compileCapabilities.vize.singleStyleSourceMap.ok ? "YES" : "NO"}, Vize batch JS=${compileCapabilities.vize.batchSourceMap.ok ? "YES" : "NO"}/CSS=${compileCapabilities.vize.batchStyleSourceMap.ok ? "YES" : "NO"}, Verter runtime-render JS=${compileCapabilities.verter.runtimeSourceMap.ok ? "YES" : "NO"}/${verterStyleApi} CSS=${compileCapabilities.verter.styleSourceMap.ok ? "YES" : "NO"}, fervid JS=${compileCapabilities.fervid.sourceMap.ok ? "YES" : "NO"}/CSS=${compileCapabilities.fervid.styleSourceMap.ok ? "YES" : "NO"}. Presence is not mapping correctness: a separate post-timing child traces selected script/template/CSS AST positions to the exact filename, full SFC content and UTF-16 coordinates for LF and CRLF plants. Each exact entrypoint and raw/style workload needs its own PASS in validation.sourceMaps; missing, failed or unknown evidence keeps that row UNRANKED. Vue template maps are translated to full SFC coordinates inside its timed composed adapter, including the first-line block column.`,
       "TypeScript handling is ONE benchmark standard for the whole cell: PASSTHROUGH, requested identically from every compiler (Vue and fervid preserve annotations by their API behaviour; Vize via isTs:true; Verter via forceJs:false). The report describes the exact benchmark call rather than inferring behaviour from a separate Vite integration.",
       `Verter analysisLevel=${VERTER_ANALYSIS_LEVEL} for every timed and validation call. The default benchmark setting is full; VERTER_ANALYSIS_LEVEL remains an explicit diagnostic override, and every Verter row prints the effective value so a tuned run cannot masquerade as the default. devMode follows the cell's isProduction value.`,
       "Production vs development uses each tool's real semantic knobs: Vue isProd (hoistStatic + cacheHandlers); Vize templateHoistStatic + templateCacheHandlers; Verter isProduction + hmrStrategy; fervid isProduction.",
       `VIZE MODE CAPABILITY AUDIT (untimed): VDOM compileSfc=${compileCapabilities.vize.singleProductionOptions.ok ? "YES" : "NO"}, VDOM compileSfcBatchWithResults=${compileCapabilities.vize.batchProductionOptions.ok ? "YES" : "NO"}; Vapor compileSfc output changes=${compileCapabilities.vize.singleVaporProductionResponse.changesOutput ? "YES" : "NO"}, Vapor batch output changes=${compileCapabilities.vize.batchVaporProductionResponse.changesOutput ? "YES" : "NO"}. "NO" for the Vapor observation is not itself a failure: the current Vapor backend does not use these VDOM transforms. A VDOM row whose options stop affecting output is automatically unranked.`,
-      `VERTER API CAPABILITY AUDIT (untimed): runtime-render emits compiled CSS=${compileCapabilities.verter.runtimeEmitsCss.ok ? "YES" : "NO"}. The style adapter composes runtime-render + processStyle only while runtime-render returns no CSS; if an upgrade starts emitting CSS, that row is automatically unranked pending adapter revalidation so CSS cannot be charged twice.`,
-      "fervid and Vize's full-SFC APIs, Vue's composed compiler-sfc reference, and Verter's composed render+processStyle path are classified in the style-inclusive class because each timed row emits both JS and CSS. API composition and scheduling differences remain explicit row properties.",
+      `VERTER API CAPABILITY AUDIT (untimed): runtime-render emits compiled CSS=${compileCapabilities.verter.runtimeEmitsCss.ok ? "YES" : "NO"}. The style adapter composes runtime-render + ${verterStyleApi} only while runtime-render returns no CSS; if an upgrade starts emitting CSS, that row is automatically unranked pending adapter revalidation so CSS cannot be charged twice.`,
+      "fervid and Vize's full-SFC APIs, Vue's composed compiler-sfc reference, and Verter's composed render + style-transform path are classified in the style-inclusive class because each timed row emits both JS and CSS. API composition and scheduling differences remain explicit row properties.",
       "fervid may emit the non-fatal HTML-strictness diagnostic NonVoidHtmlElementStartTagWithTrailingSolidus on self-closing non-void tags accepted by Vue. Only that complete diagnostic code is tolerated, and only with generated output; every other fervid diagnostic fails the timed row. The exact tolerated count is captured from each run.",
       "fervid and Vue 3.5 have no Vapor path → skipped for vapor cells (not run as VDOM).",
       `fervid's compileAsync row fans out over libuv's threadpool (UV_THREADPOOL_SIZE=${UV_POOL}), which is a fixed default of 4 rather than core count. It is reported, not tuned.`,

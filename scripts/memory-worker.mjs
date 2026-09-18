@@ -21,6 +21,7 @@ import {
 } from "./lib/memory.mjs";
 import { copyFixtureSubset } from "./lib/fixtures.mjs";
 import { assertOnlyAllowedFervidDiagnostics } from "./lib/fervid-diagnostics.mjs";
+import { resolveVerterStyleTransform, assertVerterStyleResult } from "./lib/verter-style.mjs";
 
 const require = createRequire(import.meta.url);
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -360,26 +361,34 @@ const handlers = {
     if (results.some((r) => r.actualMode !== "stateless")) {
       throw new Error("verter runtime-render did not use requestedMode=stateless");
     }
+    let styleApi = "";
     if (payload.includeStyles) {
-      const { processStyle } = require(require.resolve("@verter/native", { paths: [rootDir] }));
+      const verterStyle = resolveVerterStyleTransform(
+        require(require.resolve("@verter/native", { paths: [rootDir] })),
+      );
+      if (!verterStyle) throw new Error("verter exposes no public style transform export");
+      styleApi = verterStyle.name;
       let cssBytes = 0;
       for (const f of payload.sources) {
         for (const style of f.styles ?? []) {
-          const result = processStyle(style.content, {
-            scopeId: style.scopeId,
-            scoped: style.scoped,
-            isModule: false,
-            filename: style.filename,
-          });
+          const result = assertVerterStyleResult(
+            verterStyle.transform(style.content, {
+              scopeId: style.scopeId,
+              scoped: style.scoped,
+              isModule: false,
+              filename: style.filename,
+            }),
+            `verter ${verterStyle.name}`,
+          );
           cssBytes += result?.code?.length ?? 0;
         }
       }
-      if (cssBytes === 0) throw new Error("verter processStyle emitted no CSS");
+      if (cssBytes === 0) throw new Error(`verter ${verterStyle.name} emitted no CSS`);
     }
     return {
       validity: {
         status: "pass",
-        detail: `workspace-backed compileMany returned ${results.length}/${batchInputs.length} stateless, non-cached code results${payload.includeStyles ? " plus processStyle output" : ""}`,
+        detail: `workspace-backed compileMany returned ${results.length}/${batchInputs.length} stateless, non-cached code results${payload.includeStyles ? ` plus ${styleApi} output` : ""}`,
       },
     };
   },

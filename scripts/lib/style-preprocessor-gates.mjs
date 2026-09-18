@@ -4,6 +4,7 @@ import { pathToFileURL } from "node:url";
 import * as sass from "sass";
 
 import { assertStyleFeature, cssModuleMapping } from "./style-feature-gates.mjs";
+import { resolveVerterStyleTransform, assertVerterStyleResult } from "./verter-style.mjs";
 
 /**
  * Sass/SCSS validity is intentionally reported in two separate layers:
@@ -648,15 +649,12 @@ async function runSharedSassAdapters({
     }
   }
 
-  if (
-    !verterNative?.error &&
-    typeof verterNative.processStyle === "function" &&
-    typeof verterNative.VerterHost === "function"
-  ) {
+  const verterStyle = resolveVerterStyleTransform(verterNative);
+  if (verterStyle && typeof verterNative.VerterHost === "function") {
     const host = makeVerterHost({ devMode: false, analysisLevel: "full" });
     try {
       gates["@verter/native"] = await runPlants(
-        "sass.compileString -> one newly created host reused for the 8-case compileMany (CSS SFC) + processStyle gate",
+        `sass.compileString -> one newly created host reused for the 8-case compileMany (CSS SFC) + ${verterStyle.name} gate`,
         (plant) => {
           const preprocessed = preprocessStylePlant(plant);
           const canonicalId = `/style-preprocessor-gate/${plant.id}.vue`;
@@ -688,12 +686,15 @@ async function runSharedSassAdapters({
             },
           );
           if (render?.errors?.length) throw new Error(firstError(render.errors));
-          const result = verterNative.processStyle(preprocessed.css, {
-            scopeId: componentId,
-            scoped: plant.attrs.includes("scoped"),
-            isModule: plant.attrs.includes("module"),
-            filename: canonicalId,
-          });
+          const result = assertVerterStyleResult(
+            verterStyle.transform(preprocessed.css, {
+              scopeId: componentId,
+              scoped: plant.attrs.includes("scoped"),
+              isModule: plant.attrs.includes("module"),
+              filename: canonicalId,
+            }),
+            verterStyle.name,
+          );
           return {
             css: result.code,
             js: render?.code ?? "",
@@ -781,8 +782,8 @@ async function runExactVizeBatch(vizeNative) {
 }
 
 async function runExactVerter(verterNative, makeVerterHost) {
-  const exactPath =
-    "one newly created host reused for the 8-case authored-language compileMany + processStyle gate";
+  const verterStyle = resolveVerterStyleTransform(verterNative);
+  const exactPath = `one newly created host reused for the 8-case authored-language compileMany + ${verterStyle.name} gate`;
   const host = makeVerterHost({ devMode: false, analysisLevel: "full" });
   try {
     return await runPlants(exactPath, (plant) => {
@@ -815,12 +816,15 @@ async function runExactVerter(verterNative, makeVerterHost) {
         },
       );
       if (render?.errors?.length) throw new Error(firstError(render.errors));
-      const result = verterNative.processStyle(plant.style, {
-        scopeId: componentId,
-        scoped: plant.attrs.includes("scoped"),
-        isModule: plant.attrs.includes("module"),
-        filename: canonicalId,
-      });
+      const result = assertVerterStyleResult(
+        verterStyle.transform(plant.style, {
+          scopeId: componentId,
+          scoped: plant.attrs.includes("scoped"),
+          isModule: plant.attrs.includes("module"),
+          filename: canonicalId,
+        }),
+        verterStyle.name,
+      );
       return {
         css: result.code,
         js: render?.code ?? "",
@@ -886,8 +890,7 @@ export async function computeStylePreprocessorGates(tools) {
   }
 
   if (
-    !tools.verterNative?.error &&
-    typeof tools.verterNative.processStyle === "function" &&
+    resolveVerterStyleTransform(tools.verterNative) &&
     typeof tools.verterNative.VerterHost === "function"
   ) {
     exactEntrypoints["@verter/native"] = await runExactVerter(
