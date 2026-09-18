@@ -1,0 +1,39 @@
+diff --git a/dist/gen/verter/v1/component_meta_pb.js b/dist/gen/verter/v1/component_meta_pb.js
+index 4b8e10d87828554240deb6d805b53335cf1efcde..da06f790469f53d6814aa4785c2a02adf61e3e15 100644
+--- a/dist/gen/verter/v1/component_meta_pb.js
++++ b/dist/gen/verter/v1/component_meta_pb.js
+@@ -2,7 +2,7 @@
+ // @generated from file verter/v1/component_meta.proto (package verter.v1, syntax proto3)
+ /* eslint-disable */
+ import { enumDesc, fileDesc, messageDesc } from "@bufbuild/protobuf/codegenv2";
+-import { file_verter_v1_compiler_intrinsics } from "./compiler_intrinsics_pb";
++import { file_verter_v1_compiler_intrinsics } from "./compiler_intrinsics_pb.js";
+ /**
+  * Describes the file verter/v1/component_meta.proto.
+  */
+diff --git a/dist/gen/verter/v1/selective_component_meta_pb.js b/dist/gen/verter/v1/selective_component_meta_pb.js
+index 26e1b43414ed5dbaa6f7bb413d8b5a9dbdd3184a..cdceea0c136bbe96412fc68dfc9db1bf067e345c 100644
+--- a/dist/gen/verter/v1/selective_component_meta_pb.js
++++ b/dist/gen/verter/v1/selective_component_meta_pb.js
+@@ -2,7 +2,7 @@
+ // @generated from file verter/v1/selective_component_meta.proto (package verter.v1, syntax proto3)
+ /* eslint-disable */
+ import { enumDesc, fileDesc, messageDesc } from "@bufbuild/protobuf/codegenv2";
+-import { file_verter_v1_component_meta } from "./component_meta_pb";
++import { file_verter_v1_component_meta } from "./component_meta_pb.js";
+ /**
+  * Describes the file verter/v1/selective_component_meta.proto.
+  */
+diff --git a/dist/gen/verter/v1/typeinfo_pb.js b/dist/gen/verter/v1/typeinfo_pb.js
+index 95e4ab8c0af61723e36b2ac1ed9dd9b3e29e5a67..638601ed14d3192894305b27389b4aa354cccd62 100644
+--- a/dist/gen/verter/v1/typeinfo_pb.js
++++ b/dist/gen/verter/v1/typeinfo_pb.js
+@@ -2,7 +2,7 @@
+ // @generated from file verter/v1/typeinfo.proto (package verter.v1, syntax proto3)
+ /* eslint-disable */
+ import { enumDesc, fileDesc, messageDesc } from "@bufbuild/protobuf/codegenv2";
+-import { file_verter_v1_compiler_intrinsics } from "./compiler_intrinsics_pb";
++import { file_verter_v1_compiler_intrinsics } from "./compiler_intrinsics_pb.js";
+ /**
+  * Describes the file verter/v1/typeinfo.proto.
+  */

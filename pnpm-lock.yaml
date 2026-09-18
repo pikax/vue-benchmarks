@@ -162,6 +162,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  '@verter/proto@0.0.1-beta.5': e8b85e2a6484850fa54067b3a831d941a2eaa4942b75f0dbc604b85a0c6da96e
+
 importers:
 
   .:
@@ -5763,7 +5766,7 @@ snapshots:
       '@bufbuild/protobuf': 2.12.0
       '@verter/language-shared': 0.0.1-beta.5
       '@verter/native': 0.0.1-beta.5
-      '@verter/proto': 0.0.1-beta.5
+      '@verter/proto': 0.0.1-beta.5(patch_hash=e8b85e2a6484850fa54067b3a831d941a2eaa4942b75f0dbc604b85a0c6da96e)
       '@verter/type-ir': 0.0.1-beta.5
       '@verter/types': 0.0.1-beta.5
     optionalDependencies:
@@ -5846,7 +5849,7 @@ snapshots:
       '@verter/native-linux-x64-musl': 0.0.1-beta.5
       '@verter/native-win32-x64-msvc': 0.0.1-beta.5
 
-  '@verter/proto@0.0.1-beta.5':
+  '@verter/proto@0.0.1-beta.5(patch_hash=e8b85e2a6484850fa54067b3a831d941a2eaa4942b75f0dbc604b85a0c6da96e)':
     dependencies:
       '@bufbuild/protobuf': 2.12.0
 

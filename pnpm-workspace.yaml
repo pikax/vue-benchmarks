@@ -68,3 +68,10 @@ minimumReleaseAgeExclude:
   - '@verter/tsc-win32-x64-msvc@0.0.1-beta.5'
   - '@verter/type-ir@0.0.1-beta.5'
   - '@verter/types@0.0.1-beta.5'
+# @verter/proto 0.0.1-beta.5 ships ESM whose generated *_pb.js files import
+# sibling modules without the .js extension, so Node cannot load
+# @verter/component-meta at all (every row skipped). The patch only adds the
+# extensions; no behaviour of the tool under test changes. Drop it once
+# upstream publishes a fixed build.
+patchedDependencies:
+  '@verter/proto@0.0.1-beta.5': patches/@verter__proto@0.0.1-beta.5.patch
