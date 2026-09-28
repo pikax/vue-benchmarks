@@ -83,7 +83,7 @@
     "@vizejs/musea-mcp-server": "0.424.10",
     "@vizejs/native": "0.424.10",
     "@vscode/test-electron": "3.1.0",
-    "@vue-jsx-vapor/compiler-rs": "3.2.24",
+    "@vue-jsx-vapor/compiler-rs": "3.2.25",
     "@vue-jsx-vapor/eslint": "3.2.24",
     "@vue/babel-plugin-jsx": "3.0.0",
     "@vue/compiler-sfc": "3.5.43",
