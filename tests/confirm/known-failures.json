@@ -46,7 +46,6 @@
   "lint/v-on-native-modifier/vize-lint": "no-deprecated-v-on-native-modifier never fires on `@click.native` on a component under any preset. verter and eslint both report it.",
   "lint/computed-side-effect/vize-lint": "no side-effects-in-computed rule ever fires on `count.value += 1` inside computed() under any preset.",
   "lint/computed-side-effect/verter-lint": "no-side-effects-in-computed registered as vue-essential but never fires on a real ref mutation inside computed() — zero diagnostics. The same rule DOES fire on the async-computed plant, so it exists but misses actual mutations.",
-  "lint/prop-type-constructor/vize-lint": "vize detects the planted `type: \"String\"` as type/require-typed-props (silent on the corrected `type: String` control), but the default text renderer drops the diagnostic block — output is only '1 warning in 1 file' with no [vize:...] tag, so the harness sees 0 attributable issues. --format json/plain both render the diagnostic.",
 
   "typecheck/inherit-attrs-false-unknown/verter-tsc": "verter-tsc unconditionally exempts data-* and aria-* prefixed attributes from strictTemplates undeclared-prop checking (aria-zzz is silent, notdeclared errors), so the planted unknown attribute is missed. Unrelated to inheritAttrs.",
   "typecheck/attrs-aria-data-unknown/verter-tsc": "Same root cause as above — this case isolates the data-*/aria-* prefix exemption directly.",
@@ -56,6 +55,8 @@
 
 
   "typecheck/v-model-type/verter-tsc": "verter-tsc reports the v-model type mismatch at App.vue line 1 instead of the pinned v-model line — the diagnostic exists (TS2322 string vs number) but its location does not survive the template mapping, so the pin gate cannot attribute it.",
+  "typecheck/async-component-prop-bad/verter-tsc": "verter-tsc 0.0.1-beta.6 (beta.5 passed): the generated code for a defineAsyncComponent child imports asyncComponent from @verter/types, but the declarations embedded in the verter-tsc binary predate that export, so the run reports TS2305 Module '\"@verter/types\"' has no exported member 'asyncComponent' at App.vue(1,1) and the planted count type error is never reached. The published @verter/types beta.6 package does export it. vue-tsc reports the planted TS2322.",
+  "typecheck/async-component-prop-ok/verter-tsc": "Same stale embedded @verter/types as async-component-prop-bad/verter-tsc: the CLEAN defineAsyncComponent fixture gets the TS2305 asyncComponent false positive.",
 
   "$comment-platform": "Below: verter-tsc and vize do not behave the same on every OS. Each of these was observed on Linux (what CI runs and what the published numbers come from) and NOT on win32 on the same commit, so it is scoped rather than stated unconditionally.",
 
@@ -123,24 +124,20 @@
   "lsp/document-symbol-structure/vize": "vize documentSymbol returns only the SFC block outline (template, script setup) with no children — script bindings (greeting) and template elements are absent from the outline. Volar and Verter both return a 6-symbol tree naming greeting. Observed with Corsa unreachable on Windows, but documentSymbol is syntactic and vize's other non-type answers (completion, prop-attr definition) work in the same session.",
   "lsp/references-prop-template/verter": "verter references from a prop declaration never cross the file boundary: at Child.vue's `title: string` it returns only the declaration and Child.vue's own {{ title }}, missing App.vue's :title=\"greeting\" template usage even though App.vue is open. Volar returns all three sites.",
   "lsp/rename-prop-template/verter": "Same cross-file hole as references-prop-template/verter, as a broken refactor: rename of the `title` prop edits Child.vue only (declaration + template), leaving App.vue's :title=\"greeting\" bound to a prop that no longer exists. Volar edits App.vue's template too.",
-  "lsp/completion-prop-template/verter": {"platform":"win32","why":"verter-lsp 0.0.1-beta.5 on win32 (beta.3 passed; Linux CI passes with the same package): attribute completion inside <Child …> returns only the generic directive list (v-if, v-else, v-for, v-show, v-model, v-on, v-bind, …; 29 items) and never offers the declared epilogueText prop. Volar and vize offer it on the same fixture and protocol."},
+  "lsp/hover-template-binding/vize": {"platform":"win32","why":"vize 0.429.1 on win32 (0.424.10 passed; Linux passes with the same package): template hover on greeting returns only the generic 'Template binding — Binding from <script setup>' prose with no type, so neither greeting: string nor the literal type is shown. Volar and Verter return the TypeScript type."},
+  "lsp/rename-prop-template/vize": {"platform":"win32","why":"vize 0.429.1 on win32 (0.424.10 passed; Linux passes with the same package): rename of the title prop does not produce edits in both App.vue and Child.vue, leaving a broken refactor. Volar edits both files."},
   "format/format-pug-template/vize-fmt": "vize fmt re-indents a <template lang=\"pug\"> block by a uniform +2 spaces. Pug is indentation-significant and rejects a document whose first line is indented (pug 3: unexpected token \"indent\" at 2:1), so the formatted SFC no longer compiles under the vue-loader/plugin-vue pug pipeline. prettier, oxfmt and biome pass the block through untouched.",
-  "format/format-top-level-comments/vize-fmt": "vize fmt drops SFC top-level comments between blocks and after the last block (208B -> 134B; only the comment before the first block survives). prettier, oxfmt and biome preserve all three.",
 
   "compile/reactive-props-destructure-shadowing/vize": "Vize loses the reactive connection for the outer destructured prop: after updating label the render stays outer|parameter|arrow. The parameter and arrow shadows themselves are preserved; official Vue updates the outer value.",
   "compile/reactive-props-destructure-shadowing/verter": "Verter loses the outer destructured label binding when same-name parameter/arrow bindings exist: the first render is |parameter|arrow instead of outer|parameter|arrow. Official Vue preserves all three scopes.",
   "compile/style-multiple-style-blocks/@vizejs/native:compileSfcBatchWithResults": "@vizejs/native:compileSfcBatchWithResults applies the scoped block's scope attribute to the unscoped block as well. Reproduced with the exact compiler entry point; official Vue passes the selector/declaration contract.",
-  "compile/style-slotted/@vizejs/native:compileSfcBatchWithResults": "@vizejs/native:compileSfcBatchWithResults omits the slotted target scope attribute. Reproduced with the exact compiler entry point; official Vue passes the selector/declaration contract.",
   "compile/style-global-mixed-local/@vizejs/native:compileSfcBatchWithResults": "@vizejs/native:compileSfcBatchWithResults leaves local selector fragments/scope constraints around the global selector. Reproduced with the exact compiler entry point; official Vue passes the selector/declaration contract.",
   "compile/style-slotted-compound/@vizejs/native:compileSfcBatchWithResults": "@vizejs/native:compileSfcBatchWithResults does not attach the slotted scope attribute to the final compound target. Reproduced with the exact compiler entry point; official Vue passes the selector/declaration contract.",
   "compile/style-scoped-keyframes/@vizejs/native:compileSfcBatchWithResults": "@vizejs/native:compileSfcBatchWithResults does not rename scoped keyframes and their animation references. Reproduced with the exact compiler entry point; official Vue passes the selector/declaration contract.",
-  "compile/style-v-bind-quoted/@vizejs/native:compileSfcBatchWithResults": "@vizejs/native:compileSfcBatchWithResults leaves a quoted v-bind(theme.gap) margin-left expression unreplaced. Reproduced with the exact compiler entry point; official Vue passes the selector/declaration contract.",
   "compile/style-multiple-style-blocks/@vizejs/native:compileSfc": "@vizejs/native:compileSfc applies the scoped block's scope attribute to the unscoped block as well. Reproduced with the exact compiler entry point; official Vue passes the selector/declaration contract.",
-  "compile/style-slotted/@vizejs/native:compileSfc": "@vizejs/native:compileSfc omits the slotted target scope attribute. Reproduced with the exact compiler entry point; official Vue passes the selector/declaration contract.",
   "compile/style-global-mixed-local/@vizejs/native:compileSfc": "@vizejs/native:compileSfc leaves local selector fragments/scope constraints around the global selector. Reproduced with the exact compiler entry point; official Vue passes the selector/declaration contract.",
   "compile/style-slotted-compound/@vizejs/native:compileSfc": "@vizejs/native:compileSfc does not attach the slotted scope attribute to the final compound target. Reproduced with the exact compiler entry point; official Vue passes the selector/declaration contract.",
   "compile/style-scoped-keyframes/@vizejs/native:compileSfc": "@vizejs/native:compileSfc does not rename scoped keyframes and their animation references. Reproduced with the exact compiler entry point; official Vue passes the selector/declaration contract.",
-  "compile/style-v-bind-quoted/@vizejs/native:compileSfc": "@vizejs/native:compileSfc leaves a quoted v-bind(theme.gap) margin-left expression unreplaced. Reproduced with the exact compiler entry point; official Vue passes the selector/declaration contract.",
   "compile/style-slotted/@fervid/napi:compileSync": "@fervid/napi:compileSync leaves the :slotted() pseudo-selector in the generated CSS. Reproduced with the exact compiler entry point; official Vue passes the selector/declaration contract.",
   "compile/style-global/@fervid/napi:compileSync": "@fervid/napi:compileSync leaves the :global() pseudo-selector in the generated CSS. Reproduced with the exact compiler entry point; official Vue passes the selector/declaration contract.",
   "compile/style-v-bind/@fervid/napi:compileSync": "@fervid/napi:compileSync does not replace v-bind() with a CSS custom property. Reproduced with the exact compiler entry point; official Vue passes the selector/declaration contract.",
@@ -225,9 +222,7 @@
   "lint/mutating-props-shadowing/verter-lint-host": "Verter lint reports no attributable prop-mutation diagnostic for the real defineProps binding in the dirty shadowing twin. ESLint reports that mutation and accepts the same-name ordinary-object parameter in the clean twin.",
   "component-meta/slots/vize-declaration-meta": "Vize declaration metadata omits parseable payload types for the default/footer slots, so the required open:boolean and id:number contracts cannot be established.",
   "component-meta/emits-multi-payload/verter-component-meta": "@verter/component-meta 0.0.1-beta.5 (beta.3 passed): the toggle event payload loses its optionality and the item-click payload object drops its shift property, so the emitted multi-parameter contract is misreported.",
-  "component-meta/expose/verter-component-meta": "@verter/component-meta 0.0.1-beta.5 (beta.3 passed): output materialization fails at exposed[].type (\"the source has no live graph representation under the request view\"), so no exposed member types are produced.",
-  "component-meta/expose-ref-computed/verter-component-meta": "Same beta.5 exposed[].type materialization failure as expose/verter-component-meta, on ref/computed exposes.",
-  "component-meta/full-api/verter-component-meta": "Same beta.5 exposed[].type materialization failure as expose/verter-component-meta, on the combined props/emits/slots/expose fixture.",
+  "component-meta/full-api/verter-component-meta": "@verter/component-meta 0.0.1-beta.6 (the beta.5 exposed[].type failure is fixed): the submit event payload is reported as a bare [payload: object], losing the value/size string members of the declared payload type.",
   "component-meta/prop-type-factory-defaults/verter-component-meta": "@verter/component-meta 0.0.1-beta.5 (beta.3 passed): props with factory defaults are typed \"unknown | undefined\" (filters, pagination) or \"unknown\" (scope), so the declared object/union member types are lost.",
   "lsp/references-prop-template/vize": "Vize returns Child.vue prop references but omits the App.vue template attribute range. Both files are open; Volar returns the declaration and all intended uses.",
   "lsp/diagnostics-template/vize": "Vize publishes no diagnostic for the plantedBadProp template error within 20 seconds. The same fixture and protocol produce the diagnostic with Volar and Verter.",
@@ -239,52 +234,38 @@
   "format/shared-comments-and-svg/biome-fmt": "Biome exits successfully but leaves the deliberately unformatted Vue template block unchanged. Preserving that input is not evidence that the requested Vue formatting work ran; Prettier rewrites it and preserves the plant semantics.",
   "typecheck/attrs-aria-data-unknown/vize-check": {
     "why": "Vize reports no error for an undeclared component attribute under strictTemplates. This is its unclaimed strict-component-attrs capability, still a correctness failure rather than a skip.",
-    "path": "combined",
-    "platform": "linux"
+    "path": "combined"
   },
   "typecheck/fallthrough-mono-false-bad/vize-check": {
     "why": "Vize accepts the planted undeclared fallthrough attribute on an inheritAttrs:false or multi-root component. The combined run stays silent on both the shared tsconfig and the fallthroughAttributes retry.",
-    "path": "combined",
-    "platform": "linux"
+    "path": "combined"
   },
   "typecheck/fallthrough-multi-bad/vize-check": {
     "why": "Vize accepts the planted undeclared fallthrough attribute on an inheritAttrs:false or multi-root component. The combined run stays silent on both the shared tsconfig and the fallthroughAttributes retry.",
-    "path": "combined",
-    "platform": "linux"
+    "path": "combined"
   },
   "typecheck/fallthrough-multi-false-bad/vize-check": {
     "why": "Vize accepts the planted undeclared fallthrough attribute on an inheritAttrs:false or multi-root component. The combined run stays silent on both the shared tsconfig and the fallthroughAttributes retry.",
-    "path": "combined",
-    "platform": "linux"
+    "path": "combined"
   },
   "typecheck/fallthrough-vif-both-mono-false-bad/vize-check": {
     "why": "Vize accepts the planted undeclared fallthrough attribute on an inheritAttrs:false or multi-root component. The combined run stays silent on both the shared tsconfig and the fallthroughAttributes retry.",
-    "path": "combined",
-    "platform": "linux"
+    "path": "combined"
   },
   "typecheck/fallthrough-vif-mono-multi-bad/vize-check": {
     "why": "Vize accepts the planted undeclared fallthrough attribute on an inheritAttrs:false or multi-root component. The combined run stays silent on both the shared tsconfig and the fallthroughAttributes retry.",
-    "path": "combined",
-    "platform": "linux"
+    "path": "combined"
   },
   "typecheck/fallthrough-vif-static-multi-bad/vize-check": {
     "why": "Vize accepts the planted undeclared fallthrough attribute on an inheritAttrs:false or multi-root component. The combined run stays silent on both the shared tsconfig and the fallthroughAttributes retry.",
-    "path": "combined",
-    "platform": "linux"
+    "path": "combined"
   },
   "typecheck/inherit-attrs-false-unknown/vize-check": {
     "why": "Vize reports no error for an undeclared component attribute under strictTemplates. This is its unclaimed strict-component-attrs capability, still a correctness failure rather than a skip.",
-    "path": "combined",
-    "platform": "linux"
-  },
-  "typecheck/slot-v-bind-bad/vize-check": {
-    "why": "Vize reports no error for a slot v-bind object with the planted wrong payload type in the combined project; the expected id string/number mismatch is absent.",
-    "path": "combined",
-    "platform": "linux"
+    "path": "combined"
   },
   "typecheck/unknown-prop-strict/vize-check": {
     "why": "Vize reports no error for an undeclared component attribute under strictTemplates. This is its unclaimed strict-component-attrs capability, still a correctness failure rather than a skip.",
-    "path": "combined",
-    "platform": "linux"
+    "path": "combined"
   }
 }
