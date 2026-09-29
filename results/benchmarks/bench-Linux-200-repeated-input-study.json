@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-18T13:43:08.524Z",
+  "generatedAt": "2026-09-29T12:56:53.734Z",
   "fixture": "fixtures/200-repeated",
   "fileCount": 200,
   "settings": {
@@ -23,15 +23,15 @@
     "platform": "linux",
     "arch": "x64",
     "cpuCount": 4,
-    "cpuModel": "AMD EPYC 7763 64-Core Processor",
-    "totalmem": 16766414848,
+    "cpuModel": "INTEL(R) XEON(R) PLATINUM 8573C",
+    "totalmem": 16765378560,
     "node": "v22.23.2"
   },
   "commit": {
-    "sha": "9db7b15d6a8266ab757541d4f5e3a2a6ae13d2b6",
+    "sha": "8a8848276c52956d7e54e262e5846e41fc922288",
     "ref": "main",
     "repository": "pikax/vue-benchmarks",
-    "runUrl": "https://github.com/pikax/vue-benchmarks/actions/runs/35350720887",
+    "runUrl": "https://github.com/pikax/vue-benchmarks/actions/runs/36570273148",
     "dirty": false,
     "statusAvailable": true
   },
@@ -41,39 +41,39 @@
     "vue-36": "3.6.0-rc.9",
     "@vue/compiler-sfc": "3.5.43",
     "@vue/compiler-sfc-36": "3.6.0-rc.9",
-    "vize": "0.424.10",
-    "@vizejs/native": "0.424.10",
-    "@verter/native": "0.0.1-beta.5",
+    "vize": "0.429.1",
+    "@vizejs/native": "0.429.1",
+    "@verter/native": "0.0.1-beta.6",
     "@fervid/napi": "0.4.1",
-    "verter-tsc": "0.0.1-beta.5",
-    "@verter/component-meta": "0.0.1-beta.5",
-    "verter-lsp": "0.0.1-beta.5",
-    "verter-mcp": "0.0.1-beta.5",
+    "verter-tsc": "0.0.1-beta.6",
+    "@verter/component-meta": "0.0.1-beta.6",
+    "verter-lsp": "0.0.1-beta.6",
+    "verter-mcp": "0.0.1-beta.6",
     "@vue/language-server": "3.3.11",
     "@vue/typescript-plugin": "3.3.11",
-    "typescript-language-server": "6.0.0",
+    "typescript-language-server": "6.0.1",
     "vue-tsc": "3.3.11",
     "vue-component-meta": "3.3.11",
     "golar": "0.1.10",
     "@golar/vue": "0.1.10",
-    "prettier": "3.9.7",
-    "oxfmt": "0.68.0",
-    "oxlint": "1.83.0",
-    "eslint-plugin-vue": "10.11.0",
+    "prettier": "3.9.9",
+    "oxfmt": "0.71.0",
+    "oxlint": "1.86.0",
+    "eslint-plugin-vue": "10.11.1",
     "@biomejs/biome": "2.5.14",
     "typescript": "6.0.3",
-    "cli:vize": "0.424.10",
+    "cli:vize": "0.429.1",
     "cli:vue-tsc": "6.0.3",
-    "cli:verter-tsc": "0.0.1-beta.5",
+    "cli:verter-tsc": "0.0.1-beta.6",
     "cli:golar": "0.1.10",
-    "cli:prettier": "3.9.7",
-    "cli:oxfmt": "0.68.0",
-    "cli:oxlint": "1.83.0",
+    "cli:prettier": "3.9.9",
+    "cli:oxfmt": "0.71.0",
+    "cli:oxlint": "1.86.0",
     "cli:biome": "2.5.14",
-    "vue-jsx-vapor": "3.2.24",
-    "@vue-jsx-vapor/compiler-rs": "3.2.24",
+    "vue-jsx-vapor": "3.2.25",
+    "@vue-jsx-vapor/compiler-rs": "3.2.25",
     "@vue/babel-plugin-jsx": "3.0.0",
-    "@babel/core": "8.0.5"
+    "@babel/core": "8.0.6"
   },
   "methodology": [
     "This suite publishes two complementary outputs: apples-to-apples performance rankings against each surface's declared reference, and executable compatibility-gap findings for tool maintainers. Failed or incomplete work remains visible with evidence but cannot win a speed ranking.",
@@ -245,11 +245,11 @@
             },
             "singleSourceMap": {
               "ok": true,
-              "detail": "366 source-map bytes"
+              "detail": "391 source-map bytes"
             },
             "batchSourceMap": {
               "ok": true,
-              "detail": "366 source-map bytes"
+              "detail": "391 source-map bytes"
             },
             "singleStyleSourceMap": {
               "ok": false,
@@ -337,6 +337,7 @@
             "passed": [
               "scoped",
               "deep",
+              "slotted",
               "global",
               "v-bind",
               "css-modules",
@@ -345,16 +346,13 @@
               "where-selector-list",
               "media-scoped",
               "supports-scoped",
-              "v-bind-multiple"
+              "v-bind-multiple",
+              "v-bind-quoted"
             ],
             "failures": [
               {
                 "id": "multiple-style-blocks",
                 "error": "multiple-style-blocks: scoped and unscoped style blocks must retain their separate selector semantics"
-              },
-              {
-                "id": "slotted",
-                "error": "slotted: slotted target must receive the [data-v-…-s] attribute selector"
               },
               {
                 "id": "global-mixed-local",
@@ -367,19 +365,16 @@
               {
                 "id": "scoped-keyframes",
                 "error": "scoped-keyframes: scoped keyframe name was not rewritten"
-              },
-              {
-                "id": "v-bind-quoted",
-                "error": "v-bind-quoted: margin-left was not rewritten to a CSS variable"
               }
             ],
-            "error": "[multiple-style-blocks] multiple-style-blocks: scoped and unscoped style blocks must retain their separate selector semantics; [slotted] slotted: slotted target must receive the [data-v-…-s] attribute selector; [global-mixed-local] global-mixed-local: local selector fragments or a scope constraint leaked into Vue's global selector; [slotted-compound] slotted-compound: the slotted scope attribute was not attached to the final compound target; [scoped-keyframes] scoped-keyframes: scoped keyframe name was not rewritten; [v-bind-quoted] v-bind-quoted: margin-left was not rewritten to a CSS variable"
+            "error": "[multiple-style-blocks] multiple-style-blocks: scoped and unscoped style blocks must retain their separate selector semantics; [global-mixed-local] global-mixed-local: local selector fragments or a scope constraint leaked into Vue's global selector; [slotted-compound] slotted-compound: the slotted scope attribute was not attached to the final compound target; [scoped-keyframes] scoped-keyframes: scoped keyframe name was not rewritten"
           },
           "@vizejs/native:compileSfc": {
             "ok": false,
             "passed": [
               "scoped",
               "deep",
+              "slotted",
               "global",
               "v-bind",
               "css-modules",
@@ -388,16 +383,13 @@
               "where-selector-list",
               "media-scoped",
               "supports-scoped",
-              "v-bind-multiple"
+              "v-bind-multiple",
+              "v-bind-quoted"
             ],
             "failures": [
               {
                 "id": "multiple-style-blocks",
                 "error": "multiple-style-blocks: scoped and unscoped style blocks must retain their separate selector semantics"
-              },
-              {
-                "id": "slotted",
-                "error": "slotted: slotted target must receive the [data-v-…-s] attribute selector"
               },
               {
                 "id": "global-mixed-local",
@@ -410,13 +402,9 @@
               {
                 "id": "scoped-keyframes",
                 "error": "scoped-keyframes: scoped keyframe name was not rewritten"
-              },
-              {
-                "id": "v-bind-quoted",
-                "error": "v-bind-quoted: margin-left was not rewritten to a CSS variable"
               }
             ],
-            "error": "[multiple-style-blocks] multiple-style-blocks: scoped and unscoped style blocks must retain their separate selector semantics; [slotted] slotted: slotted target must receive the [data-v-…-s] attribute selector; [global-mixed-local] global-mixed-local: local selector fragments or a scope constraint leaked into Vue's global selector; [slotted-compound] slotted-compound: the slotted scope attribute was not attached to the final compound target; [scoped-keyframes] scoped-keyframes: scoped keyframe name was not rewritten; [v-bind-quoted] v-bind-quoted: margin-left was not rewritten to a CSS variable"
+            "error": "[multiple-style-blocks] multiple-style-blocks: scoped and unscoped style blocks must retain their separate selector semantics; [global-mixed-local] global-mixed-local: local selector fragments or a scope constraint leaked into Vue's global selector; [slotted-compound] slotted-compound: the slotted scope attribute was not attached to the final compound target; [scoped-keyframes] scoped-keyframes: scoped keyframe name was not rewritten"
           },
           "@verter/native": {
             "ok": true,
@@ -601,7 +589,7 @@
             "sass-v-bind-scoped",
             "sass-css-modules"
           ],
-          "sassVersion": "1.104.1",
+          "sassVersion": "1.105.0",
           "options": {
             "implementation": "sass",
             "syntax": {
@@ -4927,15 +4915,15 @@
               "files": 200,
               "status": "ok",
               "runs": [
-                61.983,
-                56.799
+                50.331,
+                46.705
               ],
-              "medianMs": 59.391,
-              "minMs": 56.799,
-              "maxMs": 61.983,
-              "meanMs": 59.391,
-              "stddevMs": 3.666,
-              "cvPct": 6.2,
+              "medianMs": 48.518,
+              "minMs": 46.705,
+              "maxMs": 50.331,
+              "meanMs": 48.518,
+              "stddevMs": 2.564,
+              "cvPct": 5.3,
               "metaSamples": [
                 {
                   "adapterOptionsHash": "f4306d2b3e7250b5951534e5d7fe84851d37daad31d62b0cc4d309ee6863cae3",
@@ -4958,16 +4946,16 @@
               ],
               "artifactMedian": 214800,
               "warmupPasses": 1,
-              "throughput": "3.4k files/s",
+              "throughput": "4.1k files/s",
               "freshChildRuns": [
-                132.4,
-                128.97
+                113.985,
+                115.413
               ],
-              "freshChildMedianMs": 130.685,
-              "freshChildMinMs": 128.97,
-              "freshChildMeanMs": 130.685,
-              "freshChildStddevMs": 2.425,
-              "freshChildCvPct": 1.9,
+              "freshChildMedianMs": 114.699,
+              "freshChildMinMs": 113.985,
+              "freshChildMeanMs": 114.699,
+              "freshChildStddevMs": 1.01,
+              "freshChildCvPct": 0.9,
               "freshChildMetaSamples": [
                 {
                   "adapterOptionsHash": "f4306d2b3e7250b5951534e5d7fe84851d37daad31d62b0cc4d309ee6863cae3",
@@ -5025,15 +5013,15 @@
               "files": 200,
               "status": "ok",
               "runs": [
-                86.994,
-                64.64
+                70.585,
+                46.483
               ],
-              "medianMs": 75.817,
-              "minMs": 64.64,
-              "maxMs": 86.994,
-              "meanMs": 75.817,
-              "stddevMs": 15.807,
-              "cvPct": 20.8,
+              "medianMs": 58.534,
+              "minMs": 46.483,
+              "maxMs": 70.585,
+              "meanMs": 58.534,
+              "stddevMs": 17.043,
+              "cvPct": 29.1,
               "metaSamples": [
                 {
                   "adapterOptionsHash": "43a62ac5ad5d1861b9f78520deea2f6731e3ead3b4dfbebfb95a8e19cfc1c2ec",
@@ -5056,16 +5044,16 @@
               ],
               "artifactMedian": 214800,
               "warmupPasses": 1,
-              "throughput": "2.6k files/s",
+              "throughput": "3.4k files/s",
               "freshChildRuns": [
-                128.333,
-                132.917
+                120.343,
+                124.059
               ],
-              "freshChildMedianMs": 130.625,
-              "freshChildMinMs": 128.333,
-              "freshChildMeanMs": 130.625,
-              "freshChildStddevMs": 3.241,
-              "freshChildCvPct": 2.5,
+              "freshChildMedianMs": 122.201,
+              "freshChildMinMs": 120.343,
+              "freshChildMeanMs": 122.201,
+              "freshChildStddevMs": 2.628,
+              "freshChildCvPct": 2.2,
               "freshChildMetaSamples": [
                 {
                   "adapterOptionsHash": "43a62ac5ad5d1861b9f78520deea2f6731e3ead3b4dfbebfb95a8e19cfc1c2ec",
@@ -5124,15 +5112,15 @@
               "files": 200,
               "status": "ok",
               "runs": [
-                58.269,
-                56.31
+                41.972,
+                41.924
               ],
-              "medianMs": 57.29,
-              "minMs": 56.31,
-              "maxMs": 58.269,
-              "meanMs": 57.29,
-              "stddevMs": 1.385,
-              "cvPct": 2.4,
+              "medianMs": 41.948,
+              "minMs": 41.924,
+              "maxMs": 41.972,
+              "meanMs": 41.948,
+              "stddevMs": 0.034,
+              "cvPct": 0.1,
               "metaSamples": [
                 {
                   "adapterOptionsHash": "27325e801a255676e6eebb5fcf6ef1c7c04083b4d635aa241d7dcb2e7bf1cf06",
@@ -5159,16 +5147,16 @@
               ],
               "artifactMedian": 214600,
               "warmupPasses": 1,
-              "throughput": "3.5k files/s",
+              "throughput": "4.8k files/s",
               "freshChildRuns": [
-                124.545,
-                125.558
+                117.278,
+                116.702
               ],
-              "freshChildMedianMs": 125.052,
-              "freshChildMinMs": 124.545,
-              "freshChildMeanMs": 125.052,
-              "freshChildStddevMs": 0.716,
-              "freshChildCvPct": 0.6,
+              "freshChildMedianMs": 116.99,
+              "freshChildMinMs": 116.702,
+              "freshChildMeanMs": 116.99,
+              "freshChildStddevMs": 0.407,
+              "freshChildCvPct": 0.3,
               "freshChildMetaSamples": [
                 {
                   "adapterOptionsHash": "27325e801a255676e6eebb5fcf6ef1c7c04083b4d635aa241d7dcb2e7bf1cf06",
@@ -5231,15 +5219,15 @@
               "files": 200,
               "status": "ok",
               "runs": [
-                115.899,
-                108.32
+                117.182,
+                104.472
               ],
-              "medianMs": 112.109,
-              "minMs": 108.32,
-              "maxMs": 115.899,
-              "meanMs": 112.109,
-              "stddevMs": 5.359,
-              "cvPct": 4.8,
+              "medianMs": 110.827,
+              "minMs": 104.472,
+              "maxMs": 117.182,
+              "meanMs": 110.827,
+              "stddevMs": 8.987,
+              "cvPct": 8.1,
               "metaSamples": [
                 {
                   "adapterOptionsHash": "bd14c200b2cf2aed5b6cd61a998a00444b56a8673d831cc49612ce5bff35126d",
@@ -5276,14 +5264,14 @@
               "warmupPasses": 1,
               "throughput": "1.8k files/s",
               "freshChildRuns": [
-                198.691,
-                194.531
+                192.647,
+                193.672
               ],
-              "freshChildMedianMs": 196.611,
-              "freshChildMinMs": 194.531,
-              "freshChildMeanMs": 196.611,
-              "freshChildStddevMs": 2.942,
-              "freshChildCvPct": 1.5,
+              "freshChildMedianMs": 193.159,
+              "freshChildMinMs": 192.647,
+              "freshChildMeanMs": 193.159,
+              "freshChildStddevMs": 0.725,
+              "freshChildCvPct": 0.4,
               "freshChildMetaSamples": [
                 {
                   "adapterOptionsHash": "bd14c200b2cf2aed5b6cd61a998a00444b56a8673d831cc49612ce5bff35126d",
@@ -5349,19 +5337,19 @@
               "comparisonClassLabel": "SFC compilation with CSS — script, template and style changed",
               "baseline": false,
               "artifactLabel": "Generated JS + CSS bytes",
-              "notes": "CANDIDATE VS VUE STYLE BASELINE: compileSfc vapor=false, isTs=true, templateHoistStatic=true, templateCacheHandlers=true, sourceMap=false. Receives the same per-pass-revised full SFCs; compiles script, template and inline plain-CSS style blocks. The installed binding's production/development response is capability-probed before ranking. ⚠ FAILED STYLE CORRECTNESS GATE — [multiple-style-blocks] multiple-style-blocks: scoped and unscoped style blocks must retain their separate selector semantics; [slotted] slotted: slotted target must receive the [data-v-…-s] attribute selector; [global-mixed-local] global-mixed-local: local selector fragments or a scope constraint leaked into Vue's global selector; [slotted-compound] slotted-compound: the slotted scope attribute was not attached to the final compound target; [scoped-keyframes] scoped-keyframes: scoped keyframe name was not rewritten; [v-bind-quoted] v-bind-quoted: margin-left was not rewritten to a CSS variable. All 17 independent CSS semantics plants are mandatory; measured but UNRANKED. ⚠ RUNTIME SEMANTIC VALIDITY FAIL (27/33 passed) — runtime-props-defaults-reactivity [runtime]: reactive props: expected \"updated:7\", got \"fallback:2\"; reactive-props-destructure-shadowing [runtime]: shadowing after prop update: expected \"updated|parameter|arrow\", got \"outer|parameter|arrow\"; reactive-props-destructure-alias-default [runtime]: aliased prop and computed update: expected \"next|next:7\", got \"fallback|fallback:2\"; +3 more (all retained in JSON). Generated text is not compared; these are observable runtime/API outcomes. Full per-plant results are retained in validation.compileSemantics.",
+              "notes": "CANDIDATE VS VUE STYLE BASELINE: compileSfc vapor=false, isTs=true, templateHoistStatic=true, templateCacheHandlers=true, sourceMap=false. Receives the same per-pass-revised full SFCs; compiles script, template and inline plain-CSS style blocks. The installed binding's production/development response is capability-probed before ranking. ⚠ FAILED STYLE CORRECTNESS GATE — [multiple-style-blocks] multiple-style-blocks: scoped and unscoped style blocks must retain their separate selector semantics; [global-mixed-local] global-mixed-local: local selector fragments or a scope constraint leaked into Vue's global selector; [slotted-compound] slotted-compound: the slotted scope attribute was not attached to the final compound target; [scoped-keyframes] scoped-keyframes: scoped keyframe name was not rewritten. All 17 independent CSS semantics plants are mandatory; measured but UNRANKED. ⚠ RUNTIME SEMANTIC VALIDITY FAIL (27/33 passed) — runtime-props-defaults-reactivity [runtime]: reactive props: expected \"updated:7\", got \"fallback:2\"; reactive-props-destructure-shadowing [runtime]: shadowing after prop update: expected \"updated|parameter|arrow\", got \"outer|parameter|arrow\"; reactive-props-destructure-alias-default [runtime]: aliased prop and computed update: expected \"next|next:7\", got \"fallback|fallback:2\"; +3 more (all retained in JSON). Generated text is not compared; these are observable runtime/API outcomes. Full per-plant results are retained in validation.compileSemantics.",
               "files": 200,
               "status": "unranked",
               "runs": [
-                25.198,
-                24.924
+                14.466,
+                14.47
               ],
-              "medianMs": 25.061,
-              "minMs": 24.924,
-              "maxMs": 25.198,
-              "meanMs": 25.061,
-              "stddevMs": 0.194,
-              "cvPct": 0.8,
+              "medianMs": 14.468,
+              "minMs": 14.466,
+              "maxMs": 14.47,
+              "meanMs": 14.468,
+              "stddevMs": 0.003,
+              "cvPct": 0,
               "metaSamples": [
                 {
                   "adapterOptionsHash": "646d56b2fd7a66b5b492b3e2f7d2a9bb75b1f4b40c71aab9b254187517a5226a",
@@ -5369,8 +5357,8 @@
                   "inputCount": 200,
                   "inputBytes": 77200,
                   "sourceRevision": "measure:0",
-                  "artifact": 183200,
-                  "jsBytes": 157000,
+                  "artifact": 183800,
+                  "jsBytes": 157600,
                   "cssBytes": 26200,
                   "mapBytes": 0,
                   "jsMapBytes": 0,
@@ -5384,8 +5372,8 @@
                   "inputCount": 200,
                   "inputBytes": 77200,
                   "sourceRevision": "measure:1",
-                  "artifact": 183200,
-                  "jsBytes": 157000,
+                  "artifact": 183800,
+                  "jsBytes": 157600,
                   "cssBytes": 26200,
                   "mapBytes": 0,
                   "jsMapBytes": 0,
@@ -5394,18 +5382,18 @@
                   "styleFiles": 200
                 }
               ],
-              "artifactMedian": 183200,
+              "artifactMedian": 183800,
               "warmupPasses": 1,
               "throughput": "n/a",
               "freshChildRuns": [
-                27.195,
-                27.092
+                15.616,
+                16.277
               ],
-              "freshChildMedianMs": 27.143,
-              "freshChildMinMs": 27.092,
-              "freshChildMeanMs": 27.143,
-              "freshChildStddevMs": 0.073,
-              "freshChildCvPct": 0.3,
+              "freshChildMedianMs": 15.947,
+              "freshChildMinMs": 15.616,
+              "freshChildMeanMs": 15.947,
+              "freshChildStddevMs": 0.467,
+              "freshChildCvPct": 2.9,
               "freshChildMetaSamples": [
                 {
                   "adapterOptionsHash": "646d56b2fd7a66b5b492b3e2f7d2a9bb75b1f4b40c71aab9b254187517a5226a",
@@ -5413,8 +5401,8 @@
                   "inputCount": 200,
                   "inputBytes": 77200,
                   "sourceRevision": "fresh-child:0",
-                  "artifact": 183200,
-                  "jsBytes": 157000,
+                  "artifact": 183800,
+                  "jsBytes": 157600,
                   "cssBytes": 26200,
                   "mapBytes": 0,
                   "jsMapBytes": 0,
@@ -5428,8 +5416,8 @@
                   "inputCount": 200,
                   "inputBytes": 77200,
                   "sourceRevision": "fresh-child:1",
-                  "artifact": 183200,
-                  "jsBytes": 157000,
+                  "artifact": 183800,
+                  "jsBytes": 157600,
                   "cssBytes": 26200,
                   "mapBytes": 0,
                   "jsMapBytes": 0,
@@ -5472,19 +5460,19 @@
               "comparisonClassLabel": "SFC compilation with CSS — script, template and style changed",
               "baseline": false,
               "artifactLabel": "Generated JS + CSS bytes",
-              "notes": "CANDIDATE VS VUE STYLE BASELINE: compileSfcBatchWithResults vapor=false, isTs=true, templateHoistStatic=true, templateCacheHandlers=true, includeSourceMap=false; receives the same per-pass-revised full SFCs and emits JS plus compiled CSS. Script, template and CSS all change every pass, so a prior generated output cannot satisfy this call. Warm samples reuse the process-global Rayon pool; a Fresh-child sample may still inherit native/thread/allocator effects from the excluded package import and adapter setup. Input objects are built outside the timer. The installed binding's production/development response is capability-probed before ranking. ⚠ FAILED STYLE CORRECTNESS GATE — [multiple-style-blocks] multiple-style-blocks: scoped and unscoped style blocks must retain their separate selector semantics; [slotted] slotted: slotted target must receive the [data-v-…-s] attribute selector; [global-mixed-local] global-mixed-local: local selector fragments or a scope constraint leaked into Vue's global selector; [slotted-compound] slotted-compound: the slotted scope attribute was not attached to the final compound target; [scoped-keyframes] scoped-keyframes: scoped keyframe name was not rewritten; [v-bind-quoted] v-bind-quoted: margin-left was not rewritten to a CSS variable. All 17 independent CSS semantics plants are mandatory; measured but UNRANKED. ⚠ RUNTIME SEMANTIC VALIDITY FAIL (27/33 passed) — runtime-props-defaults-reactivity [runtime]: reactive props: expected \"updated:7\", got \"fallback:2\"; reactive-props-destructure-shadowing [runtime]: shadowing after prop update: expected \"updated|parameter|arrow\", got \"outer|parameter|arrow\"; reactive-props-destructure-alias-default [runtime]: aliased prop and computed update: expected \"next|next:7\", got \"fallback|fallback:2\"; +3 more (all retained in JSON). Generated text is not compared; these are observable runtime/API outcomes. Full per-plant results are retained in validation.compileSemantics.",
+              "notes": "CANDIDATE VS VUE STYLE BASELINE: compileSfcBatchWithResults vapor=false, isTs=true, templateHoistStatic=true, templateCacheHandlers=true, includeSourceMap=false; receives the same per-pass-revised full SFCs and emits JS plus compiled CSS. Script, template and CSS all change every pass, so a prior generated output cannot satisfy this call. Warm samples reuse the process-global Rayon pool; a Fresh-child sample may still inherit native/thread/allocator effects from the excluded package import and adapter setup. Input objects are built outside the timer. The installed binding's production/development response is capability-probed before ranking. ⚠ FAILED STYLE CORRECTNESS GATE — [multiple-style-blocks] multiple-style-blocks: scoped and unscoped style blocks must retain their separate selector semantics; [global-mixed-local] global-mixed-local: local selector fragments or a scope constraint leaked into Vue's global selector; [slotted-compound] slotted-compound: the slotted scope attribute was not attached to the final compound target; [scoped-keyframes] scoped-keyframes: scoped keyframe name was not rewritten. All 17 independent CSS semantics plants are mandatory; measured but UNRANKED. ⚠ RUNTIME SEMANTIC VALIDITY FAIL (27/33 passed) — runtime-props-defaults-reactivity [runtime]: reactive props: expected \"updated:7\", got \"fallback:2\"; reactive-props-destructure-shadowing [runtime]: shadowing after prop update: expected \"updated|parameter|arrow\", got \"outer|parameter|arrow\"; reactive-props-destructure-alias-default [runtime]: aliased prop and computed update: expected \"next|next:7\", got \"fallback|fallback:2\"; +3 more (all retained in JSON). Generated text is not compared; these are observable runtime/API outcomes. Full per-plant results are retained in validation.compileSemantics.",
               "files": 200,
               "status": "unranked",
               "runs": [
-                8.312,
-                8.052
+                6.146,
+                5.845
               ],
-              "medianMs": 8.182,
-              "minMs": 8.052,
-              "maxMs": 8.312,
-              "meanMs": 8.182,
-              "stddevMs": 0.184,
-              "cvPct": 2.2,
+              "medianMs": 5.995,
+              "minMs": 5.845,
+              "maxMs": 6.146,
+              "meanMs": 5.995,
+              "stddevMs": 0.213,
+              "cvPct": 3.5,
               "metaSamples": [
                 {
                   "adapterOptionsHash": "73d124ddbcc13a252f1096b9df42e827640ea15928d1886d4adbfbe6c1f35a53",
@@ -5492,8 +5480,8 @@
                   "inputCount": 200,
                   "inputBytes": 77200,
                   "sourceRevision": "measure:0",
-                  "artifact": 183200,
-                  "jsBytes": 157000,
+                  "artifact": 183800,
+                  "jsBytes": 157600,
                   "cssBytes": 26200,
                   "mapBytes": 0,
                   "jsMapBytes": 0,
@@ -5507,8 +5495,8 @@
                   "inputCount": 200,
                   "inputBytes": 77200,
                   "sourceRevision": "measure:1",
-                  "artifact": 183200,
-                  "jsBytes": 157000,
+                  "artifact": 183800,
+                  "jsBytes": 157600,
                   "cssBytes": 26200,
                   "mapBytes": 0,
                   "jsMapBytes": 0,
@@ -5517,18 +5505,18 @@
                   "styleFiles": 200
                 }
               ],
-              "artifactMedian": 183200,
+              "artifactMedian": 183800,
               "warmupPasses": 1,
               "throughput": "n/a",
               "freshChildRuns": [
-                10.687,
-                9.783
+                7.37,
+                7.547
               ],
-              "freshChildMedianMs": 10.235,
-              "freshChildMinMs": 9.783,
-              "freshChildMeanMs": 10.235,
-              "freshChildStddevMs": 0.639,
-              "freshChildCvPct": 6.2,
+              "freshChildMedianMs": 7.458,
+              "freshChildMinMs": 7.37,
+              "freshChildMeanMs": 7.458,
+              "freshChildStddevMs": 0.125,
+              "freshChildCvPct": 1.7,
               "freshChildMetaSamples": [
                 {
                   "adapterOptionsHash": "73d124ddbcc13a252f1096b9df42e827640ea15928d1886d4adbfbe6c1f35a53",
@@ -5536,8 +5524,8 @@
                   "inputCount": 200,
                   "inputBytes": 77200,
                   "sourceRevision": "fresh-child:0",
-                  "artifact": 183200,
-                  "jsBytes": 157000,
+                  "artifact": 183800,
+                  "jsBytes": 157600,
                   "cssBytes": 26200,
                   "mapBytes": 0,
                   "jsMapBytes": 0,
@@ -5551,8 +5539,8 @@
                   "inputCount": 200,
                   "inputBytes": 77200,
                   "sourceRevision": "fresh-child:1",
-                  "artifact": 183200,
-                  "jsBytes": 157000,
+                  "artifact": 183800,
+                  "jsBytes": 157600,
                   "cssBytes": 26200,
                   "mapBytes": 0,
                   "jsMapBytes": 0,
@@ -5599,15 +5587,15 @@
               "files": 200,
               "status": "unranked",
               "runs": [
-                7.288,
-                7.602
+                5.122,
+                5.647
               ],
-              "medianMs": 7.445,
-              "minMs": 7.288,
-              "maxMs": 7.602,
-              "meanMs": 7.445,
-              "stddevMs": 0.222,
-              "cvPct": 3,
+              "medianMs": 5.385,
+              "minMs": 5.122,
+              "maxMs": 5.647,
+              "meanMs": 5.385,
+              "stddevMs": 0.371,
+              "cvPct": 6.9,
               "metaSamples": [
                 {
                   "adapterOptionsHash": "672454a2f3535e17790ad506dac398198989dc211a4d41f28ba051d0d1fb0078",
@@ -5615,7 +5603,7 @@
                   "inputCount": 200,
                   "inputBytes": 52200,
                   "sourceRevision": "candidate-raw:measure:0",
-                  "artifact": 156600,
+                  "artifact": 157200,
                   "mapBytes": 0
                 },
                 {
@@ -5624,22 +5612,22 @@
                   "inputCount": 200,
                   "inputBytes": 52200,
                   "sourceRevision": "candidate-raw:measure:1",
-                  "artifact": 156600,
+                  "artifact": 157200,
                   "mapBytes": 0
                 }
               ],
-              "artifactMedian": 156600,
+              "artifactMedian": 157200,
               "warmupPasses": 1,
               "throughput": "n/a",
               "freshChildRuns": [
-                8.448,
-                8.658
+                6.7,
+                6.508
               ],
-              "freshChildMedianMs": 8.553,
-              "freshChildMinMs": 8.448,
-              "freshChildMeanMs": 8.553,
-              "freshChildStddevMs": 0.148,
-              "freshChildCvPct": 1.7,
+              "freshChildMedianMs": 6.604,
+              "freshChildMinMs": 6.508,
+              "freshChildMeanMs": 6.604,
+              "freshChildStddevMs": 0.136,
+              "freshChildCvPct": 2.1,
               "freshChildMetaSamples": [
                 {
                   "adapterOptionsHash": "672454a2f3535e17790ad506dac398198989dc211a4d41f28ba051d0d1fb0078",
@@ -5647,7 +5635,7 @@
                   "inputCount": 200,
                   "inputBytes": 52200,
                   "sourceRevision": "candidate-raw:fresh-child:0",
-                  "artifact": 156600,
+                  "artifact": 157200,
                   "mapBytes": 0
                 },
                 {
@@ -5656,7 +5644,7 @@
                   "inputCount": 200,
                   "inputBytes": 52200,
                   "sourceRevision": "candidate-raw:fresh-child:1",
-                  "artifact": 156600,
+                  "artifact": 157200,
                   "mapBytes": 0
                 }
               ],
@@ -5698,15 +5686,15 @@
               "files": 200,
               "status": "unranked",
               "runs": [
-                16.297,
-                16.142
+                10.107,
+                10.044
               ],
-              "medianMs": 16.22,
-              "minMs": 16.142,
-              "maxMs": 16.297,
-              "meanMs": 16.22,
-              "stddevMs": 0.11,
-              "cvPct": 0.7,
+              "medianMs": 10.075,
+              "minMs": 10.044,
+              "maxMs": 10.107,
+              "meanMs": 10.075,
+              "stddevMs": 0.045,
+              "cvPct": 0.4,
               "metaSamples": [
                 {
                   "adapterOptionsHash": "5cbd06a0206d53197b015fd136478cc90b72f22d6886955b56dae38994e262a3",
@@ -5745,14 +5733,14 @@
               "warmupPasses": 1,
               "throughput": "n/a",
               "freshChildRuns": [
-                17.781,
-                17.505
+                10.622,
+                10.632
               ],
-              "freshChildMedianMs": 17.643,
-              "freshChildMinMs": 17.505,
-              "freshChildMeanMs": 17.643,
-              "freshChildStddevMs": 0.195,
-              "freshChildCvPct": 1.1,
+              "freshChildMedianMs": 10.627,
+              "freshChildMinMs": 10.622,
+              "freshChildMeanMs": 10.627,
+              "freshChildStddevMs": 0.007,
+              "freshChildCvPct": 0.1,
               "freshChildMetaSamples": [
                 {
                   "adapterOptionsHash": "5cbd06a0206d53197b015fd136478cc90b72f22d6886955b56dae38994e262a3",
@@ -5825,15 +5813,15 @@
               "files": 200,
               "status": "unranked",
               "runs": [
-                20.675,
-                6.916
+                15.791,
+                15.903
               ],
-              "medianMs": 13.796,
-              "minMs": 6.916,
-              "maxMs": 20.675,
-              "meanMs": 13.796,
-              "stddevMs": 9.729,
-              "cvPct": 70.5,
+              "medianMs": 15.847,
+              "minMs": 15.791,
+              "maxMs": 15.903,
+              "meanMs": 15.847,
+              "stddevMs": 0.079,
+              "cvPct": 0.5,
               "metaSamples": [
                 {
                   "adapterOptionsHash": "d28660da738599195553e0d18b60ce267efe8f985280c0120451839f0ef59bc2",
@@ -5872,14 +5860,14 @@
               "warmupPasses": 1,
               "throughput": "n/a",
               "freshChildRuns": [
-                7.778,
-                8.218
+                9.223,
+                8.488
               ],
-              "freshChildMedianMs": 7.998,
-              "freshChildMinMs": 7.778,
-              "freshChildMeanMs": 7.998,
-              "freshChildStddevMs": 0.311,
-              "freshChildCvPct": 3.9,
+              "freshChildMedianMs": 8.855,
+              "freshChildMinMs": 8.488,
+              "freshChildMeanMs": 8.855,
+              "freshChildStddevMs": 0.52,
+              "freshChildCvPct": 5.9,
               "freshChildMetaSamples": [
                 {
                   "adapterOptionsHash": "d28660da738599195553e0d18b60ce267efe8f985280c0120451839f0ef59bc2",
@@ -5952,15 +5940,15 @@
               "files": 200,
               "status": "unranked",
               "runs": [
-                64.679,
-                59.635
+                52.586,
+                50.866
               ],
-              "medianMs": 62.157,
-              "minMs": 59.635,
-              "maxMs": 64.679,
-              "meanMs": 62.157,
-              "stddevMs": 3.567,
-              "cvPct": 5.7,
+              "medianMs": 51.726,
+              "minMs": 50.866,
+              "maxMs": 52.586,
+              "meanMs": 51.726,
+              "stddevMs": 1.216,
+              "cvPct": 2.4,
               "metaSamples": [
                 {
                   "adapterOptionsHash": "3cb3b66c74f949d0c2d8748eddc80212c8f21743d958aa103bb5e04c3e459b98",
@@ -6005,14 +5993,14 @@
               "warmupPasses": 1,
               "throughput": "n/a",
               "freshChildRuns": [
-                66.239,
-                66.977
+                52.285,
+                50.04
               ],
-              "freshChildMedianMs": 66.608,
-              "freshChildMinMs": 66.239,
-              "freshChildMeanMs": 66.608,
-              "freshChildStddevMs": 0.522,
-              "freshChildCvPct": 0.8,
+              "freshChildMedianMs": 51.162,
+              "freshChildMinMs": 50.04,
+              "freshChildMeanMs": 51.162,
+              "freshChildStddevMs": 1.587,
+              "freshChildCvPct": 3.1,
               "freshChildMetaSamples": [
                 {
                   "adapterOptionsHash": "3cb3b66c74f949d0c2d8748eddc80212c8f21743d958aa103bb5e04c3e459b98",
@@ -6091,15 +6079,15 @@
               "files": 200,
               "status": "unranked",
               "runs": [
-                65.835,
-                72.904
+                53.307,
+                59.71
               ],
-              "medianMs": 69.369,
-              "minMs": 65.835,
-              "maxMs": 72.904,
-              "meanMs": 69.369,
-              "stddevMs": 4.999,
-              "cvPct": 7.2,
+              "medianMs": 56.508,
+              "minMs": 53.307,
+              "maxMs": 59.71,
+              "meanMs": 56.508,
+              "stddevMs": 4.528,
+              "cvPct": 8,
               "metaSamples": [
                 {
                   "adapterOptionsHash": "f42e7e128703a93be7e9a6f7aec4a5ba5b2f321d058363c4634c8f8ba3051b0a",
@@ -6134,14 +6122,14 @@
               "warmupPasses": 1,
               "throughput": "n/a",
               "freshChildRuns": [
-                81.144,
-                74.954
+                49.447,
+                59.679
               ],
-              "freshChildMedianMs": 78.049,
-              "freshChildMinMs": 74.954,
-              "freshChildMeanMs": 78.049,
-              "freshChildStddevMs": 4.377,
-              "freshChildCvPct": 5.6,
+              "freshChildMedianMs": 54.563,
+              "freshChildMinMs": 49.447,
+              "freshChildMeanMs": 54.563,
+              "freshChildStddevMs": 7.235,
+              "freshChildCvPct": 13.3,
               "freshChildMetaSamples": [
                 {
                   "adapterOptionsHash": "f42e7e128703a93be7e9a6f7aec4a5ba5b2f321d058363c4634c8f8ba3051b0a",
@@ -6214,15 +6202,15 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            61.983,
-            56.799
+            50.331,
+            46.705
           ],
-          "medianMs": 59.391,
-          "minMs": 56.799,
-          "maxMs": 61.983,
-          "meanMs": 59.391,
-          "stddevMs": 3.666,
-          "cvPct": 6.2,
+          "medianMs": 48.518,
+          "minMs": 46.705,
+          "maxMs": 50.331,
+          "meanMs": 48.518,
+          "stddevMs": 2.564,
+          "cvPct": 5.3,
           "metaSamples": [
             {
               "adapterOptionsHash": "f4306d2b3e7250b5951534e5d7fe84851d37daad31d62b0cc4d309ee6863cae3",
@@ -6245,16 +6233,16 @@
           ],
           "artifactMedian": 214800,
           "warmupPasses": 1,
-          "throughput": "3.4k files/s",
+          "throughput": "4.1k files/s",
           "freshChildRuns": [
-            132.4,
-            128.97
+            113.985,
+            115.413
           ],
-          "freshChildMedianMs": 130.685,
-          "freshChildMinMs": 128.97,
-          "freshChildMeanMs": 130.685,
-          "freshChildStddevMs": 2.425,
-          "freshChildCvPct": 1.9,
+          "freshChildMedianMs": 114.699,
+          "freshChildMinMs": 113.985,
+          "freshChildMeanMs": 114.699,
+          "freshChildStddevMs": 1.01,
+          "freshChildCvPct": 0.9,
           "freshChildMetaSamples": [
             {
               "adapterOptionsHash": "f4306d2b3e7250b5951534e5d7fe84851d37daad31d62b0cc4d309ee6863cae3",
@@ -6312,15 +6300,15 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            86.994,
-            64.64
+            70.585,
+            46.483
           ],
-          "medianMs": 75.817,
-          "minMs": 64.64,
-          "maxMs": 86.994,
-          "meanMs": 75.817,
-          "stddevMs": 15.807,
-          "cvPct": 20.8,
+          "medianMs": 58.534,
+          "minMs": 46.483,
+          "maxMs": 70.585,
+          "meanMs": 58.534,
+          "stddevMs": 17.043,
+          "cvPct": 29.1,
           "metaSamples": [
             {
               "adapterOptionsHash": "43a62ac5ad5d1861b9f78520deea2f6731e3ead3b4dfbebfb95a8e19cfc1c2ec",
@@ -6343,16 +6331,16 @@
           ],
           "artifactMedian": 214800,
           "warmupPasses": 1,
-          "throughput": "2.6k files/s",
+          "throughput": "3.4k files/s",
           "freshChildRuns": [
-            128.333,
-            132.917
+            120.343,
+            124.059
           ],
-          "freshChildMedianMs": 130.625,
-          "freshChildMinMs": 128.333,
-          "freshChildMeanMs": 130.625,
-          "freshChildStddevMs": 3.241,
-          "freshChildCvPct": 2.5,
+          "freshChildMedianMs": 122.201,
+          "freshChildMinMs": 120.343,
+          "freshChildMeanMs": 122.201,
+          "freshChildStddevMs": 2.628,
+          "freshChildCvPct": 2.2,
           "freshChildMetaSamples": [
             {
               "adapterOptionsHash": "43a62ac5ad5d1861b9f78520deea2f6731e3ead3b4dfbebfb95a8e19cfc1c2ec",
@@ -6411,15 +6399,15 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            58.269,
-            56.31
+            41.972,
+            41.924
           ],
-          "medianMs": 57.29,
-          "minMs": 56.31,
-          "maxMs": 58.269,
-          "meanMs": 57.29,
-          "stddevMs": 1.385,
-          "cvPct": 2.4,
+          "medianMs": 41.948,
+          "minMs": 41.924,
+          "maxMs": 41.972,
+          "meanMs": 41.948,
+          "stddevMs": 0.034,
+          "cvPct": 0.1,
           "metaSamples": [
             {
               "adapterOptionsHash": "27325e801a255676e6eebb5fcf6ef1c7c04083b4d635aa241d7dcb2e7bf1cf06",
@@ -6446,16 +6434,16 @@
           ],
           "artifactMedian": 214600,
           "warmupPasses": 1,
-          "throughput": "3.5k files/s",
+          "throughput": "4.8k files/s",
           "freshChildRuns": [
-            124.545,
-            125.558
+            117.278,
+            116.702
           ],
-          "freshChildMedianMs": 125.052,
-          "freshChildMinMs": 124.545,
-          "freshChildMeanMs": 125.052,
-          "freshChildStddevMs": 0.716,
-          "freshChildCvPct": 0.6,
+          "freshChildMedianMs": 116.99,
+          "freshChildMinMs": 116.702,
+          "freshChildMeanMs": 116.99,
+          "freshChildStddevMs": 0.407,
+          "freshChildCvPct": 0.3,
           "freshChildMetaSamples": [
             {
               "adapterOptionsHash": "27325e801a255676e6eebb5fcf6ef1c7c04083b4d635aa241d7dcb2e7bf1cf06",
@@ -6518,15 +6506,15 @@
           "files": 200,
           "status": "ok",
           "runs": [
-            115.899,
-            108.32
+            117.182,
+            104.472
           ],
-          "medianMs": 112.109,
-          "minMs": 108.32,
-          "maxMs": 115.899,
-          "meanMs": 112.109,
-          "stddevMs": 5.359,
-          "cvPct": 4.8,
+          "medianMs": 110.827,
+          "minMs": 104.472,
+          "maxMs": 117.182,
+          "meanMs": 110.827,
+          "stddevMs": 8.987,
+          "cvPct": 8.1,
           "metaSamples": [
             {
               "adapterOptionsHash": "bd14c200b2cf2aed5b6cd61a998a00444b56a8673d831cc49612ce5bff35126d",
@@ -6563,14 +6551,14 @@
           "warmupPasses": 1,
           "throughput": "1.8k files/s",
           "freshChildRuns": [
-            198.691,
-            194.531
+            192.647,
+            193.672
           ],
-          "freshChildMedianMs": 196.611,
-          "freshChildMinMs": 194.531,
-          "freshChildMeanMs": 196.611,
-          "freshChildStddevMs": 2.942,
-          "freshChildCvPct": 1.5,
+          "freshChildMedianMs": 193.159,
+          "freshChildMinMs": 192.647,
+          "freshChildMeanMs": 193.159,
+          "freshChildStddevMs": 0.725,
+          "freshChildCvPct": 0.4,
           "freshChildMetaSamples": [
             {
               "adapterOptionsHash": "bd14c200b2cf2aed5b6cd61a998a00444b56a8673d831cc49612ce5bff35126d",
@@ -6636,19 +6624,19 @@
           "comparisonClassLabel": "SFC compilation with CSS — script, template and style changed",
           "baseline": false,
           "artifactLabel": "Generated JS + CSS bytes",
-          "notes": "CANDIDATE VS VUE STYLE BASELINE: compileSfc vapor=false, isTs=true, templateHoistStatic=true, templateCacheHandlers=true, sourceMap=false. Receives the same per-pass-revised full SFCs; compiles script, template and inline plain-CSS style blocks. The installed binding's production/development response is capability-probed before ranking. ⚠ FAILED STYLE CORRECTNESS GATE — [multiple-style-blocks] multiple-style-blocks: scoped and unscoped style blocks must retain their separate selector semantics; [slotted] slotted: slotted target must receive the [data-v-…-s] attribute selector; [global-mixed-local] global-mixed-local: local selector fragments or a scope constraint leaked into Vue's global selector; [slotted-compound] slotted-compound: the slotted scope attribute was not attached to the final compound target; [scoped-keyframes] scoped-keyframes: scoped keyframe name was not rewritten; [v-bind-quoted] v-bind-quoted: margin-left was not rewritten to a CSS variable. All 17 independent CSS semantics plants are mandatory; measured but UNRANKED. ⚠ RUNTIME SEMANTIC VALIDITY FAIL (27/33 passed) — runtime-props-defaults-reactivity [runtime]: reactive props: expected \"updated:7\", got \"fallback:2\"; reactive-props-destructure-shadowing [runtime]: shadowing after prop update: expected \"updated|parameter|arrow\", got \"outer|parameter|arrow\"; reactive-props-destructure-alias-default [runtime]: aliased prop and computed update: expected \"next|next:7\", got \"fallback|fallback:2\"; +3 more (all retained in JSON). Generated text is not compared; these are observable runtime/API outcomes. Full per-plant results are retained in validation.compileSemantics.",
+          "notes": "CANDIDATE VS VUE STYLE BASELINE: compileSfc vapor=false, isTs=true, templateHoistStatic=true, templateCacheHandlers=true, sourceMap=false. Receives the same per-pass-revised full SFCs; compiles script, template and inline plain-CSS style blocks. The installed binding's production/development response is capability-probed before ranking. ⚠ FAILED STYLE CORRECTNESS GATE — [multiple-style-blocks] multiple-style-blocks: scoped and unscoped style blocks must retain their separate selector semantics; [global-mixed-local] global-mixed-local: local selector fragments or a scope constraint leaked into Vue's global selector; [slotted-compound] slotted-compound: the slotted scope attribute was not attached to the final compound target; [scoped-keyframes] scoped-keyframes: scoped keyframe name was not rewritten. All 17 independent CSS semantics plants are mandatory; measured but UNRANKED. ⚠ RUNTIME SEMANTIC VALIDITY FAIL (27/33 passed) — runtime-props-defaults-reactivity [runtime]: reactive props: expected \"updated:7\", got \"fallback:2\"; reactive-props-destructure-shadowing [runtime]: shadowing after prop update: expected \"updated|parameter|arrow\", got \"outer|parameter|arrow\"; reactive-props-destructure-alias-default [runtime]: aliased prop and computed update: expected \"next|next:7\", got \"fallback|fallback:2\"; +3 more (all retained in JSON). Generated text is not compared; these are observable runtime/API outcomes. Full per-plant results are retained in validation.compileSemantics.",
           "files": 200,
           "status": "unranked",
           "runs": [
-            25.198,
-            24.924
+            14.466,
+            14.47
           ],
-          "medianMs": 25.061,
-          "minMs": 24.924,
-          "maxMs": 25.198,
-          "meanMs": 25.061,
-          "stddevMs": 0.194,
-          "cvPct": 0.8,
+          "medianMs": 14.468,
+          "minMs": 14.466,
+          "maxMs": 14.47,
+          "meanMs": 14.468,
+          "stddevMs": 0.003,
+          "cvPct": 0,
           "metaSamples": [
             {
               "adapterOptionsHash": "646d56b2fd7a66b5b492b3e2f7d2a9bb75b1f4b40c71aab9b254187517a5226a",
@@ -6656,8 +6644,8 @@
               "inputCount": 200,
               "inputBytes": 77200,
               "sourceRevision": "measure:0",
-              "artifact": 183200,
-              "jsBytes": 157000,
+              "artifact": 183800,
+              "jsBytes": 157600,
               "cssBytes": 26200,
               "mapBytes": 0,
               "jsMapBytes": 0,
@@ -6671,8 +6659,8 @@
               "inputCount": 200,
               "inputBytes": 77200,
               "sourceRevision": "measure:1",
-              "artifact": 183200,
-              "jsBytes": 157000,
+              "artifact": 183800,
+              "jsBytes": 157600,
               "cssBytes": 26200,
               "mapBytes": 0,
               "jsMapBytes": 0,
@@ -6681,18 +6669,18 @@
               "styleFiles": 200
             }
           ],
-          "artifactMedian": 183200,
+          "artifactMedian": 183800,
           "warmupPasses": 1,
           "throughput": "n/a",
           "freshChildRuns": [
-            27.195,
-            27.092
+            15.616,
+            16.277
           ],
-          "freshChildMedianMs": 27.143,
-          "freshChildMinMs": 27.092,
-          "freshChildMeanMs": 27.143,
-          "freshChildStddevMs": 0.073,
-          "freshChildCvPct": 0.3,
+          "freshChildMedianMs": 15.947,
+          "freshChildMinMs": 15.616,
+          "freshChildMeanMs": 15.947,
+          "freshChildStddevMs": 0.467,
+          "freshChildCvPct": 2.9,
           "freshChildMetaSamples": [
             {
               "adapterOptionsHash": "646d56b2fd7a66b5b492b3e2f7d2a9bb75b1f4b40c71aab9b254187517a5226a",
@@ -6700,8 +6688,8 @@
               "inputCount": 200,
               "inputBytes": 77200,
               "sourceRevision": "fresh-child:0",
-              "artifact": 183200,
-              "jsBytes": 157000,
+              "artifact": 183800,
+              "jsBytes": 157600,
               "cssBytes": 26200,
               "mapBytes": 0,
               "jsMapBytes": 0,
@@ -6715,8 +6703,8 @@
               "inputCount": 200,
               "inputBytes": 77200,
               "sourceRevision": "fresh-child:1",
-              "artifact": 183200,
-              "jsBytes": 157000,
+              "artifact": 183800,
+              "jsBytes": 157600,
               "cssBytes": 26200,
               "mapBytes": 0,
               "jsMapBytes": 0,
@@ -6759,19 +6747,19 @@
           "comparisonClassLabel": "SFC compilation with CSS — script, template and style changed",
           "baseline": false,
           "artifactLabel": "Generated JS + CSS bytes",
-          "notes": "CANDIDATE VS VUE STYLE BASELINE: compileSfcBatchWithResults vapor=false, isTs=true, templateHoistStatic=true, templateCacheHandlers=true, includeSourceMap=false; receives the same per-pass-revised full SFCs and emits JS plus compiled CSS. Script, template and CSS all change every pass, so a prior generated output cannot satisfy this call. Warm samples reuse the process-global Rayon pool; a Fresh-child sample may still inherit native/thread/allocator effects from the excluded package import and adapter setup. Input objects are built outside the timer. The installed binding's production/development response is capability-probed before ranking. ⚠ FAILED STYLE CORRECTNESS GATE — [multiple-style-blocks] multiple-style-blocks: scoped and unscoped style blocks must retain their separate selector semantics; [slotted] slotted: slotted target must receive the [data-v-…-s] attribute selector; [global-mixed-local] global-mixed-local: local selector fragments or a scope constraint leaked into Vue's global selector; [slotted-compound] slotted-compound: the slotted scope attribute was not attached to the final compound target; [scoped-keyframes] scoped-keyframes: scoped keyframe name was not rewritten; [v-bind-quoted] v-bind-quoted: margin-left was not rewritten to a CSS variable. All 17 independent CSS semantics plants are mandatory; measured but UNRANKED. ⚠ RUNTIME SEMANTIC VALIDITY FAIL (27/33 passed) — runtime-props-defaults-reactivity [runtime]: reactive props: expected \"updated:7\", got \"fallback:2\"; reactive-props-destructure-shadowing [runtime]: shadowing after prop update: expected \"updated|parameter|arrow\", got \"outer|parameter|arrow\"; reactive-props-destructure-alias-default [runtime]: aliased prop and computed update: expected \"next|next:7\", got \"fallback|fallback:2\"; +3 more (all retained in JSON). Generated text is not compared; these are observable runtime/API outcomes. Full per-plant results are retained in validation.compileSemantics.",
+          "notes": "CANDIDATE VS VUE STYLE BASELINE: compileSfcBatchWithResults vapor=false, isTs=true, templateHoistStatic=true, templateCacheHandlers=true, includeSourceMap=false; receives the same per-pass-revised full SFCs and emits JS plus compiled CSS. Script, template and CSS all change every pass, so a prior generated output cannot satisfy this call. Warm samples reuse the process-global Rayon pool; a Fresh-child sample may still inherit native/thread/allocator effects from the excluded package import and adapter setup. Input objects are built outside the timer. The installed binding's production/development response is capability-probed before ranking. ⚠ FAILED STYLE CORRECTNESS GATE — [multiple-style-blocks] multiple-style-blocks: scoped and unscoped style blocks must retain their separate selector semantics; [global-mixed-local] global-mixed-local: local selector fragments or a scope constraint leaked into Vue's global selector; [slotted-compound] slotted-compound: the slotted scope attribute was not attached to the final compound target; [scoped-keyframes] scoped-keyframes: scoped keyframe name was not rewritten. All 17 independent CSS semantics plants are mandatory; measured but UNRANKED. ⚠ RUNTIME SEMANTIC VALIDITY FAIL (27/33 passed) — runtime-props-defaults-reactivity [runtime]: reactive props: expected \"updated:7\", got \"fallback:2\"; reactive-props-destructure-shadowing [runtime]: shadowing after prop update: expected \"updated|parameter|arrow\", got \"outer|parameter|arrow\"; reactive-props-destructure-alias-default [runtime]: aliased prop and computed update: expected \"next|next:7\", got \"fallback|fallback:2\"; +3 more (all retained in JSON). Generated text is not compared; these are observable runtime/API outcomes. Full per-plant results are retained in validation.compileSemantics.",
           "files": 200,
           "status": "unranked",
           "runs": [
-            8.312,
-            8.052
+            6.146,
+            5.845
           ],
-          "medianMs": 8.182,
-          "minMs": 8.052,
-          "maxMs": 8.312,
-          "meanMs": 8.182,
-          "stddevMs": 0.184,
-          "cvPct": 2.2,
+          "medianMs": 5.995,
+          "minMs": 5.845,
+          "maxMs": 6.146,
+          "meanMs": 5.995,
+          "stddevMs": 0.213,
+          "cvPct": 3.5,
           "metaSamples": [
             {
               "adapterOptionsHash": "73d124ddbcc13a252f1096b9df42e827640ea15928d1886d4adbfbe6c1f35a53",
@@ -6779,8 +6767,8 @@
               "inputCount": 200,
               "inputBytes": 77200,
               "sourceRevision": "measure:0",
-              "artifact": 183200,
-              "jsBytes": 157000,
+              "artifact": 183800,
+              "jsBytes": 157600,
               "cssBytes": 26200,
               "mapBytes": 0,
               "jsMapBytes": 0,
@@ -6794,8 +6782,8 @@
               "inputCount": 200,
               "inputBytes": 77200,
               "sourceRevision": "measure:1",
-              "artifact": 183200,
-              "jsBytes": 157000,
+              "artifact": 183800,
+              "jsBytes": 157600,
               "cssBytes": 26200,
               "mapBytes": 0,
               "jsMapBytes": 0,
@@ -6804,18 +6792,18 @@
               "styleFiles": 200
             }
           ],
-          "artifactMedian": 183200,
+          "artifactMedian": 183800,
           "warmupPasses": 1,
           "throughput": "n/a",
           "freshChildRuns": [
-            10.687,
-            9.783
+            7.37,
+            7.547
           ],
-          "freshChildMedianMs": 10.235,
-          "freshChildMinMs": 9.783,
-          "freshChildMeanMs": 10.235,
-          "freshChildStddevMs": 0.639,
-          "freshChildCvPct": 6.2,
+          "freshChildMedianMs": 7.458,
+          "freshChildMinMs": 7.37,
+          "freshChildMeanMs": 7.458,
+          "freshChildStddevMs": 0.125,
+          "freshChildCvPct": 1.7,
           "freshChildMetaSamples": [
             {
               "adapterOptionsHash": "73d124ddbcc13a252f1096b9df42e827640ea15928d1886d4adbfbe6c1f35a53",
@@ -6823,8 +6811,8 @@
               "inputCount": 200,
               "inputBytes": 77200,
               "sourceRevision": "fresh-child:0",
-              "artifact": 183200,
-              "jsBytes": 157000,
+              "artifact": 183800,
+              "jsBytes": 157600,
               "cssBytes": 26200,
               "mapBytes": 0,
               "jsMapBytes": 0,
@@ -6838,8 +6826,8 @@
               "inputCount": 200,
               "inputBytes": 77200,
               "sourceRevision": "fresh-child:1",
-              "artifact": 183200,
-              "jsBytes": 157000,
+              "artifact": 183800,
+              "jsBytes": 157600,
               "cssBytes": 26200,
               "mapBytes": 0,
               "jsMapBytes": 0,
@@ -6886,15 +6874,15 @@
           "files": 200,
           "status": "unranked",
           "runs": [
-            7.288,
-            7.602
+            5.122,
+            5.647
           ],
-          "medianMs": 7.445,
-          "minMs": 7.288,
-          "maxMs": 7.602,
-          "meanMs": 7.445,
-          "stddevMs": 0.222,
-          "cvPct": 3,
+          "medianMs": 5.385,
+          "minMs": 5.122,
+          "maxMs": 5.647,
+          "meanMs": 5.385,
+          "stddevMs": 0.371,
+          "cvPct": 6.9,
           "metaSamples": [
             {
               "adapterOptionsHash": "672454a2f3535e17790ad506dac398198989dc211a4d41f28ba051d0d1fb0078",
@@ -6902,7 +6890,7 @@
               "inputCount": 200,
               "inputBytes": 52200,
               "sourceRevision": "candidate-raw:measure:0",
-              "artifact": 156600,
+              "artifact": 157200,
               "mapBytes": 0
             },
             {
@@ -6911,22 +6899,22 @@
               "inputCount": 200,
               "inputBytes": 52200,
               "sourceRevision": "candidate-raw:measure:1",
-              "artifact": 156600,
+              "artifact": 157200,
               "mapBytes": 0
             }
           ],
-          "artifactMedian": 156600,
+          "artifactMedian": 157200,
           "warmupPasses": 1,
           "throughput": "n/a",
           "freshChildRuns": [
-            8.448,
-            8.658
+            6.7,
+            6.508
           ],
-          "freshChildMedianMs": 8.553,
-          "freshChildMinMs": 8.448,
-          "freshChildMeanMs": 8.553,
-          "freshChildStddevMs": 0.148,
-          "freshChildCvPct": 1.7,
+          "freshChildMedianMs": 6.604,
+          "freshChildMinMs": 6.508,
+          "freshChildMeanMs": 6.604,
+          "freshChildStddevMs": 0.136,
+          "freshChildCvPct": 2.1,
           "freshChildMetaSamples": [
             {
               "adapterOptionsHash": "672454a2f3535e17790ad506dac398198989dc211a4d41f28ba051d0d1fb0078",
@@ -6934,7 +6922,7 @@
               "inputCount": 200,
               "inputBytes": 52200,
               "sourceRevision": "candidate-raw:fresh-child:0",
-              "artifact": 156600,
+              "artifact": 157200,
               "mapBytes": 0
             },
             {
@@ -6943,7 +6931,7 @@
               "inputCount": 200,
               "inputBytes": 52200,
               "sourceRevision": "candidate-raw:fresh-child:1",
-              "artifact": 156600,
+              "artifact": 157200,
               "mapBytes": 0
             }
           ],
@@ -6985,15 +6973,15 @@
           "files": 200,
           "status": "unranked",
           "runs": [
-            16.297,
-            16.142
+            10.107,
+            10.044
           ],
-          "medianMs": 16.22,
-          "minMs": 16.142,
-          "maxMs": 16.297,
-          "meanMs": 16.22,
-          "stddevMs": 0.11,
-          "cvPct": 0.7,
+          "medianMs": 10.075,
+          "minMs": 10.044,
+          "maxMs": 10.107,
+          "meanMs": 10.075,
+          "stddevMs": 0.045,
+          "cvPct": 0.4,
           "metaSamples": [
             {
               "adapterOptionsHash": "5cbd06a0206d53197b015fd136478cc90b72f22d6886955b56dae38994e262a3",
@@ -7032,14 +7020,14 @@
           "warmupPasses": 1,
           "throughput": "n/a",
           "freshChildRuns": [
-            17.781,
-            17.505
+            10.622,
+            10.632
           ],
-          "freshChildMedianMs": 17.643,
-          "freshChildMinMs": 17.505,
-          "freshChildMeanMs": 17.643,
-          "freshChildStddevMs": 0.195,
-          "freshChildCvPct": 1.1,
+          "freshChildMedianMs": 10.627,
+          "freshChildMinMs": 10.622,
+          "freshChildMeanMs": 10.627,
+          "freshChildStddevMs": 0.007,
+          "freshChildCvPct": 0.1,
           "freshChildMetaSamples": [
             {
               "adapterOptionsHash": "5cbd06a0206d53197b015fd136478cc90b72f22d6886955b56dae38994e262a3",
@@ -7112,15 +7100,15 @@
           "files": 200,
           "status": "unranked",
           "runs": [
-            20.675,
-            6.916
+            15.791,
+            15.903
           ],
-          "medianMs": 13.796,
-          "minMs": 6.916,
-          "maxMs": 20.675,
-          "meanMs": 13.796,
-          "stddevMs": 9.729,
-          "cvPct": 70.5,
+          "medianMs": 15.847,
+          "minMs": 15.791,
+          "maxMs": 15.903,
+          "meanMs": 15.847,
+          "stddevMs": 0.079,
+          "cvPct": 0.5,
           "metaSamples": [
             {
               "adapterOptionsHash": "d28660da738599195553e0d18b60ce267efe8f985280c0120451839f0ef59bc2",
@@ -7159,14 +7147,14 @@
           "warmupPasses": 1,
           "throughput": "n/a",
           "freshChildRuns": [
-            7.778,
-            8.218
+            9.223,
+            8.488
           ],
-          "freshChildMedianMs": 7.998,
-          "freshChildMinMs": 7.778,
-          "freshChildMeanMs": 7.998,
-          "freshChildStddevMs": 0.311,
-          "freshChildCvPct": 3.9,
+          "freshChildMedianMs": 8.855,
+          "freshChildMinMs": 8.488,
+          "freshChildMeanMs": 8.855,
+          "freshChildStddevMs": 0.52,
+          "freshChildCvPct": 5.9,
           "freshChildMetaSamples": [
             {
               "adapterOptionsHash": "d28660da738599195553e0d18b60ce267efe8f985280c0120451839f0ef59bc2",
@@ -7239,15 +7227,15 @@
           "files": 200,
           "status": "unranked",
           "runs": [
-            64.679,
-            59.635
+            52.586,
+            50.866
           ],
-          "medianMs": 62.157,
-          "minMs": 59.635,
-          "maxMs": 64.679,
-          "meanMs": 62.157,
-          "stddevMs": 3.567,
-          "cvPct": 5.7,
+          "medianMs": 51.726,
+          "minMs": 50.866,
+          "maxMs": 52.586,
+          "meanMs": 51.726,
+          "stddevMs": 1.216,
+          "cvPct": 2.4,
           "metaSamples": [
             {
               "adapterOptionsHash": "3cb3b66c74f949d0c2d8748eddc80212c8f21743d958aa103bb5e04c3e459b98",
@@ -7292,14 +7280,14 @@
           "warmupPasses": 1,
           "throughput": "n/a",
           "freshChildRuns": [
-            66.239,
-            66.977
+            52.285,
+            50.04
           ],
-          "freshChildMedianMs": 66.608,
-          "freshChildMinMs": 66.239,
-          "freshChildMeanMs": 66.608,
-          "freshChildStddevMs": 0.522,
-          "freshChildCvPct": 0.8,
+          "freshChildMedianMs": 51.162,
+          "freshChildMinMs": 50.04,
+          "freshChildMeanMs": 51.162,
+          "freshChildStddevMs": 1.587,
+          "freshChildCvPct": 3.1,
           "freshChildMetaSamples": [
             {
               "adapterOptionsHash": "3cb3b66c74f949d0c2d8748eddc80212c8f21743d958aa103bb5e04c3e459b98",
@@ -7378,15 +7366,15 @@
           "files": 200,
           "status": "unranked",
           "runs": [
-            65.835,
-            72.904
+            53.307,
+            59.71
           ],
-          "medianMs": 69.369,
-          "minMs": 65.835,
-          "maxMs": 72.904,
-          "meanMs": 69.369,
-          "stddevMs": 4.999,
-          "cvPct": 7.2,
+          "medianMs": 56.508,
+          "minMs": 53.307,
+          "maxMs": 59.71,
+          "meanMs": 56.508,
+          "stddevMs": 4.528,
+          "cvPct": 8,
           "metaSamples": [
             {
               "adapterOptionsHash": "f42e7e128703a93be7e9a6f7aec4a5ba5b2f321d058363c4634c8f8ba3051b0a",
@@ -7421,14 +7409,14 @@
           "warmupPasses": 1,
           "throughput": "n/a",
           "freshChildRuns": [
-            81.144,
-            74.954
+            49.447,
+            59.679
           ],
-          "freshChildMedianMs": 78.049,
-          "freshChildMinMs": 74.954,
-          "freshChildMeanMs": 78.049,
-          "freshChildStddevMs": 4.377,
-          "freshChildCvPct": 5.6,
+          "freshChildMedianMs": 54.563,
+          "freshChildMinMs": 49.447,
+          "freshChildMeanMs": 54.563,
+          "freshChildStddevMs": 7.235,
+          "freshChildCvPct": 13.3,
           "freshChildMetaSamples": [
             {
               "adapterOptionsHash": "f42e7e128703a93be7e9a6f7aec4a5ba5b2f321d058363c4634c8f8ba3051b0a",

@@ -2,12 +2,12 @@
 
 > Auto-generated from the JSON snapshots in [`results/benchmarks/`](../results/benchmarks/) and [`results/real_world/`](../results/real_world/) by `pnpm docs`. Do not edit by hand.
 
-- **Generated:** 2026-09-18T13:42:39.794Z
+- **Generated:** 2026-09-29T12:56:26.892Z
 - **Fixture:** `fixtures/200` (200 files)
 - **Runs / warmups:** 5 / 1
-- **Runner:** Linux · linux/x64 · 4 CPUs · AMD EPYC 7763 64-Core Processor · 15.6 GB · Node v22.23.2
-- **Commit:** [`9db7b15`](https://github.com/pikax/vue-benchmarks/commit/9db7b15d6a8266ab757541d4f5e3a2a6ae13d2b6)
-- **CI run:** https://github.com/pikax/vue-benchmarks/actions/runs/35350720887
+- **Runner:** Linux · linux/x64 · 4 CPUs · INTEL(R) XEON(R) PLATINUM 8573C · 15.6 GB · Node v22.23.2
+- **Commit:** [`8a88482`](https://github.com/pikax/vue-benchmarks/commit/8a8848276c52956d7e54e262e5846e41fc922288)
+- **CI run:** https://github.com/pikax/vue-benchmarks/actions/runs/36570273148
 - **Source:** `results/benchmarks/bench-Linux-200-bench.json`
 
 ## Results
@@ -36,13 +36,13 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput | Peak RSS |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| eslint-plugin-vue (CLI) | **3.36 s** | 3.23 s | 71.0 ms | 2.1% | 1.00x | n/a | 60 files/s | – |
-| Vize lint (1T) ⚠ | (131.6 ms) | (129.1 ms) | – | – | not ranked | – | – | – |
-| Vize lint (default threads) ⚠ | (101.6 ms) | (99.1 ms) | – | – | not ranked | – | – | (69.3 MB) |
-| Biome lint (1T) ⚠ | (347.1 ms) | (344.9 ms) | – | – | not ranked | – | – | – |
-| Biome lint (default threads) ⚠ | (197.6 ms) | (191.8 ms) | – | – | not ranked | – | – | (103.4 MB) |
-| Oxlint (1T) ⚠ | (97.9 ms) | (89.4 ms) | – | – | not ranked | – | – | – |
-| Oxlint (default threads) ⚠ | (89.1 ms) | (87.4 ms) | – | – | not ranked | – | – | (98.9 MB) |
+| eslint-plugin-vue (CLI) | **2.95 s** | 2.90 s | 45.8 ms | 1.6% | 1.00x | n/a | 68 files/s | – |
+| Vize lint (1T) ⚠ | (130.8 ms) | (128.6 ms) | – | – | not ranked | – | – | – |
+| Vize lint (default threads) ⚠ | (94.9 ms) | (92.1 ms) | – | – | not ranked | – | – | (73.8 MB) |
+| Biome lint (1T) ⚠ | (326.4 ms) | (321.0 ms) | – | – | not ranked | – | – | – |
+| Biome lint (default threads) ⚠ | (175.6 ms) | (173.3 ms) | – | – | not ranked | – | – | (103.1 MB) |
+| Oxlint (1T) ⚠ | (86.5 ms) | (80.8 ms) | – | – | not ranked | – | – | – |
+| Oxlint (default threads) ⚠ | (74.8 ms) | (74.4 ms) | – | – | not ranked | – | – | (98.8 MB) |
 
 <details><summary>Notes</summary>
 
@@ -65,9 +65,9 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput | Peak RSS |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| eslint-plugin-vue (1T) | **1.99 s** | 1.76 s | 159.0 ms | 8.0% | 1.00x | n/a | 100 files/s | 180.6 MB |
-| eslint-plugin-vue (4 workers) | **3.70 s** | 3.67 s | 42.8 ms | 1.2% | 1.86x | n/a | 54 files/s | – |
-| Verter host lint ⚠ | (686.6 ms) | (682.8 ms) | – | – | not ranked | – | – | (65.0 MB) |
+| eslint-plugin-vue (1T) | **1.98 s** | 1.73 s | 175.1 ms | 8.9% | 1.00x | n/a | 101 files/s | 215.7 MB |
+| eslint-plugin-vue (4 workers) | **3.40 s** | 3.35 s | 60.2 ms | 1.8% | 1.72x | n/a | 59 files/s | – |
+| Verter host lint ⚠ | (853.7 ms) | (825.6 ms) | – | – | not ranked | – | – | (65.8 MB) |
 
 <details><summary>Notes</summary>
 
@@ -96,16 +96,16 @@ Tools:
 
 Raw runs:
 
-- **eslint-plugin-vue (CLI)**: 3.38 s, 3.32 s, 3.23 s, 3.36 s, 3.41 s
-- **Vize lint (1T)**: 129.3 ms, 129.1 ms, 131.6 ms, 143.7 ms, 133.9 ms
-- **Vize lint (default threads)**: 101.5 ms, 101.6 ms, 99.1 ms, 103.0 ms, 104.4 ms
-- **Biome lint (1T)**: 344.9 ms, 345.3 ms, 349.5 ms, 349.3 ms, 347.1 ms
-- **Biome lint (default threads)**: 191.8 ms, 195.7 ms, 197.6 ms, 205.3 ms, 201.5 ms
-- **Oxlint (1T)**: 89.4 ms, 107.5 ms, 93.9 ms, 97.9 ms, 107.7 ms
-- **Oxlint (default threads)**: 87.4 ms, 96.9 ms, 87.5 ms, 89.1 ms, 92.5 ms
-- **eslint-plugin-vue (1T)**: 2.14 s, 2.10 s, 1.76 s, 1.86 s, 1.99 s
-- **eslint-plugin-vue (4 workers)**: 3.78 s, 3.69 s, 3.70 s, 3.67 s, 3.73 s
-- **Verter host lint**: 686.4 ms, 739.1 ms, 686.6 ms, 682.8 ms, 743.0 ms
+- **eslint-plugin-vue (CLI)**: 2.90 s, 3.02 s, 2.95 s, 2.93 s, 2.99 s
+- **Vize lint (1T)**: 128.6 ms, 130.0 ms, 132.1 ms, 139.8 ms, 130.8 ms
+- **Vize lint (default threads)**: 92.1 ms, 94.9 ms, 96.8 ms, 94.6 ms, 98.8 ms
+- **Biome lint (1T)**: 321.0 ms, 326.4 ms, 325.0 ms, 328.2 ms, 331.5 ms
+- **Biome lint (default threads)**: 175.6 ms, 173.8 ms, 173.3 ms, 179.7 ms, 179.9 ms
+- **Oxlint (1T)**: 93.0 ms, 84.0 ms, 86.5 ms, 80.8 ms, 89.8 ms
+- **Oxlint (default threads)**: 74.4 ms, 74.6 ms, 75.6 ms, 75.7 ms, 74.8 ms
+- **eslint-plugin-vue (1T)**: 1.98 s, 1.99 s, 1.73 s, 1.73 s, 2.13 s
+- **eslint-plugin-vue (4 workers)**: 3.42 s, 3.51 s, 3.40 s, 3.38 s, 3.35 s
+- **Verter host lint**: 858.8 ms, 852.0 ms, 853.7 ms, 825.6 ms, 862.2 ms
 
 </details>
 
@@ -113,7 +113,7 @@ Raw runs:
 
 Executable correctness checks — planted errors that must be reported, clean fixtures that must stay clean. A fast tool that misses plants cannot rank as a correct one; gate failures surface as ⚠ in the timing tables.
 
-pass **51** · fail **13** · warn **0** · skip **0**
+pass **52** · fail **12** · warn **0** · skip **0**
 
 | Case | eslint-plugin-vue | vize-lint | verter-lint | eslint-plugin-vue-1t | vize-lint-1t | verter-lint-host |
 | --- | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -128,7 +128,7 @@ pass **51** · fail **13** · warn **0** · skip **0**
 | `invalid-v-slot` | ✓ | **✗** | **✗** | – | – | – |
 | `mutating-props` | ✓ | ✓ | **✗** | – | – | – |
 | `mutating-props-shadowing` | – | – | – | ✓ | **✗** | **✗** |
-| `prop-type-constructor` | ✓ | **✗** | ✓ | – | – | – |
+| `prop-type-constructor` | ✓ | ✓ | ✓ | – | – | – |
 | `require-component-is` | ✓ | ✓ | ✓ | – | – | – |
 | `reserved-props` | ✓ | ✓ | ✓ | – | – | – |
 | `template-key` | ✓ | ✓ | **✗** | – | – | – |
@@ -152,7 +152,6 @@ pass **51** · fail **13** · warn **0** · skip **0**
 - `v-on-native-modifier` · **vize-lint** — expected ≥1 issues, got 0
 - `computed-side-effect` · **vize-lint** — expected ≥1 issues, got 0
 - `computed-side-effect` · **verter-lint** — missing rules no-side-effects-in-computed; got block-lang
-- `prop-type-constructor` · **vize-lint** — expected ≥1 issues, got 0
 - `mutating-props-shadowing` · **vize-lint-1t** — dirty twin had no file+line+rule/concept-attributed diagnostic
 - `mutating-props-shadowing` · **verter-lint-host** — dirty twin had no file+line+rule/concept-attributed diagnostic
 
@@ -166,11 +165,11 @@ Each tool in its own process so RSS, allocation proxies and CPU are not mixed wi
 
 | Tool | RSS min / max / avg | Alloc min / max / avg | CPU ms | CPU % | Wall ms | Samples |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Verter host lint | 64.83 / 64.83 / 64.83 | 0.55 / 0.55 / 0.55 | 255 | 106.7 | 239 | 3 |
-| Vize lint (default threads) | 10.55 / 69.31 / 43.77 | n/a | 60 | 120.3 | 49 | 3 |
-| Oxlint (default threads; Node host + NAPI addon) | 11.04 / 98.89 / 54.32 | n/a | 30 | 65.0 | 46 | 3 |
-| Biome lint (default threads) | 0.77 / 101.48 / 76.16 | n/a | 20 | 20.1 | 99 | 3 |
-| eslint-plugin-vue (1T) | 20.55 / 177.39 / 130.99 | 9.67 / 106.05 / 61.87 | 2709 | 167.2 | 1632 | 3 |
+| Verter host lint | 65.75 / 65.75 / 65.75 | 0.53 / 0.53 / 0.53 | 332 | 105.7 | 314 | 3 |
+| Vize lint (default threads) | 14.52 / 73.76 / 49.71 | n/a | 90 | 136.5 | 68 | 3 |
+| Oxlint (default threads; Node host + NAPI addon) | 14.07 / 98.77 / 55.94 | n/a | 40 | 71.3 | 58 | 3 |
+| Biome lint (default threads) | 1.95 / 100.96 / 76.99 | n/a | 20 | 15.3 | 131 | 3 |
+| eslint-plugin-vue (1T) | 17.07 / 213.20 / 151.93 | 7.34 / 67.24 / 46.55 | 3716 | 164.5 | 2261 | 3 |
 
 <details><summary>Notes</summary>
 
@@ -193,38 +192,38 @@ Each tool in its own process so RSS, allocation proxies and CPU are not mixed wi
 | vue-36 | 3.6.0-rc.9 |
 | @vue/compiler-sfc | 3.5.43 |
 | @vue/compiler-sfc-36 | 3.6.0-rc.9 |
-| vize | 0.424.10 |
-| @vizejs/native | 0.424.10 |
-| @verter/native | 0.0.1-beta.5 |
+| vize | 0.429.1 |
+| @vizejs/native | 0.429.1 |
+| @verter/native | 0.0.1-beta.6 |
 | @fervid/napi | 0.4.1 |
-| verter-tsc | 0.0.1-beta.5 |
-| @verter/component-meta | 0.0.1-beta.5 |
-| verter-lsp | 0.0.1-beta.5 |
-| verter-mcp | 0.0.1-beta.5 |
+| verter-tsc | 0.0.1-beta.6 |
+| @verter/component-meta | 0.0.1-beta.6 |
+| verter-lsp | 0.0.1-beta.6 |
+| verter-mcp | 0.0.1-beta.6 |
 | @vue/language-server | 3.3.11 |
 | @vue/typescript-plugin | 3.3.11 |
-| typescript-language-server | 6.0.0 |
+| typescript-language-server | 6.0.1 |
 | vue-tsc | 3.3.11 |
 | vue-component-meta | 3.3.11 |
 | golar | 0.1.10 |
 | @golar/vue | 0.1.10 |
-| prettier | 3.9.7 |
-| oxfmt | 0.68.0 |
-| oxlint | 1.83.0 |
-| eslint-plugin-vue | 10.11.0 |
+| prettier | 3.9.9 |
+| oxfmt | 0.71.0 |
+| oxlint | 1.86.0 |
+| eslint-plugin-vue | 10.11.1 |
 | @biomejs/biome | 2.5.14 |
 | typescript | 6.0.3 |
-| cli:vize | 0.424.10 |
+| cli:vize | 0.429.1 |
 | cli:vue-tsc | 6.0.3 |
-| cli:verter-tsc | 0.0.1-beta.5 |
+| cli:verter-tsc | 0.0.1-beta.6 |
 | cli:golar | 0.1.10 |
-| cli:prettier | 3.9.7 |
-| cli:oxfmt | 0.68.0 |
-| cli:oxlint | 1.83.0 |
+| cli:prettier | 3.9.9 |
+| cli:oxfmt | 0.71.0 |
+| cli:oxlint | 1.86.0 |
 | cli:biome | 2.5.14 |
-| vue-jsx-vapor | 3.2.24 |
-| @vue-jsx-vapor/compiler-rs | 3.2.24 |
+| vue-jsx-vapor | 3.2.25 |
+| @vue-jsx-vapor/compiler-rs | 3.2.25 |
 | @vue/babel-plugin-jsx | 3.0.0 |
-| @babel/core | 8.0.5 |
+| @babel/core | 8.0.6 |
 
 </details>

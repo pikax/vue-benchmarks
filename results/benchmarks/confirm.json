@@ -1,6 +1,6 @@
 {
   "kind": "confirmation",
-  "generatedAt": "2026-09-18T13:35:18.494Z",
+  "generatedAt": "2026-09-29T12:49:18.328Z",
   "runner": {
     "label": "Linux",
     "platform": "linux",
@@ -10,11 +10,11 @@
     "totalmem": 16770748416,
     "node": "v22.23.2",
     "ci": true,
-    "runUrl": "https://github.com/pikax/vue-benchmarks/actions/runs/35350720887"
+    "runUrl": "https://github.com/pikax/vue-benchmarks/actions/runs/36570273148"
   },
   "summary": {
-    "pass": 524,
-    "fail": 152,
+    "pass": 532,
+    "fail": 144,
     "skip": 26,
     "warn": 0,
     "total": 702
@@ -1359,6 +1359,13 @@
     },
     {
       "suite": "compile",
+      "caseId": "style-slotted",
+      "tool": "@vizejs/native:compileSfcBatchWithResults",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
       "caseId": "style-global",
       "tool": "@vizejs/native:compileSfcBatchWithResults",
       "status": "pass",
@@ -1422,17 +1429,17 @@
     },
     {
       "suite": "compile",
+      "caseId": "style-v-bind-quoted",
+      "tool": "@vizejs/native:compileSfcBatchWithResults",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
       "caseId": "style-multiple-style-blocks",
       "tool": "@vizejs/native:compileSfcBatchWithResults",
       "status": "fail",
       "message": "multiple-style-blocks: scoped and unscoped style blocks must retain their separate selector semantics"
-    },
-    {
-      "suite": "compile",
-      "caseId": "style-slotted",
-      "tool": "@vizejs/native:compileSfcBatchWithResults",
-      "status": "fail",
-      "message": "slotted: slotted target must receive the [data-v-…-s] attribute selector"
     },
     {
       "suite": "compile",
@@ -1454,13 +1461,6 @@
       "tool": "@vizejs/native:compileSfcBatchWithResults",
       "status": "fail",
       "message": "scoped-keyframes: scoped keyframe name was not rewritten"
-    },
-    {
-      "suite": "compile",
-      "caseId": "style-v-bind-quoted",
-      "tool": "@vizejs/native:compileSfcBatchWithResults",
-      "status": "fail",
-      "message": "v-bind-quoted: margin-left was not rewritten to a CSS variable"
     },
     {
       "suite": "compile",
@@ -1478,6 +1478,13 @@
     },
     {
       "suite": "compile",
+      "caseId": "style-slotted",
+      "tool": "@vizejs/native:compileSfc",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
       "caseId": "style-global",
       "tool": "@vizejs/native:compileSfc",
       "status": "pass",
@@ -1541,17 +1548,17 @@
     },
     {
       "suite": "compile",
+      "caseId": "style-v-bind-quoted",
+      "tool": "@vizejs/native:compileSfc",
+      "status": "pass",
+      "message": "selector and declaration semantics preserved"
+    },
+    {
+      "suite": "compile",
       "caseId": "style-multiple-style-blocks",
       "tool": "@vizejs/native:compileSfc",
       "status": "fail",
       "message": "multiple-style-blocks: scoped and unscoped style blocks must retain their separate selector semantics"
-    },
-    {
-      "suite": "compile",
-      "caseId": "style-slotted",
-      "tool": "@vizejs/native:compileSfc",
-      "status": "fail",
-      "message": "slotted: slotted target must receive the [data-v-…-s] attribute selector"
     },
     {
       "suite": "compile",
@@ -1573,13 +1580,6 @@
       "tool": "@vizejs/native:compileSfc",
       "status": "fail",
       "message": "scoped-keyframes: scoped keyframe name was not rewritten"
-    },
-    {
-      "suite": "compile",
-      "caseId": "style-v-bind-quoted",
-      "tool": "@vizejs/native:compileSfc",
-      "status": "fail",
-      "message": "v-bind-quoted: margin-left was not rewritten to a CSS variable"
     },
     {
       "suite": "compile",
@@ -2511,9 +2511,45 @@
       "caseId": "source-map-vdom-production-lf-raw",
       "tool": "vize-single",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 416,
+            "generated": {
+              "line": 10,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 369,
+            "generated": {
+              "line": 7,
+              "column": 78
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          }
+        ]
       }
     },
     {
@@ -2521,9 +2557,45 @@
       "caseId": "source-map-vdom-production-crlf-raw",
       "tool": "vize-single",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 416,
+            "generated": {
+              "line": 10,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 369,
+            "generated": {
+              "line": 7,
+              "column": 78
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          }
+        ]
       }
     },
     {
@@ -2531,9 +2603,45 @@
       "caseId": "source-map-vdom-production-lf-styles",
       "tool": "vize-single",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 416,
+            "generated": {
+              "line": 10,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 369,
+            "generated": {
+              "line": 7,
+              "column": 78
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          }
+        ]
       }
     },
     {
@@ -2541,9 +2649,45 @@
       "caseId": "source-map-vdom-production-crlf-styles",
       "tool": "vize-single",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 416,
+            "generated": {
+              "line": 10,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 369,
+            "generated": {
+              "line": 7,
+              "column": 78
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          }
+        ]
       }
     },
     {
@@ -2551,9 +2695,45 @@
       "caseId": "source-map-vdom-production-lf-raw",
       "tool": "vize-batch",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 416,
+            "generated": {
+              "line": 10,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 369,
+            "generated": {
+              "line": 7,
+              "column": 78
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          }
+        ]
       }
     },
     {
@@ -2561,9 +2741,45 @@
       "caseId": "source-map-vdom-production-crlf-raw",
       "tool": "vize-batch",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 416,
+            "generated": {
+              "line": 10,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 369,
+            "generated": {
+              "line": 7,
+              "column": 78
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          }
+        ]
       }
     },
     {
@@ -2571,9 +2787,45 @@
       "caseId": "source-map-vdom-production-lf-styles",
       "tool": "vize-batch",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 416,
+            "generated": {
+              "line": 10,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 369,
+            "generated": {
+              "line": 7,
+              "column": 78
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          }
+        ]
       }
     },
     {
@@ -2581,9 +2833,45 @@
       "caseId": "source-map-vdom-production-crlf-styles",
       "tool": "vize-batch",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 416,
+            "generated": {
+              "line": 10,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 369,
+            "generated": {
+              "line": 7,
+              "column": 78
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          }
+        ]
       }
     },
     {
@@ -3827,9 +4115,45 @@
       "caseId": "source-map-vdom-development-lf-raw",
       "tool": "vize-single",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 400,
+            "generated": {
+              "line": 9,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 339,
+            "generated": {
+              "line": 6,
+              "column": 83
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          }
+        ]
       }
     },
     {
@@ -3837,9 +4161,45 @@
       "caseId": "source-map-vdom-development-crlf-raw",
       "tool": "vize-single",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 400,
+            "generated": {
+              "line": 9,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 339,
+            "generated": {
+              "line": 6,
+              "column": 83
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          }
+        ]
       }
     },
     {
@@ -3847,9 +4207,45 @@
       "caseId": "source-map-vdom-development-lf-styles",
       "tool": "vize-single",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 400,
+            "generated": {
+              "line": 9,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 339,
+            "generated": {
+              "line": 6,
+              "column": 83
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          }
+        ]
       }
     },
     {
@@ -3857,9 +4253,45 @@
       "caseId": "source-map-vdom-development-crlf-styles",
       "tool": "vize-single",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 400,
+            "generated": {
+              "line": 9,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 339,
+            "generated": {
+              "line": 6,
+              "column": 83
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          }
+        ]
       }
     },
     {
@@ -3867,9 +4299,45 @@
       "caseId": "source-map-vdom-development-lf-raw",
       "tool": "vize-batch",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 400,
+            "generated": {
+              "line": 9,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 339,
+            "generated": {
+              "line": 6,
+              "column": 83
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          }
+        ]
       }
     },
     {
@@ -3877,9 +4345,45 @@
       "caseId": "source-map-vdom-development-crlf-raw",
       "tool": "vize-batch",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 400,
+            "generated": {
+              "line": 9,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 339,
+            "generated": {
+              "line": 6,
+              "column": 83
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          }
+        ]
       }
     },
     {
@@ -3887,9 +4391,45 @@
       "caseId": "source-map-vdom-development-lf-styles",
       "tool": "vize-batch",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 400,
+            "generated": {
+              "line": 9,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 339,
+            "generated": {
+              "line": 6,
+              "column": 83
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          }
+        ]
       }
     },
     {
@@ -3897,9 +4437,45 @@
       "caseId": "source-map-vdom-development-crlf-styles",
       "tool": "vize-batch",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 400,
+            "generated": {
+              "line": 9,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 339,
+            "generated": {
+              "line": 6,
+              "column": 83
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          }
+        ]
       }
     },
     {
@@ -4887,9 +5463,45 @@
       "caseId": "source-map-vapor-production-lf-raw",
       "tool": "vize-single",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 570,
+            "generated": {
+              "line": 14,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 484,
+            "generated": {
+              "line": 9,
+              "column": 52
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          }
+        ]
       }
     },
     {
@@ -4897,9 +5509,45 @@
       "caseId": "source-map-vapor-production-crlf-raw",
       "tool": "vize-single",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 570,
+            "generated": {
+              "line": 14,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 484,
+            "generated": {
+              "line": 9,
+              "column": 52
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          }
+        ]
       }
     },
     {
@@ -4907,9 +5555,45 @@
       "caseId": "source-map-vapor-production-lf-styles",
       "tool": "vize-single",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 586,
+            "generated": {
+              "line": 14,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 500,
+            "generated": {
+              "line": 9,
+              "column": 52
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          }
+        ]
       }
     },
     {
@@ -4917,9 +5601,45 @@
       "caseId": "source-map-vapor-production-crlf-styles",
       "tool": "vize-single",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 586,
+            "generated": {
+              "line": 14,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 500,
+            "generated": {
+              "line": 9,
+              "column": 52
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          }
+        ]
       }
     },
     {
@@ -4927,9 +5647,45 @@
       "caseId": "source-map-vapor-production-lf-raw",
       "tool": "vize-batch",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 570,
+            "generated": {
+              "line": 14,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 484,
+            "generated": {
+              "line": 9,
+              "column": 52
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          }
+        ]
       }
     },
     {
@@ -4937,9 +5693,45 @@
       "caseId": "source-map-vapor-production-crlf-raw",
       "tool": "vize-batch",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 570,
+            "generated": {
+              "line": 14,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 484,
+            "generated": {
+              "line": 9,
+              "column": 52
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          }
+        ]
       }
     },
     {
@@ -4947,9 +5739,45 @@
       "caseId": "source-map-vapor-production-lf-styles",
       "tool": "vize-batch",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 586,
+            "generated": {
+              "line": 14,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 500,
+            "generated": {
+              "line": 9,
+              "column": 52
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          }
+        ]
       }
     },
     {
@@ -4957,9 +5785,45 @@
       "caseId": "source-map-vapor-production-crlf-styles",
       "tool": "vize-batch",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 586,
+            "generated": {
+              "line": 14,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 500,
+            "generated": {
+              "line": 9,
+              "column": 52
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          }
+        ]
       }
     },
     {
@@ -5611,9 +6475,45 @@
       "caseId": "source-map-vapor-development-lf-raw",
       "tool": "vize-single",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 570,
+            "generated": {
+              "line": 14,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 484,
+            "generated": {
+              "line": 9,
+              "column": 52
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          }
+        ]
       }
     },
     {
@@ -5621,9 +6521,45 @@
       "caseId": "source-map-vapor-development-crlf-raw",
       "tool": "vize-single",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 570,
+            "generated": {
+              "line": 14,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 484,
+            "generated": {
+              "line": 9,
+              "column": 52
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          }
+        ]
       }
     },
     {
@@ -5631,9 +6567,45 @@
       "caseId": "source-map-vapor-development-lf-styles",
       "tool": "vize-single",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 586,
+            "generated": {
+              "line": 14,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 500,
+            "generated": {
+              "line": 9,
+              "column": 52
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          }
+        ]
       }
     },
     {
@@ -5641,9 +6613,45 @@
       "caseId": "source-map-vapor-development-crlf-styles",
       "tool": "vize-single",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 586,
+            "generated": {
+              "line": 14,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 500,
+            "generated": {
+              "line": 9,
+              "column": 52
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          }
+        ]
       }
     },
     {
@@ -5651,9 +6659,45 @@
       "caseId": "source-map-vapor-development-lf-raw",
       "tool": "vize-batch",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 570,
+            "generated": {
+              "line": 14,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 484,
+            "generated": {
+              "line": 9,
+              "column": 52
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          }
+        ]
       }
     },
     {
@@ -5661,9 +6705,45 @@
       "caseId": "source-map-vapor-development-crlf-raw",
       "tool": "vize-batch",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 570,
+            "generated": {
+              "line": 14,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 484,
+            "generated": {
+              "line": 9,
+              "column": 52
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-raw.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          }
+        ]
       }
     },
     {
@@ -5671,9 +6751,45 @@
       "caseId": "source-map-vapor-development-lf-styles",
       "tool": "vize-batch",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 586,
+            "generated": {
+              "line": 14,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 500,
+            "generated": {
+              "line": 9,
+              "column": 52
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/lf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          }
+        ]
       }
     },
     {
@@ -5681,9 +6797,45 @@
       "caseId": "source-map-vapor-development-crlf-styles",
       "tool": "vize-batch",
       "status": "fail",
-      "message": "script: missing or invalid version-3 source map; template: missing or invalid version-3 source map; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
+      "message": "template: template: no mapping segment starts at the selected generated token; css-0: missing or invalid version-3 source map; css-1: missing or invalid version-3 source map",
       "detail": {
-        "traces": []
+        "traces": [
+          {
+            "id": "script",
+            "ok": true,
+            "generatedOffset": 586,
+            "generated": {
+              "line": 14,
+              "column": 6
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15
+            },
+            "original": {
+              "source": "file:///home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 2,
+              "column": 15,
+              "name": null
+            }
+          },
+          {
+            "id": "template",
+            "ok": false,
+            "generatedOffset": 500,
+            "generated": {
+              "line": 9,
+              "column": 52
+            },
+            "expected": {
+              "source": "/home/runner/work/vue-benchmarks/vue-benchmarks/work/source-map-plants/crlf-styles.vue",
+              "line": 4,
+              "column": 27
+            },
+            "failure": "no mapping segment starts at the selected generated token"
+          }
+        ]
       }
     },
     {
@@ -6569,7 +7721,7 @@
       "caseId": "img-no-alt",
       "tool": "vize-lint",
       "status": "pass",
-      "message": "issues=2"
+      "message": "issues=1"
     },
     {
       "suite": "lint",
@@ -6767,7 +7919,7 @@
       "status": "fail",
       "message": "expected ≥1 issues, got 0",
       "detail": {
-        "snippet": "\nNo problems found in 1 file(s)\nLinted 1 files in 918.1430µs\n"
+        "snippet": "\nNo problems found in 1 file(s)\nLinted 1 files in 1.1220ms\n"
       }
     },
     {
@@ -6791,7 +7943,7 @@
       "status": "fail",
       "message": "expected ≥1 issues, got 0",
       "detail": {
-        "snippet": "\nNo problems found in 1 file(s)\nLinted 1 files in 972.1530µs\n"
+        "snippet": "\nNo problems found in 1 file(s)\nLinted 1 files in 1.1524ms\n"
       }
     },
     {
@@ -6836,7 +7988,7 @@
       "status": "fail",
       "message": "expected ≥1 issues, got 0",
       "detail": {
-        "snippet": "\nNo problems found in 1 file(s)\nLinted 1 files in 939.8730µs\n"
+        "snippet": "\nNo problems found in 1 file(s)\nLinted 1 files in 1.2343ms\n"
       }
     },
     {
@@ -6878,11 +8030,8 @@
       "suite": "lint",
       "caseId": "prop-type-constructor",
       "tool": "vize-lint",
-      "status": "fail",
-      "message": "expected ≥1 issues, got 0",
-      "detail": {
-        "snippet": "\n1 warning in 1 file\nLinted 1 files in 1.0336ms\n"
-      }
+      "status": "pass",
+      "message": "issues=1"
     },
     {
       "suite": "lint",
@@ -6917,20 +8066,20 @@
       "caseId": "all-plants",
       "tool": "vue-tsc",
       "status": "pass",
-      "message": "95% (147/154) · 5 ⚠ (needed fallthroughAttributes) · median 3.48s · avg 3.46s of 5 after 1 warmup(s)",
+      "message": "95% (147/154) · 5 ⚠ (needed fallthroughAttributes) · median 3.32s · avg 3.32s of 5 after 1 warmup(s)",
       "detail": {
-        "ms": 3475.6,
-        "avgMs": 3461.3,
-        "minMs": 3409.9,
-        "maxMs": 3493.7,
-        "rssMb": 346.5,
-        "rssToolMb": 346.5,
+        "ms": 3323,
+        "avgMs": 3319.1,
+        "minMs": 3303.8,
+        "maxMs": 3330.7,
+        "rssMb": 343.8,
+        "rssToolMb": 343.8,
         "runs": [
-          3491.1,
-          3475.6,
-          3436.2,
-          3409.9,
-          3493.7
+          3330.7,
+          3323,
+          3325.9,
+          3303.8,
+          3312.2
         ],
         "warmups": 1,
         "runCount": 5,
@@ -8023,39 +9172,39 @@
         "unattributed": 0,
         "unattributedFiles": []
       },
-      "ms": 3475.6,
-      "rssMb": 346.5,
-      "rssToolMb": 346.5
+      "ms": 3323,
+      "rssMb": 343.8,
+      "rssToolMb": 343.8
     },
     {
       "suite": "typecheck-all",
       "caseId": "all-plants",
       "tool": "vize-check",
       "status": "pass",
-      "message": "92% (142/154) · median 1.35s · avg 1.36s of 5 after 1 warmup(s)",
+      "message": "93% (143/154) · median 1.36s · avg 1.36s of 5 after 1 warmup(s)",
       "detail": {
-        "ms": 1354.4,
-        "avgMs": 1357.1,
-        "minMs": 1341.9,
-        "maxMs": 1383.8,
-        "rssMb": 553.6,
-        "rssToolMb": 74.4,
-        "rssEngineMb": 479.2,
+        "ms": 1356.9,
+        "avgMs": 1362.5,
+        "minMs": 1336.4,
+        "maxMs": 1383.4,
+        "rssMb": 582,
+        "rssToolMb": 78,
+        "rssEngineMb": 504,
         "runs": [
-          1354.4,
-          1383.8,
-          1360.6,
-          1344.6,
-          1341.9
+          1380.3,
+          1383.4,
+          1355.5,
+          1336.4,
+          1356.9
         ],
         "warmups": 1,
         "runCount": 5,
-        "pass": 142,
-        "fail": 12,
+        "pass": 143,
+        "fail": 11,
         "warn": 0,
         "skip": 0,
         "scored": 154,
-        "passPct": 92.20779220779221,
+        "passPct": 92.85714285714286,
         "plants": [
           {
             "caseId": "async-component-prop-bad",
@@ -8195,7 +9344,7 @@
             "skip": false,
             "status": "pass",
             "ok": true,
-            "message": "caught 1 error(s)"
+            "message": "caught 2 error(s)"
           },
           {
             "caseId": "define-model-named-modifiers-ok",
@@ -8823,9 +9972,9 @@
           {
             "caseId": "slot-v-bind-bad",
             "skip": false,
-            "status": "fail",
-            "ok": false,
-            "message": "expected ≥1 error(s), got 0"
+            "status": "pass",
+            "ok": true,
+            "message": "caught 1 error(s)"
           },
           {
             "caseId": "slot-v-bind-ok",
@@ -9112,7 +10261,7 @@
             "skip": false,
             "status": "pass",
             "ok": true,
-            "message": "caught 1 error(s)"
+            "message": "caught 2 error(s)"
           },
           {
             "caseId": "v-show-no-narrow",
@@ -9139,54 +10288,54 @@
         "unattributed": 0,
         "unattributedFiles": []
       },
-      "ms": 1354.4,
-      "rssMb": 553.6,
-      "rssToolMb": 74.4,
-      "rssEngineMb": 479.2
+      "ms": 1356.9,
+      "rssMb": 582,
+      "rssToolMb": 78,
+      "rssEngineMb": 504
     },
     {
       "suite": "typecheck-all",
       "caseId": "all-plants",
       "tool": "verter-tsc",
       "status": "pass",
-      "message": "88% (135/154) · median 3.07s · avg 3.08s of 5 after 1 warmup(s) · 1 diagnostic(s) not attributable to a plant (/home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/App_aead458673bec6c8.vue.ts)",
+      "message": "86% (133/154) · median 3.01s · avg 3.03s of 5 after 1 warmup(s) · 1 diagnostic(s) not attributable to a plant (/home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/App_aead458673bec6c8.vue.ts)",
       "detail": {
-        "ms": 3068.9,
-        "avgMs": 3075.3,
-        "minMs": 3009.2,
-        "maxMs": 3197.4,
-        "rssMb": 729.8,
-        "rssToolMb": 306.6,
-        "rssEngineMb": 423.1,
+        "ms": 3005.1,
+        "avgMs": 3030.6,
+        "minMs": 2959.5,
+        "maxMs": 3178.9,
+        "rssMb": 678,
+        "rssToolMb": 308,
+        "rssEngineMb": 370.1,
         "runs": [
-          3031.6,
-          3069.2,
-          3009.2,
-          3068.9,
-          3197.4
+          2993.9,
+          3005.1,
+          3178.9,
+          3015.7,
+          2959.5
         ],
         "warmups": 1,
         "runCount": 5,
-        "pass": 135,
-        "fail": 19,
+        "pass": 133,
+        "fail": 21,
         "warn": 0,
         "skip": 0,
         "scored": 154,
-        "passPct": 87.66233766233766,
+        "passPct": 86.36363636363636,
         "plants": [
           {
             "caseId": "async-component-prop-bad",
             "skip": false,
-            "status": "pass",
-            "ok": true,
-            "message": "caught 1 error(s)"
+            "status": "fail",
+            "ok": false,
+            "message": "no diagnostic at App.vue:10 (@plant-error)"
           },
           {
             "caseId": "async-component-prop-ok",
             "skip": false,
-            "status": "pass",
-            "ok": true,
-            "message": "clean"
+            "status": "fail",
+            "ok": false,
+            "message": "expected clean (0 errors), got 1"
           },
           {
             "caseId": "async-setup-await",
@@ -10258,30 +11407,30 @@
           "/home/runner/work/vue-benchmarks/vue-benchmarks/work/confirm-typecheck-all/App_aead458673bec6c8.vue.ts"
         ]
       },
-      "ms": 3068.9,
-      "rssMb": 729.8,
-      "rssToolMb": 306.6,
-      "rssEngineMb": 423.1
+      "ms": 3005.1,
+      "rssMb": 678,
+      "rssToolMb": 308,
+      "rssEngineMb": 370.1
     },
     {
       "suite": "typecheck-all",
       "caseId": "all-plants",
       "tool": "golar-typecheck",
       "status": "pass",
-      "message": "94% (145/154) · 5 ⚠ (needed fallthroughAttributes) · median 0.99s · avg 0.99s of 5 after 1 warmup(s)",
+      "message": "94% (145/154) · 5 ⚠ (needed fallthroughAttributes) · median 0.97s · avg 0.97s of 5 after 1 warmup(s)",
       "detail": {
-        "ms": 988.8,
-        "avgMs": 989.1,
-        "minMs": 978.4,
-        "maxMs": 1003.1,
-        "rssMb": 366,
-        "rssToolMb": 366,
+        "ms": 969.3,
+        "avgMs": 969.2,
+        "minMs": 951.8,
+        "maxMs": 981.2,
+        "rssMb": 367.3,
+        "rssToolMb": 367.3,
         "runs": [
-          983,
-          992.4,
-          978.4,
-          988.8,
-          1003.1
+          969.3,
+          978.2,
+          965.4,
+          951.8,
+          981.2
         ],
         "warmups": 1,
         "runCount": 5,
@@ -11374,9 +12523,9 @@
         "unattributed": 0,
         "unattributedFiles": []
       },
-      "ms": 988.8,
-      "rssMb": 366,
-      "rssToolMb": 366
+      "ms": 969.3,
+      "rssMb": 367.3,
+      "rssToolMb": 367.3
     },
     {
       "suite": "component-meta",
@@ -12060,8 +13209,19 @@
       "suite": "component-meta",
       "caseId": "expose",
       "tool": "verter-component-meta",
-      "status": "fail",
-      "message": "output materialization error: component-meta output materialization failed at exposed[].type index 2: the source has no live graph representation under the request view"
+      "status": "pass",
+      "message": "props=0 · events=0 · slots=0 · exposed=3",
+      "detail": {
+        "source": "verter-component-meta",
+        "props": [],
+        "events": [],
+        "slots": [],
+        "exposed": [
+          "focus",
+          "reset",
+          "value"
+        ]
+      }
     },
     {
       "suite": "component-meta",
@@ -12092,8 +13252,19 @@
       "suite": "component-meta",
       "caseId": "expose-ref-computed",
       "tool": "verter-component-meta",
-      "status": "fail",
-      "message": "output materialization error: component-meta output materialization failed at exposed[].type index 0: the source has no live graph representation under the request view"
+      "status": "pass",
+      "message": "props=0 · events=0 · slots=0 · exposed=3",
+      "detail": {
+        "source": "verter-component-meta",
+        "props": [],
+        "events": [],
+        "slots": [],
+        "exposed": [
+          "query",
+          "isEmpty",
+          "clear"
+        ]
+      }
     },
     {
       "suite": "component-meta",
@@ -12192,7 +13363,28 @@
       "caseId": "full-api",
       "tool": "verter-component-meta",
       "status": "fail",
-      "message": "output materialization error: component-meta output materialization failed at exposed[].type index 1: the source has no live graph representation under the request view"
+      "message": "events.submit: type \"[payload: object]\" missing value|size|string",
+      "detail": {
+        "meta": {
+          "source": "verter-component-meta",
+          "props": [
+            "modelValue",
+            "size"
+          ],
+          "events": [
+            "update:modelValue",
+            "submit"
+          ],
+          "slots": [
+            "default",
+            "actions"
+          ],
+          "exposed": [
+            "focus",
+            "props"
+          ]
+        }
+      }
     },
     {
       "suite": "component-meta",
@@ -12966,11 +14158,11 @@
       "message": "template hover has the expected string type (```typescript (property) greeting: \"confirm-lsp\" ```)",
       "detail": {
         "snippet": "```typescript\n(property) greeting: \"confirm-lsp\"\n```",
-        "ms": 1731.3,
-        "readyMs": 1161,
+        "ms": 1735.8,
+        "readyMs": 1167.1,
         "readySignalMs": null
       },
-      "ms": 1731.3
+      "ms": 1735.8
     },
     {
       "suite": "lsp",
@@ -13060,11 +14252,11 @@
       "message": "template hover has the expected string type (```typescript const greeting: \"confirm-lsp\" ```)",
       "detail": {
         "snippet": "```typescript\nconst greeting: \"confirm-lsp\"\n```",
-        "ms": 373.8,
-        "readyMs": 320.2,
+        "ms": 368.6,
+        "readyMs": 314.1,
         "readySignalMs": null
       },
-      "ms": 373.8
+      "ms": 368.6
     },
     {
       "suite": "lsp",
@@ -13113,7 +14305,7 @@
       "status": "fail",
       "message": "references missing App.vue symbol ranges — found files child.vue",
       "detail": {
-        "snippet": "child.vue@2:2 child.vue@4:7 child.vue@4:59 child.vue@10:9"
+        "snippet": "child.vue@2:2 child.vue@10:9"
       }
     },
     {
@@ -13154,11 +14346,11 @@
       "message": "template hover has the expected string type (```typescript const greeting: \"confirm-lsp\" ```)",
       "detail": {
         "snippet": "```typescript\nconst greeting: \"confirm-lsp\"\n```",
-        "ms": 260.6,
-        "readyMs": 250.3,
-        "readySignalMs": null
+        "ms": 211,
+        "readyMs": 199.9,
+        "readySignalMs": 44.1
       },
-      "ms": 260.6
+      "ms": 211
     },
     {
       "suite": "lsp",
@@ -13244,9 +14436,9 @@
       "status": "pass",
       "message": "487→487B idempotent rewrote",
       "detail": {
-        "ms": 250.81757400001516
+        "ms": 227.49376000001212
       },
-      "ms": 250.81757400001516
+      "ms": 227.49376000001212
     },
     {
       "suite": "format",
@@ -13255,9 +14447,9 @@
       "status": "pass",
       "message": "487→487B idempotent rewrote",
       "detail": {
-        "ms": 344.703582999995
+        "ms": 311.35521400001016
       },
-      "ms": 344.703582999995
+      "ms": 311.35521400001016
     },
     {
       "suite": "format",
@@ -13266,9 +14458,9 @@
       "status": "pass",
       "message": "487→488B idempotent rewrote",
       "detail": {
-        "ms": 45.60325899999589
+        "ms": 45.185459000000264
       },
-      "ms": 45.60325899999589
+      "ms": 45.185459000000264
     },
     {
       "suite": "format",
@@ -13277,9 +14469,9 @@
       "status": "pass",
       "message": "487→497B idempotent rewrote",
       "detail": {
-        "ms": 52.44976899999892
+        "ms": 51.251594000001205
       },
-      "ms": 52.44976899999892
+      "ms": 51.251594000001205
     },
     {
       "suite": "format",
@@ -13288,9 +14480,9 @@
       "status": "pass",
       "message": "337→337B unchanged",
       "detail": {
-        "ms": 183.65548999997554
+        "ms": 178.44783599997754
       },
-      "ms": 183.65548999997554
+      "ms": 178.44783599997754
     },
     {
       "suite": "format",
@@ -13299,9 +14491,9 @@
       "status": "pass",
       "message": "337→337B unchanged",
       "detail": {
-        "ms": 316.0495419999934
+        "ms": 300.83206499999505
       },
-      "ms": 316.0495419999934
+      "ms": 300.83206499999505
     },
     {
       "suite": "format",
@@ -13310,9 +14502,9 @@
       "status": "pass",
       "message": "337→337B unchanged",
       "detail": {
-        "ms": 46.59373399999458
+        "ms": 44.00440000000526
       },
-      "ms": 46.59373399999458
+      "ms": 44.00440000000526
     },
     {
       "suite": "format",
@@ -13321,9 +14513,9 @@
       "status": "pass",
       "message": "337→337B unchanged",
       "detail": {
-        "ms": 51.46614500001306
+        "ms": 47.8943459999864
       },
-      "ms": 51.46614500001306
+      "ms": 47.8943459999864
     },
     {
       "suite": "format",
@@ -13332,9 +14524,9 @@
       "status": "pass",
       "message": "216→216B unchanged",
       "detail": {
-        "ms": 164.01883099999395
+        "ms": 158.68621499999426
       },
-      "ms": 164.01883099999395
+      "ms": 158.68621499999426
     },
     {
       "suite": "format",
@@ -13343,9 +14535,9 @@
       "status": "pass",
       "message": "216→216B unchanged",
       "detail": {
-        "ms": 273.7030139999988
+        "ms": 263.0390790000092
       },
-      "ms": 273.7030139999988
+      "ms": 263.0390790000092
     },
     {
       "suite": "format",
@@ -13354,9 +14546,9 @@
       "status": "pass",
       "message": "216→216B rewrote",
       "detail": {
-        "ms": 45.43212800001493
+        "ms": 53.25297500001034
       },
-      "ms": 45.43212800001493
+      "ms": 53.25297500001034
     },
     {
       "suite": "format",
@@ -13365,9 +14557,9 @@
       "status": "pass",
       "message": "216→216B unchanged",
       "detail": {
-        "ms": 49.966050000017276
+        "ms": 50.754641000006814
       },
-      "ms": 49.966050000017276
+      "ms": 50.754641000006814
     },
     {
       "suite": "format",
@@ -13376,9 +14568,9 @@
       "status": "pass",
       "message": "204→204B unchanged",
       "detail": {
-        "ms": 157.2358949999907
+        "ms": 153.34176599999773
       },
-      "ms": 157.2358949999907
+      "ms": 153.34176599999773
     },
     {
       "suite": "format",
@@ -13387,9 +14579,9 @@
       "status": "pass",
       "message": "204→204B unchanged",
       "detail": {
-        "ms": 279.5464090000023
+        "ms": 275.9931669999787
       },
-      "ms": 279.5464090000023
+      "ms": 275.9931669999787
     },
     {
       "suite": "format",
@@ -13398,9 +14590,9 @@
       "status": "pass",
       "message": "204→204B unchanged",
       "detail": {
-        "ms": 44.33872400000109
+        "ms": 44.12416899998789
       },
-      "ms": 44.33872400000109
+      "ms": 44.12416899998789
     },
     {
       "suite": "format",
@@ -13409,9 +14601,9 @@
       "status": "pass",
       "message": "204→203B rewrote",
       "detail": {
-        "ms": 48.53310100000817
+        "ms": 47.34848499999498
       },
-      "ms": 48.53310100000817
+      "ms": 47.34848499999498
     },
     {
       "suite": "format",
@@ -13420,9 +14612,9 @@
       "status": "pass",
       "message": "153→153B unchanged",
       "detail": {
-        "ms": 200.65577300000587
+        "ms": 200.8981550000026
       },
-      "ms": 200.65577300000587
+      "ms": 200.8981550000026
     },
     {
       "suite": "format",
@@ -13431,9 +14623,9 @@
       "status": "pass",
       "message": "153→153B unchanged",
       "detail": {
-        "ms": 282.32439400002477
+        "ms": 277.0103930000041
       },
-      "ms": 282.32439400002477
+      "ms": 277.0103930000041
     },
     {
       "suite": "format",
@@ -13442,9 +14634,9 @@
       "status": "pass",
       "message": "153→153B unchanged",
       "detail": {
-        "ms": 43.8456699999806
+        "ms": 46.57665599999018
       },
-      "ms": 43.8456699999806
+      "ms": 46.57665599999018
     },
     {
       "suite": "format",
@@ -13453,9 +14645,9 @@
       "status": "pass",
       "message": "153→151B rewrote",
       "detail": {
-        "ms": 49.85355899998103
+        "ms": 46.807044999994105
       },
-      "ms": 49.85355899998103
+      "ms": 46.807044999994105
     },
     {
       "suite": "format",
@@ -13464,9 +14656,9 @@
       "status": "pass",
       "message": "298→299B idempotent rewrote",
       "detail": {
-        "ms": 149.85625899999286
+        "ms": 145.73111799999606
       },
-      "ms": 149.85625899999286
+      "ms": 145.73111799999606
     },
     {
       "suite": "format",
@@ -13475,9 +14667,9 @@
       "status": "pass",
       "message": "298→299B idempotent rewrote",
       "detail": {
-        "ms": 247.4026249999879
+        "ms": 250.8849019999907
       },
-      "ms": 247.4026249999879
+      "ms": 250.8849019999907
     },
     {
       "suite": "format",
@@ -13486,9 +14678,9 @@
       "status": "pass",
       "message": "298→298B idempotent rewrote",
       "detail": {
-        "ms": 44.38019700002042
+        "ms": 45.63400499999989
       },
-      "ms": 44.38019700002042
+      "ms": 45.63400499999989
     },
     {
       "suite": "format",
@@ -13497,9 +14689,9 @@
       "status": "pass",
       "message": "298→298B idempotent unchanged",
       "detail": {
-        "ms": 48.295088999992004
+        "ms": 47.20679199998267
       },
-      "ms": 48.295088999992004
+      "ms": 47.20679199998267
     },
     {
       "suite": "format",
@@ -13508,9 +14700,9 @@
       "status": "pass",
       "message": "228→228B unchanged",
       "detail": {
-        "ms": 152.75308500000392
+        "ms": 145.59909599999082
       },
-      "ms": 152.75308500000392
+      "ms": 145.59909599999082
     },
     {
       "suite": "format",
@@ -13519,9 +14711,9 @@
       "status": "pass",
       "message": "228→228B unchanged",
       "detail": {
-        "ms": 288.1004050000047
+        "ms": 281.8331570000155
       },
-      "ms": 288.1004050000047
+      "ms": 281.8331570000155
     },
     {
       "suite": "format",
@@ -13530,9 +14722,9 @@
       "status": "pass",
       "message": "228→228B rewrote",
       "detail": {
-        "ms": 45.65422500000568
+        "ms": 46.65501499999664
       },
-      "ms": 45.65422500000568
+      "ms": 46.65501499999664
     },
     {
       "suite": "format",
@@ -13541,9 +14733,9 @@
       "status": "pass",
       "message": "228→228B unchanged",
       "detail": {
-        "ms": 51.26113699999405
+        "ms": 47.96933200000785
       },
-      "ms": 51.26113699999405
+      "ms": 47.96933200000785
     },
     {
       "suite": "format",
@@ -13552,9 +14744,9 @@
       "status": "pass",
       "message": "356→356B rewrote",
       "detail": {
-        "ms": 173.46626300000935
+        "ms": 167.29477999999654
       },
-      "ms": 173.46626300000935
+      "ms": 167.29477999999654
     },
     {
       "suite": "format",
@@ -13563,9 +14755,9 @@
       "status": "pass",
       "message": "356→356B rewrote",
       "detail": {
-        "ms": 278.35323400000925
+        "ms": 271.66099000000395
       },
-      "ms": 278.35323400000925
+      "ms": 271.66099000000395
     },
     {
       "suite": "format",
@@ -13574,9 +14766,9 @@
       "status": "pass",
       "message": "356→356B rewrote",
       "detail": {
-        "ms": 48.41993000000366
+        "ms": 44.508004000002984
       },
-      "ms": 48.41993000000366
+      "ms": 44.508004000002984
     },
     {
       "suite": "format",
@@ -13585,9 +14777,9 @@
       "status": "pass",
       "message": "356→356B unchanged",
       "detail": {
-        "ms": 50.020017000002554
+        "ms": 46.44145300000673
       },
-      "ms": 50.020017000002554
+      "ms": 46.44145300000673
     },
     {
       "suite": "format",
@@ -13596,9 +14788,9 @@
       "status": "pass",
       "message": "179→182B rewrote",
       "detail": {
-        "ms": 152.43269399998826
+        "ms": 149.0645839999779
       },
-      "ms": 152.43269399998826
+      "ms": 149.0645839999779
     },
     {
       "suite": "format",
@@ -13607,9 +14799,9 @@
       "status": "pass",
       "message": "179→182B rewrote",
       "detail": {
-        "ms": 289.7649800000072
+        "ms": 275.8928779999842
       },
-      "ms": 289.7649800000072
+      "ms": 275.8928779999842
     },
     {
       "suite": "format",
@@ -13618,9 +14810,9 @@
       "status": "pass",
       "message": "179→179B unchanged",
       "detail": {
-        "ms": 43.50230799999554
+        "ms": 46.055128000007244
       },
-      "ms": 43.50230799999554
+      "ms": 46.055128000007244
     },
     {
       "suite": "format",
@@ -13629,9 +14821,9 @@
       "status": "pass",
       "message": "179→179B unchanged",
       "detail": {
-        "ms": 52.299199000000954
+        "ms": 48.02287200000137
       },
-      "ms": 52.299199000000954
+      "ms": 48.02287200000137
     },
     {
       "suite": "format",
@@ -13640,9 +14832,9 @@
       "status": "pass",
       "message": "182→182B unchanged",
       "detail": {
-        "ms": 147.56631199998083
+        "ms": 140.0430869999982
       },
-      "ms": 147.56631199998083
+      "ms": 140.0430869999982
     },
     {
       "suite": "format",
@@ -13651,9 +14843,9 @@
       "status": "pass",
       "message": "182→182B unchanged",
       "detail": {
-        "ms": 274.89618100001826
+        "ms": 275.98992399999406
       },
-      "ms": 274.89618100001826
+      "ms": 275.98992399999406
     },
     {
       "suite": "format",
@@ -13663,10 +14855,10 @@
       "message": "formatted output does not match /(^|[\\r\\n])\\.wrapper\\r?\\n {2}h1\\.title CONFIRM_PUG_TITLE\\r?\\n {2}ul\\r?\\n {4}li\\(v-for=\"item in items\" :key=\"item\"\\) \\{\\{ item \\}\\}/",
       "detail": {
         "formatted": "<script setup>\nconst items = [\"a\", \"b\"];\n</script>\n\n<template lang=\"pug\">\n  .wrapper\n    h1.title CONFIRM_PUG_TITLE\n    ul\n      li(v-for=\"item in items\" :key=\"item\") {{ item }}\n</template>\n",
-        "ms": 44.80932500000927,
+        "ms": 46.38460300001316,
         "snippet": "Found 1 file(s)\nReformatted: format-pug-template.vue\n\nFormatted 1 file(s)\n  1 file(s) reformatted\n"
       },
-      "ms": 44.80932500000927
+      "ms": 46.38460300001316
     },
     {
       "suite": "format",
@@ -13675,9 +14867,9 @@
       "status": "pass",
       "message": "182→182B unchanged",
       "detail": {
-        "ms": 49.8440689999843
+        "ms": 48.25050100000226
       },
-      "ms": 49.8440689999843
+      "ms": 48.25050100000226
     },
     {
       "suite": "format",
@@ -13686,9 +14878,9 @@
       "status": "pass",
       "message": "675→763B idempotent rewrote",
       "detail": {
-        "ms": 168.4916840000078
+        "ms": 166.8553280000051
       },
-      "ms": 168.4916840000078
+      "ms": 166.8553280000051
     },
     {
       "suite": "format",
@@ -13697,9 +14889,9 @@
       "status": "pass",
       "message": "675→740B idempotent rewrote",
       "detail": {
-        "ms": 293.55678199999966
+        "ms": 300.24711399999796
       },
-      "ms": 293.55678199999966
+      "ms": 300.24711399999796
     },
     {
       "suite": "format",
@@ -13708,9 +14900,9 @@
       "status": "pass",
       "message": "675→721B idempotent rewrote",
       "detail": {
-        "ms": 45.502289000025485
+        "ms": 45.84555800000089
       },
-      "ms": 45.502289000025485
+      "ms": 45.84555800000089
     },
     {
       "suite": "format",
@@ -13719,9 +14911,9 @@
       "status": "pass",
       "message": "675→674B idempotent rewrote",
       "detail": {
-        "ms": 49.83255699998699
+        "ms": 47.386241000000155
       },
-      "ms": 49.83255699998699
+      "ms": 47.386241000000155
     },
     {
       "suite": "format",
@@ -13730,9 +14922,9 @@
       "status": "pass",
       "message": "336→342B idempotent rewrote",
       "detail": {
-        "ms": 151.02249400000437
+        "ms": 154.2744459999958
       },
-      "ms": 151.02249400000437
+      "ms": 154.2744459999958
     },
     {
       "suite": "format",
@@ -13741,9 +14933,9 @@
       "status": "pass",
       "message": "336→342B idempotent rewrote",
       "detail": {
-        "ms": 288.92777899999055
+        "ms": 276.36381899999105
       },
-      "ms": 288.92777899999055
+      "ms": 276.36381899999105
     },
     {
       "suite": "format",
@@ -13752,9 +14944,9 @@
       "status": "pass",
       "message": "336→336B idempotent unchanged",
       "detail": {
-        "ms": 46.337839999992866
+        "ms": 43.21939199999906
       },
-      "ms": 46.337839999992866
+      "ms": 43.21939199999906
     },
     {
       "suite": "format",
@@ -13763,9 +14955,9 @@
       "status": "pass",
       "message": "336→336B idempotent unchanged",
       "detail": {
-        "ms": 48.04113699999289
+        "ms": 46.68319700000575
       },
-      "ms": 48.04113699999289
+      "ms": 46.68319700000575
     },
     {
       "suite": "format",
@@ -13774,9 +14966,9 @@
       "status": "pass",
       "message": "208→208B unchanged",
       "detail": {
-        "ms": 146.71841499998118
+        "ms": 141.32930499999202
       },
-      "ms": 146.71841499998118
+      "ms": 141.32930499999202
     },
     {
       "suite": "format",
@@ -13785,22 +14977,20 @@
       "status": "pass",
       "message": "208→208B unchanged",
       "detail": {
-        "ms": 252.3761940000113
+        "ms": 240.62701100000413
       },
-      "ms": 252.3761940000113
+      "ms": 240.62701100000413
     },
     {
       "suite": "format",
       "caseId": "format-top-level-comments",
       "tool": "vize-fmt",
-      "status": "fail",
-      "message": "formatted output missing \"CONFIRM_TOP_BETWEEN_BLOCKS\"",
+      "status": "pass",
+      "message": "208→210B rewrote",
       "detail": {
-        "formatted": "<!-- CONFIRM_TOP_BEFORE_TEMPLATE -->\n\n<script setup>\nconst planted = 1;\n</script>\n\n<template>\n  <p>top-level comments</p>\n</template>\n",
-        "ms": 47.95369299998856,
-        "snippet": "Found 1 file(s)\nReformatted: format-top-level-comments.vue\n\nFormatted 1 file(s)\n  1 file(s) reformatted\n"
+        "ms": 46.16173299998627
       },
-      "ms": 47.95369299998856
+      "ms": 46.16173299998627
     },
     {
       "suite": "format",
@@ -13809,9 +14999,9 @@
       "status": "pass",
       "message": "208→208B unchanged",
       "detail": {
-        "ms": 48.29890500000329
+        "ms": 48.55272999999579
       },
-      "ms": 48.29890500000329
+      "ms": 48.55272999999579
     },
     {
       "suite": "format",
@@ -13820,9 +15010,9 @@
       "status": "pass",
       "message": "460→536B idempotent rewrote",
       "detail": {
-        "ms": 185.17686800000956
+        "ms": 167.2713399999775
       },
-      "ms": 185.17686800000956
+      "ms": 167.2713399999775
     },
     {
       "suite": "format",
@@ -13831,20 +15021,20 @@
       "status": "pass",
       "message": "460→536B idempotent rewrote",
       "detail": {
-        "ms": 321.5713429999887
+        "ms": 307.7712220000103
       },
-      "ms": 321.5713429999887
+      "ms": 307.7712220000103
     },
     {
       "suite": "format",
       "caseId": "shared-css-and-custom-block-semantics",
       "tool": "vize-fmt",
       "status": "pass",
-      "message": "460→529B idempotent rewrote",
+      "message": "460→530B idempotent rewrote",
       "detail": {
-        "ms": 46.43985799999791
+        "ms": 45.01075899999705
       },
-      "ms": 46.43985799999791
+      "ms": 45.01075899999705
     },
     {
       "suite": "format",
@@ -13854,10 +15044,10 @@
       "message": "messy template block was not rewritten",
       "detail": {
         "formatted": "<template><section><span>preserve</span><span>styles</span></section></template>\n<style scoped>.card{color:red;color:blue!important;--label:\"keep  two spaces\";padding:1px 2px}@media(min-width:1px){.card:hover{opacity:.8}}</style>\n<style>.ca",
-        "ms": 47.306345000019064,
-        "snippet": "Formatted 1 file in 851µs. No fixes applied.\n"
+        "ms": 47.23057499999413,
+        "snippet": "Formatted 1 file in 872µs. No fixes applied.\n"
       },
-      "ms": 47.306345000019064
+      "ms": 47.23057499999413
     },
     {
       "suite": "format",
@@ -13866,9 +15056,9 @@
       "status": "pass",
       "message": "537→631B idempotent rewrote",
       "detail": {
-        "ms": 208.27767499999027
+        "ms": 211.23143699998036
       },
-      "ms": 208.27767499999027
+      "ms": 211.23143699998036
     },
     {
       "suite": "format",
@@ -13877,9 +15067,9 @@
       "status": "pass",
       "message": "537→615B idempotent rewrote",
       "detail": {
-        "ms": 299.7680209999962
+        "ms": 299.07720300002256
       },
-      "ms": 299.7680209999962
+      "ms": 299.07720300002256
     },
     {
       "suite": "format",
@@ -13888,9 +15078,9 @@
       "status": "pass",
       "message": "537→602B idempotent rewrote",
       "detail": {
-        "ms": 47.27334200000041
+        "ms": 45.813842000003206
       },
-      "ms": 47.27334200000041
+      "ms": 45.813842000003206
     },
     {
       "suite": "format",
@@ -13900,10 +15090,10 @@
       "message": "messy template block was not rewritten",
       "detail": {
         "formatted": "<script setup lang=\"ts\">\nimport { ref, computed } from \"vue\";\nconst ok = ref(true);\nconst query = ref(\" x \");\nconst rows = ref([\n\t{ id: 1, label: \"one\" },\n\t{ id: 2, label: \"two\" },\n]);\nconst upper = computed(() => query.value.toUpperCase())",
-        "ms": 49.41846000001533,
-        "snippet": "Formatted 1 file in 1439µs. Fixed 1 file.\n"
+        "ms": 49.088996000005864,
+        "snippet": "Formatted 1 file in 1408µs. Fixed 1 file.\n"
       },
-      "ms": 49.41846000001533
+      "ms": 49.088996000005864
     },
     {
       "suite": "format",
@@ -13912,9 +15102,9 @@
       "status": "pass",
       "message": "499→532B idempotent rewrote",
       "detail": {
-        "ms": 255.72802099998808
+        "ms": 243.70283200000995
       },
-      "ms": 255.72802099998808
+      "ms": 243.70283200000995
     },
     {
       "suite": "format",
@@ -13923,9 +15113,9 @@
       "status": "pass",
       "message": "499→532B idempotent rewrote",
       "detail": {
-        "ms": 359.1004289999837
+        "ms": 343.41742399998475
       },
-      "ms": 359.1004289999837
+      "ms": 343.41742399998475
     },
     {
       "suite": "format",
@@ -13934,9 +15124,9 @@
       "status": "pass",
       "message": "499→514B idempotent rewrote",
       "detail": {
-        "ms": 49.08446400001412
+        "ms": 43.387486000021454
       },
-      "ms": 49.08446400001412
+      "ms": 43.387486000021454
     },
     {
       "suite": "format",
@@ -13946,10 +15136,10 @@
       "message": "messy template block was not rewritten",
       "detail": {
         "formatted": "<script setup lang=\"ts\" generic=\"T extends { id: number }\">\nconst props = defineProps<{ items: T[] }>();\n</script>\n<template><ol><li v-for=\"item in props.items\" :key=\"item.id\">{{ item.id }}</li></ol></template>\n<style scoped module=\"theme\" ",
-        "ms": 53.773895000020275,
-        "snippet": "Formatted 1 file in 1285µs. Fixed 1 file.\n"
+        "ms": 51.53813800000353,
+        "snippet": "Formatted 1 file in 1245µs. Fixed 1 file.\n"
       },
-      "ms": 53.773895000020275
+      "ms": 51.53813800000353
     },
     {
       "suite": "format",
@@ -13958,9 +15148,9 @@
       "status": "pass",
       "message": "246→270B idempotent rewrote",
       "detail": {
-        "ms": 160.53943099998287
+        "ms": 157.00121099999524
       },
-      "ms": 160.53943099998287
+      "ms": 157.00121099999524
     },
     {
       "suite": "format",
@@ -13969,9 +15159,9 @@
       "status": "pass",
       "message": "246→270B idempotent rewrote",
       "detail": {
-        "ms": 294.78074800001923
+        "ms": 276.66443099998287
       },
-      "ms": 294.78074800001923
+      "ms": 276.66443099998287
     },
     {
       "suite": "format",
@@ -13980,9 +15170,9 @@
       "status": "pass",
       "message": "246→257B idempotent rewrote",
       "detail": {
-        "ms": 46.77628200000618
+        "ms": 44.306838999997126
       },
-      "ms": 46.77628200000618
+      "ms": 44.306838999997126
     },
     {
       "suite": "format",
@@ -13992,10 +15182,10 @@
       "message": "messy template block was not rewritten",
       "detail": {
         "formatted": "<script setup>\nconst pattern = /alpha+/gi;\nconst matched = pattern.test(\"ALPHA\");\n</script>\n<template><section :data-match=\"matched\"><pre>  alpha\n    beta  </pre><span>left</span> <span>right</span><code v-pre>{{ literal }}</code></section>",
-        "ms": 49.01772199998959,
-        "snippet": "Formatted 1 file in 1228µs. Fixed 1 file.\n"
+        "ms": 48.00974499998847,
+        "snippet": "Formatted 1 file in 1258µs. Fixed 1 file.\n"
       },
-      "ms": 49.01772199998959
+      "ms": 48.00974499998847
     },
     {
       "suite": "format",
@@ -14004,9 +15194,9 @@
       "status": "pass",
       "message": "287→309B idempotent rewrote",
       "detail": {
-        "ms": 170.93136099999538
+        "ms": 171.82233000002452
       },
-      "ms": 170.93136099999538
+      "ms": 171.82233000002452
     },
     {
       "suite": "format",
@@ -14015,9 +15205,9 @@
       "status": "pass",
       "message": "287→301B idempotent rewrote",
       "detail": {
-        "ms": 312.37182400000165
+        "ms": 300.5461349999823
       },
-      "ms": 312.37182400000165
+      "ms": 300.5461349999823
     },
     {
       "suite": "format",
@@ -14026,9 +15216,9 @@
       "status": "pass",
       "message": "287→303B idempotent rewrote",
       "detail": {
-        "ms": 45.24511600000551
+        "ms": 46.338389000011375
       },
-      "ms": 45.24511600000551
+      "ms": 46.338389000011375
     },
     {
       "suite": "format",
@@ -14038,10 +15228,10 @@
       "message": "messy template block was not rewritten",
       "detail": {
         "formatted": "<script setup>\n// FORMAT_SCRIPT_COMMENT\nconst colour = \"red\";\n</script>\n<template>\n <!-- FORMAT_TEMPLATE_COMMENT -->\n <svg viewBox=\"0 0 10 10\" @click.once=\"()=>0\"><circle :fill=\"colour\" cx=\"5\" cy=\"5\" r=\"4\" /></svg>\n</template>\n<style>\n/* FO",
-        "ms": 50.88492199999746,
-        "snippet": "Formatted 1 file in 1250µs. Fixed 1 file.\n"
+        "ms": 48.96355600000243,
+        "snippet": "Formatted 1 file in 1191µs. Fixed 1 file.\n"
       },
-      "ms": 50.88492199999746
+      "ms": 48.96355600000243
     }
   ]
 }

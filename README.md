@@ -75,12 +75,12 @@ own box, never against the published charts.
 
 ## This run
 
-- **Generated:** 2026-09-18T13:42:39.794Z
+- **Generated:** 2026-09-29T12:56:26.892Z
 - **Fixture:** `fixtures/200` (200 files)
 - **Runs / warmups:** 5 / 1
-- **Runner:** Linux · linux/x64 · 4 CPUs · AMD EPYC 7763 64-Core Processor · 15.6 GB · Node v22.23.2
-- **Commit:** [`9db7b15`](https://github.com/pikax/vue-benchmarks/commit/9db7b15d6a8266ab757541d4f5e3a2a6ae13d2b6)
-- **CI run:** https://github.com/pikax/vue-benchmarks/actions/runs/35350720887
+- **Runner:** Linux · linux/x64 · 4 CPUs · INTEL(R) XEON(R) PLATINUM 8573C · 15.6 GB · Node v22.23.2
+- **Commit:** [`8a88482`](https://github.com/pikax/vue-benchmarks/commit/8a8848276c52956d7e54e262e5846e41fc922288)
+- **CI run:** https://github.com/pikax/vue-benchmarks/actions/runs/36570273148
 
 <!-- RUN_META_END -->
 
@@ -101,7 +101,7 @@ More commands: [docs/methodology.md](docs/methodology.md#quick-start).
 
 <!-- BENCHMARK_RESULTS_START -->
 
-> Generated 2026-09-18 from the latest published **Linux** JSON snapshot in `results/benchmarks/`. Numbers are reference-only; re-run on your hardware for local relevance.
+> Generated 2026-09-29 from the latest published **Linux** JSON snapshot in `results/benchmarks/`. Numbers are reference-only; re-run on your hardware for local relevance.
 > Median of measured runs; **Peak RSS** column: memory for the same row (timed session where sampled there, isolated probe otherwise). ⚠ failed a validation gate (bracketed, unranked). How to read: [docs/how-to-read.md](docs/how-to-read.md).
 
 ### Compiler
@@ -115,9 +115,9 @@ More commands: [docs/methodology.md](docs/methodology.md#quick-start).
 
 | Tool | Fresh child | **Warm (primary)** | vs fastest | Peak RSS |
 | --- | ---: | ---: | ---: | ---: |
-| [Vue compiler-sfc 3.5 reference (raw render, 1T)](https://github.com/vuejs/core) | 550.8 ms | **246.9 ms** | 1.00x | – |
-| [Vize compileSfcBatchWithResults (raw render)](https://github.com/ubugeeei-prod/vize) ⚠ | (24.4 ms) | (22.4 ms) | not ranked | (18.3 MB) |
-| [Verter compileMany (first-admission stateless raw render)](https://github.com/pikax/verter) ⚠ | (134.3 ms) | (122.1 ms) | not ranked | (44.4 MB) |
+| [Vue compiler-sfc 3.5 reference (raw render, 1T)](https://github.com/vuejs/core) | 472.2 ms | **238.0 ms** | 1.00x | – |
+| [Vize compileSfcBatchWithResults (raw render)](https://github.com/ubugeeei-prod/vize) ⚠ | (25.5 ms) | (24.1 ms) | not ranked | (21.6 MB) |
+| [Verter compileMany (first-admission stateless raw render)](https://github.com/pikax/verter) ⚠ | (140.0 ms) | (134.2 ms) | not ranked | (45.3 MB) |
 
 > ⚠ rows failed a validation gate (time bracketed, unranked); errors, skips and per-row notes: [full results](docs/compiler.md).
 
@@ -128,12 +128,12 @@ More commands: [docs/methodology.md](docs/methodology.md#quick-start).
 
 | Tool | Fresh child | **Warm (primary)** | vs fastest | Peak RSS |
 | --- | ---: | ---: | ---: | ---: |
-| [Vue compiler-sfc 3.5 reference (render + CSS, 1T)](https://github.com/vuejs/core) | 639.3 ms | **319.2 ms** | 1.00x | 65.9 MB |
-| [Vize compileSfc loop (full SFC, 1T)](https://github.com/ubugeeei-prod/vize) ⚠ | (68.9 ms) | (66.7 ms) | not ranked | (16.5 MB) |
-| [Vize compileSfcBatchWithResults (render + CSS, Rayon batch)](https://github.com/ubugeeei-prod/vize) ⚠ | (25.9 ms) | (23.7 ms) | not ranked | (18.3 MB) |
-| [fervid compileSync (1T)](https://github.com/phoenix-ru/fervid) ⚠ | (64.8 ms) | (61.5 ms) | not ranked | (16.0 MB) |
-| [fervid compileAsync (4-thread libuv pool)](https://github.com/phoenix-ru/fervid) ⚠ | (27.7 ms) | (34.9 ms) | not ranked | – |
-| [Verter compileMany + transformVueStyle (render + CSS)](https://github.com/pikax/verter) ⚠ | (128.3 ms) | (109.4 ms) | not ranked | (46.8 MB) |
+| [Vue compiler-sfc 3.5 reference (render + CSS, 1T)](https://github.com/vuejs/core) | 557.8 ms | **292.4 ms** | 1.00x | 65.5 MB |
+| [Vize compileSfc loop (full SFC, 1T)](https://github.com/ubugeeei-prod/vize) ⚠ | (72.6 ms) | (72.3 ms) | not ranked | (19.2 MB) |
+| [Vize compileSfcBatchWithResults (render + CSS, Rayon batch)](https://github.com/ubugeeei-prod/vize) ⚠ | (27.3 ms) | (25.5 ms) | not ranked | (21.6 MB) |
+| [fervid compileSync (1T)](https://github.com/phoenix-ru/fervid) ⚠ | (52.5 ms) | (49.9 ms) | not ranked | (15.8 MB) |
+| [fervid compileAsync (4-thread libuv pool)](https://github.com/phoenix-ru/fervid) ⚠ | (26.4 ms) | (37.4 ms) | not ranked | – |
+| [Verter compileMany + transformVueStyle (render + CSS)](https://github.com/pikax/verter) ⚠ | (129.3 ms) | (115.5 ms) | not ranked | (47.6 MB) |
 
 > ⚠ rows failed a validation gate (time bracketed, unranked); errors, skips and per-row notes: [full results](docs/compiler.md).
 
@@ -144,9 +144,9 @@ More commands: [docs/methodology.md](docs/methodology.md#quick-start).
 
 | Tool | Fresh child | **Warm (primary)** | vs fastest | Peak RSS |
 | --- | ---: | ---: | ---: | ---: |
-| [Vue compiler-sfc 3.6 reference (raw render, 1T)](https://github.com/vuejs/core) ⚠ | (919.2 ms) | (438.8 ms) | not ranked | – |
-| [Vize compileSfcBatchWithResults (raw render)](https://github.com/ubugeeei-prod/vize) ⚠ | (29.0 ms) | (26.9 ms) | not ranked | (20.6 MB) |
-| [Verter compileMany (first-admission stateless raw render)](https://github.com/pikax/verter) ⚠ | (138.8 ms) | (134.0 ms) | not ranked | (45.0 MB) |
+| [Vue compiler-sfc 3.6 reference (raw render, 1T)](https://github.com/vuejs/core) ⚠ | (768.6 ms) | (412.8 ms) | not ranked | – |
+| [Vize compileSfcBatchWithResults (raw render)](https://github.com/ubugeeei-prod/vize) ⚠ | (27.2 ms) | (25.5 ms) | not ranked | (23.8 MB) |
+| [Verter compileMany (first-admission stateless raw render)](https://github.com/pikax/verter) ⚠ | (146.5 ms) | (144.4 ms) | not ranked | (46.1 MB) |
 
 > ⚠ rows failed a validation gate (time bracketed, unranked); errors, skips and per-row notes: [full results](docs/compiler.md).
 
@@ -157,10 +157,10 @@ More commands: [docs/methodology.md](docs/methodology.md#quick-start).
 
 | Tool | Fresh child | **Warm (primary)** | vs fastest | Peak RSS |
 | --- | ---: | ---: | ---: | ---: |
-| [Vue compiler-sfc 3.6 reference (render + CSS, 1T)](https://github.com/vuejs/core) ⚠ | (993.5 ms) | (505.2 ms) | not ranked | (76.2 MB) |
-| [Vize compileSfc loop (full SFC, 1T)](https://github.com/ubugeeei-prod/vize) ⚠ | (81.3 ms) | (79.3 ms) | not ranked | (17.3 MB) |
-| [Vize compileSfcBatchWithResults (render + CSS, Rayon batch)](https://github.com/ubugeeei-prod/vize) ⚠ | (30.1 ms) | (27.9 ms) | not ranked | (20.6 MB) |
-| [Verter compileMany + transformVueStyle (render + CSS)](https://github.com/pikax/verter) ⚠ | (131.5 ms) | (120.5 ms) | not ranked | (47.0 MB) |
+| [Vue compiler-sfc 3.6 reference (render + CSS, 1T)](https://github.com/vuejs/core) ⚠ | (902.4 ms) | (473.4 ms) | not ranked | (78.6 MB) |
+| [Vize compileSfc loop (full SFC, 1T)](https://github.com/ubugeeei-prod/vize) ⚠ | (80.3 ms) | (77.0 ms) | not ranked | (20.4 MB) |
+| [Vize compileSfcBatchWithResults (render + CSS, Rayon batch)](https://github.com/ubugeeei-prod/vize) ⚠ | (28.8 ms) | (27.0 ms) | not ranked | (23.9 MB) |
+| [Verter compileMany + transformVueStyle (render + CSS)](https://github.com/pikax/verter) ⚠ | (135.1 ms) | (130.0 ms) | not ranked | (48.5 MB) |
 
 > ⚠ rows failed a validation gate (time bracketed, unranked); errors, skips and per-row notes: [full results](docs/compiler.md).
 
@@ -179,12 +179,12 @@ JSX compile (vue-jsx-vapor vs Babel) is ranked per codegen target on the [Compil
 
 | Tool | **Median** | vs fastest | Peak RSS |
 | --- | ---: | ---: | ---: |
-| [Vize](https://github.com/ubugeeei-prod/vize) | **1.68 s** | 1.00x | 218.4 MB |
-| [Golar (lint+check)](https://github.com/auvred/golar) | **1.76 s** | 1.05x | – |
-| [Golar typecheck](https://github.com/auvred/golar) | **1.77 s** | 1.06x | 388.2 MB |
-| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **2.50 s** | 1.50x | – |
-| [verter-tsc](https://github.com/pikax/verter) | **3.93 s** | 2.34x | 445.8 MB |
-| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | **5.35 s** | 3.19x | 353.6 MB |
+| [Vize](https://github.com/ubugeeei-prod/vize) | **1.10 s** | 1.00x | 231.1 MB |
+| [Golar typecheck](https://github.com/auvred/golar) | **1.53 s** | 1.39x | 374.5 MB |
+| [Golar (lint+check)](https://github.com/auvred/golar) | **1.55 s** | 1.40x | – |
+| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **2.27 s** | 2.06x | – |
+| [verter-tsc](https://github.com/pikax/verter) | **3.56 s** | 3.23x | 446.2 MB |
+| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | **4.79 s** | 4.34x | 355.4 MB |
 
 > Errors, skips and per-row notes: [full results](docs/typecheck.md).
 
@@ -197,10 +197,10 @@ JSX compile (vue-jsx-vapor vs Babel) is ranked per codegen target on the [Compil
 
 | Tool | **Median** | Avg | vs fastest | Peak RSS |
 | --- | ---: | ---: | ---: | ---: |
-| golar | **989 ms** | 989 ms | 1.00x | **366.0 MB** |
-| vize | **1.35 s** | 1.36 s | 1.37x | 74.4 + 479.2 = **553.6 MB** |
-| verter-tsc | **3.07 s** | 3.08 s | 3.10x | 306.6 + 423.1 = **729.8 MB** |
-| vue-tsc | **3.48 s** | 3.46 s | 3.51x | **346.5 MB** |
+| golar | **969 ms** | 969 ms | 1.00x | **367.3 MB** |
+| vize | **1.36 s** | 1.36 s | 1.40x | 78.0 + 504.0 = **582.0 MB** |
+| verter-tsc | **3.01 s** | 3.03 s | 3.10x | 308.0 + 370.1 = **678.0 MB** |
+| vue-tsc | **3.32 s** | 3.32 s | 3.43x | **343.8 MB** |
 
 Peak RSS is the separate memory pass, split `tool + tsgo/tsc = total` when the checker spawns a TypeScript engine; in-process engines cannot be split.
 
@@ -213,8 +213,8 @@ Peak RSS is the separate memory pass, split `tool + tsgo/tsc = total` when the c
 | --- | ---: | ---: | ---: |
 | vue-tsc | **95%** | 147 / 154 | 5 |
 | golar | **94%** | 145 / 154 | 5 |
-| vize | **92%** | 142 / 154 | – |
-| verter-tsc | **88%** | 135 / 154 | – |
+| vize | **93%** | 143 / 154 | – |
+| verter-tsc | **86%** | 133 / 154 | – |
 
 An unclaimed capability is a **gap and counts as a fail** — every tool is scored over the same full plant set, on what it actually reported. Skip is reserved for a missing binary/engine. **⚠ needed opt-in** counts the inheritAttrs/root-shape plants a tool only scored with `vueCompilerOptions.fallthroughAttributes`: not a pass, and still in the denominator.
 
@@ -229,10 +229,10 @@ An unclaimed capability is a **gap and counts as a fail** — every tool is scor
 
 | Tool | **Median** | vs fastest | Peak RSS |
 | --- | ---: | ---: | ---: |
-| [Vize](https://github.com/ubugeeei-prod/vize) | **138.9 ms** | 1.00x | 68.0 MB |
-| [Oxfmt](https://github.com/oxc-project/oxc) | **3.29 s** | 23.72x | 694.1 MB |
-| [Prettier](https://github.com/prettier/prettier) | **3.82 s** | 27.49x | 199.3 MB |
-| [Biome format](https://github.com/biomejs/biome) ⚠ | (117.8 ms) | not ranked | (94.8 MB) |
+| [Vize](https://github.com/ubugeeei-prod/vize) | **158.1 ms** | 1.00x | 70.3 MB |
+| [Oxfmt](https://github.com/oxc-project/oxc) | **3.15 s** | 19.94x | 681.9 MB |
+| [Prettier](https://github.com/prettier/prettier) | **3.61 s** | 22.85x | 188.7 MB |
+| [Biome format](https://github.com/biomejs/biome) ⚠ | (121.9 ms) | not ranked | (94.5 MB) |
 
 > ⚠ rows failed a validation gate (time bracketed, unranked); errors, skips and per-row notes: [full results](docs/format.md).
 
@@ -247,13 +247,13 @@ An unclaimed capability is a **gap and counts as a fail** — every tool is scor
 
 | Tool | **Median** | vs fastest | Peak RSS |
 | --- | ---: | ---: | ---: |
-| [eslint-plugin-vue (CLI)](https://github.com/vuejs/eslint-plugin-vue) | **3.36 s** | 1.00x | – |
-| [Vize lint (1T)](https://github.com/ubugeeei-prod/vize) ⚠ | (131.6 ms) | not ranked | – |
-| [Vize lint (default threads)](https://github.com/ubugeeei-prod/vize) ⚠ | (101.6 ms) | not ranked | (69.3 MB) |
-| [Biome lint (1T)](https://github.com/biomejs/biome) ⚠ | (347.1 ms) | not ranked | – |
-| [Biome lint (default threads)](https://github.com/biomejs/biome) ⚠ | (197.6 ms) | not ranked | (103.4 MB) |
-| [Oxlint (1T)](https://github.com/oxc-project/oxc) ⚠ | (97.9 ms) | not ranked | – |
-| [Oxlint (default threads)](https://github.com/oxc-project/oxc) ⚠ | (89.1 ms) | not ranked | (98.9 MB) |
+| [eslint-plugin-vue (CLI)](https://github.com/vuejs/eslint-plugin-vue) | **2.95 s** | 1.00x | – |
+| [Vize lint (1T)](https://github.com/ubugeeei-prod/vize) ⚠ | (130.8 ms) | not ranked | – |
+| [Vize lint (default threads)](https://github.com/ubugeeei-prod/vize) ⚠ | (94.9 ms) | not ranked | (73.8 MB) |
+| [Biome lint (1T)](https://github.com/biomejs/biome) ⚠ | (326.4 ms) | not ranked | – |
+| [Biome lint (default threads)](https://github.com/biomejs/biome) ⚠ | (175.6 ms) | not ranked | (103.1 MB) |
+| [Oxlint (1T)](https://github.com/oxc-project/oxc) ⚠ | (86.5 ms) | not ranked | – |
+| [Oxlint (default threads)](https://github.com/oxc-project/oxc) ⚠ | (74.8 ms) | not ranked | (98.8 MB) |
 
 > ⚠ rows failed a validation gate (time bracketed, unranked); errors, skips and per-row notes: [full results](docs/lint.md).
 
@@ -264,9 +264,9 @@ An unclaimed capability is a **gap and counts as a fail** — every tool is scor
 
 | Tool | **Median** | vs fastest | Peak RSS |
 | --- | ---: | ---: | ---: |
-| [eslint-plugin-vue (1T)](https://github.com/vuejs/eslint-plugin-vue) | **1.99 s** | 1.00x | 180.6 MB |
-| [eslint-plugin-vue (4 workers)](https://github.com/vuejs/eslint-plugin-vue) | **3.70 s** | 1.86x | – |
-| [Verter host lint](https://github.com/pikax/verter) ⚠ | (686.6 ms) | not ranked | (65.0 MB) |
+| [eslint-plugin-vue (1T)](https://github.com/vuejs/eslint-plugin-vue) | **1.98 s** | 1.00x | 215.7 MB |
+| [eslint-plugin-vue (4 workers)](https://github.com/vuejs/eslint-plugin-vue) | **3.40 s** | 1.72x | – |
+| [Verter host lint](https://github.com/pikax/verter) ⚠ | (853.7 ms) | not ranked | (65.8 MB) |
 
 > ⚠ rows failed a validation gate (time bracketed, unranked); errors, skips and per-row notes: [full results](docs/lint.md).
 
@@ -281,7 +281,9 @@ An unclaimed capability is a **gap and counts as a fail** — every tool is scor
 
 | Tool | Fresh child | **Warm (primary)** | vs fastest |
 | --- | ---: | ---: | ---: |
-| [vue-component-meta (Promise.all)](https://github.com/vuejs/language-tools) ⚠ | (2.50 s) | (969.7 ms) | not ranked |
+| [vue-component-meta (Promise.all)](https://github.com/vuejs/language-tools) ⚠ | (2.13 s) | (874.8 ms) | not ranked |
+| [@verter/component-meta (Promise.all)](https://github.com/pikax/verter) ⚠ | (1.25 s) | (1.27 s) | not ranked |
+| [@verter/component-meta (getComponentMetaBatch)](https://github.com/pikax/verter) ⚠ | (1.05 s) | (1.00 s) | not ranked |
 
 > ⚠ rows failed a validation gate (time bracketed, unranked); errors, skips and per-row notes: [full results](docs/component-meta.md).
 
@@ -292,7 +294,8 @@ An unclaimed capability is a **gap and counts as a fail** — every tool is scor
 
 | Tool | Fresh child | **Warm (primary)** | vs fastest | Peak RSS |
 | --- | ---: | ---: | ---: | ---: |
-| [vue-component-meta](https://github.com/vuejs/language-tools) ⚠ | (2.46 s) | (953.7 ms) | not ranked | (248.7 MB) |
+| [vue-component-meta](https://github.com/vuejs/language-tools) ⚠ | (2.13 s) | (853.6 ms) | not ranked | (248.3 MB) |
+| [@verter/component-meta](https://github.com/pikax/verter) ⚠ | (1.25 s) | (1.27 s) | not ranked | (128.4 MB) |
 
 > ⚠ rows failed a validation gate (time bracketed, unranked); errors, skips and per-row notes: [full results](docs/component-meta.md).
 
@@ -307,10 +310,10 @@ An unclaimed capability is a **gap and counts as a fail** — every tool is scor
 
 | Tool | **Median** | vs fastest | Peak RSS |
 | --- | ---: | ---: | ---: |
-| [Verter](https://github.com/pikax/verter) | **317.3 ms** | 1.00x | 139.3 + 121.3 = 260.6 MB |
-| [Vize](https://github.com/ubugeeei-prod/vize) | **393.2 ms** | 1.24x | 74.2 + 192.1 = 266.3 MB |
-| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **422.0 ms** | 1.33x | – |
-| [Volar (JS)](https://github.com/vuejs/language-tools) | **1.19 s** | 3.75x | 292.2 + 267.6 = 559.9 MB |
+| [Verter](https://github.com/pikax/verter) | **354.4 ms** | 1.00x | 135.4 + 137.9 = 273.4 MB |
+| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **364.3 ms** | 1.03x | – |
+| [Vize](https://github.com/ubugeeei-prod/vize) | **364.6 ms** | 1.03x | 80.8 + 185.8 = 266.7 MB |
+| [Volar (JS)](https://github.com/vuejs/language-tools) | **1.03 s** | 2.91x | 292.5 + 265.0 = 557.6 MB |
 
 > Errors, skips and per-row notes: [full results](docs/lsp.md).
 
@@ -321,10 +324,10 @@ An unclaimed capability is a **gap and counts as a fail** — every tool is scor
 
 | Tool | **Median** | vs fastest |
 | --- | ---: | ---: |
-| [Vize](https://github.com/ubugeeei-prod/vize) | **188.0 ms** | 1.00x |
-| [Volar (JS)](https://github.com/vuejs/language-tools) | **431.4 ms** | 2.29x |
-| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **473.4 ms** | 2.52x |
-| [Verter](https://github.com/pikax/verter) | **574.1 ms** | 3.05x |
+| [Verter](https://github.com/pikax/verter) | **373.3 ms** | 1.00x |
+| [Volar (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **442.3 ms** | 1.18x |
+| [Volar (JS)](https://github.com/vuejs/language-tools) | **478.0 ms** | 1.28x |
+| [Vize](https://github.com/ubugeeei-prod/vize) | **589.6 ms** | 1.58x |
 
 > Errors, skips and per-row notes: [full results](docs/lsp.md).
 
@@ -336,7 +339,7 @@ Per-operation IDE latency (initialize, completion, hover, navigation, edit loop 
 
 <!-- REAL_WORLD_RESULTS_START -->
 
-> Auto-updated 2026-09-18 from the **Benchmark (real-world)** workflow — pinned checkouts of third-party Vue projects, each project's **own** test / build / typecheck. Ranked **within** a corpus, never across.
+> Auto-updated 2026-09-29 from the **Benchmark (real-world)** workflow — pinned checkouts of third-party Vue projects, each project's **own** test / build / typecheck. Ranked **within** a corpus, never across.
 
 📄 **[Main numbers with charts → docs/real-world.md](docs/real-world.md)** · full per-project reports:
 

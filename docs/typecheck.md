@@ -2,12 +2,12 @@
 
 > Auto-generated from the JSON snapshots in [`results/benchmarks/`](../results/benchmarks/) and [`results/real_world/`](../results/real_world/) by `pnpm docs`. Do not edit by hand.
 
-- **Generated:** 2026-09-18T13:42:39.794Z
+- **Generated:** 2026-09-29T12:56:26.892Z
 - **Fixture:** `fixtures/200` (200 files)
 - **Runs / warmups:** 5 / 1
-- **Runner:** Linux · linux/x64 · 4 CPUs · AMD EPYC 7763 64-Core Processor · 15.6 GB · Node v22.23.2
-- **Commit:** [`9db7b15`](https://github.com/pikax/vue-benchmarks/commit/9db7b15d6a8266ab757541d4f5e3a2a6ae13d2b6)
-- **CI run:** https://github.com/pikax/vue-benchmarks/actions/runs/35350720887
+- **Runner:** Linux · linux/x64 · 4 CPUs · INTEL(R) XEON(R) PLATINUM 8573C · 15.6 GB · Node v22.23.2
+- **Commit:** [`8a88482`](https://github.com/pikax/vue-benchmarks/commit/8a8848276c52956d7e54e262e5846e41fc922288)
+- **CI run:** https://github.com/pikax/vue-benchmarks/actions/runs/36570273148
 - **Source:** `results/benchmarks/bench-Linux-200-bench.json`
 
 ## Results
@@ -36,19 +36,19 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Diagnostics | Throughput | Peak RSS |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize | **1.68 s** | 1.64 s | 17.4 ms | 1.0% | 1.00x | 0 | 119 files/s | 218.4 MB |
-| Golar (lint+check) | **1.76 s** | 1.71 s | 28.8 ms | 1.6% | 1.05x | 0 | 114 files/s | – |
-| Golar typecheck | **1.77 s** | 1.70 s | 41.1 ms | 2.3% | 1.06x | 0 | 113 files/s | 388.2 MB |
-| vue-tsc (N) | **2.50 s** | 2.43 s | 46.3 ms | 1.9% | 1.50x | 0 | 80 files/s | – |
-| verter-tsc | **3.93 s** | 3.88 s | 59.7 ms | 1.5% | 2.34x | 22 | 51 files/s | 445.8 MB |
-| vue-tsc (JS) | **5.35 s** | 5.31 s | 61.0 ms | 1.1% | 3.19x | 0 | 37 files/s | 353.6 MB |
+| Vize | **1.10 s** | 1.09 s | 11.4 ms | 1.0% | 1.00x | 0 | 181 files/s | 231.1 MB |
+| Golar typecheck | **1.53 s** | 1.53 s | 10.8 ms | 0.7% | 1.39x | 0 | 130 files/s | 374.5 MB |
+| Golar (lint+check) | **1.55 s** | 1.53 s | 15.0 ms | 1.0% | 1.40x | 0 | 129 files/s | – |
+| vue-tsc (N) | **2.27 s** | 2.23 s | 23.2 ms | 1.0% | 2.06x | 0 | 88 files/s | – |
+| verter-tsc | **3.56 s** | 3.53 s | 55.5 ms | 1.6% | 3.23x | 22 | 56 files/s | 446.2 MB |
+| vue-tsc (JS) | **4.79 s** | 4.74 s | 38.5 ms | 0.8% | 4.34x | 0 | 42 files/s | 355.4 MB |
 
 <details><summary>Notes</summary>
 
 - **Vize**: vize check . --tsconfig tsconfig.json (native + Corsa when available) | engine: tsgo (bundled) | gate: script=✓ tmpl-prop=✓ tmpl-event=✓ corpus=✓
-- **Golar (lint+check)**: golar default mode runs lint then typecheck — not a pure typecheck | engine: typescript-go 7.0.2 | gate: script=✓ tmpl-prop=✓ tmpl-event=✓ corpus=✓
 - **Golar typecheck**: golar typecheck (typescript-go + @golar/vue plugin) | engine: typescript-go 7.0.2 | gate: script=✓ tmpl-prop=✓ tmpl-event=✓ corpus=✓
-- **vue-tsc (N)**: vue-tsc 3.3.11 with typescript aliased to typescript-native-bridge 6.0.3-bridge.17.tsgo.7.0.2 (TS API 6.0.3 on tsgo 7.0.2, in-process NAPI/FFI) | engine: tsgo 7.0.2 via TNB 6.0.3-bridge.17.tsgo.7.0.2 | gate: script=✓ tmpl-prop=✓ tmpl-event=✓ corpus=✓
+- **Golar (lint+check)**: golar default mode runs lint then typecheck — not a pure typecheck | engine: typescript-go 7.0.2 | gate: script=✓ tmpl-prop=✓ tmpl-event=✓ corpus=✓
+- **vue-tsc (N)**: vue-tsc 3.3.11 with typescript aliased to typescript-native-bridge 6.0.3-bridge.18.tsgo.7.0.2 (TS API 6.0.3 on tsgo 7.0.2, in-process NAPI/FFI) | engine: tsgo 7.0.2 via TNB 6.0.3-bridge.18.tsgo.7.0.2 | gate: script=✓ tmpl-prop=✓ tmpl-event=✓ corpus=✓
 - **verter-tsc**: verter-tsc --noEmit -p tsconfig.json · tsgo 7.0.2 (typescript-go@7.0.2 → @typescript/typescript-linux-x64) | engine: tsgo 7.0.2 (typescript-go@7.0.2 → @typescript/typescript-linux-x64) | gate: script=✓ tmpl-prop=✓ tmpl-event=✓ corpus=✓
 - **vue-tsc (JS)**: Official Vue Language Tools CLI: vue-tsc --noEmit -p tsconfig.json | engine: TypeScript 6.0.3 (JS) | gate: script=✓ tmpl-prop=✓ tmpl-event=✓ corpus=✓
 
@@ -72,12 +72,12 @@ Tools:
 
 Raw runs:
 
-- **Vize**: 1.66 s, 1.64 s, 1.69 s, 1.68 s, 1.68 s
-- **Golar (lint+check)**: 1.71 s, 1.76 s, 1.76 s, 1.79 s, 1.77 s
-- **Golar typecheck**: 1.78 s, 1.77 s, 1.81 s, 1.77 s, 1.70 s
-- **vue-tsc (N)**: 2.53 s, 2.48 s, 2.54 s, 2.50 s, 2.43 s
-- **verter-tsc**: 3.88 s, 3.91 s, 4.04 s, 3.93 s, 3.97 s
-- **vue-tsc (JS)**: 5.34 s, 5.44 s, 5.35 s, 5.44 s, 5.31 s
+- **Vize**: 1.10 s, 1.11 s, 1.10 s, 1.09 s, 1.12 s
+- **Golar typecheck**: 1.55 s, 1.53 s, 1.56 s, 1.53 s, 1.53 s
+- **Golar (lint+check)**: 1.55 s, 1.54 s, 1.53 s, 1.55 s, 1.57 s
+- **vue-tsc (N)**: 2.27 s, 2.26 s, 2.27 s, 2.29 s, 2.23 s
+- **verter-tsc**: 3.54 s, 3.56 s, 3.53 s, 3.59 s, 3.67 s
+- **vue-tsc (JS)**: 4.75 s, 4.83 s, 4.74 s, 4.79 s, 4.81 s
 
 </details>
 
@@ -96,10 +96,10 @@ One spawn per tool over every plant with the shared `strictTemplates` tsconfig �
 
 | Tool | **Median** | Avg | vs fastest | Peak RSS |
 | --- | ---: | ---: | ---: | ---: |
-| golar | **989 ms** | 989 ms | 1.00x | **366.0 MB** |
-| vize | **1.35 s** | 1.36 s | 1.37x | 74.4 + 479.2 = **553.6 MB** |
-| verter-tsc | **3.07 s** | 3.08 s | 3.10x | 306.6 + 423.1 = **729.8 MB** |
-| vue-tsc | **3.48 s** | 3.46 s | 3.51x | **346.5 MB** |
+| golar | **969 ms** | 969 ms | 1.00x | **367.3 MB** |
+| vize | **1.36 s** | 1.36 s | 1.40x | 78.0 + 504.0 = **582.0 MB** |
+| verter-tsc | **3.01 s** | 3.03 s | 3.10x | 308.0 + 370.1 = **678.0 MB** |
+| vue-tsc | **3.32 s** | 3.32 s | 3.43x | **343.8 MB** |
 
 Peak RSS is the separate memory pass, split `tool + tsgo/tsc = total` when the checker spawns a TypeScript engine; in-process engines cannot be split.
 
@@ -112,8 +112,8 @@ Peak RSS is the separate memory pass, split `tool + tsgo/tsc = total` when the c
 | --- | ---: | ---: | ---: |
 | vue-tsc | **95%** | 147 / 154 | 5 |
 | golar | **94%** | 145 / 154 | 5 |
-| vize | **92%** | 142 / 154 | – |
-| verter-tsc | **88%** | 135 / 154 | – |
+| vize | **93%** | 143 / 154 | – |
+| verter-tsc | **86%** | 133 / 154 | – |
 
 An unclaimed capability is a **gap and counts as a fail** — every tool is scored over the same full plant set, on what it actually reported. Skip is reserved for a missing binary/engine. **⚠ needed opt-in** counts the inheritAttrs/root-shape plants a tool only scored with `vueCompilerOptions.fallthroughAttributes`: not a pass, and still in the denominator.
 
@@ -171,7 +171,7 @@ Static resolution (`v-if="true"`, `alwaysOn: true`) is the hard edge. A tool tha
 ### Summary
 
 - plants: **154**
-- pass: **569** · fail: **37** · skip: **0** · warn: **10**
+- pass: **568** · fail: **38** · skip: **0** · warn: **10**
 - one-spawn combined run: [All plants (one tsconfig)](#all-plants-one-tsconfig)
 
 ### Template narrowing
@@ -316,7 +316,7 @@ Static resolution (`v-if="true"`, `alwaysOn: true`) is the hard edge. A tool tha
 | [`slot-shadow-restoration-bad`](../tests/confirm/fixtures/typecheck/cases/slot-shadow-restoration-bad/) | error | ✓ | ✓ | ✓ | ✓ | slot alias shadows an outer string only inside its lexical scope; reject a string method on its object payload |
 | [`slot-shadow-restoration-ok`](../tests/confirm/fixtures/typecheck/cases/slot-shadow-restoration-ok/) | clean | ✓ | ✓ | ✓ | ✓ | slot alias shadows an outer string only inside its lexical scope; restore the outer binding afterwards |
 | [`slot-unknown-prop-bad`](../tests/confirm/fixtures/typecheck/cases/slot-unknown-prop-bad/) | error | ✓ | ✓ | ✓ | ✓ | Scoped slot destructure must reject a property that is not on the payload |
-| [`slot-v-bind-bad`](../tests/confirm/fixtures/typecheck/cases/slot-v-bind-bad/) | error | ✓ | **✗**† | **✗**† | ✓ | Child &lt;slot v-bind&gt; with item.id: string must not satisfy id: number |
+| [`slot-v-bind-bad`](../tests/confirm/fixtures/typecheck/cases/slot-v-bind-bad/) | error | ✓ | ✓ | **✗**† | ✓ | Child &lt;slot v-bind&gt; with item.id: string must not satisfy id: number |
 | [`slot-v-bind-ok`](../tests/confirm/fixtures/typecheck/cases/slot-v-bind-ok/) | clean | ✓ | ✓ | **✗**† | ✓ | Child slot v-bind object whose fields match defineSlots stays clean |
 
 ### v-for
@@ -335,8 +335,8 @@ Static resolution (`v-if="true"`, `alwaysOn: true`) is the hard edge. A tool tha
 
 | Case | Expect | vue-tsc | vize | verter-tsc | golar | What it checks |
 | --- | --- | --- | --- | --- | --- | --- |
-| [`async-component-prop-bad`](../tests/confirm/fixtures/typecheck/cases/async-component-prop-bad/) | error | ✓ | ✓ | ✓ | ✓ | defineAsyncComponent child must reject a string where count expects number |
-| [`async-component-prop-ok`](../tests/confirm/fixtures/typecheck/cases/async-component-prop-ok/) | clean | ✓ | ✓ | ✓ | ✓ | defineAsyncComponent(() =&gt; import('./Child.vue')) with a matching number prop stays clean |
+| [`async-component-prop-bad`](../tests/confirm/fixtures/typecheck/cases/async-component-prop-bad/) | error | ✓ | ✓ | **✗**† | ✓ | defineAsyncComponent child must reject a string where count expects number |
+| [`async-component-prop-ok`](../tests/confirm/fixtures/typecheck/cases/async-component-prop-ok/) | clean | ✓ | ✓ | **✗**† | ✓ | defineAsyncComponent(() =&gt; import('./Child.vue')) with a matching number prop stays clean |
 | [`dynamic-component-prop-bad`](../tests/confirm/fixtures/typecheck/cases/dynamic-component-prop-bad/) | error | ✓ | ✓ | ✓ | ✓ | &lt;component :is&gt; must reject a string where the resolved SFC expects count: number |
 | [`dynamic-component-prop-ok`](../tests/confirm/fixtures/typecheck/cases/dynamic-component-prop-ok/) | clean | ✓ | ✓ | ✓ | ✓ | &lt;component :is&gt; with a typed SFC and a matching number prop stays clean |
 | [`global-component-prop-bad`](../tests/confirm/fixtures/typecheck/cases/global-component-prop-bad/) | error | ✓ | ✓ | **✗**† | ✓ | GlobalComponents Fancy must reject a number where title expects string |
@@ -412,6 +412,8 @@ Static resolution (`v-if="true"`, `alwaysOn: true`) is the hard edge. A tool tha
 
 These fails are real. They are allow-listed only so the PR gate stays a useful signal; the cell still shows **✗**.
 
+- `typecheck/async-component-prop-bad/verter-tsc` — no diagnostic at App.vue:10 (@plant-error)
+- `typecheck/async-component-prop-ok/verter-tsc` — expected clean (0 errors), got 1
 - `typecheck/attrs-aria-data-unknown/verter-tsc` — expected ≥1 error(s), got 0
 - `typecheck/attrs-aria-data-unknown/vize-check` — capability gap — tool does not claim: strict-component-attrs (scored: expected ≥1 error(s), got 0)
 - `typecheck/attrs-unknown-fallthrough/verter-tsc` — expected ≥1 error(s), got 0
@@ -443,7 +445,6 @@ These fails are real. They are allow-listed only so the PR gate stays a useful s
 - `typecheck/missing-required-prop/golar-typecheck` — expected ≥1 error(s), got 0
 - `typecheck/slot-default-implicit-ok/verter-tsc` — expected clean (0 errors), got 1
 - `typecheck/slot-v-bind-bad/verter-tsc` — plant at App.vue:13 did not mention one of: TS2322 \| TS2345 \| number \| string \| not assignable
-- `typecheck/slot-v-bind-bad/vize-check` — expected ≥1 error(s), got 0
 - `typecheck/slot-v-bind-ok/verter-tsc` — expected clean (0 errors), got 1
 - `typecheck/unknown-prop-strict/vize-check` — capability gap — tool does not claim: strict-component-attrs (scored: expected ≥1 error(s), got 0)
 - `typecheck/v-if-discriminant-ok/verter-tsc` — expected clean (0 errors), got 2
@@ -471,10 +472,10 @@ Each tool in its own process so RSS, allocation proxies and CPU are not mixed wi
 
 | Tool | RSS min / max / avg | Alloc min / max / avg | CPU ms | CPU % | Wall ms | Samples |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize check | 10.55 / 212.25 / 114.67 | n/a | 340 | 56.4 | 603 | 3 |
-| vue-tsc | 10.39 / 351.84 / 261.68 | n/a | 6220 | 203.4 | 3096 | 3 |
-| Golar typecheck | 12.72 / 373.79 / 222.34 | n/a | 2310 | 244.1 | 942 | 3 |
-| verter-tsc | 10.65 / 443.64 / 226.05 | n/a | 10 | 0.6 | 1654 | 3 |
+| Vize check | 13.79 / 230.98 / 127.04 | n/a | 450 | 52.1 | 853 | 3 |
+| vue-tsc | 14.21 / 354.54 / 267.90 | n/a | 8210 | 209.9 | 3911 | 3 |
+| Golar typecheck | 14.55 / 373.52 / 222.91 | n/a | 3190 | 242.0 | 1326 | 3 |
+| verter-tsc | 13.91 / 442.74 / 234.57 | n/a | 20 | 0.9 | 2176 | 3 |
 
 <details><summary>Notes</summary>
 
@@ -496,38 +497,38 @@ Each tool in its own process so RSS, allocation proxies and CPU are not mixed wi
 | vue-36 | 3.6.0-rc.9 |
 | @vue/compiler-sfc | 3.5.43 |
 | @vue/compiler-sfc-36 | 3.6.0-rc.9 |
-| vize | 0.424.10 |
-| @vizejs/native | 0.424.10 |
-| @verter/native | 0.0.1-beta.5 |
+| vize | 0.429.1 |
+| @vizejs/native | 0.429.1 |
+| @verter/native | 0.0.1-beta.6 |
 | @fervid/napi | 0.4.1 |
-| verter-tsc | 0.0.1-beta.5 |
-| @verter/component-meta | 0.0.1-beta.5 |
-| verter-lsp | 0.0.1-beta.5 |
-| verter-mcp | 0.0.1-beta.5 |
+| verter-tsc | 0.0.1-beta.6 |
+| @verter/component-meta | 0.0.1-beta.6 |
+| verter-lsp | 0.0.1-beta.6 |
+| verter-mcp | 0.0.1-beta.6 |
 | @vue/language-server | 3.3.11 |
 | @vue/typescript-plugin | 3.3.11 |
-| typescript-language-server | 6.0.0 |
+| typescript-language-server | 6.0.1 |
 | vue-tsc | 3.3.11 |
 | vue-component-meta | 3.3.11 |
 | golar | 0.1.10 |
 | @golar/vue | 0.1.10 |
-| prettier | 3.9.7 |
-| oxfmt | 0.68.0 |
-| oxlint | 1.83.0 |
-| eslint-plugin-vue | 10.11.0 |
+| prettier | 3.9.9 |
+| oxfmt | 0.71.0 |
+| oxlint | 1.86.0 |
+| eslint-plugin-vue | 10.11.1 |
 | @biomejs/biome | 2.5.14 |
 | typescript | 6.0.3 |
-| cli:vize | 0.424.10 |
+| cli:vize | 0.429.1 |
 | cli:vue-tsc | 6.0.3 |
-| cli:verter-tsc | 0.0.1-beta.5 |
+| cli:verter-tsc | 0.0.1-beta.6 |
 | cli:golar | 0.1.10 |
-| cli:prettier | 3.9.7 |
-| cli:oxfmt | 0.68.0 |
-| cli:oxlint | 1.83.0 |
+| cli:prettier | 3.9.9 |
+| cli:oxfmt | 0.71.0 |
+| cli:oxlint | 1.86.0 |
 | cli:biome | 2.5.14 |
-| vue-jsx-vapor | 3.2.24 |
-| @vue-jsx-vapor/compiler-rs | 3.2.24 |
+| vue-jsx-vapor | 3.2.25 |
+| @vue-jsx-vapor/compiler-rs | 3.2.25 |
 | @vue/babel-plugin-jsx | 3.0.0 |
-| @babel/core | 8.0.5 |
+| @babel/core | 8.0.6 |
 
 </details>
