@@ -33,10 +33,10 @@ One page per pinned open-source project; this page carries each project's headli
 
 | Tool | **Median** | vs fastest | Peak RSS |
 | --- | ---: | ---: | ---: |
-| [element-plus — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) | **116.77 s** | 1.00x | 1668.1 MB |
-| element-plus — unplugin-vue | **117.55 s** | 1.01x | 1773.3 MB |
-| element-plus — project's own toolchain (baseline) | **117.84 s** | 1.01x | 1723.6 MB |
-| [element-plus — @verter/unplugin](https://github.com/pikax/verter) ⚠ | (106.49 s) | not ranked | (3532.0 MB) |
+| element-plus — unplugin-vue | **86.55 s** | 1.00x | 1627.8 MB |
+| element-plus — project's own toolchain (baseline) | **88.45 s** | 1.02x | 1673.1 MB |
+| [element-plus — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) | **88.83 s** | 1.03x | 1562.0 MB |
+| [element-plus — @verter/unplugin](https://github.com/pikax/verter) ⚠ | (84.45 s) | not ranked | (3538.4 MB) |
 
 > ⚠ rows failed a validation gate (time bracketed, unranked); errors, skips and per-row notes: [full results](real-world/element-plus.md).
 
@@ -49,10 +49,10 @@ One page per pinned open-source project; this page carries each project's headli
 
 | Tool | **Median** | vs fastest | Peak RSS |
 | --- | ---: | ---: | ---: |
-| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **9.96 s** | 1.00x | 2505.1 MB |
-| [verter-tsc](https://github.com/pikax/verter) | **9.99 s** | 1.00x | 1259.5 MB |
-| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | **22.73 s** | 2.28x | 1919.0 MB |
-| [Vize](https://github.com/ubugeeei-prod/vize) ⚠ | (16.93 s) | not ranked | (3475.7 MB) |
+| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **7.60 s** | 1.00x | 2564.8 MB |
+| [verter-tsc](https://github.com/pikax/verter) | **8.46 s** | 1.11x | 1257.8 MB |
+| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | **17.02 s** | 2.24x | 1936.4 MB |
+| [Vize](https://github.com/ubugeeei-prod/vize) ⚠ | (25.52 s) | not ranked | (3477.6 MB) |
 
 > ⚠ rows failed a validation gate (time bracketed, unranked); errors, skips and per-row notes: [full results](real-world/element-plus.md).
 
@@ -69,10 +69,10 @@ One page per pinned open-source project; this page carries each project's headli
 
 | Tool | **Median** | vs fastest | Peak RSS |
 | --- | ---: | ---: | ---: |
-| @hoppscotch/common — project's own toolchain (baseline) | **23.04 s** | 1.00x | 717.2 MB |
-| [@hoppscotch/common — @verter/unplugin](https://github.com/pikax/verter) | **23.10 s** | 1.00x | 710.3 MB |
-| @hoppscotch/common — unplugin-vue | **23.30 s** | 1.01x | 737.5 MB |
-| [@hoppscotch/common — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) | **23.31 s** | 1.01x | 715.9 MB |
+| [@hoppscotch/common — @verter/unplugin](https://github.com/pikax/verter) | **19.21 s** | 1.00x | 734.1 MB |
+| @hoppscotch/common — project's own toolchain (baseline) | **19.24 s** | 1.00x | 711.9 MB |
+| @hoppscotch/common — unplugin-vue | **19.31 s** | 1.01x | 746.3 MB |
+| [@hoppscotch/common — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) | **19.46 s** | 1.01x | 780.2 MB |
 
 > Errors, skips and per-row notes: [full results](real-world/hoppscotch.md).
 
@@ -85,10 +85,10 @@ One page per pinned open-source project; this page carries each project's headli
 
 | Tool | **Median** | vs fastest | Peak RSS |
 | --- | ---: | ---: | ---: |
-| [hoppscotch-agent — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) | **1.43 s** | 1.00x | 443.6 MB |
-| hoppscotch-agent — unplugin-vue | **1.58 s** | 1.10x | 421.0 MB |
-| hoppscotch-agent — project's own toolchain (baseline) | **1.60 s** | 1.12x | 440.9 MB |
-| [hoppscotch-agent — @verter/unplugin](https://github.com/pikax/verter) | **1.76 s** | 1.23x | 493.8 MB |
+| hoppscotch-agent — project's own toolchain (baseline) | **1.14 s** | 1.00x | 432.2 MB |
+| hoppscotch-agent — unplugin-vue | **1.19 s** | 1.04x | 432.3 MB |
+| [hoppscotch-agent — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) | **1.20 s** | 1.05x | 448.6 MB |
+| [hoppscotch-agent — @verter/unplugin](https://github.com/pikax/verter) | **1.55 s** | 1.35x | 490.3 MB |
 
 > Errors, skips and per-row notes: [full results](real-world/hoppscotch.md).
 
@@ -101,10 +101,10 @@ One page per pinned open-source project; this page carries each project's headli
 
 | Tool | **Median** | vs fastest | Peak RSS |
 | --- | ---: | ---: | ---: |
-| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | **6.64 s** | 1.00x | 631.2 MB |
-| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) ⚠ | (1.76 s) | not ranked | (460.3 MB) |
-| [verter-tsc](https://github.com/pikax/verter) ⚠ | (7.81 s) | not ranked | (695.1 MB) |
-| [Vize](https://github.com/ubugeeei-prod/vize) ⚠ | (1.97 s) | not ranked | (472.3 MB) |
+| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | **5.06 s** | 1.00x | 625.9 MB |
+| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) ⚠ | (1.41 s) | not ranked | (470.6 MB) |
+| [verter-tsc](https://github.com/pikax/verter) ⚠ | (6.09 s) | not ranked | (701.4 MB) |
+| [Vize](https://github.com/ubugeeei-prod/vize) ⚠ | (1.73 s) | not ranked | (508.3 MB) |
 
 > ⚠ rows failed a validation gate (time bracketed, unranked); errors, skips and per-row notes: [full results](real-world/hoppscotch.md).
 
@@ -121,10 +121,10 @@ One page per pinned open-source project; this page carries each project's headli
 
 | Tool | **Median** | vs fastest | Peak RSS |
 | --- | ---: | ---: | ---: |
-| naive-ui — project's own toolchain (baseline) ⚠ | (328.87 s) | not ranked | (1656.6 MB) |
-| naive-ui — unplugin-vue ⚠ | (331.20 s) | not ranked | (1575.2 MB) |
-| [naive-ui — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) ⚠ | (331.28 s) | not ranked | (1656.5 MB) |
-| [naive-ui — @verter/unplugin](https://github.com/pikax/verter) ⚠ | (329.89 s) | not ranked | (1622.3 MB) |
+| naive-ui — project's own toolchain (baseline) ⚠ | (328.83 s) | not ranked | (1602.6 MB) |
+| naive-ui — unplugin-vue ⚠ | (326.47 s) | not ranked | (1653.5 MB) |
+| [naive-ui — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) ⚠ | (325.26 s) | not ranked | (1675.2 MB) |
+| [naive-ui — @verter/unplugin](https://github.com/pikax/verter) ⚠ | (325.89 s) | not ranked | (1660.4 MB) |
 
 > ⚠ rows failed a validation gate (time bracketed, unranked); errors, skips and per-row notes: [full results](real-world/naive-ui.md).
 
@@ -137,10 +137,10 @@ One page per pinned open-source project; this page carries each project's headli
 
 | Tool | **Median** | vs fastest | Peak RSS |
 | --- | ---: | ---: | ---: |
-| [vue-tsc (JS)](https://github.com/vuejs/language-tools) ⚠ | (57.51 s) | not ranked | (2339.8 MB) |
-| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) ⚠ | (48.08 s) | not ranked | (2993.0 MB) |
-| [verter-tsc](https://github.com/pikax/verter) ⚠ | (89.85 s) | not ranked | (2531.7 MB) |
-| [Vize](https://github.com/ubugeeei-prod/vize) ⚠ | (24.86 s) | not ranked | (4559.3 MB) |
+| [vue-tsc (JS)](https://github.com/vuejs/language-tools) ⚠ | (54.20 s) | not ranked | (2503.4 MB) |
+| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) ⚠ | (45.47 s) | not ranked | (2966.3 MB) |
+| [verter-tsc](https://github.com/pikax/verter) ⚠ | (95.87 s) | not ranked | (2511.2 MB) |
+| [Vize](https://github.com/ubugeeei-prod/vize) ⚠ | (26.85 s) | not ranked | (4855.2 MB) |
 
 > ⚠ rows failed a validation gate (time bracketed, unranked); errors, skips and per-row notes: [full results](real-world/naive-ui.md).
 
@@ -157,10 +157,10 @@ One page per pinned open-source project; this page carries each project's headli
 
 | Tool | **Median** | vs fastest | Peak RSS |
 | --- | ---: | ---: | ---: |
-| primevue — unplugin-vue | **37.08 s** | 1.00x | 762.8 MB |
-| primevue — project's own toolchain (baseline) | **37.82 s** | 1.02x | 923.9 MB |
-| [primevue — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) ⚠ | (27.09 s) | not ranked | (490.4 MB) |
-| [primevue — @verter/unplugin](https://github.com/pikax/verter) ⚠ | (39.48 s) | not ranked | (1138.7 MB) |
+| primevue — unplugin-vue | **34.41 s** | 1.00x | 756.6 MB |
+| primevue — project's own toolchain (baseline) | **34.68 s** | 1.01x | 838.4 MB |
+| [primevue — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) ⚠ | (25.67 s) | not ranked | (488.3 MB) |
+| [primevue — @verter/unplugin](https://github.com/pikax/verter) ⚠ | (36.94 s) | not ranked | (1120.2 MB) |
 
 > ⚠ rows failed a validation gate (time bracketed, unranked); errors, skips and per-row notes: [full results](real-world/primevue.md).
 
@@ -173,10 +173,10 @@ One page per pinned open-source project; this page carries each project's headli
 
 | Tool | **Median** | vs fastest | Peak RSS |
 | --- | ---: | ---: | ---: |
-| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **15.86 s** | 1.00x | 3704.1 MB |
-| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | **28.45 s** | 1.79x | 2327.8 MB |
-| [verter-tsc](https://github.com/pikax/verter) ⚠ | (28.76 s) | not ranked | (1000.3 MB) |
-| [Vize](https://github.com/ubugeeei-prod/vize) ⚠ | (37.84 s) | not ranked | (4853.1 MB) |
+| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **14.37 s** | 1.00x | 3583.6 MB |
+| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | **29.46 s** | 2.05x | 2529.2 MB |
+| [verter-tsc](https://github.com/pikax/verter) ⚠ | (26.16 s) | not ranked | (1005.6 MB) |
+| [Vize](https://github.com/ubugeeei-prod/vize) ⚠ | (38.83 s) | not ranked | (5390.7 MB) |
 
 > ⚠ rows failed a validation gate (time bracketed, unranked); errors, skips and per-row notes: [full results](real-world/primevue.md).
 
@@ -193,7 +193,7 @@ One page per pinned open-source project; this page carries each project's headli
 
 | Tool | **Median** | vs fastest | Peak RSS |
 | --- | ---: | ---: | ---: |
-| quasar.dev — project's own toolchain (baseline) | **2.52 s** | 1.00x | 460.8 MB |
+| quasar.dev — project's own toolchain (baseline) | **3.92 s** | 1.00x | 460.8 MB |
 
 > Errors, skips and per-row notes: [full results](real-world/quasar.md).
 
@@ -206,10 +206,10 @@ One page per pinned open-source project; this page carries each project's headli
 
 | Tool | **Median** | vs fastest | Peak RSS |
 | --- | ---: | ---: | ---: |
-| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **1.31 s** | 1.00x | 725.5 MB |
-| [Vize](https://github.com/ubugeeei-prod/vize) | **1.79 s** | 1.37x | 391.6 MB |
-| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | **6.18 s** | 4.73x | 503.4 MB |
-| [verter-tsc](https://github.com/pikax/verter) ⚠ | (289.3 ms) | not ranked | (145.3 MB) |
+| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **2.14 s** | 1.00x | 737.6 MB |
+| [Vize](https://github.com/ubugeeei-prod/vize) | **2.71 s** | 1.27x | 399.6 MB |
+| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | **9.37 s** | 4.38x | 509.4 MB |
+| [verter-tsc](https://github.com/pikax/verter) ⚠ | (397.6 ms) | not ranked | (143.8 MB) |
 
 > ⚠ rows failed a validation gate (time bracketed, unranked); errors, skips and per-row notes: [full results](real-world/quasar.md).
 
@@ -226,10 +226,10 @@ One page per pinned open-source project; this page carries each project's headli
 
 | Tool | **Median** | vs fastest | Peak RSS |
 | --- | ---: | ---: | ---: |
-| vben-admin-monorepo — project's own toolchain (baseline) | **11.70 s** | 1.00x | 750.5 MB |
-| vben-admin-monorepo — unplugin-vue | **11.89 s** | 1.02x | 730.5 MB |
-| [vben-admin-monorepo — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) | **11.92 s** | 1.02x | 749.1 MB |
-| [vben-admin-monorepo — @verter/unplugin](https://github.com/pikax/verter) | **12.01 s** | 1.03x | 729.7 MB |
+| vben-admin-monorepo — project's own toolchain (baseline) | **10.98 s** | 1.00x | 691.4 MB |
+| [vben-admin-monorepo — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) | **11.13 s** | 1.01x | 684.0 MB |
+| vben-admin-monorepo — unplugin-vue | **11.25 s** | 1.02x | 721.4 MB |
+| [vben-admin-monorepo — @verter/unplugin](https://github.com/pikax/verter) | **11.27 s** | 1.03x | 701.5 MB |
 
 > Errors, skips and per-row notes: [full results](real-world/vue-vben-admin.md).
 
@@ -242,10 +242,10 @@ One page per pinned open-source project; this page carries each project's headli
 
 | Tool | **Median** | vs fastest | Peak RSS |
 | --- | ---: | ---: | ---: |
-| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **10.76 s** | 1.00x | 2670.8 MB |
-| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | **22.29 s** | 2.07x | 1653.4 MB |
-| [verter-tsc](https://github.com/pikax/verter) ⚠ | (20.41 s) | not ranked | (705.2 MB) |
-| [Vize](https://github.com/ubugeeei-prod/vize) ⚠ | (81.39 s) | not ranked | (2736.2 MB) |
+| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **10.62 s** | 1.00x | 2624.1 MB |
+| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | **21.88 s** | 2.06x | 1663.9 MB |
+| [verter-tsc](https://github.com/pikax/verter) ⚠ | (21.27 s) | not ranked | (713.5 MB) |
+| [Vize](https://github.com/ubugeeei-prod/vize) ⚠ | (86.61 s) | not ranked | (2756.6 MB) |
 
 > ⚠ rows failed a validation gate (time bracketed, unranked); errors, skips and per-row notes: [full results](real-world/vue-vben-admin.md).
 
@@ -262,10 +262,10 @@ One page per pinned open-source project; this page carries each project's headli
 
 | Tool | **Median** | vs fastest | Peak RSS |
 | --- | ---: | ---: | ---: |
-| vuetify — project's own toolchain (baseline) | **45.51 s** | 1.00x | 1034.1 MB |
-| [vuetify — @verter/unplugin](https://github.com/pikax/verter) | **45.83 s** | 1.01x | 933.5 MB |
-| vuetify — unplugin-vue | **45.98 s** | 1.01x | 1078.2 MB |
-| [vuetify — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) | **46.53 s** | 1.02x | 1112.8 MB |
+| vuetify — project's own toolchain (baseline) | **47.65 s** | 1.00x | 1042.0 MB |
+| [vuetify — @verter/unplugin](https://github.com/pikax/verter) | **47.81 s** | 1.00x | 1034.1 MB |
+| vuetify — unplugin-vue | **47.84 s** | 1.00x | 989.7 MB |
+| [vuetify — @vizejs/vite-plugin](https://github.com/ubugeeei-prod/vize) | **48.23 s** | 1.01x | 976.9 MB |
 
 > Errors, skips and per-row notes: [full results](real-world/vuetify.md).
 
@@ -278,9 +278,9 @@ One page per pinned open-source project; this page carries each project's headli
 
 | Tool | **Median** | vs fastest | Peak RSS |
 | --- | ---: | ---: | ---: |
-| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **12.86 s** | 1.00x | 2451.5 MB |
-| [Vize](https://github.com/ubugeeei-prod/vize) | **19.67 s** | 1.53x | 3457.7 MB |
-| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | **31.79 s** | 2.47x | 2153.2 MB |
-| [verter-tsc](https://github.com/pikax/verter) ⚠ | (8.42 s) | not ranked | (605.8 MB) |
+| [vue-tsc (N)](https://github.com/johnsoncodehk/typescript-native-bridge) | **13.00 s** | 1.00x | 2523.9 MB |
+| [Vize](https://github.com/ubugeeei-prod/vize) | **20.55 s** | 1.58x | 3546.9 MB |
+| [vue-tsc (JS)](https://github.com/vuejs/language-tools) | **31.42 s** | 2.42x | 2091.4 MB |
+| [verter-tsc](https://github.com/pikax/verter) ⚠ | (7.84 s) | not ranked | (621.0 MB) |
 
 > ⚠ rows failed a validation gate (time bracketed, unranked); errors, skips and per-row notes: [full results](real-world/vuetify.md).

@@ -4,12 +4,12 @@
 
 **element-plus:components** — [`element-plus/element-plus`](https://github.com/element-plus/element-plus) 2.14.3 @ `7a7bcfb66b` · 162 files
 
-- **Generated:** 2026-09-18T14:07:37.978Z
+- **Generated:** 2026-09-29T13:30:12.345Z
 - **Fixture:** `fixtures/real` (162 files)
 - **Runs / warmups:** 5 / 1
-- **Runner:** Linux · linux/x64 · 4 CPUs · AMD EPYC 9V74 80-Core Processor · 15.6 GB · Node v22.23.2
-- **Commit:** [`9db7b15`](https://github.com/pikax/vue-benchmarks/commit/9db7b15d6a8266ab757541d4f5e3a2a6ae13d2b6)
-- **CI run:** https://github.com/pikax/vue-benchmarks/actions/runs/35350729423
+- **Runner:** Linux · linux/x64 · 4 CPUs · AMD EPYC 9V45 96-Core Processor · 15.6 GB · Node v22.23.2
+- **Commit:** [`8a88482`](https://github.com/pikax/vue-benchmarks/commit/8a8848276c52956d7e54e262e5846e41fc922288)
+- **CI run:** https://github.com/pikax/vue-benchmarks/actions/runs/36570298471
 
 Ranked on the **median of measured runs**. Warm series follow ≥1 discarded warmup and are the primary ordering and ranking metric wherever both series exist. Compiler and Component-meta additionally publish a separately sampled **Fresh child** column: the first timed row workload in a new child process, after excluded process startup and package imports. It is not called Cold and its ratio/noise gate never substitutes for Warm. What else the child excludes differs by surface and each surface states it in its own methodology — Compiler builds its compiler host outside the timer, Component-meta builds its checker/session inside it, because its warm timer does too. Every table sorts fastest-first and every ratio column is **vs fastest** — the fastest ranked row is the 1.00x denominator; no tool is pinned as a reference. One table per surface unless that surface declares explicit work-equivalence classes; engine, invocation and threading are row properties, not implicit table splits — rows tagged **(JS)** run the JavaScript TypeScript compiler (a cross-engine ratio measures TypeScript's rewrite as much as the tool), and a row's label/notes say whether it is a CLI (pays process startup every run), an in-process API, single-threaded or a thread pool. Name markers: ⚠ failed validation (time bracketed, unranked) · ❌ error · ⏭ skipped. A row above CV 50% with at least three warm samples is bracketed as TOO NOISY TO RANK, no tool exempted (a two-run spread has no third sample to adjudicate, so it is flagged, not bracketed). Per-row detail is under **Notes** below each table.
 
@@ -38,8 +38,8 @@ Target: `vdom` · Environment: `production` · Source map: `off`
 
 | Tool | Fresh child | Fresh min | Fresh stddev | Fresh CV% | vs fastest fresh child | **Warm (primary)** | Warm min | Warm stddev | Warm CV% | vs fastest warm | Code bytes | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| @vue/compiler-sfc 3.5 (1T) | 1.24 s | 1.20 s | 31.0 ms | 2.5% | 1.00x | **325.5 ms** | 301.4 ms | 13.1 ms | 4.0% | 1.00x | 1,241,345 | 498 files/s |
-| @vue/compiler-sfc 3.6 (1T) | 1.67 s | 1.61 s | 40.0 ms | 2.4% | 1.34x | **576.4 ms** | 534.5 ms | 26.4 ms | 4.6% | 1.77x | 1,241,345 | 281 files/s |
+| @vue/compiler-sfc 3.5 (1T) | 1.01 s | 980.9 ms | 19.2 ms | 1.9% | 1.00x | **261.7 ms** | 247.0 ms | 10.5 ms | 4.0% | 1.00x | 1,241,345 | 619 files/s |
+| @vue/compiler-sfc 3.6 (1T) | 1.39 s | 1.28 s | 64.3 ms | 4.6% | 1.38x | **523.6 ms** | 457.3 ms | 35.6 ms | 6.8% | 2.00x | 1,241,345 | 309 files/s |
 
 <details><summary>Notes</summary>
 
@@ -52,8 +52,8 @@ Target: `vdom` · Environment: `production` · Source map: `off`
 
 | Tool | Fresh child | Fresh min | Fresh stddev | Fresh CV% | vs fastest fresh child | **Warm (primary)** | Warm min | Warm stddev | Warm CV% | vs fastest warm | Generated JS bytes | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vue compiler-sfc 3.5 reference (raw render, 1T) | 1.23 s | 1.21 s | 15.2 ms | 1.2% | 1.00x | **333.8 ms** | 303.5 ms | 32.8 ms | 9.8% | 1.00x | 1,241,183 | 485 files/s |
-| Vize compileSfcBatchWithResults (raw render) ⚠ | (61.5 ms) | (59.9 ms) | (0.9 ms) | (1.4%) | not ranked | (39.7 ms) | (35.2 ms) | (2.4 ms) | (6.1%) | not ranked | (1,229,519) | – |
+| Vue compiler-sfc 3.5 reference (raw render, 1T) | 970.0 ms | 964.5 ms | 20.6 ms | 2.1% | 1.00x | **291.1 ms** | 234.6 ms | 35.5 ms | 12.2% ⚠ | 1.00x | 1,241,183 | 556 files/s |
+| Vize compileSfcBatchWithResults (raw render) ⚠ | (52.6 ms) | (52.0 ms) | (1.5 ms) | (2.8%) | not ranked | (40.3 ms) | (37.7 ms) | (4.2 ms) | (10.5%) | not ranked | (1,229,874) | – |
 | Verter compileMany (first-admission stateless raw render) ❌ | error | – | – | – | – | – | – | – | – | – | – | – |
 
 <details><summary>Notes</summary>
@@ -70,25 +70,25 @@ Target: `vdom` · Environment: `production` · Source map: `off`
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Vue compiler-sfc 3.5 reference (render + CSS, 1T) ❌ | error | – | – | – | – | – | – | – | – | – | – | – |
 | Vize compileSfc loop (full SFC, 1T) ❌ | error | – | – | – | – | – | – | – | – | – | – | – |
-| Vize compileSfcBatchWithResults (render + CSS, Rayon batch) ⚠ | (61.4 ms) | (59.9 ms) | (0.7 ms) | (1.2%) | not ranked | (38.7 ms) | (35.3 ms) | (2.2 ms) | (5.8%) | not ranked | (1,229,843) | – |
+| Vize compileSfcBatchWithResults (render + CSS, Rayon batch) ⚠ | (52.9 ms) | (52.1 ms) | (0.8 ms) | (1.5%) | not ranked | (42.2 ms) | (41.0 ms) | (1.1 ms) | (2.6%) | not ranked | (1,230,198) | – |
 | Verter compileMany + transformVueStyle (render + CSS) ❌ | error | – | – | – | – | – | – | – | – | – | – | – |
 
 <details><summary>Notes</summary>
 
 - **Vue compiler-sfc 3.5 reference (render + CSS, 1T) ❌**: Vue style reference emitted insufficient JS/CSS
 - **Vize compileSfc loop (full SFC, 1T) ❌**: vize compile returned empty JS/CSS for corpus
-- **Vize compileSfcBatchWithResults (render + CSS, Rayon batch) ⚠**: CANDIDATE VS VUE STYLE BASELINE: compileSfcBatchWithResults vapor=false, isTs=true, templateHoistStatic=true, templateCacheHandlers=true, includeSourceMap=false; receives the same per-pass-revised full SFCs and emits JS plus compiled CSS. Script, template and CSS all change every pass, so a prior generated output cannot satisfy this call. Warm samples reuse the process-global Rayon pool; a Fresh-child sample may still inherit native/thread/allocator effects from the excluded package import and adapter setup. Input objects are built outside the timer. The installed binding's production/development response is capability-probed before ranking. ⚠ FAILED STYLE CORRECTNESS GATE — [multiple-style-blocks] multiple-style-blocks: scoped and unscoped style blocks must retain their separate selector semantics; [slotted] slotted: slotted target must receive the [data-v-…-s] attribute selector; [global-mixed-local] global-mixed-local: local selector fragments or a scope constraint leaked into Vue's global selector; [slotted-compound] slotted-compound: the slotted scope attribute was not attached to the final compound target; [scoped-keyframes] scoped-keyframes: scoped keyframe name was not rewritten; [v-bind-quoted] v-bind-quoted: margin-left was not rewritten to a CSS variable. All 17 independent CSS semantics plants are mandatory; measured but UNRANKED. ⚠ RUNTIME SEMANTIC VALIDITY FAIL (27/33 passed) — runtime-props-defaults-reactivity [runtime]: reactive props: expected "updated:7", got "fallback:2"; reactive-props-destructure-shadowing [runtime]: shadowing after prop update: expected "updated|parameter|arrow", got "outer|parameter|arrow"; reactive-props-destructure-alias-default [runtime]: aliased prop and computed update: expected "next|next:7", got "fallback|fallback:2"; +3 more (all retained in JSON). Generated text is not compared; these are observable runtime/API outcomes. Full per-plant results are retained in validation.compileSemantics. ⚠ COMPARISON REFERENCE INVALID: the Vue reference in this work-equivalence class did not clear mandatory validation, so no candidate ratio in the class may rank.
+- **Vize compileSfcBatchWithResults (render + CSS, Rayon batch) ⚠**: CANDIDATE VS VUE STYLE BASELINE: compileSfcBatchWithResults vapor=false, isTs=true, templateHoistStatic=true, templateCacheHandlers=true, includeSourceMap=false; receives the same per-pass-revised full SFCs and emits JS plus compiled CSS. Script, template and CSS all change every pass, so a prior generated output cannot satisfy this call. Warm samples reuse the process-global Rayon pool; a Fresh-child sample may still inherit native/thread/allocator effects from the excluded package import and adapter setup. Input objects are built outside the timer. The installed binding's production/development response is capability-probed before ranking. ⚠ FAILED STYLE CORRECTNESS GATE — [multiple-style-blocks] multiple-style-blocks: scoped and unscoped style blocks must retain their separate selector semantics; [global-mixed-local] global-mixed-local: local selector fragments or a scope constraint leaked into Vue's global selector; [slotted-compound] slotted-compound: the slotted scope attribute was not attached to the final compound target; [scoped-keyframes] scoped-keyframes: scoped keyframe name was not rewritten. All 17 independent CSS semantics plants are mandatory; measured but UNRANKED. ⚠ RUNTIME SEMANTIC VALIDITY FAIL (27/33 passed) — runtime-props-defaults-reactivity [runtime]: reactive props: expected "updated:7", got "fallback:2"; reactive-props-destructure-shadowing [runtime]: shadowing after prop update: expected "updated|parameter|arrow", got "outer|parameter|arrow"; reactive-props-destructure-alias-default [runtime]: aliased prop and computed update: expected "next|next:7", got "fallback|fallback:2"; +3 more (all retained in JSON). Generated text is not compared; these are observable runtime/API outcomes. Full per-plant results are retained in validation.compileSemantics. ⚠ COMPARISON REFERENCE INVALID: the Vue reference in this work-equivalence class did not clear mandatory validation, so no candidate ratio in the class may rank.
 - **Verter compileMany + transformVueStyle (render + CSS) ❌**: verter style compileMany failed 2: [/home/runner/work/vue-benchmarks/vue-benchmarks/fixtures/real/element-plus/packages/components/alert/src/alert.vue] Authoritative runtime semantics for macro syntax index 1 are partial (incomplete-traversal).
 
 </details>
 
 <details><summary>Raw runs</summary>
 
-- **@vue/compiler-sfc 3.5 (1T)**: Fresh child (first timed row workload): 1.20 s, 1.28 s, 1.21 s, 1.25 s, 1.24 s · Warm: 327.4 ms, 303.3 ms, 325.6 ms, 325.5 ms, 301.4 ms
-- **@vue/compiler-sfc 3.6 (1T)**: Fresh child (first timed row workload): 1.67 s, 1.69 s, 1.66 s, 1.61 s, 1.71 s · Warm: 597.6 ms, 567.9 ms, 534.5 ms, 576.4 ms, 599.2 ms
-- **Vue compiler-sfc 3.5 reference (raw render, 1T)**: Fresh child (first timed row workload): 1.23 s, 1.25 s, 1.24 s, 1.21 s, 1.22 s · Warm: 333.8 ms, 369.0 ms, 306.5 ms, 372.0 ms, 303.5 ms
-- **Vize compileSfcBatchWithResults (raw render)**: Fresh child (first timed row workload): 59.9 ms, 61.6 ms, 59.9 ms, 61.5 ms, 61.5 ms · Warm: 35.2 ms, 39.9 ms, 38.5 ms, 41.6 ms, 39.7 ms
-- **Vize compileSfcBatchWithResults (render + CSS, Rayon batch)**: Fresh child (first timed row workload): 61.5 ms, 61.4 ms, 59.9 ms, 61.6 ms, 61.4 ms · Warm: 35.3 ms, 37.1 ms, 40.5 ms, 38.7 ms, 40.4 ms
+- **@vue/compiler-sfc 3.5 (1T)**: Fresh child (first timed row workload): 1.03 s, 1.02 s, 991.7 ms, 1.01 s, 980.9 ms · Warm: 261.7 ms, 258.6 ms, 272.1 ms, 272.1 ms, 247.0 ms
+- **@vue/compiler-sfc 3.6 (1T)**: Fresh child (first timed row workload): 1.46 s, 1.28 s, 1.38 s, 1.39 s, 1.42 s · Warm: 501.4 ms, 523.6 ms, 457.3 ms, 549.7 ms, 532.3 ms
+- **Vue compiler-sfc 3.5 reference (raw render, 1T)**: Fresh child (first timed row workload): 966.6 ms, 970.0 ms, 964.5 ms, 1.01 s, 982.9 ms · Warm: 291.1 ms, 328.1 ms, 234.6 ms, 292.0 ms, 260.1 ms
+- **Vize compileSfcBatchWithResults (raw render)**: Fresh child (first timed row workload): 55.5 ms, 52.0 ms, 52.6 ms, 53.8 ms, 52.1 ms · Warm: 37.7 ms, 44.2 ms, 39.2 ms, 48.1 ms, 40.3 ms
+- **Vize compileSfcBatchWithResults (render + CSS, Rayon batch)**: Fresh child (first timed row workload): 54.2 ms, 52.9 ms, 52.1 ms, 53.3 ms, 52.5 ms · Warm: 41.9 ms, 43.2 ms, 41.0 ms, 42.2 ms, 43.8 ms
 
 </details>
 
@@ -145,16 +145,16 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Oxfmt | **2.43 s** | 2.40 s | 40.5 ms | 1.7% | 1.00x | n/a | 67 files/s |
-| Prettier | **3.86 s** | 3.78 s | 57.2 ms | 1.5% | 1.59x | n/a | 42 files/s |
-| Vize ⚠ | (128.2 ms) | (112.8 ms) | – | – | not ranked | – | – |
-| Biome format ⚠ | (126.4 ms) | (125.0 ms) | – | – | not ranked | – | – |
+| Vize | **105.5 ms** | 89.1 ms | 40.1 ms | 38.0% ⚠ | 1.00x | n/a | 1.5k files/s |
+| Oxfmt | **2.10 s** | 2.01 s | 48.6 ms | 2.3% | 19.87x | n/a | 77 files/s |
+| Prettier | **3.07 s** | 2.99 s | 111.5 ms | 3.6% | 29.09x | n/a | 53 files/s |
+| Biome format ⚠ | (102.4 ms) | (100.8 ms) | – | – | not ranked | – | – |
 
 <details><summary>Notes</summary>
 
+- **Vize**: vize fmt --write (fresh copy each run) · does not report thread usage — not assumed single-threaded | ⓘ file coverage verified: rewrote 162/162 planted corpus files. | ✓ format validity 5/5: parseable, descriptor/template/script semantics preserved and exact invocation idempotent.
 - **Oxfmt**: oxfmt --write (fresh copy each run) · pinned 0.65.0 routes a full .vue file through its bundled Prettier formatFile callback in worker threads; the native binding orchestrates the call, but Vue parsing/printing is the bundled Prettier path. Re-audit this package path after upgrades. | ⓘ file coverage verified: rewrote 162/162 planted corpus files. | ✓ format validity 5/5: parseable, descriptor/template/script semantics preserved and exact invocation idempotent.
 - **Prettier**: prettier --write **/*.vue (fresh copy each run) · single-threaded by design | ⓘ file coverage verified: rewrote 162/162 planted corpus files. | ✓ format validity 5/5: parseable, descriptor/template/script semantics preserved and exact invocation idempotent.
-- **Vize ⚠**: vize fmt --write (fresh copy each run) · does not report thread usage — not assumed single-threaded | ⓘ file coverage verified: rewrote 162/162 planted corpus files. | ✓ format validity 5/5: parseable, descriptor/template/script semantics preserved and exact invocation idempotent. | ⚠ TOO NOISY TO RANK — CV 214.2% (ceiling 50%). The median of a series this unstable is a draw from noise, not a result; the time is bracketed and excluded from ranking exactly like a failed gate. Raw runs below.
 - **Biome format ⚠**: biome format --write . (fresh copy each run) · multi-threaded (Rayon; honours RAYON_NUM_THREADS) · exact pinned row currently rewrites none of the planted .vue corpus | ⚠ FAILED FILE-COVERAGE GATE — rewrote 0 of 162 planted corpus files. A tool covering fewer files finishes sooner; that is a different job, not a faster one. Measured but UNRANKED. | ⚠ FORMAT SEMANTIC VALIDITY FAIL — css-and-custom-block-semantics: messy template block was not rewritten; template-behaviour: messy template block was not rewritten. Full per-plant evidence is retained in validation.formatSemantics.
 
 </details>
@@ -175,10 +175,10 @@ Tools:
 
 Raw runs:
 
-- **Oxfmt**: 2.42 s, 2.43 s, 2.49 s, 2.48 s, 2.40 s
-- **Prettier**: 3.78 s, 3.93 s, 3.86 s, 3.91 s, 3.85 s
-- **Vize**: 228.0 ms, 128.2 ms, 112.8 ms, 120.8 ms, 752.4 ms
-- **Biome format**: 125.0 ms, 128.6 ms, 128.5 ms, 126.4 ms, 125.1 ms
+- **Vize**: 132.8 ms, 93.2 ms, 89.1 ms, 105.5 ms, 186.4 ms
+- **Oxfmt**: 2.01 s, 2.10 s, 2.14 s, 2.10 s, 2.09 s
+- **Prettier**: 3.07 s, 3.18 s, 2.99 s, 3.07 s, 3.27 s
+- **Biome format**: 102.3 ms, 111.6 ms, 102.4 ms, 107.2 ms, 100.8 ms
 
 </details>
 
@@ -197,13 +197,13 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| eslint-plugin-vue (CLI) | **3.56 s** | 3.39 s | 82.2 ms | 2.3% | 1.00x | n/a | 45 files/s |
-| Vize lint (1T) ⚠ | (141.9 ms) | (139.6 ms) | – | – | not ranked | – | – |
-| Vize lint (default threads) ⚠ | (101.8 ms) | (100.6 ms) | – | – | not ranked | – | – |
-| Biome lint (1T) ⚠ | (503.2 ms) | (495.1 ms) | – | – | not ranked | – | – |
-| Biome lint (default threads) ⚠ | (237.5 ms) | (234.2 ms) | – | – | not ranked | – | – |
-| Oxlint (1T) ⚠ | (95.4 ms) | (91.6 ms) | – | – | not ranked | – | – |
-| Oxlint (default threads) ⚠ | (79.9 ms) | (76.0 ms) | – | – | not ranked | – | – |
+| eslint-plugin-vue (CLI) | **2.81 s** | 2.75 s | 163.7 ms | 5.8% | 1.00x | n/a | 58 files/s |
+| Vize lint (1T) ⚠ | (140.1 ms) | (135.7 ms) | – | – | not ranked | – | – |
+| Vize lint (default threads) ⚠ | (95.4 ms) | (94.8 ms) | – | – | not ranked | – | – |
+| Biome lint (1T) ⚠ | (396.3 ms) | (393.4 ms) | – | – | not ranked | – | – |
+| Biome lint (default threads) ⚠ | (191.4 ms) | (184.9 ms) | – | – | not ranked | – | – |
+| Oxlint (1T) ⚠ | (80.7 ms) | (78.6 ms) | – | – | not ranked | – | – |
+| Oxlint (default threads) ⚠ | (71.0 ms) | (70.1 ms) | – | – | not ranked | – | – |
 
 <details><summary>Notes</summary>
 
@@ -221,9 +221,9 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| eslint-plugin-vue (1T) | **3.02 s** | 2.93 s | 59.3 ms | 2.0% | 1.00x | n/a | 54 files/s |
-| eslint-plugin-vue (4 workers) | **3.68 s** | 3.54 s | 149.3 ms | 4.1% | 1.22x | n/a | 44 files/s |
-| Verter host lint ⚠ | (9.37 s) | (9.10 s) | – | – | not ranked | – | – |
+| eslint-plugin-vue (1T) | **2.33 s** | 1.98 s | 351.6 ms | 15.1% ⚠ | 1.00x | n/a | 69 files/s |
+| eslint-plugin-vue (4 workers) | **3.19 s** | 2.95 s | 138.1 ms | 4.3% | 1.37x | n/a | 51 files/s |
+| Verter host lint ⚠ | (9.01 s) | (8.92 s) | – | – | not ranked | – | – |
 
 <details><summary>Notes</summary>
 
@@ -252,16 +252,16 @@ Tools:
 
 Raw runs:
 
-- **eslint-plugin-vue (CLI)**: 3.58 s, 3.56 s, 3.39 s, 3.53 s, 3.60 s
-- **Vize lint (1T)**: 141.7 ms, 141.9 ms, 139.6 ms, 149.1 ms, 144.7 ms
-- **Vize lint (default threads)**: 101.8 ms, 102.3 ms, 101.3 ms, 103.6 ms, 100.6 ms
-- **Biome lint (1T)**: 505.2 ms, 503.2 ms, 495.1 ms, 500.9 ms, 506.3 ms
-- **Biome lint (default threads)**: 236.0 ms, 237.5 ms, 234.2 ms, 237.6 ms, 244.9 ms
-- **Oxlint (1T)**: 91.6 ms, 92.6 ms, 101.7 ms, 97.1 ms, 95.4 ms
-- **Oxlint (default threads)**: 76.0 ms, 77.0 ms, 80.2 ms, 79.9 ms, 82.0 ms
-- **eslint-plugin-vue (1T)**: 2.98 s, 2.93 s, 3.05 s, 3.02 s, 3.08 s
-- **eslint-plugin-vue (4 workers)**: 3.68 s, 3.95 s, 3.54 s, 3.65 s, 3.68 s
-- **Verter host lint**: 9.57 s, 9.15 s, 9.10 s, 9.37 s, 9.54 s
+- **eslint-plugin-vue (CLI)**: 2.75 s, 2.78 s, 3.15 s, 2.90 s, 2.81 s
+- **Vize lint (1T)**: 135.7 ms, 140.1 ms, 151.2 ms, 142.9 ms, 137.6 ms
+- **Vize lint (default threads)**: 94.9 ms, 98.2 ms, 104.5 ms, 94.8 ms, 95.4 ms
+- **Biome lint (1T)**: 396.3 ms, 393.4 ms, 430.4 ms, 395.8 ms, 401.3 ms
+- **Biome lint (default threads)**: 184.9 ms, 191.4 ms, 205.2 ms, 189.6 ms, 191.4 ms
+- **Oxlint (1T)**: 80.0 ms, 83.8 ms, 89.9 ms, 78.6 ms, 80.7 ms
+- **Oxlint (default threads)**: 70.9 ms, 74.4 ms, 78.2 ms, 70.1 ms, 71.0 ms
+- **eslint-plugin-vue (1T)**: 2.66 s, 2.74 s, 2.33 s, 1.98 s, 2.02 s
+- **eslint-plugin-vue (4 workers)**: 2.95 s, 3.31 s, 3.11 s, 3.22 s, 3.19 s
+- **Verter host lint**: 9.07 s, 8.92 s, 10.69 s, 9.01 s, 8.97 s
 
 </details>
 
@@ -275,25 +275,25 @@ Grouped by **bundler**, ranked within each group by Vue integration. Rows from d
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | output bytes | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vite 8 (Rolldown) × unplugin-vue | **420.7 ms** | 420.6 ms | 0.2 ms | 0.0% | 1.00x | 756,590 | 354 files/s |
-| Vite 8 (Rolldown) × @vitejs/plugin-vue | **438.1 ms** | 405.5 ms | 46.0 ms | 10.5% ⚠ | 1.04x | 756,853 | 340 files/s |
-| Vite 8 (Rolldown) × @vizejs/vite-plugin | **797.4 ms** | 783.5 ms | 19.6 ms | 2.5% | 1.90x | 830,063 | 187 files/s |
+| Vite 8 (Rolldown) × @vitejs/plugin-vue | **324.3 ms** | 291.1 ms | 47.0 ms | 14.5% ⚠ | 1.00x | 756,853 | 459 files/s |
+| Vite 8 (Rolldown) × unplugin-vue | **337.0 ms** | 320.8 ms | 23.0 ms | 6.8% | 1.04x | 756,590 | 442 files/s |
+| Vite 8 (Rolldown) × @vizejs/vite-plugin | **490.1 ms** | 482.7 ms | 10.5 ms | 2.1% | 1.51x | 830,944 | 304 files/s |
 | Vite 8 (Rolldown) × @verter/unplugin ❌ | error | – | – | – | – | – | – |
 
 <details><summary>Notes</summary>
 
-- **Vite 8 (Rolldown) × unplugin-vue**: lazy per-module transform · compiled 149/149 corpus SFCs · 0 style sub-requests · 756,590 output bytes | Bundler-agnostic build of the official @vue/compiler-sfc pipeline. | Vite 8 bundles with Rolldown (depends on rolldown ~1.1). | ✓ BUNDLE STRUCTURAL VALIDITY: exact-cell SFC canary preserved render text, dynamic/event-bearing module structure, scoped CSS and v-bind() CSS-variable linkage.
 - **Vite 8 (Rolldown) × @vitejs/plugin-vue**: lazy per-module transform · compiled 149/149 corpus SFCs · 0 style sub-requests · 756,853 output bytes | The official Vite Vue plugin — the reference implementation for this surface. | Vite 8 bundles with Rolldown (depends on rolldown ~1.1). | ✓ BUNDLE STRUCTURAL VALIDITY: exact-cell SFC canary preserved render text, dynamic/event-bearing module structure, scoped CSS and v-bind() CSS-variable linkage.
-- **Vite 8 (Rolldown) × @vizejs/vite-plugin**: eager native batch pre-compile · compiled 149/149 corpus SFCs · 0 style sub-requests · 830,063 output bytes | Different strategy: compiles the whole corpus in a native batch when the plugin initialises, then serves each module from that result, handing the bundler `.vue.ts` sidecars rather than `.vue` ids. The pre-pass is inside the timed region, so the total is comparable to the lazy rows; what is not comparable is per-module cost, since this row front-loads what the others spread out. | Vite 8 bundles with Rolldown (depends on rolldown ~1.1). | ✓ BUNDLE STRUCTURAL VALIDITY: exact-cell SFC canary preserved render text, dynamic/event-bearing module structure, scoped CSS and v-bind() CSS-variable linkage.
+- **Vite 8 (Rolldown) × unplugin-vue**: lazy per-module transform · compiled 149/149 corpus SFCs · 0 style sub-requests · 756,590 output bytes | Bundler-agnostic build of the official @vue/compiler-sfc pipeline. | Vite 8 bundles with Rolldown (depends on rolldown ~1.1). | ✓ BUNDLE STRUCTURAL VALIDITY: exact-cell SFC canary preserved render text, dynamic/event-bearing module structure, scoped CSS and v-bind() CSS-variable linkage.
+- **Vite 8 (Rolldown) × @vizejs/vite-plugin**: eager native batch pre-compile · compiled 149/149 corpus SFCs · 0 style sub-requests · 830,944 output bytes | Different strategy: compiles the whole corpus in a native batch when the plugin initialises, then serves each module from that result, handing the bundler `.vue.ts` sidecars rather than `.vue` ids. The pre-pass is inside the timed region, so the total is comparable to the lazy rows; what is not comparable is per-module cost, since this row front-loads what the others spread out. | Vite 8 bundles with Rolldown (depends on rolldown ~1.1). | ✓ BUNDLE STRUCTURAL VALIDITY: exact-cell SFC canary preserved render text, dynamic/event-bearing module structure, scoped CSS and v-bind() CSS-variable linkage.
 - **Vite 8 (Rolldown) × @verter/unplugin ❌**: Build failed with 83 errors:  [plugin vite:vue] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/element-plus/bundle/element-plus-components/packages/components/menu/src/menu-item-group.vue
 
 </details>
 
 <details><summary>Raw runs</summary>
 
-- **Vite 8 (Rolldown) × unplugin-vue**: 420.6 ms, 420.8 ms
-- **Vite 8 (Rolldown) × @vitejs/plugin-vue**: 470.6 ms, 405.5 ms
-- **Vite 8 (Rolldown) × @vizejs/vite-plugin**: 811.3 ms, 783.5 ms
+- **Vite 8 (Rolldown) × @vitejs/plugin-vue**: 357.5 ms, 291.1 ms
+- **Vite 8 (Rolldown) × unplugin-vue**: 353.3 ms, 320.8 ms
+- **Vite 8 (Rolldown) × @vizejs/vite-plugin**: 497.6 ms, 482.7 ms
 
 </details>
 
@@ -301,7 +301,7 @@ Grouped by **bundler**, ranked within each group by Vue integration. Rows from d
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | output bytes | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Rolldown (no Vite) × unplugin-vue ⚠ | (696.3 ms) | (689.0 ms) | – | – | not ranked | (749,946) | – |
+| Rolldown (no Vite) × unplugin-vue ⚠ | (543.1 ms) | (525.1 ms) | – | – | not ranked | (749,946) | – |
 | Rolldown (no Vite) × @verter/unplugin ❌ | error | – | – | – | – | – | – |
 
 <details><summary>Notes</summary>
@@ -313,7 +313,7 @@ Grouped by **bundler**, ranked within each group by Vue integration. Rows from d
 
 <details><summary>Raw runs</summary>
 
-- **Rolldown (no Vite) × unplugin-vue**: 689.0 ms, 703.7 ms
+- **Rolldown (no Vite) × unplugin-vue**: 525.1 ms, 561.1 ms
 
 </details>
 
@@ -321,25 +321,25 @@ Grouped by **bundler**, ranked within each group by Vue integration. Rows from d
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | output bytes | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Rspack × vue-loader ⚠ | (275.0 ms) | (272.0 ms) | – | – | not ranked | (2,117,560) | – |
-| Rspack × unplugin-vue ⚠ | (742.6 ms) | (725.7 ms) | – | – | not ranked | (1,677,280) | – |
-| Rspack × @vizejs/rspack-plugin ⚠ | (377.5 ms) | (361.4 ms) | – | – | not ranked | (1,799,557) | – |
+| Rspack × vue-loader ⚠ | (189.9 ms) | (186.8 ms) | – | – | not ranked | (2,117,560) | – |
+| Rspack × unplugin-vue ⚠ | (626.1 ms) | (582.1 ms) | – | – | not ranked | (1,677,280) | – |
+| Rspack × @vizejs/rspack-plugin ⚠ | (272.3 ms) | (266.5 ms) | – | – | not ranked | (1,797,535) | – |
 | Rspack × @verter/unplugin ❌ | error | – | – | – | – | – | – |
 
 <details><summary>Notes</summary>
 
 - **Rspack × vue-loader ⚠**: loader chain · compiled 149/149 corpus SFCs · 0 style sub-requests · 2,117,560 output bytes | The official webpack Vue integration — a loader rule plus VueLoaderPlugin. The reference implementation for this family. | Rust webpack-compatible bundler. Loader/plugin architecture, not Rollup hooks. | ⚠ BUNDLE STRUCTURAL VALIDITY FAIL: cssVariableLinkage. Time remains visible but is excluded from ranking. | ⚠ COMPARISON REFERENCE INVALID: this bundler's official/reference integration did not pass the same canary, so no peer ratio in the class may rank.
 - **Rspack × unplugin-vue ⚠**: lazy per-module transform · compiled 149/149 corpus SFCs · 0 style sub-requests · 1,677,280 output bytes | Official compiler pipeline as an unplugin, so the same code path the Vite rows use. | Rust webpack-compatible bundler. Loader/plugin architecture, not Rollup hooks. | ⚠ BUNDLE STRUCTURAL VALIDITY FAIL: cssVariableLinkage. Time remains visible but is excluded from ranking. | ⚠ COMPARISON REFERENCE INVALID: this bundler's official/reference integration did not pass the same canary, so no peer ratio in the class may rank. | ⚠ COMPARISON REFERENCE UNAVAILABLE/INVALID: Rspack's Vue reference row did not produce a valid ranked result, so candidate timings remain visible but no ratio in this class may rank.
-- **Rspack × @vizejs/rspack-plugin ⚠**: eager native batch pre-compile · compiled 149/149 corpus SFCs · 0 style sub-requests · 1,799,557 output bytes | Vize's native compiler as an Rspack integration: a LOADER rule (`@vizejs/rspack-plugin/loader`) plus the `VizePlugin` class — the same two-part shape vue-loader has, and the setup its README documents. The plugin does not register the SFC loader itself; it clones the config's CSS rules for Vue style sub-requests and adds an swc post-pass for `.vue` TypeScript, both of which need the loader rule to already be there. | Rust webpack-compatible bundler. Loader/plugin architecture, not Rollup hooks. | ✓ BUNDLE STRUCTURAL VALIDITY: exact-cell SFC canary preserved render text, dynamic/event-bearing module structure, scoped CSS and v-bind() CSS-variable linkage. | ⚠ COMPARISON REFERENCE INVALID: this bundler's official/reference integration did not pass the same canary, so no peer ratio in the class may rank. | ⚠ COMPARISON REFERENCE UNAVAILABLE/INVALID: Rspack's Vue reference row did not produce a valid ranked result, so candidate timings remain visible but no ratio in this class may rank.
-- **Rspack × @verter/unplugin ❌**:   × Module build failed (from ../../../../node_modules/.pnpm/unplugin@3.3.0_@rspack+core@2.2.6_esbuild@0.28.1_rolldown@1.2.9_vite@8.3.0_@types+node@_a11ee8f37e41472179d16bbc3370ba23/node_modules/unplugin/dist/rspack/loaders/load.mjs):   ╰─▶   × Error: [verter] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/element-plus/bundle/element-plus-components/packages/components/affix/src/affix.v
+- **Rspack × @vizejs/rspack-plugin ⚠**: eager native batch pre-compile · compiled 149/149 corpus SFCs · 0 style sub-requests · 1,797,535 output bytes | Vize's native compiler as an Rspack integration: a LOADER rule (`@vizejs/rspack-plugin/loader`) plus the `VizePlugin` class — the same two-part shape vue-loader has, and the setup its README documents. The plugin does not register the SFC loader itself; it clones the config's CSS rules for Vue style sub-requests and adds an swc post-pass for `.vue` TypeScript, both of which need the loader rule to already be there. | Rust webpack-compatible bundler. Loader/plugin architecture, not Rollup hooks. | ✓ BUNDLE STRUCTURAL VALIDITY: exact-cell SFC canary preserved render text, dynamic/event-bearing module structure, scoped CSS and v-bind() CSS-variable linkage. | ⚠ COMPARISON REFERENCE INVALID: this bundler's official/reference integration did not pass the same canary, so no peer ratio in the class may rank. | ⚠ COMPARISON REFERENCE UNAVAILABLE/INVALID: Rspack's Vue reference row did not produce a valid ranked result, so candidate timings remain visible but no ratio in this class may rank.
+- **Rspack × @verter/unplugin ❌**:   × Module build failed (from ../../../../node_modules/.pnpm/unplugin@3.4.0_@rspack+core@2.2.8_esbuild@0.28.1_rolldown@1.2.11_vite@8.3.1_@types+node_903c0001e2df9e07f91da0266d7e5576/node_modules/unplugin/dist/rspack/loaders/load.mjs):   ╰─▶   × Error: [verter] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/element-plus/bundle/element-plus-components/packages/components/affix/src/affix.v
 
 </details>
 
 <details><summary>Raw runs</summary>
 
-- **Rspack × vue-loader**: 278.0 ms, 272.0 ms
-- **Rspack × unplugin-vue**: 725.7 ms, 759.5 ms
-- **Rspack × @vizejs/rspack-plugin**: 361.4 ms, 393.5 ms
+- **Rspack × vue-loader**: 186.8 ms, 192.9 ms
+- **Rspack × unplugin-vue**: 582.1 ms, 670.2 ms
+- **Rspack × @vizejs/rspack-plugin**: 266.5 ms, 278.2 ms
 
 </details>
 
@@ -347,24 +347,24 @@ Grouped by **bundler**, ranked within each group by Vue integration. Rows from d
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | output bytes | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| webpack 5 × vue-loader ⚠ | (649.3 ms) | (530.1 ms) | – | – | not ranked | (2,966,995) | – |
-| webpack 5 × unplugin-vue ⚠ | (1.00 s) | (989.8 ms) | – | – | not ranked | (2,299,271) | – |
+| webpack 5 × vue-loader ⚠ | (545.9 ms) | (428.7 ms) | – | – | not ranked | (2,969,715) | – |
+| webpack 5 × unplugin-vue ⚠ | (813.8 ms) | (791.0 ms) | – | – | not ranked | (2,299,271) | – |
 | webpack 5 × @verter/unplugin ❌ | error | – | – | – | – | – | – |
 | webpack 5 × @vizejs/rspack-plugin ⏭ | skipped | – | – | – | – | – | – |
 
 <details><summary>Notes</summary>
 
-- **webpack 5 × vue-loader ⚠**: loader chain · compiled 149/149 corpus SFCs · 0 style sub-requests · 2,966,995 output bytes | The official webpack Vue integration — a loader rule plus VueLoaderPlugin. The reference implementation for this family. | The reference webpack implementation. Loader/plugin architecture, not Rollup hooks. | ⚠ BUNDLE STRUCTURAL VALIDITY FAIL: cssVariableLinkage. Time remains visible but is excluded from ranking. | ⚠ COMPARISON REFERENCE INVALID: this bundler's official/reference integration did not pass the same canary, so no peer ratio in the class may rank.
+- **webpack 5 × vue-loader ⚠**: loader chain · compiled 149/149 corpus SFCs · 0 style sub-requests · 2,969,715 output bytes | The official webpack Vue integration — a loader rule plus VueLoaderPlugin. The reference implementation for this family. | The reference webpack implementation. Loader/plugin architecture, not Rollup hooks. | ⚠ BUNDLE STRUCTURAL VALIDITY FAIL: cssVariableLinkage. Time remains visible but is excluded from ranking. | ⚠ COMPARISON REFERENCE INVALID: this bundler's official/reference integration did not pass the same canary, so no peer ratio in the class may rank.
 - **webpack 5 × unplugin-vue ⚠**: lazy per-module transform · compiled 149/149 corpus SFCs · 0 style sub-requests · 2,299,271 output bytes | Official compiler pipeline as an unplugin, so the same code path the Vite rows use. | The reference webpack implementation. Loader/plugin architecture, not Rollup hooks. | ⚠ BUNDLE STRUCTURAL VALIDITY FAIL: cssVariableLinkage. Time remains visible but is excluded from ranking. | ⚠ COMPARISON REFERENCE INVALID: this bundler's official/reference integration did not pass the same canary, so no peer ratio in the class may rank. | ⚠ COMPARISON REFERENCE UNAVAILABLE/INVALID: webpack 5's Vue reference row did not produce a valid ranked result, so candidate timings remain visible but no ratio in this class may rank.
-- **webpack 5 × @verter/unplugin ❌**: Module build failed (from ../../../../node_modules/.pnpm/unplugin@3.3.0_@rspack+core@2.2.6_esbuild@0.28.1_rolldown@1.2.9_vite@8.3.0_@types+node@_a11ee8f37e41472179d16bbc3370ba23/node_modules/unplugin/dist/webpack/loaders/transform.mjs): Error: [verter] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/element-plus/bundle/element-plus-components/packages/components/affix/src/affix.vue: miss
+- **webpack 5 × @verter/unplugin ❌**: Module build failed (from ../../../../node_modules/.pnpm/unplugin@3.4.0_@rspack+core@2.2.8_esbuild@0.28.1_rolldown@1.2.11_vite@8.3.1_@types+node_903c0001e2df9e07f91da0266d7e5576/node_modules/unplugin/dist/webpack/loaders/transform.mjs): Error: [verter] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/element-plus/bundle/element-plus-components/packages/components/affix/src/affix.vue: miss
 - **webpack 5 × @vizejs/rspack-plugin ⏭**: @vizejs/rspack-plugin publishes no webpack entry point
 
 </details>
 
 <details><summary>Raw runs</summary>
 
-- **webpack 5 × vue-loader**: 530.1 ms, 768.5 ms
-- **webpack 5 × unplugin-vue**: 989.8 ms, 1.01 s
+- **webpack 5 × vue-loader**: 428.7 ms, 663.0 ms
+- **webpack 5 × unplugin-vue**: 836.6 ms, 791.0 ms
 
 </details>
 
@@ -445,17 +445,17 @@ Two independent measurements. Cold start is paid once per session; HMR turnaroun
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vite 8 (Rolldown) × @verter/unplugin | **21.0 ms** | 20.9 ms | 0.2 ms | 1.0% | 1.00x | n/a | 7.1k files/s |
-| Vite 8 (Rolldown) × @vitejs/plugin-vue | **21.4 ms** | 21.1 ms | 0.4 ms | 1.8% | 1.02x | n/a | 7.0k files/s |
-| Vite 8 (Rolldown) × unplugin-vue | **22.6 ms** | 20.0 ms | 3.7 ms | 16.5% ⚠ | 1.08x | n/a | 6.6k files/s |
-| Vite 8 (Rolldown) × @vizejs/vite-plugin | **63.3 ms** | 53.0 ms | 14.6 ms | 23.1% ⚠ | 3.01x | n/a | 2.4k files/s |
+| Vite 8 (Rolldown) × @vitejs/plugin-vue | **15.5 ms** | 14.4 ms | 1.5 ms | 9.8% | 1.00x | n/a | 9.6k files/s |
+| Vite 8 (Rolldown) × unplugin-vue | **15.9 ms** | 13.5 ms | 3.5 ms | 21.7% ⚠ | 1.03x | n/a | 9.4k files/s |
+| Vite 8 (Rolldown) × @vizejs/vite-plugin | **40.3 ms** | 35.8 ms | 6.3 ms | 15.7% ⚠ | 2.61x | n/a | 3.7k files/s |
+| Vite 8 (Rolldown) × @verter/unplugin | **361.5 ms** | 15.5 ms | 489.3 ms | 135.3% ⚠ | 23.38x | n/a | 412 files/s |
 
 <details><summary>Notes</summary>
 
-- **Vite 8 (Rolldown) × @verter/unplugin**: createServer + listen + transformRequest('/bench-entry.js') — the ENTRY MODULE only: lazy plugins defer per-SFC compilation to first request, which is untimed here, while an eager plugin (Vize) pays its full 149-SFC batch inside this window. That strategy difference is the point of this table, not noise in it · lazy per-module transform
 - **Vite 8 (Rolldown) × @vitejs/plugin-vue**: createServer + listen + transformRequest('/bench-entry.js') — the ENTRY MODULE only: lazy plugins defer per-SFC compilation to first request, which is untimed here, while an eager plugin (Vize) pays its full 149-SFC batch inside this window. That strategy difference is the point of this table, not noise in it · lazy per-module transform
 - **Vite 8 (Rolldown) × unplugin-vue**: createServer + listen + transformRequest('/bench-entry.js') — the ENTRY MODULE only: lazy plugins defer per-SFC compilation to first request, which is untimed here, while an eager plugin (Vize) pays its full 149-SFC batch inside this window. That strategy difference is the point of this table, not noise in it · lazy per-module transform
 - **Vite 8 (Rolldown) × @vizejs/vite-plugin**: createServer + listen + transformRequest('/bench-entry.js') — the ENTRY MODULE only: lazy plugins defer per-SFC compilation to first request, which is untimed here, while an eager plugin (Vize) pays its full 149-SFC batch inside this window. That strategy difference is the point of this table, not noise in it · eager native batch pre-compile
+- **Vite 8 (Rolldown) × @verter/unplugin**: createServer + listen + transformRequest('/bench-entry.js') — the ENTRY MODULE only: lazy plugins defer per-SFC compilation to first request, which is untimed here, while an eager plugin (Vize) pays its full 149-SFC batch inside this window. That strategy difference is the point of this table, not noise in it · lazy per-module transform
 
 </details>
 
@@ -479,10 +479,10 @@ Two independent measurements. Cold start is paid once per session; HMR turnaroun
 
 <details><summary>Raw runs</summary>
 
-- **Vite 8 (Rolldown) × @verter/unplugin**: 20.9 ms, 21.2 ms
-- **Vite 8 (Rolldown) × @vitejs/plugin-vue**: 21.1 ms, 21.7 ms
-- **Vite 8 (Rolldown) × unplugin-vue**: 20.0 ms, 25.3 ms
-- **Vite 8 (Rolldown) × @vizejs/vite-plugin**: 53.0 ms, 73.6 ms
+- **Vite 8 (Rolldown) × @vitejs/plugin-vue**: 16.5 ms, 14.4 ms
+- **Vite 8 (Rolldown) × unplugin-vue**: 13.5 ms, 18.4 ms
+- **Vite 8 (Rolldown) × @vizejs/vite-plugin**: 44.8 ms, 35.8 ms
+- **Vite 8 (Rolldown) × @verter/unplugin**: 707.5 ms, 15.5 ms
 
 </details>
 
@@ -528,16 +528,16 @@ Two independent measurements. Cold start is paid once per session; HMR turnaroun
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | module bytes | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vite 8 (Rolldown) × @vitejs/plugin-vue ⚠ | (7.7 ms) | (7.4 ms) | – | – | not ranked | (30,605) | – |
-| Vite 8 (Rolldown) × unplugin-vue ⚠ | (8.5 ms) | (7.1 ms) | – | – | not ranked | (30,607) | – |
-| Vite 8 (Rolldown) × @vizejs/vite-plugin ⏭ | skipped | – | – | – | – | – | – |
+| Vite 8 (Rolldown) × unplugin-vue | **7.0 ms** | 5.5 ms | 0.7 ms | 10.1% ⚠ | 1.00x | 30,607 | 21.4k files/s |
+| Vite 8 (Rolldown) × @vitejs/plugin-vue | **7.2 ms** | 6.7 ms | 0.5 ms | 6.7% | 1.03x | 30,605 | 20.7k files/s |
+| Vite 8 (Rolldown) × @vizejs/vite-plugin | **10.6 ms** | 8.9 ms | 1.1 ms | 10.7% ⚠ | 1.52x | 29,568 | 14.0k files/s |
 | Vite 8 (Rolldown) × @verter/unplugin ⏭ | skipped | – | – | – | – | – | – |
 
 <details><summary>Notes</summary>
 
-- **Vite 8 (Rolldown) × @vitejs/plugin-vue ⚠**: edit &lt;template> of packages/components/affix/src/affix.vue and packages/components/alert/src/alert.vue → update · lazy per-module transform · one warm server per row (cold start is the other table's question), ms = mean of 2 round trip(s) per run | measured region: change announced → update message → updated module fetched over HTTP | revision plant verified in /packages/components/affix/src/affix.vue | ⚠ TOO NOISY TO RANK — CV 61.3% (ceiling 50%). The median of a series this unstable is a draw from noise, not a result; the time is bracketed and excluded from ranking exactly like a failed gate. Raw runs below.
-- **Vite 8 (Rolldown) × unplugin-vue ⚠**: edit &lt;template> of packages/components/affix/src/affix.vue and packages/components/alert/src/alert.vue → update · lazy per-module transform · one warm server per row (cold start is the other table's question), ms = mean of 2 round trip(s) per run | measured region: change announced → update message → updated module fetched over HTTP | revision plant verified in /packages/components/affix/src/affix.vue | ⚠ TOO NOISY TO RANK — CV 57.6% (ceiling 50%). The median of a series this unstable is a draw from noise, not a result; the time is bracketed and excluded from ranking exactly like a failed gate. Raw runs below.
-- **Vite 8 (Rolldown) × @vizejs/vite-plugin ⏭**: ⏭ NOT MEASURED — no HMR message (headless probe limitation, not a tool result) exceeded 30000 ms. This is the harness declining to publish a number, not a statement about @vizejs/vite-plugin. The dev cold-start row for this cell is published regardless: that measurement succeeded, and discarding it would hide a working result behind a probe limitation.
+- **Vite 8 (Rolldown) × unplugin-vue**: edit &lt;template> of packages/components/affix/src/affix.vue and packages/components/alert/src/alert.vue → update · lazy per-module transform · one warm server per row (cold start is the other table's question), ms = mean of 2 round trip(s) per run | measured region: change announced → update message → updated module fetched over HTTP | revision plant verified in /packages/components/affix/src/affix.vue
+- **Vite 8 (Rolldown) × @vitejs/plugin-vue**: edit &lt;template> of packages/components/affix/src/affix.vue and packages/components/alert/src/alert.vue → update · lazy per-module transform · one warm server per row (cold start is the other table's question), ms = mean of 2 round trip(s) per run | measured region: change announced → update message → updated module fetched over HTTP | revision plant verified in /packages/components/affix/src/affix.vue
+- **Vite 8 (Rolldown) × @vizejs/vite-plugin**: edit &lt;template> of packages/components/affix/src/affix.vue and packages/components/alert/src/alert.vue → update · eager native batch pre-compile · one warm server per row (cold start is the other table's question), ms = mean of 2 round trip(s) per run | measured region: change announced → update message → updated module fetched over HTTP | revision plant verified in /packages/components/affix/src/affix.vue?vue&vize
 - **Vite 8 (Rolldown) × @verter/unplugin ⏭**: ❌ HMR probe failed on this corpus — [verter] /home/runner/work/vue-benchmarks/vue-benchmarks/work-real/element-plus/bundle/element-plus-components-hmr/packages/components/affix/src/affix.vue: missing macro type dependency './affix' for type 'AffixProps' in '/home/runner/work/vue-benchmarks/vue-benchmarks/work-real/element-plus/bundle/element-plus-components-hmr/packages/components/affix/src/affix.vue'. The probe file compiles under the reference compiler in this same staged app (the staging preflight excludes files that need project context), so this is attributable to the integration rather than to the staging.
 
 </details>
@@ -562,8 +562,9 @@ Two independent measurements. Cold start is paid once per session; HMR turnaroun
 
 <details><summary>Raw runs</summary>
 
-- **Vite 8 (Rolldown) × @vitejs/plugin-vue**: 7.7 ms, 18.1 ms, 7.8 ms, 7.4 ms, 7.4 ms
-- **Vite 8 (Rolldown) × unplugin-vue**: 10.4 ms, 19.2 ms, 7.1 ms, 8.3 ms, 8.5 ms
+- **Vite 8 (Rolldown) × unplugin-vue**: 5.5 ms, 7.0 ms, 6.7 ms, 7.0 ms, 7.2 ms
+- **Vite 8 (Rolldown) × @vitejs/plugin-vue**: 7.2 ms, 7.7 ms, 6.7 ms, 7.8 ms, 7.1 ms
+- **Vite 8 (Rolldown) × @vizejs/vite-plugin**: 8.9 ms, 9.1 ms, 11.4 ms, 10.9 ms, 10.6 ms
 
 </details>
 
@@ -604,16 +605,16 @@ Files: **162** · Bytes: **765,295**
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | tests passed | Throughput | Peak RSS |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| element-plus — @vizejs/vite-plugin | **116.77 s** | 116.77 s | n/a | n/a | 1.00x | 2,533 | 1 files/s | 1668.1 MB |
-| element-plus — unplugin-vue | **117.55 s** | 117.55 s | n/a | n/a | 1.01x | 2,533 | 1 files/s | 1773.3 MB |
-| element-plus — project's own toolchain (baseline) | **117.84 s** | 117.84 s | n/a | n/a | 1.01x | 2,533 | 1 files/s | 1723.6 MB |
-| element-plus — @verter/unplugin ⚠ | (106.49 s) | (106.49 s) | – | – | not ranked | (519) | – | (3532.0 MB) |
+| element-plus — unplugin-vue | **86.55 s** | 86.55 s | n/a | n/a | 1.00x | 2,533 | 2 files/s | 1627.8 MB |
+| element-plus — project's own toolchain (baseline) | **88.45 s** | 88.45 s | n/a | n/a | 1.02x | 2,533 | 2 files/s | 1673.1 MB |
+| element-plus — @vizejs/vite-plugin | **88.83 s** | 88.83 s | n/a | n/a | 1.03x | 2,533 | 2 files/s | 1562.0 MB |
+| element-plus — @verter/unplugin ⚠ | (84.45 s) | (84.45 s) | – | – | not ranked | (519) | – | (3538.4 MB) |
 
 <details><summary>Notes</summary>
 
-- **element-plus — @vizejs/vite-plugin**: a generated config that imports the project's real config and replaces only the Vue plugin · extends vitest.config.mts · resolved with ConfigEnv {command:'serve', mode:'test'}, matching how vitest resolves it for the baseline · Vize's native compiler, substituted for the project's Vue plugin. · ⚠ NOT EQUAL WORK — the project's own vue({...}) options are DROPPED: the challenger is constructed with no options, because plugin-vue bakes them into the instance and exposes no way to read them back. The baseline row keeps them. This row may therefore be doing more or less work than the baseline, in an unmeasured direction | ⓘ SINGLE MEASURED RUN — the time is indicative (per-surface runtime budget); there is no median or spread behind it.
 - **element-plus — unplugin-vue**: a generated config that imports the project's real config and replaces only the Vue plugin · extends vitest.config.mts · resolved with ConfigEnv {command:'serve', mode:'test'}, matching how vitest resolves it for the baseline · Same official @vue/compiler-sfc as the baseline, different plugin wrapper — a gap to baseline is wrapper cost, not compiler cost. · ⚠ NOT EQUAL WORK — the project's own vue({...}) options are DROPPED: the challenger is constructed with no options, because plugin-vue bakes them into the instance and exposes no way to read them back. The baseline row keeps them. This row may therefore be doing more or less work than the baseline, in an unmeasured direction | ⓘ SINGLE MEASURED RUN — the time is indicative (per-surface runtime budget); there is no median or spread behind it.
 - **element-plus — project's own toolchain (baseline)**: the project's own toolchain, unmodified (baseline) · package . · script "test": vitest · config vitest.config.mts | ⓘ SINGLE MEASURED RUN — the time is indicative (per-surface runtime budget); there is no median or spread behind it.
+- **element-plus — @vizejs/vite-plugin**: a generated config that imports the project's real config and replaces only the Vue plugin · extends vitest.config.mts · resolved with ConfigEnv {command:'serve', mode:'test'}, matching how vitest resolves it for the baseline · Vize's native compiler, substituted for the project's Vue plugin. · ⚠ NOT EQUAL WORK — the project's own vue({...}) options are DROPPED: the challenger is constructed with no options, because plugin-vue bakes them into the instance and exposes no way to read them back. The baseline row keeps them. This row may therefore be doing more or less work than the baseline, in an unmeasured direction | ⓘ SINGLE MEASURED RUN — the time is indicative (per-surface runtime budget); there is no median or spread behind it.
 - **element-plus — @verter/unplugin ⚠**: a generated config that imports the project's real config and replaces only the Vue plugin · extends vitest.config.mts · resolved with ConfigEnv {command:'serve', mode:'test'}, matching how vitest resolves it for the baseline · Verter's universal bundler plugin, substituted for the project's Vue plugin. · ⚠ NOT EQUAL WORK — the project's own vue({...}) options are DROPPED: the challenger is constructed with no options, because plugin-vue bakes them into the instance and exposes no way to read them back. The baseline row keeps them. This row may therefore be doing more or less work than the baseline, in an unmeasured direction | ⓘ 78 of 162 test FILES failed to collect under this toolchain, so their tests never ran. The gate below compares tests PASSED, which is the quantity that shrinks when a file collapses; this line is here so a half-collected suite is visible rather than inferred from a file total that looks whole. | ⚠ FAILED TEST-COUNT GATE — passed 519 tests where the project's own toolchain passed 2533; failed 28 test(s) where the project's own toolchain failed 0 — a failing test is not a faster test. Measured but UNRANKED: a suite that passes fewer tests finishes sooner, and that is not a speed result. | ⚠ 28 test(s) FAILED under this toolchain that the project's own toolchain does not fail (baseline: 0) — a correctness finding about @verter/unplugin. | ⓘ SINGLE MEASURED RUN — the time is indicative (per-surface runtime budget); there is no median or spread behind it.
 
 </details>
@@ -639,10 +640,10 @@ Files: **162** · Bytes: **765,295**
 
 Raw runs:
 
-- **element-plus — @vizejs/vite-plugin**: 116.77 s
-- **element-plus — unplugin-vue**: 117.55 s
-- **element-plus — project's own toolchain (baseline)**: 117.84 s
-- **element-plus — @verter/unplugin**: 106.49 s
+- **element-plus — unplugin-vue**: 86.55 s
+- **element-plus — project's own toolchain (baseline)**: 88.45 s
+- **element-plus — @vizejs/vite-plugin**: 88.83 s
+- **element-plus — @verter/unplugin**: 84.45 s
 
 </details>
 
@@ -683,7 +684,7 @@ Grouped by **TypeScript engine**, ranked within each group. The JS engine and na
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | diagnostics | Throughput | Peak RSS |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| vue-tsc (JS) | **22.73 s** | 22.65 s | 123.3 ms | 0.5% | 1.00x | 82 | 34 files/s | 1919.0 MB |
+| vue-tsc (JS) | **17.02 s** | 16.66 s | 510.0 ms | 3.0% | 1.00x | 82 | 46 files/s | 1936.4 MB |
 
 <details><summary>Notes</summary>
 
@@ -693,7 +694,7 @@ Grouped by **TypeScript engine**, ranked within each group. The JS engine and na
 
 <details><summary>Raw runs</summary>
 
-- **vue-tsc (JS)**: 22.82 s, 22.65 s
+- **vue-tsc (JS)**: 17.38 s, 16.66 s
 
 </details>
 
@@ -706,25 +707,25 @@ Grouped by **TypeScript engine**, ranked within each group. The JS engine and na
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | diagnostics | Throughput | Peak RSS |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| vue-tsc (N) | **9.96 s** | 9.94 s | 23.6 ms | 0.2% | 1.00x | 85 | 78 files/s | 2505.1 MB |
-| verter-tsc | **9.99 s** | 9.95 s | 54.8 ms | 0.5% | 1.00x | 1,645 | 78 files/s | 1259.5 MB |
-| Vize ⚠ | (16.93 s) | (16.67 s) | – | – | not ranked | (1) | – | (3475.7 MB) |
+| vue-tsc (N) | **7.60 s** | 7.39 s | 286.8 ms | 3.8% | 1.00x | 85 | 103 files/s | 2564.8 MB |
+| verter-tsc | **8.46 s** | 8.41 s | 77.6 ms | 0.9% | 1.11x | 1,424 | 92 files/s | 1257.8 MB |
+| Vize ⚠ | (25.52 s) | (24.59 s) | – | – | not ranked | (0) | – | (3477.6 MB) |
 | Golar typecheck ⏭ | skipped | – | – | – | – | – | – | – |
 
 <details><summary>Notes</summary>
 
-- **vue-tsc (N)**: Same vue-tsc 3.3.11 with typescript aliased to typescript-native-bridge 6.0.3-bridge.17.tsgo.7.0.2 (TS API 6.0.3 on tsgo 7.0.2, in-process NAPI/FFI) — exactly one variable against the (JS) row: the TypeScript engine. | post-timing entrypoint plants: script=✓ template-prop=✓ template-event=✓
-- **verter-tsc**: verter-tsc --noEmit -p tsconfig.json | ⓘ reported 1645 diagnostics against the baseline's 82. Diagnostic equivalence is NOT asserted by this surface; a checker may legitimately be stricter. Read the counts, not just the times. | post-timing entrypoint plants: script=✓ template-prop=✓ template-event=✓
-- **Vize ⚠**: vize check --tsconfig tsconfig.json (no path pattern, so the file set comes from the tsconfig's include/exclude/files — the closest analogue of the -p invocation the other rows use) · ⚠ NOT ASSERTED EQUAL: Vize builds its own virtual project from that tsconfig rather than a TypeScript program, so which files end up checked may still differ; the diagnostic census below is what would expose a materially smaller set. | ⚠ FAILED PROGRAM-CONSTRUCTION GATE — at least one measured run exited 1 reporting 1 diagnostic(s) across 0 file(s). A checker that aborts while building the program returns quickly without checking anything, which on a wall-clock table is indistinguishable from a fast, thorough checker. Measured but UNRANKED. | ⚠ FAILED DIAGNOSTIC-CENSUS GATE — reported 1 diagnostics against the baseline's 82 (under half). A checker reporting far fewer may be skipping files, failing to resolve the project, or not checking templates; that finishes sooner, and it is not a speed result. Measured but UNRANKED. | post-timing entrypoint plants: script=✓ template-prop=✓ template-event=✓
+- **vue-tsc (N)**: Same vue-tsc 3.3.11 with typescript aliased to typescript-native-bridge 6.0.3-bridge.18.tsgo.7.0.2 (TS API 6.0.3 on tsgo 7.0.2, in-process NAPI/FFI) — exactly one variable against the (JS) row: the TypeScript engine. | post-timing entrypoint plants: script=✓ template-prop=✓ template-event=✓
+- **verter-tsc**: verter-tsc --noEmit -p tsconfig.json | ⓘ reported 1424 diagnostics against the baseline's 82. Diagnostic equivalence is NOT asserted by this surface; a checker may legitimately be stricter. Read the counts, not just the times. | post-timing entrypoint plants: script=✓ template-prop=✓ template-event=✓
+- **Vize ⚠**: vize check --tsconfig tsconfig.json (no path pattern, so the file set comes from the tsconfig's include/exclude/files — the closest analogue of the -p invocation the other rows use) · ⚠ NOT ASSERTED EQUAL: Vize builds its own virtual project from that tsconfig rather than a TypeScript program, so which files end up checked may still differ; the diagnostic census below is what would expose a materially smaller set. | ⚠ FAILED DIAGNOSTIC-CENSUS GATE — reported 0 diagnostics against the baseline's 82 (under half). A checker reporting far fewer may be skipping files, failing to resolve the project, or not checking templates; that finishes sooner, and it is not a speed result. Measured but UNRANKED. | post-timing entrypoint plants: script=✓ template-prop=✓ template-event=✓
 - **Golar typecheck ⏭**: ⏭ NOT MEASURED — golar is not yet wired into the project-typecheck surface (its own-tsconfig invocation and diagnostic census have not been validated against real projects). A harness omission, not a verdict about golar; it ranks on the generated-corpus typecheck surface.
 
 </details>
 
 <details><summary>Raw runs</summary>
 
-- **vue-tsc (N)**: 9.94 s, 9.97 s
-- **verter-tsc**: 10.02 s, 9.95 s
-- **Vize**: 16.67 s, 17.19 s
+- **vue-tsc (N)**: 7.39 s, 7.80 s
+- **verter-tsc**: 8.41 s, 8.52 s
+- **Vize**: 26.45 s, 24.59 s
 
 </details>
 
@@ -756,13 +757,13 @@ Files: **162** · Bytes: **765,295**
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | components resolved | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| vue-component-meta ⚠ | (5.26 s) | (4.49 s) | – | – | not ranked | (162) | – |
-| @verter/component-meta ⚠ | (35.52 s) | (34.57 s) | – | – | not ranked | (131) | – |
+| vue-component-meta ⚠ | (3.96 s) | (3.60 s) | – | – | not ranked | (162) | – |
+| @verter/component-meta ⚠ | (66.74 s) | (64.38 s) | – | – | not ranked | (153) | – |
 
 <details><summary>Notes</summary>
 
 - **vue-component-meta ⚠**: BASELINE · createChecker(tsconfig.web.json) + getComponentMeta for each of 162 corpus SFCs under ., using the project's own tsconfig and installed dependencies ⚠ COMPONENT-META SEMANTIC VALIDITY FAIL (28/29 passed) — options-api-component: events.increment: missing; events.reset: missing.
-- **@verter/component-meta ⚠**: openComponentMetaSession({root: ., tsconfig: tsconfig.web.json}) + getComponentMeta for the same 162 corpus SFCs | ⚠ FAILED METADATA CENSUS — returned metadata for 131 components where the baseline returned 162 (of 162), failing on 31. Fewer components is less work, and less work finishes sooner. Measured but UNRANKED. ⚠ COMPONENT-META SEMANTIC VALIDITY FAIL (0/29 passed) — attr-name-normalization: validity child crashed: output materialization error: component-meta output materialization failed at exposed[].type index 2: the source has no live graph representation under the request view; basic-props: validity child crashed: output materialization error: component-meta output materialization failed at exposed[].type index 2: the source has no live graph representation under the request view. ⚠ COMPARISON REFERENCE INVALID: the official Vue component-meta baseline did not pass mandatory validation.
+- **@verter/component-meta ⚠**: openComponentMetaSession({root: ., tsconfig: tsconfig.web.json}) + getComponentMeta for the same 162 corpus SFCs | ⚠ FAILED METADATA CENSUS — returned metadata for 153 components where the baseline returned 162 (of 162), failing on 9. Fewer components is less work, and less work finishes sooner. Measured but UNRANKED. ⚠ COMPONENT-META SEMANTIC VALIDITY FAIL (26/29 passed) — emits-multi-payload: events.toggle: parameter 1: optionality differs; events.item-click: parameter 2.shift: missing property; full-api: events.submit: type "[payload: object]" missing value|size|string. ⚠ COMPARISON REFERENCE INVALID: the official Vue component-meta baseline did not pass mandatory validation.
 
 </details>
 
@@ -796,8 +797,8 @@ Files: **162** · Bytes: **765,295**
 
 Raw runs:
 
-- **vue-component-meta**: 5.34 s, 5.26 s, 5.39 s, 4.49 s, 4.59 s
-- **@verter/component-meta**: 35.09 s, 35.52 s, 38.57 s, 36.88 s, 34.57 s
+- **vue-component-meta**: 4.18 s, 4.38 s, 3.82 s, 3.60 s, 3.96 s
+- **@verter/component-meta**: 66.74 s, 66.60 s, 67.34 s, 64.38 s, 67.22 s
 
 </details>
 
@@ -818,17 +819,17 @@ Hover is ranked per TypeScript engine; diagnostics is observational and always u
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | diagnostics published | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (JS) ⚠ | (3.62 s) | (3.58 s) | – | – | not ranked | (0) | – |
+| Volar (JS) ⚠ | (2.73 s) | (2.65 s) | – | – | not ranked | (0) | – |
 
 <details><summary>Notes</summary>
 
-- **Volar (JS) ⚠**: BASELINE · official Vue language server v3 in hybrid (two-process) mode — the only mode v3 has. The measured unit is the pair: @vue/language-server plus typescript-language-server with @vue/typescript-plugin, joined by the tsserver bridge. Both processes' startup and project load of the real project are inside the timings. HOVER asks both halves in parallel and charges the slower; DIAGNOSTICS times the first publication for the document from either half (which may be an empty preliminary — the count it carried and the first NON-EMPTY publication are both published). · operation: didOpen → diagnostics · workspace ., document packages/components/affix/src/affix.vue | ⚠ FAILED DIAGNOSTIC-CONTENT GATE — published 0 diagnostics for a document verter-lsp published 1 for. Answering "nothing to report" fast is not the same job as answering. Measured but UNRANKED. (Diagnostic EQUIVALENCE is not asserted; the counts are published so a suspicious row is visible.) | ⚠ OBSERVATIONAL ONLY — diagnostics correctness is UNKNOWN on this unplanted third-party document, and Volar's Vue-only LSP publication is not the same product as the native servers' combined Vue+TypeScript publication. Time and counts remain visible; no diagnostics row participates in ranking.
+- **Volar (JS) ⚠**: BASELINE · official Vue language server v3 in hybrid (two-process) mode — the only mode v3 has. The measured unit is the pair: @vue/language-server plus typescript-language-server with @vue/typescript-plugin, joined by the tsserver bridge. Both processes' startup and project load of the real project are inside the timings. HOVER asks both halves in parallel and charges the slower; DIAGNOSTICS times the first publication for the document from either half (which may be an empty preliminary — the count it carried and the first NON-EMPTY publication are both published). · operation: didOpen → diagnostics · workspace ., document packages/components/affix/src/affix.vue | ⓘ DIAGNOSTIC-CONTENT GATE NOT RUN — every server published an EMPTY diagnostic list for this document. That is a legitimate answer, but not one any row can be measured against. Ranked, but unverified rather than verified-equal. | ⚠ OBSERVATIONAL ONLY — diagnostics correctness is UNKNOWN on this unplanted third-party document, and Volar's Vue-only LSP publication is not the same product as the native servers' combined Vue+TypeScript publication. Time and counts remain visible; no diagnostics row participates in ranking.
 
 </details>
 
 <details><summary>Raw runs</summary>
 
-- **Volar (JS)**: 3.61 s, 3.58 s, 3.68 s, 3.69 s, 3.62 s
+- **Volar (JS)**: 2.65 s, 2.78 s, 2.72 s, 2.90 s, 2.73 s
 
 </details>
 
@@ -836,23 +837,22 @@ Hover is ranked per TypeScript engine; diagnostics is observational and always u
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | diagnostics published | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (N) ⚠ | (2.42 s) | (2.35 s) | – | – | not ranked | (0) | – |
-| Verter ⚠ | (2.04 s) | (1.95 s) | – | – | not ranked | (1) | – |
-| Vize ⚠ | (1.94 s) | (1.93 s) | – | – | not ranked | (0) | – |
+| Volar (N) ⚠ | (1.83 s) | (1.81 s) | – | – | not ranked | (0) | – |
+| Verter ❌ | error | – | – | – | – | – | – |
+| Vize ⚠ | (1.77 s) | (1.77 s) | – | – | not ranked | (0) | – |
 
 <details><summary>Notes</summary>
 
-- **Volar (N) ⚠**: Identical to the Volar row except the TypeScript half runs on typescript-native-bridge (tsgo): same @vue/language-server, same @vue/typescript-plugin, same bridge, tsdk pointed at TNB 6.0.3-bridge.17.tsgo.7.0.2 tsdk. Exactly one variable against the baseline — the TypeScript engine — which is why the two are ranked in separate tables. · operation: didOpen → diagnostics · workspace ., document packages/components/affix/src/affix.vue | ⚠ FAILED DIAGNOSTIC-CONTENT GATE — published 0 diagnostics for a document verter-lsp published 1 for. Answering "nothing to report" fast is not the same job as answering. Measured but UNRANKED. (Diagnostic EQUIVALENCE is not asserted; the counts are published so a suspicious row is visible.) | ⚠ OBSERVATIONAL ONLY — diagnostics correctness is UNKNOWN on this unplanted third-party document, and Volar's Vue-only LSP publication is not the same product as the native servers' combined Vue+TypeScript publication. Time and counts remain visible; no diagnostics row participates in ranking.
-- **Verter ⚠**: verter-lsp stdio, the native server from the published npm package, given the project directory as its workspace root. $/verter/ready is not waited for — its workspace load is inside the measured window like every other server's. · operation: didOpen → diagnostics · workspace ., document packages/components/affix/src/affix.vue | ⚠ OBSERVATIONAL ONLY — diagnostics correctness is UNKNOWN on this unplanted third-party document, and Volar's Vue-only LSP publication is not the same product as the native servers' combined Vue+TypeScript publication. Time and counts remain visible; no diagnostics row participates in ranking. | ⚠ VUE REFERENCE UNAVAILABLE/INVALID — this operation × engine class has no valid official Vue reference, so candidate timing remains visible but cannot rank.
-- **Vize ⚠**: vize lsp --stdio, launched from the npm package's NODE entry, because no version-matched native server was found; that costs ~35ms of Node bootstrap per spawn. Same workspace, file and position as every other row. · operation: didOpen → diagnostics · workspace ., document packages/components/affix/src/affix.vue | ⚠ FAILED DIAGNOSTIC-CONTENT GATE — published 0 diagnostics for a document verter-lsp published 1 for. Answering "nothing to report" fast is not the same job as answering. Measured but UNRANKED. (Diagnostic EQUIVALENCE is not asserted; the counts are published so a suspicious row is visible.) | ⚠ OBSERVATIONAL ONLY — diagnostics correctness is UNKNOWN on this unplanted third-party document, and Volar's Vue-only LSP publication is not the same product as the native servers' combined Vue+TypeScript publication. Time and counts remain visible; no diagnostics row participates in ranking. | ⚠ VUE REFERENCE UNAVAILABLE/INVALID — this operation × engine class has no valid official Vue reference, so candidate timing remains visible but cannot rank.
+- **Volar (N) ⚠**: Identical to the Volar row except the TypeScript half runs on typescript-native-bridge (tsgo): same @vue/language-server, same @vue/typescript-plugin, same bridge, tsdk pointed at TNB 6.0.3-bridge.18.tsgo.7.0.2 tsdk. Exactly one variable against the baseline — the TypeScript engine — which is why the two are ranked in separate tables. · operation: didOpen → diagnostics · workspace ., document packages/components/affix/src/affix.vue | ⓘ DIAGNOSTIC-CONTENT GATE NOT RUN — every server published an EMPTY diagnostic list for this document. That is a legitimate answer, but not one any row can be measured against. Ranked, but unverified rather than verified-equal. | ⚠ OBSERVATIONAL ONLY — diagnostics correctness is UNKNOWN on this unplanted third-party document, and Volar's Vue-only LSP publication is not the same product as the native servers' combined Vue+TypeScript publication. Time and counts remain visible; no diagnostics row participates in ranking.
+- **Verter ❌**: verter-lsp:diagnostics: no textDocument/publishDiagnostics for the opened document within 120000 ms — the server never answered, so there is no latency to report
+- **Vize ⚠**: vize lsp --stdio, launched from the npm package's NODE entry, because no version-matched native server was found; that costs ~35ms of Node bootstrap per spawn. Same workspace, file and position as every other row. · operation: didOpen → diagnostics · workspace ., document packages/components/affix/src/affix.vue | ⓘ DIAGNOSTIC-CONTENT GATE NOT RUN — every server published an EMPTY diagnostic list for this document. That is a legitimate answer, but not one any row can be measured against. Ranked, but unverified rather than verified-equal. | ⚠ OBSERVATIONAL ONLY — diagnostics correctness is UNKNOWN on this unplanted third-party document, and Volar's Vue-only LSP publication is not the same product as the native servers' combined Vue+TypeScript publication. Time and counts remain visible; no diagnostics row participates in ranking. | ⚠ VUE REFERENCE UNAVAILABLE/INVALID — this operation × engine class has no valid official Vue reference, so candidate timing remains visible but cannot rank.
 
 </details>
 
 <details><summary>Raw runs</summary>
 
-- **Volar (N)**: 2.42 s, 2.44 s, 2.41 s, 2.43 s, 2.35 s
-- **Verter**: 2.10 s, 2.04 s, 2.24 s, 2.01 s, 1.95 s
-- **Vize**: 1.93 s, 1.94 s, 1.93 s, 1.95 s, 2.00 s
+- **Volar (N)**: 1.81 s, 1.83 s, 1.96 s, 1.97 s, 1.81 s
+- **Vize**: 1.77 s, 1.77 s, 1.82 s, 1.91 s, 1.77 s
 
 </details>
 
@@ -860,7 +860,7 @@ Hover is ranked per TypeScript engine; diagnostics is observational and always u
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | hover bytes | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Volar (JS) | **3.8 ms** | 1.7 ms | 1.4 ms | 36.5% ⚠ | 1.00x | 49 | 264 files/s |
+| Volar (JS) | **2.7 ms** | 1.3 ms | 1.0 ms | 37.1% ⚠ | 1.00x | 49 | 375 files/s |
 
 <details><summary>Notes</summary>
 
@@ -870,7 +870,7 @@ Hover is ranked per TypeScript engine; diagnostics is observational and always u
 
 <details><summary>Raw runs</summary>
 
-- **Volar (JS)**: 1.7 ms, 4.6 ms, 3.8 ms, 1.7 ms, 4.1 ms
+- **Volar (JS)**: 1.3 ms, 3.4 ms, 1.5 ms, 2.7 ms, 3.4 ms
 
 </details>
 
@@ -878,23 +878,23 @@ Hover is ranked per TypeScript engine; diagnostics is observational and always u
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | hover bytes | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Verter | **0.7 ms** | 0.5 ms | 0.1 ms | 17.3% ⚠ | 1.00x | 49 | 1.4k files/s |
-| Volar (N) | **16.8 ms** | 15.8 ms | 2.9 ms | 17.2% ⚠ | 23.81x | 49 | 60 files/s |
-| Vize ⚠ | (39.3 ms) | (39.0 ms) | – | – | not ranked | (49) | – |
+| Verter | **0.4 ms** | 0.4 ms | 0.1 ms | 17.7% ⚠ | 1.00x | 49 | 2.2k files/s |
+| Volar (N) | **19.3 ms** | 14.4 ms | 4.6 ms | 24.0% ⚠ | 43.20x | 49 | 52 files/s |
+| Vize | **66.6 ms** | 64.5 ms | 1.9 ms | 2.8% | 148.95x | 49 | 15 files/s |
 
 <details><summary>Notes</summary>
 
 - **Verter**: verter-lsp stdio, the native server from the published npm package, given the project directory as its workspace root. $/verter/ready is not waited for — its workspace load is inside the measured window like every other server's. · operation: hover on `COMPONENT_NAME` · workspace ., document packages/components/affix/src/affix.vue
-- **Volar (N)**: Identical to the Volar row except the TypeScript half runs on typescript-native-bridge (tsgo): same @vue/language-server, same @vue/typescript-plugin, same bridge, tsdk pointed at TNB 6.0.3-bridge.17.tsgo.7.0.2 tsdk. Exactly one variable against the baseline — the TypeScript engine — which is why the two are ranked in separate tables. · operation: hover on `COMPONENT_NAME` · workspace ., document packages/components/affix/src/affix.vue
-- **Vize ⚠**: vize lsp --stdio, launched from the npm package's NODE entry, because no version-matched native server was found; that costs ~35ms of Node bootstrap per spawn. Same workspace, file and position as every other row. · operation: hover on `COMPONENT_NAME` · workspace ., document packages/components/affix/src/affix.vue | ⚠ TOO NOISY TO RANK — CV 94.4% (ceiling 50%). The median of a series this unstable is a draw from noise, not a result; the time is bracketed and excluded from ranking exactly like a failed gate. Raw runs below.
+- **Volar (N)**: Identical to the Volar row except the TypeScript half runs on typescript-native-bridge (tsgo): same @vue/language-server, same @vue/typescript-plugin, same bridge, tsdk pointed at TNB 6.0.3-bridge.18.tsgo.7.0.2 tsdk. Exactly one variable against the baseline — the TypeScript engine — which is why the two are ranked in separate tables. · operation: hover on `COMPONENT_NAME` · workspace ., document packages/components/affix/src/affix.vue
+- **Vize**: vize lsp --stdio, launched from the npm package's NODE entry, because no version-matched native server was found; that costs ~35ms of Node bootstrap per spawn. Same workspace, file and position as every other row. · operation: hover on `COMPONENT_NAME` · workspace ., document packages/components/affix/src/affix.vue
 
 </details>
 
 <details><summary>Raw runs</summary>
 
-- **Verter**: 0.7 ms, 0.7 ms, 0.5 ms, 0.8 ms, 0.7 ms
-- **Volar (N)**: 16.7 ms, 21.4 ms, 16.8 ms, 15.8 ms, 21.9 ms
-- **Vize**: 122.2 ms, 39.1 ms, 39.0 ms, 39.3 ms, 39.5 ms
+- **Verter**: 0.4 ms, 0.5 ms, 0.6 ms, 0.4 ms, 0.4 ms
+- **Volar (N)**: 14.4 ms, 15.0 ms, 20.1 ms, 25.9 ms, 19.3 ms
+- **Vize**: 64.5 ms, 68.1 ms, 65.0 ms, 68.8 ms, 66.6 ms
 
 </details>
 
