@@ -100,7 +100,7 @@
     "postcss-selector-parser": "7.1.6",
     "postcss-value-parser": "4.2.0",
     "prettier": "3.9.9",
-    "source-map-js": "1.2.1",
+    "source-map-js": "1.2.2",
     "typescript-language-server": "6.0.1",
     "verter-lsp": "0.0.1-beta.6",
     "verter-mcp": "0.0.1-beta.6",
