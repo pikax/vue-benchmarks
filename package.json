@@ -81,7 +81,7 @@
     "@verter/component-meta": "0.0.1-beta.6",
     "@verter/native": "0.0.1-beta.6",
     "@vizejs/musea-mcp-server": "0.429.1",
-    "@vizejs/native": "0.429.1",
+    "@vizejs/native": "0.429.2",
     "@vscode/test-electron": "3.1.0",
     "@vue-jsx-vapor/compiler-rs": "3.2.25",
     "@vue-jsx-vapor/eslint": "3.2.25",
