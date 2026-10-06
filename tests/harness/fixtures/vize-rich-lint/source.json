@@ -1,0 +1,60 @@
+{
+  "schema": "vue-benchmarks.vize-rich-frame-regression",
+  "version": 1,
+  "upstreamRevision": "5489aee433cd1054b9d72973457498544da7c467",
+  "originalSuiteHash": "3a09ab6b2b314ce5be7d60bf17fa06941f895f25fe0e305adf88c0a1b0ee06a2",
+  "sourceBuild": {
+    "schema": "vize.differential.build",
+    "version": 1,
+    "recipe": "cargo build --profile ci -p vize",
+    "sourceRevision": "4dfe05c7ba9742065c3bf522fba531ee0a6a5c97",
+    "binaryPath": "target/ci/vize",
+    "binarySha256": "19be840ff38d859aad82b33c6f27f0bf176d4fa976ac60ecead7d62d8cb1e19b",
+    "cliVersion": "vize 0.432.0"
+  },
+  "historicalActions": {
+    "repository": "ubugeeei-prod/vize",
+    "runId": 37258271095,
+    "artifactId": 11323822734,
+    "archiveSha256": "a12e56003f84622e0ca2085357eba1241ab7a581f5fcbbfc62163763c583b77f"
+  },
+  "sourcePins": {
+    "scripts/lib/lint-validity-plants.mjs": "7f069c2b588cc11438deb0d2fcedb89de5342fe75f237eed656a8d19d510914b",
+    "scripts/lib/lint-row-specs.mjs": "9936d99aca8008c9fbbcabd4352e286e25935b05ed3977cf216614766b504cb5",
+    "scripts/lib/real-world/ansi.mjs": "d51f5c28a8d05d69b4394032f26827f954a880811c171d882459c3c35f133296",
+    "LICENSE": "c3081f92362a167af8f17890c6876dcdf06c1dbbd328347e9ff696103a538467"
+  },
+  "fixtures": [
+    {
+      "file": "vize-lint-1t-dirty-human.stdout",
+      "bytes": 9574,
+      "sha256": "0c570b0c0ff0a081087648ce619208f35bf8aca544c384932c31d9925c41314c"
+    },
+    {
+      "file": "vize-lint-1t-clean-human.stdout",
+      "bytes": 971,
+      "sha256": "435b5ca633e9bbdd991fb5b3a55bebaf92dac6a86fcc0c7114760fd71aa2ab0b"
+    },
+    {
+      "file": "vize-lint-max-dirty-human.stdout",
+      "bytes": 9574,
+      "sha256": "3637008d9b284acdfbdfe3dadbff2789e8cf98d6bb87c6f0ab37be9474c84987"
+    },
+    {
+      "file": "vize-lint-max-clean-human.stdout",
+      "bytes": 971,
+      "sha256": "a34d3de438e4f62eea999da1b37102349c082ea0342ba167d3fd563adb603953"
+    },
+    {
+      "file": "original-diagnostics.json",
+      "bytes": 11926,
+      "sha256": "e8421e346b468f3ceb393e835a4998a95d8cd77577a95e47fe049a3b8d8fe9b8"
+    },
+    {
+      "file": "expected-diagnostics.json",
+      "bytes": 11730,
+      "sha256": "7945d46c1589f9e9db707c05954b83ea496f1e3142c3fb578164a1acc1060dbc"
+    }
+  ],
+  "authority": "All four retained human stdout byte streams are unchanged. Expected diagnostics alter only the file field: the literal rich-frame opening decoration ╭─[ is not part of the authored filename. Every old row, range, rule, message and raw slice is retained. These are historical source-build parser regressions, not current/public/ranking observations."
+}

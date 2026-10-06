@@ -1,0 +1,238 @@
+{
+  "vize-lint-1t": {
+    "dirty": [
+      {
+        "file": "nested/00/v-html/Plant.vue",
+        "line": 6,
+        "column": 8,
+        "rule": "vize:vue/no-v-html",
+        "message": "v-html can lead to XSS attacks. Avoid using it with user-provided content",
+        "raw": "⚠ [vize:vue/no-v-html] v-html can lead to XSS attacks. Avoid using it with user-provided content\n   ╭─[nested/00/v-html/Plant.vue:6:8"
+      },
+      {
+        "file": "nested/01/v-for-key/Plant.vue",
+        "line": 5,
+        "column": 6,
+        "rule": "vize:vue/require-v-for-key",
+        "message": "Elements in iteration expect to have 'v-bind:key' directives. Element: <p>",
+        "raw": "× [vize:vue/require-v-for-key] Elements in iteration expect to have 'v-bind:key' directives. Element: <p>\n   ╭─[nested/01/v-for-key/Plant.vue:5:6"
+      },
+      {
+        "file": "nested/02/duplicate-attributes/Plant.vue",
+        "line": 2,
+        "column": 25,
+        "rule": "vize:parser/template",
+        "message": "Duplicate attribute `type`. Keeping the repeated attribute so parsing can continue.",
+        "raw": "⚠ [vize:parser/template] Duplicate attribute `type`. Keeping the repeated attribute so parsing can continue.\n   ╭─[nested/02/duplicate-attributes/Plant.vue:2:25"
+      },
+      {
+        "file": "nested/02/duplicate-attributes/Plant.vue",
+        "line": 2,
+        "column": 25,
+        "rule": "vize:vue/no-duplicate-attributes",
+        "message": "Duplicate attribute 'type'",
+        "raw": "× [vize:vue/no-duplicate-attributes] Duplicate attribute 'type'\n   ╭─[nested/02/duplicate-attributes/Plant.vue:2:25"
+      },
+      {
+        "file": "nested/03/dupe-else-if/Plant.vue",
+        "line": 4,
+        "column": 42,
+        "rule": "vize:vue/no-dupe-v-else-if",
+        "message": "This condition is a duplicate of a condition in the same v-if/v-else-if chain",
+        "raw": "× [vize:vue/no-dupe-v-else-if] This condition is a duplicate of a condition in the same v-if/v-else-if chain\n   ╭─[nested/03/dupe-else-if/Plant.vue:4:42"
+      },
+      {
+        "file": "nested/04/textarea-mustache/Plant.vue",
+        "line": 5,
+        "column": 3,
+        "rule": "vize:a11y/form-control-has-label",
+        "message": "<textarea> elements must have an associated label",
+        "raw": "⚠ [vize:a11y/form-control-has-label] <textarea> elements must have an associated label\n   ╭─[nested/04/textarea-mustache/Plant.vue:5:3"
+      },
+      {
+        "file": "nested/04/textarea-mustache/Plant.vue",
+        "line": 5,
+        "column": 13,
+        "rule": "vize:vue/no-textarea-mustache",
+        "message": "Mustache interpolation inside textarea is not allowed",
+        "raw": "× [vize:vue/no-textarea-mustache] Mustache interpolation inside textarea is not allowed\n   ╭─[nested/04/textarea-mustache/Plant.vue:5:13"
+      },
+      {
+        "file": "nested/05/v-if-with-v-for/Plant.vue",
+        "line": 6,
+        "column": 9,
+        "rule": "vize:vue/no-use-v-if-with-v-for",
+        "message": "Avoid using v-if with v-for on the same element. Use a computed property to filter the list first",
+        "raw": "⚠ [vize:vue/no-use-v-if-with-v-for] Avoid using v-if with v-for on the same element. Use a computed property to filter the list first\n   ╭─[nested/05/v-if-with-v-for/Plant.vue:6:9"
+      },
+      {
+        "file": "nested/06/require-component-is/Plant.vue",
+        "line": 3,
+        "column": 5,
+        "rule": "vize:vue/require-component-is",
+        "message": "<component> requires a `:is` or `is` attribute",
+        "raw": "× [vize:vue/require-component-is] <component> requires a `:is` or `is` attribute\n   ╭─[nested/06/require-component-is/Plant.vue:3:5"
+      },
+      {
+        "file": "nested/07/mutating-props/Plant.vue",
+        "line": 5,
+        "column": 3,
+        "rule": "vize:vue/no-mutating-props",
+        "message": "Unexpected mutation of prop 'props.count' in <script setup>",
+        "raw": "× [vize:vue/no-mutating-props] Unexpected mutation of prop 'props.count' in <script setup>\n   ╭─[nested/07/mutating-props/Plant.vue:5:3"
+      },
+      {
+        "file": "nested/08/mutating-props-shadowing/Plant.vue",
+        "line": 4,
+        "column": 3,
+        "rule": "vize:vue/no-mutating-props",
+        "message": "Unexpected mutation of prop 'props.count' in <script setup>",
+        "raw": "× [vize:vue/no-mutating-props] Unexpected mutation of prop 'props.count' in <script setup>\n   ╭─[nested/08/mutating-props-shadowing/Plant.vue:4:3"
+      },
+      {
+        "file": "nested/09/deprecated-slot-attribute/Plant.vue",
+        "line": 8,
+        "column": 7,
+        "rule": "vize:vue/no-deprecated-slot-attribute",
+        "message": "the `slot` attribute was deprecated in Vue 2.6 and removed in Vue 3",
+        "raw": "× [vize:vue/no-deprecated-slot-attribute] the `slot` attribute was deprecated in Vue 2.6 and removed in Vue 3\n   ╭─[nested/09/deprecated-slot-attribute/Plant.vue:8:7"
+      },
+      {
+        "file": "nested/10/v-text-on-component/Plant.vue",
+        "line": 5,
+        "column": 18,
+        "rule": "vize:vue/no-v-text-v-html-on-component",
+        "message": "v-text cannot be used on component <MyBox>",
+        "raw": "× [vize:vue/no-v-text-v-html-on-component] v-text cannot be used on component <MyBox>\n   ╭─[nested/10/v-text-on-component/Plant.vue:5:18"
+      }
+    ],
+    "clean": [
+      {
+        "file": "nested/04/textarea-mustache/Plant.vue",
+        "line": 5,
+        "column": 3,
+        "rule": "vize:a11y/form-control-has-label",
+        "message": "<textarea> elements must have an associated label",
+        "raw": "⚠ [vize:a11y/form-control-has-label] <textarea> elements must have an associated label\n   ╭─[nested/04/textarea-mustache/Plant.vue:5:3"
+      }
+    ]
+  },
+  "vize-lint-max": {
+    "dirty": [
+      {
+        "file": "nested/00/v-html/Plant.vue",
+        "line": 6,
+        "column": 8,
+        "rule": "vize:vue/no-v-html",
+        "message": "v-html can lead to XSS attacks. Avoid using it with user-provided content",
+        "raw": "⚠ [vize:vue/no-v-html] v-html can lead to XSS attacks. Avoid using it with user-provided content\n   ╭─[nested/00/v-html/Plant.vue:6:8"
+      },
+      {
+        "file": "nested/01/v-for-key/Plant.vue",
+        "line": 5,
+        "column": 6,
+        "rule": "vize:vue/require-v-for-key",
+        "message": "Elements in iteration expect to have 'v-bind:key' directives. Element: <p>",
+        "raw": "× [vize:vue/require-v-for-key] Elements in iteration expect to have 'v-bind:key' directives. Element: <p>\n   ╭─[nested/01/v-for-key/Plant.vue:5:6"
+      },
+      {
+        "file": "nested/02/duplicate-attributes/Plant.vue",
+        "line": 2,
+        "column": 25,
+        "rule": "vize:parser/template",
+        "message": "Duplicate attribute `type`. Keeping the repeated attribute so parsing can continue.",
+        "raw": "⚠ [vize:parser/template] Duplicate attribute `type`. Keeping the repeated attribute so parsing can continue.\n   ╭─[nested/02/duplicate-attributes/Plant.vue:2:25"
+      },
+      {
+        "file": "nested/02/duplicate-attributes/Plant.vue",
+        "line": 2,
+        "column": 25,
+        "rule": "vize:vue/no-duplicate-attributes",
+        "message": "Duplicate attribute 'type'",
+        "raw": "× [vize:vue/no-duplicate-attributes] Duplicate attribute 'type'\n   ╭─[nested/02/duplicate-attributes/Plant.vue:2:25"
+      },
+      {
+        "file": "nested/03/dupe-else-if/Plant.vue",
+        "line": 4,
+        "column": 42,
+        "rule": "vize:vue/no-dupe-v-else-if",
+        "message": "This condition is a duplicate of a condition in the same v-if/v-else-if chain",
+        "raw": "× [vize:vue/no-dupe-v-else-if] This condition is a duplicate of a condition in the same v-if/v-else-if chain\n   ╭─[nested/03/dupe-else-if/Plant.vue:4:42"
+      },
+      {
+        "file": "nested/04/textarea-mustache/Plant.vue",
+        "line": 5,
+        "column": 3,
+        "rule": "vize:a11y/form-control-has-label",
+        "message": "<textarea> elements must have an associated label",
+        "raw": "⚠ [vize:a11y/form-control-has-label] <textarea> elements must have an associated label\n   ╭─[nested/04/textarea-mustache/Plant.vue:5:3"
+      },
+      {
+        "file": "nested/04/textarea-mustache/Plant.vue",
+        "line": 5,
+        "column": 13,
+        "rule": "vize:vue/no-textarea-mustache",
+        "message": "Mustache interpolation inside textarea is not allowed",
+        "raw": "× [vize:vue/no-textarea-mustache] Mustache interpolation inside textarea is not allowed\n   ╭─[nested/04/textarea-mustache/Plant.vue:5:13"
+      },
+      {
+        "file": "nested/05/v-if-with-v-for/Plant.vue",
+        "line": 6,
+        "column": 9,
+        "rule": "vize:vue/no-use-v-if-with-v-for",
+        "message": "Avoid using v-if with v-for on the same element. Use a computed property to filter the list first",
+        "raw": "⚠ [vize:vue/no-use-v-if-with-v-for] Avoid using v-if with v-for on the same element. Use a computed property to filter the list first\n   ╭─[nested/05/v-if-with-v-for/Plant.vue:6:9"
+      },
+      {
+        "file": "nested/06/require-component-is/Plant.vue",
+        "line": 3,
+        "column": 5,
+        "rule": "vize:vue/require-component-is",
+        "message": "<component> requires a `:is` or `is` attribute",
+        "raw": "× [vize:vue/require-component-is] <component> requires a `:is` or `is` attribute\n   ╭─[nested/06/require-component-is/Plant.vue:3:5"
+      },
+      {
+        "file": "nested/07/mutating-props/Plant.vue",
+        "line": 5,
+        "column": 3,
+        "rule": "vize:vue/no-mutating-props",
+        "message": "Unexpected mutation of prop 'props.count' in <script setup>",
+        "raw": "× [vize:vue/no-mutating-props] Unexpected mutation of prop 'props.count' in <script setup>\n   ╭─[nested/07/mutating-props/Plant.vue:5:3"
+      },
+      {
+        "file": "nested/08/mutating-props-shadowing/Plant.vue",
+        "line": 4,
+        "column": 3,
+        "rule": "vize:vue/no-mutating-props",
+        "message": "Unexpected mutation of prop 'props.count' in <script setup>",
+        "raw": "× [vize:vue/no-mutating-props] Unexpected mutation of prop 'props.count' in <script setup>\n   ╭─[nested/08/mutating-props-shadowing/Plant.vue:4:3"
+      },
+      {
+        "file": "nested/09/deprecated-slot-attribute/Plant.vue",
+        "line": 8,
+        "column": 7,
+        "rule": "vize:vue/no-deprecated-slot-attribute",
+        "message": "the `slot` attribute was deprecated in Vue 2.6 and removed in Vue 3",
+        "raw": "× [vize:vue/no-deprecated-slot-attribute] the `slot` attribute was deprecated in Vue 2.6 and removed in Vue 3\n   ╭─[nested/09/deprecated-slot-attribute/Plant.vue:8:7"
+      },
+      {
+        "file": "nested/10/v-text-on-component/Plant.vue",
+        "line": 5,
+        "column": 18,
+        "rule": "vize:vue/no-v-text-v-html-on-component",
+        "message": "v-text cannot be used on component <MyBox>",
+        "raw": "× [vize:vue/no-v-text-v-html-on-component] v-text cannot be used on component <MyBox>\n   ╭─[nested/10/v-text-on-component/Plant.vue:5:18"
+      }
+    ],
+    "clean": [
+      {
+        "file": "nested/04/textarea-mustache/Plant.vue",
+        "line": 5,
+        "column": 3,
+        "rule": "vize:a11y/form-control-has-label",
+        "message": "<textarea> elements must have an associated label",
+        "raw": "⚠ [vize:a11y/form-control-has-label] <textarea> elements must have an associated label\n   ╭─[nested/04/textarea-mustache/Plant.vue:5:3"
+      }
+    ]
+  }
+}

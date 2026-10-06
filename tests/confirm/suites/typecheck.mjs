@@ -290,9 +290,9 @@ export function toolRunners(cwd, { timeout = 120_000 } = {}) {
       id: "vize-check",
       available: Boolean(vize),
       run: (opts = {}) =>
-        invoke(vize, ["check", ".", "--tsconfig", "tsconfig.json"], { cwd, timeout, sampleRss: opts.sampleRss }),
+        invoke(vize, ["check", "--tsconfig", "tsconfig.json"], { cwd, timeout, sampleRss: opts.sampleRss }),
       runProject: (rel, opts = {}) =>
-        invoke(vize, ["check", ".", "--tsconfig", rel], { cwd, timeout, sampleRss: opts.sampleRss }),
+        invoke(vize, ["check", "--tsconfig", rel], { cwd, timeout, sampleRss: opts.sampleRss }),
       unavailable: "vize binary not found",
     },
     {

@@ -250,11 +250,11 @@ export async function runTypecheckSurface(fixtureDir, options) {
       artifactLabel: "Diagnostics",
       artifactPolarity: "informational",
       package: "vize",
-      notes: "vize check . --tsconfig tsconfig.json (native + Corsa when available)",
+      notes: "vize check --tsconfig tsconfig.json (native + Corsa when available)",
       measure: () => {
         const { ms, stdout, stderr } = runCommand(
           vize,
-          ["check", ".", "--tsconfig", "tsconfig.json"],
+          ["check", "--tsconfig", "tsconfig.json"],
           {
             cwd: checkDir,
             allowNonZeroExit: true,
@@ -351,11 +351,13 @@ export async function runTypecheckSurface(fixtureDir, options) {
     "golar-typecheck": golar && { bin: golar, args: ["typecheck"] },
     "golar-default": golar && { bin: golar, args: [] },
     "vize-check": vize && {
-      // Plain `check .` first — Vize discovers via tsconfig include and
+      // No-pattern `check` follows tsconfig files/include/exclude. An explicit
+      // `.` requests a directory input set and overrides those exclusions.
+      // Keep discovery first because
       // `--tsconfig` can race Corsa IO on Windows plant dirs.
       bin: vize,
-      args: ["check", "."],
-      alt: ["check", ".", "--tsconfig", "tsconfig.json"],
+      args: ["check"],
+      alt: ["check", "--tsconfig", "tsconfig.json"],
     },
     "verter-tsc": verterTsc && { bin: verterTsc, args: ["--noEmit", "-p", "tsconfig.json"] },
   };

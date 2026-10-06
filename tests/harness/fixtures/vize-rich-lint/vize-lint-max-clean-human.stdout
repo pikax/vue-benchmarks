@@ -1,0 +1,24 @@
+
+  [38;2;244;191;117;1m⚠[0m [38;2;244;191;117;1m[vize:a11y/form-control-has-label] <textarea> elements must have an associated label[0m
+   ╭─[[38;2;92;157;255;1mnested/04/textarea-mustache/Plant.vue[0m:5:3]
+ [2m4[0m │ <template>
+ [2m5[0m │   <textarea v-model="msg"></textarea>
+   · [38;2;246;87;248m  ────────────────────────[0m
+ [2m6[0m │ </template>
+   ╰────
+[38;2;106;159;181m  help: [0mOption 1: Use <label> with for:
+          <label for="email">Email</label>
+          <input id="email" type="email">
+        Option 2: Wrap input in label:
+          <label>
+          Email
+          <input type="email">
+          </label>
+        Option 3: Use aria-label:
+          <input type="search" aria-label="Search">
+        Note: Placeholder is NOT a substitute for a label.
+        Reference: docs/content/rules/accessibility.md
+
+
+1 warning in 12 files
+Linted 12 files in 10.7348ms
