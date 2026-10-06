@@ -47,3 +47,20 @@ commands and rich output remain unchanged. The historical source version and
 artifact identity are in the fixture manifest; these bytes are not current
 installed-package observations. Upstream CI, a supported published Vize update,
 current full validation and any ranking refresh remain separate requirements.
+
+## First upstream CI and obsolete exception
+
+Source 5c8e6ea passes all harness controls and the ordinary PR build/smoke.
+Test 37399471255 executes all 702 confirmation rows but fails the existing rule
+that rejects a known-failure entry once its original dirty/clean judge passes:
+`lint/mutating-props-shadowing/vize-lint-1t` now passes after path attribution.
+The full failed report is retained: official artifact 11384519536, 28,126 bytes,
+SHA256 154ef1564369e266a8f01107c7bab2e7c6d079d33819d530d5e4e92c5768dd03.
+Both ZIP member CRCs are valid; report totals are 533 pass / 143 fail / 26 skip / 0 warn.
+
+Remove only that obsolete exception, so its unchanged original test must keep
+passing. All other known-failure entries, original plants/judges/configs and
+published results stay exact. The first failed run stays failed; a fresh current
+upstream Test must execute the same full suite before this patch is qualified.
+
+The [paired correction record](https://github.com/ubugeeei-prod/vize/issues/7856#issuecomment-6007558994) preserves the same complete first-CI evidence and scope.
