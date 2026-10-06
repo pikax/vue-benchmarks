@@ -111,3 +111,18 @@ case, exception, scoring rule or published result is changed by this update.
 Vize issue #7856 and authoritative upstream main ranking remain unfinished.
 
 Decision: https://github.com/ubugeeei-prod/vize/issues/7856#issuecomment-6013062932
+
+## First published-package harness result
+
+The first 0.435.0 Test (37441354148) fails one of 1,034 harness tests before
+confirmation. The blanket installed-native zero-passes assertion rejects the
+unchanged `scss-v-bind-scoped` judge, whose authored style uses only ordinary
+CSS nesting and v-bind. Ordinary PR smoke 37441354149 independently records
+that single pass for both Vize native APIs, with seven genuine Sass failures.
+The complete exact Sass gate remains FAIL; external Sass-adapter results remain
+separate. Keep all original eight plants/judges and the aggregate FAIL assertion,
+while removing only the Vize-specific forever-zero assumption. No Sass support,
+confirmation completion or ranking is inferred. The complete first failed log
+and official smoke artifact remain retained; fresh same-PR Actions are required.
+
+Decision: https://github.com/ubugeeei-prod/vize/issues/7856#issuecomment-6013255914
