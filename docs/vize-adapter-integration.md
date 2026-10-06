@@ -126,3 +126,24 @@ confirmation completion or ranking is inferred. The complete first failed log
 and official smoke artifact remain retained; fresh same-PR Actions are required.
 
 Decision: https://github.com/ubugeeei-prod/vize/issues/7856#issuecomment-6013255914
+
+## Published confirmation and stale exceptions
+
+Published 0.435.0 at source 62454f5c passes all 1,034 harness tests and ordinary
+PR build/smoke. Test 37442497373 then runs the unchanged full correctness suite:
+543 pass / 133 fail / 26 skip / 0 warn, with 702 report rows and 1,318 expanded
+gate rows. Its sole gate failure is twenty-one applicable known-failure entries
+whose original judges now pass. The complete official report is retained as
+artifact 11402151169, 27,640 bytes, SHA256
+5e6568593b80c50800cac409370d068bf6af1146c8e05c6940d019c4a1356620.
+Both ZIP members pass CRC; there are no unexpected failures under the unchanged
+known-failure policy.
+
+Remove only those twenty-one entries, leaving 163 actual exception keys and all
+three documentation metadata entries. Their original cases now remain mandatory
+regression checks. All other entries, complete inputs/configs/judges, scorers,
+locks and published results stay exact. The failed run stays failed and a fresh
+same-PR Test must qualify the new manifest. This correctness qualification does
+not establish throughput or an official upstream-main ranking; #7856 stays open.
+
+Decision: https://github.com/ubugeeei-prod/vize/issues/7856#issuecomment-6013434915
