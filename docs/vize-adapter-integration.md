@@ -19,11 +19,12 @@ classification unchanged. The first retained Vize-source replay of the original
 strict-prop/fallthrough diagnostics and one unrelated Golar diagnostic. That
 failed observation remains historical evidence, not adapter acceptance.
 
-The independent Vize raw-config correction is tracked in
-[ubugeeei-prod/vize#8075](https://github.com/ubugeeei-prod/vize/pull/8075): absent
-`checkUnknownProps` inherits authored `strictTemplates`, while an explicit false
-wins and unconfigured/typed defaults stay unchanged. This upstream patch does
-not update the pinned Vize dependency or assume that correction is published.
+The early global raw-config fallback proposed in
+[ubugeeei-prod/vize#8075](https://github.com/ubugeeei-prod/vize/pull/8075) was
+withdrawn after unchanged native fallthrough contracts failed. The delivered
+fix retains those defaults and provides the explicit `strictComponentAttrs`
+policy used by the isolated adapter below. Both failed histories remain
+recorded; the adapter does not modify the original project configurations.
 
 ## Rich lint frame attribution
 
@@ -76,7 +77,7 @@ benchmark options now use an isolated Vize `extends` wrapper: absent
 Original configs, SFCs and all judges remain byte-exact. The helper accepts the
 benchmark's generated JSON configs and fails on missing or cyclic inputs.
 
-`strictComponentAttrs` requires the upcoming qualified Vize release: it defaults
+`strictComponentAttrs` is available in the published Vize 0.435.0: it defaults
 false, is effective only with resolved unknown-prop checking, keeps declared and
 Vue public attributes, and permits only genuinely enabled inferred root keys.
 This applies to confirmation, timing and post-timing work gates. Wrapper creation
@@ -87,3 +88,26 @@ public ranking is claimed. The previous upstream 702-row confirmation at 2339ffd
 is green independently of this new source delta and is not transferred to it.
 
 Decision: https://github.com/ubugeeei-prod/vize/issues/7856#issuecomment-6007815072
+
+## Published dependency adoption
+
+Pin the five direct Vize packages and their fourteen-package dependency graph
+to the actual published 0.435.0 release. Every new lockfile integrity matches
+the retained official registry metadata. All other package blocks, peer
+contexts, the package-manager lock document and original judges remain exact.
+The Vite plugin's new `picomatch` dependency uses the already locked 4.0.5.
+The resolver adds only these fourteen exact versions to the existing release-age
+exceptions; the threshold and other integrity policies remain unchanged.
+
+The public release is sourced from 51f3778473a17cecfb31c6238207418c2232c299,
+with source cut baa427830e0a1b1b50a45582bda418992d5a5ac9. Dependency preparation
+used lockfile-only resolution with scripts disabled and loaded no provider.
+Fresh upstream CI must validate these actual installed versions.
+
+The separate current-source 154-case qualification remains failed: text has
+149 passes and five warnings; JSON has 146 passes, two failures and six warnings;
+the unchanged reference has 147 passes, two failures and five warnings. No
+case, exception, scoring rule or published result is changed by this update.
+Vize issue #7856 and authoritative upstream main ranking remain unfinished.
+
+Decision: https://github.com/ubugeeei-prod/vize/issues/7856#issuecomment-6013062932
