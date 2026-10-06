@@ -64,3 +64,26 @@ published results stay exact. The first failed run stays failed; a fresh current
 upstream Test must execute the same full suite before this patch is qualified.
 
 The [paired correction record](https://github.com/ubugeeei-prod/vize/issues/7856#issuecomment-6007558994) preserves the same complete first-CI evidence and scope.
+
+## Standard strict component-attribute translation
+
+Vize's retained default policy permits native component attributes and automatic
+fallthrough; changing it globally breaks existing projects. Standard strict
+benchmark options now use an isolated Vize `extends` wrapper: absent
+`checkUnknownProps` inherits authored `strictTemplates`, absent
+`fallthroughAttributes` becomes false, and absent `strictComponentAttrs` inherits
+`strictTemplates`. Authored explicit booleans win, including inherited options.
+Original configs, SFCs and all judges remain byte-exact. The helper accepts the
+benchmark's generated JSON configs and fails on missing or cyclic inputs.
+
+`strictComponentAttrs` requires the upcoming qualified Vize release: it defaults
+false, is effective only with resolved unknown-prop checking, keeps declared and
+Vue public attributes, and permits only genuinely enabled inferred root keys.
+This applies to confirmation, timing and post-timing work gates. Wrapper creation
+is outside measured CLI execution; the actual checker still pays config loading.
+The registered Vize current-154 recipe uses the byte-identical helper; official
+references keep their original configs. Neither current 154-case completion nor
+public ranking is claimed. The previous upstream 702-row confirmation at 2339ffd
+is green independently of this new source delta and is not transferred to it.
+
+Decision: https://github.com/ubugeeei-prod/vize/issues/7856#issuecomment-6007815072

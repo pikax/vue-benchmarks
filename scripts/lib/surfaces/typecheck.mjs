@@ -1,3 +1,4 @@
+import { vizeTypecheckConfig } from "../vize-typecheck-config.mjs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { existsSync, writeFileSync } from "node:fs";
@@ -118,6 +119,7 @@ export async function runTypecheckSurface(fixtureDir, options) {
 
   const vueTsc = tryResolveBin("vue-tsc");
   const vize = tryResolveBin("vize");
+  const vizeConfig = vize ? vizeTypecheckConfig(checkDir) : null;
   const verterTsc = tryResolveBin("verter-tsc");
   const golar = tryResolveBin("golar");
   const tnb = resolveTnbVueTsc(rootDir);
@@ -250,11 +252,11 @@ export async function runTypecheckSurface(fixtureDir, options) {
       artifactLabel: "Diagnostics",
       artifactPolarity: "informational",
       package: "vize",
-      notes: "vize check --tsconfig tsconfig.json (native + Corsa when available)",
+      notes: "vize check --tsconfig isolated standard-strict config (native + Corsa when available)",
       measure: () => {
         const { ms, stdout, stderr } = runCommand(
           vize,
-          ["check", "--tsconfig", "tsconfig.json"],
+          ["check", "--tsconfig", vizeConfig],
           {
             cwd: checkDir,
             allowNonZeroExit: true,
@@ -351,13 +353,10 @@ export async function runTypecheckSurface(fixtureDir, options) {
     "golar-typecheck": golar && { bin: golar, args: ["typecheck"] },
     "golar-default": golar && { bin: golar, args: [] },
     "vize-check": vize && {
-      // No-pattern `check` follows tsconfig files/include/exclude. An explicit
-      // `.` requests a directory input set and overrides those exclusions.
-      // Keep discovery first because
-      // `--tsconfig` can race Corsa IO on Windows plant dirs.
+      // The isolated wrapper translates authored strict options; original
+      // fixture configs stay byte-exact for every other tool.
       bin: vize,
-      args: ["check"],
-      alt: ["check", "--tsconfig", "tsconfig.json"],
+      args: ["check", "--tsconfig", "tsconfig.vize-tsconfig.json"],
     },
     "verter-tsc": verterTsc && { bin: verterTsc, args: ["--noEmit", "-p", "tsconfig.json"] },
   };
@@ -377,6 +376,11 @@ export async function runTypecheckSurface(fixtureDir, options) {
   const corpusPlant = prepareCorpusPlant(checkDir);
   const gateReport = {};
   try {
+    if (vize) {
+      for (const directory of [plant.scriptDir, plant.templatePropDir, plant.templateEventDir, corpusPlant.dir]) {
+        vizeTypecheckConfig(directory);
+      }
+    }
     applyWorkGate(results, (v) => {
       const spec = gateSpecs[v.id];
       if (!spec) return true;
@@ -471,7 +475,7 @@ export async function runTypecheckSurface(fixtureDir, options) {
       },
     },
     methodology: [
-      "Same on-disk fixture directory and tsconfig for every tool.",
+      "Same original on-disk fixture project; Vize uses an isolated extends config translating standard strict component attributes with explicit option precedence.",
       "Default check file limit is smaller than compile corpus (typecheck cost scales steeply).",
       "Each measurement is a full CLI process invocation — every tool here is a CLI, so process startup is paid by all of them equally.",
       "Warm runs still benefit from OS page cache of source files and node_modules.",
