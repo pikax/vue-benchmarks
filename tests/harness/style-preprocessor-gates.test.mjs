@@ -282,12 +282,20 @@ describe("Sass/SCSS compiler validity plants", () => {
       assert.equal(gates.sharedSassAdapter[name].status, "PASS");
     }
 
-    // The installed standalone native type surfaces expose no Sass option.
-    // This is a proved unsupported capability (FAIL), not semantic UNKNOWN and
-    // not a PASS borrowed from the shared external adapter.
+    // Vize still fails the complete authored Sass gate. Individual plants can
+    // contain only ordinary CSS nesting/v-bind and pass their unchanged judge;
+    // that does not establish Sass preprocessing support.
     for (const name of [
       "@vizejs/native:compileSfc",
       "@vizejs/native:compileSfcBatchWithResults",
+    ]) {
+      assert.equal(gates.exactEntrypoints[name]?.status, "FAIL", name);
+    }
+
+    // The other installed standalone native type surfaces expose no Sass option.
+    // This is a proved unsupported capability (FAIL), not semantic UNKNOWN and
+    // not a PASS borrowed from the shared external adapter.
+    for (const name of [
       "@verter/native",
       "@fervid/napi:compileSync",
       "@fervid/napi:compileAsync",

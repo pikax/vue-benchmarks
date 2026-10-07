@@ -1,0 +1,194 @@
+
+  [38;2;244;191;117;1m⚠[0m [38;2;244;191;117;1m[vize:vue/no-v-html] v-html can lead to XSS attacks. Avoid using it with user-provided content[0m
+   ╭─[[38;2;92;157;255;1mnested/00/v-html/Plant.vue[0m:6:8]
+ [2m5[0m │   <!-- lint plant -->
+ [2m6[0m │   <div v-html="html"></div>
+   · [38;2;246;87;248m       ─────────────[0m
+ [2m7[0m │ </template>
+   ╰────
+[38;2;106;159;181m  help: [0mSecurity Risk: v-html renders raw HTML and can execute malicious scripts from user input.
+        Alternatives:
+        1. Use text interpolation (auto-escaped):
+          <p>{{ userContent }}</p>
+        2. Use a sanitization library:
+          import DOMPurify from 'dompurify'
+          const safeHtml = DOMPurify.sanitize(userInput)
+        3. Use a markdown renderer with XSS protection
+        If you must use v-html:
+        - Never use with user-provided content
+        - Only use with trusted, static content
+        Reference: docs/content/rules/vue.md
+
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1m[vize:vue/require-v-for-key] Elements in iteration expect to have 'v-bind:key' directives. Element: <p>[0m
+   ╭─[[38;2;92;157;255;1mnested/01/v-for-key/Plant.vue[0m:5:6]
+ [2m4[0m │ <template>
+ [2m5[0m │   <p v-for="row in rows">{{ row.id }}</p>
+   · [38;2;246;87;248m     ───────────────────[0m
+ [2m6[0m │ </template>
+   ╰────
+[38;2;106;159;181m  help: [0mWhy: The :key attribute helps Vue's virtual DOM efficiently track and update list items.
+        Fix: Add a unique identifier as the key:
+          <li v-for="item in items" :key="item.id">
+          {{ item.name }}
+          </li>
+        Best practices:
+        - Use unique, stable identifiers (like database IDs)
+        - Avoid using array index as key when list order may change
+        - Keys must be primitive values (string or number)
+        Reference: docs/content/rules/vue.md
+
+
+  [38;2;244;191;117;1m⚠[0m [38;2;244;191;117;1m[vize:parser/template] Duplicate attribute `type`. Keeping the repeated attribute so parsing can continue.[0m
+   ╭─[[38;2;92;157;255;1mnested/02/duplicate-attributes/Plant.vue[0m:2:25]
+ [2m1[0m │ <template>
+ [2m2[0m │   <button type="button" type="submit">go</button>
+   · [38;2;246;87;248m                        ────[0m
+ [2m3[0m │ </template>
+   ╰────
+[38;2;106;159;181m  help: [0mReference: docs/content/rules/index.md
+
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1m[vize:vue/no-duplicate-attributes] Duplicate attribute 'type'[0m
+   ╭─[[38;2;92;157;255;1mnested/02/duplicate-attributes/Plant.vue[0m:2:25]
+ [2m1[0m │ <template>
+ [2m2[0m │   <button type="button" type="submit">go</button>
+   · [38;2;246;87;248m                        ─────────────[0m
+ [2m3[0m │ </template>
+   ╰────
+[38;2;106;159;181m  help: [0mRemove the duplicate attribute
+        Reference: docs/content/rules/vue.md
+
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1m[vize:vue/no-dupe-v-else-if] This condition is a duplicate of a condition in the same v-if/v-else-if chain[0m
+   ╭─[[38;2;92;157;255;1mnested/03/dupe-else-if/Plant.vue[0m:4:42]
+ [2m3[0m │ </script>
+ [2m4[0m │ <template><p v-if="kind === 'a'">a</p><p v-else-if="kind === 'a'">again</p></template>
+   · [38;2;246;87;248m                                         ────────────────────────[0m
+   ╰────
+[38;2;106;159;181m  help: [0mRemove or modify the duplicate condition
+        Reference: docs/content/rules/vue.md
+
+
+  [38;2;244;191;117;1m⚠[0m [38;2;244;191;117;1m[vize:a11y/form-control-has-label] <textarea> elements must have an associated label[0m
+   ╭─[[38;2;92;157;255;1mnested/04/textarea-mustache/Plant.vue[0m:5:3]
+ [2m4[0m │ <template>
+ [2m5[0m │   <textarea>{{ msg }}</textarea>
+   · [38;2;246;87;248m  ──────────[0m
+ [2m6[0m │ </template>
+   ╰────
+[38;2;106;159;181m  help: [0mOption 1: Use <label> with for:
+          <label for="email">Email</label>
+          <input id="email" type="email">
+        Option 2: Wrap input in label:
+          <label>
+          Email
+          <input type="email">
+          </label>
+        Option 3: Use aria-label:
+          <input type="search" aria-label="Search">
+        Note: Placeholder is NOT a substitute for a label.
+        Reference: docs/content/rules/accessibility.md
+
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1m[vize:vue/no-textarea-mustache] Mustache interpolation inside textarea is not allowed[0m
+   ╭─[[38;2;92;157;255;1mnested/04/textarea-mustache/Plant.vue[0m:5:13]
+ [2m4[0m │ <template>
+ [2m5[0m │   <textarea>{{ msg }}</textarea>
+   · [38;2;246;87;248m            ─────────[0m
+ [2m6[0m │ </template>
+   ╰────
+[38;2;106;159;181m  help: [0mUse v-model instead of mustache interpolation in textarea
+        Reference: docs/content/rules/vue.md
+
+
+  [38;2;244;191;117;1m⚠[0m [38;2;244;191;117;1m[vize:vue/no-use-v-if-with-v-for] Avoid using v-if with v-for on the same element. Use a computed property to filter the list first[0m
+   ╭─[[38;2;92;157;255;1mnested/05/v-if-with-v-for/Plant.vue[0m:6:9]
+ [2m5[0m │   <ul>
+ [2m6[0m │     <li v-for="item in items" v-if="item.ok" :key="item.id">{{ item.id }}</li>
+   · [38;2;246;87;248m        ──────────┬──────────[0m[38;2;30;201;212m ──────────────[0m
+   ·                   [38;2;246;87;248m╰── [38;2;246;87;248mv-for is here[0m[0m
+ [2m7[0m │   </ul>
+   ╰────
+[38;2;106;159;181m  help: [0mProblem: v-for has higher priority than v-if, causing the entire list to iterate before filtering.
+        Solution 1: Use a computed property:
+          <script setup>
+          const activeUsers = computed(() =>
+          users.filter(u => u.isActive)
+          )
+          </script>
+          <template>
+          <li v-for="user in activeUsers" :key="user.id">
+          </template>
+        Solution 2: Wrap with <template>:
+          <template v-for="user in users" :key="user.id">
+          <li v-if="user.isActive">{{ user.name }}</li>
+          </template>
+        Reference: docs/content/rules/vue.md
+
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1m[vize:vue/require-component-is] <component> requires a `:is` or `is` attribute[0m
+   ╭─[[38;2;92;157;255;1mnested/06/require-component-is/Plant.vue[0m:3:5]
+ [2m2[0m │   <div>
+ [2m3[0m │     <component />
+   · [38;2;246;87;248m    ─────────────[0m
+ [2m4[0m │   </div>
+   ╰────
+[38;2;106;159;181m  help: [0mWhy: The <component> element is a dynamic component placeholder. Without is, Vue cannot determine which component to render.
+        Fix:
+          <component :is="currentComponent" />
+          <component is="MyComponent" />
+        Reference: docs/content/rules/vue.md
+
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1m[vize:vue/no-mutating-props] Unexpected mutation of prop 'props.count' in <script setup>[0m
+   ╭─[[38;2;92;157;255;1mnested/07/mutating-props/Plant.vue[0m:5:3]
+ [2m4[0m │   // plant
+ [2m5[0m │   props.count += 1
+   · [38;2;246;87;248m  ────────────────[0m
+ [2m6[0m │ }
+   ╰────
+[38;2;106;159;181m  help: [0mUse a local ref or emit an event instead of mutating props directly
+        Reference: docs/content/rules/vue.md
+
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1m[vize:vue/no-mutating-props] Unexpected mutation of prop 'props.count' in <script setup>[0m
+   ╭─[[38;2;92;157;255;1mnested/08/mutating-props-shadowing/Plant.vue[0m:4:3]
+ [2m3[0m │ function bump() {
+ [2m4[0m │   props.count++
+   · [38;2;246;87;248m  ─────────────[0m
+ [2m5[0m │ }
+   ╰────
+[38;2;106;159;181m  help: [0mUse a local ref or emit an event instead of mutating props directly
+        Reference: docs/content/rules/vue.md
+
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1m[vize:vue/no-deprecated-slot-attribute] the `slot` attribute was deprecated in Vue 2.6 and removed in Vue 3[0m
+   ╭─[[38;2;92;157;255;1mnested/09/deprecated-slot-attribute/Plant.vue[0m:8:7]
+ [2m7[0m │     <span
+ [2m8[0m │       slot="header">h</span>
+   · [38;2;246;87;248m      ────[0m
+ [2m9[0m │   </MyPanel>
+   ╰────
+[38;2;106;159;181m  help: [0mUse v-slot instead (e.g. <template v-slot:header>).
+        Reference: docs/content/rules/vue.md
+
+
+  [38;2;225;80;80;1m×[0m [38;2;225;80;80;1m[vize:vue/no-v-text-v-html-on-component] v-text cannot be used on component <MyBox>[0m
+   ╭─[[38;2;92;157;255;1mnested/10/v-text-on-component/Plant.vue[0m:5:18]
+ [2m4[0m │ </script>
+ [2m5[0m │ <template><MyBox v-text="msg" /></template>
+   · [38;2;246;87;248m                 ────────────[0m
+   ╰────
+[38;2;106;159;181m  help: [0mWhy: Components have their own rendering logic. v-text/v-html would overwrite the component's content unexpectedly.
+        Fix: Pass content via props or slots:
+          <!-- Instead of -->
+          <MyComponent v-html="content" />
+        
+          <!-- Use slots -->
+          <MyComponent><div v-html="content" /></MyComponent>
+        Reference: docs/content/rules/vue.md
+
+
+9 errors, 4 warnings in 12 files
+Linted 12 files in 17.3181ms

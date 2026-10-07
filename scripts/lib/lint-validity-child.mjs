@@ -69,10 +69,12 @@ function verterDiagnostics(output, filename, source) {
   }));
 }
 
-function cliDiagnostics(raw) {
+export function cliDiagnostics(raw) {
   const diagnostics = [];
   const text = stripAnsi(raw);
-  const vizePattern = /(?:⚠|×|✖|✗)\s*\[([^\]]+)]\s*([^\r\n]+)[\s\S]*?([^\s]+\.vue):(\d+):(\d+)/g;
+  // A rich frame owns its filename; frame decoration and paths quoted in
+  // source/help text are not filenames. Never borrow the next report's frame.
+  const vizePattern = /(?:⚠|×|✖|✗)[ \t]*\[([^\]\r\n]+)][ \t]*([^\r\n]+)(?:(?!\r?\n[ \t]*(?:⚠|×|✖|✗)[ \t]*\[)[\s\S])*?\r?\n[ \t]*╭─\[([^\r\n]+\.vue):(\d+):(\d+)/g;
   for (const match of text.matchAll(vizePattern)) {
     diagnostics.push({
       file: match[3],
