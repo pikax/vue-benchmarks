@@ -125,7 +125,7 @@
     "rolldown": "1.2.11",
     "sass": "1.105.0",
     "swc-loader": "0.2.7",
-    "tinybench": "6.2.0",
+    "tinybench": "6.2.1",
     "typescript": "6.0.3",
     "typescript-go": "npm:typescript@7.0.2",
     "unplugin-vue": "8.0.0",
