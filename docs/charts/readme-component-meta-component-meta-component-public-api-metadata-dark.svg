@@ -14,27 +14,27 @@
   <line x1="248" y1="56" x2="248" y2="136" stroke="#3d444d" stroke-opacity="0.55" />
   <text fill="#9198a1" x="248" y="156" text-anchor="middle" font-size="11">0.0 ms</text>
   <line x1="348.5" y1="56" x2="348.5" y2="136" stroke="#3d444d" stroke-opacity="0.55" />
-  <text fill="#9198a1" x="348.5" y="156" text-anchor="middle" font-size="11">534 ms</text>
+  <text fill="#9198a1" x="348.5" y="156" text-anchor="middle" font-size="11">528 ms</text>
   <line x1="449" y1="56" x2="449" y2="136" stroke="#3d444d" stroke-opacity="0.55" />
-  <text fill="#9198a1" x="449" y="156" text-anchor="middle" font-size="11">1.07 s</text>
+  <text fill="#9198a1" x="449" y="156" text-anchor="middle" font-size="11">1.06 s</text>
   <line x1="549.5" y1="56" x2="549.5" y2="136" stroke="#3d444d" stroke-opacity="0.55" />
-  <text fill="#9198a1" x="549.5" y="156" text-anchor="middle" font-size="11">1.60 s</text>
+  <text fill="#9198a1" x="549.5" y="156" text-anchor="middle" font-size="11">1.58 s</text>
   <line x1="650" y1="56" x2="650" y2="136" stroke="#3d444d" stroke-opacity="0.55" />
-  <text fill="#9198a1" x="650" y="156" text-anchor="middle" font-size="11">2.13 s</text>
+  <text fill="#9198a1" x="650" y="156" text-anchor="middle" font-size="11">2.11 s</text>
   <text fill="#9198a1" x="16" y="85" font-size="11">1</text>
       <text fill="#e6edf3" x="36" y="85" font-size="13" fill-opacity="0.62">vue-component-meta</text>
       <line x1="36" y1="80" x2="240" y2="80" stroke="#e6edf3" stroke-opacity="0.45" />
       <rect x="248" y="69" width="402" height="22" rx="5" fill="#6e768166"/>
       <rect x="248" y="69" width="402.0" height="22" rx="5" fill="url(#hatch-0)" fill-opacity="0.38"/>
-      <rect x="248" y="69" width="160.8" height="22" rx="5" fill="url(#hatch-0)" fill-opacity="1"/>
-      <line x1="408.770054322746" y1="68" x2="408.770054322746" y2="92" stroke="#0d1117" stroke-width="2" stroke-opacity="0.9"/>
-      <text fill="#ffffff" x="256" y="85" font-size="12" font-weight="600">854 ms warm / 2.13 s fresh child · unranked</text>
+      <rect x="248" y="69" width="165.5" height="22" rx="5" fill="url(#hatch-0)" fill-opacity="1"/>
+      <line x1="413.500888220502" y1="68" x2="413.500888220502" y2="92" stroke="#0d1117" stroke-width="2" stroke-opacity="0.9"/>
+      <text fill="#ffffff" x="256" y="85" font-size="12" font-weight="600">870 ms warm / 2.11 s fresh child · unranked</text>
   <text fill="#9198a1" x="16" y="121" font-size="11">2</text>
       <text fill="#e6edf3" x="36" y="121" font-size="13" fill-opacity="0.62">@verter/component-meta</text>
       <line x1="36" y1="116" x2="240" y2="116" stroke="#e6edf3" stroke-opacity="0.45" />
       <rect x="248" y="105" width="402" height="22" rx="5" fill="#6e768166"/>
-      <rect x="248" y="105" width="239.8" height="22" rx="5" fill="url(#hatch-1)" fill-opacity="1"/>
-      <rect x="248" y="105" width="234.5" height="22" rx="5" fill="url(#hatch-1)" fill-opacity="0.38"/>
-      <line x1="482.5128854303069" y1="104" x2="482.5128854303069" y2="128" stroke="#0d1117" stroke-width="2" stroke-opacity="0.9"/>
-      <text fill="#ffffff" x="256" y="121" font-size="12" font-weight="600">1.27 s warm / 1.25 s fresh child · unranked</text>
+      <rect x="248" y="105" width="265.6" height="22" rx="5" fill="url(#hatch-1)" fill-opacity="1"/>
+      <rect x="248" y="105" width="256.6" height="22" rx="5" fill="url(#hatch-1)" fill-opacity="0.38"/>
+      <line x1="504.5573179053328" y1="104" x2="504.5573179053328" y2="128" stroke="#0d1117" stroke-width="2" stroke-opacity="0.9"/>
+      <text fill="#ffffff" x="256" y="121" font-size="12" font-weight="600">1.40 s warm / 1.35 s fresh child · unranked</text>
 </svg>

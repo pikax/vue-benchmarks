@@ -2,12 +2,12 @@
 
 > Auto-generated from the JSON snapshots in [`results/benchmarks/`](../results/benchmarks/) and [`results/real_world/`](../results/real_world/) by `pnpm docs`. Do not edit by hand.
 
-- **Generated:** 2026-09-29T12:56:26.892Z
+- **Generated:** 2026-10-19T21:23:23.900Z
 - **Fixture:** `fixtures/200` (200 files)
 - **Runs / warmups:** 5 / 1
-- **Runner:** Linux · linux/x64 · 4 CPUs · INTEL(R) XEON(R) PLATINUM 8573C · 15.6 GB · Node v22.23.2
-- **Commit:** [`8a88482`](https://github.com/pikax/vue-benchmarks/commit/8a8848276c52956d7e54e262e5846e41fc922288)
-- **CI run:** https://github.com/pikax/vue-benchmarks/actions/runs/36570273148
+- **Runner:** Linux · linux/x64 · 4 CPUs · INTEL(R) XEON(R) PLATINUM 8573C · 15.6 GB · Node v22.23.3
+- **Commit:** [`33fd9d3`](https://github.com/pikax/vue-benchmarks/commit/33fd9d395c22a020a8b9a90d40abe850ac241023)
+- **CI run:** https://github.com/pikax/vue-benchmarks/actions/runs/39325819866
 - **Source:** `results/benchmarks/bench-Linux-200-bench.json`
 
 ## Results
@@ -34,10 +34,10 @@ Tools:
 
 | Tool | **Median (primary)** | Min | Stddev | CV% | vs fastest | Artifact | Throughput | Peak RSS |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize | **158.1 ms** | 156.6 ms | 5.3 ms | 3.4% | 1.00x | n/a | 1.3k files/s | 70.3 MB |
-| Oxfmt | **3.15 s** | 3.12 s | 64.7 ms | 2.1% | 19.94x | n/a | 63 files/s | 681.9 MB |
-| Prettier | **3.61 s** | 3.59 s | 30.5 ms | 0.8% | 22.85x | n/a | 55 files/s | 188.7 MB |
-| Biome format ⚠ | (121.9 ms) | (120.9 ms) | – | – | not ranked | – | – | (94.5 MB) |
+| Vize | **133.8 ms** | 123.9 ms | 7.0 ms | 5.2% | 1.00x | n/a | 1.5k files/s | 72.6 MB |
+| Oxfmt | **2.60 s** | 2.58 s | 22.4 ms | 0.9% | 19.44x | n/a | 77 files/s | 671.9 MB |
+| Prettier | **2.99 s** | 2.95 s | 38.2 ms | 1.3% | 22.33x | n/a | 67 files/s | 198.2 MB |
+| Biome format ⚠ | (104.0 ms) | (101.4 ms) | – | – | not ranked | – | – | (74.0 MB) |
 
 <details><summary>Notes</summary>
 
@@ -64,10 +64,10 @@ Tools:
 
 Raw runs:
 
-- **Vize**: 158.1 ms, 169.2 ms, 156.7 ms, 161.8 ms, 156.6 ms
-- **Oxfmt**: 3.15 s, 3.29 s, 3.17 s, 3.12 s, 3.15 s
-- **Prettier**: 3.61 s, 3.67 s, 3.65 s, 3.61 s, 3.59 s
-- **Biome format**: 131.0 ms, 125.6 ms, 120.9 ms, 121.9 ms, 121.4 ms
+- **Vize**: 134.0 ms, 123.9 ms, 143.4 ms, 133.8 ms, 131.5 ms
+- **Oxfmt**: 2.60 s, 2.64 s, 2.62 s, 2.58 s, 2.60 s
+- **Prettier**: 2.99 s, 3.04 s, 2.95 s, 3.02 s, 2.96 s
+- **Biome format**: 108.0 ms, 103.5 ms, 104.0 ms, 101.4 ms, 109.1 ms
 
 </details>
 
@@ -117,10 +117,10 @@ Each tool in its own process so RSS, allocation proxies and CPU are not mixed wi
 
 | Tool | RSS min / max / avg | Alloc min / max / avg | CPU ms | CPU % | Wall ms | Samples |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Vize fmt | 14.50 / 70.28 / 56.42 | n/a | 100 | 110.5 | 91 | 3 |
-| Biome format | 2.25 / 94.44 / 57.78 | n/a | 30 | 35.9 | 83 | 3 |
-| Prettier | 14.16 / 188.60 / 139.49 | n/a | 4070 | 167.9 | 2375 | 3 |
-| Oxfmt | 14.49 / 680.39 / 491.84 | n/a | 150 | 5.9 | 2515 | 3 |
+| Vize fmt | 13.77 / 72.56 / 58.73 | n/a | 80 | 77.0 | 111 | 3 |
+| Biome format | 2.20 / 73.80 / 48.88 | n/a | 20 | 26.3 | 69 | 3 |
+| Prettier | 14.45 / 196.32 / 139.81 | n/a | 3420 | 171.8 | 1981 | 3 |
+| Oxfmt | 14.40 / 667.78 / 475.92 | n/a | 110 | 5.3 | 2086 | 3 |
 
 <details><summary>Notes</summary>
 
@@ -137,43 +137,43 @@ Each tool in its own process so RSS, allocation proxies and CPU are not mixed wi
 
 | Package | Version |
 | --- | --- |
-| node | v22.23.2 |
-| vue | 3.5.43 |
-| vue-36 | 3.6.0-rc.9 |
-| @vue/compiler-sfc | 3.5.43 |
-| @vue/compiler-sfc-36 | 3.6.0-rc.9 |
-| vize | 0.429.1 |
-| @vizejs/native | 0.429.1 |
-| @verter/native | 0.0.1-beta.6 |
+| node | v22.23.3 |
+| vue | 3.5.44 |
+| vue-36 | 3.6.0-rc.12 |
+| @vue/compiler-sfc | 3.5.44 |
+| @vue/compiler-sfc-36 | 3.6.0-rc.12 |
+| vize | 0.481.0 |
+| @vizejs/native | 0.481.0 |
+| @verter/native | 0.0.1-beta.7 |
 | @fervid/napi | 0.4.1 |
-| verter-tsc | 0.0.1-beta.6 |
-| @verter/component-meta | 0.0.1-beta.6 |
-| verter-lsp | 0.0.1-beta.6 |
-| verter-mcp | 0.0.1-beta.6 |
-| @vue/language-server | 3.3.11 |
-| @vue/typescript-plugin | 3.3.11 |
-| typescript-language-server | 6.0.1 |
-| vue-tsc | 3.3.11 |
-| vue-component-meta | 3.3.11 |
-| golar | 0.1.10 |
-| @golar/vue | 0.1.10 |
-| prettier | 3.9.9 |
-| oxfmt | 0.71.0 |
-| oxlint | 1.86.0 |
+| verter-tsc | 0.0.1-beta.7 |
+| @verter/component-meta | 0.0.1-beta.7 |
+| verter-lsp | 0.0.1-beta.7 |
+| verter-mcp | 0.0.1-beta.7 |
+| @vue/language-server | 3.3.13 |
+| @vue/typescript-plugin | 3.3.13 |
+| typescript-language-server | 6.0.2 |
+| vue-tsc | 3.3.13 |
+| vue-component-meta | 3.3.13 |
+| golar | 0.1.11 |
+| @golar/vue | 0.1.11 |
+| prettier | 3.9.10 |
+| oxfmt | 0.73.0 |
+| oxlint | 1.88.0 |
 | eslint-plugin-vue | 10.11.1 |
-| @biomejs/biome | 2.5.14 |
+| @biomejs/biome | 2.5.15 |
 | typescript | 6.0.3 |
-| cli:vize | 0.429.1 |
+| cli:vize | 0.481.0 |
 | cli:vue-tsc | 6.0.3 |
-| cli:verter-tsc | 0.0.1-beta.6 |
-| cli:golar | 0.1.10 |
-| cli:prettier | 3.9.9 |
-| cli:oxfmt | 0.71.0 |
-| cli:oxlint | 1.86.0 |
-| cli:biome | 2.5.14 |
-| vue-jsx-vapor | 3.2.25 |
-| @vue-jsx-vapor/compiler-rs | 3.2.25 |
+| cli:verter-tsc | 0.0.1-beta.7 |
+| cli:golar | 0.1.11 |
+| cli:prettier | 3.9.10 |
+| cli:oxfmt | 0.73.0 |
+| cli:oxlint | 1.88.0 |
+| cli:biome | 2.5.15 |
+| vue-jsx-vapor | 3.2.28 |
+| @vue-jsx-vapor/compiler-rs | 3.2.28 |
 | @vue/babel-plugin-jsx | 3.0.0 |
-| @babel/core | 8.0.6 |
+| @babel/core | 8.0.7 |
 
 </details>

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "kind": "ide",
-  "generatedAt": "2026-09-29T12:49:55.322Z",
+  "generatedAt": "2026-10-19T21:21:11.718Z",
   "settings": {
     "suites": [
       "scale"
@@ -19,47 +19,47 @@
     "label": "Linux",
     "platform": "linux",
     "arch": "x64",
-    "node": "v22.23.2"
+    "node": "v22.23.3"
   },
   "versions": {
-    "node": "v22.23.2",
-    "vue": "3.5.43",
-    "vue-36": "3.6.0-rc.9",
-    "@vue/compiler-sfc": "3.5.43",
-    "@vue/compiler-sfc-36": "3.6.0-rc.9",
-    "vize": "0.429.1",
-    "@vizejs/native": "0.429.1",
-    "@verter/native": "0.0.1-beta.6",
+    "node": "v22.23.3",
+    "vue": "3.5.44",
+    "vue-36": "3.6.0-rc.12",
+    "@vue/compiler-sfc": "3.5.44",
+    "@vue/compiler-sfc-36": "3.6.0-rc.12",
+    "vize": "0.481.0",
+    "@vizejs/native": "0.481.0",
+    "@verter/native": "0.0.1-beta.7",
     "@fervid/napi": "0.4.1",
-    "verter-tsc": "0.0.1-beta.6",
-    "@verter/component-meta": "0.0.1-beta.6",
-    "verter-lsp": "0.0.1-beta.6",
-    "verter-mcp": "0.0.1-beta.6",
-    "@vue/language-server": "3.3.11",
-    "@vue/typescript-plugin": "3.3.11",
-    "typescript-language-server": "6.0.1",
-    "vue-tsc": "3.3.11",
-    "vue-component-meta": "3.3.11",
-    "golar": "0.1.10",
-    "@golar/vue": "0.1.10",
-    "prettier": "3.9.9",
-    "oxfmt": "0.71.0",
-    "oxlint": "1.86.0",
+    "verter-tsc": "0.0.1-beta.7",
+    "@verter/component-meta": "0.0.1-beta.7",
+    "verter-lsp": "0.0.1-beta.7",
+    "verter-mcp": "0.0.1-beta.7",
+    "@vue/language-server": "3.3.13",
+    "@vue/typescript-plugin": "3.3.13",
+    "typescript-language-server": "6.0.2",
+    "vue-tsc": "3.3.13",
+    "vue-component-meta": "3.3.13",
+    "golar": "0.1.11",
+    "@golar/vue": "0.1.11",
+    "prettier": "3.9.10",
+    "oxfmt": "0.73.0",
+    "oxlint": "1.88.0",
     "eslint-plugin-vue": "10.11.1",
-    "@biomejs/biome": "2.5.14",
+    "@biomejs/biome": "2.5.15",
     "typescript": "6.0.3",
-    "cli:vize": "0.429.1",
+    "cli:vize": "0.481.0",
     "cli:vue-tsc": "6.0.3",
-    "cli:verter-tsc": "0.0.1-beta.6",
-    "cli:golar": "0.1.10",
-    "cli:prettier": "3.9.9",
-    "cli:oxfmt": "0.71.0",
-    "cli:oxlint": "1.86.0",
-    "cli:biome": "2.5.14",
-    "vue-jsx-vapor": "3.2.25",
-    "@vue-jsx-vapor/compiler-rs": "3.2.25",
+    "cli:verter-tsc": "0.0.1-beta.7",
+    "cli:golar": "0.1.11",
+    "cli:prettier": "3.9.10",
+    "cli:oxfmt": "0.73.0",
+    "cli:oxlint": "1.88.0",
+    "cli:biome": "2.5.15",
+    "vue-jsx-vapor": "3.2.28",
+    "@vue-jsx-vapor/compiler-rs": "3.2.28",
     "@vue/babel-plugin-jsx": "3.0.0",
-    "@babel/core": "8.0.6"
+    "@babel/core": "8.0.7"
   },
   "results": [
     {
@@ -71,15 +71,15 @@
         {
           "id": "usable@20",
           "label": "Time-to-usable @20 files",
-          "medianMs": 1904.511047,
+          "medianMs": 1198.9307090000002,
           "coldMedianMs": null,
-          "minMs": 1876.2620949999982,
-          "stddevMs": 24.768015680622632,
-          "cvPct": 1.302117799117194,
+          "minMs": 1130.5945520000005,
+          "stddevMs": 55.42669435253327,
+          "cvPct": 4.657863565076605,
           "runs": [
-            1925.6266240000004,
-            1904.511047,
-            1876.2620949999982
+            1130.5945520000005,
+            1240.3535199999988,
+            1198.9307090000002
           ],
           "valid": true,
           "reason": "",
@@ -89,15 +89,15 @@
         {
           "id": "completion@20",
           "label": "Completion @20 files",
-          "medianMs": 208.6557210000028,
+          "medianMs": 106.93305400000008,
           "coldMedianMs": null,
-          "minMs": 179.4578619999993,
-          "stddevMs": 17.15517071332521,
-          "cvPct": 8.609508106947745,
+          "minMs": 105.174880999999,
+          "stddevMs": 6.9442384523796985,
+          "cvPct": 6.3111671480697655,
           "runs": [
-            179.4578619999993,
-            209.66170799999963,
-            208.6557210000028
+            106.93305400000008,
+            117.98497599999973,
+            105.174880999999
           ],
           "valid": true,
           "reason": "",
@@ -107,15 +107,15 @@
         {
           "id": "references@20",
           "label": "References @20 files",
-          "medianMs": 444.86354700000084,
+          "medianMs": 28.025630000000092,
           "coldMedianMs": null,
-          "minMs": 288.8876089999976,
-          "stddevMs": 91.86250726332005,
-          "cvPct": 23.26204768438695,
+          "minMs": 27.380851999998413,
+          "stddevMs": 2.9293778604623806,
+          "cvPct": 9.969212731833375,
           "runs": [
-            288.8876089999976,
-            444.86354700000084,
-            450.9576260000031
+            28.025630000000092,
+            32.74625200000082,
+            27.380851999998413
           ],
           "valid": true,
           "reason": "",
@@ -125,15 +125,15 @@
         {
           "id": "hover-warm@20",
           "label": "Hover warm @20 files",
-          "medianMs": 1.2793329999985872,
+          "medianMs": 1.3514650000015536,
           "coldMedianMs": null,
-          "minMs": 1.1773819999943953,
-          "stddevMs": 0.8168006866472937,
-          "cvPct": 48.07486008968741,
+          "minMs": 1.1026610000008077,
+          "stddevMs": 0.18437467542293148,
+          "cvPct": 14.121513943039934,
           "runs": [
-            2.6403400000017427,
-            1.2793329999985872,
-            1.1773819999943953
+            1.4627630000004501,
+            1.3514650000015536,
+            1.1026610000008077
           ],
           "valid": true,
           "reason": "",
@@ -143,15 +143,15 @@
         {
           "id": "usable@100",
           "label": "Time-to-usable @100 files",
-          "medianMs": 2101.2486019999997,
+          "medianMs": 1388.6512199999997,
           "coldMedianMs": null,
-          "minMs": 2099.3089060000057,
-          "stddevMs": 1.8810811373500242,
-          "cvPct": 0.0895237385036732,
+          "minMs": 1315.8004459999975,
+          "stddevMs": 44.6338828534398,
+          "cvPct": 3.2648144854152497,
           "runs": [
-            2103.0704530000003,
-            2101.2486019999997,
-            2099.3089060000057
+            1396.9038370000007,
+            1388.6512199999997,
+            1315.8004459999975
           ],
           "valid": true,
           "reason": "",
@@ -161,15 +161,15 @@
         {
           "id": "completion@100",
           "label": "Completion @100 files",
-          "medianMs": 192.36754000000656,
+          "medianMs": 121.03233999999975,
           "coldMedianMs": null,
-          "minMs": 189.99238499999774,
-          "stddevMs": 2.0429624830778477,
-          "cvPct": 1.063269256186907,
+          "minMs": 110.98356699999931,
+          "stddevMs": 7.586584976016839,
+          "cvPct": 6.359792813840323,
           "runs": [
-            189.99238499999774,
-            194.05920999999944,
-            192.36754000000656
+            125.85353299999952,
+            121.03233999999975,
+            110.98356699999931
           ],
           "valid": true,
           "reason": "",
@@ -179,15 +179,15 @@
         {
           "id": "references@100",
           "label": "References @100 files",
-          "medianMs": 1059.0048539999989,
+          "medianMs": 68.47475600000143,
           "coldMedianMs": null,
-          "minMs": 1037.8751619999966,
-          "stddevMs": 22.280820064961866,
-          "cvPct": 2.1024287250614377,
+          "minMs": 67.70090999999957,
+          "stddevMs": 1.1006275647272479,
+          "cvPct": 1.6024810385017316,
           "runs": [
-            1082.4173080000037,
-            1059.0048539999989,
-            1037.8751619999966
+            68.47475600000143,
+            69.8724940000011,
+            67.70090999999957
           ],
           "valid": true,
           "reason": "",
@@ -197,15 +197,15 @@
         {
           "id": "hover-warm@100",
           "label": "Hover warm @100 files",
-          "medianMs": 2.4862690000009025,
+          "medianMs": 1.2043680000006134,
           "coldMedianMs": null,
-          "minMs": 2.0970840000081807,
-          "stddevMs": 0.4003322612057657,
-          "cvPct": 16.053962627400708,
+          "minMs": 1.2025659999999334,
+          "stddevMs": 0.7888590133960702,
+          "cvPct": 47.552718005756404,
           "runs": [
-            2.4862690000009025,
-            2.8976459999976214,
-            2.0970840000081807
+            2.569809999999052,
+            1.2043680000006134,
+            1.2025659999999334
           ],
           "valid": true,
           "reason": "",
@@ -215,15 +215,15 @@
         {
           "id": "usable@500",
           "label": "Time-to-usable @500 files",
-          "medianMs": 3087.35469,
+          "medianMs": 2013.8081299999994,
           "coldMedianMs": null,
-          "minMs": 3056.7985990000016,
-          "stddevMs": 22.5775507139061,
-          "cvPct": 0.7326391690740173,
+          "minMs": 2002.7668689999991,
+          "stddevMs": 109.12755671875942,
+          "cvPct": 5.26877862536148,
           "runs": [
-            3087.35469,
-            3056.7985990000016,
-            3100.8686809999926
+            2197.0599520000014,
+            2013.8081299999994,
+            2002.7668689999991
           ],
           "valid": true,
           "reason": "",
@@ -233,15 +233,15 @@
         {
           "id": "completion@500",
           "label": "Completion @500 files",
-          "medianMs": 291.1161990000037,
+          "medianMs": 161.06875000000218,
           "coldMedianMs": null,
-          "minMs": 265.49430599999323,
-          "stddevMs": 15.907888054228529,
-          "cvPct": 5.606301301772484,
+          "minMs": 156.08374700000059,
+          "stddevMs": 22.584887278233943,
+          "cvPct": 13.166267613969296,
           "runs": [
-            294.6399289999972,
-            291.1161990000037,
-            265.49430599999323
+            197.4554680000001,
+            161.06875000000218,
+            156.08374700000059
           ],
           "valid": true,
           "reason": "",
@@ -251,15 +251,15 @@
         {
           "id": "references@500",
           "label": "References @500 files",
-          "medianMs": 14856.885521000004,
+          "medianMs": 252.53446599999734,
           "coldMedianMs": null,
-          "minMs": 14851.792070999996,
-          "stddevMs": 193.06269673555713,
-          "cvPct": 1.2900264299754776,
+          "minMs": 244.4471969999977,
+          "stddevMs": 11.41547159523198,
+          "cvPct": 4.48273414434062,
           "runs": [
-            14851.792070999996,
-            15188.704100999996,
-            14856.885521000004
+            266.9809920000007,
+            252.53446599999734,
+            244.4471969999977
           ],
           "valid": true,
           "reason": "",
@@ -269,15 +269,15 @@
         {
           "id": "hover-warm@500",
           "label": "Hover warm @500 files",
-          "medianMs": 1.321912000013981,
+          "medianMs": 1.3356710000007297,
           "coldMedianMs": null,
-          "minMs": 1.3001710000025923,
-          "stddevMs": 0.03657798001992876,
-          "cvPct": 2.7477331967282836,
+          "minMs": 1.1102519999985816,
+          "stddevMs": 0.38786794680571574,
+          "cvPct": 26.987111827705192,
           "runs": [
-            1.3001710000025923,
-            1.321912000013981,
-            1.3715340000053402
+            1.8657789999997476,
+            1.1102519999985816,
+            1.3356710000007297
           ],
           "valid": true,
           "reason": "",
@@ -295,8 +295,8 @@
           "runs": [],
           "valid": true,
           "reason": "",
-          "sample": "1925.6 ms → 3087.4 ms",
-          "artifact": 1.6,
+          "sample": "1130.6 ms → 2197.1 ms",
+          "artifact": 1.94,
           "artifactLabel": "Scale factor 20→500 (×, lower is better)"
         },
         {
@@ -310,8 +310,8 @@
           "runs": [],
           "valid": true,
           "reason": "",
-          "sample": "179.5 ms → 294.6 ms",
-          "artifact": 1.64,
+          "sample": "106.9 ms → 197.5 ms",
+          "artifact": 1.85,
           "artifactLabel": "Scale factor 20→500 (×, lower is better)"
         },
         {
@@ -325,8 +325,8 @@
           "runs": [],
           "valid": true,
           "reason": "",
-          "sample": "288.9 ms → 14851.8 ms",
-          "artifact": 51.41,
+          "sample": "28.0 ms → 267.0 ms",
+          "artifact": 9.53,
           "artifactLabel": "Scale factor 20→500 (×, lower is better)"
         },
         {
@@ -340,25 +340,25 @@
           "runs": [],
           "valid": true,
           "reason": "",
-          "sample": "2.6 ms → 1.3 ms",
-          "artifact": 0.49,
+          "sample": "1.5 ms → 1.9 ms",
+          "artifact": 1.28,
           "artifactLabel": "Scale factor 20→500 (×, lower is better)"
         }
       ],
       "backendFallback": null,
-      "initializeMs": 521.6824379999962,
+      "initializeMs": 307.35098300000027,
       "initializeRuns": [
-        521.4573299999975,
-        521.6824379999962,
-        522.9048369999946
+        301.88599500000055,
+        345.3166309999997,
+        307.35098300000027
       ],
-      "peakRssMb": 330.875,
-      "rssToolMb": 254.3515625,
-      "rssEngineMb": 76.5234375,
+      "peakRssMb": 355.6328125,
+      "rssToolMb": 275.578125,
+      "rssEngineMb": 80.0546875,
       "rssRuns": [
-        331.671875,
-        330.19140625,
-        330.875
+        347.98046875,
+        357.8515625,
+        355.6328125
       ]
     },
     {
@@ -370,15 +370,15 @@
         {
           "id": "usable@20",
           "label": "Time-to-usable @20 files",
-          "medianMs": 1168.9312609999906,
+          "medianMs": 693.255675999997,
           "coldMedianMs": null,
-          "minMs": 1162.1071379999921,
-          "stddevMs": 5.836560098289528,
-          "cvPct": 0.49959721100778265,
+          "minMs": 684.4493650000004,
+          "stddevMs": 7.558527030461227,
+          "cvPct": 1.0916424470095687,
           "runs": [
-            1168.9312609999906,
-            1173.7210170000035,
-            1162.1071379999921
+            684.4493650000004,
+            693.255675999997,
+            699.4935100000002
           ],
           "valid": true,
           "reason": "",
@@ -388,15 +388,15 @@
         {
           "id": "completion@20",
           "label": "Completion @20 files",
-          "medianMs": 181.03952399999253,
+          "medianMs": 97.99082599999383,
           "coldMedianMs": null,
-          "minMs": 180.8923119999963,
-          "stddevMs": 19.59923533945535,
-          "cvPct": 10.192992676254693,
+          "minMs": 93.20842300000368,
+          "stddevMs": 5.316030691107713,
+          "cvPct": 5.405721741518297,
           "runs": [
-            180.8923119999963,
-            181.03952399999253,
-            214.9125500000082
+            103.82318899999882,
+            93.20842300000368,
+            97.99082599999383
           ],
           "valid": true,
           "reason": "",
@@ -406,15 +406,15 @@
         {
           "id": "references@20",
           "label": "References @20 files",
-          "medianMs": 116.55691499999375,
+          "medianMs": 23.06659799999761,
           "coldMedianMs": null,
-          "minMs": 110.52936099999351,
-          "stddevMs": 13.330743401699714,
-          "cvPct": 11.013467994594137,
+          "minMs": 22.117844000000332,
+          "stddevMs": 0.7243335232384471,
+          "cvPct": 3.1618891931071738,
           "runs": [
-            116.55691499999375,
-            136.03486099999282,
-            110.52936099999351
+            22.117844000000332,
+            23.540311999997357,
+            23.06659799999761
           ],
           "valid": true,
           "reason": "",
@@ -424,15 +424,15 @@
         {
           "id": "hover-warm@20",
           "label": "Hover warm @20 files",
-          "medianMs": 1.6123130000196397,
+          "medianMs": 0.9948079999994661,
           "coldMedianMs": null,
-          "minMs": 1.5979740000038873,
-          "stddevMs": 0.09411742576099591,
-          "cvPct": 5.672033120334004,
+          "minMs": 0.9494189999968512,
+          "stddevMs": 0.059188672332261036,
+          "cvPct": 5.897198958528378,
           "runs": [
-            1.7676860000065062,
-            1.6123130000196397,
-            1.5979740000038873
+            0.9948079999994661,
+            1.066795999999158,
+            0.9494189999968512
           ],
           "valid": true,
           "reason": "",
@@ -442,15 +442,15 @@
         {
           "id": "usable@100",
           "label": "Time-to-usable @100 files",
-          "medianMs": 1335.8796569999831,
+          "medianMs": 822.6671769999994,
           "coldMedianMs": null,
-          "minMs": 1330.9628559999983,
-          "stddevMs": 3.0137090246434117,
-          "cvPct": 0.22584281285903973,
+          "minMs": 813.5447780000031,
+          "stddevMs": 13.530480872928258,
+          "cvPct": 1.6391432410460225,
           "runs": [
-            1330.9628559999983,
-            1336.4405489999917,
-            1335.8796569999831
+            822.6671769999994,
+            840.1697060000006,
+            813.5447780000031
           ],
           "valid": true,
           "reason": "",
@@ -460,15 +460,15 @@
         {
           "id": "completion@100",
           "label": "Completion @100 files",
-          "medianMs": 198.0301599999948,
+          "medianMs": 94.12034700000004,
           "coldMedianMs": null,
-          "minMs": 194.04146000000765,
-          "stddevMs": 11.818172298669793,
-          "cvPct": 5.828616876739306,
+          "minMs": 89.67259800000465,
+          "stddevMs": 4.736301769542786,
+          "cvPct": 5.022014183744158,
           "runs": [
-            194.04146000000765,
-            216.21191700000782,
-            198.0301599999948
+            94.12034700000004,
+            99.13945600000443,
+            89.67259800000465
           ],
           "valid": true,
           "reason": "",
@@ -478,15 +478,15 @@
         {
           "id": "references@100",
           "label": "References @100 files",
-          "medianMs": 583.554970000012,
+          "medianMs": 40.89403699999821,
           "coldMedianMs": null,
-          "minMs": 578.7467260000121,
-          "stddevMs": 18.12679095845529,
-          "cvPct": 3.064422400712215,
+          "minMs": 40.365561999999045,
+          "stddevMs": 1.4802223274645363,
+          "cvPct": 3.5693225943246665,
           "runs": [
-            583.554970000012,
-            612.2700100000075,
-            578.7467260000121
+            43.152438999997685,
+            40.365561999999045,
+            40.89403699999821
           ],
           "valid": true,
           "reason": "",
@@ -496,15 +496,15 @@
         {
           "id": "hover-warm@100",
           "label": "Hover warm @100 files",
-          "medianMs": 1.8602649999957066,
+          "medianMs": 1.4649260000005597,
           "coldMedianMs": null,
-          "minMs": 1.7427050000114832,
-          "stddevMs": 0.06834103855619912,
-          "cvPct": 3.7516771430652662,
+          "minMs": 1.3189060000004247,
+          "stddevMs": 0.09088776109045998,
+          "cvPct": 6.386297317173748,
           "runs": [
-            1.861869000000297,
-            1.8602649999957066,
-            1.7427050000114832
+            1.4649260000005597,
+            1.485672999995586,
+            1.3189060000004247
           ],
           "valid": true,
           "reason": "",
@@ -514,15 +514,15 @@
         {
           "id": "usable@500",
           "label": "Time-to-usable @500 files",
-          "medianMs": 2022.753223000007,
+          "medianMs": 1311.8731750000006,
           "coldMedianMs": null,
-          "minMs": 2022.1842279999983,
-          "stddevMs": 12.494650930481864,
-          "cvPct": 0.6155968900432554,
+          "minMs": 1311.7998399999997,
+          "stddevMs": 9.618906372954035,
+          "cvPct": 0.7301487617259903,
           "runs": [
-            2044.104484999989,
-            2022.753223000007,
-            2022.1842279999983
+            1311.8731750000006,
+            1328.4968210000006,
+            1311.7998399999997
           ],
           "valid": true,
           "reason": "",
@@ -532,15 +532,15 @@
         {
           "id": "completion@500",
           "label": "Completion @500 files",
-          "medianMs": 244.6517440000025,
+          "medianMs": 124.00605300000461,
           "coldMedianMs": null,
-          "minMs": 233.9888740000024,
-          "stddevMs": 11.043281511577172,
-          "cvPct": 4.509230343195665,
+          "minMs": 121.63154999999824,
+          "stddevMs": 4.404957431582027,
+          "cvPct": 3.5164298516305474,
           "runs": [
-            244.6517440000025,
-            256.07111799999257,
-            233.9888740000024
+            130.16606300000058,
+            121.63154999999824,
+            124.00605300000461
           ],
           "valid": true,
           "reason": "",
@@ -550,15 +550,15 @@
         {
           "id": "references@500",
           "label": "References @500 files",
-          "medianMs": 10706.580134999982,
+          "medianMs": 112.38474300000235,
           "coldMedianMs": null,
-          "minMs": 10699.616528999992,
-          "stddevMs": 41.60492453379859,
-          "cvPct": 0.3878511234530417,
+          "minMs": 112.01094100000046,
+          "stddevMs": 0.8459488549798049,
+          "cvPct": 0.7507921024756832,
           "runs": [
-            10706.580134999982,
-            10774.907387000014,
-            10699.616528999992
+            113.6268600000003,
+            112.01094100000046,
+            112.38474300000235
           ],
           "valid": true,
           "reason": "",
@@ -568,15 +568,15 @@
         {
           "id": "hover-warm@500",
           "label": "Hover warm @500 files",
-          "medianMs": 4.498107000021264,
+          "medianMs": 3.3149019999982556,
           "coldMedianMs": null,
-          "minMs": 4.389667000010377,
-          "stddevMs": 0.24095332521105933,
-          "cvPct": 5.26164025399786,
+          "minMs": 3.198452000004181,
+          "stddevMs": 0.27089456746243074,
+          "cvPct": 7.945467427985734,
           "runs": [
-            4.389667000010377,
-            4.85052700000233,
-            4.498107000021264
+            3.7149140000001353,
+            3.3149019999982556,
+            3.198452000004181
           ],
           "valid": true,
           "reason": "",
@@ -594,8 +594,8 @@
           "runs": [],
           "valid": true,
           "reason": "",
-          "sample": "1168.9 ms → 2044.1 ms",
-          "artifact": 1.75,
+          "sample": "684.4 ms → 1311.9 ms",
+          "artifact": 1.92,
           "artifactLabel": "Scale factor 20→500 (×, lower is better)"
         },
         {
@@ -609,8 +609,8 @@
           "runs": [],
           "valid": true,
           "reason": "",
-          "sample": "180.9 ms → 244.7 ms",
-          "artifact": 1.35,
+          "sample": "103.8 ms → 130.2 ms",
+          "artifact": 1.25,
           "artifactLabel": "Scale factor 20→500 (×, lower is better)"
         },
         {
@@ -624,8 +624,8 @@
           "runs": [],
           "valid": true,
           "reason": "",
-          "sample": "116.6 ms → 10706.6 ms",
-          "artifact": 91.86,
+          "sample": "22.1 ms → 113.6 ms",
+          "artifact": 5.14,
           "artifactLabel": "Scale factor 20→500 (×, lower is better)"
         },
         {
@@ -639,25 +639,25 @@
           "runs": [],
           "valid": true,
           "reason": "",
-          "sample": "1.8 ms → 4.4 ms",
-          "artifact": 2.48,
+          "sample": "1.0 ms → 3.7 ms",
+          "artifact": 3.73,
           "artifactLabel": "Scale factor 20→500 (×, lower is better)"
         }
       ],
       "backendFallback": null,
-      "initializeMs": 523.2107810000016,
+      "initializeMs": 294.5061119999991,
       "initializeRuns": [
-        523.2107810000016,
-        524.1390039999969,
-        520.6144270000223
+        294.77602599999955,
+        294.5061119999991,
+        292.33197700000164
       ],
-      "peakRssMb": 408.078125,
-      "rssToolMb": 270.66796875,
-      "rssEngineMb": 137.41015625,
+      "peakRssMb": 425.46484375,
+      "rssToolMb": 286.3828125,
+      "rssEngineMb": 139.08203125,
       "rssRuns": [
-        408.078125,
-        409.54296875,
-        407.83984375
+        426.82421875,
+        425.46484375,
+        424.90625
       ]
     },
     {
@@ -669,15 +669,15 @@
         {
           "id": "usable@20",
           "label": "Time-to-usable @20 files",
-          "medianMs": 342.6114070000185,
+          "medianMs": 220.02180999999837,
           "coldMedianMs": null,
-          "minMs": 340.3101349999779,
-          "stddevMs": 7.271478528286406,
-          "cvPct": 2.1039788425607977,
+          "minMs": 217.76756100000057,
+          "stddevMs": 2.013157863392415,
+          "cvPct": 0.9156638770704252,
           "runs": [
-            353.8966589999909,
-            342.6114070000185,
-            340.3101349999779
+            220.02180999999837,
+            217.76756100000057,
+            221.78383499999472
           ],
           "valid": true,
           "reason": "",
@@ -687,51 +687,51 @@
         {
           "id": "completion@20",
           "label": "Completion @20 files",
-          "medianMs": 0.38553800000227056,
+          "medianMs": 0.7614969999995083,
           "coldMedianMs": null,
-          "minMs": 0.3763409999955911,
-          "stddevMs": 0.03907839151385925,
-          "cvPct": 9.688585158751096,
+          "minMs": 0.7281959999963874,
+          "stddevMs": 1.5080572130762482,
+          "cvPct": 93.35094992397906,
           "runs": [
-            0.4481550000200514,
-            0.3763409999955911,
-            0.38553800000227056
+            0.7614969999995083,
+            3.3567190000030678,
+            0.7281959999963874
           ],
           "valid": true,
           "reason": "",
-          "sample": "7 items; matched scaleProbeTally, scaleProbeLabel, scaleProbeUpper, sharedLabel",
-          "artifact": 7
+          "sample": "48 items; matched scaleProbeTally, scaleProbeLabel, scaleProbeUpper, sharedLabel",
+          "artifact": 48
         },
         {
           "id": "references@20",
           "label": "References @20 files",
-          "medianMs": 2.9561459999822546,
+          "medianMs": 208.63455299999623,
           "coldMedianMs": null,
-          "minMs": 2.848013999988325,
-          "stddevMs": 0.14810346814608233,
-          "cvPct": 4.967104235312037,
+          "minMs": 206.94031900000118,
+          "stddevMs": 1.0835916619137032,
+          "cvPct": 0.520513220015261,
           "runs": [
-            2.848013999988325,
-            2.9561459999822546,
-            3.1408989999908954
+            208.95777400000225,
+            206.94031900000118,
+            208.63455299999623
           ],
-          "valid": false,
-          "reason": "all 2 references are in a single file — no cross-file search happened",
-          "sample": "2 refs / 1 files / 0 generated components",
-          "artifact": 1
+          "valid": true,
+          "reason": "",
+          "sample": "63 refs / 22 files / 20 generated components",
+          "artifact": 22
         },
         {
           "id": "hover-warm@20",
           "label": "Hover warm @20 files",
-          "medianMs": 1.726425000000745,
+          "medianMs": 0.7527779999945778,
           "coldMedianMs": null,
-          "minMs": 1.6358170000021346,
-          "stddevMs": 0.06027376822917187,
-          "cvPct": 3.537040059260399,
+          "minMs": 0.7516019999966375,
+          "stddevMs": 0.037532951010909046,
+          "cvPct": 4.8501145574573234,
           "runs": [
-            1.726425000000745,
-            1.6358170000021346,
-            1.7499789999856148
+            0.7516019999966375,
+            0.7527779999945778,
+            0.8171910000091884
           ],
           "valid": true,
           "reason": "",
@@ -741,15 +741,15 @@
         {
           "id": "usable@100",
           "label": "Time-to-usable @100 files",
-          "medianMs": 343.4295560000173,
+          "medianMs": 219.6745169999922,
           "coldMedianMs": null,
-          "minMs": 331.9101209999935,
-          "stddevMs": 16.533780947387527,
-          "cvPct": 4.77003394033082,
+          "minMs": 218.44441100000404,
+          "stddevMs": 2.6021963609772034,
+          "cvPct": 1.180031257030735,
           "runs": [
-            364.51336100001936,
-            343.4295560000173,
-            331.9101209999935
+            218.44441100000404,
+            219.6745169999922,
+            223.4388939999917
           ],
           "valid": true,
           "reason": "",
@@ -759,51 +759,51 @@
         {
           "id": "completion@100",
           "label": "Completion @100 files",
-          "medianMs": 0.3854879999998957,
+          "medianMs": 0.7282460000060382,
           "coldMedianMs": null,
-          "minMs": 0.3827330000058282,
-          "stddevMs": 0.01723736134706169,
-          "cvPct": 4.374624313595322,
+          "minMs": 0.7258119999896735,
+          "stddevMs": 0.011574215064582087,
+          "cvPct": 1.5775684849198897,
           "runs": [
-            0.3854879999998957,
-            0.41387099999701604,
-            0.3827330000058282
+            0.7282460000060382,
+            0.7258119999896735,
+            0.746964999998454
           ],
           "valid": true,
           "reason": "",
-          "sample": "7 items; matched scaleProbeTally, scaleProbeLabel, scaleProbeUpper, sharedLabel",
-          "artifact": 7
+          "sample": "48 items; matched scaleProbeTally, scaleProbeLabel, scaleProbeUpper, sharedLabel",
+          "artifact": 48
         },
         {
           "id": "references@100",
           "label": "References @100 files",
-          "medianMs": 3.1311010000063106,
+          "medianMs": 1136.5702789999996,
           "coldMedianMs": null,
-          "minMs": 2.8776190000062343,
-          "stddevMs": 0.16156397241665998,
-          "cvPct": 5.276059041997391,
+          "minMs": 1132.3715280000033,
+          "stddevMs": 3.1233305902356925,
+          "cvPct": 0.27498802293183877,
           "runs": [
-            2.8776190000062343,
-            3.1311010000063106,
-            3.177908000012394
+            1136.5702789999996,
+            1132.3715280000033,
+            1138.476330999998
           ],
-          "valid": false,
-          "reason": "all 2 references are in a single file — no cross-file search happened",
-          "sample": "2 refs / 1 files / 0 generated components",
-          "artifact": 1
+          "valid": true,
+          "reason": "",
+          "sample": "303 refs / 102 files / 100 generated components",
+          "artifact": 102
         },
         {
           "id": "hover-warm@100",
           "label": "Hover warm @100 files",
-          "medianMs": 1.7283990000141785,
+          "medianMs": 0.7893079999921611,
           "coldMedianMs": null,
-          "minMs": 1.6697500000009313,
-          "stddevMs": 0.044423888108216264,
-          "cvPct": 2.5852782844401077,
+          "minMs": 0.7444259999974747,
+          "stddevMs": 0.027512695278950023,
+          "cvPct": 3.545191538282251,
           "runs": [
-            1.7283990000141785,
-            1.7568730000057258,
-            1.6697500000009313
+            0.7444259999974747,
+            0.7893079999921611,
+            0.7944360000110464
           ],
           "valid": true,
           "reason": "",
@@ -813,15 +813,15 @@
         {
           "id": "usable@500",
           "label": "Time-to-usable @500 files",
-          "medianMs": 355.6918079999741,
+          "medianMs": 223.9684910000069,
           "coldMedianMs": null,
-          "minMs": 342.79133400000865,
-          "stddevMs": 9.719636436283203,
-          "cvPct": 2.750014832230753,
+          "minMs": 217.45603200000187,
+          "stddevMs": 7.981827463156182,
+          "cvPct": 3.548746053497261,
           "runs": [
-            361.8351139999868,
-            355.6918079999741,
-            342.79133400000865
+            217.45603200000187,
+            233.33444899998722,
+            223.9684910000069
           ],
           "valid": true,
           "reason": "",
@@ -831,51 +831,51 @@
         {
           "id": "completion@500",
           "label": "Completion @500 files",
-          "medianMs": 0.38688100001309067,
+          "medianMs": 0.7577210000017658,
           "coldMedianMs": null,
-          "minMs": 0.38438599999062717,
-          "stddevMs": 0.04990818315557844,
-          "cvPct": 12.042347162344031,
+          "minMs": 0.7218969999958063,
+          "stddevMs": 0.02175235896415165,
+          "cvPct": 2.912217083351677,
           "runs": [
-            0.4720499999821186,
-            0.38438599999062717,
-            0.38688100001309067
+            0.7218969999958063,
+            0.761186000003363,
+            0.7577210000017658
           ],
           "valid": true,
           "reason": "",
-          "sample": "7 items; matched scaleProbeTally, scaleProbeLabel, scaleProbeUpper, sharedLabel",
-          "artifact": 7
+          "sample": "48 items; matched scaleProbeTally, scaleProbeLabel, scaleProbeUpper, sharedLabel",
+          "artifact": 48
         },
         {
           "id": "references@500",
           "label": "References @500 files",
-          "medianMs": 2.9245870000158902,
+          "medianMs": 20879.901111999992,
           "coldMedianMs": null,
-          "minMs": 2.780058000003919,
-          "stddevMs": 0.12696598042304993,
-          "cvPct": 4.359205277539518,
+          "minMs": 20660.15088,
+          "stddevMs": 305.8963067396553,
+          "cvPct": 1.4611822834268577,
           "runs": [
-            3.0331390000064857,
-            2.780058000003919,
-            2.9245870000158902
+            20660.15088,
+            20879.901111999992,
+            21264.49543699999
           ],
-          "valid": false,
-          "reason": "all 2 references are in a single file — no cross-file search happened",
-          "sample": "2 refs / 1 files / 0 generated components",
-          "artifact": 1
+          "valid": true,
+          "reason": "",
+          "sample": "1503 refs / 502 files / 500 generated components",
+          "artifact": 502
         },
         {
           "id": "hover-warm@500",
           "label": "Hover warm @500 files",
-          "medianMs": 1.7251929999911226,
+          "medianMs": 0.7444120000000112,
           "coldMedianMs": null,
-          "minMs": 1.667579000000842,
-          "stddevMs": 0.07363890201379267,
-          "cvPct": 4.243061727020794,
+          "minMs": 0.7007149999990361,
+          "stddevMs": 0.09909369503762745,
+          "cvPct": 12.730967859786379,
           "runs": [
-            1.667579000000842,
-            1.8137679999927059,
-            1.7251929999911226
+            0.7007149999990361,
+            0.8899749999982305,
+            0.7444120000000112
           ],
           "valid": true,
           "reason": "",
@@ -893,8 +893,8 @@
           "runs": [],
           "valid": true,
           "reason": "",
-          "sample": "353.9 ms → 361.8 ms",
-          "artifact": 1.02,
+          "sample": "220.0 ms → 217.5 ms",
+          "artifact": 0.99,
           "artifactLabel": "Scale factor 20→500 (×, lower is better)"
         },
         {
@@ -908,8 +908,8 @@
           "runs": [],
           "valid": true,
           "reason": "",
-          "sample": "0.4 ms → 0.5 ms",
-          "artifact": 1.05,
+          "sample": "0.8 ms → 0.7 ms",
+          "artifact": 0.95,
           "artifactLabel": "Scale factor 20→500 (×, lower is better)"
         },
         {
@@ -921,9 +921,10 @@
           "stddevMs": null,
           "cvPct": null,
           "runs": [],
-          "valid": false,
-          "reason": "no scale factor: the gate failed at 20 and 500 files (see references@20)",
-          "sample": "",
+          "valid": true,
+          "reason": "",
+          "sample": "209.0 ms → 20660.2 ms",
+          "artifact": 98.87,
           "artifactLabel": "Scale factor 20→500 (×, lower is better)"
         },
         {
@@ -937,63 +938,63 @@
           "runs": [],
           "valid": true,
           "reason": "",
-          "sample": "1.7 ms → 1.7 ms",
-          "artifact": 0.97,
+          "sample": "0.8 ms → 0.7 ms",
+          "artifact": 0.93,
           "artifactLabel": "Scale factor 20→500 (×, lower is better)"
         }
       ],
       "backendFallback": null,
-      "initializeMs": 36.56165200000396,
+      "initializeMs": 27.752183000004152,
       "initializeRuns": [
-        36.56165200000396,
-        36.49438200000441,
-        39.272557999996934
+        27.087675999995554,
+        29.3733210000064,
+        27.752183000004152
       ],
-      "peakRssMb": 66.20703125,
-      "rssToolMb": 66.20703125,
+      "peakRssMb": 72.80078125,
+      "rssToolMb": 72.80078125,
       "rssEngineMb": null,
       "rssRuns": [
-        66.22265625,
-        66.20703125,
-        66.20703125
+        72.80078125,
+        72.80078125,
+        72.76171875
       ]
     },
     {
       "suite": "scale",
       "suiteLabel": "Scale (20 / 100 / 500 files)",
       "server": "verter",
-      "label": "Verter LSP (npm 0.0.1-beta.6)",
+      "label": "Verter LSP (npm 0.0.1-beta.7)",
       "ops": [
         {
           "id": "usable@20",
           "label": "Time-to-usable @20 files",
-          "medianMs": 355.5933810000133,
+          "medianMs": 60164.532632999995,
           "coldMedianMs": null,
-          "minMs": 346.1838080000016,
-          "stddevMs": 6.5696244388514815,
-          "cvPct": 1.8582622367196318,
+          "minMs": 60131.23532900002,
+          "stddevMs": 20.34008527386825,
+          "cvPct": 0.03381300017539403,
           "runs": [
-            355.5933810000133,
-            358.8305619999883,
-            346.1838080000016
+            60164.532632999995,
+            60131.23532900002,
+            60168.12316000002
           ],
-          "valid": true,
-          "reason": "",
-          "sample": "```typescript\nconst scaleProbeTally: Ref<number, number>Stable probe — do not rename. Its type requires ./shared to resolve.\n```",
+          "valid": false,
+          "reason": "no correct hover within 60122 ms (386 attempts): empty hover payload",
+          "sample": "{\"code\":-32801,\"message\":\"Content modified\"}",
           "artifact": 21
         },
         {
           "id": "completion@20",
           "label": "Completion @20 files",
-          "medianMs": 144.4893260000099,
+          "medianMs": 2.201805000018794,
           "coldMedianMs": null,
-          "minMs": 139.36088299998664,
-          "stddevMs": 7.06453878178579,
-          "cvPct": 4.847834750428975,
+          "minMs": 2.112290999968536,
+          "stddevMs": 0.447603794646656,
+          "cvPct": 18.540637022342967,
           "runs": [
-            144.4893260000099,
-            153.3267460000061,
-            139.36088299998664
+            2.9284350000089034,
+            2.201805000018794,
+            2.112290999968536
           ],
           "valid": true,
           "reason": "",
@@ -1003,182 +1004,142 @@
         {
           "id": "references@20",
           "label": "References @20 files",
-          "medianMs": 0.44490900001255795,
+          "medianMs": 3.4599699999962468,
           "coldMedianMs": null,
-          "minMs": 0.4405200000037439,
-          "stddevMs": 0.010131963391003302,
-          "cvPct": 2.259453834963623,
+          "minMs": 3.3246219999855384,
+          "stddevMs": 0.08217579001764333,
+          "cvPct": 2.4033560389042408,
           "runs": [
-            0.4405200000037439,
-            0.44490900001255795,
-            0.45984699999098666
+            3.4599699999962468,
+            3.47303799999645,
+            3.3246219999855384
           ],
           "valid": false,
-          "reason": "server answered textDocument/references with null — the provider declined this request (which is not proof the capability is absent)",
-          "sample": "0 refs / 0 files / 0 generated components",
-          "artifact": 0
+          "reason": "all 2 references are in a single file — no cross-file search happened",
+          "sample": "2 refs / 1 files / 0 generated components",
+          "artifact": 1
         },
         {
           "id": "hover-warm@20",
           "label": "Hover warm @20 files",
-          "medianMs": 0.6601289999962319,
+          "medianMs": 3.0980540000018664,
           "coldMedianMs": null,
-          "minMs": 0.6458930000080727,
-          "stddevMs": 0.015995660792151974,
-          "cvPct": 2.41888890338173,
+          "minMs": 3.084716000012122,
+          "stddevMs": 0.10042140588323396,
+          "cvPct": 3.1887552136942157,
           "runs": [
-            0.6458930000080727,
-            0.6601289999962319,
-            0.6778219999978319
+            3.2649359999923036,
+            3.0980540000018664,
+            3.084716000012122
           ],
-          "valid": true,
-          "reason": "",
-          "sample": "```typescript\nconst scaleProbeTally: Ref<number, number>Stable probe — do not rename. Its type requires ./shared to resolve.\n```",
-          "artifact": 130
+          "valid": false,
+          "reason": "5/5 repeats failed the gate — empty hover payload",
+          "sample": "",
+          "artifact": 0
         },
         {
           "id": "usable@100",
           "label": "Time-to-usable @100 files",
-          "medianMs": 288.22721099999035,
+          "medianMs": null,
           "coldMedianMs": null,
-          "minMs": 285.2852689999854,
-          "stddevMs": 64.88610816222075,
-          "cvPct": 20.013689733160707,
-          "runs": [
-            288.22721099999035,
-            399.1133930000069,
-            285.2852689999854
-          ],
-          "valid": true,
-          "reason": "",
-          "sample": "```typescript\nconst scaleProbeTally: Ref<number, number>Stable probe — do not rename. Its type requires ./shared to resolve.\n```",
-          "artifact": 101
+          "minMs": null,
+          "stddevMs": null,
+          "cvPct": null,
+          "runs": [],
+          "valid": false,
+          "reason": "not attempted: the server never became usable on the 20-file corpus, so it cannot become usable on 100. Re-proving that costs the full project-load budget per size, per pass, and yields no new information.",
+          "sample": ""
         },
         {
           "id": "completion@100",
           "label": "Completion @100 files",
-          "medianMs": 164.74194799998077,
+          "medianMs": null,
           "coldMedianMs": null,
-          "minMs": 163.33753999997862,
-          "stddevMs": 4.615886760889376,
-          "cvPct": 2.7694150321322275,
-          "runs": [
-            163.33753999997862,
-            171.94164000000455,
-            164.74194799998077
-          ],
-          "valid": true,
-          "reason": "",
-          "sample": "7 items; matched scaleProbeTally, scaleProbeLabel, scaleProbeUpper, sharedLabel",
-          "artifact": 7
+          "minMs": null,
+          "stddevMs": null,
+          "cvPct": null,
+          "runs": [],
+          "valid": false,
+          "reason": "not attempted: the server never became usable on the 20-file corpus, so it cannot become usable on 100. Re-proving that costs the full project-load budget per size, per pass, and yields no new information.",
+          "sample": ""
         },
         {
           "id": "references@100",
           "label": "References @100 files",
-          "medianMs": 0.49529300001449883,
+          "medianMs": null,
           "coldMedianMs": null,
-          "minMs": 0.472749999986263,
-          "stddevMs": 0.015316956511179612,
-          "cvPct": 3.125849952055753,
-          "runs": [
-            0.49529300001449883,
-            0.472749999986263,
-            0.5019850000098813
-          ],
+          "minMs": null,
+          "stddevMs": null,
+          "cvPct": null,
+          "runs": [],
           "valid": false,
-          "reason": "server answered textDocument/references with null — the provider declined this request (which is not proof the capability is absent)",
-          "sample": "0 refs / 0 files / 0 generated components",
-          "artifact": 0
+          "reason": "not attempted: the server never became usable on the 20-file corpus, so it cannot become usable on 100. Re-proving that costs the full project-load budget per size, per pass, and yields no new information.",
+          "sample": ""
         },
         {
           "id": "hover-warm@100",
           "label": "Hover warm @100 files",
-          "medianMs": 0.6918579999764916,
+          "medianMs": null,
           "coldMedianMs": null,
-          "minMs": 0.672552000003634,
-          "stddevMs": 0.04153786146849476,
-          "cvPct": 5.8874664215048185,
-          "runs": [
-            0.7521810000180267,
-            0.672552000003634,
-            0.6918579999764916
-          ],
-          "valid": true,
-          "reason": "",
-          "sample": "```typescript\nconst scaleProbeTally: Ref<number, number>Stable probe — do not rename. Its type requires ./shared to resolve.\n```",
-          "artifact": 130
+          "minMs": null,
+          "stddevMs": null,
+          "cvPct": null,
+          "runs": [],
+          "valid": false,
+          "reason": "not attempted: the server never became usable on the 20-file corpus, so it cannot become usable on 100. Re-proving that costs the full project-load budget per size, per pass, and yields no new information.",
+          "sample": ""
         },
         {
           "id": "usable@500",
           "label": "Time-to-usable @500 files",
-          "medianMs": 404.22682500001974,
+          "medianMs": null,
           "coldMedianMs": null,
-          "minMs": 306.30695299999206,
-          "stddevMs": 64.26866598621041,
-          "cvPct": 16.943829057289253,
-          "runs": [
-            306.30695299999206,
-            404.22682500001974,
-            427.3790119999903
-          ],
-          "valid": true,
-          "reason": "",
-          "sample": "```typescript\nconst scaleProbeTally: Ref<number, number>Stable probe — do not rename. Its type requires ./shared to resolve.\n```",
-          "artifact": 501
+          "minMs": null,
+          "stddevMs": null,
+          "cvPct": null,
+          "runs": [],
+          "valid": false,
+          "reason": "not attempted: the server never became usable on the 20-file corpus, so it cannot become usable on 500. Re-proving that costs the full project-load budget per size, per pass, and yields no new information.",
+          "sample": ""
         },
         {
           "id": "completion@500",
           "label": "Completion @500 files",
-          "medianMs": 176.74129499998526,
+          "medianMs": null,
           "coldMedianMs": null,
-          "minMs": 172.70267400000012,
-          "stddevMs": 2.650370432119569,
-          "cvPct": 1.5083511919493207,
-          "runs": [
-            177.6952899999742,
-            176.74129499998526,
-            172.70267400000012
-          ],
-          "valid": true,
-          "reason": "",
-          "sample": "7 items; matched scaleProbeTally, scaleProbeLabel, scaleProbeUpper, sharedLabel",
-          "artifact": 7
+          "minMs": null,
+          "stddevMs": null,
+          "cvPct": null,
+          "runs": [],
+          "valid": false,
+          "reason": "not attempted: the server never became usable on the 20-file corpus, so it cannot become usable on 500. Re-proving that costs the full project-load budget per size, per pass, and yields no new information.",
+          "sample": ""
         },
         {
           "id": "references@500",
           "label": "References @500 files",
-          "medianMs": 0.8746689999825321,
+          "medianMs": null,
           "coldMedianMs": null,
-          "minMs": 0.855864000011934,
-          "stddevMs": 0.019323296624374705,
-          "cvPct": 2.2083439474093884,
-          "runs": [
-            0.855864000011934,
-            0.8746689999825321,
-            0.894505999982357
-          ],
+          "minMs": null,
+          "stddevMs": null,
+          "cvPct": null,
+          "runs": [],
           "valid": false,
-          "reason": "server answered textDocument/references with null — the provider declined this request (which is not proof the capability is absent)",
-          "sample": "0 refs / 0 files / 0 generated components",
-          "artifact": 0
+          "reason": "not attempted: the server never became usable on the 20-file corpus, so it cannot become usable on 500. Re-proving that costs the full project-load budget per size, per pass, and yields no new information.",
+          "sample": ""
         },
         {
           "id": "hover-warm@500",
           "label": "Hover warm @500 files",
-          "medianMs": 0.8132749999931548,
+          "medianMs": null,
           "coldMedianMs": null,
-          "minMs": 0.757461000001058,
-          "stddevMs": 0.033119569299942746,
-          "cvPct": 4.1624999748293305,
-          "runs": [
-            0.8162600000214297,
-            0.8132749999931548,
-            0.757461000001058
-          ],
-          "valid": true,
-          "reason": "",
-          "sample": "```typescript\nconst scaleProbeTally: Ref<number, number>Stable probe — do not rename. Its type requires ./shared to resolve.\n```",
-          "artifact": 130
+          "minMs": null,
+          "stddevMs": null,
+          "cvPct": null,
+          "runs": [],
+          "valid": false,
+          "reason": "not attempted: the server never became usable on the 20-file corpus, so it cannot become usable on 500. Re-proving that costs the full project-load budget per size, per pass, and yields no new information.",
+          "sample": ""
         },
         {
           "id": "scale-usable",
@@ -1189,10 +1150,9 @@
           "stddevMs": null,
           "cvPct": null,
           "runs": [],
-          "valid": true,
-          "reason": "",
-          "sample": "355.6 ms → 306.3 ms",
-          "artifact": 0.86,
+          "valid": false,
+          "reason": "no scale factor: the gate failed at 20 and 500 files (see usable@20)",
+          "sample": "",
           "artifactLabel": "Scale factor 20→500 (×, lower is better)"
         },
         {
@@ -1204,10 +1164,9 @@
           "stddevMs": null,
           "cvPct": null,
           "runs": [],
-          "valid": true,
-          "reason": "",
-          "sample": "144.5 ms → 177.7 ms",
-          "artifact": 1.23,
+          "valid": false,
+          "reason": "no scale factor: the gate failed at 500 files (see completion@500)",
+          "sample": "",
           "artifactLabel": "Scale factor 20→500 (×, lower is better)"
         },
         {
@@ -1233,27 +1192,26 @@
           "stddevMs": null,
           "cvPct": null,
           "runs": [],
-          "valid": true,
-          "reason": "",
-          "sample": "0.6 ms → 0.8 ms",
-          "artifact": 1.26,
+          "valid": false,
+          "reason": "no scale factor: the gate failed at 20 and 500 files (see hover-warm@20)",
+          "sample": "",
           "artifactLabel": "Scale factor 20→500 (×, lower is better)"
         }
       ],
       "backendFallback": null,
-      "initializeMs": 5.819159999984549,
+      "initializeMs": 4.4177119999949355,
       "initializeRuns": [
-        5.965028999984497,
-        5.783611999999266,
-        5.819159999984549
+        4.4177119999949355,
+        5.007880999997724,
+        4.373969999956898
       ],
-      "peakRssMb": 68.55078125,
-      "rssToolMb": 68.55078125,
+      "peakRssMb": 665.44140625,
+      "rssToolMb": 665.44140625,
       "rssEngineMb": null,
       "rssRuns": [
-        65.171875,
-        72.5546875,
-        68.55078125
+        665.44140625,
+        667.85546875,
+        655.71484375
       ]
     }
   ]

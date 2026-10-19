@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "kind": "ide",
-  "generatedAt": "2026-09-29T12:50:50.231Z",
+  "generatedAt": "2026-10-19T21:19:16.688Z",
   "settings": {
     "suites": [
       "background",
@@ -23,47 +23,47 @@
     "label": "Linux",
     "platform": "linux",
     "arch": "x64",
-    "node": "v22.23.2"
+    "node": "v22.23.3"
   },
   "versions": {
-    "node": "v22.23.2",
-    "vue": "3.5.43",
-    "vue-36": "3.6.0-rc.9",
-    "@vue/compiler-sfc": "3.5.43",
-    "@vue/compiler-sfc-36": "3.6.0-rc.9",
-    "vize": "0.429.1",
-    "@vizejs/native": "0.429.1",
-    "@verter/native": "0.0.1-beta.6",
+    "node": "v22.23.3",
+    "vue": "3.5.44",
+    "vue-36": "3.6.0-rc.12",
+    "@vue/compiler-sfc": "3.5.44",
+    "@vue/compiler-sfc-36": "3.6.0-rc.12",
+    "vize": "0.481.0",
+    "@vizejs/native": "0.481.0",
+    "@verter/native": "0.0.1-beta.7",
     "@fervid/napi": "0.4.1",
-    "verter-tsc": "0.0.1-beta.6",
-    "@verter/component-meta": "0.0.1-beta.6",
-    "verter-lsp": "0.0.1-beta.6",
-    "verter-mcp": "0.0.1-beta.6",
-    "@vue/language-server": "3.3.11",
-    "@vue/typescript-plugin": "3.3.11",
-    "typescript-language-server": "6.0.1",
-    "vue-tsc": "3.3.11",
-    "vue-component-meta": "3.3.11",
-    "golar": "0.1.10",
-    "@golar/vue": "0.1.10",
-    "prettier": "3.9.9",
-    "oxfmt": "0.71.0",
-    "oxlint": "1.86.0",
+    "verter-tsc": "0.0.1-beta.7",
+    "@verter/component-meta": "0.0.1-beta.7",
+    "verter-lsp": "0.0.1-beta.7",
+    "verter-mcp": "0.0.1-beta.7",
+    "@vue/language-server": "3.3.13",
+    "@vue/typescript-plugin": "3.3.13",
+    "typescript-language-server": "6.0.2",
+    "vue-tsc": "3.3.13",
+    "vue-component-meta": "3.3.13",
+    "golar": "0.1.11",
+    "@golar/vue": "0.1.11",
+    "prettier": "3.9.10",
+    "oxfmt": "0.73.0",
+    "oxlint": "1.88.0",
     "eslint-plugin-vue": "10.11.1",
-    "@biomejs/biome": "2.5.14",
+    "@biomejs/biome": "2.5.15",
     "typescript": "6.0.3",
-    "cli:vize": "0.429.1",
+    "cli:vize": "0.481.0",
     "cli:vue-tsc": "6.0.3",
-    "cli:verter-tsc": "0.0.1-beta.6",
-    "cli:golar": "0.1.10",
-    "cli:prettier": "3.9.9",
-    "cli:oxfmt": "0.71.0",
-    "cli:oxlint": "1.86.0",
-    "cli:biome": "2.5.14",
-    "vue-jsx-vapor": "3.2.25",
-    "@vue-jsx-vapor/compiler-rs": "3.2.25",
+    "cli:verter-tsc": "0.0.1-beta.7",
+    "cli:golar": "0.1.11",
+    "cli:prettier": "3.9.10",
+    "cli:oxfmt": "0.73.0",
+    "cli:oxlint": "1.88.0",
+    "cli:biome": "2.5.15",
+    "vue-jsx-vapor": "3.2.28",
+    "@vue-jsx-vapor/compiler-rs": "3.2.28",
     "@vue/babel-plugin-jsx": "3.0.0",
-    "@babel/core": "8.0.6"
+    "@babel/core": "8.0.7"
   },
   "results": [
     {
@@ -75,50 +75,50 @@
         {
           "id": "semantic-tokens-full",
           "label": "Semantic tokens (full)",
-          "medianMs": 779.2121649999999,
+          "medianMs": 953.7612440000003,
           "coldMedianMs": null,
-          "minMs": 762.3110380000007,
-          "stddevMs": 14.846405099599453,
-          "cvPct": 1.9087465278772908,
+          "minMs": 838.1279739999991,
+          "stddevMs": 134.7034712072026,
+          "cvPct": 13.94175021220361,
           "runs": [
-            779.2121649999999,
-            762.3110380000007,
-            791.9042399999998
+            953.7612440000003,
+            1106.673785,
+            838.1279739999991
           ],
           "valid": true,
           "reason": "",
-          "sample": "48 tokens, resultId=\"1790686003652\", data[0..9]=[3,13,7,8,0,3,17,5,7,3]",
+          "sample": "48 tokens, resultId=\"1792444503532\", data[0..9]=[3,13,7,7,2,3,17,5,7,3]",
           "artifact": 48
         },
         {
           "id": "semantic-tokens-delta",
           "label": "Semantic tokens (delta after edit)",
-          "medianMs": 1.1020889999999781,
+          "medianMs": 1.07030499999928,
           "coldMedianMs": null,
-          "minMs": 1.0945350000001781,
-          "stddevMs": 0.008781894461186348,
-          "cvPct": 0.7962625256919603,
+          "minMs": 1.0105429999994158,
+          "stddevMs": 0.04007131151268756,
+          "cvPct": 3.7952115960303052,
           "runs": [
-            1.0945350000001781,
-            1.1020889999999781,
-            1.1120439999995142
+            1.0866679999999178,
+            1.0105429999994158,
+            1.07030499999928
           ],
           "valid": false,
-          "reason": "not implemented (JSON-RPC -32601: Unhandled method textDocument/semanticTokens/full/delta); the full request DID return resultId \"1790686003652\", which invites a delta",
+          "reason": "not implemented (JSON-RPC -32601: Unhandled method textDocument/semanticTokens/full/delta); the full request DID return resultId \"1792444503532\", which invites a delta",
           "sample": "{\"code\":-32601,\"message\":\"Unhandled method textDocument/semanticTokens/full/delta\"}"
         },
         {
           "id": "document-symbol",
           "label": "Document symbols (outline)",
-          "medianMs": 16.798398000000816,
+          "medianMs": 25.98201700000027,
           "coldMedianMs": null,
-          "minMs": 16.378169000000526,
-          "stddevMs": 4.103725670871605,
-          "cvPct": 21.650445443226044,
+          "minMs": 17.07889299999988,
+          "stddevMs": 5.265525798852527,
+          "cvPct": 22.741154821117853,
           "runs": [
-            16.378169000000526,
-            23.686822000000575,
-            16.798398000000816
+            26.40160199999991,
+            25.98201700000027,
+            17.07889299999988
           ],
           "valid": true,
           "reason": "",
@@ -128,15 +128,15 @@
         {
           "id": "document-highlight",
           "label": "Document highlight (caret move)",
-          "medianMs": 18.758655999999974,
+          "medianMs": 22.724388999999064,
           "coldMedianMs": null,
-          "minMs": 17.42597399999977,
-          "stddevMs": 0.874931623912501,
-          "cvPct": 4.749983874557804,
+          "minMs": 20.15691599999991,
+          "stddevMs": 1.8867567999618282,
+          "cvPct": 8.484016456715123,
           "runs": [
-            17.42597399999977,
-            19.074396999999408,
-            18.758655999999974
+            23.835567000000083,
+            20.15691599999991,
+            22.724388999999064
           ],
           "valid": true,
           "reason": "",
@@ -146,33 +146,33 @@
         {
           "id": "inlay-hint",
           "label": "Inlay hints (document range)",
-          "medianMs": 70.83058699999947,
+          "medianMs": 80.39573999999993,
           "coldMedianMs": null,
-          "minMs": 69.79199999999946,
-          "stddevMs": 1.8857851059502622,
-          "cvPct": 2.642711701405851,
+          "minMs": 67.50468700000056,
+          "stddevMs": 17.69704974847598,
+          "cvPct": 21.202748684738275,
           "runs": [
-            70.83058699999947,
-            69.79199999999946,
-            73.45128699999987
+            102.4970570000005,
+            80.39573999999993,
+            67.50468700000056
           ],
           "valid": true,
           "reason": "",
-          "sample": "14 hint(s); e.g. \": Ref<{ id: number; label: string; weight: number }[], Entry[] | { id: number; label: string; weight: number }[]>\" at 29:13",
-          "artifact": 14
+          "sample": "16 hint(s); e.g. \": Ref<{ id: number; label: string; weight: number }[], Entry[] | { id: number; label: string; weight: number }[]>\" at 29:13",
+          "artifact": 16
         },
         {
           "id": "folding-range",
           "label": "Folding ranges",
-          "medianMs": 128.31901600000128,
+          "medianMs": 10.27999600000112,
           "coldMedianMs": null,
-          "minMs": 12.760949999999866,
-          "stddevMs": 67.41436589863362,
-          "cvPct": 74.4151590128688,
+          "minMs": 7.2155430000002525,
+          "stddevMs": 88.68432127722893,
+          "cvPct": 147.95011289637566,
           "runs": [
-            12.760949999999866,
-            130.6967799999993,
-            128.31901600000128
+            7.2155430000002525,
+            162.33059200000025,
+            10.27999600000112
           ],
           "valid": true,
           "reason": "",
@@ -181,19 +181,19 @@
         }
       ],
       "backendFallback": null,
-      "initializeMs": 525.300596000001,
+      "initializeMs": 559.9981259999986,
       "initializeRuns": [
-        524.4041230000003,
-        531.9690140000002,
-        525.300596000001
+        533.3363510000004,
+        562.8691580000004,
+        559.9981259999986
       ],
-      "peakRssMb": 533.3984375,
-      "rssToolMb": 275.70703125,
-      "rssEngineMb": 257.69140625,
+      "peakRssMb": 541.95703125,
+      "rssToolMb": 284.4453125,
+      "rssEngineMb": 257.51171875,
       "rssRuns": [
-        532.1171875,
-        534.09375,
-        533.3984375
+        532.171875,
+        546.72265625,
+        541.95703125
       ]
     },
     {
@@ -205,50 +205,50 @@
         {
           "id": "semantic-tokens-full",
           "label": "Semantic tokens (full)",
-          "medianMs": 154.06335899999976,
+          "medianMs": 157.00049099999887,
           "coldMedianMs": null,
-          "minMs": 136.394225,
-          "stddevMs": 18.65755337691381,
-          "cvPct": 12.059181125362048,
+          "minMs": 154.10446299999967,
+          "stddevMs": 2.1982532240965664,
+          "cvPct": 1.404568329623519,
           "runs": [
-            154.06335899999976,
-            136.394225,
-            173.69217500000013
+            157.00049099999887,
+            158.41721399999915,
+            154.10446299999967
           ],
           "valid": true,
           "reason": "",
-          "sample": "48 tokens, resultId=\"1790686012303\", data[0..9]=[3,13,7,8,0,3,17,5,7,3]",
+          "sample": "48 tokens, resultId=\"1792444512708\", data[0..9]=[3,13,7,7,2,3,17,5,7,3]",
           "artifact": 48
         },
         {
           "id": "semantic-tokens-delta",
           "label": "Semantic tokens (delta after edit)",
-          "medianMs": 1.0028220000003785,
+          "medianMs": 1.1180739999999787,
           "coldMedianMs": null,
-          "minMs": 0.9750820000008389,
-          "stddevMs": 0.02765604252259132,
-          "cvPct": 2.7579756914941895,
+          "minMs": 0.8573859999996785,
+          "stddevMs": 0.15336961352295916,
+          "cvPct": 14.826996685959434,
           "runs": [
-            1.0303940000012517,
-            1.0028220000003785,
-            0.9750820000008389
+            1.1180739999999787,
+            1.1277229999977862,
+            0.8573859999996785
           ],
           "valid": false,
-          "reason": "not implemented (JSON-RPC -32601: Unhandled method textDocument/semanticTokens/full/delta); the full request DID return resultId \"1790686012303\", which invites a delta",
+          "reason": "not implemented (JSON-RPC -32601: Unhandled method textDocument/semanticTokens/full/delta); the full request DID return resultId \"1792444512708\", which invites a delta",
           "sample": "{\"code\":-32601,\"message\":\"Unhandled method textDocument/semanticTokens/full/delta\"}"
         },
         {
           "id": "document-symbol",
           "label": "Document symbols (outline)",
-          "medianMs": 28.73750899999868,
+          "medianMs": 21.779711999999563,
           "coldMedianMs": null,
-          "minMs": 21.030908000000636,
-          "stddevMs": 4.532901263628855,
-          "cvPct": 17.259959823470677,
+          "minMs": 21.579932000000554,
+          "stddevMs": 0.16809914428149603,
+          "cvPct": 0.7725897086765695,
           "runs": [
-            21.030908000000636,
-            28.73750899999868,
-            29.019157999999152
+            21.779711999999563,
+            21.579932000000554,
+            21.913996999999654
           ],
           "valid": true,
           "reason": "",
@@ -258,15 +258,15 @@
         {
           "id": "document-highlight",
           "label": "Document highlight (caret move)",
-          "medianMs": 41.100752999998804,
+          "medianMs": 39.66546500000186,
           "coldMedianMs": null,
-          "minMs": 37.715212000000975,
-          "stddevMs": 3.1759048691528684,
-          "cvPct": 7.753783286934493,
+          "minMs": 37.496626000000106,
+          "stddevMs": 1.4218046593261522,
+          "cvPct": 3.6352184973826587,
           "runs": [
-            37.715212000000975,
-            44.06230300000061,
-            41.100752999998804
+            37.496626000000106,
+            40.173743999999715,
+            39.66546500000186
           ],
           "valid": true,
           "reason": "",
@@ -276,33 +276,33 @@
         {
           "id": "inlay-hint",
           "label": "Inlay hints (document range)",
-          "medianMs": 251.02377999999953,
+          "medianMs": 267.8062200000004,
           "coldMedianMs": null,
-          "minMs": 238.0276869999998,
-          "stddevMs": 16.068079368482866,
-          "cvPct": 6.35076344944797,
+          "minMs": 261.46449199999915,
+          "stddevMs": 3.8016549616950233,
+          "cvPct": 1.4300205945272673,
           "runs": [
-            238.0276869999998,
-            251.02377999999953,
-            269.97913600000174
+            267.8062200000004,
+            268.2677939999994,
+            261.46449199999915
           ],
           "valid": true,
           "reason": "",
-          "sample": "14 hint(s); e.g. \": Ref<{ id: number; label: string; weight: number }[], Entry[] | { id: number; label: string; weight: number }[]>\" at 29:13",
-          "artifact": 14
+          "sample": "16 hint(s); e.g. \": Ref<{ id: number; label: string; weight: number }[], Entry[] | { id: number; label: string; weight: number }[]>\" at 29:13",
+          "artifact": 16
         },
         {
           "id": "folding-range",
           "label": "Folding ranges",
-          "medianMs": 26.060699999998178,
+          "medianMs": 23.131956000001082,
           "coldMedianMs": null,
-          "minMs": 22.301056000000244,
-          "stddevMs": 3.066708108519721,
-          "cvPct": 11.98878735870251,
+          "minMs": 22.498085999999603,
+          "stddevMs": 1.6379122149429082,
+          "cvPct": 6.89856451601911,
           "runs": [
-            22.301056000000244,
-            28.377651000000697,
-            26.060699999998178
+            22.498085999999603,
+            25.598351000000548,
+            23.131956000001082
           ],
           "valid": true,
           "reason": "",
@@ -311,19 +311,19 @@
         }
       ],
       "backendFallback": null,
-      "initializeMs": 538.6064409999999,
+      "initializeMs": 540.9281210000008,
       "initializeRuns": [
-        538.6064409999999,
-        528.4463739999992,
-        542.9550609999988
+        544.7646130000012,
+        536.1538519999995,
+        540.9281210000008
       ],
-      "peakRssMb": 681.96484375,
-      "rssToolMb": 288.07421875,
-      "rssEngineMb": 393.890625,
+      "peakRssMb": 687.90234375,
+      "rssToolMb": 294.3359375,
+      "rssEngineMb": 393.56640625,
       "rssRuns": [
-        675.84765625,
-        681.96484375,
-        685.7578125
+        695.453125,
+        687.90234375,
+        681.1484375
       ]
     },
     {
@@ -335,15 +335,15 @@
         {
           "id": "semantic-tokens-full",
           "label": "Semantic tokens (full)",
-          "medianMs": 0.5718479999995907,
+          "medianMs": 0.844532999999501,
           "coldMedianMs": null,
-          "minMs": 0.5217550000015763,
-          "stddevMs": 0.054114125165123185,
-          "cvPct": 9.419403053633037,
+          "minMs": 0.7770060000002559,
+          "stddevMs": 0.055237871546946274,
+          "cvPct": 6.6073218677919,
           "runs": [
-            0.5718479999995907,
-            0.6298860000024433,
-            0.5217550000015763
+            0.844532999999501,
+            0.7770060000002559,
+            0.886491000001115
           ],
           "valid": true,
           "reason": "",
@@ -353,15 +353,15 @@
         {
           "id": "semantic-tokens-delta",
           "label": "Semantic tokens (delta after edit)",
-          "medianMs": 100.4739069999996,
+          "medianMs": 0.4780659999996715,
           "coldMedianMs": null,
-          "minMs": 100.26414899999872,
-          "stddevMs": 0.3590315274428202,
-          "cvPct": 0.3570063245751722,
+          "minMs": 0.4749599999995553,
+          "stddevMs": 0.046618041668687785,
+          "cvPct": 9.260396864743301,
           "runs": [
-            100.4739069999996,
-            100.26414899999872,
-            100.96376500000042
+            0.557213000000047,
+            0.4749599999995553,
+            0.4780659999996715
           ],
           "valid": false,
           "reason": "not implemented (JSON-RPC -32601: Method not found); the full request returned no resultId",
@@ -370,33 +370,33 @@
         {
           "id": "document-symbol",
           "label": "Document symbols (outline)",
-          "medianMs": 0.29283700000087265,
+          "medianMs": 0.7727169999998296,
           "coldMedianMs": null,
-          "minMs": 0.26797000000078697,
-          "stddevMs": 0.02174467803907105,
-          "cvPct": 7.480032211219904,
+          "minMs": 0.6558879999975034,
+          "stddevMs": 0.09904350255060584,
+          "cvPct": 13.023797116642255,
           "runs": [
-            0.3113020000018878,
-            0.29283700000087265,
-            0.26797000000078697
+            0.7727169999998296,
+            0.6558879999975034,
+            0.8528380000025209
           ],
-          "valid": false,
-          "reason": "outline is missing 7/7 script symbols: heading, nextLabel, threshold, entries, visibleEntries, formatEntry, addEntry",
-          "sample": "2 symbols: template, script setup",
-          "artifact": 2
+          "valid": true,
+          "reason": "",
+          "sample": "17 symbols: template, section, header, h1, ul, li, footer, button, script setup, Entry, heading, nextLabel, threshold, entries, visibleEntries, formatEntry, addEntry",
+          "artifact": 17
         },
         {
           "id": "document-highlight",
           "label": "Document highlight (caret move)",
-          "medianMs": 0.2727000000013504,
+          "medianMs": 0.48567999999795575,
           "coldMedianMs": null,
-          "minMs": 0.22790600000007544,
-          "stddevMs": 0.0438950893074249,
-          "cvPct": 16.132048659081207,
+          "minMs": 0.4336029999976745,
+          "stddevMs": 0.058068209172234216,
+          "cvPct": 11.860151122172201,
           "runs": [
-            0.31568999999944936,
-            0.2727000000013504,
-            0.22790600000007544
+            0.48567999999795575,
+            0.4336029999976745,
+            0.549539999999979
           ],
           "valid": true,
           "reason": "",
@@ -406,33 +406,33 @@
         {
           "id": "inlay-hint",
           "label": "Inlay hints (document range)",
-          "medianMs": 0.4328480000003765,
+          "medianMs": 8.188822000000073,
           "coldMedianMs": null,
-          "minMs": 0.431616000001668,
-          "stddevMs": 0.06324017517353134,
-          "cvPct": 13.49146762470739,
+          "minMs": 7.928844000001845,
+          "stddevMs": 0.1982391480710186,
+          "cvPct": 2.433801852896623,
           "runs": [
-            0.5417620000007446,
-            0.4328480000003765,
-            0.431616000001668
+            8.318072000001848,
+            8.188822000000073,
+            7.928844000001845
           ],
           "valid": true,
           "reason": "",
-          "sample": "2 hint(s); e.g. \": Ref<Entry[]>\" at 29:13",
+          "sample": "2 hint(s); e.g. \": Ref<{ id: number; label: string; weight: number }[],Entry[] | { id: number; label: string; weight: number }[]>\" at 29:13",
           "artifact": 2
         },
         {
           "id": "folding-range",
           "label": "Folding ranges",
-          "medianMs": 0.2742270000017015,
+          "medianMs": 0.43545600000288687,
           "coldMedianMs": null,
-          "minMs": 0.2345180000011169,
-          "stddevMs": 0.07205221401236636,
-          "cvPct": 24.47747236240985,
+          "minMs": 0.41211200000179815,
+          "stddevMs": 0.02555912236374378,
+          "cvPct": 5.849947441043643,
           "runs": [
-            0.3743389999981446,
-            0.2345180000011169,
-            0.2742270000017015
+            0.4631680000020424,
+            0.41211200000179815,
+            0.43545600000288687
           ],
           "valid": true,
           "reason": "",
@@ -441,57 +441,56 @@
         }
       ],
       "backendFallback": null,
-      "initializeMs": 37.231777000000875,
+      "initializeMs": 41.58819199999925,
       "initializeRuns": [
-        37.231777000000875,
-        37.35218199999872,
-        36.71980500000063
+        44.02716099999816,
+        40.06208300000071,
+        41.58819199999925
       ],
-      "peakRssMb": 254.51171875,
-      "rssToolMb": 80.40625,
-      "rssEngineMb": 174.10546875,
+      "peakRssMb": 184.6484375,
+      "rssToolMb": 85.296875,
+      "rssEngineMb": 99.3515625,
       "rssRuns": [
-        256.68359375,
-        254.51171875,
-        252.76171875
+        185.2734375,
+        184.6484375,
+        183.1328125
       ]
     },
     {
       "suite": "background",
       "suiteLabel": "Background (editor chatter)",
       "server": "verter",
-      "label": "Verter LSP (npm 0.0.1-beta.6)",
+      "label": "Verter LSP (npm 0.0.1-beta.7)",
       "ops": [
         {
           "id": "semantic-tokens-full",
           "label": "Semantic tokens (full)",
-          "medianMs": 175.01688000000286,
+          "medianMs": 0.560790999999881,
           "coldMedianMs": null,
-          "minMs": 173.64769800000067,
-          "stddevMs": 2.157624993062887,
-          "cvPct": 1.2293204954194992,
+          "minMs": 0.5054069999969215,
+          "stddevMs": 0.03435455936936357,
+          "cvPct": 6.305467017286778,
           "runs": [
-            175.01688000000286,
-            173.64769800000067,
-            177.87630400000126
+            0.5054069999969215,
+            0.5683150000004389,
+            0.560790999999881
           ],
-          "valid": true,
-          "reason": "",
-          "sample": "53 tokens, resultId=null, data[0..9]=[3,13,7,8,1028,3,48,5,7,0]",
-          "artifact": 53
+          "valid": false,
+          "reason": "returned null — no tokens at all for this document",
+          "sample": "null"
         },
         {
           "id": "semantic-tokens-delta",
           "label": "Semantic tokens (delta after edit)",
-          "medianMs": 0.530746000000363,
+          "medianMs": 0.634105000001,
           "coldMedianMs": null,
-          "minMs": 0.4500019999977667,
-          "stddevMs": 0.07324996000418448,
-          "cvPct": 13.934811048462473,
+          "minMs": 0.605995999998413,
+          "stddevMs": 0.04036234879822174,
+          "cvPct": 6.287995363445527,
           "runs": [
-            0.530746000000363,
-            0.5962370000015653,
-            0.4500019999977667
+            0.605995999998413,
+            0.6855850000029022,
+            0.634105000001
           ],
           "valid": false,
           "reason": "not implemented (JSON-RPC -32601: Method not found); the full request returned no resultId",
@@ -500,15 +499,15 @@
         {
           "id": "document-symbol",
           "label": "Document symbols (outline)",
-          "medianMs": 0.7948649999998452,
+          "medianMs": 0.5469520000006014,
           "coldMedianMs": null,
-          "minMs": 0.7851660000014817,
-          "stddevMs": 0.020058399594414425,
-          "cvPct": 2.503380073336574,
+          "minMs": 0.5330680000006396,
+          "stddevMs": 0.021342414952116716,
+          "cvPct": 3.868748427859635,
           "runs": [
-            0.8237269999990531,
-            0.7948649999998452,
-            0.7851660000014817
+            0.5330680000006396,
+            0.5749660000001313,
+            0.5469520000006014
           ],
           "valid": true,
           "reason": "",
@@ -518,15 +517,15 @@
         {
           "id": "document-highlight",
           "label": "Document highlight (caret move)",
-          "medianMs": 0.3438029999997525,
+          "medianMs": 0.32183399999848916,
           "coldMedianMs": null,
-          "minMs": 0.33745099999941885,
-          "stddevMs": 0.006241329026086814,
-          "cvPct": 1.8157702800996676,
+          "minMs": 0.3213820000019041,
+          "stddevMs": 0.009305589664054773,
+          "cvPct": 2.8459288407060503,
           "runs": [
-            0.34993300000132876,
-            0.3438029999997525,
-            0.33745099999941885
+            0.32183399999848916,
+            0.3213820000019041,
+            0.33772099999987404
           ],
           "valid": true,
           "reason": "",
@@ -536,15 +535,15 @@
         {
           "id": "inlay-hint",
           "label": "Inlay hints (document range)",
-          "medianMs": 0.28429099999993923,
+          "medianMs": 0.27407400000083726,
           "coldMedianMs": null,
-          "minMs": 0.2727889999987383,
-          "stddevMs": 0.010715372182834625,
-          "cvPct": 3.776209537231403,
+          "minMs": 0.27189699999871664,
+          "stddevMs": 0.002899360102465068,
+          "cvPct": 1.056090837470275,
           "runs": [
-            0.2727889999987383,
-            0.28429099999993923,
-            0.2942000000002736
+            0.27407400000083726,
+            0.2776400000002468,
+            0.27189699999871664
           ],
           "valid": false,
           "reason": "returned null — no inlay hints for a document full of inferable bindings",
@@ -553,15 +552,15 @@
         {
           "id": "folding-range",
           "label": "Folding ranges",
-          "medianMs": 0.3424990000021353,
+          "medianMs": 0.2727789999989909,
           "coldMedianMs": null,
-          "minMs": 0.3039779999999155,
-          "stddevMs": 0.029783692590732474,
-          "cvPct": 8.8548474400087,
+          "minMs": 0.2698159999999916,
+          "stddevMs": 0.007369351824785374,
+          "cvPct": 2.675237473855526,
           "runs": [
-            0.3625869999996212,
-            0.3424990000021353,
-            0.3039779999999155
+            0.2698159999999916,
+            0.28380099999776576,
+            0.2727789999989909
           ],
           "valid": true,
           "reason": "",
@@ -570,19 +569,19 @@
         }
       ],
       "backendFallback": null,
-      "initializeMs": 4.947277999999642,
+      "initializeMs": 5.386248000002524,
       "initializeRuns": [
-        4.946046000000933,
-        4.947277999999642,
-        5.174158999998326
+        5.380188999999518,
+        5.530017000000953,
+        5.386248000002524
       ],
-      "peakRssMb": 207.48046875,
-      "rssToolMb": 116.3046875,
-      "rssEngineMb": 91.17578125,
+      "peakRssMb": 80.828125,
+      "rssToolMb": 80.828125,
+      "rssEngineMb": null,
       "rssRuns": [
-        206.953125,
-        207.48046875,
-        209.7265625
+        80.3046875,
+        80.8671875,
+        80.828125
       ]
     },
     {
@@ -594,20 +593,20 @@
         {
           "id": "completion-script-member",
           "label": "Completion: script member",
-          "medianMs": 24.38712200000009,
-          "coldMedianMs": 1103.753971000002,
-          "minMs": 24.058445000002393,
-          "stddevMs": 2.6144062778705512,
-          "cvPct": 10.161231473223935,
+          "medianMs": 16.636523000001034,
+          "coldMedianMs": 1131.2251179999948,
+          "minMs": 16.153077000002668,
+          "stddevMs": 2.1717708370677804,
+          "cvPct": 12.311010742570785,
           "runs": [
-            28.742113000000245,
-            24.38712200000009,
-            24.058445000002393
+            16.153077000002668,
+            16.636523000001034,
+            20.133045000002312
           ],
           "coldRuns": [
-            1191.6803299999992,
-            1103.753971000002,
-            1095.184911999997
+            1122.4539250000016,
+            1131.2251179999948,
+            1153.0774850000016
           ],
           "valid": true,
           "reason": "",
@@ -617,20 +616,20 @@
         {
           "id": "completion-component-tag",
           "label": "Completion: component tag <Ch",
-          "medianMs": 37.824211999999534,
-          "coldMedianMs": 125.24817199999961,
-          "minMs": 36.53555800000322,
-          "stddevMs": 1.9702786308045381,
-          "cvPct": 5.150398192263358,
+          "medianMs": 36.32056300000113,
+          "coldMedianMs": 126.74290900000051,
+          "minMs": 35.82147200000327,
+          "stddevMs": 4.112917989834075,
+          "cvPct": 10.699234235968818,
           "runs": [
-            40.40486899999814,
-            37.824211999999534,
-            36.53555800000322
+            43.18167600000015,
+            36.32056300000113,
+            35.82147200000327
           ],
           "coldRuns": [
-            133.50227299999824,
-            120.35038400000485,
-            125.24817199999961
+            126.74290900000051,
+            121.35789199999999,
+            128.9436050000004
           ],
           "valid": true,
           "reason": "",
@@ -640,20 +639,20 @@
         {
           "id": "completion-prop-name",
           "label": "Completion: prop name <C :",
-          "medianMs": 156.6699099999969,
-          "coldMedianMs": 195.09374799999932,
-          "minMs": 8.648742999997921,
-          "stddevMs": 106.3728336248915,
-          "cvPct": 83.909202788908,
+          "medianMs": 92.4627149999942,
+          "coldMedianMs": 197.15117399999872,
+          "minMs": 82.27401200000168,
+          "stddevMs": 42.70153377774523,
+          "cvPct": 38.178854916191604,
           "runs": [
-            8.648742999997921,
-            214.99541299999692,
-            156.6699099999969
+            160.80136499999935,
+            82.27401200000168,
+            92.4627149999942
           ],
           "coldRuns": [
-            195.09374799999932,
-            190.2549910000016,
-            196.12426000000414
+            221.82112400000187,
+            194.274725999996,
+            197.15117399999872
           ],
           "valid": true,
           "reason": "",
@@ -663,20 +662,20 @@
         {
           "id": "completion-event-name",
           "label": "Completion: event name <C @",
-          "medianMs": 7.792227999998431,
-          "coldMedianMs": 123.97041000000172,
-          "minMs": 6.090653999999631,
-          "stddevMs": 1.8574268177083466,
-          "cvPct": 23.527470456929244,
+          "medianMs": 6.05355899999995,
+          "coldMedianMs": 8.82653399999981,
+          "minMs": 5.8130799999999,
+          "stddevMs": 0.5442532972255912,
+          "cvPct": 8.722315485892155,
           "runs": [
-            9.8012639999979,
-            7.792227999998431,
-            6.090653999999631
+            6.852700999999797,
+            5.8130799999999,
+            6.05355899999995
           ],
           "coldRuns": [
-            171.09571999999753,
-            123.97041000000172,
-            13.131210999999894
+            11.120049000001018,
+            8.82653399999981,
+            7.608179000002565
           ],
           "valid": true,
           "reason": "",
@@ -686,20 +685,20 @@
         {
           "id": "completion-directive",
           "label": "Completion: directive v-",
-          "medianMs": 28.477281999999832,
-          "coldMedianMs": 26.71772300000157,
-          "minMs": 12.648067000001902,
-          "stddevMs": 19.942416878077694,
-          "cvPct": 64.05998259479242,
+          "medianMs": 13.336795999995957,
+          "coldMedianMs": 33.23446100000001,
+          "minMs": 12.29646800000046,
+          "stddevMs": 25.56862255521373,
+          "cvPct": 92.7218141875679,
           "runs": [
-            52.26719999999841,
-            12.648067000001902,
-            28.477281999999832
+            57.093619999999646,
+            13.336795999995957,
+            12.29646800000046
           ],
           "coldRuns": [
-            33.35740699999951,
-            23.131474000001617,
-            26.71772300000157
+            42.45185400000264,
+            33.23446100000001,
+            26.48372200000449
           ],
           "valid": true,
           "reason": "",
@@ -709,20 +708,20 @@
         {
           "id": "completion-slot-name",
           "label": "Completion: slot name <template #",
-          "medianMs": 15.3732469999959,
-          "coldMedianMs": 119.78909399999975,
-          "minMs": 13.120731999995769,
-          "stddevMs": 1.4090023107774117,
-          "cvPct": 9.561757854778651,
+          "medianMs": 15.056830000001355,
+          "coldMedianMs": 14.188371999996889,
+          "minMs": 14.375731000000087,
+          "stddevMs": 1.2815496966774402,
+          "cvPct": 8.305796776370116,
           "runs": [
-            15.713446000001568,
-            15.3732469999959,
-            13.120731999995769
+            16.856184000000212,
+            15.056830000001355,
+            14.375731000000087
           ],
           "coldRuns": [
-            128.83449499999915,
-            18.569264999998268,
-            119.78909399999975
+            13.961277999998856,
+            14.188371999996889,
+            15.354738000001817
           ],
           "valid": true,
           "reason": "",
@@ -732,15 +731,15 @@
         {
           "id": "completion-auto-import",
           "label": "Completion: auto-import",
-          "medianMs": 35.39399599999888,
+          "medianMs": 37.26097700000537,
           "coldMedianMs": null,
-          "minMs": 32.82586000000447,
-          "stddevMs": 3.999945205195618,
-          "cvPct": 11.020023202413402,
+          "minMs": 33.769983000005595,
+          "stddevMs": 3.5122273516104388,
+          "cvPct": 9.422444538477171,
           "runs": [
-            40.67134499999884,
-            35.39399599999888,
-            32.82586000000447
+            40.794395000000804,
+            33.769983000005595,
+            37.26097700000537
           ],
           "valid": true,
           "reason": "",
@@ -750,15 +749,15 @@
         {
           "id": "resolve-auto-import",
           "label": "Resolve: auto-import edit",
-          "medianMs": 51.53800400000182,
+          "medianMs": 40.501029999999446,
           "coldMedianMs": null,
-          "minMs": 47.44173700000101,
-          "stddevMs": 20.234286306037642,
-          "cvPct": 33.11009250421219,
+          "minMs": 37.58621600000333,
+          "stddevMs": 8.088053740356116,
+          "cvPct": 18.53492619564857,
           "runs": [
-            51.53800400000182,
-            47.44173700000101,
-            84.35668099999748
+            52.82323600000018,
+            37.58621600000333,
+            40.501029999999446
           ],
           "valid": true,
           "reason": "",
@@ -768,15 +767,15 @@
         {
           "id": "resolve-member",
           "label": "Resolve: script member detail",
-          "medianMs": 3.2510890000012296,
+          "medianMs": 2.973729999997886,
           "coldMedianMs": null,
-          "minMs": 2.7541809999966063,
-          "stddevMs": 0.29669544068819953,
-          "cvPct": 9.582371030727058,
+          "minMs": 2.4247180000020307,
+          "stddevMs": 1.1709379300550653,
+          "cvPct": 34.88645500730243,
           "runs": [
-            3.2510890000012296,
-            2.7541809999966063,
-            3.2835199999972247
+            4.6708289999987755,
+            2.4247180000020307,
+            2.973729999997886
           ],
           "valid": true,
           "reason": "",
@@ -785,19 +784,19 @@
         }
       ],
       "backendFallback": null,
-      "initializeMs": 523.3762320000023,
+      "initializeMs": 546.6503899999989,
       "initializeRuns": [
-        521.804838,
-        530.4226899999994,
-        523.3762320000023
+        546.6503899999989,
+        546.6656189999994,
+        538.3777579999951
       ],
-      "peakRssMb": 585.56640625,
-      "rssToolMb": 296.7265625,
-      "rssEngineMb": 288.83984375,
+      "peakRssMb": 571.59765625,
+      "rssToolMb": 299.33984375,
+      "rssEngineMb": 272.2578125,
       "rssRuns": [
-        588.33203125,
-        582.99609375,
-        585.56640625
+        580.14453125,
+        569.2265625,
+        571.59765625
       ]
     },
     {
@@ -809,20 +808,20 @@
         {
           "id": "completion-script-member",
           "label": "Completion: script member",
-          "medianMs": 27.162532999995165,
-          "coldMedianMs": 407.50707200000033,
-          "minMs": 17.44912500000646,
-          "stddevMs": 6.879553662327685,
-          "cvPct": 27.387920088624774,
+          "medianMs": 15.667373000003863,
+          "coldMedianMs": 418.59438700000464,
+          "minMs": 12.677800000004936,
+          "stddevMs": 4.933322122800266,
+          "cvPct": 29.213816643601398,
           "runs": [
-            17.44912500000646,
-            30.745145000000775,
-            27.162532999995165
+            22.315671999996994,
+            12.677800000004936,
+            15.667373000003863
           ],
           "coldRuns": [
-            410.869412,
-            407.50707200000033,
-            394.32413899999665
+            426.85345499999676,
+            418.59438700000464,
+            414.2648610000033
           ],
           "valid": true,
           "reason": "",
@@ -832,20 +831,20 @@
         {
           "id": "completion-component-tag",
           "label": "Completion: component tag <Ch",
-          "medianMs": 39.65538500000548,
-          "coldMedianMs": 141.282981999997,
-          "minMs": 38.98082399999839,
-          "stddevMs": 1.61282572608809,
-          "cvPct": 4.009143939091788,
+          "medianMs": 42.754754999994475,
+          "coldMedianMs": 144.27577900000324,
+          "minMs": 42.213637000000745,
+          "stddevMs": 0.7955765131546855,
+          "cvPct": 1.8537930495731203,
           "runs": [
-            42.049833999997645,
-            38.98082399999839,
-            39.65538500000548
+            43.78004299999884,
+            42.754754999994475,
+            42.213637000000745
           ],
           "coldRuns": [
-            139.85368900000321,
-            143.7462549999982,
-            141.282981999997
+            154.26123299999745,
+            141.72231900000043,
+            144.27577900000324
           ],
           "valid": true,
           "reason": "",
@@ -855,20 +854,20 @@
         {
           "id": "completion-prop-name",
           "label": "Completion: prop name <C :",
-          "medianMs": 8.14364299999579,
-          "coldMedianMs": 35.24484200000006,
-          "minMs": 7.877150000000256,
-          "stddevMs": 0.40252693461778283,
-          "cvPct": 4.89115351342991,
+          "medianMs": 7.619358999996621,
+          "coldMedianMs": 38.61121600000479,
+          "minMs": 7.244477000000188,
+          "stddevMs": 0.8300779778349063,
+          "cvPct": 10.508931978843833,
           "runs": [
-            8.668287000000419,
-            7.877150000000256,
-            8.14364299999579
+            7.619358999996621,
+            8.83252000000357,
+            7.244477000000188
           ],
           "coldRuns": [
-            35.86501100000169,
-            35.24484200000006,
-            34.2418370000014
+            35.35837300000276,
+            38.61121600000479,
+            40.520737999999255
           ],
           "valid": true,
           "reason": "",
@@ -878,20 +877,20 @@
         {
           "id": "completion-event-name",
           "label": "Completion: event name <C @",
-          "medianMs": 6.38506100000086,
-          "coldMedianMs": 6.840591000000131,
-          "minMs": 6.178829000004043,
-          "stddevMs": 0.1436721189915295,
-          "cvPct": 2.266227078979474,
+          "medianMs": 6.763254999998026,
+          "coldMedianMs": 7.514392000004591,
+          "minMs": 6.621940999997605,
+          "stddevMs": 0.11269305572985713,
+          "cvPct": 1.67118944062332,
           "runs": [
-            6.178829000004043,
-            6.45522599999822,
-            6.38506100000086
+            6.621940999997605,
+            6.844657000001462,
+            6.763254999998026
           ],
           "coldRuns": [
-            6.705591999998433,
-            7.245571999999811,
-            6.840591000000131
+            7.2694269999992684,
+            7.514392000004591,
+            8.583566000001156
           ],
           "valid": true,
           "reason": "",
@@ -901,20 +900,20 @@
         {
           "id": "completion-directive",
           "label": "Completion: directive v-",
-          "medianMs": 12.502081999999064,
-          "coldMedianMs": 27.989369999995688,
-          "minMs": 12.181781999999657,
-          "stddevMs": 0.3666054447977769,
-          "cvPct": 2.925278164988539,
+          "medianMs": 12.854823000001488,
+          "coldMedianMs": 28.401246000001265,
+          "minMs": 12.440540999996301,
+          "stddevMs": 0.5579335299857845,
+          "cvPct": 4.309437897276902,
           "runs": [
-            12.502081999999064,
-            12.913118999997096,
-            12.181781999999657
+            12.854823000001488,
+            12.440540999996301,
+            13.544981999999436
           ],
           "coldRuns": [
-            28.62624700000015,
-            27.989369999995688,
-            27.46829200000502
+            28.401246000001265,
+            29.67795699999988,
+            28.03359100000671
           ],
           "valid": true,
           "reason": "",
@@ -924,20 +923,20 @@
         {
           "id": "completion-slot-name",
           "label": "Completion: slot name <template #",
-          "medianMs": 15.635008999997808,
-          "coldMedianMs": 15.619039999997767,
-          "minMs": 13.606399000003876,
-          "stddevMs": 1.242193568606255,
-          "cvPct": 8.262165746914462,
+          "medianMs": 14.404882999995607,
+          "coldMedianMs": 15.469696000000113,
+          "minMs": 13.838896000001114,
+          "stddevMs": 1.282348989987423,
+          "cvPct": 8.63883678520062,
           "runs": [
-            13.606399000003876,
-            15.635008999997808,
-            15.862755000001926
+            13.838896000001114,
+            16.2882230000032,
+            14.404882999995607
           ],
           "coldRuns": [
-            14.933900000003632,
-            15.619039999997767,
-            17.98681100000249
+            14.95266100000299,
+            15.469696000000113,
+            17.583370000000286
           ],
           "valid": true,
           "reason": "",
@@ -947,15 +946,15 @@
         {
           "id": "completion-auto-import",
           "label": "Completion: auto-import",
-          "medianMs": 67.87810400000308,
+          "medianMs": 72.9981209999969,
           "coldMedianMs": null,
-          "minMs": 39.453436999996484,
-          "stddevMs": 17.32774363330076,
-          "cvPct": 29.176771531409862,
+          "minMs": 42.01398799999879,
+          "stddevMs": 25.586165607143442,
+          "cvPct": 36.94082033579336,
           "runs": [
-            67.87810400000308,
-            39.453436999996484,
-            70.83495299999777
+            42.01398799999879,
+            72.9981209999969,
+            92.77563400000508
           ],
           "valid": true,
           "reason": "",
@@ -965,15 +964,15 @@
         {
           "id": "resolve-auto-import",
           "label": "Resolve: auto-import edit",
-          "medianMs": 51.54771900000196,
+          "medianMs": 50.682912999996915,
           "coldMedianMs": null,
-          "minMs": 50.53727000000072,
-          "stddevMs": 0.6577660874931387,
-          "cvPct": 1.28255334222523,
+          "minMs": 50.53193900000042,
+          "stddevMs": 4.054318880907397,
+          "cvPct": 7.657202440290186,
           "runs": [
-            51.54771900000196,
-            50.53727000000072,
-            51.772023999998055
+            50.53193900000042,
+            50.682912999996915,
+            57.6284949999972
           ],
           "valid": true,
           "reason": "",
@@ -983,15 +982,15 @@
         {
           "id": "resolve-member",
           "label": "Resolve: script member detail",
-          "medianMs": 9.149320999997144,
+          "medianMs": 9.710605000000214,
           "coldMedianMs": null,
-          "minMs": 9.052108999996562,
-          "stddevMs": 0.1327141395669718,
-          "cvPct": 1.44694659635479,
+          "minMs": 9.363605999998981,
+          "stddevMs": 0.37970630953614604,
+          "cvPct": 3.901584462260183,
           "runs": [
-            9.052108999996562,
-            9.31461099999433,
-            9.149320999997144
+            10.122105000002193,
+            9.710605000000214,
+            9.363605999998981
           ],
           "valid": true,
           "reason": "",
@@ -1000,19 +999,19 @@
         }
       ],
       "backendFallback": null,
-      "initializeMs": 526.0224030000027,
+      "initializeMs": 531.8021719999961,
       "initializeRuns": [
-        526.0224030000027,
-        529.0977060000005,
-        520.7738399999944
+        531.8021719999961,
+        530.049493999999,
+        558.8711829999957
       ],
-      "peakRssMb": 699.8515625,
-      "rssToolMb": 308.5859375,
-      "rssEngineMb": 391.265625,
+      "peakRssMb": 710.9375,
+      "rssToolMb": 309.4765625,
+      "rssEngineMb": 401.4609375,
       "rssRuns": [
-        699.8515625,
-        718.06640625,
-        699.3828125
+        725.21484375,
+        710.9375,
+        709.96484375
       ]
     },
     {
@@ -1024,20 +1023,20 @@
         {
           "id": "completion-script-member",
           "label": "Completion: script member",
-          "medianMs": 0.2698939999972936,
-          "coldMedianMs": 0.5324739999996382,
-          "minMs": 0.24847399999998743,
-          "stddevMs": 0.02320021275716155,
-          "cvPct": 8.558879666675352,
+          "medianMs": 0.525934999997844,
+          "coldMedianMs": 4.734497000004922,
+          "minMs": 0.49315300000307616,
+          "stddevMs": 0.029618955320485037,
+          "cvPct": 5.654767390411559,
           "runs": [
-            0.24847399999998743,
-            0.29482999999891035,
-            0.2698939999972936
+            0.5522740000014892,
+            0.49315300000307616,
+            0.525934999997844
           ],
           "coldRuns": [
-            0.5204920000032871,
-            0.5708059999960824,
-            0.5324739999996382
+            4.734497000004922,
+            0.8673840000046766,
+            5.00027499999851
           ],
           "valid": true,
           "reason": "",
@@ -1047,89 +1046,89 @@
         {
           "id": "completion-component-tag",
           "label": "Completion: component tag <Ch",
-          "medianMs": 0.5698040000061155,
-          "coldMedianMs": 68.9953469999964,
-          "minMs": 0.5443759999980102,
-          "stddevMs": 0.053673268175090355,
-          "cvPct": 9.140600022165463,
+          "medianMs": 20.790216000001237,
+          "coldMedianMs": 206.95595900000626,
+          "minMs": 20.485936000004585,
+          "stddevMs": 6.742633806905883,
+          "cvPct": 27.487356536702833,
           "runs": [
-            0.5443759999980102,
-            0.6474090000046999,
-            0.5698040000061155
+            20.485936000004585,
+            20.790216000001237,
+            32.313687000001664
           ],
           "coldRuns": [
-            75.83107000000018,
-            68.53353700000298,
-            68.9953469999964
+            211.49025599999732,
+            206.95595900000626,
+            203.58808699999645
           ],
-          "valid": false,
-          "reason": "cold: no `ChildCard` component tag in 42 items",
-          "sample": "[v-if, v-else-if, v-else, v-for, v-on, v-bind, v-model, v-slot, v-show, v-pre, v-once, v-memo, …+30]",
-          "artifact": 42
+          "valid": true,
+          "reason": "",
+          "sample": "\"ChildCard\" kind=7 detail=\"Component in script setup\"",
+          "artifact": 1
         },
         {
           "id": "completion-prop-name",
           "label": "Completion: prop name <C :",
-          "medianMs": 3.8654160000005504,
-          "coldMedianMs": 297.32226100000116,
-          "minMs": 3.7478870000049938,
-          "stddevMs": 0.08107584542918474,
-          "cvPct": 2.111954761765856,
+          "medianMs": 1.7220549999983632,
+          "coldMedianMs": 10.73340100000496,
+          "minMs": 1.659218000000692,
+          "stddevMs": 0.06858619499858076,
+          "cvPct": 3.9740860803419307,
           "runs": [
-            3.8654160000005504,
-            3.7478870000049938,
-            3.903399000002537
+            1.659218000000692,
+            1.7220549999983632,
+            1.7962340000012773
           ],
           "coldRuns": [
-            300.01838500000304,
-            297.32226100000116,
-            294.48522299999604
+            10.73340100000496,
+            9.810953999993217,
+            11.043624000005366
           ],
           "valid": true,
           "reason": "",
           "sample": "\"blurb\" kind=10 detail=\"prop: string (optional)\"",
-          "artifact": 4
+          "artifact": 13
         },
         {
           "id": "completion-event-name",
           "label": "Completion: event name <C @",
-          "medianMs": 0.3807809999998426,
-          "coldMedianMs": 0.4602200000008452,
-          "minMs": 0.34727900000143563,
-          "stddevMs": 0.038506583504318376,
-          "cvPct": 10.0265028080047,
+          "medianMs": 0.5978800000011688,
+          "coldMedianMs": 0.621714000000793,
+          "minMs": 0.5848659999974188,
+          "stddevMs": 0.0191270537552373,
+          "cvPct": 3.1785327233670215,
           "runs": [
-            0.34727900000143563,
-            0.4240840000056778,
-            0.3807809999998426
+            0.5978800000011688,
+            0.6225259999991977,
+            0.5848659999974188
           ],
           "coldRuns": [
-            0.4141730000046664,
-            0.4698560000033467,
-            0.4602200000008452
+            0.5731230000019423,
+            0.621714000000793,
+            0.6565090000003693
           ],
-          "valid": false,
-          "reason": "cold: no `quench` declared emit in 12 items",
-          "sample": "[v-on, @, @click, @input, @change, @submit, @keydown, @keyup, @focus, @blur, @mouseenter, @mouseleave]",
-          "artifact": 12
+          "valid": true,
+          "reason": "",
+          "sample": "\"@quench\" kind=23 detail=\"event: [value: number]\"",
+          "artifact": 14
         },
         {
           "id": "completion-directive",
           "label": "Completion: directive v-",
-          "medianMs": 0.370891999999003,
-          "coldMedianMs": 0.41257999999652384,
-          "minMs": 0.3629579999978887,
-          "stddevMs": 0.04032720904336653,
-          "cvPct": 10.337791831056895,
+          "medianMs": 0.5339709999971092,
+          "coldMedianMs": 0.5677929999947082,
+          "minMs": 0.5168679999987944,
+          "stddevMs": 0.03179621229923884,
+          "cvPct": 5.854570662630187,
           "runs": [
-            0.3629579999978887,
-            0.4364350000032573,
-            0.370891999999003
+            0.5339709999971092,
+            0.5784630000052857,
+            0.5168679999987944
           ],
           "coldRuns": [
-            0.41257999999652384,
-            0.43064400000002934,
-            0.3977630000008503
+            0.5448709999982384,
+            0.5677929999947082,
+            0.5880409999954281
           ],
           "valid": true,
           "reason": "",
@@ -1139,20 +1138,20 @@
         {
           "id": "completion-slot-name",
           "label": "Completion: slot name <template #",
-          "medianMs": 0.5707459999975981,
-          "coldMedianMs": 0.5831879999968805,
-          "minMs": 0.5475129999977071,
-          "stddevMs": 0.02984812514039489,
-          "cvPct": 5.190945183621705,
+          "medianMs": 0.6966240000037942,
+          "coldMedianMs": 0.7108710000029532,
+          "minMs": 0.6587429999999586,
+          "stddevMs": 0.024554857247639388,
+          "cvPct": 3.5757469960505057,
           "runs": [
-            0.5707459999975981,
-            0.6067519999996875,
-            0.5475129999977071
+            0.6587429999999586,
+            0.7047500000044238,
+            0.6966240000037942
           ],
           "coldRuns": [
-            0.5831879999968805,
-            0.5539239999998244,
-            0.6130249999987427
+            0.7051710000014282,
+            0.7339649999994435,
+            0.7108710000029532
           ],
           "valid": true,
           "reason": "",
@@ -1162,15 +1161,15 @@
         {
           "id": "completion-auto-import",
           "label": "Completion: auto-import",
-          "medianMs": 35.0158420000007,
+          "medianMs": 35.667818000001716,
           "coldMedianMs": null,
-          "minMs": 34.802583999997296,
-          "stddevMs": 0.32172516320894573,
-          "cvPct": 0.9170018257529737,
+          "minMs": 33.37030599999707,
+          "stddevMs": 1.372860714052903,
+          "cvPct": 3.927724952928452,
           "runs": [
-            34.802583999997296,
-            35.0158420000007,
-            35.43496199999936
+            35.821106000003056,
+            35.667818000001716,
+            33.37030599999707
           ],
           "valid": false,
           "reason": "`computed` offered but no import edit on any entry, in the list or after resolve — see resolve-auto-import",
@@ -1180,15 +1179,15 @@
         {
           "id": "resolve-auto-import",
           "label": "Resolve: auto-import edit",
-          "medianMs": 5.374563999997918,
+          "medianMs": 5.917632999997295,
           "coldMedianMs": null,
-          "minMs": 5.241605999995954,
-          "stddevMs": 0.31132922869762164,
-          "cvPct": 5.677372237340801,
+          "minMs": 5.514226999999664,
+          "stddevMs": 0.3566447853041613,
+          "cvPct": 6.059467158434256,
           "runs": [
-            5.241605999995954,
-            5.374563999997918,
-            5.834885999996914
+            5.514226999999664,
+            6.225375000001804,
+            5.917632999997295
           ],
           "valid": false,
           "reason": "resolve returned no import edit for `computed`",
@@ -1198,15 +1197,15 @@
         {
           "id": "resolve-member",
           "label": "Resolve: script member detail",
-          "medianMs": 0.2328239999988,
+          "medianMs": 0.20652700000209734,
           "coldMedianMs": null,
-          "minMs": 0.19431299999996554,
-          "stddevMs": 0.0224992418161136,
-          "cvPct": 10.213573077720048,
+          "minMs": 0.19569699999556178,
+          "stddevMs": 0.006613713131452124,
+          "cvPct": 3.2531097704670637,
           "runs": [
-            0.23372599999856902,
-            0.2328239999988,
-            0.19431299999996554
+            0.20768900000257418,
+            0.20652700000209734,
+            0.19569699999556178
           ],
           "valid": true,
           "reason": "",
@@ -1215,113 +1214,113 @@
         }
       ],
       "backendFallback": null,
-      "initializeMs": 35.84874900000432,
+      "initializeMs": 42.47819200000231,
       "initializeRuns": [
-        37.21068400000513,
-        35.39010899999994,
-        35.84874900000432
+        42.47819200000231,
+        42.71082200000092,
+        41.111574999995355
       ],
-      "peakRssMb": 296.92578125,
-      "rssToolMb": 90.99609375,
-      "rssEngineMb": 205.9296875,
+      "peakRssMb": 212.2109375,
+      "rssToolMb": 99.9453125,
+      "rssEngineMb": 112.265625,
       "rssRuns": [
-        301.265625,
-        295.21484375,
-        296.92578125
+        216.421875,
+        212.2109375,
+        203.61328125
       ]
     },
     {
       "suite": "completion",
       "suiteLabel": "Completion (8 contexts, content-gated)",
       "server": "verter",
-      "label": "Verter LSP (npm 0.0.1-beta.6)",
+      "label": "Verter LSP (npm 0.0.1-beta.7)",
       "ops": [
         {
           "id": "completion-script-member",
           "label": "Completion: script member",
-          "medianMs": 1.1426569999966887,
-          "coldMedianMs": 194.01454599999852,
-          "minMs": 1.138846999994712,
-          "stddevMs": 0.0866131002383804,
-          "cvPct": 7.273851874263479,
+          "medianMs": 6.963002000004053,
+          "coldMedianMs": 229.39216300000408,
+          "minMs": 6.240567000000738,
+          "stddevMs": 0.4494338198339707,
+          "cvPct": 6.652189677148924,
           "runs": [
-            1.138846999994712,
-            1.2907339999946998,
-            1.1426569999966887
+            7.0649670000057085,
+            6.963002000004053,
+            6.240567000000738
           ],
           "coldRuns": [
-            207.08352299999387,
-            194.01454599999852,
-            186.22734599999967
+            231.36745399999927,
+            229.39216300000408,
+            227.92076799999631
           ],
-          "valid": true,
-          "reason": "",
-          "sample": "\"quaver\" kind=5",
-          "artifact": 3
+          "valid": false,
+          "reason": "cold: no `quaver` member of the local object in 9 items",
+          "sample": "[headline, visible, probe, chosen, onDismiss, derived, ref, ChildCard, SiblingCard]",
+          "artifact": 9
         },
         {
           "id": "completion-component-tag",
           "label": "Completion: component tag <Ch",
-          "medianMs": 32.949979999997595,
-          "coldMedianMs": 169.04661000000488,
-          "minMs": 25.40693299999839,
-          "stddevMs": 8.14738057726856,
-          "cvPct": 24.431387767851863,
+          "medianMs": 4.531131999996433,
+          "coldMedianMs": 2.9371700000046985,
+          "minMs": 4.0710739999994985,
+          "stddevMs": 0.2697273041533131,
+          "cvPct": 6.154750969727673,
           "runs": [
-            32.949979999997595,
-            41.68710400000418,
-            25.40693299999839
+            4.531131999996433,
+            4.545066999999108,
+            4.0710739999994985
           ],
           "coldRuns": [
-            168.02492299999722,
-            169.04661000000488,
-            184.1271990000023
+            2.9016069999997853,
+            3.220203999997466,
+            2.9371700000046985
           ],
           "valid": true,
           "reason": "",
-          "sample": "\"ChildCard\" kind=6 detail=\"from './ChildCard.vue'\"",
-          "artifact": 1193
+          "sample": "\"ChildCard\" kind=7 detail=\"from './ChildCard.vue'\"",
+          "artifact": 66
         },
         {
           "id": "completion-prop-name",
           "label": "Completion: prop name <C :",
-          "medianMs": 5.703052999997453,
-          "coldMedianMs": 8.221541999999317,
-          "minMs": 5.37064900000405,
-          "stddevMs": 1.0368638855449626,
-          "cvPct": 16.920809445449336,
+          "medianMs": 2.644552999998268,
+          "coldMedianMs": 2.7461630000034347,
+          "minMs": 2.614346000002115,
+          "stddevMs": 0.043874653231364094,
+          "cvPct": 1.6536302788173787,
           "runs": [
-            5.37064900000405,
-            7.309529999998631,
-            5.703052999997453
+            2.614346000002115,
+            2.644552999998268,
+            2.7007979999980307
           ],
           "coldRuns": [
-            5.938760999997612,
-            8.221541999999317,
-            18.18009699999675
+            2.8159039999954985,
+            2.7461630000034347,
+            2.7355620000016643
           ],
-          "valid": true,
-          "reason": "",
-          "sample": "\"blurb?\" kind=5 insertText=\"blurb\"",
-          "artifact": 201
+          "valid": false,
+          "reason": "cold: no `blurb` declared prop in 0 items",
+          "sample": "(empty list)",
+          "artifact": 0
         },
         {
           "id": "completion-event-name",
           "label": "Completion: event name <C @",
-          "medianMs": 0.41237000000546686,
-          "coldMedianMs": 0.5368729999972857,
-          "minMs": 0.3916509999980917,
-          "stddevMs": 0.058027253633764236,
-          "cvPct": 13.34038567033065,
+          "medianMs": 2.702182000000903,
+          "coldMedianMs": 2.794514999994135,
+          "minMs": 2.674759000001359,
+          "stddevMs": 0.016454178463820947,
+          "cvPct": 0.6108343200905096,
           "runs": [
-            0.3916509999980917,
-            0.41237000000546686,
-            0.500901999999769
+            2.7042249999940395,
+            2.702182000000903,
+            2.674759000001359
           ],
           "coldRuns": [
-            0.37533099999564,
-            0.5658369999946444,
-            0.5368729999972857
+            3.0101680000007036,
+            2.755197999998927,
+            2.794514999994135
           ],
           "valid": false,
           "reason": "cold: no `quench` declared emit in 0 items",
@@ -1331,20 +1330,20 @@
         {
           "id": "completion-directive",
           "label": "Completion: directive v-",
-          "medianMs": 0.5483929999973043,
-          "coldMedianMs": 0.5846129999990808,
-          "minMs": 0.48457500000222353,
-          "stddevMs": 0.04616179723139418,
-          "cvPct": 8.61640697714606,
+          "medianMs": 3.0081930000014836,
+          "coldMedianMs": 4.3087499999965075,
+          "minMs": 2.522333000000799,
+          "stddevMs": 0.9354934000118748,
+          "cvPct": 28.46177257331201,
           "runs": [
-            0.48457500000222353,
-            0.5483929999973043,
-            0.5742609999942943
+            4.329999000001408,
+            3.0081930000014836,
+            2.522333000000799
           ],
           "coldRuns": [
-            0.4812979999987874,
-            0.5846129999990808,
-            0.6330430000016349
+            2.7291110000005574,
+            4.5335310000009486,
+            4.3087499999965075
           ],
           "valid": true,
           "reason": "",
@@ -1354,38 +1353,38 @@
         {
           "id": "completion-slot-name",
           "label": "Completion: slot name <template #",
-          "medianMs": 0.4588069999954314,
-          "coldMedianMs": 0.4708210000026156,
-          "minMs": 0.3905880000020261,
-          "stddevMs": 0.04511667475400608,
-          "cvPct": 10.213238517534322,
+          "medianMs": 0.41726099999505095,
+          "coldMedianMs": 0.4333809999952791,
+          "minMs": 0.4168710000012652,
+          "stddevMs": 0.009386854286511316,
+          "cvPct": 2.2218230466554068,
           "runs": [
-            0.4588069999954314,
-            0.3905880000020261,
-            0.4758460000011837
+            0.41726099999505095,
+            0.4168710000012652,
+            0.4333210000040708
           ],
           "coldRuns": [
-            0.4149150000012014,
-            0.4708210000026156,
-            0.5680639999991399
+            0.43296099999861326,
+            0.4333809999952791,
+            0.4335519999949611
           ],
-          "valid": true,
-          "reason": "",
-          "sample": "\"epilogue\" kind=5 detail=\"slot\" insertText=\"epilogue\"",
-          "artifact": 2
+          "valid": false,
+          "reason": "cold: no `epilogue` declared slot in 0 items",
+          "sample": "(empty list)",
+          "artifact": 0
         },
         {
           "id": "completion-auto-import",
           "label": "Completion: auto-import",
-          "medianMs": 0.526824000000488,
+          "medianMs": 2.981305000001157,
           "coldMedianMs": null,
-          "minMs": 0.42528399999719113,
-          "stddevMs": 0.06053519997877103,
-          "cvPct": 12.227151379507228,
+          "minMs": 2.7293449999997392,
+          "stddevMs": 0.22434963821098114,
+          "cvPct": 7.572974195282366,
           "runs": [
-            0.42528399999719113,
-            0.5331569999980275,
-            0.526824000000488
+            2.7293449999997392,
+            3.176860999999917,
+            2.981305000001157
           ],
           "valid": false,
           "reason": "no `computed` in 9 items",
@@ -1395,15 +1394,15 @@
         {
           "id": "resolve-auto-import",
           "label": "Resolve: auto-import edit",
-          "medianMs": 0.005911000000196509,
+          "medianMs": 0.0035569999963627197,
           "coldMedianMs": null,
-          "minMs": 0.003246000000217464,
-          "stddevMs": 0.0023039783724586845,
-          "cvPct": 40.6799783163244,
+          "minMs": 0.0035260000004200265,
+          "stddevMs": 0.002305123065705519,
+          "cvPct": 47.310454927639725,
           "runs": [
-            0.00783400000364054,
-            0.003246000000217464,
-            0.005911000000196509
+            0.00753400000394322,
+            0.0035260000004200265,
+            0.0035569999963627197
           ],
           "valid": false,
           "reason": "auto-import completion offered no `computed` item to resolve",
@@ -1412,36 +1411,35 @@
         {
           "id": "resolve-member",
           "label": "Resolve: script member detail",
-          "medianMs": 4.412438999999722,
+          "medianMs": 0.0073739999934332445,
           "coldMedianMs": null,
-          "minMs": 4.321651999998721,
-          "stddevMs": 0.2353752396609701,
-          "cvPct": 5.23010954227441,
+          "minMs": 0.007043999998131767,
+          "stddevMs": 0.0015784629673449913,
+          "cvPct": 19.45037749024356,
           "runs": [
-            4.321651999998721,
-            4.767073999995773,
-            4.412438999999722
+            0.009927999999490567,
+            0.0073739999934332445,
+            0.007043999998131767
           ],
-          "valid": true,
-          "reason": "",
-          "sample": "\"quaver\" kind=5 detail=\"(property) quaver: string\" (+25 chars over the list item)",
-          "artifact": 25
+          "valid": false,
+          "reason": "script member completion offered no `quaver` item to resolve (9 items)",
+          "sample": "[headline, visible, probe, chosen, onDismiss, derived, ref, ChildCard, SiblingCard]"
         }
       ],
       "backendFallback": null,
-      "initializeMs": 5.186013999998977,
+      "initializeMs": 5.312249000002339,
       "initializeRuns": [
-        5.1824889999988955,
-        5.40328999999474,
-        5.186013999998977
+        5.312249000002339,
+        5.425700999992841,
+        5.211870999999519
       ],
-      "peakRssMb": 298.77734375,
-      "rssToolMb": 133.12109375,
-      "rssEngineMb": 165.65625,
+      "peakRssMb": 86.75,
+      "rssToolMb": 86.75,
+      "rssEngineMb": null,
       "rssRuns": [
-        302.26171875,
-        298.77734375,
-        298.7421875
+        86.6015625,
+        86.8828125,
+        86.75
       ]
     },
     {
@@ -1453,15 +1451,15 @@
         {
           "id": "open-diagnostics",
           "label": "didOpen -> first diagnostics",
-          "medianMs": 1143.91799799999,
+          "medianMs": 1166.8773389999988,
           "coldMedianMs": null,
-          "minMs": 1142.6069479999933,
-          "stddevMs": 10.978772517234747,
-          "cvPct": 0.9550165534269576,
+          "minMs": 1158.7076169999928,
+          "stddevMs": 12.46996499141073,
+          "cvPct": 1.066178235799818,
           "runs": [
-            1142.6069479999933,
-            1162.244338000004,
-            1143.91799799999
+            1183.1993839999996,
+            1166.8773389999988,
+            1158.7076169999928
           ],
           "valid": true,
           "reason": "",
@@ -1473,15 +1471,15 @@
         {
           "id": "diagnostics-error",
           "label": "Edit plants type error -> reported",
-          "medianMs": 403.19344100001035,
+          "medianMs": 415.1887659999993,
           "coldMedianMs": null,
-          "minMs": 395.4670279999991,
-          "stddevMs": 13.574403555342817,
-          "cvPct": 3.3365185970416023,
+          "minMs": 402.1980919999987,
+          "stddevMs": 8.641949740185602,
+          "cvPct": 2.097639417191833,
           "runs": [
-            421.869537999999,
-            395.4670279999991,
-            403.19344100001035
+            415.1887659999993,
+            402.1980919999987,
+            418.56670999999915
           ],
           "valid": true,
           "reason": "",
@@ -1491,104 +1489,104 @@
         {
           "id": "diagnostics-cleared",
           "label": "Edit fixes it -> diagnostic clears",
-          "medianMs": 460.22034699999494,
+          "medianMs": 462.46644099999685,
           "coldMedianMs": null,
-          "minMs": 456.93591000000015,
-          "stddevMs": 2.1926519654051075,
-          "cvPct": 0.4772684132959471,
+          "minMs": 458.8557179999989,
+          "stddevMs": 2.462104159087774,
+          "cvPct": 0.5333528647995192,
           "runs": [
-            460.22034699999494,
-            461.09457900000416,
-            456.93591000000015
+            462.46644099999685,
+            458.8557179999989,
+            463.560713999992
           ],
           "valid": true,
           "reason": "",
-          "sample": "after fix (8 publish(es) for this file): []",
+          "sample": "after fix (10 publish(es) for this file): []",
           "artifact": 0
         },
         {
           "id": "hover-after-edit",
           "label": "Hover after retype -> NEW type",
-          "medianMs": 50.37335200000962,
+          "medianMs": 33.690159000005224,
           "coldMedianMs": null,
-          "minMs": 47.83247100000153,
-          "stddevMs": 1.6401277312401374,
-          "cvPct": 3.2999363267319017,
+          "minMs": 33.51231299999927,
+          "stddevMs": 1.1054972932413967,
+          "cvPct": 3.2289146413992964,
           "runs": [
-            50.89957499999582,
-            47.83247100000153,
-            50.37335200000962
+            33.51231299999927,
+            35.509808999995585,
+            33.690159000005224
           ],
           "valid": true,
           "reason": "",
-          "sample": "```typescript\n(property) probeValue: number\n```",
-          "artifact": 47
+          "sample": "```typescript\nlet probeValue: number\n```",
+          "artifact": 40
         },
         {
           "id": "hover-settled",
           "label": "... same hover, time to correct",
-          "medianMs": 50.37335200000962,
+          "medianMs": 33.690159000005224,
           "coldMedianMs": null,
-          "minMs": 47.83247100000153,
-          "stddevMs": 1.6401277312401374,
-          "cvPct": 3.2999363267319017,
+          "minMs": 33.51231299999927,
+          "stddevMs": 1.1054972932413967,
+          "cvPct": 3.2289146413992964,
           "runs": [
-            50.89957499999582,
-            47.83247100000153,
-            50.37335200000962
+            33.51231299999927,
+            35.509808999995585,
+            33.690159000005224
           ],
           "valid": true,
           "reason": "",
-          "sample": "```typescript\n(property) probeValue: number\n```",
+          "sample": "```typescript\nlet probeValue: number\n```",
           "artifact": 1
         },
         {
           "id": "steady-first",
           "label": "Steady state: edits 1-5 (median)",
-          "medianMs": 43.197557999999844,
+          "medianMs": 21.492223999994167,
           "coldMedianMs": null,
-          "minMs": 41.819020000009914,
-          "stddevMs": 0.8929115203836598,
-          "cvPct": 2.0844881726224163,
+          "minMs": 21.215723999994225,
+          "stddevMs": 0.5437880272532697,
+          "cvPct": 2.51083992393575,
           "runs": [
-            43.197557999999844,
-            43.491445999999996,
-            41.819020000009914
+            22.26489500000025,
+            21.492223999994167,
+            21.215723999994225
           ],
           "valid": true,
           "reason": "",
-          "sample": "```typescript\n(property) probeValue: \"steady-4\"\n```"
+          "sample": "```typescript\nlet probeValue: \"steady-4\"\n```"
         },
         {
           "id": "steady-last",
           "label": "Steady state: edits 6-10 (median)",
-          "medianMs": 33.50580899999477,
+          "medianMs": 17.351614999999583,
           "coldMedianMs": null,
-          "minMs": 33.166445999988355,
-          "stddevMs": 1.8516805152984877,
-          "cvPct": 5.382683029399658,
+          "minMs": 16.647655000007944,
+          "stddevMs": 1.7440053703331326,
+          "cvPct": 9.696559073925119,
           "runs": [
-            33.50580899999477,
-            36.5298380000022,
-            33.166445999988355
+            19.95818099999451,
+            17.351614999999583,
+            16.647655000007944
           ],
           "valid": true,
           "reason": "",
-          "sample": "```typescript\n(property) probeValue: \"steady-9\"\n```",
-          "artifact": -10
+          "sample": "```typescript\nlet probeValue: \"steady-9\"\n```",
+          "artifact": -2
         },
         {
           "id": "xfile-diagnostics",
           "label": "Child prop retype -> Parent diagnostic",
-          "medianMs": 378.3239650000032,
+          "medianMs": 378.347941,
           "coldMedianMs": null,
-          "minMs": 375.36312100000214,
-          "stddevMs": 2.4565946535239727,
-          "cvPct": 0.6499350863438238,
+          "minMs": 376.53374300000723,
+          "stddevMs": 1.0729028242205796,
+          "cvPct": 0.2840082993048805,
           "runs": [
-            380.2390730000043,
-            375.36312100000214,
-            378.3239650000032
+            378.4332510000022,
+            376.53374300000723,
+            378.347941
           ],
           "valid": true,
           "reason": "",
@@ -1598,15 +1596,15 @@
         {
           "id": "xfile-hover",
           "label": "Child prop retype -> Parent hover",
-          "medianMs": 103.06642800000554,
+          "medianMs": 121.35527700000966,
           "coldMedianMs": null,
-          "minMs": 99.61092400000052,
-          "stddevMs": 6.685685623001498,
-          "cvPct": 6.363226611589684,
+          "minMs": 115.28737199999887,
+          "stddevMs": 4.500489587058108,
+          "cvPct": 3.742907026784878,
           "runs": [
-            99.61092400000052,
-            112.52526600001147,
-            103.06642800000554
+            115.28737199999887,
+            121.35527700000966,
+            124.07880800000567
           ],
           "valid": true,
           "reason": "",
@@ -1616,15 +1614,15 @@
         {
           "id": "xfile-hover-settled",
           "label": "... Parent hover, time to correct",
-          "medianMs": 103.06642800000554,
+          "medianMs": 121.35527700000966,
           "coldMedianMs": null,
-          "minMs": 99.61092400000052,
-          "stddevMs": 6.685685623001498,
-          "cvPct": 6.363226611589684,
+          "minMs": 115.28737199999887,
+          "stddevMs": 4.500489587058108,
+          "cvPct": 3.742907026784878,
           "runs": [
-            99.61092400000052,
-            112.52526600001147,
-            103.06642800000554
+            115.28737199999887,
+            121.35527700000966,
+            124.07880800000567
           ],
           "valid": true,
           "reason": "",
@@ -1633,19 +1631,19 @@
         }
       ],
       "backendFallback": null,
-      "initializeMs": 526.1915119999976,
+      "initializeMs": 534.2482440000022,
       "initializeRuns": [
-        523.7781470000045,
-        526.1915119999976,
-        532.6958190000005
+        528.6061479999989,
+        534.2482440000022,
+        536.3833299999969
       ],
-      "peakRssMb": 603.609375,
-      "rssToolMb": 293.02734375,
-      "rssEngineMb": 310.58203125,
+      "peakRssMb": 596.734375,
+      "rssToolMb": 294.2265625,
+      "rssEngineMb": 302.5078125,
       "rssRuns": [
-        603.609375,
-        602.34375,
-        604.3203125
+        596.734375,
+        595.78125,
+        598.36328125
       ]
     },
     {
@@ -1657,15 +1655,15 @@
         {
           "id": "open-diagnostics",
           "label": "didOpen -> first diagnostics",
-          "medianMs": 469.5746369999979,
+          "medianMs": 490.1025729999965,
           "coldMedianMs": null,
-          "minMs": 464.2932440000004,
-          "stddevMs": 5.702004927856554,
-          "cvPct": 1.2135755155930956,
+          "minMs": 478.87805800000206,
+          "stddevMs": 10.13717842623883,
+          "cvPct": 2.071499698808967,
           "runs": [
-            469.5746369999979,
-            475.6871539999993,
-            464.2932440000004
+            490.1025729999965,
+            499.1120410000003,
+            478.87805800000206
           ],
           "valid": true,
           "reason": "",
@@ -1677,15 +1675,15 @@
         {
           "id": "diagnostics-error",
           "label": "Edit plants type error -> reported",
-          "medianMs": 398.2543389999919,
+          "medianMs": 402.55841999998665,
           "coldMedianMs": null,
-          "minMs": 397.28583300000173,
-          "stddevMs": 0.8167628392121647,
-          "cvPct": 0.20513957109360947,
+          "minMs": 399.46090299999923,
+          "stddevMs": 7.682867979177186,
+          "cvPct": 1.895346334171495,
           "runs": [
-            397.28583300000173,
-            398.9092970000056,
-            398.2543389999919
+            399.46090299999923,
+            402.55841999998665,
+            414.04359499999555
           ],
           "valid": true,
           "reason": "",
@@ -1695,15 +1693,15 @@
         {
           "id": "diagnostics-cleared",
           "label": "Edit fixes it -> diagnostic clears",
-          "medianMs": 440.01119999999355,
+          "medianMs": 439.6952029999957,
           "coldMedianMs": null,
-          "minMs": 423.48821700000553,
-          "stddevMs": 16.644405774824655,
-          "cvPct": 3.782028273907224,
+          "minMs": 401.416121000002,
+          "stddevMs": 30.91994351479435,
+          "cvPct": 7.11496585279828,
           "runs": [
-            440.01119999999355,
-            456.7767339999991,
-            423.48821700000553
+            439.6952029999957,
+            462.6170770000026,
+            401.416121000002
           ],
           "valid": true,
           "reason": "",
@@ -1713,86 +1711,86 @@
         {
           "id": "hover-after-edit",
           "label": "Hover after retype -> NEW type",
-          "medianMs": 16.897701000008965,
+          "medianMs": 15.080136000004131,
           "coldMedianMs": null,
-          "minMs": 15.831982999996399,
-          "stddevMs": 0.9361616170133517,
-          "cvPct": 5.569328551782058,
+          "minMs": 14.002969000008306,
+          "stddevMs": 10.367714852861486,
+          "cvPct": 50.52671546616854,
           "runs": [
-            15.831982999996399,
-            16.897701000008965,
-            17.698025999998208
+            32.474715000003926,
+            14.002969000008306,
+            15.080136000004131
           ],
           "valid": true,
           "reason": "",
-          "sample": "```typescript\n(property) probeValue: number\n```",
-          "artifact": 47
+          "sample": "```typescript\nlet probeValue: number\n```",
+          "artifact": 40
         },
         {
           "id": "hover-settled",
           "label": "... same hover, time to correct",
-          "medianMs": 16.897701000008965,
+          "medianMs": 15.080136000004131,
           "coldMedianMs": null,
-          "minMs": 15.831982999996399,
-          "stddevMs": 0.9361616170133517,
-          "cvPct": 5.569328551782058,
+          "minMs": 14.002969000008306,
+          "stddevMs": 10.367714852861486,
+          "cvPct": 50.52671546616854,
           "runs": [
-            15.831982999996399,
-            16.897701000008965,
-            17.698025999998208
+            32.474715000003926,
+            14.002969000008306,
+            15.080136000004131
           ],
           "valid": true,
           "reason": "",
-          "sample": "```typescript\n(property) probeValue: number\n```",
+          "sample": "```typescript\nlet probeValue: number\n```",
           "artifact": 1
         },
         {
           "id": "steady-first",
           "label": "Steady state: edits 1-5 (median)",
-          "medianMs": 15.661324999993667,
+          "medianMs": 13.969882999997935,
           "coldMedianMs": null,
-          "minMs": 15.522632000007434,
-          "stddevMs": 0.6216973083334864,
-          "cvPct": 3.898112428436725,
+          "minMs": 13.494487000003573,
+          "stddevMs": 0.5218550390001006,
+          "cvPct": 3.7274270987375617,
           "runs": [
-            16.66207000000577,
-            15.661324999993667,
-            15.522632000007434
+            13.969882999997935,
+            14.536856999999145,
+            13.494487000003573
           ],
           "valid": true,
           "reason": "",
-          "sample": "```typescript\n(property) probeValue: \"steady-4\"\n```"
+          "sample": "```typescript\nlet probeValue: \"steady-4\"\n```"
         },
         {
           "id": "steady-last",
           "label": "Steady state: edits 6-10 (median)",
-          "medianMs": 15.071624000003794,
+          "medianMs": 12.859029999992345,
           "coldMedianMs": null,
-          "minMs": 14.447771999999532,
-          "stddevMs": 1.1918121229740408,
-          "cvPct": 7.727094875116689,
+          "minMs": 12.812894000002416,
+          "stddevMs": 0.459123006852977,
+          "cvPct": 3.504567975465086,
           "runs": [
-            16.75202200000058,
-            15.071624000003794,
-            14.447771999999532
+            12.812894000002416,
+            13.63018199999351,
+            12.859029999992345
           ],
           "valid": true,
           "reason": "",
-          "sample": "```typescript\n(property) probeValue: \"steady-9\"\n```",
-          "artifact": 0
+          "sample": "```typescript\nlet probeValue: \"steady-9\"\n```",
+          "artifact": -1
         },
         {
           "id": "xfile-diagnostics",
           "label": "Child prop retype -> Parent diagnostic",
-          "medianMs": 382.3264909999998,
+          "medianMs": 382.0089849999931,
           "coldMedianMs": null,
-          "minMs": 382.2738859999954,
-          "stddevMs": 0.3264188129161274,
-          "cvPct": 0.08534092159353665,
+          "minMs": 381.2641100000037,
+          "stddevMs": 0.7382798486346503,
+          "cvPct": 0.1932646580869736,
           "runs": [
-            382.3264909999998,
-            382.2738859999954,
-            382.8637239999953
+            382.0089849999931,
+            381.2641100000037,
+            382.74064999999246
           ],
           "valid": true,
           "reason": "",
@@ -1802,15 +1800,15 @@
         {
           "id": "xfile-hover",
           "label": "Child prop retype -> Parent hover",
-          "medianMs": 70.23587699999916,
+          "medianMs": 72.55782899999758,
           "coldMedianMs": null,
-          "minMs": 68.68842000000586,
-          "stddevMs": 3.718539002826575,
-          "cvPct": 5.196243704370917,
+          "minMs": 71.9879030000011,
+          "stddevMs": 10.177502929787119,
+          "cvPct": 13.023611928255338,
           "runs": [
-            68.68842000000586,
-            75.76188099999854,
-            70.23587699999916
+            72.55782899999758,
+            71.9879030000011,
+            89.89390699999058
           ],
           "valid": true,
           "reason": "",
@@ -1820,15 +1818,15 @@
         {
           "id": "xfile-hover-settled",
           "label": "... Parent hover, time to correct",
-          "medianMs": 70.23587699999916,
+          "medianMs": 72.55782899999758,
           "coldMedianMs": null,
-          "minMs": 68.68842000000586,
-          "stddevMs": 3.718539002826575,
-          "cvPct": 5.196243704370917,
+          "minMs": 71.9879030000011,
+          "stddevMs": 10.177502929787119,
+          "cvPct": 13.023611928255338,
           "runs": [
-            68.68842000000586,
-            75.76188099999854,
-            70.23587699999916
+            72.55782899999758,
+            71.9879030000011,
+            89.89390699999058
           ],
           "valid": true,
           "reason": "",
@@ -1837,19 +1835,19 @@
         }
       ],
       "backendFallback": null,
-      "initializeMs": 526.7895750000025,
+      "initializeMs": 539.1300740000006,
       "initializeRuns": [
-        525.9466560000001,
-        527.2228179999947,
-        526.7895750000025
+        539.1300740000006,
+        546.1509359999909,
+        537.1148289999983
       ],
-      "peakRssMb": 708.625,
-      "rssToolMb": 302.98046875,
-      "rssEngineMb": 405.64453125,
+      "peakRssMb": 729.0859375,
+      "rssToolMb": 304.74609375,
+      "rssEngineMb": 424.33984375,
       "rssRuns": [
-        708.625,
-        701.99609375,
-        717.92578125
+        729.0859375,
+        714.75390625,
+        729.75390625
       ]
     },
     {
@@ -1861,15 +1859,15 @@
         {
           "id": "open-diagnostics",
           "label": "didOpen -> first diagnostics",
-          "medianMs": 1287.8212279999861,
+          "medianMs": 1043.273132000002,
           "coldMedianMs": null,
-          "minMs": 1281.916108999998,
-          "stddevMs": 9.368784807356883,
-          "cvPct": 0.7262612028788937,
+          "minMs": 1042.5233110000117,
+          "stddevMs": 0.9939626849418727,
+          "cvPct": 0.09525919055322968,
           "runs": [
-            1300.2689790000004,
-            1281.916108999998,
-            1287.8212279999861
+            1043.273132000002,
+            1042.5233110000117,
+            1044.4926529999939
           ],
           "valid": true,
           "reason": "",
@@ -1881,15 +1879,15 @@
         {
           "id": "diagnostics-error",
           "label": "Edit plants type error -> reported",
-          "medianMs": 55.38318999999319,
+          "medianMs": 56.074022000000696,
           "coldMedianMs": null,
-          "minMs": 55.005732000019634,
-          "stddevMs": 10.887365648737893,
-          "cvPct": 17.70898264154584,
+          "minMs": 55.18173900000693,
+          "stddevMs": 0.5781604303757082,
+          "cvPct": 1.035384048696489,
           "runs": [
-            55.38318999999319,
-            74.04909800000314,
-            55.005732000019634
+            56.074022000000696,
+            55.18173900000693,
+            56.26481200000853
           ],
           "valid": true,
           "reason": "",
@@ -1899,219 +1897,15 @@
         {
           "id": "diagnostics-cleared",
           "label": "Edit fixes it -> diagnostic clears",
-          "medianMs": 53.201287000003504,
+          "medianMs": 13.791717999993125,
           "coldMedianMs": null,
-          "minMs": 53.01434399999562,
-          "stddevMs": 0.2398743832821326,
-          "cvPct": 0.4505922065373978,
+          "minMs": 13.789232999988599,
+          "stddevMs": 0.10214284073029818,
+          "cvPct": 0.7375230778011159,
           "runs": [
-            53.490449000004446,
-            53.201287000003504,
-            53.01434399999562
-          ],
-          "valid": true,
-          "reason": "",
-          "sample": "after fix (3 publish(es) for this file): []",
-          "artifact": 0
-        },
-        {
-          "id": "hover-after-edit",
-          "label": "Hover after retype -> NEW type",
-          "medianMs": 533.914786999987,
-          "coldMedianMs": null,
-          "minMs": 529.543313000002,
-          "stddevMs": 4.694094613418473,
-          "cvPct": 0.8788341707660275,
-          "runs": [
-            529.543313000002,
-            538.9242729999969,
-            533.914786999987
-          ],
-          "valid": true,
-          "reason": "",
-          "sample": "```typescript\nlet probeValue: number\n```",
-          "artifact": 40
-        },
-        {
-          "id": "hover-settled",
-          "label": "... same hover, time to correct",
-          "medianMs": 533.914786999987,
-          "coldMedianMs": null,
-          "minMs": 529.543313000002,
-          "stddevMs": 4.694094613418473,
-          "cvPct": 0.8788341707660275,
-          "runs": [
-            529.543313000002,
-            538.9242729999969,
-            533.914786999987
-          ],
-          "valid": true,
-          "reason": "",
-          "sample": "```typescript\nlet probeValue: number\n```",
-          "artifact": 1
-        },
-        {
-          "id": "steady-first",
-          "label": "Steady state: edits 1-5 (median)",
-          "medianMs": 532.1503739999898,
-          "coldMedianMs": null,
-          "minMs": 526.5799700000061,
-          "stddevMs": 3.520847370143397,
-          "cvPct": 0.6635487567532516,
-          "runs": [
-            526.5799700000061,
-            533.0957280000148,
-            532.1503739999898
-          ],
-          "valid": true,
-          "reason": "",
-          "sample": "```typescript\nlet probeValue: \"steady-4\"\n```"
-        },
-        {
-          "id": "steady-last",
-          "label": "Steady state: edits 6-10 (median)",
-          "medianMs": 530.2230149999959,
-          "coldMedianMs": null,
-          "minMs": 529.6905720000213,
-          "stddevMs": 0.4663847164372296,
-          "cvPct": 0.08796759200603524,
-          "runs": [
-            530.6200600000011,
-            529.6905720000213,
-            530.2230149999959
-          ],
-          "valid": true,
-          "reason": "",
-          "sample": "```typescript\nlet probeValue: \"steady-9\"\n```",
-          "artifact": 4
-        },
-        {
-          "id": "xfile-diagnostics",
-          "label": "Child prop retype -> Parent diagnostic",
-          "medianMs": 434.21443700000236,
-          "coldMedianMs": null,
-          "minMs": 422.9580759999808,
-          "stddevMs": 49.28888034390446,
-          "cvPct": 10.788687137602809,
-          "runs": [
-            434.21443700000236,
-            513.3987080000225,
-            422.9580759999808
-          ],
-          "valid": true,
-          "reason": "",
-          "sample": "before: [] || after: vize/types:2322@L7 Type 'string' is not assignable to type 'number'.",
-          "artifact": 1
-        },
-        {
-          "id": "xfile-hover",
-          "label": "Child prop retype -> Parent hover",
-          "medianMs": 760.7634429999889,
-          "coldMedianMs": null,
-          "minMs": 736.2345339999883,
-          "stddevMs": 77.98282436942675,
-          "cvPct": 9.834369721384949,
-          "runs": [
-            760.7634429999889,
-            881.8883140000107,
-            736.2345339999883
-          ],
-          "valid": true,
-          "reason": "",
-          "sample": "**label**\n\n_Component prop_\n\n```typescript\n(property) label: number\n```\n\n**Requirement**\n\nRequired\n\n**Example**\n\n```vue\n<Child label=\"...\" />\n<Child :label=\"value\" />\n```\n\n**Docs**\n\n[Vue Component Pro",
-          "artifact": 250
-        },
-        {
-          "id": "xfile-hover-settled",
-          "label": "... Parent hover, time to correct",
-          "medianMs": 760.7634429999889,
-          "coldMedianMs": null,
-          "minMs": 736.2345339999883,
-          "stddevMs": 77.98282436942675,
-          "cvPct": 9.834369721384949,
-          "runs": [
-            760.7634429999889,
-            881.8883140000107,
-            736.2345339999883
-          ],
-          "valid": true,
-          "reason": "",
-          "sample": "**label**\n\n_Component prop_\n\n```typescript\n(property) label: number\n```\n\n**Requirement**\n\nRequired\n\n**Example**\n\n```vue\n<Child label=\"...\" />\n<Child :label=\"value\" />\n```\n\n**Docs**\n\n[Vue Component Pro",
-          "artifact": 1
-        }
-      ],
-      "backendFallback": null,
-      "initializeMs": 36.27387699999963,
-      "initializeRuns": [
-        36.16370599999209,
-        36.285825999992085,
-        36.27387699999963
-      ],
-      "peakRssMb": 265.5234375,
-      "rssToolMb": 82.3203125,
-      "rssEngineMb": 183.203125,
-      "rssRuns": [
-        265.5234375,
-        266.09765625,
-        263.25
-      ]
-    },
-    {
-      "suite": "edit-loop",
-      "suiteLabel": "Edit loop (type, wait, hover)",
-      "server": "verter",
-      "label": "Verter LSP (npm 0.0.1-beta.6)",
-      "ops": [
-        {
-          "id": "open-diagnostics",
-          "label": "didOpen -> first diagnostics",
-          "medianMs": 839.3124240000034,
-          "coldMedianMs": null,
-          "minMs": 839.2385829999985,
-          "stddevMs": 0.24933982214864558,
-          "cvPct": 0.02970389720885131,
-          "runs": [
-            839.7026119999937,
-            839.2385829999985,
-            839.3124240000034
-          ],
-          "valid": true,
-          "reason": "",
-          "sample": "push: 1 publish(es) across [server] -> []",
-          "artifact": 0,
-          "ranked": false,
-          "rankingNote": "the fixture is a valid file, so the correct payload is empty and no gate can tell an analysed empty report from a server that publishes `[]` on open and analyses afterwards — the fastest number here can be the least work done. Read `Edit plants type error -> reported` and `Edit fixes it -> diagnostic clears`, which demand specific content, as the comparable diagnostics figures."
-        },
-        {
-          "id": "diagnostics-error",
-          "label": "Edit plants type error -> reported",
-          "medianMs": 341.6473479999986,
-          "coldMedianMs": null,
-          "minMs": 337.5905050000001,
-          "stddevMs": 4.223327302117481,
-          "cvPct": 1.2357668370209363,
-          "runs": [
-            346.0350000000035,
-            337.5905050000001,
-            341.6473479999986
-          ],
-          "valid": true,
-          "reason": "",
-          "sample": "ts:2322@L3 Type 'string' is not assignable to type 'number'.",
-          "artifact": 1
-        },
-        {
-          "id": "diagnostics-cleared",
-          "label": "Edit fixes it -> diagnostic clears",
-          "medianMs": 307.22693699999945,
-          "coldMedianMs": null,
-          "minMs": 307.13773200000287,
-          "stddevMs": 0.8371042412691481,
-          "cvPct": 0.2720830697036527,
-          "runs": [
-            307.13773200000287,
-            307.22693699999945,
-            308.6301819999935
+            13.789232999988599,
+            13.791717999993125,
+            13.967379000008805
           ],
           "valid": true,
           "reason": "",
@@ -2121,15 +1915,15 @@
         {
           "id": "hover-after-edit",
           "label": "Hover after retype -> NEW type",
-          "medianMs": 30.51895999998669,
+          "medianMs": 57.314795999991475,
           "coldMedianMs": null,
-          "minMs": 30.254761999996845,
-          "stddevMs": 3.181174914976411,
-          "cvPct": 9.872701646686616,
+          "minMs": 56.44897700000729,
+          "stddevMs": 0.7671278728015339,
+          "cvPct": 1.3400192808362446,
           "runs": [
-            35.892064999992726,
-            30.51895999998669,
-            30.254761999996845
+            57.97880199999781,
+            57.314795999991475,
+            56.44897700000729
           ],
           "valid": true,
           "reason": "",
@@ -2139,15 +1933,15 @@
         {
           "id": "hover-settled",
           "label": "... same hover, time to correct",
-          "medianMs": 30.51895999998669,
+          "medianMs": 57.314795999991475,
           "coldMedianMs": null,
-          "minMs": 30.254761999996845,
-          "stddevMs": 3.181174914976411,
-          "cvPct": 9.872701646686616,
+          "minMs": 56.44897700000729,
+          "stddevMs": 0.7671278728015339,
+          "cvPct": 1.3400192808362446,
           "runs": [
-            35.892064999992726,
-            30.51895999998669,
-            30.254761999996845
+            57.97880199999781,
+            57.314795999991475,
+            56.44897700000729
           ],
           "valid": true,
           "reason": "",
@@ -2157,15 +1951,15 @@
         {
           "id": "steady-first",
           "label": "Steady state: edits 1-5 (median)",
-          "medianMs": 75.06818699999712,
+          "medianMs": 56.222223000004306,
           "coldMedianMs": null,
-          "minMs": 70.94672400000854,
-          "stddevMs": 68.89271756663953,
-          "cvPct": 61.094122298843224,
+          "minMs": 54.573070999991614,
+          "stddevMs": 1.537560641742517,
+          "cvPct": 2.73846014194003,
           "runs": [
-            192.27974800000084,
-            75.06818699999712,
-            70.94672400000854
+            56.222223000004306,
+            54.573070999991614,
+            57.645424000002095
           ],
           "valid": true,
           "reason": "",
@@ -2174,90 +1968,294 @@
         {
           "id": "steady-last",
           "label": "Steady state: edits 6-10 (median)",
-          "medianMs": 50.49328300001798,
+          "medianMs": 55.89248399999633,
           "coldMedianMs": null,
-          "minMs": 48.68940600001952,
-          "stddevMs": 63.1564591045518,
-          "cvPct": 73.39419762772667,
+          "minMs": 54.783617000008235,
+          "stddevMs": 1.1898037193868072,
+          "cvPct": 2.1267062010268676,
           "runs": [
-            158.97038500002236,
-            48.68940600001952,
-            50.49328300001798
+            55.89248399999633,
+            54.783617000008235,
+            57.16142899999977
           ],
           "valid": true,
           "reason": "",
           "sample": "```typescript\nlet probeValue: \"steady-9\"\n```",
-          "artifact": -33
+          "artifact": 0
         },
         {
           "id": "xfile-diagnostics",
           "label": "Child prop retype -> Parent diagnostic",
-          "medianMs": 617.1821500000078,
+          "medianMs": 126.92137700000603,
           "coldMedianMs": null,
-          "minMs": 616.486321000004,
-          "stddevMs": 0.8234805447522707,
-          "cvPct": 0.13340791030194685,
+          "minMs": 124.83323699999892,
+          "stddevMs": 1.2248452310852378,
+          "cvPct": 0.9701969925805715,
           "runs": [
-            616.486321000004,
-            617.1821500000078,
-            618.1269949999987
+            126.98658199999772,
+            124.83323699999892,
+            126.92137700000603
           ],
           "valid": true,
           "reason": "",
-          "sample": "before: [] || after: ts:2322@L7 Type 'string' is not assignable to type 'number'.",
+          "sample": "before: [] || after: vize/types:2322@L7 Type 'string' is not assignable to type 'number'.",
           "artifact": 1
         },
         {
           "id": "xfile-hover",
           "label": "Child prop retype -> Parent hover",
-          "medianMs": 1.522744000016246,
+          "medianMs": 137.0014999999985,
           "coldMedianMs": null,
-          "minMs": 1.468793000007281,
-          "stddevMs": 0.04900953074897311,
-          "cvPct": 3.2256007664031814,
+          "minMs": 135.4333239999978,
+          "stddevMs": 1.3925314507834392,
+          "cvPct": 1.017323819353286,
           "runs": [
-            1.5666400000045542,
-            1.468793000007281,
-            1.522744000016246
+            138.2106630000053,
+            135.4333239999978,
+            137.0014999999985
           ],
-          "valid": false,
-          "reason": "STALE: still reports `label: string` after the edit changed it to `number` (the same position answered `string` before the edit, so the feature works here — this is the edit loop; caught up after 451ms)",
-          "sample": "```typescript\n(property) label: string\n```",
-          "artifact": 42
+          "valid": true,
+          "reason": "",
+          "sample": "**label**\n\n_Component prop_\n\n```typescript\n(property) label: number\n```\n\n**Requirement**\n\nRequired\n\n**Example**\n\n```vue\n<Child label=\"...\" />\n<Child :label=\"value\" />\n```\n\n**Docs**\n\n[Vue Component Pro",
+          "artifact": 250
         },
         {
           "id": "xfile-hover-settled",
           "label": "... Parent hover, time to correct",
-          "medianMs": 448.7426080000005,
+          "medianMs": 137.0014999999985,
           "coldMedianMs": null,
-          "minMs": 448.5175750000053,
-          "stddevMs": 1.6606264200629417,
-          "cvPct": 0.36936737670881314,
+          "minMs": 135.4333239999978,
+          "stddevMs": 1.3925314507834392,
+          "cvPct": 1.017323819353286,
           "runs": [
-            451.4997710000025,
-            448.7426080000005,
-            448.5175750000053
+            138.2106630000053,
+            135.4333239999978,
+            137.0014999999985
           ],
           "valid": true,
           "reason": "",
-          "sample": "```typescript\n(property) label: number\n```",
-          "artifact": 3
+          "sample": "**label**\n\n_Component prop_\n\n```typescript\n(property) label: number\n```\n\n**Requirement**\n\nRequired\n\n**Example**\n\n```vue\n<Child label=\"...\" />\n<Child :label=\"value\" />\n```\n\n**Docs**\n\n[Vue Component Pro",
+          "artifact": 1
         }
       ],
       "backendFallback": null,
-      "initializeMs": 5.0832320000045,
+      "initializeMs": 42.3881640000036,
       "initializeRuns": [
-        5.405484999995679,
-        5.0832320000045,
-        5.0618109999923036
+        42.3881640000036,
+        43.527969000002486,
+        41.395590000000084
       ],
-      "peakRssMb": 842.93359375,
-      "rssToolMb": 37.5625,
-      "rssEngineMb": 805.37109375,
+      "peakRssMb": 210.35546875,
+      "rssToolMb": 87.64453125,
+      "rssEngineMb": 122.7109375,
       "rssRuns": [
-        847.51171875,
-        842.93359375,
-        823.1875
+        210.3046875,
+        210.35546875,
+        212.796875
+      ]
+    },
+    {
+      "suite": "edit-loop",
+      "suiteLabel": "Edit loop (type, wait, hover)",
+      "server": "verter",
+      "label": "Verter LSP (npm 0.0.1-beta.7)",
+      "ops": [
+        {
+          "id": "open-diagnostics",
+          "label": "didOpen -> first diagnostics",
+          "medianMs": 877.142771999992,
+          "coldMedianMs": null,
+          "minMs": 873.1292729999986,
+          "stddevMs": 2.3335149736075427,
+          "cvPct": 0.2664366431051973,
+          "runs": [
+            877.142771999992,
+            873.1292729999986,
+            877.1987260000024
+          ],
+          "valid": true,
+          "reason": "",
+          "sample": "push: 2 publish(es) across [server] -> []",
+          "artifact": 0,
+          "ranked": false,
+          "rankingNote": "the fixture is a valid file, so the correct payload is empty and no gate can tell an analysed empty report from a server that publishes `[]` on open and analyses afterwards — the fastest number here can be the least work done. Read `Edit plants type error -> reported` and `Edit fixes it -> diagnostic clears`, which demand specific content, as the comparable diagnostics figures."
+        },
+        {
+          "id": "diagnostics-error",
+          "label": "Edit plants type error -> reported",
+          "medianMs": 4001.3044899999804,
+          "coldMedianMs": null,
+          "minMs": 4001.2860830000136,
+          "stddevMs": 0.24915955873783635,
+          "cvPct": 0.006226748832248239,
+          "runs": [
+            4001.7265489999845,
+            4001.3044899999804,
+            4001.2860830000136
+          ],
+          "valid": false,
+          "reason": "no diagnostic referencing the planted error (`plantedTypeError` at line 3) in 4000ms across 4 publish(es) [model=push]",
+          "sample": "[]",
+          "artifact": 0
+        },
+        {
+          "id": "diagnostics-cleared",
+          "label": "Edit fixes it -> diagnostic clears",
+          "medianMs": 0.10399400000460446,
+          "coldMedianMs": null,
+          "minMs": 0.09223199999541976,
+          "stddevMs": 0.009906087893208652,
+          "cvPct": 9.64421530055071,
+          "runs": [
+            0.11191999999573454,
+            0.09223199999541976,
+            0.10399400000460446
+          ],
+          "valid": false,
+          "reason": "the planted diagnostic was never reported, so its clearing cannot be measured — see the diagnostics-error row",
+          "sample": "after fix (4 publish(es) for this file): []",
+          "artifact": 0
+        },
+        {
+          "id": "hover-after-edit",
+          "label": "Hover after retype -> NEW type",
+          "medianMs": 6.897502999985591,
+          "coldMedianMs": null,
+          "minMs": 6.895680999994511,
+          "stddevMs": 0.036467008901454906,
+          "cvPct": 0.5271597056029089,
+          "runs": [
+            6.895680999994511,
+            6.959735000011278,
+            6.897502999985591
+          ],
+          "valid": false,
+          "reason": "empty hover payload for `probeValue` (the same position carried no type before the edit either, so it is unsupported rather than stale; never caught up)",
+          "sample": "",
+          "artifact": 0
+        },
+        {
+          "id": "hover-settled",
+          "label": "... same hover, time to correct",
+          "medianMs": 3083.2573390000034,
+          "coldMedianMs": null,
+          "minMs": 3080.079318999982,
+          "stddevMs": 5.2151417048721544,
+          "cvPct": 0.1690737762391846,
+          "runs": [
+            3090.27171500001,
+            3083.2573390000034,
+            3080.079318999982
+          ],
+          "valid": false,
+          "reason": "hover never reported `probeValue: number` within 3000ms across 16 attempts — empty hover payload for `probeValue`",
+          "sample": "",
+          "artifact": 16
+        },
+        {
+          "id": "steady-first",
+          "label": "Steady state: edits 1-5 (median)",
+          "medianMs": 6.657933999988018,
+          "coldMedianMs": null,
+          "minMs": 6.416080000024522,
+          "stddevMs": 0.6122790460929998,
+          "cvPct": 8.894823733113096,
+          "runs": [
+            6.416080000024522,
+            7.5766160000057425,
+            6.657933999988018
+          ],
+          "valid": false,
+          "reason": "edit #1: empty hover payload for `probeValue`",
+          "sample": ""
+        },
+        {
+          "id": "steady-last",
+          "label": "Steady state: edits 6-10 (median)",
+          "medianMs": 6.254267999989679,
+          "coldMedianMs": null,
+          "minMs": 6.129142999998294,
+          "stddevMs": 0.4416541114531075,
+          "cvPct": 6.853594951679824,
+          "runs": [
+            6.129142999998294,
+            6.948959000001196,
+            6.254267999989679
+          ],
+          "valid": false,
+          "reason": "edit #6: empty hover payload for `probeValue`",
+          "sample": "",
+          "artifact": 0
+        },
+        {
+          "id": "xfile-diagnostics",
+          "label": "Child prop retype -> Parent diagnostic",
+          "medianMs": 4000.040559999994,
+          "coldMedianMs": null,
+          "minMs": 3999.4124010000087,
+          "stddevMs": 0.6279415125585395,
+          "cvPct": 0.015698379201464607,
+          "runs": [
+            4000.040559999994,
+            4000.668284000014,
+            3999.4124010000087
+          ],
+          "valid": false,
+          "reason": "Parent.vue never reported the now-invalid `:label` binding (line 7) in 4000ms; 8 publish(es) for Parent.vue since the session began, 0 diagnostic(s) now",
+          "sample": "before: [] || after: []",
+          "artifact": 0
+        },
+        {
+          "id": "xfile-hover",
+          "label": "Child prop retype -> Parent hover",
+          "medianMs": 9.074239000008674,
+          "coldMedianMs": null,
+          "minMs": 8.85127199999988,
+          "stddevMs": 0.2605405004201002,
+          "cvPct": 2.863487610940592,
+          "runs": [
+            9.074239000008674,
+            8.85127199999988,
+            9.370625999988988
+          ],
+          "valid": false,
+          "reason": "empty hover payload for `label` (the same position carried no type before the edit either, so it is unsupported rather than stale; never caught up)",
+          "sample": "",
+          "artifact": 0
+        },
+        {
+          "id": "xfile-hover-settled",
+          "label": "... Parent hover, time to correct",
+          "medianMs": 3095.1363249999995,
+          "coldMedianMs": null,
+          "minMs": 3090.700549000001,
+          "stddevMs": 8.696405613028972,
+          "cvPct": 0.28073086157691934,
+          "runs": [
+            3090.700549000001,
+            3107.482959999994,
+            3095.1363249999995
+          ],
+          "valid": false,
+          "reason": "hover never reported `label: number` within 3000ms across 16 attempts — empty hover payload for `label`",
+          "sample": "",
+          "artifact": 16
+        }
+      ],
+      "backendFallback": null,
+      "initializeMs": 5.345698999997694,
+      "initializeRuns": [
+        5.345698999997694,
+        5.400252999999793,
+        5.19385300000431
+      ],
+      "peakRssMb": 83.7734375,
+      "rssToolMb": 83.7734375,
+      "rssEngineMb": null,
+      "rssRuns": [
+        83.7734375,
+        83.9765625,
+        83.52734375
       ]
     },
     {
@@ -2269,20 +2267,20 @@
         {
           "id": "def-component-tag",
           "label": "Definition: <ChildCard/> tag",
-          "medianMs": 181.0506619999942,
-          "coldMedianMs": 1112.6413950000133,
-          "minMs": 177.49588400000357,
-          "stddevMs": 12.43591102829397,
-          "cvPct": 6.672362100271827,
+          "medianMs": 184.17473299999256,
+          "coldMedianMs": 1174.7150950000214,
+          "minMs": 179.521338999999,
+          "stddevMs": 4.764175557655017,
+          "cvPct": 2.5857364607781883,
           "runs": [
-            177.49588400000357,
-            181.0506619999942,
-            200.5917699999991
+            179.521338999999,
+            189.04883799998788,
+            184.17473299999256
           ],
           "coldRuns": [
-            1112.6413950000133,
-            1145.0005340000207,
-            1110.9190559999843
+            1136.4237829999765,
+            1174.7150950000214,
+            1179.2053710000182
           ],
           "valid": true,
           "reason": "",
@@ -2292,20 +2290,20 @@
         {
           "id": "def-imported-symbol",
           "label": "Definition: imported fn (script)",
-          "medianMs": 173.33904700001585,
-          "coldMedianMs": 1130.579402000003,
-          "minMs": 172.9527400000079,
-          "stddevMs": 3.8999844480905703,
-          "cvPct": 2.223546382070371,
+          "medianMs": 181.0592910000123,
+          "coldMedianMs": 1176.8144740000134,
+          "minMs": 178.80138299998362,
+          "stddevMs": 5.337841648953547,
+          "cvPct": 2.9177713472855475,
           "runs": [
-            172.9527400000079,
-            173.33904700001585,
-            179.8925750000053
+            188.9666000000143,
+            181.0592910000123,
+            178.80138299998362
           ],
           "coldRuns": [
-            1130.579402000003,
-            1125.866742000013,
-            1140.265561999986
+            1156.7160500000173,
+            1176.8144740000134,
+            1192.6345480000018
           ],
           "valid": true,
           "reason": "",
@@ -2315,15 +2313,15 @@
         {
           "id": "type-definition",
           "label": "Type definition: typed binding",
-          "medianMs": 8.202820000005886,
+          "medianMs": 7.210340999998152,
           "coldMedianMs": null,
-          "minMs": 7.402873999992153,
-          "stddevMs": 1.4226271636727437,
-          "cvPct": 16.559369825608936,
+          "minMs": 7.109445999987656,
+          "stddevMs": 0.05973199527172114,
+          "cvPct": 0.8321120815781485,
           "runs": [
-            8.202820000005886,
-            10.167518000002019,
-            7.402873999992153
+            7.210340999998152,
+            7.215291000000434,
+            7.109445999987656
           ],
           "valid": true,
           "reason": "",
@@ -2333,15 +2331,15 @@
         {
           "id": "references-prop",
           "label": "References: prop -> parent template",
-          "medianMs": 138.37844100000802,
+          "medianMs": 144.30254400000558,
           "coldMedianMs": null,
-          "minMs": 132.86931100001675,
-          "stddevMs": 3.579738083092481,
-          "cvPct": 2.6140191074575947,
+          "minMs": 141.59484100001282,
+          "stddevMs": 6.375301438659681,
+          "cvPct": 4.350389788204008,
           "runs": [
-            139.58376099998713,
-            132.86931100001675,
-            138.37844100000802
+            141.59484100001282,
+            153.73918199999025,
+            144.30254400000558
           ],
           "valid": true,
           "reason": "",
@@ -2351,15 +2349,15 @@
         {
           "id": "prepare-rename",
           "label": "Prepare rename: prop",
-          "medianMs": 5.369760999979917,
+          "medianMs": 6.276425999996718,
           "coldMedianMs": null,
-          "minMs": 5.18911800000933,
-          "stddevMs": 0.7218394629090872,
-          "cvPct": 12.679603336003684,
+          "minMs": 5.021681000012904,
+          "stddevMs": 0.9888753032544814,
+          "cvPct": 16.23670590817217,
           "runs": [
-            6.519876000005752,
-            5.18911800000933,
-            5.369760999979917
+            6.973000000027241,
+            5.021681000012904,
+            6.276425999996718
           ],
           "valid": true,
           "reason": "",
@@ -2368,15 +2366,15 @@
         {
           "id": "rename-prop",
           "label": "Rename prop (cross-file edit)",
-          "medianMs": 4.4198039999755565,
+          "medianMs": 3.765509999997448,
           "coldMedianMs": null,
-          "minMs": 3.2855259999923874,
-          "stddevMs": 0.6794858781870555,
-          "cvPct": 16.700188998824,
+          "minMs": 3.5458379999909084,
+          "stddevMs": 1.1403954171295638,
+          "cvPct": 26.45302598408123,
           "runs": [
-            4.500865000009071,
-            4.4198039999755565,
-            3.2855259999923874
+            5.621713999978965,
+            3.5458379999909084,
+            3.765509999997448
           ],
           "valid": true,
           "reason": "",
@@ -2386,15 +2384,15 @@
         {
           "id": "code-action",
           "label": "Code action at diagnostic",
-          "medianMs": 35.156770000001416,
+          "medianMs": 36.0918749999837,
           "coldMedianMs": null,
-          "minMs": 30.743029000004753,
-          "stddevMs": 3.7371048611679516,
-          "cvPct": 10.772507582801245,
+          "minMs": 34.52785600000061,
+          "stddevMs": 1.3435490738448541,
+          "cvPct": 3.7382459243178663,
           "runs": [
-            35.156770000001416,
-            38.173597999993945,
-            30.743029000004753
+            34.52785600000061,
+            37.2021539999987,
+            36.0918749999837
           ],
           "valid": true,
           "reason": "",
@@ -2404,15 +2402,15 @@
         {
           "id": "signature-help",
           "label": "Signature help after `(`",
-          "medianMs": 18.943896999990102,
+          "medianMs": 20.170192999998108,
           "coldMedianMs": null,
-          "minMs": 18.74130999998306,
-          "stddevMs": 0.33330750038391954,
-          "cvPct": 1.7518585307210648,
+          "minMs": 19.990334000001894,
+          "stddevMs": 2.9681494781524838,
+          "cvPct": 13.619651228545635,
           "runs": [
-            18.74130999998306,
-            18.943896999990102,
-            19.392603999993298
+            25.218888999981573,
+            20.170192999998108,
+            19.990334000001894
           ],
           "valid": true,
           "reason": "",
@@ -2422,15 +2420,15 @@
         {
           "id": "formatting",
           "label": "Format unformatted SFC",
-          "medianMs": 61.80997899998329,
+          "medianMs": 65.87430500000482,
           "coldMedianMs": null,
-          "minMs": 61.104220000008354,
-          "stddevMs": 0.47035677595198994,
-          "cvPct": 0.7631122090332721,
+          "minMs": 64.66950200000429,
+          "stddevMs": 1.7331050693201138,
+          "cvPct": 2.617583232771338,
           "runs": [
-            61.99574099999154,
-            61.104220000008354,
-            61.80997899998329
+            65.87430500000482,
+            68.08656100000371,
+            64.66950200000429
           ],
           "valid": true,
           "reason": "",
@@ -2439,22 +2437,22 @@
         }
       ],
       "backendFallback": null,
-      "initializeMs": 528.2514979999978,
+      "initializeMs": 543.6136564999906,
       "initializeRuns": [
-        555.1624589999847,
-        527.3639439999824,
-        533.833907000022,
-        528.0224909999815,
-        522.6014469999936,
-        528.4805050000141
+        541.9637310000253,
+        544.4746119999909,
+        536.0186049999902,
+        543.7174909999885,
+        552.9105020000134,
+        543.5098219999927
       ],
-      "peakRssMb": 550.26953125,
-      "rssToolMb": 294.125,
-      "rssEngineMb": 256.14453125,
+      "peakRssMb": 548.73046875,
+      "rssToolMb": 296.07421875,
+      "rssEngineMb": 252.65625,
       "rssRuns": [
-        550.26953125,
-        551.57421875,
-        549.0078125
+        548.73046875,
+        547.40625,
+        552.40625
       ]
     },
     {
@@ -2466,20 +2464,20 @@
         {
           "id": "def-component-tag",
           "label": "Definition: <ChildCard/> tag",
-          "medianMs": 16.583398999995552,
-          "coldMedianMs": 418.3434019999986,
-          "minMs": 13.332883000024594,
-          "stddevMs": 3.7566546238839607,
-          "cvPct": 22.210904291483814,
+          "medianMs": 15.398538000008557,
+          "coldMedianMs": 443.10638499999186,
+          "minMs": 14.813292999984697,
+          "stddevMs": 0.5687935846461227,
+          "cvPct": 3.6964611291472687,
           "runs": [
-            13.332883000024594,
-            20.824397999997018,
-            16.583398999995552
+            15.398538000008557,
+            14.813292999984697,
+            15.950720000022557
           ],
           "coldRuns": [
-            427.8905859999941,
-            411.40439199999673,
-            418.3434019999986
+            444.5469279999961,
+            436.4549180000031,
+            443.10638499999186
           ],
           "valid": true,
           "reason": "",
@@ -2489,20 +2487,20 @@
         {
           "id": "def-imported-symbol",
           "label": "Definition: imported fn (script)",
-          "medianMs": 16.137733000010485,
-          "coldMedianMs": 433.45435200000065,
-          "minMs": 5.78701099997852,
-          "stddevMs": 8.000183853455006,
-          "cvPct": 55.232286378114836,
+          "medianMs": 25.799004000000423,
+          "coldMedianMs": 433.33044900000095,
+          "minMs": 14.91555399997742,
+          "stddevMs": 6.458548787771697,
+          "cvPct": 28.877108956545346,
           "runs": [
-            5.78701099997852,
-            21.529099999985192,
-            16.137733000010485
+            26.38234700000612,
+            25.799004000000423,
+            14.91555399997742
           ],
           "coldRuns": [
-            427.4163549999939,
-            441.30210500000976,
-            433.45435200000065
+            431.89752899997984,
+            440.33393200000864,
+            433.33044900000095
           ],
           "valid": true,
           "reason": "",
@@ -2512,15 +2510,15 @@
         {
           "id": "type-definition",
           "label": "Type definition: typed binding",
-          "medianMs": 18.145428000018,
+          "medianMs": 18.298139000020456,
           "coldMedianMs": null,
-          "minMs": 17.911271999997552,
-          "stddevMs": 10.32530838126765,
-          "cvPct": 43.041332025441875,
+          "minMs": 16.180893999990076,
+          "stddevMs": 1.564979241081865,
+          "cvPct": 8.74047477742535,
           "runs": [
-            35.91115900001023,
-            17.911271999997552,
-            18.145428000018
+            19.2358720000193,
+            18.298139000020456,
+            16.180893999990076
           ],
           "valid": true,
           "reason": "",
@@ -2530,15 +2528,15 @@
         {
           "id": "references-prop",
           "label": "References: prop -> parent template",
-          "medianMs": 77.26002499999595,
+          "medianMs": 89.59836400000495,
           "coldMedianMs": null,
-          "minMs": 68.50860299999476,
-          "stddevMs": 10.507154088569056,
-          "cvPct": 13.402059408839701,
+          "minMs": 73.21152500002063,
+          "stddevMs": 9.498622178946642,
+          "cvPct": 11.283793542689253,
           "runs": [
-            77.26002499999595,
-            89.43001800001366,
-            68.50860299999476
+            89.72811100000399,
+            73.21152500002063,
+            89.59836400000495
           ],
           "valid": true,
           "reason": "",
@@ -2548,15 +2546,15 @@
         {
           "id": "prepare-rename",
           "label": "Prepare rename: prop",
-          "medianMs": 5.778330000001006,
+          "medianMs": 5.77073499999824,
           "coldMedianMs": null,
-          "minMs": 4.915301000000909,
-          "stddevMs": 0.6263427689072024,
-          "cvPct": 11.166899708379647,
+          "minMs": 5.182190999999875,
+          "stddevMs": 0.3424904212533172,
+          "cvPct": 6.140430302078194,
           "runs": [
-            4.915301000000909,
-            6.1331369999970775,
-            5.778330000001006
+            5.77073499999824,
+            5.779960999992909,
+            5.182190999999875
           ],
           "valid": true,
           "reason": "",
@@ -2565,15 +2563,15 @@
         {
           "id": "rename-prop",
           "label": "Rename prop (cross-file edit)",
-          "medianMs": 3.106260000000475,
+          "medianMs": 3.444969999982277,
           "coldMedianMs": null,
-          "minMs": 3.013097999995807,
-          "stddevMs": 0.22504493314765436,
-          "cvPct": 7.0617950996913885,
+          "minMs": 3.3690570000035223,
+          "stddevMs": 0.09358456796043238,
+          "cvPct": 2.707572644511189,
           "runs": [
-            3.4410270000225864,
-            3.013097999995807,
-            3.106260000000475
+            3.444969999982277,
+            3.3690570000035223,
+            3.5551759999943897
           ],
           "valid": true,
           "reason": "",
@@ -2583,15 +2581,15 @@
         {
           "id": "code-action",
           "label": "Code action at diagnostic",
-          "medianMs": 781.1568990000233,
+          "medianMs": 768.9914189999981,
           "coldMedianMs": null,
-          "minMs": 760.1737340000109,
-          "stddevMs": 13.781841279381776,
-          "cvPct": 1.7764111677987886,
+          "minMs": 760.6721759999928,
+          "stddevMs": 6.428243699430173,
+          "cvPct": 0.8373800924859885,
           "runs": [
-            781.1568990000233,
-            760.1737340000109,
-            786.1442550000211
+            760.6721759999928,
+            773.3205899999884,
+            768.9914189999981
           ],
           "valid": true,
           "reason": "",
@@ -2601,15 +2599,15 @@
         {
           "id": "signature-help",
           "label": "Signature help after `(`",
-          "medianMs": 28.2950220000057,
+          "medianMs": 28.04451499998686,
           "coldMedianMs": null,
-          "minMs": 27.591169999999693,
-          "stddevMs": 0.8324080806010409,
-          "cvPct": 2.933222237742587,
+          "minMs": 27.159906999993837,
+          "stddevMs": 0.7253355310795316,
+          "cvPct": 2.5965940107486403,
           "runs": [
-            28.2950220000057,
-            27.591169999999693,
-            29.24967699998524
+            27.159906999993837,
+            28.04451499998686,
+            28.59792000000016
           ],
           "valid": true,
           "reason": "",
@@ -2619,15 +2617,15 @@
         {
           "id": "formatting",
           "label": "Format unformatted SFC",
-          "medianMs": 62.273709999979474,
+          "medianMs": 66.90491399998427,
           "coldMedianMs": null,
-          "minMs": 61.60779700000421,
-          "stddevMs": 3.14769359652365,
-          "cvPct": 4.937722812089312,
+          "minMs": 66.25464999998803,
+          "stddevMs": 1.2792151619070076,
+          "cvPct": 1.9009325815975395,
           "runs": [
-            62.273709999979474,
-            61.60779700000421,
-            67.36213199998019
+            66.90491399998427,
+            66.25464999998803,
+            68.72268700000132
           ],
           "valid": true,
           "reason": "",
@@ -2636,22 +2634,22 @@
         }
       ],
       "backendFallback": null,
-      "initializeMs": 525.8045450000063,
+      "initializeMs": 536.8724900000088,
       "initializeRuns": [
-        537.1317759999947,
-        520.9528670000145,
-        531.6736910000036,
-        519.4588529999892,
-        523.1862790000159,
-        528.4228109999967
+        528.1179420000117,
+        532.7383619999746,
+        540.3164099999995,
+        533.4285700000182,
+        552.6284260000102,
+        541.6535589999985
       ],
-      "peakRssMb": 788.22265625,
-      "rssToolMb": 305.16796875,
-      "rssEngineMb": 483.0546875,
+      "peakRssMb": 780.4765625,
+      "rssToolMb": 308.90234375,
+      "rssEngineMb": 471.57421875,
       "rssRuns": [
-        795.16015625,
-        777.0703125,
-        788.22265625
+        779.359375,
+        808.9765625,
+        780.4765625
       ]
     },
     {
@@ -2663,20 +2661,20 @@
         {
           "id": "def-component-tag",
           "label": "Definition: <ChildCard/> tag",
-          "medianMs": 0.26511500001652166,
-          "coldMedianMs": 69.56767699998454,
-          "minMs": 0.2610370000184048,
-          "stddevMs": 0.0072591333669361395,
-          "cvPct": 2.717775613187455,
+          "medianMs": 158.76184699998703,
+          "coldMedianMs": 229.9783790000074,
+          "minMs": 0.5042240000038873,
+          "stddevMs": 94.7041081449517,
+          "cvPct": 86.35002842553925,
           "runs": [
-            0.27514300000621006,
-            0.2610370000184048,
-            0.26511500001652166
+            0.5042240000038873,
+            169.75793700001668,
+            158.76184699998703
           ],
           "coldRuns": [
-            68.57914499999606,
-            74.95946900002309,
-            69.56767699998454
+            230.34164200001396,
+            229.9783790000074,
+            211.05213399999775
           ],
           "valid": true,
           "reason": "",
@@ -2686,20 +2684,20 @@
         {
           "id": "def-imported-symbol",
           "label": "Definition: imported fn (script)",
-          "medianMs": 2.756345000001602,
-          "coldMedianMs": 330.489831999992,
-          "minMs": 2.7294049999909475,
-          "stddevMs": 0.1355813732110959,
-          "cvPct": 4.80654507438965,
+          "medianMs": 1.6872290000028443,
+          "coldMedianMs": 314.73326800001087,
+          "minMs": 1.6596370000042953,
+          "stddevMs": 0.03248314917480638,
+          "cvPct": 1.9216117479229335,
           "runs": [
-            2.9765469999983907,
-            2.756345000001602,
-            2.7294049999909475
+            1.6596370000042953,
+            1.7243689999741036,
+            1.6872290000028443
           ],
           "coldRuns": [
-            336.33264199999394,
-            329.1187590000045,
-            330.489831999992
+            314.73326800001087,
+            318.26495400001295,
+            231.50651000000653
           ],
           "valid": true,
           "reason": "",
@@ -2709,15 +2707,15 @@
         {
           "id": "type-definition",
           "label": "Type definition: typed binding",
-          "medianMs": 249.09491200000048,
+          "medianMs": 8.978199000004679,
           "coldMedianMs": null,
-          "minMs": 248.5175070000114,
-          "stddevMs": 1.262966640960288,
-          "cvPct": 0.5061664387101799,
+          "minMs": 8.736823999992339,
+          "stddevMs": 95.0157077024629,
+          "cvPct": 149.12656133954232,
           "runs": [
-            250.93581200001063,
-            249.09491200000048,
-            248.5175070000114
+            173.42941199999768,
+            8.978199000004679,
+            8.736823999992339
           ],
           "valid": true,
           "reason": "",
@@ -2727,33 +2725,33 @@
         {
           "id": "references-prop",
           "label": "References: prop -> parent template",
-          "medianMs": 109.56195099998149,
+          "medianMs": 264.52981599999475,
           "coldMedianMs": null,
-          "minMs": 106.7682119999954,
-          "stddevMs": 1.7562485154738012,
-          "cvPct": 1.614500653645922,
+          "minMs": 262.98131699999794,
+          "stddevMs": 1.9425955988073476,
+          "cvPct": 0.7336524054715298,
           "runs": [
-            109.56195099998149,
-            110.00885300000664,
-            106.7682119999954
+            262.98131699999794,
+            266.8414449999982,
+            264.52981599999475
           ],
-          "valid": false,
-          "reason": "references missing ChildCard.vue + Parent.vue symbol ranges — found files childcard.vue",
-          "sample": "childcard.vue@2:11 childcard.vue@11:2",
-          "artifact": 2
+          "valid": true,
+          "reason": "",
+          "sample": "childcard.vue@2:11 childcard.vue@11:2 childcard.vue@15:38 parent.vue@2:16",
+          "artifact": 4
         },
         {
           "id": "prepare-rename",
           "label": "Prepare rename: prop",
-          "medianMs": 1.6656300000031479,
+          "medianMs": 173.05761700001312,
           "coldMedianMs": null,
-          "minMs": 1.6385690000024624,
-          "stddevMs": 1.2268991882333324,
-          "cvPct": 51.97828968619685,
+          "minMs": 172.76902599999448,
+          "stddevMs": 1.1180944347584614,
+          "cvPct": 0.644236343558251,
           "runs": [
-            3.7770219999947585,
-            1.6385690000024624,
-            1.6656300000031479
+            174.83372299998882,
+            172.76902599999448,
+            173.05761700001312
           ],
           "valid": true,
           "reason": "",
@@ -2762,33 +2760,33 @@
         {
           "id": "rename-prop",
           "label": "Rename prop (cross-file edit)",
-          "medianMs": 6.937239999999292,
+          "medianMs": 265.2351069999859,
           "coldMedianMs": null,
-          "minMs": 6.820833000005223,
-          "stddevMs": 0.12156446670191458,
-          "cvPct": 1.751484238569791,
+          "minMs": 264.15764800002216,
+          "stddevMs": 2.0131258658845783,
+          "cvPct": 0.757337352309909,
           "runs": [
-            7.0638899999903515,
-            6.937239999999292,
-            6.820833000005223
+            268.05604100000346,
+            264.15764800002216,
+            265.2351069999859
           ],
-          "valid": false,
-          "reason": "BROKEN REFACTOR: applied edits changed unrelated SFC semantics or failed to perform the intended edit",
-          "sample": "childcard.vue:2, parent.vue:1 :: applied rename of captionText to renamedCaption; declaration, uses and decoys checked",
-          "artifact": 3
+          "valid": true,
+          "reason": "",
+          "sample": "childcard.vue:3, parent.vue:1 :: applied rename of captionText to renamedCaption; declaration, uses and decoys checked",
+          "artifact": 4
         },
         {
           "id": "code-action",
           "label": "Code action at diagnostic",
-          "medianMs": 10.670149000012316,
+          "medianMs": 89.36720900001819,
           "coldMedianMs": null,
-          "minMs": 10.457617999985814,
-          "stddevMs": 0.7037397810999193,
-          "cvPct": 6.417745838800962,
+          "minMs": 87.33332499998505,
+          "stddevMs": 8.813895498952393,
+          "cvPct": 9.436215112318028,
           "runs": [
-            10.457617999985814,
-            11.768819999997504,
-            10.670149000012316
+            89.36720900001819,
+            87.33332499998505,
+            103.51442699998734
           ],
           "valid": false,
           "reason": "codeAction returned nothing at the diagnostic",
@@ -2798,15 +2796,15 @@
         {
           "id": "signature-help",
           "label": "Signature help after `(`",
-          "medianMs": 381.1821319999872,
+          "medianMs": 536.5684739999997,
           "coldMedianMs": null,
-          "minMs": 380.5791699999827,
-          "stddevMs": 1.7778102285796842,
-          "cvPct": 0.46552671407235996,
+          "minMs": 357.4485649999988,
+          "stddevMs": 105.99395481367011,
+          "cvPct": 22.094115734256707,
           "runs": [
-            380.5791699999827,
-            381.1821319999872,
-            383.91531000001123
+            545.1981269999815,
+            536.5684739999997,
+            357.4485649999988
           ],
           "valid": true,
           "reason": "",
@@ -2816,64 +2814,64 @@
         {
           "id": "formatting",
           "label": "Format unformatted SFC",
-          "medianMs": 0.38412699999753386,
+          "medianMs": 0.48543799997423775,
           "coldMedianMs": null,
-          "minMs": 0.3690690000075847,
-          "stddevMs": 0.014308658772964939,
-          "cvPct": 3.72987510470115,
+          "minMs": 0.44349000000511296,
+          "stddevMs": 0.07440498781475818,
+          "cvPct": 14.713857946221623,
           "runs": [
-            0.3690690000075847,
-            0.3976729999994859,
-            0.38412699999753386
+            0.48543799997423775,
+            0.5881109999900218,
+            0.44349000000511296
           ],
-          "valid": true,
-          "reason": "",
-          "sample": "1 edit(s); first change @1: \"template>\\n     <div    class=\\\"messy\\\"   >\" -> \"script setup lang=\\\"ts\\\">\\nimport { ref } f\"",
-          "artifact": 1
+          "valid": false,
+          "reason": "formatting returned null on a deliberately unformatted document",
+          "sample": "null",
+          "artifact": 0
         }
       ],
       "backendFallback": null,
-      "initializeMs": 37.671018499997444,
+      "initializeMs": 41.763408499988145,
       "initializeRuns": [
-        38.37580899999011,
-        38.65148000000045,
-        40.697692999994615,
-        36.044330000004265,
-        35.307935999997426,
-        36.966228000004776
+        42.239604999980656,
+        41.72267599997576,
+        41.81207699998049,
+        41.80414100000053,
+        40.52363399998285,
+        40.9206669999985
       ],
-      "peakRssMb": 266.80859375,
-      "rssToolMb": 81.54296875,
-      "rssEngineMb": 185.265625,
+      "peakRssMb": 178.26171875,
+      "rssToolMb": 91.12890625,
+      "rssEngineMb": 87.1328125,
       "rssRuns": [
-        266.80859375,
-        264.953125,
-        266.8203125
+        177.92578125,
+        178.26171875,
+        193.96875
       ]
     },
     {
       "suite": "navigation",
       "suiteLabel": "Navigation & refactor (cross-file)",
       "server": "verter",
-      "label": "Verter LSP (npm 0.0.1-beta.6)",
+      "label": "Verter LSP (npm 0.0.1-beta.7)",
       "ops": [
         {
           "id": "def-component-tag",
           "label": "Definition: <ChildCard/> tag",
-          "medianMs": 15.725766000017757,
-          "coldMedianMs": 49.2402010000078,
-          "minMs": 1.765947000007145,
-          "stddevMs": 8.710204206138563,
-          "cvPct": 74.10356321001018,
+          "medianMs": 0.7187549999798648,
+          "coldMedianMs": 273.3248650000023,
+          "minMs": 0.593840999994427,
+          "stddevMs": 0.2569534920613801,
+          "cvPct": 32.11111858929669,
           "runs": [
-            1.765947000007145,
-            15.725766000017757,
-            17.770575999980792
+            0.7187549999798648,
+            1.0880070000130218,
+            0.593840999994427
           ],
           "coldRuns": [
-            57.36559900001157,
-            49.2402010000078,
-            44.230045000003884
+            277.7666250000184,
+            273.3248650000023,
+            272.2121220000263
           ],
           "valid": true,
           "reason": "",
@@ -2883,20 +2881,20 @@
         {
           "id": "def-imported-symbol",
           "label": "Definition: imported fn (script)",
-          "medianMs": 8.773518000001786,
-          "coldMedianMs": 44.50917900001514,
-          "minMs": 4.847873000020627,
-          "stddevMs": 5.264722542077431,
-          "cvPct": 54.66357520981323,
+          "medianMs": 0.926534999976866,
+          "coldMedianMs": 272.75150099999155,
+          "minMs": 0.7371500000008382,
+          "stddevMs": 0.28310002988912364,
+          "cvPct": 28.71558186745091,
           "runs": [
-            15.272013000008883,
-            4.847873000020627,
-            8.773518000001786
+            0.926534999976866,
+            1.2939429999969434,
+            0.7371500000008382
           ],
           "coldRuns": [
-            44.50917900001514,
-            50.51644900001702,
-            44.05079899998964
+            278.11814899998717,
+            204.60001500000362,
+            272.75150099999155
           ],
           "valid": true,
           "reason": "",
@@ -2906,51 +2904,51 @@
         {
           "id": "type-definition",
           "label": "Type definition: typed binding",
-          "medianMs": 206.06222299998626,
+          "medianMs": 15.918001000012737,
           "coldMedianMs": null,
-          "minMs": 191.22155799999018,
-          "stddevMs": 8.93898891559948,
-          "cvPct": 4.435790611010765,
+          "minMs": 14.660647999990033,
+          "stddevMs": 0.7581267123088651,
+          "cvPct": 4.880450947235249,
           "runs": [
-            207.27511500002583,
-            206.06222299998626,
-            191.22155799999018
+            16.023194999987027,
+            15.918001000012737,
+            14.660647999990033
           ],
-          "valid": true,
-          "reason": "",
-          "sample": "types.ts@1:17",
-          "artifact": 1
+          "valid": false,
+          "reason": "typeDefinition returned no location",
+          "sample": "null",
+          "artifact": 0
         },
         {
           "id": "references-prop",
           "label": "References: prop -> parent template",
-          "medianMs": 87.47213999999803,
+          "medianMs": 63.66478399999323,
           "coldMedianMs": null,
-          "minMs": 67.24103500001365,
-          "stddevMs": 12.10255386875251,
-          "cvPct": 14.90596201885147,
+          "minMs": 53.99438499999815,
+          "stddevMs": 10.6376812181264,
+          "cvPct": 16.543790318016605,
           "runs": [
-            88.86494200001471,
-            67.24103500001365,
-            87.47213999999803
+            75.24126700000488,
+            53.99438499999815,
+            63.66478399999323
           ],
           "valid": false,
-          "reason": "references missing Parent.vue symbol ranges — found files childcard.vue",
-          "sample": "childcard.vue@11:2 childcard.vue@15:38 childcard.vue@2:11",
-          "artifact": 3
+          "reason": "references returned nothing",
+          "sample": "null",
+          "artifact": 0
         },
         {
           "id": "prepare-rename",
           "label": "Prepare rename: prop",
-          "medianMs": 0.7389789999870118,
+          "medianMs": 6.6054300000250805,
           "coldMedianMs": null,
-          "minMs": 0.6719410000077914,
-          "stddevMs": 0.9215844780924081,
-          "cvPct": 74.49043417826577,
+          "minMs": 4.0481480000016745,
+          "stddevMs": 2.4090296097494948,
+          "cvPct": 37.030320728441005,
           "runs": [
-            0.7389789999870118,
-            2.3006350000214297,
-            0.6719410000077914
+            6.6054300000250805,
+            8.863100999995368,
+            4.0481480000016745
           ],
           "valid": false,
           "reason": "prepareRename returned null — server declines to rename at this position",
@@ -2959,15 +2957,15 @@
         {
           "id": "rename-prop",
           "label": "Rename prop (cross-file edit)",
-          "medianMs": 0.4002369999943767,
+          "medianMs": 5.826139000011608,
           "coldMedianMs": null,
-          "minMs": 0.3641899999929592,
-          "stddevMs": 0.03481683155544144,
-          "cvPct": 8.717021911094797,
+          "minMs": 5.095010999997612,
+          "stddevMs": 1.005704735118624,
+          "cvPct": 16.75755154253167,
           "runs": [
-            0.4338090000092052,
-            0.4002369999943767,
-            0.3641899999929592
+            5.095010999997612,
+            7.08335500000976,
+            5.826139000011608
           ],
           "valid": false,
           "reason": "request failed: {\"code\":-32803,\"message\":\"verter: rename is unavailable for public component props because complete cross-file usage proof is unavailable; no rename edit was produced.\"}",
@@ -2976,51 +2974,50 @@
         {
           "id": "code-action",
           "label": "Code action at diagnostic",
-          "medianMs": 5.046069999982137,
+          "medianMs": 7.08607699998538,
           "coldMedianMs": null,
-          "minMs": 4.829113999992842,
-          "stddevMs": 1.3940079689818132,
-          "cvPct": 24.2859278658133,
+          "minMs": 6.493713999981992,
+          "stddevMs": 7.8144946501189985,
+          "cvPct": 69.16489268768922,
           "runs": [
-            7.344763000000967,
-            5.046069999982137,
-            4.829113999992842
+            20.3152720000071,
+            6.493713999981992,
+            7.08607699998538
           ],
           "valid": false,
-          "reason": "codeAction returned nothing at the diagnostic",
-          "sample": "null",
-          "artifact": 0
+          "reason": "request failed: {\"code\":-32801,\"message\":\"Content modified\"}",
+          "sample": ""
         },
         {
           "id": "signature-help",
           "label": "Signature help after `(`",
-          "medianMs": 20.10954499998479,
+          "medianMs": 22.4875919999904,
           "coldMedianMs": null,
-          "minMs": 18.782921999983955,
-          "stddevMs": 0.9787181333943638,
-          "cvPct": 4.927658526966579,
+          "minMs": 19.8442689999938,
+          "stddevMs": 2.5478943241426895,
+          "cvPct": 11.362571831306964,
           "runs": [
-            20.692716999998083,
-            18.782921999983955,
-            20.10954499998479
+            19.8442689999938,
+            22.4875919999904,
+            24.938850999984425
           ],
-          "valid": true,
-          "reason": "",
-          "sample": "formatCaption(rawText: string, repeat: number): string",
-          "artifact": 1
+          "valid": false,
+          "reason": "signatureHelp returned no signatures",
+          "sample": "null",
+          "artifact": 0
         },
         {
           "id": "formatting",
           "label": "Format unformatted SFC",
-          "medianMs": 0.27811000001383945,
+          "medianMs": 0.26820199997746386,
           "coldMedianMs": null,
-          "minMs": 0.22316700001829304,
-          "stddevMs": 0.11353529373464714,
-          "cvPct": 36.130083151124694,
+          "minMs": 0.25547800000640564,
+          "stddevMs": 0.013990052332515756,
+          "cvPct": 5.200112129508132,
           "runs": [
-            0.44144400002551265,
-            0.27811000001383945,
-            0.22316700001829304
+            0.25547800000640564,
+            0.26820199997746386,
+            0.2834210000000894
           ],
           "valid": false,
           "reason": "formatting returned null on a deliberately unformatted document",
@@ -3029,22 +3026,22 @@
         }
       ],
       "backendFallback": null,
-      "initializeMs": 5.149402999988524,
+      "initializeMs": 5.350338999996893,
       "initializeRuns": [
-        5.26632100000279,
-        5.121031999995466,
-        5.431680000008782,
-        5.131936999998288,
-        4.994991000014124,
-        5.16686899997876
+        5.241936000005808,
+        5.524241000006441,
+        5.280366999999387,
+        5.424927000014577,
+        5.409332999988692,
+        5.291345000005094
       ],
-      "peakRssMb": 226.16015625,
-      "rssToolMb": 117.640625,
-      "rssEngineMb": 108.51953125,
+      "peakRssMb": 93.1171875,
+      "rssToolMb": 93.1171875,
+      "rssEngineMb": null,
       "rssRuns": [
-        226.16015625,
-        229.53125,
-        224.68359375
+        96.7578125,
+        91.484375,
+        93.1171875
       ]
     },
     {
@@ -3056,67 +3053,67 @@
         {
           "id": "hover-script",
           "label": "Hover (script setup)",
-          "medianMs": 177.61700100000598,
-          "coldMedianMs": 1119.2670700000017,
-          "minMs": 7.506120000005467,
-          "stddevMs": 100.39204240215425,
-          "cvPct": 81.38670416013655,
+          "medianMs": 179.92217700000037,
+          "coldMedianMs": 1136.0393349999795,
+          "minMs": 179.7651809999952,
+          "stddevMs": 2.3910640440964355,
+          "cvPct": 1.3194012630787648,
           "runs": [
-            184.93256600000313,
-            7.506120000005467,
-            177.61700100000598
+            179.92217700000037,
+            179.7651809999952,
+            183.98289099999238
           ],
           "coldRuns": [
-            1106.931408000004,
-            1119.2670700000017,
-            1129.36780800001
+            1129.4369130000123,
+            1138.8580650000076,
+            1136.0393349999795
           ],
-          "valid": true,
-          "reason": "",
+          "valid": false,
+          "reason": "unranked because the paired probe failed (hover-template) — a hover that is right in one context and wrong in the other is not a comparable measurement",
           "sample": "```typescript\nconst marker: Ref<string, string>\n```\nStable hover target — do not rename.",
           "artifact": 90
         },
         {
           "id": "hover-template",
           "label": "Hover (template interpolation)",
-          "medianMs": 149.069038000016,
-          "coldMedianMs": 1183.3430250000092,
-          "minMs": 7.880721000023186,
-          "stddevMs": 84.83983694461523,
-          "cvPct": 80.30832208539381,
+          "medianMs": 177.0493799999822,
+          "coldMedianMs": 1141.0567339999834,
+          "minMs": 174.88060699999915,
+          "stddevMs": 4.370405824487511,
+          "cvPct": 2.4496507404466845,
           "runs": [
-            159.97818100001314,
-            7.880721000023186,
-            149.069038000016
+            177.0493799999822,
+            183.2980460000108,
+            174.88060699999915
           ],
           "coldRuns": [
-            1185.3174369999906,
-            1177.0091830000165,
-            1183.3430250000092
+            1143.0699040000036,
+            1135.118766999978,
+            1141.0567339999834
           ],
-          "valid": true,
-          "reason": "",
-          "sample": "```typescript\n(property) marker: string\n```",
-          "artifact": 43
+          "valid": false,
+          "reason": "cold: returned Ref<...> — script type leaked into template context",
+          "sample": "```typescript\nconst marker: Ref<string, string>\n```\nStable hover target — do not rename.",
+          "artifact": 90
         }
       ],
       "backendFallback": null,
-      "initializeMs": 522.8293645000085,
+      "initializeMs": 534.3516705000075,
       "initializeRuns": [
-        522.5107660000212,
-        526.4817510000139,
-        523.1479629999958,
-        521.7104669999972,
-        527.0068509999837,
-        517.6911679999903
+        536.4045380000025,
+        534.9479920000012,
+        532.0298449999827,
+        527.0542570000107,
+        535.3938950000156,
+        533.7553490000137
       ],
-      "peakRssMb": 523.93359375,
-      "rssToolMb": 277.25390625,
-      "rssEngineMb": 246.6796875,
+      "peakRssMb": 526.84375,
+      "rssToolMb": 278.5234375,
+      "rssEngineMb": 248.3203125,
       "rssRuns": [
-        526.7265625,
-        523.24609375,
-        523.93359375
+        524.05859375,
+        527.11328125,
+        526.84375
       ]
     },
     {
@@ -3128,67 +3125,67 @@
         {
           "id": "hover-script",
           "label": "Hover (script setup)",
-          "medianMs": 23.12789000000339,
-          "coldMedianMs": 462.4112089999835,
-          "minMs": 22.816580000013346,
-          "stddevMs": 2.1476919886011734,
-          "cvPct": 8.871481256915823,
+          "medianMs": 25.003923000011127,
+          "coldMedianMs": 468.3333740000089,
+          "minMs": 13.07286600000225,
+          "stddevMs": 9.411897638482841,
+          "cvPct": 40.49622341710431,
           "runs": [
-            22.816580000013346,
-            26.68236400000751,
-            23.12789000000339
+            25.003923000011127,
+            13.07286600000225,
+            31.647472999989986
           ],
           "coldRuns": [
-            462.4112089999835,
-            479.1982340000104,
-            458.7434490000014
+            486.2306320000207,
+            468.3333740000089,
+            461.503721999994
           ],
-          "valid": true,
-          "reason": "",
+          "valid": false,
+          "reason": "unranked because the paired probe failed (hover-template) — a hover that is right in one context and wrong in the other is not a comparable measurement",
           "sample": "```typescript\nconst marker: Ref<string, string>\n```\nStable hover target — do not rename.",
           "artifact": 90
         },
         {
           "id": "hover-template",
           "label": "Hover (template interpolation)",
-          "medianMs": 14.16920500001288,
-          "coldMedianMs": 469.44636800000444,
-          "minMs": 11.02387699999963,
-          "stddevMs": 5.207432443975613,
-          "cvPct": 33.67744740223975,
+          "medianMs": 18.805059000005713,
+          "coldMedianMs": 472.3269310000178,
+          "minMs": 17.11505500000203,
+          "stddevMs": 1.3255664095440685,
+          "cvPct": 7.146019455305157,
           "runs": [
-            14.16920500001288,
-            21.1949270000041,
-            11.02387699999963
+            19.729037999990396,
+            17.11505500000203,
+            18.805059000005713
           ],
           "coldRuns": [
-            481.16196900000796,
-            469.44636800000444,
-            467.7111690000165
+            472.3269310000178,
+            463.80648600001587,
+            484.11282400001073
           ],
-          "valid": true,
-          "reason": "",
-          "sample": "```typescript\n(property) marker: string\n```",
-          "artifact": 43
+          "valid": false,
+          "reason": "cold: returned Ref<...> — script type leaked into template context",
+          "sample": "```typescript\nconst marker: Ref<string, string>\n```\nStable hover target — do not rename.",
+          "artifact": 90
         }
       ],
       "backendFallback": null,
-      "initializeMs": 521.7888289999973,
+      "initializeMs": 533.5086584999954,
       "initializeRuns": [
-        518.6758859999827,
-        523.1366960000014,
-        520.4409619999933,
-        529.9255830000038,
-        523.3898270000063,
-        519.8872090000077
+        545.9861220000021,
+        535.6906249999884,
+        535.7904229999986,
+        529.9609819999896,
+        523.1726760000165,
+        531.3266920000024
       ],
-      "peakRssMb": 612.51953125,
-      "rssToolMb": 288.3125,
-      "rssEngineMb": 324.20703125,
+      "peakRssMb": 621.05078125,
+      "rssToolMb": 289.12109375,
+      "rssEngineMb": 331.9296875,
       "rssRuns": [
-        612.51953125,
-        615.5703125,
-        611.02734375
+        626.2109375,
+        620.84765625,
+        621.05078125
       ]
     },
     {
@@ -3200,20 +3197,20 @@
         {
           "id": "hover-script",
           "label": "Hover (script setup)",
-          "medianMs": 1.8536390000081155,
-          "coldMedianMs": 296.6994249999989,
-          "minMs": 1.6471540000056848,
-          "stddevMs": 4.569956983716429,
-          "cvPct": 104.14220954718205,
+          "medianMs": 1.1217410000099335,
+          "coldMedianMs": 227.0701350000163,
+          "minMs": 1.0913029999937862,
+          "stddevMs": 0.07233247155602093,
+          "cvPct": 6.304316610266493,
           "runs": [
-            1.8536390000081155,
-            1.6471540000056848,
-            9.66377400001511
+            1.0913029999937862,
+            1.2290009999996983,
+            1.1217410000099335
           ],
           "coldRuns": [
-            307.44338199999765,
-            296.6994249999989,
-            281.90165000001434
+            227.31938100000843,
+            227.0701350000163,
+            220.73166700001457
           ],
           "valid": true,
           "reason": "",
@@ -3223,20 +3220,20 @@
         {
           "id": "hover-template",
           "label": "Hover (template interpolation)",
-          "medianMs": 1.6348949999955948,
-          "coldMedianMs": 279.26043900000514,
-          "minMs": 1.6271169999963604,
-          "stddevMs": 0.02433686014151494,
-          "cvPct": 1.4795556145073412,
+          "medianMs": 1.1054500000027474,
+          "coldMedianMs": 223.74506900002598,
+          "minMs": 1.0857130000076722,
+          "stddevMs": 0.023289130379742274,
+          "cvPct": 2.1023611941231013,
           "runs": [
-            1.6271169999963604,
-            1.6348949999955948,
-            1.672617000003811
+            1.1321189999871422,
+            1.0857130000076722,
+            1.1054500000027474
           ],
           "coldRuns": [
-            301.45548500001314,
-            275.34092899999814,
-            279.26043900000514
+            226.47934799999348,
+            221.67776300001424,
+            223.74506900002598
           ],
           "valid": true,
           "reason": "",
@@ -3245,94 +3242,94 @@
         }
       ],
       "backendFallback": null,
-      "initializeMs": 36.09745999998995,
+      "initializeMs": 41.11712949999492,
       "initializeRuns": [
-        37.78840499999933,
-        35.893760000006296,
-        36.07394099998055,
-        36.654429000016535,
-        35.91478000002098,
-        36.12097899999935
+        41.244338999997126,
+        41.77190800002427,
+        40.98991999999271,
+        40.753263999999035,
+        41.78406599999289,
+        39.476404000015464
       ],
-      "peakRssMb": 255.05859375,
-      "rssToolMb": 79.7734375,
-      "rssEngineMb": 175.28515625,
+      "peakRssMb": 170.12109375,
+      "rssToolMb": 84.41796875,
+      "rssEngineMb": 85.703125,
       "rssRuns": [
-        255.05859375,
-        256.5703125,
-        254.6953125
+        172.01953125,
+        170.12109375,
+        170.05859375
       ]
     },
     {
       "suite": "smoke",
       "suiteLabel": "Smoke (reference suite)",
       "server": "verter",
-      "label": "Verter LSP (npm 0.0.1-beta.6)",
+      "label": "Verter LSP (npm 0.0.1-beta.7)",
       "ops": [
         {
           "id": "hover-script",
           "label": "Hover (script setup)",
-          "medianMs": 4.569087999989279,
-          "coldMedianMs": 183.2104929999914,
-          "minMs": 4.243329000019003,
-          "stddevMs": 0.33756958482430555,
-          "cvPct": 7.3754807874808925,
+          "medianMs": 4.5534869999974035,
+          "coldMedianMs": 263.03260399997816,
+          "minMs": 4.544575000007171,
+          "stddevMs": 0.05285809094910478,
+          "cvPct": 1.1542479200314733,
           "runs": [
-            4.918332000001101,
-            4.569087999989279,
-            4.243329000019003
+            4.640257999999449,
+            4.544575000007171,
+            4.5534869999974035
           ],
           "coldRuns": [
-            174.67362800001865,
-            188.95117399998708,
-            183.2104929999914
+            263.5016730000207,
+            261.62998399999924,
+            263.03260399997816
           ],
-          "valid": true,
-          "reason": "",
-          "sample": "```typescript\nconst marker: Ref<string, string>Stable hover target — do not rename.\n```",
-          "artifact": 89
+          "valid": false,
+          "reason": "cold: no type for `marker` at the script position",
+          "sample": "",
+          "artifact": 0
         },
         {
           "id": "hover-template",
           "label": "Hover (template interpolation)",
-          "medianMs": 0.8217639999929816,
-          "coldMedianMs": 206.1252000000095,
-          "minMs": 0.7809769999876153,
-          "stddevMs": 2.561025415686564,
-          "cvPct": 112.32900986827454,
+          "medianMs": 4.459360000008019,
+          "coldMedianMs": 262.29231900000013,
+          "minMs": 4.4533790000132285,
+          "stddevMs": 0.13876054939542287,
+          "cvPct": 3.05878188825642,
           "runs": [
-            5.237055999983568,
-            0.7809769999876153,
-            0.8217639999929816
+            4.4533790000132285,
+            4.459360000008019,
+            4.696653999999398
           ],
           "coldRuns": [
-            172.40924300000188,
-            206.1252000000095,
-            232.17925600000308
+            262.30956099997275,
+            262.29231900000013,
+            261.26238100000774
           ],
-          "valid": true,
-          "reason": "",
-          "sample": "```typescript\nlet marker: stringStable hover target — do not rename.\n```",
-          "artifact": 74
+          "valid": false,
+          "reason": "cold: no unwrapped `string` type at the template position",
+          "sample": "",
+          "artifact": 0
         }
       ],
       "backendFallback": null,
-      "initializeMs": 5.101218500014511,
+      "initializeMs": 5.318351999987499,
       "initializeRuns": [
-        5.216408999986015,
-        5.130648000020301,
-        5.071789000008721,
-        4.97779200001969,
-        4.8959259999974165,
-        5.200897000002442
+        5.324548999982653,
+        5.393108000018401,
+        5.265969000000041,
+        5.499626000004355,
+        5.3121549999923445,
+        5.251121000008425
       ],
-      "peakRssMb": 166.71875,
-      "rssToolMb": 76.91796875,
-      "rssEngineMb": 89.80078125,
+      "peakRssMb": 78.85546875,
+      "rssToolMb": 78.85546875,
+      "rssEngineMb": null,
       "rssRuns": [
-        166.71875,
-        163.75,
-        178.55078125
+        78.85546875,
+        78.625,
+        78.875
       ]
     }
   ]

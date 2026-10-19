@@ -2,12 +2,12 @@
 
 > Auto-generated from the JSON snapshots in [`results/benchmarks/`](../results/benchmarks/) and [`results/real_world/`](../results/real_world/) by `pnpm docs`. Do not edit by hand.
 
-- **Generated:** 2026-09-29T12:56:26.892Z
+- **Generated:** 2026-10-19T21:23:23.900Z
 - **Fixture:** `fixtures/200` (200 files)
 - **Runs / warmups:** 5 / 1
-- **Runner:** Linux · linux/x64 · 4 CPUs · INTEL(R) XEON(R) PLATINUM 8573C · 15.6 GB · Node v22.23.2
-- **Commit:** [`8a88482`](https://github.com/pikax/vue-benchmarks/commit/8a8848276c52956d7e54e262e5846e41fc922288)
-- **CI run:** https://github.com/pikax/vue-benchmarks/actions/runs/36570273148
+- **Runner:** Linux · linux/x64 · 4 CPUs · INTEL(R) XEON(R) PLATINUM 8573C · 15.6 GB · Node v22.23.3
+- **Commit:** [`33fd9d3`](https://github.com/pikax/vue-benchmarks/commit/33fd9d395c22a020a8b9a90d40abe850ac241023)
+- **CI run:** https://github.com/pikax/vue-benchmarks/actions/runs/39325819866
 - **Source:** `results/benchmarks/bench-Linux-200-bench.json`
 
 ## Results
@@ -39,9 +39,9 @@ Files: **100** · Bytes: **142,771**
 
 | Tool | Fresh child | Fresh min | Fresh stddev | Fresh CV% | vs fastest fresh child | **Warm (primary)** | Warm min | Warm stddev | Warm CV% | vs fastest warm | Meta members | Throughput |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| vue-component-meta (Promise.all) ⚠ | (2.13 s) | (2.12 s) | (12.0 ms) | (0.6%) | not ranked | (874.8 ms) | (739.7 ms) | (208.4 ms) | (23.8%) | not ranked | (1,343) | – |
-| @verter/component-meta (Promise.all) ⚠ | (1.25 s) | (1.24 s) | (5.7 ms) | (0.5%) | not ranked | (1.27 s) | (1.27 s) | (51.6 ms) | (4.1%) | not ranked | (88) | – |
-| @verter/component-meta (getComponentMetaBatch) ⚠ | (1.05 s) | (1.01 s) | (31.9 ms) | (3.0%) | not ranked | (1.00 s) | (999.3 ms) | (21.5 ms) | (2.1%) | not ranked | (88) | – |
+| vue-component-meta (Promise.all) ⚠ | (2.15 s) | (2.10 s) | (50.8 ms) | (2.4%) | not ranked | (810.4 ms) | (769.2 ms) | (200.3 ms) | (24.7%) | not ranked | (1,343) | – |
+| @verter/component-meta (Promise.all) ⚠ | (1.35 s) | (1.33 s) | (20.4 ms) | (1.5%) | not ranked | (1.38 s) | (1.38 s) | (13.0 ms) | (0.9%) | not ranked | (88) | – |
+| @verter/component-meta (getComponentMetaBatch) ⚠ | (986.9 ms) | (977.7 ms) | (7.2 ms) | (0.7%) | not ranked | (995.0 ms) | (973.1 ms) | (15.9 ms) | (1.6%) | not ranked | (88) | – |
 
 <details><summary>Notes</summary>
 
@@ -60,8 +60,8 @@ Files: **100** · Bytes: **142,771**
 
 | Tool | Fresh child | Fresh min | Fresh stddev | Fresh CV% | vs fastest fresh child | **Warm (primary)** | Warm min | Warm stddev | Warm CV% | vs fastest warm | Meta members | Throughput | Peak RSS |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| vue-component-meta ⚠ | (2.13 s) | (2.11 s) | (16.8 ms) | (0.8%) | not ranked | (853.6 ms) | (776.5 ms) | (206.7 ms) | (24.2%) | not ranked | (1,343) | – | (248.3 MB) |
-| @verter/component-meta ⚠ | (1.25 s) | (1.23 s) | (14.4 ms) | (1.2%) | not ranked | (1.27 s) | (1.24 s) | (54.5 ms) | (4.3%) | not ranked | (88) | – | (128.4 MB) |
+| vue-component-meta ⚠ | (2.11 s) | (2.08 s) | (24.7 ms) | (1.2%) | not ranked | (870.0 ms) | (772.0 ms) | (173.1 ms) | (19.9%) | not ranked | (1,343) | – | (259.3 MB) |
+| @verter/component-meta ⚠ | (1.35 s) | (1.34 s) | (27.1 ms) | (2.0%) | not ranked | (1.40 s) | (1.36 s) | (37.5 ms) | (2.7%) | not ranked | (88) | – | (174.4 MB) |
 
 <details><summary>Notes</summary>
 
@@ -91,11 +91,11 @@ Files: **100** · Bytes: **142,771**
 
 Raw runs:
 
-- **vue-component-meta (Promise.all)**: Fresh child (first timed row workload): 2.15 s, 2.13 s, 2.12 s, 2.13 s, 2.14 s · Warm: 874.8 ms, 1.27 s, 797.3 ms, 876.9 ms, 739.7 ms
-- **@verter/component-meta (Promise.all)**: Fresh child (first timed row workload): 1.25 s, 1.26 s, 1.25 s, 1.24 s, 1.24 s · Warm: 1.27 s, 1.38 s, 1.27 s, 1.27 s, 1.27 s
-- **@verter/component-meta (getComponentMetaBatch)**: Fresh child (first timed row workload): 1.05 s, 1.07 s, 1.03 s, 1.01 s, 1.09 s · Warm: 1.04 s, 999.3 ms, 1.00 s, 1.00 s, 1.03 s
-- **vue-component-meta**: Fresh child (first timed row workload): 2.13 s, 2.11 s, 2.15 s, 2.13 s, 2.15 s · Warm: 921.8 ms, 853.6 ms, 793.7 ms, 1.28 s, 776.5 ms
-- **@verter/component-meta**: Fresh child (first timed row workload): 1.27 s, 1.26 s, 1.23 s, 1.25 s, 1.24 s · Warm: 1.24 s, 1.27 s, 1.28 s, 1.38 s, 1.27 s
+- **vue-component-meta (Promise.all)**: Fresh child (first timed row workload): 2.24 s, 2.13 s, 2.10 s, 2.15 s, 2.16 s · Warm: 1.20 s, 810.4 ms, 769.2 ms, 793.1 ms, 1.10 s
+- **@verter/component-meta (Promise.all)**: Fresh child (first timed row workload): 1.38 s, 1.35 s, 1.36 s, 1.33 s, 1.35 s · Warm: 1.38 s, 1.38 s, 1.41 s, 1.39 s, 1.38 s
+- **@verter/component-meta (getComponentMetaBatch)**: Fresh child (first timed row workload): 991.9 ms, 986.9 ms, 977.7 ms, 997.0 ms, 986.4 ms · Warm: 979.8 ms, 973.1 ms, 1.01 s, 997.0 ms, 995.0 ms
+- **vue-component-meta**: Fresh child (first timed row workload): 2.15 s, 2.08 s, 2.12 s, 2.11 s, 2.11 s · Warm: 879.5 ms, 780.7 ms, 1.20 s, 870.0 ms, 772.0 ms
+- **@verter/component-meta**: Fresh child (first timed row workload): 1.40 s, 1.35 s, 1.34 s, 1.35 s, 1.35 s · Warm: 1.40 s, 1.36 s, 1.38 s, 1.40 s, 1.46 s
 
 </details>
 
@@ -162,8 +162,8 @@ Each tool in its own process so RSS, allocation proxies and CPU are not mixed wi
 
 | Tool | RSS min / max / avg | Alloc min / max / avg | CPU ms | CPU % | Wall ms | Samples |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| @verter/component-meta | 31.93 / 127.09 / 95.32 | 10.02 / 31.78 / 20.90 | 1247 | 134.9 | 929 | 3 |
-| vue-component-meta | 247.16 / 247.16 / 247.16 | 168.52 / 168.52 / 168.52 | 4111 | 217.0 | 1900 | 3 |
+| @verter/component-meta | 168.93 / 169.43 / 169.18 | 33.66 / 33.66 / 33.66 | 1298 | 134.1 | 968 | 3 |
+| vue-component-meta | 258.57 / 258.57 / 258.57 | 177.90 / 177.90 / 177.90 | 3945 | 223.7 | 1764 | 3 |
 
 <details><summary>Notes</summary>
 
@@ -178,43 +178,43 @@ Each tool in its own process so RSS, allocation proxies and CPU are not mixed wi
 
 | Package | Version |
 | --- | --- |
-| node | v22.23.2 |
-| vue | 3.5.43 |
-| vue-36 | 3.6.0-rc.9 |
-| @vue/compiler-sfc | 3.5.43 |
-| @vue/compiler-sfc-36 | 3.6.0-rc.9 |
-| vize | 0.429.1 |
-| @vizejs/native | 0.429.1 |
-| @verter/native | 0.0.1-beta.6 |
+| node | v22.23.3 |
+| vue | 3.5.44 |
+| vue-36 | 3.6.0-rc.12 |
+| @vue/compiler-sfc | 3.5.44 |
+| @vue/compiler-sfc-36 | 3.6.0-rc.12 |
+| vize | 0.481.0 |
+| @vizejs/native | 0.481.0 |
+| @verter/native | 0.0.1-beta.7 |
 | @fervid/napi | 0.4.1 |
-| verter-tsc | 0.0.1-beta.6 |
-| @verter/component-meta | 0.0.1-beta.6 |
-| verter-lsp | 0.0.1-beta.6 |
-| verter-mcp | 0.0.1-beta.6 |
-| @vue/language-server | 3.3.11 |
-| @vue/typescript-plugin | 3.3.11 |
-| typescript-language-server | 6.0.1 |
-| vue-tsc | 3.3.11 |
-| vue-component-meta | 3.3.11 |
-| golar | 0.1.10 |
-| @golar/vue | 0.1.10 |
-| prettier | 3.9.9 |
-| oxfmt | 0.71.0 |
-| oxlint | 1.86.0 |
+| verter-tsc | 0.0.1-beta.7 |
+| @verter/component-meta | 0.0.1-beta.7 |
+| verter-lsp | 0.0.1-beta.7 |
+| verter-mcp | 0.0.1-beta.7 |
+| @vue/language-server | 3.3.13 |
+| @vue/typescript-plugin | 3.3.13 |
+| typescript-language-server | 6.0.2 |
+| vue-tsc | 3.3.13 |
+| vue-component-meta | 3.3.13 |
+| golar | 0.1.11 |
+| @golar/vue | 0.1.11 |
+| prettier | 3.9.10 |
+| oxfmt | 0.73.0 |
+| oxlint | 1.88.0 |
 | eslint-plugin-vue | 10.11.1 |
-| @biomejs/biome | 2.5.14 |
+| @biomejs/biome | 2.5.15 |
 | typescript | 6.0.3 |
-| cli:vize | 0.429.1 |
+| cli:vize | 0.481.0 |
 | cli:vue-tsc | 6.0.3 |
-| cli:verter-tsc | 0.0.1-beta.6 |
-| cli:golar | 0.1.10 |
-| cli:prettier | 3.9.9 |
-| cli:oxfmt | 0.71.0 |
-| cli:oxlint | 1.86.0 |
-| cli:biome | 2.5.14 |
-| vue-jsx-vapor | 3.2.25 |
-| @vue-jsx-vapor/compiler-rs | 3.2.25 |
+| cli:verter-tsc | 0.0.1-beta.7 |
+| cli:golar | 0.1.11 |
+| cli:prettier | 3.9.10 |
+| cli:oxfmt | 0.73.0 |
+| cli:oxlint | 1.88.0 |
+| cli:biome | 2.5.15 |
+| vue-jsx-vapor | 3.2.28 |
+| @vue-jsx-vapor/compiler-rs | 3.2.28 |
 | @vue/babel-plugin-jsx | 3.0.0 |
-| @babel/core | 8.0.6 |
+| @babel/core | 8.0.7 |
 
 </details>
